@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/tools"
+    android:id="@+id/map_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/map_current_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_my_location_black_18dp"
+        android:layout_margin="@dimen/_10sdp"
+        android:layout_alignParentBottom="true" />
+
+
+    <!--<wolve.dms.controls.CTextView-->
+        <!--android:id="@+id/map_dropdown"-->
+        <!--android:layout_width="@dimen/_30sdp"-->
+        <!--android:layout_height="@dimen/_30sdp"-->
+        <!--android:text="@string/icon_down"-->
+        <!--android:textSize="@dimen/_14sdp"-->
+        <!--android:textColor="@color/colorWhite"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:gravity="center"-->
+        <!--android:layout_marginLeft="@dimen/_2sdp"-->
+        <!--app:customFont="@string/font_awesome"/>-->
+
+    <Spinner
+        android:id="@+id/map_spinner"
+        android:layout_width="@dimen/_80sdp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/spinner_bg"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/_5sdp"
+        android:overlapAnchor="false"/>
+
+    <RadioGroup
+        android:checkedButton="@+id/map_filter_all"
+        android:id="@+id/map_filter"
+        android:layout_width="@dimen/_120sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:background="@drawable/pink_out_line"
+        android:orientation="horizontal"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/_5sdp">
+
+        <RadioButton
+            android:id="@+id/map_filter_all"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp"
+            android:layout_marginLeft="1dp"
+            android:background="@drawable/toggle_widget_background"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:button="@null"
+            android:gravity="center"
+            android:text="Tất cả"
+            android:textColor="@drawable/text_white_selected"
+            android:textSize="@dimen/_10sdp"/>
+
+        <RadioButton
+            android:id="@+id/map_filter_interested"
+            android:layout_marginRight="1dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/toggle_widget_background"
+            android:button="@null"
+            android:gravity="center"
+            android:text="Quan tâm"
+            android:textColor="@drawable/text_white_selected"
+            android:textSize="@dimen/_10sdp"/>
+
+    </RadioGroup>
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/map_new_customer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/_10sdp"
+        fab:menu_fab_size="mini"
+        fab:menu_colorNormal="#1565C0"
+        fab:menu_colorPressed="#2272CD"
+        fab:menu_colorRipple="#62B2FF">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/map_new_maintain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_mode_edit_white_18dp"
+            app:fab_label="BẢO TRÌ"
+            style="@style/MenuButtonsStyle" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/map_new_accessary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_mode_edit_white_18dp"
+            app:fab_label="PHỤ TÙNG"
+            style="@style/MenuButtonsStyle" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/map_new_wash"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_mode_edit_white_18dp"
+            app:fab_label="RỬA XE"
+            style="@style/MenuButtonsStyle" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/map_new_repair"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_mode_edit_white_18dp"
+            app:fab_label="SỬA XE"
+            style="@style/MenuButtonsStyle" />
+
+    </com.github.clans.fab.FloatingActionMenu>
+
+</RelativeLayout>

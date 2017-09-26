@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorWhite"
+    android:clickable="true">
+
+    <RelativeLayout
+        android:id="@+id/update_price_header"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_35sdp"
+        android:background="@drawable/bg_header_top">
+
+        <ImageView
+            android:id="@+id/icon_back"
+            android:layout_width="@dimen/_35sdp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_arrow_back_black_18dp"
+            android:padding="@dimen/_8sdp"
+            android:background="?selectableItemBackground"/>
+
+        <TextView
+            android:id="@+id/update_price_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="SẢN PHẨM"
+            android:textSize="@dimen/_14sdp"
+            android:textColor="@color/black_text_color"/>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/_10sdp"
+        android:paddingRight="@dimen/_10sdp">
+
+        <wolve.dms.controls.CInputForm
+            android:id="@+id/add_product_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapWords"
+            app:textHint="Nhập tên sản phẩm"
+            app:iconText="@string/icon_product"/>
+
+        <wolve.dms.controls.CInputForm
+            android:id="@+id/add_product_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:textHint="Nhóm sản phẩm"
+            app:iconText="@string/icon_product_group"
+            app:isDropdown="true"
+            app:textColor="@color/colorBlue"
+            app:iconColor="@color/colorBlue"/>
+
+        <wolve.dms.controls.CInputForm
+            android:id="@+id/add_product_unit_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            app:textHint="Giá bán"
+            app:iconText="@string/icon_price"
+            />
+
+        <wolve.dms.controls.CInputForm
+            android:id="@+id/add_product_purchase_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            app:textHint="Giá nhập hàng"
+            app:iconText="@string/icon_purchase"/>
+
+        <wolve.dms.controls.CInputForm
+            android:id="@+id/add_product_volume"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            app:textHint="Khối lượng"
+            app:iconText="@string/icon_weight"/>
+
+        <wolve.dms.controls.CInputForm
+            android:id="@+id/add_product_promotion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:textHint=""
+            app:iconText="@string/icon_gift"
+            app:isDropdown="true"
+            app:textColor="@color/colorBlue"
+            app:iconColor="@color/colorBlue"/>
+
+
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/add_product_submit"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/_30sdp"
+        android:minWidth="@dimen/_150sdp"
+        android:background="@drawable/btn_add_new"
+        android:layout_margin="@dimen/_10sdp"
+        android:text="CẬP NHẬT"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_14sdp"
+        android:layout_gravity="center_horizontal"/>
+
+
+</LinearLayout>

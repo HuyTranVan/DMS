@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/drawable-v21/notification_action_background.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/drawable-v21/notification_action_background.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/drawable-v21/abc_edit_text_material.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/drawable-v21/abc_edit_text_material.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/drawable-v21/abc_btn_colored_material.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/drawable-v21/abc_btn_colored_material.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/drawable-v21/abc_action_bar_item_background_material.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/drawable-v21/abc_action_bar_item_background_material.xml"
+    }
+]

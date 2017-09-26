@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SweetAlertDialog</string>
+    <string name="dialog_default_title">Here\'s a message!</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="LOADING">Loading...</string>
+
+
+    <!-- FONT STRING -->
+    <string name="customFont_OpenSans_Semibold">opensans_semi_bold.ttf</string>
+    <string name="customFont_OpenSans_SemiboldItalic">opensans_semi_bold_italic.ttf</string>
+    <string name="customFont_OpenSans_Italic">opensans_italic.ttf</string>
+    <string name="customFont_OpenSans_Regular">opensans_regular.ttf</string>
+    <string name="customFont_FontAwesome">font_awesome.ttf</string>
+</resources>

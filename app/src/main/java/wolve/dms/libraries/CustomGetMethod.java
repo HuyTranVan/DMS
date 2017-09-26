@@ -1,0 +1,108 @@
+package wolve.dms.libraries;
+
+import android.content.Context;
+import android.os.AsyncTask;
+import android.util.Log;
+
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+
+import wolve.dms.callback.Callback;
+import wolve.dms.models.User;
+import wolve.dms.utils.Util;
+
+/**
+ * Created by tranhuy on 7/22/16.
+ */
+public class CustomGetMethod extends AsyncTask<String, Void, String> {
+    private Callback mListener = null;
+    private String baseUrl,token, id_user;
+
+    public CustomGetMethod(String url, Callback listener) {
+        mListener = listener;
+        this.baseUrl = url;
+
+        User currentUser = User.getCurrentUser();
+        if (currentUser != null && currentUser.getToken() != null) {
+            token = currentUser.getToken();
+            id_user = currentUser.getId_user();
+        }
+    }
+
+    @Override
+        protected String doInBackground(String... params) {
+        Log.d("url: ", baseUrl);
+        Log.d("token: ", token);
+        Log.d("id_nv: ", id_user);
+
+        StringBuffer response = null;
+        URL obj = null;
+        try {
+            obj = new URL(baseUrl);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+            con.setRequestMethod("GET");
+            con.setRequestProperty("User-Agent", "Mozilla/5.0");
+            con.setRequestProperty("x-wolver-accesstoken", token);
+            con.setRequestProperty("x-wolver-accessid", id_user);
+
+            int responseCode = con.getResponseCode();
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            response = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return "errorCode: 01";
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+            return "errorCode: 02";
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "errorCode: 03";
+        }
+        Log.d("output: ", String.valueOf(response));
+
+        return String.valueOf(response);
+        }
+
+    @Override
+    protected void onPostExecute(String response) {
+        if (response.contains("errorCode")){
+            mListener.onError(response);
+            if (response.contains("errorCode: 01")){
+                Util.getInstance().quickMessage("Lỗi kết nối server ", null, null);
+            }else if (response.contains("errorCode: 02")){
+                Util.getInstance().quickMessage("Lỗi đường truyền ", null, null);
+            }else if (response.contains("errorCode: 03")){
+                Util.getInstance().quickMessage("Lỗi kết nối server", null, null);
+            }
+        }else {
+            try {
+                mListener.onResponse(new JSONObject(response));
+
+            } catch (JSONException e) {
+                mListener.onError("Data error");
+                Util.getInstance().quickMessage("Lỗi dữ liệu", null, null);
+            }
+        }
+
+    }
+}
+
+

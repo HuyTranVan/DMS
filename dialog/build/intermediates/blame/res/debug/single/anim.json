@@ -1,0 +1,66 @@
+[
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/anim/abc_slide_in_top.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/anim/abc_slide_in_top.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/anim/abc_popup_enter.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/anim/abc_popup_enter.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/anim/success_mask_layout.xml",
+        "source": "/Users/macos/StudioProjects/DMS/dialog/src/main/res/anim/success_mask_layout.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/anim/error_x_in.xml",
+        "source": "/Users/macos/StudioProjects/DMS/dialog/src/main/res/anim/error_x_in.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/anim/abc_slide_out_bottom.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/anim/abc_slide_out_bottom.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/anim/abc_slide_in_bottom.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/anim/abc_slide_in_bottom.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/anim/abc_shrink_fade_out_from_bottom.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/anim/abc_shrink_fade_out_from_bottom.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/anim/abc_fade_in.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/anim/abc_fade_in.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/anim/abc_popup_exit.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/anim/abc_popup_exit.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/anim/abc_fade_out.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/anim/abc_fade_out.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/anim/abc_grow_fade_in_from_bottom.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/anim/abc_grow_fade_in_from_bottom.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/anim/success_bow_roate.xml",
+        "source": "/Users/macos/StudioProjects/DMS/dialog/src/main/res/anim/success_bow_roate.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/anim/abc_slide_out_top.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/anim/abc_slide_out_top.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/anim/error_frame_in.xml",
+        "source": "/Users/macos/StudioProjects/DMS/dialog/src/main/res/anim/error_frame_in.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/anim/modal_in.xml",
+        "source": "/Users/macos/StudioProjects/DMS/dialog/src/main/res/anim/modal_in.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/anim/modal_out.xml",
+        "source": "/Users/macos/StudioProjects/DMS/dialog/src/main/res/anim/modal_out.xml"
+    }
+]

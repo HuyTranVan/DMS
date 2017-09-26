@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/release/layout-v11/notification_media_cancel_action.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/layout-v11/notification_media_cancel_action.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/release/layout-v11/notification_template_big_media.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/layout-v11/notification_template_big_media.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/release/layout-v11/notification_template_big_media_narrow.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/layout-v11/notification_template_big_media_narrow.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/release/layout-v11/notification_media_action.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/layout-v11/notification_media_action.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/release/layout-v11/notification_template_big_media_narrow_custom.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/layout-v11/notification_template_big_media_narrow_custom.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/release/layout-v11/notification_template_big_media_custom.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/layout-v11/notification_template_big_media_custom.xml"
+    }
+]

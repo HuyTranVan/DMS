@@ -1,0 +1,86 @@
+[
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/color/abc_primary_text_disable_only_material_light.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/color/abc_primary_text_disable_only_material_light.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/color/abc_hint_foreground_material_dark.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/color/abc_hint_foreground_material_dark.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/color/switch_thumb_material_dark.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/color/switch_thumb_material_dark.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/color/abc_hint_foreground_material_light.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/color/abc_hint_foreground_material_light.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/color/abc_tint_edittext.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/color/abc_tint_edittext.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/color/abc_secondary_text_material_dark.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/color/abc_secondary_text_material_dark.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/color/abc_tint_btn_checkable.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/color/abc_tint_btn_checkable.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/color/abc_search_url_text.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/color/abc_search_url_text.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/color/abc_tint_seek_thumb.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/color/abc_tint_seek_thumb.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/color/abc_tint_switch_track.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/color/abc_tint_switch_track.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/color/abc_primary_text_material_dark.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/color/abc_primary_text_material_dark.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/color/lib_default_text_black_color.xml",
+        "source": "/Users/macos/StudioProjects/DMS/dialog/src/main/res/color/lib_default_text_black_color.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/color/abc_tint_spinner.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/color/abc_tint_spinner.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/color/abc_btn_colored_borderless_text_material.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/color/abc_btn_colored_borderless_text_material.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/color/abc_primary_text_disable_only_material_dark.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/color/abc_primary_text_disable_only_material_dark.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/color/abc_primary_text_material_light.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/color/abc_primary_text_material_light.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/color/abc_tint_switch_thumb.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/color/abc_tint_switch_thumb.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/color/abc_btn_colored_text_material.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/color/abc_btn_colored_text_material.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/color/abc_secondary_text_material_light.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/color/abc_secondary_text_material_light.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/color/abc_tint_default.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/color/abc_tint_default.xml"
+    },
+    {
+        "merged": "/Users/macos/StudioProjects/DMS/dialog/build/intermediates/res/merged/debug/color/switch_thumb_material_light.xml",
+        "source": "/Users/macos/.android/build-cache/2de04c1499ea7e2c0f21a93bc869ceaeb3cc816d/output/res/color/switch_thumb_material_light.xml"
+    }
+]

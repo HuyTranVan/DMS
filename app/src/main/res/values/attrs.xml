@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CTextViewDefault">
+        <attr name="customFont" format="string"/>
+        <attr name="textWhite" format="boolean"/>
+        <attr name="setActive" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="CInputForm">
+        <attr name="iconColor" format="integer" />
+        <attr name="iconSize" format="integer" />
+        <attr name="iconText" format="string" />
+        <attr name="textSize" format="integer" />
+        <attr name="textColor" format="integer" />
+        <attr name="textColorHint" format="integer" />
+        <attr name="text" format="string" />
+        <attr name="textHint" format="string" />
+        <attr name="android:inputType"/>
+        <attr name="isDropdown" format="boolean"/>
+    </declare-styleable>
+
+
+
+    <declare-styleable name="MaterialSearchView">
+        <attr name="searchBackground" format="integer" />
+        <attr name="searchVoiceIcon" format="integer" />
+        <attr name="searchCloseIcon" format="integer" />
+        <attr name="searchBackIcon" format="integer" />
+        <attr name="searchSuggestionIcon" format="integer" />
+        <attr name="searchSuggestionBackground" format="integer" />
+        <attr name="android:hint" />
+        <attr name="android:textColor" />
+        <attr name="android:textColorHint" />
+    </declare-styleable>
+
+    <declare-styleable name="InputRegister">
+        <attr name="customIconText" format="integer" />
+        <attr name="iconsSize" format="integer" />
+        <attr name="paddingIcon" format="integer" />
+        <attr name="iconsColor" format="integer" />
+        <attr name="paddingUnderLine" format="integer" />
+        <attr name="colorUnderLine" format="integer" />
+        <attr name="weightUnderLine" format="integer" />
+        <attr name="android:hint" />
+        <attr name="android:textColor" />
+        <attr name="android:textColorHint"/>
+    </declare-styleable>
+
+</resources>

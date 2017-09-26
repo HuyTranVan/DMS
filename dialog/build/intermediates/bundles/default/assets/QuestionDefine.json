@@ -1,0 +1,50 @@
+{
+
+  "result":true,
+  "code":"10000",
+  "data":[
+    {
+      "questionId":3,
+      "questionName":"Đường vào/ Hẻm vào nhà",
+      "type":2,
+      "icon":"icon_duongvao"
+    },
+    {
+      "questionId":4,
+      "questionName":"Mặt tiền phía trước căn nhà",
+      "type":2,
+      "icon":"icon_mattien"
+    },
+    {
+      "questionId":5,
+      "questionName":"Kiến trúc/ kết cấu nhà",
+      "type":2,
+      "icon":"icon_kientruc"
+    },
+    {
+      "questionId":6,
+      "questionName":"Phòng khách",
+      "type":2,
+      "icon":"icon_phongkhach"
+    },
+    {
+      "questionId":7,
+      "questionName":"Nhà bếp",
+      "type":2,
+      "icon":"icon_phongbep"
+    },
+    {
+      "questionId":8,
+      "questionName":"Phòng ngủ",
+      "type":2,
+      "icon":"icon_phongngu"
+    },
+    {
+      "questionId":9,
+      "questionName":"Nhà vệ sinh",
+      "type":2,
+      "icon":"icon_nhavesinh"
+    }
+  ],
+  "message":"Thao tác thành công"
+}

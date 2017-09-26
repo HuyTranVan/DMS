@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="text_color_white_hint">#5effffff</color>
+    <color name="colorGray">#e0e0e0</color>
+    <color name="bg_even_list_item">#f8f8f8</color>
+
+    <color name="colorGreen">#8fd811</color>
+    <color name="colorBlue">#2196f3</color>
+    <color name="colorBlueTransparent">#7b2196f3</color>
+
+    <color name="colorBlueDark">#0570c6</color>
+    <color name="lightGreen">#ccff99</color>
+    <color name="colorGreenFab">#99cc33</color>
+    <color name="colorRed">#ed3237</color>
+    <color name="colorRedTransparent">#61ed3237</color>
+    <color name="colorRedDark">#ce0208</color>
+
+   <!--black text color-->
+    <color name="black_text_color">#de000000</color>
+    <color name="black_text_color_hint">#61000000</color>
+    <color name="black_text_icon">#61000000</color>
+    <color name="black_text_disable">#80000000</color>
+    <!--white text color-->
+    <color name="white_text_color">#ffffff</color>
+    <color name="white_text_color_hint">#61ffffff</color>
+    <color name="white_text_icon">#61ffffff</color>
+    <color name="white_text_disable">#80ffffff</color>
+
+    <color name="orange">#ffac2c</color>
+    <color name="orange_dark">#ff963b</color>
+    <color name="orange_pressed">#e76d04</color>
+    <color name="orange_disable">#80ff963b</color>
+
+    <color name="pin_activated">#ff6666</color>
+    <color name="pin_waiting">#3399cc</color>
+    <color name="pin_deactivated">#666666</color>
+
+    <color name="yellow_under">#bbff9f35</color>
+    <color name="yellow">#ff963b</color>
+    <color name="yellow_pressed">#ed7f02</color>
+    <color name="colorMain">#1d75d9</color>
+    <color name="colorMain_under">#1d59d9</color>
+    <color name="colorMainStroke">#e8f1fb</color>
+
+
+    <color name="facebook">#3b5998</color>
+    <color name="facebook_under">#043397</color>
+    <color name="cardview_shadow_start_color">#de000000</color>
+    <color name="cardview_shadow_end_color">#03000000</color>
+    <color name="colorWhite">#ffffff</color>
+
+</resources>

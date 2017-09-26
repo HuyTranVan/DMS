@@ -1,0 +1,64 @@
+<resources>
+    <string name="app_name">DMS</string>
+    <string name="map_id">AIzaSyCJ-4zFtAI6ZVWSXY8E2xxM_EyLqXtwCXE</string>
+
+
+    <!-- FONT STRING -->
+    <string name="font_awesome">font_awesome.ttf</string>
+    <string name="font_regular">opensans_regular.ttf</string>
+    <string name="font_bold">opensans_bold.ttf</string>
+    <string name="font_semibold">opensans_semi_bold.ttf</string>
+    <string name="font_semibolditalic">opensans_semi_bold_italic.ttf</string>
+    <string name="font_opensans_italic">opensans_italic.ttf</string>
+
+    <!--ICON STRING FROM AWSOME FONT-->
+    <string name="icon_username">&#xf007;</string>
+    <string name="icon_password">&#xf023;</string>
+    <string name="icon_non_password">&#xf13e;</string>
+    <string name="icon_email">&#xf0e0;</string>
+    <string name='icon_sms'>&#xf075;</string>
+    <string name="icon_phone">&#xf095;</string>
+    <string name="icon_idcard">&#xf02a;</string>
+    <string name="icon_edit">&#xf044;</string>
+    <string name="icon_camera">&#xf030;</string>
+    <string name="icon_facebook">&#xf09a;</string>
+    <string name="icon_image">&#xf1c5;</string>
+    <string name="icon_circle">&#xf111;</string>
+    <string name="icon_trash">&#xf014;</string>
+    <string name="icon_upload">&#xf0ee;</string>
+    <string name="icon_clock">&#xf017;</string>
+    <string name="icon_heart">&#xf004;</string>
+    <string name="icon_dashboard">&#xf0e4;</string>
+    <string name="icon_group">&#xf0c0;</string>
+    <string name="icon_setting">&#xf085;</string>
+    <string name="icon_logout">&#xf08b;</string>
+    <string name="icon_info">&#xf05a;</string>
+    <string name="icon_invite">&#xf0a1;</string>
+    <string name="icon_qrcode">&#xf029;</string>
+    <string name="icon_up">&#xf0de;</string>
+    <string name="icon_down">&#xf0d7;</string>
+    <string name="icon_schedule">&#xf073;</string>
+    <string name="icon_comment">&#xf075;</string>
+    <string name="icon_account">&#xf013;</string>
+    <string name="icon_home">&#xf015;</string>
+    <string name="icon_plus">&#xf067;</string>
+    <string name="icon_product_group">&#xf0e8;</string>
+    <string name="icon_product">&#xf02d;</string>
+    <string name="icon_price">&#xf155;</string>
+    <string name="icon_purchase_price">&#xf0d6;</string>
+    <string name="icon_gift">&#xf06b;</string>
+    <string name="icon_chart">&#xf080;</string>
+    <string name="icon_status">&#xf27a;</string>
+    <string name="icon_purchase">&#xf291;</string>
+    <string name="icon_weight">&#xf019;</string>
+    <string name="icon_adress">&#xf277;</string>
+    <string name="icon_district">&#xf041;</string>
+    <string name="icon_city">&#xf279;</string>
+    <string name="icon_flag">&#xf024;</string>
+    <string name="icon_protect">&#xf132;</string>
+
+    <string name="login_username">Nhập tài khoản hoặc SĐT</string>
+    <string name="login_password">Nhập mật khẩu</string>
+    <string name="login_button_login">đăng nhập</string>
+
+</resources>
