@@ -48,11 +48,22 @@ public class StatusActivity extends BaseActivity implements View.OnClickListener
     }
 
     @Override
-    public void initializeView() {
+    public void findViewById() {
         btnBack = (ImageView) findViewById(R.id.icon_back);
         rvStatus = (RecyclerView) findViewById(R.id.status_rvstatus);
         btnAddStatus = (ImageView) findViewById(R.id.status_addnew);
 
+    }
+
+    @Override
+    public void initialData() {
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadStatus();
     }
 
     @Override
@@ -90,12 +101,6 @@ public class StatusActivity extends BaseActivity implements View.OnClickListener
         return true;
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        loadStatus();
-
-    }
 
     protected void loadStatus() {
         StatusConnect.ListStatus(new CallbackJSONArray() {

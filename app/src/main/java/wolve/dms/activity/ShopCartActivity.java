@@ -1,25 +1,18 @@
 package wolve.dms.activity;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.IdRes;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
+import com.github.clans.fab.FloatingActionButton;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,15 +23,8 @@ import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.CheckinsAdapter;
 import wolve.dms.adapter.ReasonAdapter;
-import wolve.dms.apiconnect.CustomerConnect;
-import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackJSONObject;
-import wolve.dms.controls.CInputForm;
-import wolve.dms.controls.CTextView;
-import wolve.dms.controls.WorkaroundMapFragment;
 import wolve.dms.models.Checkin;
 import wolve.dms.models.Customer;
-import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
 
@@ -47,17 +33,13 @@ import wolve.dms.utils.Util;
  */
 
 public class ShopCartActivity extends BaseActivity implements  View.OnClickListener, RadioGroup.OnCheckedChangeListener {
-    public GoogleMap mMap;
-    public SupportMapFragment mapFragment;
     private ImageView btnBack;
-    private CTextView tvTrash;
-    private Button btnSubmit, btnCurLocation;
+    private Button btnSubmit;
     private TextView tvTitle;
-    private CInputForm edName, edPhone , edAdress, edStreet, edDistrict, edCity, edNote , edShopType, edShopName;
     private RadioGroup rgStatus;
     private RadioButton rdInterested, rdNotInterested, rdOrdered;
-    private RecyclerView rvReason, rvCheckins;
-    private ScrollView scParent;
+    private RecyclerView rvShop;
+    private FloatingActionButton btnAdd;
 
 
     private ReasonAdapter reasonAdapter;
@@ -66,18 +48,6 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     private List<Checkin> listCheckins = new ArrayList<>();
     private int currentStatusId = 1;
     private String firstName ="";
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-
-
-
-
-
-    }
 
     @Override
     public int getResourceLayout() {
@@ -90,12 +60,27 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     }
 
     @Override
-    public void initializeView() {
-        btnSubmit = (Button) findViewById(R.id.add_customer_submit);
+    public void findViewById() {
+        btnSubmit = (Button) findViewById(R.id.cart_submit);
         btnBack = (ImageView) findViewById(R.id.icon_back);
+        tvTitle = (TextView) findViewById(R.id.cart_title);
+        btnAdd = (FloatingActionButton) findViewById(R.id.cart_add_product);
 
 
+    }
 
+    @Override
+    public void initialData() {
+        String bundle = getIntent().getExtras().getString(Constants.CUSTOMER_CART);
+        if (bundle != null){
+            try {
+                currentCustomer = new Customer(new JSONObject(bundle));
+                //tvTitle.setText(edShopType.getText().toString() +" - " + currentCustomer.getString("signBoard") );
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
@@ -103,9 +88,16 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     public void addEvent() {
         btnBack.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
-        tvTrash.setOnClickListener(this);
-        rgStatus.setOnCheckedChangeListener(this);
-        btnCurLocation.setOnClickListener(this);
+        btnAdd.setOnClickListener(this);
+
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK){
+            returnPreviousScreen(currentCustomer);
+        }
+        return true;
     }
 
     @Override
@@ -121,20 +113,18 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
                 break;
 
-            case R.id.icon_more:
-
+            case R.id.cart_add_product:
+                Util.getInstance().showCustomDialog(R.layout.view_dialog_select_product);
                 break;
 
-            case R.id.add_customer_currentlocation:
 
-                break;
         }
     }
 
     private void returnPreviousScreen(Customer customer){
         Intent returnIntent = new Intent();
-        returnIntent.putExtra(Constants.CUSTOMER, customer.CustomertoString());
-        setResult(Constants.RESULT_CUSTOMER_ACTIVITY,returnIntent);
+        returnIntent.putExtra(Constants.CUSTOMER_CART, customer.CustomertoString());
+        setResult(Constants.RESULT_SHOPCART_ACTIVITY,returnIntent);
         Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         Util.getInstance().getCurrentActivity().finish();
 
@@ -160,6 +150,8 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
         }
     }
+
+
 
 
 

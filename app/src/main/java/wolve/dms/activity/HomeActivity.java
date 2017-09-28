@@ -30,13 +30,6 @@ import wolve.dms.utils.Util;
 public class HomeActivity extends BaseActivity implements View.OnClickListener, CallbackClickAdapter {
     private RecyclerView rvItems;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        createListItem();
-        loadCurrentData();
-    }
 
     private void createListItem() {
         HomeAdapter adapter = new HomeAdapter(HomeActivity.this);
@@ -59,8 +52,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     @Override
-    public void initializeView() {
+    public void findViewById() {
         rvItems= (RecyclerView) findViewById(R.id.home_rvitems);
+    }
+
+    @Override
+    public void initialData() {
+        createListItem();
+        loadCurrentData();
     }
 
     @Override

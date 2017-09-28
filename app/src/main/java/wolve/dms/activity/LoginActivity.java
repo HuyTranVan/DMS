@@ -30,21 +30,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     private EditText edUsername, edPassword;
     private Button btnSubmit;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (BuildConfig.DEBUG_FLAG ){
-//            edUsername.setText("0908136885");
-            edUsername.setText("0916083773");
-            edPassword.setText("123");
-
-
-            doLogin();
-
-
-        }
-    }
 
     @Override
     public int getResourceLayout() {
@@ -57,11 +42,25 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     }
 
     @Override
-    public void initializeView() {
+    public void findViewById() {
         edUsername = (EditText) findViewById(R.id.login_username);
         edPassword = (EditText) findViewById(R.id.login_password);
         btnSubmit = (Button) findViewById(R.id.login_submit);
 
+    }
+
+    @Override
+    public void initialData() {
+        if (BuildConfig.DEBUG_FLAG ){
+//            edUsername.setText("0908136885");
+            edUsername.setText("0916083773");
+            edPassword.setText("123");
+
+
+            doLogin();
+
+
+        }
     }
 
     @Override

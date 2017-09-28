@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.IdRes;
@@ -66,28 +65,23 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/14/17.
  */
 
-public class MapsActivity extends BaseActivity implements OnMapReadyCallback,View.OnClickListener, GoogleMap.OnCameraIdleListener, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapLongClickListener, RadioGroup.OnCheckedChangeListener , GoogleMap.OnInfoWindowLongClickListener{
+public class MapsActivity extends BaseActivity implements OnMapReadyCallback,View.OnClickListener,
+        GoogleMap.OnCameraIdleListener, GoogleMap.OnInfoWindowClickListener,
+        GoogleMap.OnMapLongClickListener, RadioGroup.OnCheckedChangeListener ,
+        GoogleMap.OnInfoWindowLongClickListener, GoogleMap.OnCameraMoveListener,
+        GoogleMap.OnMarkerClickListener{
     public GoogleMap mMap;
     public Marker currentMarker;
     private FloatingActionMenu btnNewCustomer;
-    private FloatingActionButton btnLocation, btnRepair, btnWash, btnAccesary, btnMaintain;
+    private FloatingActionButton btnLocation, btnRepair, btnWash, btnAccesary, btnMaintain, btnPhoneNumber;
     public SupportMapFragment mapFragment;
     private DialogPlus dialog;
     private Spinner mSpinner;
     private RadioGroup rdFilter;
 
-    public Boolean isStarted = true;
-    private String currentDistrict = "Quận 2";
-    private int firstDistrictPosition = 9;
     private ArrayList<Customer> listCustomer = new ArrayList<>();
-    private LatLng currentLatlng;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Util.mapsActivity = this;
-
-    }
+    //private LatLng currentLatlng;
+    private Handler mHandler = new Handler();
 
     @Override
     public int getResourceLayout() {
@@ -100,7 +94,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     }
 
     @Override
-    public void initializeView() {
+    public void findViewById() {
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         btnLocation = (FloatingActionButton) findViewById(R.id.map_current_location);
         btnNewCustomer = (FloatingActionMenu) findViewById(R.id.map_new_customer);
@@ -108,6 +102,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         btnWash = (FloatingActionButton) findViewById(R.id.map_new_wash);
         btnAccesary = (FloatingActionButton) findViewById(R.id.map_new_accessary);
         btnMaintain = (FloatingActionButton) findViewById(R.id.map_new_maintain);
+        btnPhoneNumber = (FloatingActionButton) findViewById(R.id.map_new_addphone);
         mSpinner = (Spinner) findViewById(R.id.map_spinner);
         rdFilter = (RadioGroup) findViewById(R.id.map_filter);
 
@@ -117,32 +112,13 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         btnNewCustomer.setMenuButtonColorPressedResId(R.color.colorBlueDark);
 
 
-        setupSpinner();
-
-
     }
 
-    private void setupSpinner(){
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, R.layout.view_spinner_item, Util.mListDistricts);
+    @Override
+    public void initialData() {
+        Util.mapsActivity = this;
+        setupSpinner();
 
-        dataAdapter.setDropDownViewResource(R.layout.view_spinner_item);
-        mSpinner.setAdapter(dataAdapter);
-        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                currentDistrict = parent.getItemAtPosition(position).toString();
-                currentLatlng = null;
-                loadAllCustomer(currentDistrict, rdFilter.getCheckedRadioButtonId() == R.id.map_filter_all ? true : false);
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        mSpinner.setSelection(firstDistrictPosition);
     }
 
     @Override
@@ -154,42 +130,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         btnAccesary.setOnClickListener(this);
         btnMaintain.setOnClickListener(this);
         rdFilter.setOnCheckedChangeListener(this);
-
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.map_current_location:
-                triggerCurrentLocation(new LatLng(getCurLocation().getLatitude(), getCurLocation().getLongitude()), 16);
-//                loadAllCustomerDependLocation(getCurLocation().getLatitude(), getCurLocation().getLongitude(), true);
-                break;
-
-            case R.id.map_new_repair:
-                choiceShopType(Constants.shopType[0]);
-
-                break;
-
-            case R.id.map_new_wash:
-                choiceShopType(Constants.shopType[1]);
-                break;
-
-            case R.id.map_new_maintain:
-                choiceShopType(Constants.shopType[2]);
-
-                break;
-
-            case R.id.map_new_accessary:
-                choiceShopType(Constants.shopType[3]);
-                break;
-
-            case R.id.map_new_customer:
-
-                break;
-
-
-        }
-
+        btnPhoneNumber.setOnClickListener(this);
     }
 
     @Override
@@ -201,51 +142,59 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     }
 
     @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.map_current_location:
+                triggerCurrentLocation(new LatLng(getCurLocation().getLatitude(), getCurLocation().getLongitude()), 16);
+                loadAllCustomerDependLocation(getCurLocation().getLatitude(), getCurLocation().getLongitude(), getCheckedFilter());
+                break;
+
+            case R.id.map_new_repair:
+                inputShopName(Constants.shopType[0]);
+
+                break;
+
+            case R.id.map_new_wash:
+                inputShopName(Constants.shopType[1]);
+                break;
+
+            case R.id.map_new_accessary:
+                inputShopName(Constants.shopType[2]);
+                break;
+
+            case R.id.map_new_maintain:
+                inputShopName(Constants.shopType[3]);
+
+                break;
+
+            case R.id.map_new_addphone:
+                inputPhoneNumber();
+                break;
+
+            case R.id.map_new_customer:
+
+                break;
+
+        }
+
+    }
+
+    @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-
-//        final Handler h = new Handler();
-//        h.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (Util.getInstance().getCurrentLocation() != null) {
-//                    triggerCurrentLocation();
-//
-//                } else {
-//                    h.postDelayed(this, 1000);
-//                }
-//            }
-//        }, 10);
         if (getCurLocation() != null){
-            LocationConnect.getAddressFromLocation(getCurLocation().getLatitude(), getCurLocation().getLongitude(), new CallbackJSONObject() {
+            triggerCurrentLocation(new LatLng(getCurLocation().getLatitude(), getCurLocation().getLongitude()), 15);
+            final Handler h = new Handler();
+            h.postDelayed(new Runnable() {
                 @Override
-                public void onResponse(JSONObject result) {
-                    JSONObject objectAdress = MapUtil.getAddressFromMapResult(result);
-                    try {
-                        currentDistrict = objectAdress.getString("district");
-                        loadAllCustomer(currentDistrict, rdFilter.getCheckedRadioButtonId() == R.id.map_filter_all ? true : false);
-                        //set Value for Spinner
-                        for (int i=0; i<Util.mListDistricts.size(); i++){
-                            if (currentDistrict.equals(Util.mListDistricts.get(i))){
-                                mSpinner.setSelection(i);
-                                break;
-                            }
-                        }
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
+                public void run() {
+                    loadAllCustomerDependLocation(getCurLocation().getLatitude(), getCurLocation().getLongitude(), getCheckedFilter());
                 }
-
-                @Override
-                public void onError(String error) {
-                    loadAllCustomer(currentDistrict, rdFilter.getCheckedRadioButtonId() == R.id.map_filter_all ? true : false);
-                }
-            }, true);
+            }, 500);
         }
 
+        mMap.setOnCameraMoveListener(this);
         mMap.setOnCameraIdleListener(this);
         mMap.setOnInfoWindowClickListener(this);
         mMap.setOnInfoWindowLongClickListener(this);
@@ -256,6 +205,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
                 btnNewCustomer.close(true);
             }
         });
+        mMap.setOnMarkerClickListener(this);
+
 
     }
 
@@ -279,15 +230,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
 
     @Override
     public void onCameraIdle() {
-
-    }
-
-    public void triggerCurrentLocation(LatLng latLng, int zomm) {
-        if (latLng != null){
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zomm), 200, null);
-
-        }
-
+        mMap.setOnCameraMoveListener(MapsActivity.this);
     }
 
     @Override
@@ -302,7 +245,39 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         return true;
     }
 
-    private void choiceShopType(final String shop_type){
+    private void setupSpinner(){
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, R.layout.view_spinner_item, Util.mListDistricts);
+
+        dataAdapter.setDropDownViewResource(R.layout.view_spinner_item);
+        mSpinner.setAdapter(dataAdapter);
+        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position != 0){
+                    mMap.setOnCameraMoveListener(null);
+                    loadAllCustomer(parent.getItemAtPosition(position).toString(), getCheckedFilter());
+
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+    }
+
+    public void triggerCurrentLocation(LatLng latLng, int zomm){
+        if (latLng != null){
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zomm), 400, null);
+
+        }
+
+    }
+
+    private void inputShopName(final String shop_type){
         btnNewCustomer.close(true);
         dialog = DialogPlus.newDialog(this)
                                             .setContentHolder(new ViewHolder(R.layout.view_input_shopname))
@@ -323,14 +298,14 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         final EditText edName = (EditText) dialog.findViewById(R.id.input_shopnname_name);
         ImageView btnSubmit = (ImageView) dialog.findViewById(R.id.input_shopnname_submit);
 
-        tvShopType.setText(shop_type);
+        tvShopType.setText(Constants.getShopInfo(shop_type, null));
 
         edName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 boolean handled = false;
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    openCustomerScreen(shop_type, edName.getText().toString().trim());
+                    openCustomerScreen(shop_type, edName.getText().toString().trim(), null);
                     handled = true;
                 }
                 return handled;
@@ -342,7 +317,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
             public void onClick(View v) {
                 Util.hideKeyboard(v);
                 if (!edName.getText().toString().trim().equals("")){
-                    openCustomerScreen(shop_type, edName.getText().toString().trim());
+                    openCustomerScreen(shop_type, edName.getText().toString().trim(), null);
                 }
             }
         });
@@ -352,20 +327,77 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         Util.showKeyboard(edName);
     }
 
-    private void openCustomerScreen(final String shopType, final String shopName){
+    private void inputPhoneNumber(){
+        btnNewCustomer.close(true);
+        dialog = DialogPlus.newDialog(this)
+                .setContentHolder(new ViewHolder(R.layout.view_input_phonenumber))
+                .setGravity(Gravity.CENTER)
+                .setBackgroundColorResId(R.drawable.colorwhite_corner)
+                .setMargin(10,10,10,10)
+                .setPadding(20,30,20,20)
+                .setInAnimation(R.anim.slide_up)
+                .setOnBackPressListener(new OnBackPressListener() {
+                    @Override
+                    public void onBackPressed(DialogPlus dialogPlus) {
+                        dialogPlus.dismiss();
+                    }
+                })
+                .create();
+        LinearLayout lnParent = (LinearLayout) dialog.findViewById(R.id.input_phonenumber_parent);
+        final EditText edPhone = (EditText) dialog.findViewById(R.id.input_phonenumber_phone);
+        ImageView btnSubmit = (ImageView) dialog.findViewById(R.id.input_phonenumber_submit);
+
+        edPhone.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    openCustomerScreen(null, null, edPhone.getText().toString().trim());
+                    handled = true;
+                }
+                return handled;
+            }
+        });
+
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.hideKeyboard(v);
+                if (!edPhone.getText().toString().trim().equals("")){
+                    openCustomerScreen(null, null, edPhone.getText().toString().trim());
+                }
+            }
+        });
+
+        dialog.show();
+        edPhone.requestFocus();
+        Util.showKeyboard(edPhone);
+    }
+
+    private void openCustomerScreen(final String shopType, final String shopName, final String phone){
         LocationConnect.getAddressFromLocation(getCurLocation().getLatitude(), getCurLocation().getLongitude(), new CallbackJSONObject() {
             @Override
             public void onResponse(JSONObject result) {
                 Customer customer = new Customer(new JSONObject());
+                JSONObject objectAdress = MapUtil.getAddressFromMapResult(result);
                 try {
+                    if (phone == null && shopType != null && shopName != null){
+                        customer.put("shopType", shopType);
+                        customer.put("signBoard", shopName);
+                        customer.put("name","Anh "+ shopName.substring(shopName.lastIndexOf(" ")+1));
+                        customer.put("phone", "");
+                    }else if (shopType == null && shopName == null && phone != null ){
+                        customer.put("shopType", Constants.shopType[0]);
+                        customer.put("signBoard", "");
+                        customer.put("name","");
+                        customer.put("phone", phone);
+                    }
+
+
+
                     customer.put("id",0);
-                    customer.put("shopType", shopType);
-                    customer.put("signBoard", shopName);
-                    customer.put("name","Anh "+ shopName.substring(shopName.lastIndexOf(" ")+1));
                     customer.put("lat", Util.getInstance().getCurrentLocation().getLatitude());
                     customer.put("lng", Util.getInstance().getCurrentLocation().getLongitude());
-
-                    JSONObject objectAdress = MapUtil.getAddressFromMapResult(result);
                     customer.put("province", objectAdress.getString("province"));
                     customer.put("district", objectAdress.getString("district"));
                     customer.put("street", objectAdress.getString("street"));
@@ -376,9 +408,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
                 }
 
                 Transaction.gotoCustomerActivity(customer.CustomertoString());
-
-                currentLatlng = new LatLng(Util.getInstance().getCurrentLocation().getLatitude(), Util.getInstance().getCurrentLocation().getLongitude());
-
                 dialog.dismiss();
             }
 
@@ -400,7 +429,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
                         listCustomer.add(new Customer(result.getJSONObject(i)));
 
                     }
-                    addMarkertoMap(listCustomer, isAll);
+                    addMarkertoMap(listCustomer, isAll, true);
+                    mMap.setOnCameraMoveListener(MapsActivity.this);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -416,7 +446,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     }
 
     private void loadAllCustomerDependLocation(Double lat , Double lng, final Boolean isAll){
-
         CustomerConnect.ListCustomerLocation(Util.encodeString(String.valueOf(lat)), Util.encodeString(String.valueOf(lng)), new CallbackJSONArray() {
             @Override
             public void onResponse(JSONArray result) {
@@ -424,35 +453,30 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
                     listCustomer = new ArrayList<Customer>();
                     for (int i=0; i<result.length(); i++){
                         listCustomer.add(new Customer(result.getJSONObject(i)));
-
                     }
-                    addMarkertoMap(listCustomer, isAll);
+                    addMarkertoMap(listCustomer, isAll, false);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
-
             @Override
             public void onError(String error) {
 
             }
+
         }, true);
     }
 
-
-
     @Override
     public void onInfoWindowClick(final Marker marker) {
+        //mMap.setOnCameraMoveListener(this);
         final Customer customer = new Customer((JSONObject) marker.getTag());
         String param = customer.getString("id");
         CustomerConnect.GetCustomerDetail(param, new CallbackJSONObject() {
             @Override
             public void onResponse(JSONObject result) {
                 Transaction.gotoCustomerActivity(result.toString());
-
-                currentLatlng = marker.getPosition();
 
             }
 
@@ -468,10 +492,21 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        loadAllCustomer(currentDistrict, rdFilter.getCheckedRadioButtonId() == R.id.map_filter_all ? true : false);
+        if (data.getStringExtra(Constants.CUSTOMER) != null && requestCode == Constants.RESULT_CUSTOMER_ACTIVITY){
+            try {
+                Customer customer =new Customer(new JSONObject(data.getStringExtra(Constants.CUSTOMER)));
+                MapUtil.showUpdatedMarker(mMap, customer);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }else if (data.getStringExtra(Constants.CUSTOMER) == null){
+            onCameraMove();
+        }
 
     }
 
+    //update Current marker when move
     public  void animateMarker(final LatLng startPosition, final LatLng toPosition) {
         final double duration = 1000;
         final Handler handler = new Handler();
@@ -530,7 +565,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
                 }
 
                 Transaction.gotoCustomerActivity(customer.CustomertoString());
-                currentLatlng = latLng;
+                //currentLatlng = latLng;
 
             }
 
@@ -545,26 +580,20 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
         switch (checkedId){
             case R.id.map_filter_all:
-                addMarkertoMap(listCustomer, true);
+                addMarkertoMap(listCustomer, true, true);
                 break;
 
             case R.id.map_filter_interested:
-                addMarkertoMap(listCustomer, false);
+                addMarkertoMap(listCustomer, false, true);
                 break;
         }
     }
 
-    private void addMarkertoMap(ArrayList<Customer> list, Boolean isAll){
+    private void addMarkertoMap(ArrayList<Customer> list, Boolean isAll, Boolean isBound){
         mMap.clear();
         LatLng currentPoint = new LatLng(Util.getInstance().getCurrentLocation().getLatitude(), Util.getInstance().getCurrentLocation().getLongitude());
         currentMarker = mMap.addMarker(new MarkerOptions().anchor(0.5f, 0.5f).position(currentPoint).flat(true).icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_location)));
-        MapUtil.getInstance().addMarkerToMap(mMap, list,currentLatlng , isAll);
-
-        if (currentLatlng != null){
-            triggerCurrentLocation(currentLatlng, 15);
-        }
-
-
+        MapUtil.getInstance().addListMarkerToMap(mMap, list, isAll, isBound);
 
     }
 
@@ -595,4 +624,33 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
 
 
     }
+
+    @Override
+    public void onCameraMove() {
+        mHandler.removeCallbacks(mFilterTask);
+        mHandler.postDelayed(mFilterTask, 1000);
+
+    }
+
+    private Runnable mFilterTask = new Runnable() {
+        @Override public void run() {
+            LatLng curLocation =  mMap.getCameraPosition().target;
+            loadAllCustomerDependLocation(curLocation.latitude, curLocation.longitude, getCheckedFilter());
+        }
+    };
+
+    private Boolean getCheckedFilter(){
+        return rdFilter.getCheckedRadioButtonId() == R.id.map_filter_all ? true : false;
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        mMap.setOnCameraMoveListener(null);
+        marker.showInfoWindow();
+
+        return true;
+    }
+
+
 }
+

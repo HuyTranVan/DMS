@@ -92,32 +92,6 @@ public class CustomSharedPrefer {
 
     }
 
-    //    public ArrayMap<String,?> getAllSharepreferences(){
-    public List<ArrayMap<String,Object>> getAllSharepreferences(){
-        Map<String, ?> allEntries = prefs.getAll();
-        List<ArrayMap<String,Object>> listObject = new ArrayList<>();
-
-        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-            if(entry.getKey().contains(Constants.CATEGORY)){
-                try {
-
-                    ArrayMap<String,Object> object = Util.JSON2ArrayMap(new JSONObject(entry.getValue().toString()));
-                    object.put("name",entry.getKey() );
-
-                    listObject.add(object);
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            Log.d("map values", entry.getKey() + ": " + entry.getValue().toString());
-
-        }
-
-        return listObject;
-    }
 
     public List<JSONObject> getAllSharepreferencesObject(){
         Map<String, ?> allEntries = prefs.getAll();

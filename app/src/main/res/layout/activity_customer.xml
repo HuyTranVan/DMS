@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -47,12 +47,11 @@
     </RelativeLayout>
 
     <ScrollView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/customer_parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:nestedScrollingEnabled="true">
+        android:nestedScrollingEnabled="true"
+        android:layout_below="@+id/customer_header">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -386,7 +385,19 @@
         </LinearLayout>
 
     </ScrollView>
-</LinearLayout>
+
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/add_customer_shopcart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_shopping_cart_white_18dp"
+        android:layout_margin="@dimen/_10sdp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        app:fab_size="normal"
+        app:fab_colorNormal="@color/colorBlue"
+        app:fab_colorPressed="@color/colorBlueDark"/>
+</RelativeLayout>
 
 
 

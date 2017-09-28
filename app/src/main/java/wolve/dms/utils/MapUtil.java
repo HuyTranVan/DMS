@@ -12,7 +12,9 @@ import android.graphics.Rect;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.util.Log;
+import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
@@ -48,11 +50,7 @@ public class MapUtil{
     public Marker currentMarker;
     private int currentStep;
     private GoogleMap currentMap;
-    private List<Marker> markers;
-
-
-
-
+    public static List<Marker> markers;
 
     public static synchronized MapUtil getInstance() {
         if (util == null)
@@ -69,17 +67,12 @@ public class MapUtil{
             }
             LatLngBounds bounds = builder.build();
 
-            int padding = 100; // offset from edges of the map in pixels
+            int padding = 50; // offset from edges of the map in pixels
             CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
             currentMap.moveCamera(cu);
         }
-//        else {
-//            Marker marker = markers.get(0);
-//            CameraUpdate cu = CameraUpdateFactory.newLatLng(marker.getPosition());
-//            currentMap.animateCamera(cu);
-//        }
-    }
 
+    }
 
     public static Bitmap GetBitmapMarker(Context mContext, int resourceId, String mText, int textColor) {
         try
@@ -118,6 +111,7 @@ public class MapUtil{
             return null;
         }
     }
+
     public static double distance(double lat1, double lon1, double lat2, double lon2, String unit) {
         return distance(lat1, lon1, lat2, lon2, 0,0);
     }
@@ -140,25 +134,6 @@ public class MapUtil{
 
         return Math.sqrt(distance);
     }
-
-//    public static void checkGetLocationGotoMap() {
-//        //Util.getInstance().showLoading("Đang kiểm tra vị trí...");
-//        if (Util.getInstance().getCurrentLocation() != null) {
-//            Transaction.gotoMapPage(Util.getInstance().getCurrentActivity(), Constants.FROM_LISTING_ACTIVITY);
-//        } else {
-//            final Handler h = new Handler();
-//            h.postDelayed(new Runnable() {
-//                public void run() {
-//                    if (Util.getInstance().getCurrentLocation() != null) {
-//                        Transaction.gotoMapPage(Util.getInstance().getCurrentActivity(), Constants.FROM_LISTING_ACTIVITY);
-//                    } else {
-//                        h.postDelayed(this, 1000);
-//                    }
-//                }
-//            }, 1000);
-//        }
-//    }
-
 
     public static JSONObject getAddressFromMapResult(JSONObject object){
         JSONObject objectResult = new JSONObject();
@@ -192,7 +167,7 @@ public class MapUtil{
         return objectResult;
     }
 
-    public void addMarkerToMap(final GoogleMap mMap, final ArrayList<Customer> listCustomer, LatLng currentlatlng, Boolean isAll) {
+    public void addListMarkerToMap(final GoogleMap mMap, final ArrayList<Customer> listCustomer, Boolean isAll, Boolean isBound) {
         currentMap = mMap;
         markers = new ArrayList<>();
 
@@ -200,44 +175,13 @@ public class MapUtil{
             try {
                 Customer customer = listCustomer.get(i);
 
-                LatLng markerPoint = new LatLng(customer.getDouble("lat"), customer.getDouble("lng"));
-                String title = Constants.getShopInfo(customer.getString("shopType"), null) +" " + customer.getString("signBoard");
-                String add = customer.getString("address") + " " + customer.getString("street") ;
-
-                int markertype = new JSONObject(customer.getString("status")).getInt("id");
-                int icon=0;
-                if (markertype ==1){
-                    icon = R.drawable.ico_pin_red;
-                }else if (markertype == 2){
-                    icon = R.drawable.ico_pin_grey;
-                }else {
-                    icon = R.drawable.ico_pin_blue;
-                }
-
                 if (isAll){
-                    Marker pointMarker = currentMap.addMarker(new MarkerOptions().position(markerPoint).snippet(add).title(title));
-                    Bitmap bitmap = GetBitmapMarker(Util.getInstance().getCurrentActivity(), icon, customer.getString("checkinCount"), R.color.pin_waiting);
-                    pointMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
-                    pointMarker.setTag(customer.CustomerJSONObject());
-
-                    markers.add(pointMarker);
-
-                    if (currentlatlng != null && currentlatlng.latitude == customer.getDouble("lat") &&  currentlatlng.longitude == customer.getDouble("lng")){
-                        pointMarker.showInfoWindow();
-                    }
+                    markers.add(addMarkerToMap(mMap, customer));
 
                 }else {
+                    int markertype = new JSONObject(customer.getString("status")).getInt("id");
                     if (markertype == 1 || markertype == 3){
-                        Marker pointMarker = currentMap.addMarker(new MarkerOptions().position(markerPoint).snippet(add).title(title));
-                        Bitmap bitmap = GetBitmapMarker(Util.getInstance().getCurrentActivity(), icon, customer.getString("checkinCount"), R.color.pin_waiting);
-                        pointMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
-                        pointMarker.setTag(customer.CustomerJSONObject());
-
-                        markers.add(pointMarker);
-
-                        if (currentlatlng != null && currentlatlng.latitude == customer.getDouble("lat") &&  currentlatlng.longitude == customer.getDouble("lng")){
-                            pointMarker.showInfoWindow();
-                        }
+                        markers.add(addMarkerToMap(mMap, customer));
                     }
                 }
 
@@ -246,12 +190,93 @@ public class MapUtil{
                 e.printStackTrace();
             }
 
-
         }
 
+        if (isBound){
+            reboundMap();
+        }
 
+    }
 
-        reboundMap();
+    public static Marker addMarkerToMap(GoogleMap mMap, Customer customer ){
+        Marker currentMarker = null;
+        LatLng markerPosition = new LatLng(customer.getDouble("lat"), customer.getDouble("lng"));
+        String title = Constants.getShopInfo(customer.getString("shopType"), null) +" " + customer.getString("signBoard");
+        String add = customer.getString("address") + " " + customer.getString("street") ;
+
+        try {
+            int markertype = new JSONObject(customer.getString("status")).getInt("id");
+            int icon=0;
+            if (markertype ==1){
+                icon = R.drawable.ico_pin_red;
+            }else if (markertype == 2){
+                icon = R.drawable.ico_pin_grey;
+            }else {
+                icon = R.drawable.ico_pin_blue;
+            }
+
+            currentMarker = mMap.addMarker(new MarkerOptions().position(markerPosition).snippet(add).title(title));
+            Bitmap bitmap = GetBitmapMarker(Util.getInstance().getCurrentActivity(), icon, customer.getString("checkinCount"), R.color.pin_waiting);
+            currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
+            currentMarker.setTag(customer.CustomerJSONObject());
+
+            markers.add(currentMarker);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return currentMarker;
+    }
+
+    private void startDropMarkerAnimation(GoogleMap mMap, final Marker marker) {
+        final LatLng target = marker.getPosition();
+        final Handler handler = new Handler();
+        final long start = SystemClock.uptimeMillis();
+        Projection proj = mMap.getProjection();
+        Point targetPoint = proj.toScreenLocation(target);
+        final long duration = (long) (200 + (targetPoint.y * 0.6));
+        Point startPoint = proj.toScreenLocation(marker.getPosition());
+        startPoint.y = 0;
+        final LatLng startLatLng = proj.fromScreenLocation(startPoint);
+        final Interpolator interpolator = new LinearOutSlowInInterpolator();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                long elapsed = SystemClock.uptimeMillis() - start;
+                float t = interpolator.getInterpolation((float) elapsed / duration);
+                double lng = t * target.longitude + (1 - t) * startLatLng.longitude;
+                double lat = t * target.latitude + (1 - t) * startLatLng.latitude;
+                marker.setPosition(new LatLng(lat, lng));
+                if (t < 1.0) {
+                    // Post again 16ms later == 60 frames per second
+                    handler.postDelayed(this, 16);
+                }
+            }
+        });
+    }
+
+    public static void showUpdatedMarker(GoogleMap mMap, Customer customer){
+        Boolean isNew = true;
+        for (int i=0; i<markers.size(); i++){
+            try {
+                JSONObject object = new JSONObject(markers.get(i).getTag().toString());
+                if (object.getString("id").equals(customer.getString("id"))){
+                    Marker marker = markers.get(i);
+                    marker.showInfoWindow();
+
+                    isNew = false;
+                    break;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (isNew){
+            Marker marker = addMarkerToMap(mMap, customer);
+            marker.showInfoWindow();
+        }
     }
 
 }

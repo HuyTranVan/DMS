@@ -16,21 +16,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.Window;
-import android.view.WindowManager;
 
 
 import com.google.android.gms.maps.model.LatLng;
 
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.FitScrollWithFullscreen;
-import wolve.dms.utils.MapUtil;
 import wolve.dms.utils.Util;
 
 import static wolve.dms.utils.Constants.REQUEST_PERMISSION_LOCATION;
-import static wolve.dms.utils.Constants.USER;
 
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -44,8 +38,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(getResourceLayout());
         Util.getInstance().setCurrentActivity(this);
-        initializeView();
-
+        findViewById();
+        initialData();
         addEvent();
     }
 
@@ -55,7 +49,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     //set id container for change fragment
     public abstract int setIdContainer();
 
-    public abstract void initializeView();
+    public abstract void findViewById();
+
+    public abstract void initialData();
 
     public abstract void addEvent();
 
@@ -104,8 +100,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Util.getInstance().setCurrentActivity(this);
-        //checkDraft();
-        //checkLocationPermission();
 
     }
 

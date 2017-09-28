@@ -1,10 +1,10 @@
 package wolve.dms.activity;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -13,6 +13,7 @@ import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -40,6 +41,8 @@ import wolve.dms.models.Checkin;
 import wolve.dms.models.Customer;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.MapUtil;
+import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
 /**
@@ -51,7 +54,8 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     public SupportMapFragment mapFragment;
     private ImageView btnBack;
     private CTextView tvTrash;
-    private Button btnSubmit, btnCurLocation;
+    private Button btnSubmit, btnCurLocation ;
+    private FloatingActionButton btnShopCart;
     private TextView tvTitle;
     private CInputForm edName, edPhone , edAdress, edStreet, edDistrict, edCity, edNote , edShopType, edShopName;
     private RadioGroup rgStatus;
@@ -69,9 +73,57 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public int getResourceLayout() {
+        return R.layout.activity_customer;
+    }
 
+    @Override
+    public int setIdContainer() {
+        return 0;
+    }
+
+    @Override
+    public void findViewById() {
+        btnSubmit = (Button) findViewById(R.id.add_customer_submit);
+        btnCurLocation = (Button) findViewById(R.id.add_customer_currentlocation);
+        btnBack = (ImageView) findViewById(R.id.icon_back);
+        btnShopCart = (FloatingActionButton) findViewById(R.id.add_customer_shopcart);
+        tvTrash = (CTextView) findViewById(R.id.icon_more);
+        tvTitle = (TextView) findViewById(R.id.add_customer_title);
+        edName = (CInputForm) findViewById(R.id.add_customer_name);
+        edPhone = (CInputForm) findViewById(R.id.add_customer_phone);
+        edAdress = (CInputForm) findViewById(R.id.add_customer_adress);
+        edStreet = (CInputForm) findViewById(R.id.add_customer_street);
+        edDistrict = (CInputForm) findViewById(R.id.add_customer_district);
+        edCity = (CInputForm) findViewById(R.id.add_customer_city);
+        edNote = (CInputForm) findViewById(R.id.add_customer_note);
+        edShopType = (CInputForm) findViewById(R.id.add_customer_shoptype);
+        edShopName = (CInputForm) findViewById(R.id.add_customer_shopname);
+        rgStatus = (RadioGroup) findViewById(R.id.customer_radiogroup_status);
+        rdInterested = (RadioButton) findViewById(R.id.customer_radio_status_interested);
+        rdNotInterested = (RadioButton) findViewById(R.id.customer_radio_status_nointerested);
+        rdOrdered = (RadioButton) findViewById(R.id.customer_radio_status_ordered);
+        rvReason = (RecyclerView) findViewById(R.id.add_customer_rvreason);
+        rvCheckins = (RecyclerView) findViewById(R.id.add_customer_rvcheckins);
+        scParent = (ScrollView) findViewById(R.id.customer_parent);
+
+        //fix MapView in ScrollView
+        mapFragment = (WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.add_customer_map);
+        ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.add_customer_map)).setListener(new WorkaroundMapFragment.OnTouchListener() {
+            @Override
+            public void onTouch() {
+                scParent.requestDisallowInterceptTouchEvent(true);
+            }
+        });
+
+        edShopType.setDropdown(true);
+        edShopType.setDropdownList(Util.arrayToList(Constants.shopName));
+
+
+    }
+
+    @Override
+    public void initialData() {
         loadReasonList();
         String bundle = getIntent().getExtras().getString(Constants.CUSTOMER);
         if (bundle != null){
@@ -145,59 +197,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 return true;
             }
         });
-
-
     }
-
-    @Override
-    public int getResourceLayout() {
-        return R.layout.activity_customer;
-    }
-
-    @Override
-    public int setIdContainer() {
-        return 0;
-    }
-
-    @Override
-    public void initializeView() {
-        btnSubmit = (Button) findViewById(R.id.add_customer_submit);
-        btnCurLocation = (Button) findViewById(R.id.add_customer_currentlocation);
-        btnBack = (ImageView) findViewById(R.id.icon_back);
-        tvTrash = (CTextView) findViewById(R.id.icon_more);
-        tvTitle = (TextView) findViewById(R.id.add_customer_title);
-        edName = (CInputForm) findViewById(R.id.add_customer_name);
-        edPhone = (CInputForm) findViewById(R.id.add_customer_phone);
-        edAdress = (CInputForm) findViewById(R.id.add_customer_adress);
-        edStreet = (CInputForm) findViewById(R.id.add_customer_street);
-        edDistrict = (CInputForm) findViewById(R.id.add_customer_district);
-        edCity = (CInputForm) findViewById(R.id.add_customer_city);
-        edNote = (CInputForm) findViewById(R.id.add_customer_note);
-        edShopType = (CInputForm) findViewById(R.id.add_customer_shoptype);
-        edShopName = (CInputForm) findViewById(R.id.add_customer_shopname);
-        rgStatus = (RadioGroup) findViewById(R.id.customer_radiogroup_status);
-        rdInterested = (RadioButton) findViewById(R.id.customer_radio_status_interested);
-        rdNotInterested = (RadioButton) findViewById(R.id.customer_radio_status_nointerested);
-        rdOrdered = (RadioButton) findViewById(R.id.customer_radio_status_ordered);
-        rvReason = (RecyclerView) findViewById(R.id.add_customer_rvreason);
-        rvCheckins = (RecyclerView) findViewById(R.id.add_customer_rvcheckins);
-        scParent = (ScrollView) findViewById(R.id.customer_parent);
-
-        //fix MapView in ScrollView
-        mapFragment = (WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.add_customer_map);
-        ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.add_customer_map)).setListener(new WorkaroundMapFragment.OnTouchListener() {
-            @Override
-            public void onTouch() {
-                scParent.requestDisallowInterceptTouchEvent(true);
-            }
-        });
-
-        edShopType.setDropdown(true);
-        edShopType.setDropdownList(Util.arrayToList(Constants.shopName));
-
-
-    }
-
 
     @Override
     public void addEvent() {
@@ -207,6 +207,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         tvTrash.setOnClickListener(this);
         rgStatus.setOnCheckedChangeListener(this);
         btnCurLocation.setOnClickListener(this);
+        btnShopCart.setOnClickListener(this);
     }
 
     @Override
@@ -233,15 +234,25 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(curLocation, 18), 400, null);
 
                 break;
+
+            case R.id.add_customer_shopcart:
+                openShopCartScreen(currentCustomer);
+
+                break;
         }
     }
 
     private void returnPreviousScreen(Customer customer){
         Intent returnIntent = new Intent();
-        returnIntent.putExtra(Constants.CUSTOMER, customer.CustomertoString());
+        returnIntent.putExtra(Constants.CUSTOMER, customer != null? customer.CustomertoString() : null);
         setResult(Constants.RESULT_CUSTOMER_ACTIVITY,returnIntent);
         Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         Util.getInstance().getCurrentActivity().finish();
+
+    }
+
+    private void openShopCartScreen(Customer customer){
+        Transaction.gotoShopCartActivity(customer.CustomertoString());
 
     }
 
@@ -279,17 +290,18 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             CustomerConnect.CreateCustomer(param, new CallbackJSONObject() {
                 @Override
                 public void onResponse(JSONObject result) {
-                    Customer responseCustomer = new Customer(result);
+                    final Customer responseCustomer = new Customer(result);
+
                     String params = String.format(Constants.SCHECKIN_CREATE_PARAM, responseCustomer.getInt("id"),
                             reasonAdapter.getCheckedReason() ==0 ? currentStatusId : reasonAdapter.getCheckedReason(),
-                            Util.encodeString(edNote.getText().toString().trim())
-//                            Util.getCurrentUserId()
+                            Util.encodeString(edNote.getText().toString().trim()),
+                            Util.getCurrentUserId()
                             );
 
                     CustomerConnect.PostCheckin(params, new CallbackJSONObject() {
                         @Override
                         public void onResponse(JSONObject result) {
-                            returnPreviousScreen(new Customer(result));
+                            returnPreviousScreen(responseCustomer);
                         }
 
                         @Override
@@ -316,7 +328,6 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         LatLng curLocation = new LatLng(currentCustomer.getDouble("lat"), currentCustomer.getDouble("lng"));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(curLocation, 18), 200, null);
 
-
     }
 
     @Override
@@ -338,7 +349,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 CustomerConnect.DeleteCustomer(currentCustomer.getString("id"), new CallbackJSONObject() {
                     @Override
                     public void onResponse(JSONObject result) {
-                        returnPreviousScreen(currentCustomer);
+                        returnPreviousScreen(null);
                     }
 
                     @Override
@@ -348,6 +359,23 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 }, true);
             }
         });
+
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK){
+            returnPreviousScreen(currentCustomer);
+        }
+        return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data.getStringExtra(Constants.CUSTOMER_CART) != null && requestCode == Constants.RESULT_SHOPCART_ACTIVITY){
+
+        }
 
     }
 

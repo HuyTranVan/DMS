@@ -52,7 +52,7 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
     }
 
     @Override
-    public void initializeView() {
+    public void findViewById() {
         btnBack = (ImageView) findViewById(R.id.icon_back);
         rvProduct = (RecyclerView) findViewById(R.id.product_rvproduct);
         rvProductGroup = (RecyclerView) findViewById(R.id.product_rvproductgroup);
@@ -60,6 +60,17 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
         btnAddProduct = (ImageView) findViewById(R.id.product_addproduct);
 
 
+    }
+
+    @Override
+    public void initialData() {
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadProductGroup();
     }
 
     @Override
@@ -101,13 +112,6 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
 
         }
         return true;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        loadProductGroup();
-
     }
 
     protected void loadProductGroup() {

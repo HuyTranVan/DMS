@@ -13,14 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.github.clans.fab.FloatingActionButton
-        android:id="@+id/map_current_location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_my_location_black_18dp"
-        android:layout_margin="@dimen/_10sdp"
-        android:layout_alignParentBottom="true" />
-
 
     <!--<wolve.dms.controls.CTextView-->
         <!--android:id="@+id/map_dropdown"-->
@@ -85,6 +77,16 @@
 
     </RadioGroup>
 
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/map_current_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_my_location_black_18dp"
+        android:layout_margin="@dimen/_10sdp"
+        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/map_new_customer"
+        app:fab_size="normal"/>
+
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/map_new_customer"
         android:layout_width="wrap_content"
@@ -96,6 +98,15 @@
         fab:menu_colorNormal="#1565C0"
         fab:menu_colorPressed="#2272CD"
         fab:menu_colorRipple="#62B2FF">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/map_new_addphone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_local_phone_white_18dp"
+            app:fab_label="Nhập số điện thoại"
+            style="@style/MenuButtonsStyleBlue"
+            />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/map_new_maintain"

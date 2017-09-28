@@ -13,6 +13,9 @@ public class Constants {
     public final static String PRODUCT = "product";
     public final static String STATUS = "status";
     public final static String CUSTOMER = "customer";
+    public final static String CUSTOMER_CART = "customer";
+    public final static String USER = "user";
+    public final static String IMAGES_DIRECTORY = "Wolver_DMS";
 
     public final static String LOGIN_PARAM ="phone=%s&password=%s";
 
@@ -26,46 +29,18 @@ public class Constants {
     public final static String STATUS_CREATE_PARAM ="%sname=%s&color=%s&defaultStatus=%s";
 
     public final static String CUSTOMER_PARAM ="?page=%d&size=%d";
-    public final static String CUSTOMER_NEAREST_PARAM ="?page=%d&size=%d&lat=%s&lng=%s";
+    public final static String CUSTOMER_NEAREST_PARAM ="?lat=%s&lng=%s&page=%d&size=%d";
     public final static String CUSTOMER_CREATE_PARAM ="%sname=%s&signBoard=%s&address=%s&phone=%s&street=%s&note=%s&district=%s&province=%s&lat=%s&lng=%s&volumeEstimate=%s&shopType=%s&status.id=%d";
 
-//    public final static String SCHECKIN_CREATE_PARAM ="customer.id=%d&status.id=%d&note=%s&user.id=%s";
-    public final static String SCHECKIN_CREATE_PARAM ="customer.id=%d&status.id=%d&note=%s";
+    public final static String SCHECKIN_CREATE_PARAM ="customer.id=%d&status.id=%d&note=%s&user.id=%s";
 
     public final static String IS_PROMOTION = "BÁN VÀ KHUYẾN MÃI";
     public final static String NO_PROMOTION = "CHỈ BÁN";
 
-    public final static String SUA_XE = "SỬA XE";
-    public final static String RUA_XE = "RỬA XE";
-    public final static String PHU_TUNG = "PHỤ TÙNG";
-    public final static String BAO_TRI = "BẢO TRÌ";
+    public final static int RESULT_CUSTOMER_ACTIVITY = 1000;
+    public final static int RESULT_SHOPCART_ACTIVITY = 1000;
 
-//    public static String shopType(String id){
-//        String s = null;
-//        switch (id){
-//            case "SUA_XE":
-//                s= "SỬA XE";
-//                break;
-//
-//            case "RUA_XE":
-//                s= "RỬA XE";
-//                break;
-//
-//            case "PHU_TUNG":
-//                s= "PHỤ TÙNG";
-//                break;
-//
-//            case "BAO_TRI":
-//                s= "BẢO TRÌ";
-//                break;
-//        }
-//        return s;
-//    }
-    public final static int RESULT_CUSTOMER_ACTIVITY = 1327;
-    public final static String IMAGES_DIRECTORY = "Wolver_DMS";
-    public final static String USER = "user";
     public final static String BADGE = "badge";
-    public final static String CATEGORY = "category_";
     public final static int REQUEST_PERMISSION_LOCATION = 2;
     public final static int REQUEST_PHONE_PERMISSION = 8;
     public final static String RESULT_ERROR_TITLE = "Có lỗi xảy ra";

@@ -10,6 +10,7 @@ import wolve.dms.activity.CustomerActivity;
 import wolve.dms.activity.HomeActivity;
 import wolve.dms.activity.MapsActivity;
 import wolve.dms.activity.ProductActivity;
+import wolve.dms.activity.ShopCartActivity;
 import wolve.dms.activity.StatusActivity;
 
 
@@ -63,7 +64,15 @@ public class Transaction {
         intent.putExtra(Constants.CUSTOMER, customer);
         context.startActivityForResult(intent, Constants.RESULT_CUSTOMER_ACTIVITY);
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-
-
     }
+
+    public static void gotoShopCartActivity(String customer) {
+        Activity context = Util.getInstance().getCurrentActivity();
+        Intent intent = new Intent(context, ShopCartActivity.class);
+        intent.putExtra(Constants.CUSTOMER, customer);
+        context.startActivityForResult(intent, Constants.RESULT_SHOPCART_ACTIVITY);
+        context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
+
+
 }

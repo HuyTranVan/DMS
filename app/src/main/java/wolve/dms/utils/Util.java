@@ -67,6 +67,7 @@ import java.util.regex.Pattern;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import me.leolin.shortcutbadger.ShortcutBadger;
 import wolve.dms.BaseActivity;
+import wolve.dms.R;
 import wolve.dms.activity.MapsActivity;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.models.Province;
@@ -260,9 +261,10 @@ public class Util {
         AlertDialog.Builder adb = new AlertDialog.Builder(getInstance().getCurrentActivity());
         final Dialog d = adb.setView(new View(getInstance().getCurrentActivity())).create();
         //create corner edge for dialog
-        d.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+//        d.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        d.getWindow().setBackgroundDrawableResource(R.drawable.colorwhite_corner_large);
 
-        d.setCanceledOnTouchOutside(true);
+        d.setCanceledOnTouchOutside(false);
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.copyFrom(d.getWindow().getAttributes());
         lp.width = WindowManager.LayoutParams.MATCH_PARENT;
@@ -884,6 +886,7 @@ public class Util {
 
     public static void setDistrictList(JSONArray result){
         mListDistricts = new ArrayList<>();
+        mListDistricts.add(0, "Chọn quận");
         try {
             for (int i=0; i<result.length(); i++){
                 JSONObject object = result.getJSONObject(i);

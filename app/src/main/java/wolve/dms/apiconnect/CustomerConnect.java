@@ -52,7 +52,7 @@ public class CustomerConnect {
     public static void ListCustomer(String param, final CallbackJSONArray listener, final Boolean stopLoading){
         Util.getInstance().showLoading();
 
-        String url = Api_link.CUSTOMERS+ String.format(Constants.CUSTOMER_PARAM, 1,1000);
+        String url = Api_link.CUSTOMERS+ String.format(Constants.CUSTOMER_PARAM, 1,500);
 
         new CustomPostMethod(url,param, new Callback() {
             @Override
@@ -80,9 +80,9 @@ public class CustomerConnect {
     }
 
     public static void ListCustomerLocation(String lat, String lng, final CallbackJSONArray listener, final Boolean stopLoading){
-        Util.getInstance().showLoading();
+        //Util.getInstance().showLoading();
 
-        String url = Api_link.CUSTOMERS_NEAREST+ String.format(Constants.CUSTOMER_NEAREST_PARAM, 1,1000, lat, lng);
+        String url = Api_link.CUSTOMERS_NEAREST+ String.format(Constants.CUSTOMER_NEAREST_PARAM, lat, lng,1, 30);
 
         new CustomGetMethod(url, new Callback() {
             @Override
