@@ -23,7 +23,7 @@ public class CustomerConnect {
 
         String url = Api_link.CUSTOMER_NEW ;
 
-        new CustomPostMethod(url,params, new Callback() {
+        new CustomPostMethod(url,params, false,new Callback() {
             @Override
             public void onResponse(JSONObject result) {
                 Util.getInstance().stopLoading(stopLoading);
@@ -54,7 +54,7 @@ public class CustomerConnect {
 
         String url = Api_link.CUSTOMERS+ String.format(Constants.CUSTOMER_PARAM, 1,500);
 
-        new CustomPostMethod(url,param, new Callback() {
+        new CustomPostMethod(url,param, false, new Callback() {
             @Override
             public void onResponse(JSONObject result) {
                 Util.getInstance().stopLoading(stopLoading);
@@ -174,10 +174,41 @@ public class CustomerConnect {
 
         String url = Api_link.CHECKIN_NEW ;
 
-        new CustomPostMethod(url,params, new Callback() {
+        new CustomPostMethod(url,params, false,new Callback() {
             @Override
             public void onResponse(JSONObject result) {
                 Util.getInstance().stopLoading(stopLoading);
+                try {
+                    if (result.getInt("status") == 200) {
+                        listener.onResponse(result.getJSONObject("data"));
+
+                    } else {
+                        listener.onError("Unknow error");
+                    }
+                } catch (JSONException e) {
+                    listener.onError(e.toString());
+                }
+            }
+
+
+            @Override
+            public void onError(String error) {
+                listener.onError(error);
+                Util.getInstance().stopLoading(stopLoading);
+            }
+        }).execute();
+    }
+
+    public static void PostBill(String params, final CallbackJSONObject listener, final Boolean stopLoading) {
+        Util.getInstance().showLoading();
+
+        String url = Api_link.BILL_NEW;
+
+        new CustomPostMethod(url, params,true, new Callback() {
+            @Override
+            public void onResponse(JSONObject result) {
+                Util.getInstance().stopLoading(stopLoading);
+
                 try {
                     if (result.getInt("status") == 200) {
                         listener.onResponse(result.getJSONObject("data"));

@@ -57,6 +57,7 @@ import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.models.Customer;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomDialog;
 import wolve.dms.utils.MapUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
@@ -145,6 +146,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.map_current_location:
+                mMap.setOnCameraMoveListener(MapsActivity.this);
                 triggerCurrentLocation(new LatLng(getCurLocation().getLatitude(), getCurLocation().getLongitude()), 16);
                 loadAllCustomerDependLocation(getCurLocation().getLatitude(), getCurLocation().getLongitude(), getCheckedFilter());
                 break;
@@ -230,7 +232,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
 
     @Override
     public void onCameraIdle() {
-        mMap.setOnCameraMoveListener(MapsActivity.this);
+
     }
 
     @Override
@@ -430,7 +432,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
 
                     }
                     addMarkertoMap(listCustomer, isAll, true);
-                    mMap.setOnCameraMoveListener(MapsActivity.this);
+                    //mMap.setOnCameraMoveListener(MapsActivity.this);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -603,7 +605,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         final String phone = customer.getString("phone");
 
         if (!phone.equals("")){
-            Util.alertWithCancelButton(null, "Gọi điện thoại cho " + customer.getString("name") + " (" + customer.getString("phone") +")", "ĐỒNG Ý","HỦY", new CallbackBoolean() {
+            CustomDialog.alertWithCancelButton(null, "Gọi điện thoại cho " + customer.getString("name") + " (" + customer.getString("phone") +")", "ĐỒNG Ý","HỦY", new CallbackBoolean() {
                 @Override
                 public void onRespone(Boolean result) {
                     if (ActivityCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {

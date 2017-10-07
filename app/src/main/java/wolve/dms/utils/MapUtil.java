@@ -206,6 +206,7 @@ public class MapUtil{
 
         try {
             int markertype = new JSONObject(customer.getString("status")).getInt("id");
+            int checkinCount = new JSONArray(customer.getString("checkIns")).length();
             int icon=0;
             if (markertype ==1){
                 icon = R.drawable.ico_pin_red;
@@ -216,7 +217,7 @@ public class MapUtil{
             }
 
             currentMarker = mMap.addMarker(new MarkerOptions().position(markerPosition).snippet(add).title(title));
-            Bitmap bitmap = GetBitmapMarker(Util.getInstance().getCurrentActivity(), icon, customer.getString("checkinCount"), R.color.pin_waiting);
+            Bitmap bitmap = GetBitmapMarker(Util.getInstance().getCurrentActivity(), icon, String.valueOf(checkinCount), R.color.pin_waiting);
             currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
             currentMarker.setTag(customer.CustomerJSONObject());
 

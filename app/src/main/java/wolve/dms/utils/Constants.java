@@ -15,6 +15,9 @@ public class Constants {
     public final static String CUSTOMER = "customer";
     public final static String CUSTOMER_CART = "customer";
     public final static String USER = "user";
+    public final static String DISTRIBUTOR = "distributor";
+    public final static String USER_USERNAME = "username";
+    public final static String USER_PASSWORD = "password";
     public final static String IMAGES_DIRECTORY = "Wolver_DMS";
 
     public final static String LOGIN_PARAM ="phone=%s&password=%s";
@@ -38,11 +41,14 @@ public class Constants {
     public final static String NO_PROMOTION = "CHỈ BÁN";
 
     public final static int RESULT_CUSTOMER_ACTIVITY = 1000;
-    public final static int RESULT_SHOPCART_ACTIVITY = 1000;
-
-    public final static String BADGE = "badge";
+    public final static int RESULT_SHOPCART_ACTIVITY = 1001;
+    public final static int REQUEST_CHOOSE_IMAGE = 1002;
+    public final static int REQUEST_READ_PERMISSION = 1003;
     public final static int REQUEST_PERMISSION_LOCATION = 2;
     public final static int REQUEST_PHONE_PERMISSION = 8;
+
+    public final static String BADGE = "badge";
+
     public final static String RESULT_ERROR_TITLE = "Có lỗi xảy ra";
     public final static String RESULT = "result";
     public final static boolean RESULT_FALSE = false;

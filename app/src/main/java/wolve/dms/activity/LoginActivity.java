@@ -16,6 +16,7 @@ import wolve.dms.R;
 import wolve.dms.apiconnect.UserConnect;
 import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackJSONObject;
+import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSharedPrefer;
@@ -52,13 +53,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     @Override
     public void initialData() {
         if (BuildConfig.DEBUG_FLAG ){
-//            edUsername.setText("0908136885");
-            edUsername.setText("0916083773");
-            edPassword.setText("123");
-
-
-            doLogin();
-
+            CustomSharedPrefer customSharedPrefer = new CustomSharedPrefer(Util.getInstance().getCurrentActivity());
+            edUsername.setText(customSharedPrefer.getString(Constants.USER_USERNAME));
+            edPassword.setText(customSharedPrefer.getString(Constants.USER_PASSWORD));
+            if (!edUsername.getText().toString().trim().equals("") && !edPassword.getText().toString().trim().equals("")){
+                doLogin();
+            }
 
         }
     }
@@ -87,11 +87,16 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                 try {
                     CustomSharedPrefer customShared = new CustomSharedPrefer(Util.getInstance().getCurrentActivity());
                     User user = new User(result);
+                    Distributor distributor = new Distributor(result.getJSONObject("distributor"));
 
                     user.setToken(result.getString("token"));
                     user.setId_user(result.getString("id"));
 
                     customShared.setObject(Constants.USER, user);
+                    customShared.setObject(Constants.DISTRIBUTOR, distributor);
+
+                    customShared.setString(Constants.USER_USERNAME, edUsername.getText().toString().trim());
+                    customShared.setString(Constants.USER_PASSWORD, edPassword.getText().toString().trim());
 
                     Transaction.gotoHomeActivity();
                     Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();

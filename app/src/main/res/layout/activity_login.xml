@@ -136,7 +136,7 @@
                     android:id="@+id/login_submit"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_35sdp"
-                    android:background="@drawable/btn_login_custom"
+                    android:background="@drawable/btn_confirm_red"
                     android:layout_marginTop="@dimen/_10sdp"
                     android:text="@string/login_button_login"
                     android:textAllCaps="true"

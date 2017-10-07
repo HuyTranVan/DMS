@@ -1,5 +1,6 @@
 package wolve.dms.models;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import wolve.dms.utils.Constants;
@@ -58,4 +59,14 @@ public class User extends BaseModel {
         currentUser = getCurrentUser();
         return currentUser.jsonObject;
     }
+
+    public static String getCurrentUserId(){
+        String id_user = "";
+        User currentUser = User.getCurrentUser();
+        if (currentUser != null && currentUser.getToken() != null) {
+            id_user = currentUser.getId_user();
+        }
+        return id_user;
+    }
+
 }

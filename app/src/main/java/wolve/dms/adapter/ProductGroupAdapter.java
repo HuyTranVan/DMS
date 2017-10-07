@@ -19,6 +19,7 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.models.ProductGroup;
+import wolve.dms.utils.CustomDialog;
 import wolve.dms.utils.Util;
 
 
@@ -69,7 +70,7 @@ public class ProductGroupAdapter extends RecyclerView.Adapter<ProductGroupAdapte
         holder.lnParent.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Util.alertWithCancelButton(null, "Bạn muốn xóa nhóm " + mData.get(position).getString("name"), "XÓA","HỦY", new CallbackBoolean() {
+                CustomDialog.alertWithCancelButton(null, "Bạn muốn xóa nhóm " + mData.get(position).getString("name"), "XÓA","HỦY", new CallbackBoolean() {
                     @Override
                     public void onRespone(Boolean result) {
                         String param = String.valueOf(mData.get(position).getInt("id"));

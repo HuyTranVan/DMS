@@ -222,12 +222,12 @@ public class ApiHelper {
                 try {
                     jsonObj = new JSONObject(response);
                 } catch (JSONException e) {
-                    Util.alert(Constants.RESULT_ERROR_TITLE, response, "Đóng");
+                    CustomDialog.alert(Constants.RESULT_ERROR_TITLE, response, "Đóng");
                     e.printStackTrace();
                 }
                 try {
                     if (jsonObj.getBoolean(Constants.RESULT) == Constants.RESULT_FALSE) {
-                        Util.alert(Constants.RESULT_ERROR_TITLE, jsonObj.getString(Constants.RESULT_MESSAGE), "Đóng");
+                        CustomDialog.alert(Constants.RESULT_ERROR_TITLE, jsonObj.getString(Constants.RESULT_MESSAGE), "Đóng");
                         Util.getInstance().stopLoading(true);
                         callback.onError("");
                         return;
@@ -258,12 +258,12 @@ public class ApiHelper {
                 try {
                     jsonObj = new JSONObject(response);
                 } catch (JSONException e) {
-                    Util.alert(Constants.RESULT_ERROR_TITLE, response, "Đóng");
+                    CustomDialog.alert(Constants.RESULT_ERROR_TITLE, response, "Đóng");
                     e.printStackTrace();
                 }
                 try {
                     if (jsonObj.getBoolean(Constants.RESULT) == Constants.RESULT_FALSE) {
-                        Util.alert(Constants.RESULT_ERROR_TITLE, jsonObj.getString(Constants.RESULT_MESSAGE), "Đóng");
+                        CustomDialog.alert(Constants.RESULT_ERROR_TITLE, jsonObj.getString(Constants.RESULT_MESSAGE), "Đóng");
                         Util.getInstance().stopLoading(true);
                         callback.onError("");
                         return;
@@ -295,12 +295,12 @@ public class ApiHelper {
                 try {
                     jsonObj = new JSONObject(response);
                 } catch (JSONException e) {
-                    Util.alert(Constants.RESULT_ERROR_TITLE, response, "Đóng");
+                    CustomDialog.alert(Constants.RESULT_ERROR_TITLE, response, "Đóng");
                     e.printStackTrace();
                 }
                 try {
                     if (jsonObj.getBoolean(Constants.RESULT) == Constants.RESULT_FALSE) {
-                        Util.alert(Constants.RESULT_ERROR_TITLE, jsonObj.getString(Constants.RESULT_MESSAGE), "Đóng");
+                        CustomDialog.alert(Constants.RESULT_ERROR_TITLE, jsonObj.getString(Constants.RESULT_MESSAGE), "Đóng");
                         Util.getInstance().stopLoading(true);
                         return;
                     }
@@ -330,12 +330,12 @@ public class ApiHelper {
                 try {
                     jsonObj = new JSONObject(response);
                 } catch (JSONException e) {
-                    Util.alert(Constants.RESULT_ERROR_TITLE, response, "Đóng");
+                    CustomDialog.alert(Constants.RESULT_ERROR_TITLE, response, "Đóng");
                     e.printStackTrace();
                 }
                 try {
                     if (jsonObj.getBoolean(Constants.RESULT) == Constants.RESULT_FALSE) {
-                        Util.alert(Constants.RESULT_ERROR_TITLE, jsonObj.getString(Constants.RESULT_MESSAGE), "Đóng");
+                        CustomDialog.alert(Constants.RESULT_ERROR_TITLE, jsonObj.getString(Constants.RESULT_MESSAGE), "Đóng");
                         Util.getInstance().stopLoading(true);
                         return;
                     }

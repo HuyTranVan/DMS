@@ -41,6 +41,7 @@ import wolve.dms.models.Checkin;
 import wolve.dms.models.Customer;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomDialog;
 import wolve.dms.utils.MapUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
@@ -197,6 +198,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 return true;
             }
         });
+
     }
 
     @Override
@@ -236,7 +238,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 break;
 
             case R.id.add_customer_shopcart:
-                openShopCartScreen(currentCustomer);
+                openShopCartScreen(getCurrentCustomer());
 
                 break;
         }
@@ -252,7 +254,24 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     private void openShopCartScreen(Customer customer){
-        Transaction.gotoShopCartActivity(customer.CustomertoString());
+        if (customer.getInt("id") == 0){
+            CustomerConnect.CreateCustomer(createParamCustomer(getCurrentCustomer()), new CallbackJSONObject() {
+                @Override
+                public void onResponse(JSONObject result) {
+                    final Customer responseCustomer = new Customer(result);
+                    Transaction.gotoShopCartActivity(responseCustomer.CustomertoString());
+
+                }
+
+                @Override
+                public void onError(String error) {
+
+                }
+            }, true);
+
+        }else {
+            Transaction.gotoShopCartActivity(customer.CustomertoString());
+        }
 
     }
 
@@ -263,52 +282,42 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 || edCity.getText().toString().trim().equals("")
                 || edShopName.getText().toString().trim().equals("")
                 || edShopType.getText().toString().trim().equals("")){
-            Util.alertWithCancelButton(null, "Vui lòng nhập đủ thông tin", "đồng ý", null, new CallbackBoolean() {
-                @Override
-                public void onRespone(Boolean result) {
+            CustomDialog.alertWithCancelButton(null, "Vui lòng nhập đủ thông tin", "đồng ý", null, new CallbackBoolean() {
+                @Override public void onRespone(Boolean result) {
 
                 }
             });
 
         }else {
-            String param = String.format(Constants.CUSTOMER_CREATE_PARAM, currentCustomer.getInt("id") == 0? "" : "id="+ currentCustomer.getString("id") +"&",
-                    Util.encodeString(edName.getText().toString().trim()),//name
-                    Util.encodeString(edShopName.getText().toString().trim()),//signBoard
-                    Util.encodeString(edAdress.getText().toString().trim()), //address
-                    Util.encodeString(edPhone.getText().toString().trim()), //phone
-                    Util.encodeString(edStreet.getText().toString().trim()), //street
-                    Util.encodeString(edNote.getText().toString().trim()), //note
-                    Util.encodeString(edDistrict.getText().toString().trim()), //district
-                    Util.encodeString(edCity.getText().toString().trim()), //province
-                    currentCustomer.getString("lat"), //lat
-                    currentCustomer.getString("lng"), //lng
-                    10,
-                    Util.encodeString(Constants.getShopInfo(null,edShopType.getText().toString())), //shopType
-                    currentStatusId //currentStatusId
-                    );
 
-            CustomerConnect.CreateCustomer(param, new CallbackJSONObject() {
+            CustomerConnect.CreateCustomer(createParamCustomer(getCurrentCustomer()), new CallbackJSONObject() {
                 @Override
                 public void onResponse(JSONObject result) {
                     final Customer responseCustomer = new Customer(result);
 
-                    String params = String.format(Constants.SCHECKIN_CREATE_PARAM, responseCustomer.getInt("id"),
-                            reasonAdapter.getCheckedReason() ==0 ? currentStatusId : reasonAdapter.getCheckedReason(),
-                            Util.encodeString(edNote.getText().toString().trim()),
-                            Util.getCurrentUserId()
-                            );
+                    if (reasonAdapter.getCheckedReason() > 0){
+                        String params = String.format(Constants.SCHECKIN_CREATE_PARAM, responseCustomer.getInt("id"),
+                                reasonAdapter.getCheckedReason() ==0 ? currentStatusId : reasonAdapter.getCheckedReason(),
+                                Util.encodeString(edNote.getText().toString().trim()),
+                                User.getCurrentUserId()
+                        );
 
-                    CustomerConnect.PostCheckin(params, new CallbackJSONObject() {
-                        @Override
-                        public void onResponse(JSONObject result) {
-                            returnPreviousScreen(responseCustomer);
-                        }
+                        CustomerConnect.PostCheckin(params, new CallbackJSONObject() {
+                            @Override
+                            public void onResponse(JSONObject result) {
+                                returnPreviousScreen(responseCustomer);
+                            }
 
-                        @Override
-                        public void onError(String error) {
+                            @Override
+                            public void onError(String error) {
 
-                        }
-                    }, true);
+                            }
+                        }, true);
+
+                    }else {
+                        returnPreviousScreen(responseCustomer);
+                    }
+
 
                 }
 
@@ -343,7 +352,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     private void deleteCustomer(){
-        Util.alertWithCancelButton(null, "Xóa khách hàng " + edShopType.getText().toString() +" " + currentCustomer.getString("signBoard"), "ĐỒNG Ý","HỦY", new CallbackBoolean() {
+        CustomDialog.alertWithCancelButton(null, "Xóa khách hàng " + edShopType.getText().toString() +" " + currentCustomer.getString("signBoard"), "ĐỒNG Ý","HỦY", new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
                 CustomerConnect.DeleteCustomer(currentCustomer.getString("id"), new CallbackJSONObject() {
@@ -417,6 +426,52 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         rvCheckins.setLayoutManager(linearLayoutManager);
 
     }
+
+    private Customer getCurrentCustomer(){
+        Customer customer = new Customer();
+        try {
+            customer = currentCustomer;
+            customer.put("name", edName.getText().toString().trim());
+            customer.put("signBoard", edShopName.getText().toString().trim());
+            customer.put("address", edAdress.getText().toString().trim());
+            customer.put("phone", edPhone.getText().toString().trim());
+            customer.put("street", edStreet.getText().toString().trim());
+            customer.put("note", edNote.getText().toString().trim());
+            customer.put("district", edDistrict.getText().toString().trim());
+            customer.put("province", edCity.getText().toString().trim());
+            customer.put("lat", currentCustomer.getDouble("lat"));
+            customer.put("lng", currentCustomer.getDouble("lng"));
+            customer.put("volumeEstimate", 10);
+            customer.put("shopType", Constants.getShopInfo(null,edShopType.getText().toString()));
+            customer.put("status.id", currentStatusId);
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return customer;
+    }
+
+    private String createParamCustomer(Customer customer){
+        String param = String.format(Constants.CUSTOMER_CREATE_PARAM, customer.getInt("id") == 0? "" : "id="+ customer.getString("id") +"&",
+                Util.encodeString(customer.getString("name")),//name
+                Util.encodeString(customer.getString("signBoard")),//signBoard
+                Util.encodeString(customer.getString("address")), //address
+                Util.encodeString(customer.getString("phone")), //phone
+                Util.encodeString(customer.getString("street")), //street
+                Util.encodeString(customer.getString("note")), //note
+                Util.encodeString(customer.getString("district")), //district
+                Util.encodeString(customer.getString("province")), //province
+                customer.getDouble("lat"), //lat
+                customer.getDouble("lng"), //lng
+                customer.getInt("volumeEstimate"), //province
+                Util.encodeString(customer.getString("shopType")), //shopType
+                customer.getInt("status.id") //currentStatusId
+        );
+
+        return param;
+    }
+
 
 
 }

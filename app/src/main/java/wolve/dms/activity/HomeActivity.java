@@ -16,6 +16,7 @@ import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.HomeAdapter;
 import wolve.dms.apiconnect.LocationConnect;
+import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.apiconnect.StatusConnect;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackJSONArray;
@@ -80,15 +81,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 break;
 
             case 1:
-//                String dataToPrint="$big$This is a printer test Chúng ta là những con bò$intro$posprinterdriver.com$intro$$intro$$cut$$intro$";
-//
-//                Intent intentPrint = new Intent();
-//
-//                intentPrint.setAction(Intent.ACTION_SEND);
-//                intentPrint.putExtra(Intent.EXTRA_TEXT, dataToPrint);
-//                intentPrint.setType("text/plain");
-//
-//                this.startActivity(intentPrint);
+
                 break;
 
             case 2:
@@ -110,32 +103,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             @Override
             public void onResponse(JSONArray result) {
                 Util.setStatusList(result);
-
-                LocationConnect.getAllDistrict("79", new CallbackJSONArray() {
-                    @Override
-                    public void onResponse(JSONArray result) {
-                        Util.setDistrictList(result);
-                    }
-
-                    @Override
-                    public void onError(String error) {
-
-                    }
-                }, true);
-
-
-//                LocationConnect.getAllProvinces(new CallbackJSONArray() {
-//                    @Override
-//                    public void onResponse(JSONArray result) {
-//                        Util.setProvincesList(result);
-//                    }
-//
-//                    @Override
-//                    public void onError(String error) {
-//
-//                    }
-//                }, true);
-
+                loadDistrict(false);
             }
 
             @Override
@@ -144,5 +112,67 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             }
         }, false);
     }
+
+    private void loadProvince(Boolean cancelLoading){
+        LocationConnect.getAllProvinces(new CallbackJSONArray() {
+            @Override
+            public void onResponse(JSONArray result) {
+                Util.setProvincesList(result);
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        }, true);
+    }
+
+    private void loadDistrict(Boolean cancelLoading){
+        LocationConnect.getAllDistrict("79", new CallbackJSONArray() {
+            @Override
+            public void onResponse(JSONArray result) {
+                Util.setDistrictList(result);
+                loadProductGroup(false);
+
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        }, cancelLoading);
+    }
+
+    private void loadProductGroup(Boolean cancelLoading){
+        ProductConnect.ListProductGroup(new CallbackJSONArray() {
+            @Override
+            public void onResponse(JSONArray result) {
+                Util.setProductGroupList(result);
+                loadProducts(true);
+
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        }, cancelLoading);
+    }
+
+    private void loadProducts(Boolean cancelLoading){
+        ProductConnect.ListProduct(new CallbackJSONArray() {
+            @Override
+            public void onResponse(JSONArray result) {
+                Util.setProductList(result);
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        }, cancelLoading);
+    }
+
+
 
 }

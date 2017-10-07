@@ -18,4 +18,9 @@ public class Product extends BaseModel{
     public String ProducttoString(){
         return jsonObject.toString();
     }
+
+    public JSONObject ProductJSONObject(){
+        return jsonObject;
+    }
+
 }

@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/dialog_edit_product_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorWhite">
+
+    <TextView
+        android:id="@+id/dialog_edit_product_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_25sdp"
+        android:background="@drawable/bg_header_top"
+        android:text="SẢN PHẨM"
+        android:textSize="@dimen/_14sdp"
+        android:textColor="@color/black_text_color"
+        android:gravity="center"/>
+
+
+
+    <LinearLayout
+        android:id="@+id/dialog_edit_product_body"
+        android:layout_below="@+id/dialog_edit_product_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:orientation="vertical"
+        android:layout_marginBottom="@dimen/_5sdp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:minHeight="@dimen/_30sdp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.7"
+                android:text="Giá sản phẩm"
+                android:textSize="@dimen/_12sdp"
+                android:paddingLeft="@dimen/_10sdp"
+                android:gravity="center_vertical"/>
+
+            <TextView
+                android:id="@+id/dialog_edit_product_unitprice"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.3"
+                android:text="2000"
+                android:textSize="@dimen/_14sdp"
+                android:textColor="@color/black_text_color"
+                android:paddingRight="@dimen/_10sdp"
+                android:gravity="center_vertical|right"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="#0d000000"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:minHeight="@dimen/_30sdp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.7"
+                android:text="Giảm giá (VNĐ)"
+                android:textSize="@dimen/_12sdp"
+                android:paddingLeft="@dimen/_10sdp"
+                android:gravity="center_vertical"/>
+
+            <EditText
+                android:id="@+id/dialog_edit_product_discount"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.3"
+                android:background="@drawable/colorwhite_borderred_corner"
+                android:text="2000"
+                android:textSize="@dimen/_12sdp"
+                android:inputType="number"
+                android:gravity="center"
+                android:layout_margin="@dimen/_2sdp"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="#0d000000"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:minHeight="@dimen/_30sdp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.7"
+                android:text="Giá NET"
+                android:textSize="@dimen/_12sdp"
+                android:paddingLeft="@dimen/_10sdp"
+                android:gravity="center_vertical"/>
+
+            <TextView
+                android:id="@+id/dialog_edit_product_netprice"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.3"
+                android:text="2000"
+                android:textSize="@dimen/_14sdp"
+                android:textColor="@color/colorBlue"
+                android:paddingRight="@dimen/_10sdp"
+                android:gravity="center_vertical|right"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="#0d000000"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:minHeight="@dimen/_30sdp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.6"
+                android:text="Số lượng:"
+                android:textSize="@dimen/_12sdp"
+                android:paddingLeft="@dimen/_10sdp"
+                android:gravity="center_vertical"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_weight="0.4">
+
+                <wolve.dms.controls.CTextView
+                    android:id="@+id/dialog_edit_product_sub"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="match_parent"
+                    android:background="?selectableItemBackground"
+                    android:text="@string/icon_up"
+                    android:textSize="@dimen/_16sdp"
+                    android:textColor="@color/black_text_color_hint"
+                    android:gravity="center"
+                    android:rotation="270"
+                    app:customFont="@string/font_awesome"/>
+
+                <EditText
+                    android:id="@+id/dialog_edit_product_quantity"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/colorwhite_cornerred"
+                    android:text="2000"
+                    android:maxLength="4"
+                    android:textSize="@dimen/_12sdp"
+                    android:inputType="number"
+                    android:layout_margin="@dimen/_2sdp"
+                    android:gravity="center"/>
+
+                <wolve.dms.controls.CTextView
+                    android:id="@+id/dialog_edit_product_plus"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="match_parent"
+                    android:background="?selectableItemBackground"
+                    android:text="@string/icon_up"
+                    android:textSize="@dimen/_16sdp"
+                    android:textColor="@color/black_text_color_hint"
+                    android:gravity="center"
+                    android:rotation="90"
+                    app:customFont="@string/font_awesome"/>
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="#0d000000"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:minHeight="@dimen/_30sdp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.7"
+                android:text="Tổng tiền:"
+                android:textSize="@dimen/_12sdp"
+                android:paddingLeft="@dimen/_10sdp"
+                android:gravity="center_vertical"/>
+
+            <TextView
+                android:id="@+id/dialog_edit_product_total"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.3"
+                android:text="2000"
+                android:textSize="@dimen/_14sdp"
+                android:textColor="@color/colorBlue"
+                android:paddingRight="@dimen/_10sdp"
+                android:gravity="center_vertical|right"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="#0d000000"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/_10sdp">
+
+            <Button
+                android:id="@+id/dialog_edit_product_cancel"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_25sdp"
+                android:layout_weight="0.5"
+                android:background="@drawable/btn_cancel_grey"
+                android:textColor="@color/colorWhite"
+                android:text="hủy"
+                android:textSize="@dimen/_12sdp"
+                android:textAllCaps="true"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/_20sdp"
+                android:layout_marginRight="@dimen/_20sdp"/>
+
+            <Button
+                android:id="@+id/dialog_edit_product_submit"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_25sdp"
+                android:layout_weight="0.5"
+                android:background="@drawable/btn_confirm_orange"
+                android:textColor="@color/colorWhite"
+                android:text="lưu"
+                android:textSize="@dimen/_12sdp"
+                android:textAllCaps="true"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/_20sdp"
+                android:layout_marginRight="@dimen/_20sdp"/>
+
+        </LinearLayout>
+
+
+
+
+    </LinearLayout>
+
+
+
+
+</RelativeLayout>

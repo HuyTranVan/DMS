@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/shopcart_promotions_item_parent"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorWhite">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/shopcart_promotions_item_image"
+        android:layout_width="@dimen/_25sdp"
+        android:layout_height="@dimen/_25sdp"
+        android:layout_marginLeft="@dimen/_10sdp"
+        android:layout_marginRight="@dimen/_10sdp"
+        android:src="@drawable/icon_lubricant_bottle"
+        app:civ_border_overlay="true"
+        app:civ_fill_color="#d5d3d3"
+        android:layout_centerVertical="true"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_toRightOf="@+id/shopcart_promotions_item_image"
+        android:layout_centerVertical="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/shopcart_promotions_item_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.55"
+                android:text="Sản phẩm"
+                android:textColor="@color/black_text_color"
+                android:textSize="@dimen/_12sdp"
+                android:layout_gravity="center_vertical"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="0.45">
+
+                <wolve.dms.controls.CTextView
+                    android:id="@+id/shopcart_promotions_item_sub"
+                    android:layout_width="@dimen/_35sdp"
+                    android:layout_height="@dimen/_35sdp"
+                    android:background="?selectableItemBackground"
+                    android:text="@string/icon_up"
+                    android:textSize="@dimen/_16sdp"
+                    android:textColor="@color/black_text_color_hint"
+                    android:gravity="center"
+                    android:rotation="270"
+                    app:customFont="@string/font_awesome"/>
+
+                <TextView
+                    android:id="@+id/shopcart_promotions_item_quantity"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:background="@drawable/colorwhite_cornerred"
+                    android:layout_weight="0.1"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:text="1"
+                    android:textColor="@color/black_text_color"
+                    android:textSize="@dimen/_10sdp"
+                    android:layout_gravity="center_vertical"/>
+
+                <wolve.dms.controls.CTextView
+                    android:id="@+id/shopcart_promotions_item_plus"
+                    android:layout_width="@dimen/_35sdp"
+                    android:layout_height="@dimen/_35sdp"
+                    android:background="?selectableItemBackground"
+                    android:text="@string/icon_up"
+                    android:textSize="@dimen/_16sdp"
+                    android:textColor="@color/black_text_color_hint"
+                    android:gravity="center"
+                    android:rotation="90"
+                    app:customFont="@string/font_awesome"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorGray"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="@dimen/_2sdp"/>
+
+
+
+</RelativeLayout>

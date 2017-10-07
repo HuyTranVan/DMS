@@ -44,11 +44,18 @@
 
     </style>
 
-    <style name="MenuButtonsSmall">
+    <style name="MenuButtonsBlue">
         <item name="fab_size">mini</item>
-        <item name="fab_colorNormal">#1565C0</item>
-        <item name="fab_colorPressed">#2272CD</item>
+        <item name="fab_colorNormal">@color/colorBlue</item>
+        <item name="fab_colorPressed">@color/colorBlueDark</item>
         <item name="fab_colorRipple">#62B2FF</item>
+    </style>
+
+    <style name="MenuButtonsRed">
+        <item name="fab_size">mini</item>
+        <item name="fab_colorNormal">@color/colorRed</item>
+        <item name="fab_colorPressed">@color/colorRedDark</item>
+        <item name="fab_colorRipple">@color/colorRedTransparent</item>
     </style>
 
     <style name="TestSpinnerStyle" parent="android:style/Widget.ListView.DropDown">

@@ -21,6 +21,7 @@ import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.controls.CTextView;
 import wolve.dms.models.Status;
+import wolve.dms.utils.CustomDialog;
 import wolve.dms.utils.Util;
 
 
@@ -76,7 +77,7 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusAdap
             @Override
             public boolean onLongClick(View v) {
                 if (!mData.get(position).getBoolean("defaultStatus")){
-                    Util.alertWithCancelButton(null, "Bạn muốn xóa trạng thái " + mData.get(position).getString("name"), "ĐỒNG Ý","HỦY", new CallbackBoolean() {
+                    CustomDialog.alertWithCancelButton(null, "Bạn muốn xóa trạng thái " + mData.get(position).getString("name"), "ĐỒNG Ý","HỦY", new CallbackBoolean() {
                         @Override
                         public void onRespone(Boolean result) {
                             String param = String.valueOf(mData.get(position).getInt("id"));

@@ -22,6 +22,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomDialog;
 import wolve.dms.utils.Util;
 
 import static wolve.dms.utils.Constants.REQUEST_PERMISSION_LOCATION;
@@ -103,6 +104,13 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onDestroy() {
+        Util.getInstance().stopLoading(true);
+        super.onDestroy();
+
+    }
+
     private String getDeviceName() {
         String manufacturer = Build.MANUFACTURER;
         String model = Build.MODEL;
@@ -166,7 +174,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void checkIsEnabledGPS(boolean isDisplayedPopup) {
         boolean gps_enabled = false;
         try {
-            //Util.getInstance().showCheckLocationLoading("Kiểm tra thông tin vị trí");
+//            Util.getInstance().showLocationLoading("Kiểm tra thông tin vị trí");
             Util.getInstance().showLoading("Kiểm tra thông tin vị trí");
             gps_enabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
@@ -174,7 +182,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             ex.printStackTrace();
         }
         if (!gps_enabled) {
-            Util.alertWithButton("Xác thực quyền truy cập vị trí", "Bạn cần mở GPS truy cập vị trí để sử dụng toàn bộ tính năng phần mềm", "Bật GPS", new CallbackBoolean() {
+            CustomDialog.alertWithButton("Xác thực quyền truy cập vị trí", "Bạn cần mở GPS truy cập vị trí để sử dụng toàn bộ tính năng phần mềm", "Bật GPS", new CallbackBoolean() {
                 @Override
                 public void onRespone(Boolean result) {
                     final Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
@@ -202,7 +210,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public boolean checkLocationPermission() {
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Util.alertWithButton("Xác thực quyền truy cập vị trí", "Bạn cần cho phép ứng dụng truy cập vị trí để sử dụng toàn bộ tính năng phần mềm", "Xác nhận", new CallbackBoolean() {
+            CustomDialog.alertWithButton("Xác thực quyền truy cập vị trí", "Bạn cần cho phép ứng dụng truy cập vị trí để sử dụng toàn bộ tính năng phần mềm", "Xác nhận", new CallbackBoolean() {
                 @Override
                 public void onRespone(Boolean result) {
                     ActivityCompat.requestPermissions(Util.getInstance().getCurrentActivity(),

@@ -32,6 +32,7 @@ import wolve.dms.controls.CInputForm;
 import wolve.dms.models.Product;
 import wolve.dms.models.Status;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomDialog;
 import wolve.dms.utils.Util;
 
 /**
@@ -141,7 +142,7 @@ public class AddStatusFragment extends Fragment implements View.OnClickListener,
 
             case R.id.add_status_submit:
                 if (edName.getText().toString().trim().equals("")){
-                    Util.alertWithCancelButton(null, "Vui lòng nhập đủ thông tin", "đồng ý", null, new CallbackBoolean() {
+                    CustomDialog.alertWithCancelButton(null, "Vui lòng nhập đủ thông tin", "đồng ý", null, new CallbackBoolean() {
                         @Override
                         public void onRespone(Boolean result) {
 

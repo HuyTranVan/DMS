@@ -22,7 +22,7 @@ public class UserConnect {
 
     public static void Login(String params, final CallbackJSONObject listener, final Boolean stopLoading){
         Util.getInstance().showLoading();
-        new CustomPostMethod(Api_link.LOGIN, params, new Callback() {
+        new CustomPostMethod(Api_link.LOGIN, params,false, new Callback() {
             @Override
             public void onResponse(JSONObject result) {
                 Util.getInstance().stopLoading(stopLoading);

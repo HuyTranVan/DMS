@@ -54,7 +54,7 @@ public class ProductConnect {
 
         String url = Api_link.PRODUCT_GROUP_NEW ;
 
-        new CustomPostMethod(url,params, new Callback() {
+        new CustomPostMethod(url,params, false,new Callback() {
             @Override
             public void onResponse(JSONObject result) {
                 Util.getInstance().stopLoading(stopLoading);
@@ -145,7 +145,7 @@ public class ProductConnect {
 
         String url = Api_link.PRODUCT_NEW ;
 
-        new CustomPostMethod(url,params, new Callback() {
+        new CustomPostMethod(url,params,false, new Callback() {
             @Override
             public void onResponse(JSONObject result) {
                 Util.getInstance().stopLoading(stopLoading);

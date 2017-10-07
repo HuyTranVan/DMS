@@ -39,7 +39,7 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/_30sdp"
             android:layout_weight="0.3"
-            android:background="@drawable/btn_add_new"
+            android:background="@drawable/btn_confirm_blue"
             android:src="@drawable/ic_arrow_forward_white_18dp"
             android:layout_marginLeft="@dimen/_5sdp"
             android:padding="@dimen/_4sdp"

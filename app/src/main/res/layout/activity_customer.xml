@@ -67,8 +67,6 @@
                 android:background="@color/colorWhite"
                 android:clickable="true">
 
-
-
                 <RadioGroup
                     android:id="@+id/customer_radiogroup_status"
                     android:layout_width="match_parent"
@@ -295,7 +293,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/_25sdp"
                         android:minWidth="@dimen/_75sdp"
-                        android:background="@drawable/btn_login_custom"
+                        android:background="@drawable/btn_confirm_red"
                         android:text="vị trí hiện tại"
                         android:textSize="@dimen/_8sdp"
                         android:textColor="@color/colorWhite"
@@ -367,7 +365,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/_30sdp"
                     android:minWidth="@dimen/_150sdp"
-                    android:background="@drawable/btn_add_new"
+                    android:background="@drawable/btn_confirm_blue"
                     android:layout_margin="@dimen/_10sdp"
                     android:text="CẬP NHẬT"
                     android:textAllCaps="true"

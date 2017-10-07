@@ -22,7 +22,7 @@ import wolve.dms.utils.Util;
 
 public class MoreLayout {
 
-    public static void DialogSpiner(View view , int width, Drawable color, ArrayList<String> list , final CallbackClickAdapter listener){
+    public static void DialogSpinner(View view , int width, Drawable color, ArrayList<String> list , final CallbackClickAdapter listener){
         final PopupWindow popup = new PopupWindow(Util.getInstance().getCurrentActivity());
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(Util.getInstance().getCurrentActivity(), android.R.layout.select_dialog_item){
             @Override
@@ -61,4 +61,5 @@ public class MoreLayout {
         popup.setContentView(listViewDogs);
         popup.showAsDropDown(view , 50, 0);
     }
+
 }

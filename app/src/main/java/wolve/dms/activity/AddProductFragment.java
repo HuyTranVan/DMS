@@ -1,27 +1,46 @@
 package wolve.dms.activity;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.soundcloud.android.crop.Crop;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.R;
 import wolve.dms.apiconnect.ProductConnect;
+import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.controls.CInputForm;
+import wolve.dms.libraries.CustomPostMultiPartMethod;
 import wolve.dms.models.Product;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomDialog;
 import wolve.dms.utils.Util;
+
+import static android.app.Activity.RESULT_OK;
+import static wolve.dms.utils.Constants.REQUEST_CHOOSE_IMAGE;
 
 /**
  * Created by macos on 9/16/17.
@@ -31,12 +50,14 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
     private View view;
     private ImageView btnBack;
     private CInputForm edName, edUnitPrice, edPurchasePrice, edGroup, edVolume, edIsPromotion;
-    private Button btnSubmit;
+    private Button btnSubmit , btnLoadImage;
+    private CircleImageView imgProduct;
+
     private Product product;
     private ProductActivity mActivity;
-
     private ArrayList<String> listGroup = new ArrayList<>();
     private ArrayList<String> listBoolean = new ArrayList<>();
+    private String imageChangeUri ;
 
     @Nullable
     @Override
@@ -79,11 +100,19 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
                 e.printStackTrace();
             }
         }
+
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE ,Manifest.permission.READ_EXTERNAL_STORAGE }, Constants.REQUEST_READ_PERMISSION);
+            return;
+        }
+
     }
 
     private void addEvent() {
         btnBack.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
+        btnLoadImage.setOnClickListener(this);
     }
 
     private void initializeView() {
@@ -95,6 +124,8 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
         edIsPromotion = (CInputForm) view.findViewById(R.id.add_product_promotion);
         btnSubmit = (Button) view.findViewById(R.id.add_product_submit);
         btnBack = (ImageView) view.findViewById(R.id.icon_back);
+        btnLoadImage = (Button) view.findViewById(R.id.add_product_choiceimage);
+        imgProduct = (CircleImageView) view.findViewById(R.id.add_product_image);
 
         mActivity = (ProductActivity) getActivity();
     }
@@ -110,7 +141,28 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
             case R.id.add_product_submit:
                 submitProduct();
                 break;
+
+            case R.id.add_product_choiceimage:
+                startImageChooser();
+                break;
+
         }
+    }
+
+    private void startImageChooser() {
+        // Kiểm tra permission với android sdk >= 23
+        if (Build.VERSION.SDK_INT <= 19) {
+            Intent i = new Intent();
+            i.setType("image/*");
+            i.setAction(Intent.ACTION_GET_CONTENT);
+            i.addCategory(Intent.CATEGORY_OPENABLE);
+            startActivityForResult(i, REQUEST_CHOOSE_IMAGE);
+
+        } else if (Build.VERSION.SDK_INT > 19) {
+            Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
+        }
+
     }
 
     private int defineGroupId(String groupName){
@@ -127,7 +179,7 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
         if (edName.getText().toString().trim().equals("")
                 || edUnitPrice.getText().toString().trim().equals("")
                 || edPurchasePrice.getText().toString().trim().equals("")){
-            Util.alertWithCancelButton(null, "Vui lòng nhập đủ thông tin", "đồng ý", null, new CallbackBoolean() {
+            CustomDialog.alertWithCancelButton(null, "Vui lòng nhập đủ thông tin", "đồng ý", null, new CallbackBoolean() {
                 @Override
                 public void onRespone(Boolean result) {
 
@@ -157,6 +209,58 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
 
                 }
             }, true);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CHOOSE_IMAGE){
+            if (data != null){
+                imageChangeUri = Util.getRealPathFromURI(data.getData());
+                Glide.with(this).load(imageChangeUri).fitCenter().into(imgProduct);
+                uploadImage(data.getData());
+//                Crop.of(Uri.parse(data.getData().toString()), Uri.fromFile(Util.getOutputMediaFile())).asSquare().start(getActivity(), this);
+
+            }
+
+        } else if (requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
+            imageChangeUri = Util.getRealPathFromURI(data.getData());
+            Glide.with(this).load(imageChangeUri).fitCenter().into(imgProduct);
+
+        } else if (requestCode == Crop.REQUEST_CROP) {
+            if (resultCode == RESULT_OK) {
+                imageChangeUri = Util.getRealPathFromURI(data.getData());
+                Glide.with(this).load(imageChangeUri).fitCenter().into(imgProduct);
+
+            } else if (resultCode == Crop.RESULT_ERROR) {
+                Toast.makeText(getActivity(), Crop.getError(data).getMessage(), Toast.LENGTH_SHORT).show();
+
+            }
+        }
+
+    }
+
+    private void uploadImage(Uri uri){
+        new CustomPostMultiPartMethod("", "", uri, new Callback() {
+            @Override
+            public void onResponse(JSONObject result) {
+                Log.e("resu;t", result.toString());
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        }).execute();
+    }
+
+    @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == Constants.REQUEST_READ_PERMISSION) {
+            if (grantResults[0] == PackageManager.PERMISSION_DENIED || grantResults[1] == PackageManager.PERMISSION_DENIED ) {
+                // close the app
+                Toast.makeText(getActivity(), "Cấp quyền truy cập không thành công!", Toast.LENGTH_LONG).show();
+
+            }
         }
     }
 }

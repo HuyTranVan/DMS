@@ -44,7 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="@dimen/_30sdp"
         android:minWidth="@dimen/_150sdp"
-        android:background="@drawable/btn_add_new"
+        android:background="@drawable/btn_confirm_blue"
         android:layout_margin="@dimen/_10sdp"
         android:text="CẬP NHẬT"
         android:textAllCaps="true"

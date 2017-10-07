@@ -1,5 +1,7 @@
 package wolve.dms.activity;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -7,6 +9,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.soundcloud.android.crop.Crop;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,6 +32,8 @@ import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.utils.Constants.REQUEST_CHOOSE_IMAGE;
 
 /**
  * Created by macos on 9/16/17.
@@ -221,4 +229,6 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
         bundle.putString(Constants.PRODUCT, product);
         changeFragment(groupFragment, bundle, true );
     }
+
+
 }

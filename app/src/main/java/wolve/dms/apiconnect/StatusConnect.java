@@ -53,7 +53,7 @@ public class StatusConnect {
 
         String url = Api_link.STATUS_NEW ;
 
-        new CustomPostMethod(url,params, new Callback() {
+        new CustomPostMethod(url,params,false, new Callback() {
             @Override
             public void onResponse(JSONObject result) {
                 Util.getInstance().stopLoading(stopLoading);

@@ -40,6 +40,7 @@ public class Api_link {
 
     public final static String CHECKIN_NEW = BASE_URL + "token/customer/checkin";
 
+    public final static String BILL_NEW = BASE_URL + "token/bill/create_or_update";
 
 
 }

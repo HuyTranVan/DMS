@@ -70,6 +70,8 @@ import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.activity.MapsActivity;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.models.Product;
+import wolve.dms.models.ProductGroup;
 import wolve.dms.models.Province;
 import wolve.dms.models.Status;
 import wolve.dms.models.User;
@@ -86,10 +88,11 @@ public class Util {
     public static ArrayList<Status> mListStatus;
     public static ArrayList<Province> mListProvinces;
     public static ArrayList<String> mListDistricts;
+    public static ArrayList<ProductGroup> mListProductGroup;
+    public static ArrayList<Product> mListProduct;
+    public static ArrayList<Product> mListPromotion;
     private DisplayMetrics windowSize;
     private static int PLAY_SERVICES_RESOLUTION_REQUEST = 1462;
-
-
 
     public void setCurrentLocation(Location currentLocation) {
         this.currentLocation = currentLocation;
@@ -108,83 +111,12 @@ public class Util {
         return util;
     }
 
-    public static String getCurrentUserId(){
-        String id_user = "";
-        User currentUser = User.getCurrentUser();
-        if (currentUser != null && currentUser.getToken() != null) {
-            id_user = currentUser.getId_user();
-        }
-        return id_user;
-    }
-
-
     public void setCurrentActivity(Activity activity) {
         currentActivity = activity;
     }
 
     public Activity getCurrentActivity() {
         return currentActivity;
-    }
-
-    public static void alert(final String title, final String message, final String confirm) {
-        getInstance().getCurrentActivity().runOnUiThread(new Runnable() {
-            public void run() {
-                new SweetAlertDialog(getInstance().getCurrentActivity(), SweetAlertDialog.WARNING_TYPE)
-                        .setTitleText(title)
-                        .setContentText(message)
-                        .setConfirmText(confirm)
-                        .show();
-            }
-        });
-    }
-
-    public static void alertWithButton(final String title, final String message, final String confirm, final CallbackBoolean callback) {
-        getInstance().getCurrentActivity().runOnUiThread(new Runnable() {
-            public void run() {
-                SweetAlertDialog dialog = new SweetAlertDialog(getInstance().getCurrentActivity(), SweetAlertDialog.WARNING_TYPE)
-                        .setTitleText(title)
-                        .setContentText(message)
-                        .setConfirmText(confirm)
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sDialog) {
-                                sDialog.dismissWithAnimation();
-                                callback.onRespone(null);
-                            }
-                        });
-                dialog.setCanceledOnTouchOutside(false);
-                dialog.setCancelable(false);
-                dialog.show();
-            }
-        });
-    }
-
-    public static void alertWithCancelButton(final String title, final String message, final String confirm, final String cancel, final CallbackBoolean callback) {
-        getInstance().getCurrentActivity().runOnUiThread(new Runnable() {
-            public void run() {
-                SweetAlertDialog dialog = new SweetAlertDialog(getInstance().getCurrentActivity(), SweetAlertDialog.WARNING_TYPE)
-                        .setTitleText(title)
-                        .setContentText(message)
-                        .setConfirmText(confirm)
-                        .setCancelText(cancel)
-                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                sweetAlertDialog.dismissWithAnimation();
-                            }
-                        })
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sDialog) {
-                                sDialog.dismissWithAnimation();
-                                callback.onRespone(null);
-                            }
-                        });
-                dialog.setCanceledOnTouchOutside(false);
-                dialog.setCancelable(false);
-                dialog.show();
-            }
-        });
     }
 
     public static String capitalize(String s) {
@@ -215,7 +147,8 @@ public class Util {
     }
 
     public void showLoading(final String message) {
-        if (cDialog == null || !cDialog.isShowing()) {
+        if (cDialog == null || !cDialog.isShowing()  ) {
+
             cDialog = KProgressHUD.create(getCurrentActivity())
                     .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
                     .setDetailsLabel(message)
@@ -227,7 +160,7 @@ public class Util {
         }
     }
 
-    public void showCheckLocationLoading(final String message) {
+    public void showLocationLoading(final String message) {
         if (cDialogLocation == null) {
             cDialogLocation = KProgressHUD.create(getCurrentActivity())
                     .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
@@ -249,77 +182,12 @@ public class Util {
 
     public void stopLoading(Boolean stop) {
         if (stop){
-            if (cDialog != null && cDialog.isShowing()) {
+            if (cDialog != null && cDialog.isShowing() || cDialog != null) {
                 cDialog.dismiss();
                 cDialog = null;
             }
         }
 
-    }
-
-    public Dialog showCustomDialog(int resId) {
-        AlertDialog.Builder adb = new AlertDialog.Builder(getInstance().getCurrentActivity());
-        final Dialog d = adb.setView(new View(getInstance().getCurrentActivity())).create();
-        //create corner edge for dialog
-//        d.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        d.getWindow().setBackgroundDrawableResource(R.drawable.colorwhite_corner_large);
-
-        d.setCanceledOnTouchOutside(false);
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(d.getWindow().getAttributes());
-        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-        lp.height = WindowManager.LayoutParams.MATCH_PARENT;
-
-        d.getWindow().setAttributes(lp);
-        d.show();
-        d.setContentView(resId);
-
-        d.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
-
-        return d;
-    }
-
-
-
-    public Dialog showCustomDialogNotCancel(int resId) {
-        AlertDialog.Builder adb = new AlertDialog.Builder(getInstance().getCurrentActivity());
-        final Dialog d = adb.setView(new View(getInstance().getCurrentActivity())).create();
-        //create corner edge for dialog
-        d.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-
-        d.setCanceledOnTouchOutside(false);
-        d.setCancelable(false);
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(d.getWindow().getAttributes());
-        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-        lp.height = WindowManager.LayoutParams.MATCH_PARENT;
-
-        d.getWindow().setAttributes(lp);
-        d.show();
-        d.setContentView(resId);
-
-        d.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
-
-        return d;
-    }
-
-    public Dialog showCustomDialog(int resId, Boolean showLater) {
-        AlertDialog.Builder adb = new AlertDialog.Builder(this.getCurrentActivity());
-        final Dialog d = adb.setView(new View(this.getCurrentActivity())).create();
-        d.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-
-        d.setCanceledOnTouchOutside(true);
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(d.getWindow().getAttributes());
-        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-        lp.height = WindowManager.LayoutParams.MATCH_PARENT;
-
-        d.getWindow().setAttributes(lp);
-        if (!showLater) {
-            d.show();
-        }
-        d.setContentView(resId);
-        return d;
     }
 
     public static boolean checkPlayServices() {
@@ -860,6 +728,15 @@ public class Util {
         return moneyFormated;
     }
 
+    public static ArrayList<String> arrayToList(String[] array){
+        ArrayList<String> list = new ArrayList<>();
+        for (int i=0; i<array.length; i++){
+            list.add(array[i]);
+        }
+
+        return list;
+    }
+
     public static void setStatusList(JSONArray result){
         mListStatus = new ArrayList<>();
         try {
@@ -903,13 +780,48 @@ public class Util {
         }
     }
 
-    public static ArrayList<String> arrayToList(String[] array){
-        ArrayList<String> list = new ArrayList<>();
-        for (int i=0; i<array.length; i++){
-            list.add(array[i]);
-        }
+    public static void setProductGroupList(JSONArray result){
+        mListProductGroup = new ArrayList<>();
+        try {
+            for (int i=0; i<result.length(); i++){
+                ProductGroup productGroup = new ProductGroup(result.getJSONObject(i));
+                mListProductGroup.add(productGroup);
+            }
 
-        return list;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setProductList(JSONArray result){
+        mListProduct = new ArrayList<>();
+        try {
+            for (int i=0; i<result.length(); i++){
+                Product product = new Product(result.getJSONObject(i));
+                product.put("totalMoney", product.getDouble("unitPrice"));
+                product.put("quantity", 1);
+                product.put("discount", 0);
+                product.put("checked", false);
+                mListProduct.add(product);
+            }
+            setPromotionList(mListProduct);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setPromotionList(ArrayList<Product> listProducts){
+        mListPromotion = new ArrayList<>();
+        for (int i=0; i<listProducts.size(); i++){
+            if (listProducts.get(i).getBoolean("promotion")){
+                mListPromotion.add(listProducts.get(i));
+            }
+        }
+    }
+
+    public static Double valueMoney(String money){
+        return Double.parseDouble(money.replace(".",""));
     }
 
 
