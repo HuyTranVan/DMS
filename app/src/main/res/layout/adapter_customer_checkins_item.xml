@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/checkins_item_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@drawable/colorwhite_pressed">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/fab_margin">
+
+        <View
+            android:id="@+id/checkins_item_upper"
+            android:layout_width="1dip"
+            android:layout_height="match_parent"
+            android:background="#e5e5e5"
+            android:layout_above="@+id/checkins_item_dategroup"
+            android:layout_centerHorizontal="true"/>
+
+        <RelativeLayout
+            android:id="@+id/checkins_item_dategroup"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:orientation="vertical"
+            android:background="@drawable/bg_dark_rounded_button"
+            android:gravity="center"
+            android:layout_centerVertical="true">
+
+            <TextView
+                android:id="@+id/checkins_item_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="11/12"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/_7sdp"
+                android:layout_centerHorizontal="true"/>
+
+            <TextView
+                android:id="@+id/checkins_item_year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/checkins_item_date"
+                android:text="2017"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/_9sdp"
+                android:layout_centerHorizontal="true"/>
+
+        </RelativeLayout>
+
+
+        <View
+            android:id="@+id/checkins_item_under"
+            android:layout_width="1dip"
+            android:layout_height="match_parent"
+            android:background="#e5e5e5"
+            android:layout_below="@+id/checkins_item_dategroup"
+            android:layout_centerHorizontal="true"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="@dimen/_50sdp"
+        android:layout_height="match_parent">
+
+        <View
+            android:id="@+id/checkins_item_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#e5e5e5"
+            android:layout_centerVertical="true"/>
+
+        <TextView
+            android:id="@+id/checkins_item_hour"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Default"
+            android:textColor="@color/black_text_color_hint"
+            android:textSize="@dimen/_8sdp"
+            android:layout_above="@+id/checkins_item_line"
+            android:gravity="center"/>
+
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:id="@+id/checkins_item_content_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/colorgrey_corner"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+
+
+        <TextView
+            android:id="@+id/checkins_item_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Default"
+            android:textColor="@color/black_text_color"
+            android:textSize="@dimen/_10sdp" />
+
+
+        <TextView
+            android:id="@+id/checkins_item_note"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Default"
+            android:textColor="@color/black_text_color_hint"
+            android:textSize="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_2sdp"/>
+
+
+    </LinearLayout>
+
+</LinearLayout>

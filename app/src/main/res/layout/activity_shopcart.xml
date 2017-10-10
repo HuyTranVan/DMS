@@ -135,6 +135,30 @@
                     android:clipToPadding="false"
                     android:paddingBottom="@dimen/_5sdp"/>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <wolve.dms.controls.CInputForm
+                        android:id="@+id/cart_note"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.3"
+                        app:iconText="@string/icon_comment"
+                        android:layout_margin="@dimen/_5sdp"/>
+
+                    <Button
+                        android:id="@+id/cart_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.7"
+                        android:layout_gravity="center_vertical"
+                        android:text="chọn ngày"/>
+
+                </LinearLayout>
+
+
                 <Button
                     android:id="@+id/cart_submit"
                     android:layout_width="wrap_content"

@@ -56,6 +56,8 @@
     <string name="icon_city">&#xf279;</string>
     <string name="icon_flag">&#xf024;</string>
     <string name="icon_protect">&#xf132;</string>
+    <string name="icon_bill">&#xf022;</string>
+
 
     <string name="login_username">Nhập tài khoản hoặc SĐT</string>
     <string name="login_password">Nhập mật khẩu</string>

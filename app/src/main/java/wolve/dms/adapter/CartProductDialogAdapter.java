@@ -96,10 +96,10 @@ public class CartProductDialogAdapter extends RecyclerView.Adapter<CartProductDi
             public void onClick(View v) {
                  if (mData.get(position).getBoolean("checked")){
                      holder.cbCheck.setChecked(false);
-                     putValueToParentData(mData.get(position), false);
+//                     putValueToParentData(mData.get(position), false);
                  }else {
                      holder.cbCheck.setChecked(true);
-                     putValueToParentData(mData.get(position), true);
+//                     putValueToParentData(mData.get(position), true);
                  }
             }
         });
@@ -110,11 +110,11 @@ public class CartProductDialogAdapter extends RecyclerView.Adapter<CartProductDi
                 try {
                     if (isChecked){
                         mData.get(position).put("checked", true);
-                        putValueToParentData(mData.get(position), true);
+//                        putValueToParentData(mData.get(position), true);
 
                     }else {
                         mData.get(position).put("checked", false);
-                        putValueToParentData(mData.get(position), false);
+//                        putValueToParentData(mData.get(position), false);
                     }
                 }catch (JSONException e){
                     e.printStackTrace();
@@ -147,17 +147,21 @@ public class CartProductDialogAdapter extends RecyclerView.Adapter<CartProductDi
 
     }
 
-    private void putValueToParentData(Product product, Boolean checked){
-        try {
-            for (int i=0; i<allData.size(); i++){
-                if (product.getInt("id") == allData.get(i).getInt("id")){
-                    allData.get(i).put("checked", checked);
-                    break;
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public List<Product> getAllData(){
+        return mData;
     }
+
+//    private void putValueToParentData(Product product, Boolean checked){
+//        try {
+//            for (int i=0; i<allData.size(); i++){
+//                if (product.getInt("id") == allData.get(i).getInt("id")){
+//                    allData.get(i).put("checked", checked);
+//                    break;
+//                }
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 }

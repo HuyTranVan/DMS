@@ -5,7 +5,8 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="text_color_white_hint">#5effffff</color>
-    <color name="colorGray">#e0e0e0</color>
+    <color name="colorGrey">#e0e0e0</color>
+    <color name="colorLightGrey">#0d000000</color>
     <color name="bg_even_list_item">#f8f8f8</color>
 
     <color name="colorGreen">#8fd811</color>

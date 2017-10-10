@@ -41,19 +41,13 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
     private List<Product> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
-    private CallbackBoolean mChangePrice;
-    private CallbackDeleteAdapter mDelete;
+    private CallbackChangePrice mChangePrice;
 
-    public CartProductsAdapter(List<Product> list, CallbackBoolean callbackBoolean, CallbackDeleteAdapter callbackDeleteAdapter) {
+    public CartProductsAdapter(List<Product> list, CallbackChangePrice callbackChangePrice) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
-        this.mChangePrice = callbackBoolean;
-        this.mDelete = callbackDeleteAdapter;
-        for (int i=0; i<list.size(); i++){
-            if (!list.get(i).getBoolean("isPromotion")){
-                this.mData.add(list.get(i));
-            }
-        }
+        this.mChangePrice = callbackChangePrice;
+        this.mData = list;
 
     }
 
@@ -68,6 +62,7 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
     public void onBindViewHolder(final ProductDialogShopCartAdapterViewHolder holder, final int position) {
         holder.tvName.setText(mData.get(position).getString("name") +" ("+Util.FormatMoney(mData.get(position).getDouble("unitPrice")) +")" );
         holder.tvUnitPrice.setText(Util.FormatMoney(mData.get(position).getDouble("totalMoney")));
+        holder.tvDiscount.setText(Util.FormatMoney(mData.get(position).getDouble("discount")));
         holder.tvQuantity.setText(mData.get(position).getInt("quantity").toString());
 
         holder.lnParent.setOnClickListener(new View.OnClickListener() {
@@ -76,10 +71,20 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
                 CustomDialog.showDialogEditProduct(mData.get(position), new CallbackClickProduct() {
                     @Override
                     public void ProductChoice(Product product) {
-                        mData.remove(position);
-                        mData.add(position, product);
-                        mChangePrice.onRespone(true);
-                        notifyDataSetChanged();
+                        //mData.remove(position);
+                        try {
+                            mData.get(position).put("quantity", product.getInt("quantity"));
+                            mData.get(position).put("discount", product.getDouble("discount"));
+                            mData.get(position).put("totalMoney", product.getDouble("totalMoney"));
+
+//                            mData.add(position, product);
+                            mChangePrice.NewPrice(updatePrice(mData));
+                            notifyItemChanged(position);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
                     }
                 });
             }
@@ -93,7 +98,7 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
                     if ( currentQuantity > 1){
                         mData.get(position).put("quantity", currentQuantity -1);
                         mData.get(position).put("totalMoney", (currentQuantity -1)* mData.get(position).getDouble("unitPrice"));
-                        mChangePrice.onRespone(true);
+                        mChangePrice.NewPrice(updatePrice(mData));
                         notifyItemChanged(position);
                     }
                 } catch (JSONException e) {
@@ -108,7 +113,7 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
                     int currentQuantity = mData.get(position).getInt("quantity");
                     mData.get(position).put("quantity", currentQuantity +1);
                     mData.get(position).put("totalMoney", (currentQuantity +1)* mData.get(position).getDouble("unitPrice"));
-                    mChangePrice.onRespone(true);
+                    mChangePrice.NewPrice(updatePrice(mData));
                     notifyItemChanged(position);
 
                 } catch (JSONException e) {
@@ -123,8 +128,8 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
                 CustomDialog.alertWithCancelButton(null, "Xóa " + mData.get(position).getString("name") +" khỏi danh sách" , "ĐỒNG Ý","HỦY", new CallbackBoolean() {
                     @Override
                     public void onRespone(Boolean result) {
-                        mDelete.onDelete(mData.get(position).ProducttoString(), position);
                         mData.remove(position);
+                        mChangePrice.NewPrice(updatePrice(mData));
                         notifyItemRemoved(position);
                         notifyItemRangeChanged(position, getItemCount());
 
@@ -143,7 +148,7 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
     }
 
     public class ProductDialogShopCartAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvName, tvUnitPrice, tvQuantity ;
+        private TextView tvName, tvUnitPrice, tvQuantity ,tvDiscount;
         private RelativeLayout lnParent;
         private CircleImageView imgProduct;
         private CTextView btnSub, btnPlus;
@@ -157,30 +162,30 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
             tvQuantity = (TextView) itemView.findViewById(R.id.shopcart_products_item_quantity);
             btnSub = (CTextView) itemView.findViewById(R.id.shopcart_products_item_sub);
             btnPlus = (CTextView) itemView.findViewById(R.id.shopcart_products_item_plus);
+            tvDiscount = (TextView) itemView.findViewById(R.id.shopcart_products_item_discount);
 
         }
 
     }
 
-    public void addItem(Product product){
+    public void addItemProduct(Product product){
         mData.add(product);
-//        if (!product.getBoolean("isPromotion")){
-//            mData.add(product);
-//        }
-        notifyDataSetChanged();
-        mChangePrice.onRespone(true);
+//        notifyDataSetChanged();
+        notifyItemInserted(mData.size());
+        mChangePrice.NewPrice(updatePrice(mData));
     }
 
-//    public void addAllItems(List<Product> listproduct){
-//        mData = new ArrayList<>();
-//        for (int i=0; i<listproduct.size(); i++){
-//            if (!listproduct.get(i).getBoolean("isPromotion")){
-//                mData.add(listproduct.get(i));
-//            }
-//        }
-//        notifyDataSetChanged();
-//        mChangePrice.onRespone(true);
-//    }
+    public List<Product> getAllDataProduct(){
+        return mData;
+    }
+
+    private Double updatePrice(List<Product> list){
+        Double sum = 0.0;
+        for (int i = 0; i < list.size(); i++) {
+            sum += list.get(i).getDouble("totalMoney");
+        }
+        return sum;
+    }
 
 
 }

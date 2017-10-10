@@ -3,7 +3,6 @@ package wolve.dms.utils;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.graphics.drawable.ColorDrawable;
-import android.renderscript.Double2;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -21,15 +20,15 @@ import android.widget.Toast;
 
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import wolve.dms.R;
 import wolve.dms.adapter.CartProductDialogAdapter;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackClickProduct;
-import wolve.dms.callback.CallbackClickPromotion;
+import wolve.dms.callback.CallbackListProduct;
 import wolve.dms.controls.CTextView;
 import wolve.dms.models.Product;
 
@@ -163,7 +162,7 @@ public class CustomDialog {
         });
     }
 
-    public static void showDialogChoiceProduct(String title, List<Product> listProduct,Boolean isPromotion, final CallbackBoolean callbackBoolean){
+    public static void showDialogChoiceProduct(String title, List<Product> listProduct,Boolean isPromotion, final CallbackListProduct callback){
         final Dialog dialogResult = CustomDialog.showCustomDialog(R.layout.view_dialog_select_product);
         TextView tvTitle = (TextView) dialogResult.findViewById(R.id.dialog_choice_product_title);
         final RadioGroup radioGroup = (RadioGroup) dialogResult.findViewById(R.id.dialog_choice_product_radiogroup);
@@ -215,7 +214,14 @@ public class CustomDialog {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                callbackBoolean.onRespone(true);
+
+                List<Product> listChecked = new ArrayList<Product>();
+                for (int i=0; i<adapter.getAllData().size(); i++){
+                    if (adapter.getAllData().get(i).getBoolean("checked")){
+                        listChecked.add(adapter.getAllData().get(i));
+                    }
+                }
+                callback.Products(listChecked);
                 dialogResult.dismiss();
             }
         });
@@ -239,7 +245,7 @@ public class CustomDialog {
 
         tvTitle.setText(product.getString("name"));
         tvUnitPrice.setText(Util.FormatMoney(product.getDouble("unitPrice")));
-        edDiscount.setText(Util.FormatMoney(product.getDouble("discount")));
+        edDiscount.setText(String.valueOf(Math.round(product.getDouble("discount"))));
         tvNetPrice.setText(Util.FormatMoney(product.getDouble("unitPrice") - product.getDouble("discount")  ));
         edQuantity.setText(String.valueOf(Math.round(product.getDouble("quantity"))));
         tvTotal.setText(Util.FormatMoney(product.getDouble("quantity") * (product.getDouble("unitPrice") - product.getDouble("discount"))));
@@ -318,10 +324,11 @@ public class CustomDialog {
                 if (edQuantity.getText().toString().equals("") || edQuantity.getText().toString().equals("0")){
                     Toast.makeText(Util.getInstance().getCurrentActivity(), "Vui lòng nhập số lượng >0 ",Toast.LENGTH_SHORT).show();
 
-                }else {
+                }
+                else {
                     try {
                         Product newProduct = product;
-                        newProduct.put("quantity", edQuantity.getText().toString());
+                        newProduct.put("quantity", Integer.parseInt(edQuantity.getText().toString()));
                         newProduct.put("discount", edDiscount.getText().toString().equals("") ? 0 : Double.parseDouble(edDiscount.getText().toString()));
                         newProduct.put("totalMoney", tvTotal.getText().toString().replace(".",""));
 

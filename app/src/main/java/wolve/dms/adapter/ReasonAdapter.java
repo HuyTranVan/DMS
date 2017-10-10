@@ -65,14 +65,14 @@ public class ReasonAdapter extends RecyclerView.Adapter<ReasonAdapter.ReasonAdap
     }
 
     public int getCheckedReason(){
-        int position = 0;
+        int pos = 0;
         for (int i=0; i<mData.size(); i++){
             if (mData.get(i).getBoolean("checked")){
-                position = mData.get(i).getInt("id");
+                pos= mData.get(i).getInt("id");
                 break;
             }
         }
-        return position;
+        return pos;
     }
 
 

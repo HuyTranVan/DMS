@@ -615,6 +615,24 @@ public class Util {
 
     }
 
+    public static long TimeStamp1(String ddMMyyyy){
+
+        SimpleDateFormat dfm = new SimpleDateFormat("dd-MM-yyyy");
+
+        long unixtime = 0;
+        try
+        {
+            unixtime = dfm.parse(ddMMyyyy).getTime();
+            unixtime=unixtime;
+        }
+        catch (ParseException e)
+        {
+            e.printStackTrace();
+        }
+        return unixtime;
+
+    }
+
     public static String DateString(long timestamp){
         String date ="";
 
@@ -634,6 +652,42 @@ public class Util {
         //cal.setTimeInMillis(timestamp*1000);
         cal.setTimeInMillis(timestamp);
         date = DateFormat.format("dd-MM-yyyy (HH:mm)", cal).toString();
+
+        return date;
+
+    }
+
+    public static String DateMonthString(long timestamp){
+        String date ="";
+
+        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+        //cal.setTimeInMillis(timestamp*1000);
+        cal.setTimeInMillis(timestamp);
+        date = DateFormat.format("dd/MM", cal).toString();
+
+        return date;
+
+    }
+
+    public static String YearString(long timestamp){
+        String date ="";
+
+        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+        //cal.setTimeInMillis(timestamp*1000);
+        cal.setTimeInMillis(timestamp);
+        date = DateFormat.format("yyyy", cal).toString();
+
+        return date;
+
+    }
+
+    public static String HourString(long timestamp){
+        String date ="";
+
+        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+        //cal.setTimeInMillis(timestamp*1000);
+        cal.setTimeInMillis(timestamp);
+        date = DateFormat.format("HH:mm", cal).toString();
 
         return date;
 
@@ -798,10 +852,10 @@ public class Util {
         try {
             for (int i=0; i<result.length(); i++){
                 Product product = new Product(result.getJSONObject(i));
-                product.put("totalMoney", product.getDouble("unitPrice"));
-                product.put("quantity", 1);
-                product.put("discount", 0);
-                product.put("checked", false);
+//                product.put("totalMoney", product.getDouble("unitPrice"));
+//                product.put("quantity", 1);
+//                product.put("discount", 0);
+//                product.put("checked", false);
                 mListProduct.add(product);
             }
             setPromotionList(mListProduct);

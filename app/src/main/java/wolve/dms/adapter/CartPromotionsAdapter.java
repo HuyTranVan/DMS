@@ -38,18 +38,17 @@ public class CartPromotionsAdapter extends RecyclerView.Adapter<CartPromotionsAd
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mDelete = callbackDeleteAdapter;
+        this.mData = list;
 
-        try {
-            for (int i=0; i<list.size(); i++){
-                if (list.get(i).getBoolean("isPromotion")){
-                    list.get(i).put("totalMoney",0);
-                    list.get(i).put("discount", list.get(i).getDouble("unitPrice"));
-                    this.mData.add(list.get(i));
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            for (int i=0; i<list.size(); i++){
+//                list.get(i).put("totalMoney",0);
+//                list.get(i).put("discount", list.get(i).getDouble("unitPrice"));
+//                this.mData.add(list.get(i));
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
 
     }
 
@@ -139,33 +138,14 @@ public class CartPromotionsAdapter extends RecyclerView.Adapter<CartPromotionsAd
 
     }
 
-    public void addItem(Product product){
+    public void addItemPromotion(Product product){
         mData.add(product);
-//        try {
-//            if (product.getBoolean("isPromotion")){
-//                mData.add(product);
-//            }
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
         notifyDataSetChanged();
-    }
 
-//    public void addAllItems(List<Product> listproduct){
-//        mData = new ArrayList<>();
-////        try {
-//            for (int i=0; i<listproduct.size(); i++){
-//                if (listproduct.get(i).getBoolean("isPromotion")){
-////                    listproduct.get(i).put("totalMoney",0);
-////                    listproduct.get(i).put("discount", listproduct.get(i).getDouble("unitPrice"));
-//                    mData.add(listproduct.get(i));
-//                }
-//            }
-////        } catch (JSONException e) {
-////            e.printStackTrace();
-////        }
-//        notifyDataSetChanged();
-//    }
+    }
+    public List<Product> getAllDataPromotion(){
+        return mData;
+    }
 
 
 }

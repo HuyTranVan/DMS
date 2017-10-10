@@ -103,7 +103,7 @@
                 android:layout_height="@dimen/_50sdp"
                 android:layout_margin="@dimen/_10sdp"
                 app:civ_border_width="1dip"
-                app:civ_border_color="@color/colorGray"
+                app:civ_border_color="@color/colorGrey"
                 android:src="@drawable/icon_lubricant_bottle"/>
 
             <Button
@@ -126,7 +126,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dip"
-        android:background="@color/colorGray"
+        android:background="@color/colorGrey"
         android:layout_gravity="bottom"/>
 
     <Button

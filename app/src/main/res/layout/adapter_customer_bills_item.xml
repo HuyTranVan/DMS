@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bills_item_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@drawable/colorwhite_pressed">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/_5sdp">
+
+        <View
+            android:id="@+id/bills_item_upper"
+            android:layout_width="1dip"
+            android:layout_height="match_parent"
+            android:background="#e5e5e5"
+            android:layout_above="@+id/bills_item_icon"
+            android:layout_centerHorizontal="true"/>
+
+        <wolve.dms.controls.CTextView
+            android:id="@+id/bills_item_icon"
+            android:layout_width="@dimen/_16sdp"
+            android:layout_height="@dimen/_16sdp"
+            android:background="@drawable/bg_greendark_rounded_button"
+            android:textColor="@color/colorWhite"
+            android:text="@string/icon_bill"
+            android:textSize="@dimen/_8sdp"
+            android:gravity="center"
+            android:layout_centerVertical="true"
+            app:customFont="@string/font_awesome"/>
+
+        <View
+            android:id="@+id/bills_item_under"
+            android:layout_width="1dip"
+            android:layout_height="match_parent"
+            android:background="#e5e5e5"
+            android:layout_below="@+id/bills_item_icon"
+            android:layout_centerHorizontal="true"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="@dimen/_45sdp"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/bills_item_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/bills_item_line"
+            android:paddingLeft="@dimen/_2sdp"
+            android:text="Default"
+            android:textColor="@color/black_text_color_hint"
+            android:textSize="@dimen/_7sdp" />
+
+        <View
+            android:id="@+id/bills_item_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_centerVertical="true"
+            android:background="#e5e5e5" />
+
+        <TextView
+            android:id="@+id/bills_item_hour"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/bills_item_line"
+            android:gravity="right"
+            android:paddingRight="@dimen/_2sdp"
+            android:text="Default"
+            android:textColor="@color/black_text_color_hint"
+            android:textSize="@dimen/_7sdp" />
+
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:id="@+id/bills_item_content_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/colorwhite_bordergrey_corner"
+        android:orientation="vertical"
+        android:paddingTop="5dp">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/bills_item_rvproduct"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_2sdp"
+            android:clipToPadding="true"
+            android:paddingBottom="@dimen/_5sdp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_centerVertical="true"
+            android:background="#e5e5e5" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorLightGrey"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/_2sdp"
+            android:paddingTop="@dimen/_2sdp"
+            android:weightSum="3">
+
+            <TextView
+                android:id="@+id/bills_item_debt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="Default"
+                android:textColor="@color/colorRed"
+                android:textSize="@dimen/_8sdp" />
+
+            <TextView
+                android:id="@+id/bills_item_pay"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="Default"
+                android:textColor="@color/black_text_color_hint"
+                android:textSize="@dimen/_8sdp" />
+
+            <TextView
+                android:id="@+id/bills_item_total"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="Default"
+                android:textColor="@color/colorBlue"
+                android:textSize="@dimen/_8sdp" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</LinearLayout>

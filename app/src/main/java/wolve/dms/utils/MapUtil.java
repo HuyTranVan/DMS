@@ -206,14 +206,20 @@ public class MapUtil{
 
         try {
             int markertype = new JSONObject(customer.getString("status")).getInt("id");
-            int checkinCount = new JSONArray(customer.getString("checkIns")).length();
+            int checkinCount = 0;
             int icon=0;
             if (markertype ==1){
                 icon = R.drawable.ico_pin_red;
+                checkinCount = new JSONArray(customer.getString("checkIns")).length();
             }else if (markertype == 2){
                 icon = R.drawable.ico_pin_grey;
+                checkinCount = new JSONArray(customer.getString("checkIns")).length();
             }else {
                 icon = R.drawable.ico_pin_blue;
+                if (customer.getString("bills") != null && customer.getString("bills").equals("[]")){
+                    checkinCount = new JSONArray(customer.getString("bills")).length();
+                }
+
             }
 
             currentMarker = mMap.addMarker(new MarkerOptions().position(markerPosition).snippet(add).title(title));
@@ -265,6 +271,7 @@ public class MapUtil{
                 if (object.getString("id").equals(customer.getString("id"))){
                     Marker marker = markers.get(i);
                     marker.showInfoWindow();
+
 
                     isNew = false;
                     break;

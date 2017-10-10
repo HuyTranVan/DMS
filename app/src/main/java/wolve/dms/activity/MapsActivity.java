@@ -108,7 +108,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         rdFilter = (RadioGroup) findViewById(R.id.map_filter);
 
         btnLocation.setColorNormalResId(R.color.colorWhite);
-        btnLocation.setColorPressedResId(R.color.colorGray);
+        btnLocation.setColorPressedResId(R.color.colorGrey);
         btnNewCustomer.setMenuButtonColorNormalResId(R.color.colorBlue);
         btnNewCustomer.setMenuButtonColorPressedResId(R.color.colorBlueDark);
 

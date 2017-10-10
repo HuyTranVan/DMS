@@ -1,64 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/customer_parent"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <RelativeLayout
-        android:id="@+id/customer_header"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_35sdp"
-        android:background="@drawable/bg_header_top">
-
-        <ImageView
-            android:id="@+id/icon_back"
-            android:layout_width="@dimen/_35sdp"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_arrow_back_black_18dp"
-            android:padding="@dimen/_8sdp"
-            android:background="?selectableItemBackground"/>
-
-        <TextView
-            android:id="@+id/add_customer_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="CỬA HÀNG"
-            android:textSize="@dimen/_14sdp"
-            android:textColor="@color/black_text_color"
-            android:layout_centerInParent="true"/>
-
-
-        <wolve.dms.controls.CTextView
-            android:id="@+id/icon_more"
-            android:layout_width="@dimen/_35sdp"
-            android:layout_height="match_parent"
-            android:text="@string/icon_trash"
-            android:textColor="@color/black_text_color_hint"
-            android:textSize="@dimen/_14sdp"
-            android:gravity="center"
-            android:background="?selectableItemBackground"
-            android:layout_alignParentRight="true"
-            app:customFont="@string/font_awesome"/>
-
-
-    </RelativeLayout>
-
-    <ScrollView
-        android:id="@+id/customer_parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:nestedScrollingEnabled="true"
-        android:layout_below="@+id/customer_header">
+        android:orientation="vertical">
 
-        <LinearLayout
+        <RelativeLayout
+            android:id="@+id/customer_header"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:background="@drawable/bg_header_top">
+
+            <ImageView
+                android:id="@+id/icon_back"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_arrow_back_black_18dp"
+                android:padding="@dimen/_8sdp"
+                android:background="?selectableItemBackground"/>
+
+            <TextView
+                android:id="@+id/add_customer_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CỬA HÀNG"
+                android:textSize="@dimen/_14sdp"
+                android:textColor="@color/black_text_color"
+                android:layout_centerInParent="true"/>
+
+
+            <wolve.dms.controls.CTextView
+                android:id="@+id/icon_more"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="match_parent"
+                android:text="@string/icon_trash"
+                android:textColor="@color/black_text_color_hint"
+                android:textSize="@dimen/_14sdp"
+                android:gravity="center"
+                android:background="?selectableItemBackground"
+                android:layout_alignParentRight="true"
+                app:customFont="@string/font_awesome"/>
+
+
+        </RelativeLayout>
+
+        <RadioGroup
+            android:id="@+id/customer_radiogroup_status"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_below="@+id/customer_header"
+            android:background="@drawable/pink_out_line"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:weightSum="9"
+            android:layout_marginLeft="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginRight="@dimen/_20sdp"
+            android:checkedButton="@+id/customer_radio_status_interested">
+
+            <RadioButton
+                android:id="@+id/customer_radio_status_interested"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:background="@drawable/toggle_widget_background"
+                android:text="Quan tâm"
+                android:textSize="@dimen/_12sdp"
+                android:textColor="@drawable/text_white_selected"
+                android:button="@null"
+                android:layout_marginLeft="1dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginBottom="1dp"
+                android:gravity="center"/>
+
+            <RadioButton
+                android:id="@+id/customer_radio_status_nointerested"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/toggle_widget_background"
+                android:layout_weight="3"
+                android:text="0 quan tâm"
+                android:textSize="@dimen/_12sdp"
+                android:textColor="@drawable/text_white_selected"
+                android:button="@null"
+                android:layout_margin="1dp"
+                android:gravity="center"/>
+
+            <RadioButton
+                android:id="@+id/customer_radio_status_ordered"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/toggle_widget_background"
+                android:layout_weight="3"
+                android:text="Đã Order"
+                android:textSize="@dimen/_12sdp"
+                android:textColor="@drawable/text_white_selected"
+                android:button="@null"
+                android:layout_marginBottom="1dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginRight="1dp"
+                android:gravity="center"/>
+
+        </RadioGroup>
+
+        <View
+            android:id="@+id/customer_line"
+            android:layout_width="wrap_content"
+            android:layout_height="2dp"
+            android:background="#75b9b3b3"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_below="@+id/customer_radiogroup_status"/>
+
+        <ScrollView
+            android:id="@+id/customer_scrollview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:background="@color/colorWhite"
-            android:clickable="true">
+            android:nestedScrollingEnabled="true"
+            android:layout_below="@+id/customer_line"
+            android:layout_marginBottom="57dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -67,335 +133,339 @@
                 android:background="@color/colorWhite"
                 android:clickable="true">
 
-                <RadioGroup
-                    android:id="@+id/customer_radiogroup_status"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/_30sdp"
-                    android:background="@drawable/pink_out_line"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:weightSum="9"
-                    android:layout_marginLeft="@dimen/_20sdp"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginRight="@dimen/_20sdp"
-                    android:checkedButton="@+id/customer_radio_status_interested">
-
-                    <RadioButton
-                        android:id="@+id/customer_radio_status_interested"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="3"
-                        android:background="@drawable/toggle_widget_background"
-                        android:text="Quan tâm"
-                        android:textSize="@dimen/_12sdp"
-                        android:textColor="@drawable/text_white_selected"
-                        android:button="@null"
-                        android:layout_marginLeft="1dp"
-                        android:layout_marginTop="1dp"
-                        android:layout_marginBottom="1dp"
-                        android:gravity="center"/>
-
-                    <RadioButton
-                        android:id="@+id/customer_radio_status_nointerested"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/toggle_widget_background"
-                        android:layout_weight="3"
-                        android:text="0 quan tâm"
-                        android:textSize="@dimen/_12sdp"
-                        android:textColor="@drawable/text_white_selected"
-                        android:button="@null"
-                        android:layout_margin="1dp"
-                        android:gravity="center"/>
-
-                    <RadioButton
-                        android:id="@+id/customer_radio_status_ordered"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/toggle_widget_background"
-                        android:layout_weight="3"
-                        android:text="Đã Order"
-                        android:textSize="@dimen/_12sdp"
-                        android:textColor="@drawable/text_white_selected"
-                        android:button="@null"
-                        android:layout_marginBottom="1dp"
-                        android:layout_marginTop="1dp"
-                        android:layout_marginRight="1dp"
-                        android:gravity="center"/>
-
-                </RadioGroup>
-
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:paddingLeft="@dimen/_10sdp"
-                    android:paddingRight="@dimen/_10sdp">
+                    android:background="@color/colorWhite"
+                    android:clickable="true">
 
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <wolve.dms.controls.CInputForm
-                            android:id="@+id/add_customer_shoptype"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:inputType="textCapWords"
-                            app:textHint="Rua xe"
-                            app:iconText="@string/icon_product"/>
-
-                        <View
-                            android:layout_width="1px"
-                            android:layout_height="match_parent"
-                            android:background="@color/colorGray"
-                            android:layout_margin="@dimen/_5sdp"/>
-
-                        <wolve.dms.controls.CInputForm
-                            android:id="@+id/add_customer_shopname"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:inputType="textCapWords"
-                            app:textHint=""
-                            app:iconText="@string/icon_home"/>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <wolve.dms.controls.CInputForm
-                            android:id="@+id/add_customer_name"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:inputType="textCapWords"
-                            app:textHint="Tên chủ tiệm"
-                            app:iconText="@string/icon_username"/>
-
-                        <View
-                            android:layout_width="1px"
-                            android:layout_height="match_parent"
-                            android:background="@color/colorGray"
-                            android:layout_margin="@dimen/_5sdp"/>
-
-                        <wolve.dms.controls.CInputForm
-                            android:id="@+id/add_customer_phone"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:inputType="number"
-                            app:textHint="Số điện thoại"
-                            app:iconText="@string/icon_phone"/>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <wolve.dms.controls.CInputForm
-                            android:id="@+id/add_customer_adress"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:inputType="textCapWords"
-                            app:textHint="Số nhà"
-                            app:iconText="@string/icon_flag"/>
-
-                        <View
-                            android:layout_width="1px"
-                            android:layout_height="match_parent"
-                            android:background="@color/colorGray"
-                            android:layout_margin="@dimen/_5sdp"/>
-
-                        <wolve.dms.controls.CInputForm
-                            android:id="@+id/add_customer_street"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:inputType="textCapWords"
-                            app:textHint="Tên đường"
-                            app:iconText="@string/icon_adress"/>
-
-                    </LinearLayout>
-
-
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <wolve.dms.controls.CInputForm
-                            android:id="@+id/add_customer_district"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:inputType="textCapWords"
-                            app:textHint="Quận / Huyện"
-                            app:iconText="@string/icon_district"/>
-
-                        <View
-                            android:layout_width="1px"
-                            android:layout_height="match_parent"
-                            android:background="@color/colorGray"
-                            android:layout_margin="@dimen/_5sdp"/>
-
-                        <wolve.dms.controls.CInputForm
-                            android:id="@+id/add_customer_city"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:inputType="number"
-                            app:textHint="Thành phố"
-                            app:iconText="@string/icon_city"/>
-
-                    </LinearLayout>
-
-
-
-
-
-                </LinearLayout>
-
-                <RelativeLayout
-                    android:id="@+id/add_customer_map_parent"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/_150sdp"
-                    android:layout_marginTop="@dimen/_2sdp"
-                    android:focusableInTouchMode="false">
-
-                    <fragment
-                        android:id="@+id/add_customer_map"
-                        android:name="com.google.android.gms.maps.SupportMapFragment"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        class="wolve.dms.controls.WorkaroundMapFragment"/>
-
-                    <ImageView
-                        android:id="@+id/add_customer_marker"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_pin"
-                        android:layout_centerInParent="true"/>
-
-
-
-                    <Button
-                        android:id="@+id/add_customer_currentlocation"
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/_25sdp"
-                        android:minWidth="@dimen/_75sdp"
-                        android:background="@drawable/btn_confirm_red"
-                        android:text="vị trí hiện tại"
-                        android:textSize="@dimen/_8sdp"
-                        android:textColor="@color/colorWhite"
-                        android:layout_alignParentBottom="true"
-                        android:layout_margin="@dimen/_5sdp"
-                        />
-
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:background="@color/colorWhite">
 
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:background="@drawable/colorwhite_cornerred"
-                        android:layout_marginTop="@dimen/_10sdp"
-                        android:paddingLeft="@dimen/_5sdp"
-                        android:paddingRight="@dimen/_5sdp"
-                        android:paddingBottom="@dimen/_5sdp"
-                        android:paddingTop="@dimen/_10sdp"
-                        android:layout_marginLeft="@dimen/_5sdp"
-                        android:layout_marginRight="@dimen/_5sdp">
+                        android:paddingLeft="@dimen/_10sdp"
+                        android:paddingRight="@dimen/_10sdp">
 
-                        <android.support.v7.widget.RecyclerView
-                            android:id="@+id/add_customer_rvreason"
+
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            />
+                            android:orientation="horizontal">
 
-                        <wolve.dms.controls.CInputForm
-                            android:id="@+id/add_customer_note"
+                            <wolve.dms.controls.CInputForm
+                                android:id="@+id/add_customer_shoptype"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5"
+                                android:inputType="textCapWords"
+                                app:textHint="Rua xe"
+                                app:iconText="@string/icon_product"/>
+
+                            <View
+                                android:layout_width="1px"
+                                android:layout_height="match_parent"
+                                android:background="@color/colorGrey"
+                                android:layout_margin="@dimen/_5sdp"/>
+
+                            <wolve.dms.controls.CInputForm
+                                android:id="@+id/add_customer_shopname"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5"
+                                android:inputType="textCapWords"
+                                app:textHint=""
+                                app:iconText="@string/icon_home"/>
+
+                        </LinearLayout>
+
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:inputType="textCapSentences"
-                            app:textHint="Ghi chú"
-                            app:iconText="@string/icon_comment"
-                            app:iconColor="@color/colorBlueTransparent"
-                            app:textColor="@color/colorBlue"
-                            app:textColorHint="@color/colorBlueTransparent"/>
+                            android:orientation="horizontal">
+
+                            <wolve.dms.controls.CInputForm
+                                android:id="@+id/add_customer_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5"
+                                android:inputType="textCapWords"
+                                app:textHint="Tên chủ tiệm"
+                                app:iconText="@string/icon_username"/>
+
+                            <View
+                                android:layout_width="1px"
+                                android:layout_height="match_parent"
+                                android:background="@color/colorGrey"
+                                android:layout_margin="@dimen/_5sdp"/>
+
+                            <wolve.dms.controls.CInputForm
+                                android:id="@+id/add_customer_phone"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5"
+                                android:inputType="number"
+                                app:textHint="Số điện thoại"
+                                app:iconText="@string/icon_phone"/>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <wolve.dms.controls.CInputForm
+                                android:id="@+id/add_customer_adress"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5"
+                                android:inputType="textCapWords"
+                                app:textHint="Số nhà"
+                                app:iconText="@string/icon_flag"/>
+
+                            <View
+                                android:layout_width="1px"
+                                android:layout_height="match_parent"
+                                android:background="@color/colorGrey"
+                                android:layout_margin="@dimen/_5sdp"/>
+
+                            <wolve.dms.controls.CInputForm
+                                android:id="@+id/add_customer_street"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5"
+                                android:inputType="textCapWords"
+                                app:textHint="Tên đường"
+                                app:iconText="@string/icon_adress"/>
+
+                        </LinearLayout>
+
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <wolve.dms.controls.CInputForm
+                                android:id="@+id/add_customer_district"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5"
+                                android:inputType="textCapWords"
+                                app:textHint="Quận / Huyện"
+                                app:iconText="@string/icon_district"/>
+
+                            <View
+                                android:layout_width="1px"
+                                android:layout_height="match_parent"
+                                android:background="@color/colorGrey"
+                                android:layout_margin="@dimen/_5sdp"/>
+
+                            <wolve.dms.controls.CInputForm
+                                android:id="@+id/add_customer_city"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5"
+                                android:inputType="number"
+                                app:textHint="Thành phố"
+                                app:iconText="@string/icon_city"/>
+
+                        </LinearLayout>
+
+
+
+
 
                     </LinearLayout>
 
-                    <TextView
+                    <RelativeLayout
+                        android:id="@+id/add_customer_map_parent"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_150sdp"
+                        android:layout_marginTop="@dimen/_2sdp"
+                        android:focusableInTouchMode="false">
+
+                        <fragment
+                            android:id="@+id/add_customer_map"
+                            android:name="com.google.android.gms.maps.SupportMapFragment"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            class="wolve.dms.controls.WorkaroundMapFragment"/>
+
+                        <ImageView
+                            android:id="@+id/add_customer_marker"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_pin"
+                            android:layout_centerInParent="true"/>
+
+
+                        <Button
+                            android:id="@+id/add_customer_editlocation"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/_25sdp"
+                            android:minWidth="@dimen/_75sdp"
+                            android:background="@drawable/btn_confirm_red"
+                            android:text="vị trí hiện tại"
+                            android:textSize="@dimen/_8sdp"
+                            android:textColor="@color/colorWhite"
+                            android:layout_alignParentBottom="true"
+                            android:layout_margin="@dimen/_5sdp" />
+
+                        <com.github.clans.fab.FloatingActionButton
+                            android:id="@+id/add_customer_currentlocation"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_my_location_black_18dp"
+                            android:layout_margin="@dimen/_5sdp"
+                            android:layout_alignParentBottom="true"
+                            android:layout_above="@+id/map_new_customer"
+                            android:layout_alignParentRight="true"
+                            app:fab_size="mini"
+                            app:fab_colorNormal="@color/colorWhite"
+                            app:fab_colorPressed="@color/colorGrey"
+                            android:alpha="0.7"
+                            android:visibility="gone"/>
+
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@color/colorWhite">
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:background="@drawable/colorwhite_cornerred"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:paddingLeft="@dimen/_5sdp"
+                            android:paddingRight="@dimen/_5sdp"
+                            android:paddingBottom="@dimen/_5sdp"
+                            android:paddingTop="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_5sdp"
+                            android:layout_marginRight="@dimen/_5sdp">
+
+                            <android.support.v7.widget.RecyclerView
+                                android:id="@+id/add_customer_rvreason"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                />
+
+                            <wolve.dms.controls.CInputForm
+                                android:id="@+id/add_customer_note"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5"
+                                android:inputType="textCapSentences"
+                                app:textHint="Ghi chú"
+                                app:iconText="@string/icon_comment"
+                                app:textSize="@dimen/_5sdp"
+                                app:iconSize="@dimen/_5sdp"
+                                app:iconColor="@color/colorBlueTransparent"
+                                app:textColor="@color/colorBlue"
+                                app:textColorHint="@color/colorBlueTransparent"/>
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/_20sdp"
+                            android:minWidth="@dimen/_70sdp"
+                            android:background="@drawable/colorwhite_cornerred"
+                            android:text="CHECK_IN"
+                            android:textAllCaps="true"
+                            android:textColor="@color/colorRed"
+                            android:textSize="@dimen/_10sdp"
+                            android:gravity="center"
+                            android:layout_centerHorizontal="true" />
+
+
+                    </RelativeLayout>
+
+                    <Button
+                        android:id="@+id/add_customer_submit"
                         android:layout_width="wrap_content"
-                        android:layout_height="@dimen/_20sdp"
-                        android:minWidth="@dimen/_70sdp"
-                        android:background="@drawable/colorwhite_cornerred"
-                        android:text="CHECK_IN"
+                        android:layout_height="@dimen/_30sdp"
+                        android:minWidth="@dimen/_150sdp"
+                        android:background="@drawable/btn_confirm_blue"
+                        android:layout_margin="@dimen/_10sdp"
+                        android:text="CẬP NHẬT"
                         android:textAllCaps="true"
-                        android:textColor="@color/colorRed"
-                        android:textSize="@dimen/_10sdp"
-                        android:gravity="center"
-                        android:layout_centerHorizontal="true"
-                        />
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_14sdp"
+                        android:layout_gravity="center_horizontal"/>
 
+                </LinearLayout>
 
-                </RelativeLayout>
-
-                <Button
-                    android:id="@+id/add_customer_submit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/_30sdp"
-                    android:minWidth="@dimen/_150sdp"
-                    android:background="@drawable/btn_confirm_blue"
-                    android:layout_margin="@dimen/_10sdp"
-                    android:text="CẬP NHẬT"
-                    android:textAllCaps="true"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/_14sdp"
-                    android:layout_gravity="center_horizontal"/>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/add_customer_rvcheckins"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
 
             </LinearLayout>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/add_customer_rvcheckins"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+        </ScrollView>
 
-        </LinearLayout>
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/add_customer_shopcart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_shopping_cart_white_18dp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_marginBottom="70dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            app:fab_size="normal"
+            app:fab_colorNormal="@color/colorBlue"
+            app:fab_colorPressed="@color/colorBlueDark"/>
+    </RelativeLayout>
 
-    </ScrollView>
+    <LinearLayout
+        android:id="@+id/customer_bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="57dp"
+        android:orientation="vertical"
+        app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
-    <com.github.clans.fab.FloatingActionButton
-        android:id="@+id/add_customer_shopcart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_shopping_cart_white_18dp"
-        android:layout_margin="@dimen/_10sdp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        app:fab_size="normal"
-        app:fab_colorNormal="@color/colorBlue"
-        app:fab_colorPressed="@color/colorBlueDark"/>
-</RelativeLayout>
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:background="#75b9b3b3"/>
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/customer_tabs"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="#f4f4f4"
+            app:tabGravity="fill"
+            app:tabIndicatorColor="@color/colorGreen"
+            app:tabIndicatorHeight="3dp"
+            app:tabMode="fixed"
+            app:tabSelectedTextColor="@color/colorGreen"
+            app:tabTextAppearance="@style/NavigationTabTextAppeareance"
+            app:tabTextColor="@color/black_text_color_hint" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/customer_viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorWhite"
+            />
+
+    </LinearLayout>
+
+</android.support.design.widget.CoordinatorLayout>
+
+
 
 
 

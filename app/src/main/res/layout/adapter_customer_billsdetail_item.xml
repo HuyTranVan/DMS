@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/customer_billdetail_item_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@color/colorWhite">
+
+    <TextView
+        android:id="@+id/customer_billdetail_item_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.55"
+        android:text="San pham"
+        android:textSize="@dimen/_10sdp"
+        android:singleLine="true"
+        android:paddingLeft="5dp"
+        android:paddingTop="@dimen/_2sdp"
+        android:paddingBottom="@dimen/_2sdp"/>
+
+    <TextView
+        android:id="@+id/customer_billdetail_item_quantity"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.23"
+        android:text="6x125.000"
+        android:textSize="@dimen/_8sdp"
+        android:singleLine="true"/>
+
+    <TextView
+        android:id="@+id/customer_billdetail_item_discount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.17"
+        android:text="-10.000"
+        android:textSize="@dimen/_8sdp"
+        android:singleLine="true"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/customer_billdetail_item_total"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.25"
+        android:text="000.000"
+        android:textSize="@dimen/_8sdp"
+        android:singleLine="true"
+        android:gravity="right"
+        android:paddingRight="@dimen/_5sdp"/>
+
+</LinearLayout>
