@@ -12,6 +12,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.HomeAdapter;
@@ -20,7 +21,9 @@ import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.apiconnect.StatusConnect;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackJSONArray;
+import wolve.dms.callback.CallbackStatus;
 import wolve.dms.models.Status;
+import wolve.dms.utils.CustomDialog;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -31,13 +34,17 @@ import wolve.dms.utils.Util;
 public class HomeActivity extends BaseActivity implements View.OnClickListener, CallbackClickAdapter {
     private RecyclerView rvItems;
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     private void createListItem() {
         HomeAdapter adapter = new HomeAdapter(HomeActivity.this);
         adapter.notifyDataSetChanged();
         rvItems.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new GridLayoutManager(this, 3);
-        linearLayoutManager.setAutoMeasureEnabled(false);
+        //linearLayoutManager.setAutoMeasureEnabled(false);
         rvItems.setLayoutManager(linearLayoutManager);
 
     }
@@ -70,7 +77,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void onClick(View v) {
-        Transaction.gotoMapsActivity();
+//        Transaction.gotoMapsActivity();
     }
 
     @Override
@@ -81,6 +88,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 break;
 
             case 1:
+                Transaction.gotoStatisticalActivity();
 
                 break;
 

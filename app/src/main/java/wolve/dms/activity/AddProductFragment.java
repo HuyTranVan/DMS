@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.ArrayMap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,16 +25,19 @@ import com.soundcloud.android.crop.Crop;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.R;
+import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.controls.CInputForm;
-import wolve.dms.libraries.CustomPostMultiPartMethod;
+import wolve.dms.libraries.CustomPostMultiPart;
+import wolve.dms.libraries.RestClientHelper;
 import wolve.dms.models.Product;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomDialog;
@@ -187,7 +191,7 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
             });
 
         }else {
-            String param = String.format(Constants.PRODUCT_CREATE_PARAM, product == null? "" : "id="+ product.getString("id") +"&",
+            String param = String.format(Api_link.PRODUCT_CREATE_PARAM, product == null? "" : "id="+ product.getString("id") +"&",
                     Util.encodeString(edName.getText().toString()),
                     edIsPromotion.getText().toString().trim().equals(Constants.IS_PROMOTION) ? true: false,
                     Integer.parseInt(edUnitPrice.getText().toString().trim().replace(",","")),
@@ -240,18 +244,38 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
 
     }
 
-    private void uploadImage(Uri uri){
-        new CustomPostMultiPartMethod("", "", uri, new Callback() {
+    private void uploadImage(Uri  uri){
+        File file = new File(imageChangeUri);
+//        OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
+//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
+//        os.close();
+        Log.e("string", file.toString());
+        Util.getInstance().showLoading();
+        new CustomPostMultiPart(Api_link.PRODUCT_NEW, "image", file, new Callback() {
             @Override
             public void onResponse(JSONObject result) {
-                Log.e("resu;t", result.toString());
+                Util.getInstance().stopLoading(true);
+                try {
+                    if (result.getInt("status") == 200) {
+                        //listener.onResponse(result.getJSONArray("data"));
+
+                    } else {
+                        //listener.onError("Unknow error");
+                    }
+                } catch (JSONException e) {
+                    //listener.onError(e.toString());
+                }
             }
 
             @Override
             public void onError(String error) {
-
+                //listener.onError(error);
+                Util.getInstance().stopLoading(true);
             }
         }).execute();
+
+
+
     }
 
     @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -263,4 +287,6 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
             }
         }
     }
+
+
 }

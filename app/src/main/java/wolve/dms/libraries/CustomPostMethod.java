@@ -61,7 +61,7 @@ public class CustomPostMethod extends AsyncTask<String, Void, String> {
         con.setConnectTimeout(5000);
         con.setRequestMethod("POST");
         con.setRequestProperty("User-Agent", "Mozilla/5.0");
-        con.setRequestProperty("Content-Type",isJsonType? "application/json ":"application/x-www-form-urlencoded");
+        con.setRequestProperty("Content-Type",isJsonType? "application/json":"application/x-www-form-urlencoded");
         con.setRequestProperty("x-wolver-accesstoken", token);
         con.setRequestProperty("x-wolver-accessid", id_user);
 

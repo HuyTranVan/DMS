@@ -404,6 +404,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
                     customer.put("district", objectAdress.getString("district"));
                     customer.put("street", objectAdress.getString("street"));
                     customer.put("address", objectAdress.getString("address"));
+                    customer.put("note", "");
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -420,7 +421,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         }, true);
     }
 
-    private void loadAllCustomer(String district, final Boolean isAll){
+    private void loadAllCustomer(String district, final String isAll){
         String param = "district="+ Util.encodeString(district);
         CustomerConnect.ListCustomer(param, new CallbackJSONArray() {
             @Override
@@ -432,7 +433,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
 
                     }
                     addMarkertoMap(listCustomer, isAll, true);
-                    //mMap.setOnCameraMoveListener(MapsActivity.this);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -447,7 +447,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         }, true);
     }
 
-    private void loadAllCustomerDependLocation(Double lat , Double lng, final Boolean isAll){
+    private void loadAllCustomerDependLocation(Double lat , Double lng, final String isAll){
         CustomerConnect.ListCustomerLocation(Util.encodeString(String.valueOf(lat)), Util.encodeString(String.valueOf(lng)), new CallbackJSONArray() {
             @Override
             public void onResponse(JSONArray result) {
@@ -473,6 +473,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     @Override
     public void onInfoWindowClick(final Marker marker) {
         //mMap.setOnCameraMoveListener(this);
+        mMap.setOnCameraMoveListener(null);
         final Customer customer = new Customer((JSONObject) marker.getTag());
         String param = customer.getString("id");
         CustomerConnect.GetCustomerDetail(param, new CallbackJSONObject() {
@@ -488,12 +489,12 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
             }
         }, true);
 
-
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if (data.getStringExtra(Constants.CUSTOMER) != null && requestCode == Constants.RESULT_CUSTOMER_ACTIVITY){
             try {
                 Customer customer =new Customer(new JSONObject(data.getStringExtra(Constants.CUSTOMER)));
@@ -502,9 +503,10 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }else if (data.getStringExtra(Constants.CUSTOMER) == null){
-            onCameraMove();
         }
+//        else if (data.getStringExtra(Constants.CUSTOMER) == null){
+//            onCameraMove();
+//        }
 
     }
 
@@ -582,20 +584,24 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
         switch (checkedId){
             case R.id.map_filter_all:
-                addMarkertoMap(listCustomer, true, true);
+                addMarkertoMap(listCustomer, Constants.MARKER_ALL, true);
                 break;
 
             case R.id.map_filter_interested:
-                addMarkertoMap(listCustomer, false, true);
+                addMarkertoMap(listCustomer, Constants.MARKER_INTERESTED, true);
+                break;
+
+            case R.id.map_filter_ordered:
+                addMarkertoMap(listCustomer, Constants.MARKER_ORDERED, true);
                 break;
         }
     }
 
-    private void addMarkertoMap(ArrayList<Customer> list, Boolean isAll, Boolean isBound){
+    private void addMarkertoMap(ArrayList<Customer> list, String filter, Boolean isBound){
         mMap.clear();
         LatLng currentPoint = new LatLng(Util.getInstance().getCurrentLocation().getLatitude(), Util.getInstance().getCurrentLocation().getLongitude());
         currentMarker = mMap.addMarker(new MarkerOptions().anchor(0.5f, 0.5f).position(currentPoint).flat(true).icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_location)));
-        MapUtil.getInstance().addListMarkerToMap(mMap, list, isAll, isBound);
+        MapUtil.getInstance().addListMarkerToMap(mMap, list, filter, isBound);
 
     }
 
@@ -641,8 +647,16 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         }
     };
 
-    private Boolean getCheckedFilter(){
-        return rdFilter.getCheckedRadioButtonId() == R.id.map_filter_all ? true : false;
+    private String getCheckedFilter(){
+        String s = Constants.MARKER_ALL;
+        if (rdFilter.getCheckedRadioButtonId() == R.id.map_filter_all){
+            s= Constants.MARKER_ALL;
+        }else if (rdFilter.getCheckedRadioButtonId() == R.id.map_filter_interested){
+            s= Constants.MARKER_INTERESTED;
+        }else {
+            s= Constants.MARKER_ORDERED;
+        }
+        return s;
     }
 
     @Override

@@ -167,7 +167,7 @@ public class MapUtil{
         return objectResult;
     }
 
-    public void addListMarkerToMap(final GoogleMap mMap, final ArrayList<Customer> listCustomer, Boolean isAll, Boolean isBound) {
+    public void addListMarkerToMap(final GoogleMap mMap, final ArrayList<Customer> listCustomer, String filter, Boolean isBound) {
         currentMap = mMap;
         markers = new ArrayList<>();
 
@@ -175,13 +175,21 @@ public class MapUtil{
             try {
                 Customer customer = listCustomer.get(i);
 
-                if (isAll){
-                    markers.add(addMarkerToMap(mMap, customer));
+                if (filter.equals(Constants.MARKER_ALL)){
+//                    markers.add(addMarkerToMap(mMap, customer));
+                    addMarkerToMap(mMap, customer);
 
-                }else {
+                }else if (filter.equals(Constants.MARKER_INTERESTED)){
                     int markertype = new JSONObject(customer.getString("status")).getInt("id");
                     if (markertype == 1 || markertype == 3){
-                        markers.add(addMarkerToMap(mMap, customer));
+//                        markers.add(addMarkerToMap(mMap, customer));
+                        addMarkerToMap(mMap, customer);
+                    }
+                }else if (filter.equals(Constants.MARKER_ORDERED)){
+                    int markertype = new JSONObject(customer.getString("status")).getInt("id");
+                    if (markertype == 3){
+//                        markers.add(addMarkerToMap(mMap, customer));
+                        addMarkerToMap(mMap, customer);
                     }
                 }
 
@@ -206,19 +214,14 @@ public class MapUtil{
 
         try {
             int markertype = new JSONObject(customer.getString("status")).getInt("id");
-            int checkinCount = 0;
-            int icon=0;
+            int checkinCount = customer.getInt("checkinCount");
+            int icon = 0;
             if (markertype ==1){
                 icon = R.drawable.ico_pin_red;
-                checkinCount = new JSONArray(customer.getString("checkIns")).length();
             }else if (markertype == 2){
                 icon = R.drawable.ico_pin_grey;
-                checkinCount = new JSONArray(customer.getString("checkIns")).length();
             }else {
                 icon = R.drawable.ico_pin_blue;
-                if (customer.getString("bills") != null && customer.getString("bills").equals("[]")){
-                    checkinCount = new JSONArray(customer.getString("bills")).length();
-                }
 
             }
 
@@ -242,7 +245,7 @@ public class MapUtil{
         final long start = SystemClock.uptimeMillis();
         Projection proj = mMap.getProjection();
         Point targetPoint = proj.toScreenLocation(target);
-        final long duration = (long) (200 + (targetPoint.y * 0.6));
+        final long duration = (long) (500 + (targetPoint.y * 0.6));
         Point startPoint = proj.toScreenLocation(marker.getPosition());
         startPoint.y = 0;
         final LatLng startLatLng = proj.fromScreenLocation(startPoint);
@@ -267,23 +270,29 @@ public class MapUtil{
         Boolean isNew = true;
         for (int i=0; i<markers.size(); i++){
             try {
-                JSONObject object = new JSONObject(markers.get(i).getTag().toString());
-                if (object.getString("id").equals(customer.getString("id"))){
-                    Marker marker = markers.get(i);
-                    marker.showInfoWindow();
+                if (markers.get(i).getTag() != null){
+                    JSONObject object = new JSONObject(markers.get(i).getTag().toString());
+                    if (object.getString("id").equals(customer.getString("id"))){
+                        markers.get(i).remove();
+
+                        Marker marker = addMarkerToMap(mMap, customer);
+                        marker.showInfoWindow();
 
 
-                    isNew = false;
-                    break;
+                        isNew = false;
+                        break;
+                    }
                 }
+
             } catch (JSONException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
             }
         }
 
         if (isNew){
             Marker marker = addMarkerToMap(mMap, customer);
             marker.showInfoWindow();
+            isNew = false;
         }
     }
 

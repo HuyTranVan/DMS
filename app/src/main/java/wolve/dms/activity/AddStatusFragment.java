@@ -24,6 +24,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import wolve.dms.R;
+import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.apiconnect.StatusConnect;
 import wolve.dms.callback.CallbackBoolean;
@@ -150,7 +151,7 @@ public class AddStatusFragment extends Fragment implements View.OnClickListener,
                     });
 
                 }else {
-                    String param = String.format(Constants.STATUS_CREATE_PARAM, status == null? "" : "id="+ status.getString("id") +"&",
+                    String param = String.format(Api_link.STATUS_CREATE_PARAM, status == null? "" : "id="+ status.getString("id") +"&",
                             Util.encodeString(edName.getText().toString()),
                             currentColor,
                             defaultStatus);

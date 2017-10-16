@@ -41,20 +41,24 @@ import wolve.dms.R;
 import wolve.dms.adapter.CustomerBillsAdapter;
 import wolve.dms.adapter.CustomerCheckinsAdapter;
 import wolve.dms.adapter.CustomerViewpagerAdapter;
-import wolve.dms.adapter.ReasonAdapter;
+import wolve.dms.adapter.CartCheckinReasonAdapter;
+import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackChangePrice;
+import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
+import wolve.dms.callback.CallbackStatus;
 import wolve.dms.controls.CInputForm;
 import wolve.dms.controls.CTextView;
 import wolve.dms.controls.WorkaroundMapFragment;
 import wolve.dms.models.Bill;
 import wolve.dms.models.Checkin;
 import wolve.dms.models.Customer;
+import wolve.dms.models.Status;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomDialog;
-import wolve.dms.utils.MapUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -73,7 +77,6 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     private CInputForm edName, edPhone , edAdress, edStreet, edDistrict, edCity, edNote , edShopType, edShopName;
     private RadioGroup rgStatus;
     private RadioButton rdInterested, rdNotInterested, rdOrdered;
-    private RecyclerView rvReason, rvCheckins;
     private ScrollView scParent;
     private ViewPager viewPager;
     private TabLayout tabLayout;
@@ -83,7 +86,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     private RelativeLayout rlHeader;
 
 
-    private ReasonAdapter reasonAdapter;
+    private CartCheckinReasonAdapter cartCheckinReasonAdapter;
     private CustomerCheckinsAdapter customerCheckinsAdapter;
     private CustomerBillsAdapter customerBillsAdapter;
     private CustomerViewpagerAdapter viewpagerAdapter;
@@ -91,7 +94,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     private List<Checkin> listCheckins = new ArrayList<>();
     private List<Bill> listBills = new ArrayList<>();
     private List<RecyclerView.Adapter> listAdapter = new ArrayList<>();
-    private int currentStatusId = 1;
+    private Status currentStatus= Util.mListStatus.get(0);
     private int currentPosition=0;
     private String firstName ="";
     private float bottomSheetHeight;
@@ -133,8 +136,6 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         rdInterested = (RadioButton) findViewById(R.id.customer_radio_status_interested);
         rdNotInterested = (RadioButton) findViewById(R.id.customer_radio_status_nointerested);
         rdOrdered = (RadioButton) findViewById(R.id.customer_radio_status_ordered);
-        rvReason = (RecyclerView) findViewById(R.id.add_customer_rvreason);
-        rvCheckins = (RecyclerView) findViewById(R.id.add_customer_rvcheckins);
         scParent = (ScrollView) findViewById(R.id.customer_scrollview);
         viewPager = (ViewPager) findViewById(R.id.customer_viewpager);
         tabLayout = (TabLayout) findViewById(R.id.customer_tabs);
@@ -149,15 +150,13 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             }
         });
 
-        tabLayout.setupWithViewPager(viewPager);
-        edShopType.setDropdown(true);
-        edShopType.setDropdownList(Util.arrayToList(Constants.shopName));
-
     }
 
     @Override
     public void initialData() {
-        loadReasonList();
+        //loadReasonList();
+        tabLayout.setupWithViewPager(viewPager);
+
         String bundle = getIntent().getExtras().getString(Constants.CUSTOMER);
         if (bundle != null){
             try {
@@ -168,6 +167,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 edPhone.setText(currentCustomer.getString("phone") == null? "" : currentCustomer.getString("phone"));
                 edAdress.setText((currentCustomer.getString("address") == null? "" : currentCustomer.getString("address")));
                 edStreet.setText(currentCustomer.getString("street") == null? "" : currentCustomer.getString("street"));
+                edNote.setTextHint(currentCustomer.getString("note") == null? "Ghi chú" : "Ghi chú: " +currentCustomer.getString("note"));
                 edDistrict.setText(currentCustomer.getString("district"));
                 edCity.setText(currentCustomer.getString("province"));
                 edShopName.setText(currentCustomer.getString("signBoard"));
@@ -175,10 +175,10 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 tvTitle.setText(edShopType.getText().toString() +" - " + currentCustomer.getString("signBoard") );
 
                 if (currentCustomer.getString("status") != null){
-                    currentStatusId = new JSONObject(currentCustomer.getString("status")).getInt("id");
+                    currentStatus = new Status(currentCustomer.getJsonObject("status"));
                 }
 
-                switch (currentStatusId){
+                switch (currentStatus.getInt("id")){
                     case 1:
                         rdInterested.setChecked(true);
                         break;
@@ -202,24 +202,30 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                     for (int i=0; i<array.length(); i++){
                         listBills.add(new Bill(array.getJSONObject(i)));
                     }
+                    currentPosition = listBills.size();
                 }
 
                 listAdapter.add(0, new CustomerCheckinsAdapter(listCheckins));
-                listAdapter.add(1, new CustomerBillsAdapter(listBills));
+                listAdapter.add(1, new CustomerBillsAdapter(listBills, new CallbackDeleteAdapter() {
+                    @Override
+                    public void onDelete(String data, int position) {
+                        deleteBill(position);
+                        viewpagerAdapter.notifyDataSetChanged();
+                    }
+                }));
                 setupViewPager(listAdapter);
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-
+        btnEditLocation.setText(MAP_EDIT);
         if (currentCustomer.getInt("id") !=0){
             tvTrash.setVisibility(User.getCurrentUser().getString("role").equals("MANAGER") ? View.VISIBLE : View.GONE);
-            btnEditLocation.setVisibility(View.VISIBLE);
-            btnEditLocation.setText(MAP_EDIT);
+            btnSubmit.setText("CHECK_IN & CẬP NHẬT");
         }else {
             tvTrash.setVisibility(View.GONE);
-            btnEditLocation.setVisibility(View.GONE);
+            btnSubmit.setText("CẬP NHẬT");
         }
 
         if (edShopName.getText().toString().trim().equals("")){
@@ -227,6 +233,10 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         }else {
             edPhone.setSelection();
         }
+
+
+        edShopType.setDropdown(true);
+        edShopType.setDropdownList(Util.arrayToList(Constants.shopName));
 
         edShopName.addTextChangeListenter(new CInputForm.OnQueryTextListener() {
             @Override
@@ -283,7 +293,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         listTitle.add(0,"CHECK_IN");
         listTitle.add(1, "HÓA ĐƠN");
 
-        viewpagerAdapter = new CustomerViewpagerAdapter(listadapter, listTitle);
+        viewpagerAdapter = new CustomerViewpagerAdapter(listadapter, listTitle, getTotalMoney(listBills));
         viewPager.setAdapter(viewpagerAdapter);
         viewPager.setCurrentItem(currentPosition);
         viewPager.setOffscreenPageLimit(2);
@@ -316,7 +326,11 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 break;
 
             case R.id.add_customer_submit:
-                submitCustomer();
+                if (currentCustomer.getInt("id") ==0){
+                    submitCustomerCheckin(currentStatus);
+                }else {
+                    loadReasonList();
+                }
 
                 break;
 
@@ -358,7 +372,12 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 @Override
                 public void onResponse(JSONObject result) {
                     final Customer responseCustomer = new Customer(result);
-                    Transaction.gotoShopCartActivity(responseCustomer.CustomertoString());
+                    try {
+                        currentCustomer.put("id", responseCustomer.getInt("id"));
+                        Transaction.gotoShopCartActivity(responseCustomer.CustomertoString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
 
                 }
 
@@ -374,9 +393,9 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
     }
 
-    private void submitCustomer(){
+    private Boolean checkInputField(){
+        Boolean check = false;
         if (edName.getText().toString().trim().equals("")
-                || edAdress.getText().toString().trim().equals("")
                 || edDistrict.getText().toString().trim().equals("")
                 || edCity.getText().toString().trim().equals("")
                 || edShopName.getText().toString().trim().equals("")
@@ -387,36 +406,40 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 }
             });
 
-        }else {
+            check = false;
 
+        }else {
+            check = true;
+        }
+        return check;
+    }
+
+    private void submitCustomer(){
+        if (checkInputField()){
             CustomerConnect.CreateCustomer(createParamCustomer(getCurrentCustomer()), new CallbackJSONObject() {
                 @Override
                 public void onResponse(JSONObject result) {
                     final Customer responseCustomer = new Customer(result);
+                    returnPreviousScreen(responseCustomer);
 
-                    if (reasonAdapter.getCheckedReason() > 0){
-                        String params = String.format(Constants.SCHECKIN_CREATE_PARAM, responseCustomer.getInt("id"),
-                                reasonAdapter.getCheckedReason() ==0 ? currentStatusId : reasonAdapter.getCheckedReason(),
-                                Util.encodeString(edNote.getText().toString().trim()),
-                                User.getCurrentUserId()
-                        );
+                }
 
-                        CustomerConnect.PostCheckin(params, new CallbackJSONObject() {
-                            @Override
-                            public void onResponse(JSONObject result) {
-                                returnPreviousScreen(responseCustomer);
-                            }
+                @Override
+                public void onError(String error) {
 
-                            @Override
-                            public void onError(String error) {
+                }
+            }, true);
+        }
 
-                            }
-                        }, true);
+    }
 
-                    }else {
-                        returnPreviousScreen(responseCustomer);
-                    }
-
+    private void submitCustomerCheckin(final Status status){
+        if (checkInputField()){
+            CustomerConnect.CreateCustomer(createParamCustomer(getCurrentCustomer()), new CallbackJSONObject() {
+                @Override
+                public void onResponse(JSONObject result) {
+                    final Customer responseCustomer = new Customer(result);
+                    submitCheckin(responseCustomer, status);
 
                 }
 
@@ -426,6 +449,28 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 }
             }, false);
         }
+
+    }
+
+    private void submitCheckin(final Customer customer, Status status){
+            String params = String.format(Api_link.SCHECKIN_CREATE_PARAM, customer.getInt("id"),
+                    status.getInt("id"),
+                    Util.encodeString(edNote.getText().toString().trim()),
+                    User.getCurrentUserId()
+            );
+
+            CustomerConnect.PostCheckin(params, new CallbackJSONObject() {
+                @Override
+                public void onResponse(JSONObject result) {
+                    returnPreviousScreen(customer);
+                }
+
+                @Override
+                public void onError(String error) {
+
+                }
+            }, true);
+
     }
 
     @Override
@@ -485,7 +530,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED){
             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         }else {
-            returnPreviousScreen(currentCustomer);
+            returnPreviousScreen(null);
         }
     }
 
@@ -498,7 +543,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 if (customer.getString("bills") != null ){
                     JSONArray array = new JSONArray(customer.getString("bills"));
                     if (array.length() >0){
-                        if (currentStatusId != 3){
+                        if (currentStatus.getInt("id") != 3){
                             rdOrdered.setChecked(true);
                             CustomerConnect.CreateCustomer(createParamCustomer(getCurrentCustomer()), new CallbackJSONObject() {
                                 @Override
@@ -519,7 +564,13 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                     }
 
                 }
-                listAdapter.add(1, new CustomerBillsAdapter(listBills));
+                listAdapter.add(1, new CustomerBillsAdapter(listBills, new CallbackDeleteAdapter() {
+                    @Override
+                    public void onDelete(String data, int position) {
+                        deleteBill(position);
+                        viewpagerAdapter.notifyDataSetChanged();
+                    }
+                }));
                 setupViewPager(listAdapter);
 
             } catch (JSONException e) {
@@ -533,17 +584,17 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
         switch (checkedId){
             case R.id.customer_radio_status_interested:
-                currentStatusId = 1;
+                currentStatus = Util.mListStatus.get(0);
 
                 break;
 
             case R.id.customer_radio_status_nointerested:
-                currentStatusId = 2;
+                currentStatus = Util.mListStatus.get(1);
 
                 break;
 
             case R.id.customer_radio_status_ordered:
-                currentStatusId = 3;
+                currentStatus = Util.mListStatus.get(2);
 
                 break;
 
@@ -551,11 +602,16 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     private void loadReasonList() {
-        reasonAdapter = new ReasonAdapter(Util.mListStatus);
-        reasonAdapter.notifyDataSetChanged();
-        rvReason.setAdapter(reasonAdapter);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        rvReason.setLayoutManager(linearLayoutManager);
+        CustomDialog.showCheckinReason("CHECK_IN", Util.mListStatus, new CallbackStatus() {
+            @Override
+            public void Status(Status status) {
+                if (status == null){
+                    submitCustomer();
+                }else {
+                    submitCustomerCheckin(status );
+                }
+            }
+        });
 
     }
 
@@ -575,7 +631,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             customer.put("lng", currentCustomer.getDouble("lng"));
             customer.put("volumeEstimate", 10);
             customer.put("shopType", Constants.getShopInfo(null,edShopType.getText().toString()));
-            customer.put("status.id", currentStatusId);
+            customer.put("status.id", currentStatus.getInt("id"));
 
 
         } catch (JSONException e) {
@@ -585,7 +641,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     private String createParamCustomer(Customer customer){
-        String param = String.format(Constants.CUSTOMER_CREATE_PARAM, customer.getInt("id") == 0? "" : "id="+ customer.getString("id") +"&",
+        String param = String.format(Api_link.CUSTOMER_CREATE_PARAM, customer.getInt("id") == 0? "" : "id="+ customer.getString("id") +"&",
                 Util.encodeString(customer.getString("name")),//name
                 Util.encodeString(customer.getString("signBoard")),//signBoard
                 Util.encodeString(customer.getString("address")), //address
@@ -635,5 +691,29 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 break;
         }
     }
+
+    private Double getTotalMoney(List<Bill> list){
+        Double money =0.0;
+        for (int i=0; i<list.size(); i++){
+            money += list.get(i).getDouble("total");
+        }
+        return money;
+    }
+
+    private void deleteBill(int count){
+        TabLayout.Tab tab = tabLayout.getTabAt(1);
+        TextView tabTextTitle = (TextView) tabLayout.getTabAt(1).getCustomView().findViewById(R.id.tabNotify);
+        tabTextTitle.setText(String.valueOf(count));
+
+        if (count <=0){
+            tabTextTitle.setVisibility(View.GONE);
+        }else {
+            tabTextTitle.setVisibility(View.VISIBLE);
+            tabTextTitle.setText(String.valueOf(count));
+        }
+
+    }
+
+
 
 }

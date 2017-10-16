@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import wolve.dms.R;
+import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackJSONObject;
@@ -93,7 +94,7 @@ public class AddProdGroupFragment extends Fragment implements View.OnClickListen
 
                 }else {
                     String param = null;
-                    param = String.format(Constants.PRODUCTGROUP_CREATE_PARAM, productGroup == null? "" : "id="+ productGroup.getString("id") +"&",
+                    param = String.format(Api_link.PRODUCTGROUP_CREATE_PARAM, productGroup == null? "" : "id="+ productGroup.getString("id") +"&",
                                 Util.encodeString(edInput.getText().toString()));
 
 

@@ -69,6 +69,9 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.activity.MapsActivity;
+import wolve.dms.activity.StatisticalBillsFragment;
+import wolve.dms.activity.StatisticalDashboardFragment;
+import wolve.dms.activity.StatisticalProductFragment;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
@@ -83,6 +86,10 @@ public class Util {
     private KProgressHUD cDialogLocation;
     public Location currentLocation;
     public static MapsActivity mapsActivity;
+    public static StatisticalDashboardFragment dashboardFragment;
+    public static StatisticalBillsFragment billsFragment;
+    public static StatisticalProductFragment productFragment;
+
 
 
     public static ArrayList<Status> mListStatus;
@@ -138,8 +145,8 @@ public class Util {
         return date;
     }
 
-    public void showToast(String message){
-        Toast.makeText(getCurrentActivity(), message, Toast.LENGTH_SHORT).show();
+    public static void showToast(String message){
+        Toast.makeText(Util.getInstance().getCurrentActivity(), message, Toast.LENGTH_SHORT).show();
     }
 
     public void showLoading() {

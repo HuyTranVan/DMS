@@ -23,14 +23,18 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import wolve.dms.R;
+import wolve.dms.adapter.CartCheckinReasonAdapter;
 import wolve.dms.adapter.CartProductDialogAdapter;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickProduct;
 import wolve.dms.callback.CallbackListProduct;
+import wolve.dms.callback.CallbackStatus;
 import wolve.dms.controls.CTextView;
 import wolve.dms.models.Product;
+import wolve.dms.models.Status;
 
 /**
  * Created by macos on 9/28/17.
@@ -345,5 +349,47 @@ public class CustomDialog {
 
 
     }
+
+    public static void showCheckinReason(String title, List<Status> listStatus, final CallbackStatus callback){
+        final Dialog dialogResult = CustomDialog.showCustomDialog(R.layout.view_dialog_select_status);
+        TextView tvTitle = (TextView) dialogResult.findViewById(R.id.dialog_choice_status_title);
+        RecyclerView rvStatus = (RecyclerView) dialogResult.findViewById(R.id.dialog_choice_status_rvStatus);
+        Button btnCancel = (Button) dialogResult.findViewById(R.id.dialog_choice_status_cancel);
+        Button btnSubmit = (Button) dialogResult.findViewById(R.id.dialog_choice_status_submit);
+
+        tvTitle.setText(title);
+
+        final CartCheckinReasonAdapter adapter = new CartCheckinReasonAdapter(listStatus, new CallbackStatus() {
+            @Override
+            public void Status(Status status) {
+                callback.Status(status);
+                dialogResult.dismiss();
+            }
+        });
+        rvStatus.setAdapter(adapter);
+        rvStatus.setHasFixedSize(true);
+        rvStatus.setNestedScrollingEnabled(false);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(), LinearLayoutManager.VERTICAL, false);
+        rvStatus.setLayoutManager(layoutManager);
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogResult.dismiss();
+            }
+        });
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                callback.Status(null);
+                dialogResult.dismiss();
+            }
+        });
+
+
+    }
+
+
 
 }

@@ -22,36 +22,54 @@ public class SplashScreenActivity extends AppCompatActivity {
 //        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_splash);
         Util.getInstance().setCurrentActivity(this);
-
-        if (Util.getInstance().checkPlayServices()) {
-            Intent intent = this.getIntent();
-            Bundle bundle = intent.getExtras();
-            //FirebaseApp.initializeApp(this);
-//            String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-//            if (refreshedToken != null) {
-//                Log.d("Device TOKEN", refreshedToken);
-//                FirebaseMessaging.getInstance().subscribeToTopic("cs");
-//            }
-
-            new Handler().postDelayed(new Runnable() {
+        new Handler().postDelayed(new Runnable() {
 
             /*
              * Showing splash screen with a timer. This will be useful when you
              * want to show case your app logo_signup / company
              */
 
-                @Override
-                public void run() {
-                    Intent intent = new Intent(SplashScreenActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                    SplashScreenActivity.this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                    finish();
+            @Override
+            public void run() {
+                Intent intent = new Intent(SplashScreenActivity.this, LoginActivity.class);
+                startActivity(intent);
+                SplashScreenActivity.this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                finish();
 
-                    return;
+                return;
 
-                }
-            }, SPLASH_TIME_OUT);
-        }
+            }
+        }, SPLASH_TIME_OUT);
+
+//        if (Util.getInstance().checkPlayServices()) {
+//            Intent intent = this.getIntent();
+//            Bundle bundle = intent.getExtras();
+//            //FirebaseApp.initializeApp(this);
+////            String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+////            if (refreshedToken != null) {
+////                Log.d("Device TOKEN", refreshedToken);
+////                FirebaseMessaging.getInstance().subscribeToTopic("cs");
+////            }
+//
+//            new Handler().postDelayed(new Runnable() {
+//
+//            /*
+//             * Showing splash screen with a timer. This will be useful when you
+//             * want to show case your app logo_signup / company
+//             */
+//
+//                @Override
+//                public void run() {
+//                    Intent intent = new Intent(SplashScreenActivity.this, LoginActivity.class);
+//                    startActivity(intent);
+//                    SplashScreenActivity.this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+//                    finish();
+//
+//                    return;
+//
+//                }
+//            }, SPLASH_TIME_OUT);
+//        }
 
     }
 

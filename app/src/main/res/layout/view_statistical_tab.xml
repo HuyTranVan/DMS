@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <wolve.dms.controls.CTextView
+        android:id="@+id/statistical_tab_icon"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:text="@string/icon_dashboard"
+        android:textSize="@dimen/_12sdp"
+        android:textColor="@drawable/text_blue_selected"
+        android:gravity="center"
+        android:layout_marginRight="5dp"
+        app:customFont="@string/font_awesome"/>
+
+    <TextView
+        android:id="@+id/statistical_tab_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dashboard"
+        android:textSize="@dimen/_10sdp"
+        android:textColor="@drawable/text_blue_selected"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"/>
+
+
+
+</LinearLayout>

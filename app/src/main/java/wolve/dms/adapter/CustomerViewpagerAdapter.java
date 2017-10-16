@@ -8,13 +8,14 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.models.Bill;
 import wolve.dms.utils.Util;
 
 
@@ -27,11 +28,14 @@ public class CustomerViewpagerAdapter extends PagerAdapter {
     private LayoutInflater inflater;
     private List<RecyclerView.Adapter> listAdapter = new ArrayList<>();
     private  ArrayList<String> listTitle = new ArrayList<>();
+    private Double totalBill;
+    private View view;
 
-    public CustomerViewpagerAdapter( List<RecyclerView.Adapter> listAdapter, ArrayList<String > title){
+    public CustomerViewpagerAdapter( List<RecyclerView.Adapter> listAdapter, ArrayList<String > title, Double totalBill){
         this.mContext = Util.getInstance().getCurrentActivity();
         this.listAdapter = listAdapter;
         this.listTitle = title;
+        this.totalBill = totalBill;
     }
 
     @Override
@@ -41,15 +45,30 @@ public class CustomerViewpagerAdapter extends PagerAdapter {
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
-        return (view ==(RelativeLayout)object);
+        return (view ==(LinearLayout)object);
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         inflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View v = inflater.inflate(R.layout.adapter_customer_viewpager_item,container,false);
-        RecyclerView rvList = (RecyclerView) v.findViewById(R.id.customer_viewpager_item_rv);
+        view = inflater.inflate(R.layout.adapter_customer_viewpager_item,container,false);
+        RecyclerView rvList = (RecyclerView) view.findViewById(R.id.customer_viewpager_item_rv);
+        TextView tvTotal = (TextView) view.findViewById(R.id.customer_viewpager_item_total);
 
+        if (position == 0){
+            tvTotal.setVisibility(View.GONE);
+        }else {
+            if (listAdapter.get(position).getItemCount() ==0){
+                tvTotal.setVisibility(View.GONE);
+            }else {
+                tvTotal.setVisibility(View.VISIBLE);
+                CustomerBillsAdapter adapter = (CustomerBillsAdapter) listAdapter.get(position);
+                tvTotal.setText("Tổng cộng: " +Util.FormatMoney(getTotalMoney(adapter.getAllBill())));
+            }
+
+        }
+
+        //setup List
         listAdapter.get(position).notifyDataSetChanged();
         rvList.setAdapter(listAdapter.get(position));
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
@@ -57,9 +76,9 @@ public class CustomerViewpagerAdapter extends PagerAdapter {
         rvList.addOnItemTouchListener(mScrollTouchListener);
         rvList.setNestedScrollingEnabled(true);
 
-        container.addView(v);
+        container.addView(view);
 
-        return v;
+        return view;
 
     }
 
@@ -94,6 +113,17 @@ public class CustomerViewpagerAdapter extends PagerAdapter {
 
         }
     };
+
+    public void updateNewTotalPrice(Double total){
+    }
+
+    public Double getTotalMoney(List<Bill> list){
+        Double money =0.0;
+        for (int i=0; i<list.size(); i++){
+            money += list.get(i).getDouble("total");
+        }
+        return money;
+    }
 
 
 }

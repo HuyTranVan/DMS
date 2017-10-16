@@ -52,7 +52,7 @@ public class CustomerConnect {
     public static void ListCustomer(String param, final CallbackJSONArray listener, final Boolean stopLoading){
         Util.getInstance().showLoading();
 
-        String url = Api_link.CUSTOMERS+ String.format(Constants.CUSTOMER_PARAM, 1,500);
+        String url = Api_link.CUSTOMERS+ String.format(Api_link.CUSTOMER_PARAM, 1,500);
 
         new CustomPostMethod(url,param, false, new Callback() {
             @Override
@@ -82,7 +82,7 @@ public class CustomerConnect {
     public static void ListCustomerLocation(String lat, String lng, final CallbackJSONArray listener, final Boolean stopLoading){
         //Util.getInstance().showLoading();
 
-        String url = Api_link.CUSTOMERS_NEAREST+ String.format(Constants.CUSTOMER_NEAREST_PARAM, lat, lng,1, 30);
+        String url = Api_link.CUSTOMERS_NEAREST+ String.format(Api_link.CUSTOMER_NEAREST_PARAM, lat, lng,1, 30);
 
         new CustomGetMethod(url, new Callback() {
             @Override
@@ -230,4 +230,63 @@ public class CustomerConnect {
         }).execute();
     }
 
+    public static void DeleteBill(String params,final CallbackJSONObject listener, final Boolean stopLoading){
+        Util.getInstance().showLoading();
+
+        String url = Api_link.BILL_DELETE + params;
+
+        new CustomDeleteMethod(url, new Callback() {
+            @Override
+            public void onResponse(JSONObject result) {
+                Util.getInstance().stopLoading(stopLoading);
+                try {
+                    if (result.getInt("status") == 200) {
+                        listener.onResponse(null);
+
+                    } else {
+                        listener.onError("Unknow error");
+                    }
+                } catch (JSONException e) {
+                    listener.onError(e.toString());
+                }
+            }
+
+
+            @Override
+            public void onError(String error) {
+                listener.onError(error);
+                Util.getInstance().stopLoading(stopLoading);
+            }
+        }).execute();
+    }
+
+    public static void ListBill(String param, final CallbackJSONArray listener, final Boolean stopLoading){
+        Util.getInstance().showLoading();
+
+        String url = Api_link.BILLS+ String.format(Api_link.BILL_PARAM, 1,500) + param;
+
+        new CustomGetMethod(url, new Callback() {
+            @Override
+            public void onResponse(JSONObject result) {
+                Util.getInstance().stopLoading(stopLoading);
+                try {
+                    if (result.getInt("status") == 200) {
+                        listener.onResponse(result.getJSONArray("data"));
+
+                    } else {
+                        listener.onError("Unknow error");
+                    }
+                } catch (JSONException e) {
+                    listener.onError(e.toString());
+                }
+            }
+
+
+            @Override
+            public void onError(String error) {
+                listener.onError(error);
+                Util.getInstance().stopLoading(stopLoading);
+            }
+        }).execute();
+    }
 }

@@ -166,17 +166,45 @@
                     android:minWidth="@dimen/_150sdp"
                     android:background="@drawable/btn_confirm_blue"
                     android:layout_margin="@dimen/_10sdp"
-                    android:text="CẬP NHẬT"
+                    android:text="THANH TOÁN"
                     android:textAllCaps="true"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_14sdp"
-                    android:layout_gravity="center_horizontal"/>
+                    android:layout_gravity="center_horizontal" />
             </LinearLayout>
         </ScrollView>
 
 
 
     </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/cart_cover"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorWhite"
+        android:gravity="center"
+        android:layout_below="@+id/cart_header">
+
+        <wolve.dms.controls.CTextView
+            android:id="@+id/cart_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:customFont="@string/font_awesome"
+            android:text="@string/icon_bill"
+            android:textSize="@dimen/_30sdp"
+            android:textColor="@color/black_text_color_hint"
+            android:layout_centerInParent="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black_text_color_hint"
+            android:layout_below="@+id/cart_icon"
+            android:text="Chưa có sản phẩm"
+            android:layout_centerInParent="true"/>
+
+    </RelativeLayout>
 
     <com.github.clans.fab.FloatingActionButton
         android:id="@+id/cart_add_promotion"

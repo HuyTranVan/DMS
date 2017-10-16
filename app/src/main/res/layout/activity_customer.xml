@@ -124,7 +124,7 @@
             android:layout_height="match_parent"
             android:nestedScrollingEnabled="true"
             android:layout_below="@+id/customer_line"
-            android:layout_marginBottom="57dp">
+            android:layout_marginBottom="60dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -334,82 +334,41 @@
 
                     </RelativeLayout>
 
-                    <RelativeLayout
+                    <wolve.dms.controls.CInputForm
+                        android:id="@+id/add_customer_note"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_5sdp"
-                        android:background="@color/colorWhite">
+                        android:layout_weight="0.5"
+                        android:inputType="textCapSentences"
+                        android:layout_marginLeft="@dimen/_10sdp"
+                        android:layout_marginRight="@dimen/_10sdp"
+                        app:textHint="Ghi chú"
+                        app:iconText="@string/icon_comment"
+                        app:textSize="@dimen/_5sdp"
+                        app:iconSize="@dimen/_5sdp"
+                        app:iconColor="@color/colorBlueTransparent"
+                        app:textColor="@color/colorBlue"
+                        app:textColorHint="@color/colorBlueTransparent"/>
 
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:background="@drawable/colorwhite_cornerred"
-                            android:layout_marginTop="@dimen/_10sdp"
-                            android:paddingLeft="@dimen/_5sdp"
-                            android:paddingRight="@dimen/_5sdp"
-                            android:paddingBottom="@dimen/_5sdp"
-                            android:paddingTop="@dimen/_10sdp"
-                            android:layout_marginLeft="@dimen/_5sdp"
-                            android:layout_marginRight="@dimen/_5sdp">
-
-                            <android.support.v7.widget.RecyclerView
-                                android:id="@+id/add_customer_rvreason"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                />
-
-                            <wolve.dms.controls.CInputForm
-                                android:id="@+id/add_customer_note"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="0.5"
-                                android:inputType="textCapSentences"
-                                app:textHint="Ghi chú"
-                                app:iconText="@string/icon_comment"
-                                app:textSize="@dimen/_5sdp"
-                                app:iconSize="@dimen/_5sdp"
-                                app:iconColor="@color/colorBlueTransparent"
-                                app:textColor="@color/colorBlue"
-                                app:textColorHint="@color/colorBlueTransparent"/>
-
-                        </LinearLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="@dimen/_20sdp"
-                            android:minWidth="@dimen/_70sdp"
-                            android:background="@drawable/colorwhite_cornerred"
-                            android:text="CHECK_IN"
-                            android:textAllCaps="true"
-                            android:textColor="@color/colorRed"
-                            android:textSize="@dimen/_10sdp"
-                            android:gravity="center"
-                            android:layout_centerHorizontal="true" />
-
-
-                    </RelativeLayout>
+                    <!--<android.support.v7.widget.RecyclerView-->
+                        <!--android:id="@+id/add_customer_rvreason"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"/>-->
 
                     <Button
                         android:id="@+id/add_customer_submit"
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/_30sdp"
-                        android:minWidth="@dimen/_150sdp"
+                        android:minWidth="@dimen/_180sdp"
                         android:background="@drawable/btn_confirm_blue"
                         android:layout_margin="@dimen/_10sdp"
                         android:text="CẬP NHẬT"
                         android:textAllCaps="true"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/_14sdp"
+                        android:textSize="@dimen/_12sdp"
                         android:layout_gravity="center_horizontal"/>
 
                 </LinearLayout>
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/add_customer_rvcheckins"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
 
             </LinearLayout>
 

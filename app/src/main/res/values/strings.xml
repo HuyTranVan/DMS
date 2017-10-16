@@ -63,4 +63,8 @@
     <string name="login_password">Nhập mật khẩu</string>
     <string name="login_button_login">đăng nhập</string>
 
+    <string name="day_month_year">day month year</string>
+    <string name="first_day_selected">First day selected</string>
+    <string name="last_day_selected">Last day selected</string>
+
 </resources>

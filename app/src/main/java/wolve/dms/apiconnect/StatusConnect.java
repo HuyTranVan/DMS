@@ -21,7 +21,7 @@ public class StatusConnect {
     public static void ListStatus(final CallbackJSONArray listener, final Boolean stopLoading){
         Util.getInstance().showLoading();
 
-        String url = Api_link.STATUS+ String.format(Constants.STATUS_PARAM, 1,20);
+        String url = Api_link.STATUS+ String.format(Api_link.STATUS_PARAM, 1,20);
 
         new CustomGetMethod(url, new Callback() {
             @Override

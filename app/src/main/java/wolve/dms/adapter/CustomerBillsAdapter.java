@@ -11,13 +11,23 @@ import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackChangePrice;
+import wolve.dms.callback.CallbackDeleteAdapter;
+import wolve.dms.callback.CallbackJSONObject;
+import wolve.dms.controls.CTextView;
 import wolve.dms.models.Bill;
 import wolve.dms.models.BillDetail;
+import wolve.dms.models.User;
+import wolve.dms.utils.CustomDialog;
 import wolve.dms.utils.Util;
 
 /**
@@ -28,12 +38,14 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
     private List<Bill> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
+    private CallbackDeleteAdapter mDelete;
 
-    public CustomerBillsAdapter(List<Bill> data) {
+    public CustomerBillsAdapter(List<Bill> data, CallbackDeleteAdapter mDelete) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mData = data;
         this.mContext = Util.getInstance().getCurrentActivity();
-
+        this.mDelete = mDelete;
+        Collections.reverse(mData);
     }
 
     @Override
@@ -75,6 +87,37 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
                 holder.vLineUnder.setVisibility(View.GONE);
             }
 
+            holder.tvicon.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if(User.getCurrentUser().getString("role").equals("MANAGER")){
+                        CustomDialog.alertWithCancelButton(null, "Bạn muốn xóa hóa đơn " + Util.DateString(mData.get(position).getLong("updateAt")), "ĐỒNG Ý","HỦY", new CallbackBoolean() {
+                            @Override
+                            public void onRespone(Boolean result) {
+                                String param = String.valueOf(mData.get(position).getInt("id"));
+                                CustomerConnect.DeleteBill(param, new CallbackJSONObject() {
+                                    @Override
+                                    public void onResponse(JSONObject result) {
+                                        mDelete.onDelete(mData.get(position).BillstoString(), mData.size() -1);
+                                        mData.remove(position);
+                                        notifyDataSetChanged();
+                                    }
+
+                                    @Override
+                                    public void onError(String error) {
+
+                                    }
+                                }, true);
+                            }
+                        });
+
+                    }
+
+
+                    return true;
+                }
+            });
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -88,6 +131,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
     public class CustomerBillsAdapterViewHolder extends RecyclerView.ViewHolder {
         private TextView tvDate, tvHour, tvPay, tvDebt, tvTotal;
         private RecyclerView rvBillDetail;
+        private CTextView tvicon;
         private View vLineUpper, vLineUnder;
         private LinearLayout lnParent;
 
@@ -103,11 +147,22 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
             vLineUnder = (View) itemView.findViewById(R.id.bills_item_under);
             vLineUpper = (View) itemView.findViewById(R.id.bills_item_upper);
             lnParent = (LinearLayout) itemView.findViewById(R.id.bills_item_content_parent);
+            tvicon = (CTextView) itemView.findViewById(R.id.bills_item_icon);
 
         }
 
     }
 
+    public List<Bill> getAllBill(){
+        return mData;
+    }
 
+//    public Double getTotalMoney(){
+//        Double money =0.0;
+//        for (int i=0; i<mData.size(); i++){
+//            money += mData.get(i).getDouble("total");
+//        }
+//        return money;
+//    }
 
 }

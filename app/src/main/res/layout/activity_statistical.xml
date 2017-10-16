@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/statistical_header"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_35sdp"
+        android:background="@drawable/bg_header_top">
+
+        <ImageView
+            android:id="@+id/icon_back"
+            android:layout_width="@dimen/_35sdp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_arrow_back_black_18dp"
+            android:padding="@dimen/_8sdp"
+            android:background="?selectableItemBackground"/>
+
+        <TextView
+            android:id="@+id/statistical_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="THỐNG KÊ"
+            android:textSize="@dimen/_14sdp"
+            android:textColor="@color/black_text_color"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/icon_back"/>
+
+
+        <TextView
+            android:id="@+id/statistical_date_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tháng"
+            android:textSize="@dimen/_14sdp"
+            android:textColor="@color/black_text_color"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/statistical_date_icon"/>
+
+        <wolve.dms.controls.CTextView
+            android:id="@+id/statistical_date_icon"
+            android:layout_width="@dimen/_35sdp"
+            android:layout_height="match_parent"
+            android:text="@string/icon_schedule"
+            android:textSize="@dimen/_16sdp"
+            android:gravity="center"
+            android:textColor="@color/black_text_color_hint"
+            android:background="?selectableItemBackground"
+            android:layout_alignParentRight="true"
+            app:customFont="@string/font_awesome"/>
+
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_below="@+id/statistical_header">
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:background="#75b9b3b3"/>
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/statistical_tabs"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:background="#f4f4f4"
+            app:tabGravity="fill"
+            app:tabIndicatorColor="@color/colorBlue"
+            app:tabIndicatorHeight="3dp"
+            app:tabMode="fixed"
+            app:tabSelectedTextColor="@color/colorBlue"
+            app:tabTextAppearance="@style/NavigationTabTextAppeareance"
+            app:tabTextColor="@color/black_text_color_hint" />
+
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/statistical_viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorWhite"
+            />
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import wolve.dms.BaseActivity;
 import wolve.dms.BuildConfig;
 import wolve.dms.R;
+import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.UserConnect;
 import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackJSONObject;
@@ -79,7 +80,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     }
 
     private void doLogin(){
-        String params = String.format(Constants.LOGIN_PARAM,edUsername.getText().toString(), edPassword.getText().toString());
+        String params = String.format(Api_link.LOGIN_PARAM,edUsername.getText().toString(), edPassword.getText().toString());
 
         UserConnect.Login(params, new CallbackJSONObject() {
             @Override

@@ -48,10 +48,12 @@
             android:value="@string/map_id"/>
 
         <!--activity-->
-        <activity android:name=".activity.SplashScreenActivity">
+        <activity android:name=".activity.SplashScreenActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/FullScreen">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
@@ -104,6 +106,12 @@
             android:theme="@style/FullScreen"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
 
+        <activity
+            android:name=".activity.StatisticalActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/FullScreen"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
 
 
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />

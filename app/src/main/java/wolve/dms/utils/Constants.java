@@ -20,23 +20,6 @@ public class Constants {
     public final static String USER_PASSWORD = "password";
     public final static String IMAGES_DIRECTORY = "Wolver_DMS";
 
-    public final static String LOGIN_PARAM ="phone=%s&password=%s";
-
-    public final static String PRODUCTGROUPS_PARAM ="?page=%d&size=%d";
-    public final static String PRODUCTGROUP_CREATE_PARAM ="%sname=%s";
-
-    public final static String PRODUCTS_PARAM ="?page=%d&size=%d";
-    public final static String PRODUCT_CREATE_PARAM ="%sname=%s&promotion=%s&unitPrice=%d&purchasePrice=%d&volume=%d&productGroup.id=%d";
-
-    public final static String STATUS_PARAM ="?page=%d&size=%d";
-    public final static String STATUS_CREATE_PARAM ="%sname=%s&color=%s&defaultStatus=%s";
-
-    public final static String CUSTOMER_PARAM ="?page=%d&size=%d";
-    public final static String CUSTOMER_NEAREST_PARAM ="?lat=%s&lng=%s&page=%d&size=%d";
-    public final static String CUSTOMER_CREATE_PARAM ="%sname=%s&signBoard=%s&address=%s&phone=%s&street=%s&note=%s&district=%s&province=%s&lat=%s&lng=%s&volumeEstimate=%s&shopType=%s&status.id=%d";
-
-    public final static String SCHECKIN_CREATE_PARAM ="customer.id=%d&status.id=%d&note=%s&user.id=%s";
-
     public final static String IS_PROMOTION = "BÁN VÀ KHUYẾN MÃI";
     public final static String NO_PROMOTION = "CHỈ BÁN";
 
@@ -53,6 +36,10 @@ public class Constants {
     public final static String RESULT = "result";
     public final static boolean RESULT_FALSE = false;
     public final static String RESULT_MESSAGE = "message";
+
+    public final static String MARKER_ALL = "all";
+    public final static String MARKER_INTERESTED = "interested";
+    public final static String MARKER_ORDERED = "ordered";
 
     //Home constant
     public static ArrayList<JSONObject> HomeItemList(){

@@ -13,7 +13,9 @@ import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 
@@ -56,14 +58,13 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     private Button btnSubmit, btnDate;
     private TextView tvTitle, tvTotal;
     private CInputForm tvNote;
-    private RadioGroup rgPay;
+    private RadioGroup rgBill;
     private RadioButton rdCash, rdDebt;
     private RecyclerView rvProducts, rvPromotions;
     private FloatingActionButton btnAdd, btnAddPromotion;
+    private RelativeLayout rlCover;
 
     private DatePickerDialog fromDatePickerDialog;
-
-
 
     private CartProductsAdapter adapterProducts;
     private CartPromotionsAdapter adapterPromotions;
@@ -94,6 +95,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         btnAddPromotion = (FloatingActionButton) findViewById(R.id.cart_add_promotion);
         rvProducts = (RecyclerView) findViewById(R.id.cart_rvproduct);
         rvPromotions = (RecyclerView) findViewById(R.id.cart_rvpromotion);
+        rlCover = (RelativeLayout) findViewById(R.id.cart_cover);
 
     }
 
@@ -153,6 +155,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
             case R.id.cart_submit:
                 submitBill();
+
                 break;
 
             case R.id.cart_add_product:
@@ -260,8 +263,8 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
                 }
+                rlCover.setVisibility(list_product.size() <=0? View.VISIBLE: View.GONE);
             }
         });
     }
@@ -283,7 +286,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
             params.put("customerId", currentCustomer.getInt("id"));
             params.put("distributorId", Distributor.getCurrentDistributorId());
             params.put("userId", User.getCurrentUserId());
-            params.put("note", Util.TimeStamp1(tvNote.getText().toString()));
+            params.put("note", tvNote.getText().toString().equals("")? "" : Util.TimeStamp1(tvNote.getText().toString()));
 
             JSONArray array = new JSONArray();
             for (int i=0; i< listProductChoice.size(); i++){
@@ -341,6 +344,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
             }
 
         },Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+
 
     }
 
