@@ -78,7 +78,7 @@
             android:id="@+id/add_product_volume"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number"
+            android:inputType="numberDecimal"
             app:textHint="Khối lượng"
             app:iconText="@string/icon_weight"/>
 

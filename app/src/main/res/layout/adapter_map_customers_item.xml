@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/map_customers_item_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="@dimen/_5sdp">
+
+        <TextView
+            android:id="@+id/map_customers_item_shopname"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.7"
+            android:layout_centerVertical="true"
+            android:text="a"
+            android:textColor="@color/black"
+            android:layout_marginLeft="@dimen/_10sdp"/>
+
+        <TextView
+            android:id="@+id/map_customers_item_address"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:layout_centerVertical="true"
+            android:text="a"
+            android:textColor="@color/black"
+            android:paddingRight="@dimen/_10sdp"
+            android:gravity="right"/>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/statistical_product_item_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="#e5e5e5" />
+
+</RelativeLayout>
+
+
+

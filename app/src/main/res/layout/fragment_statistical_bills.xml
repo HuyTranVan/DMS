@@ -3,9 +3,46 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="hoa don"/>
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/statistical_bills_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="tong cong"
+            android:padding="@dimen/_5sdp"
+            android:gravity="right"
+            android:textSize="@dimen/_10sdp"
+            android:textColor="@color/colorRed"/>
+
+        <TextView
+            android:id="@+id/statistical_bills_total"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="tong cong"
+            android:padding="@dimen/_5sdp"
+            android:gravity="right"
+            android:textSize="@dimen/_10sdp"
+            android:textColor="@color/colorBlue"/>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/statistical_product_item_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="#e5e5e5" />
+
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/statistical_bills_rvbill"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

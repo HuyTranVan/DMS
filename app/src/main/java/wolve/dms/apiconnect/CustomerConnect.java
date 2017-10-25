@@ -261,7 +261,9 @@ public class CustomerConnect {
     }
 
     public static void ListBill(String param, final CallbackJSONArray listener, final Boolean stopLoading){
-        Util.getInstance().showLoading();
+        if (stopLoading){
+            Util.getInstance().showLoading();
+        }
 
         String url = Api_link.BILLS+ String.format(Api_link.BILL_PARAM, 1,500) + param;
 

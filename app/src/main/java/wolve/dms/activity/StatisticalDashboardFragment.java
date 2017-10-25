@@ -38,11 +38,16 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import lecho.lib.hellocharts.model.Axis;
+import lecho.lib.hellocharts.model.AxisValue;
 import lecho.lib.hellocharts.model.Column;
+import lecho.lib.hellocharts.model.ColumnChartData;
 import lecho.lib.hellocharts.model.Line;
 import lecho.lib.hellocharts.model.PieChartData;
 import lecho.lib.hellocharts.model.PointValue;
 import lecho.lib.hellocharts.model.SliceValue;
+import lecho.lib.hellocharts.model.SubcolumnValue;
+import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.util.ChartUtils;
 import lecho.lib.hellocharts.view.ColumnChartView;
 import lecho.lib.hellocharts.view.PieChartView;
@@ -56,7 +61,7 @@ import wolve.dms.utils.Util;
 
 public class StatisticalDashboardFragment extends Fragment implements View.OnClickListener {
     private View view;
-    private BarChart chartIncome;
+    private ColumnChartView chartIncome;
     private PieChartView chartDistrict;
 
     private StatisticalActivity mActivity;
@@ -85,7 +90,7 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
 
     private void initializeView() {
         mActivity = (StatisticalActivity) getActivity();
-        chartIncome = (BarChart) view.findViewById(R.id.statistical_dashboard_income);
+        chartIncome = (ColumnChartView) view.findViewById(R.id.statistical_dashboard_income);
         chartDistrict = (PieChartView) view.findViewById(R.id.statistical_dashboard_district);
 
     }
@@ -155,41 +160,61 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
     }
 
     private void setupIncomeChart(List<Bill> list){
-        chartIncome.animateY(1000, Easing.EasingOption.Linear);
+//        chartIncome.animateY(1000, Easing.EasingOption.Linear);
         float income =0.0f;
-        float debt =0.0f;
-        float profit =0.0f;
+        float debt =-12000000.0f;
+        float profit =-30000000.0f;
 
         for (int i=0; i<list.size(); i++){
             income += list.get(i).getDouble("total");
             debt += list.get(i).getDouble("debt");
         }
 
-        ArrayList<BarEntry> entries = new ArrayList<>();
-            entries.add(new BarEntry(0,income));
-            entries.add(new BarEntry(1,debt));
-            entries.add(new BarEntry(2,profit));
+        float[] inputData = new float[]{income , debt , profit};
+
+        List<Column> columns = new ArrayList<Column>();
+
+        for (int i = 0; i < 3; ++i) {
+            List<SubcolumnValue> values = new ArrayList<SubcolumnValue>();
+            SubcolumnValue subcolumnValue = new SubcolumnValue(inputData[i], ChartUtils.nextColor());
+            subcolumnValue.setLabel(Util.FormatMoney((double) inputData[i]));
+
+            values.add(subcolumnValue);
+
+            Column column = new Column(values);
+            column.setHasLabels(true);
+            columns.add(column);
+
+        }
+
+        ColumnChartData data = new ColumnChartData(columns);
+
+        List<AxisValue> axisValues = new ArrayList<AxisValue>();
+        axisValues.add(new AxisValue(0, "Doanh thu".toCharArray()));
+        axisValues.add(new AxisValue(1, "Công nợ".toCharArray()));
+        axisValues.add(new AxisValue(2, "Lợi nhuận".toCharArray()));
+        Axis axisX = new Axis(axisValues);
+
+        data.setAxisXBottom(axisX);
 
 
-        BarDataSet dataset = new BarDataSet(entries,"Income");
+//        data.setAxisYLeft(axisX);
 
-        ArrayList<String> labels = new ArrayList<>();
-            labels.add("Doanh thu");
-            labels.add("Công nợ");
-            labels.add("Lợi nhuận");
 
-        BarData data = new BarData(labels, dataset);
-        dataset.setColors(ColorTemplate.MATERIAL_COLORS);
-        chartIncome.invalidate();
-        chartIncome.setData(data);
-        chartIncome.setDescription(null);
-        chartIncome.getAxisLeft().setDrawGridLines(false);
-        chartIncome.getXAxis().setDrawGridLines(false);
 
-        chartIncome.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
-        XAxis xAxis = chartIncome.getXAxis();
-        xAxis.setGranularity(1f);
-        xAxis.setGranularityEnabled(true);
+//        final Viewport v = new Viewport(chartIncome.getMaximumViewport());
+//        v.top = v.top + 30; //example max value
+//        chartIncome.setMaximumViewport(v);
+//        chartIncome.setCurrentViewport(v);
+//Optional step: disable viewport recalculations, thanks to this animations will not change viewport automatically.
+        chartIncome.setViewportCalculationEnabled(true);
+
+
+
+        chartIncome.setColumnChartData(data);
+
+
+
 
     }
 

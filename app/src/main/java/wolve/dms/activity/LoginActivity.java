@@ -99,7 +99,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                     customShared.setString(Constants.USER_USERNAME, edUsername.getText().toString().trim());
                     customShared.setString(Constants.USER_PASSWORD, edPassword.getText().toString().trim());
 
-                    Transaction.gotoHomeActivity();
+                    Transaction.gotoHomeActivity(true);
                     Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
 
                 } catch (JSONException e) {

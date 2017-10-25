@@ -55,38 +55,51 @@
 
     </RelativeLayout>
 
-    <LinearLayout
+    <wolve.dms.libraries.MySwipeRefreshLayout
+        android:id="@+id/statistical_swipelayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/statistical_header">
 
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="1dp"
-            android:background="#75b9b3b3"/>
-
-        <android.support.design.widget.TabLayout
-            android:id="@+id/statistical_tabs"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_35sdp"
-            android:background="#f4f4f4"
-            app:tabGravity="fill"
-            app:tabIndicatorColor="@color/colorBlue"
-            app:tabIndicatorHeight="3dp"
-            app:tabMode="fixed"
-            app:tabSelectedTextColor="@color/colorBlue"
-            app:tabTextAppearance="@style/NavigationTabTextAppeareance"
-            app:tabTextColor="@color/black_text_color_hint" />
-
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/statistical_viewpager"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorWhite"
-            />
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="#75b9b3b3"/>
+
+            <android.support.design.widget.TabLayout
+                android:id="@+id/statistical_tabs"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_35sdp"
+                android:background="#f4f4f4"
+                app:tabGravity="fill"
+                app:tabIndicatorColor="@color/colorBlue"
+                app:tabIndicatorHeight="3dp"
+                app:tabMode="fixed"
+                app:tabSelectedTextColor="@color/colorBlue"
+                app:tabTextAppearance="@style/NavigationTabTextAppeareance"
+                app:tabTextColor="@color/black_text_color_hint" />
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="#75b9b3b3"/>
+
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/statistical_viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorWhite"
+                />
+
+        </LinearLayout>
+    </wolve.dms.libraries.MySwipeRefreshLayout>
+
+
 
 </RelativeLayout>

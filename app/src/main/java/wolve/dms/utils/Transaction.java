@@ -17,9 +17,10 @@ import wolve.dms.activity.StatusActivity;
 
 public class Transaction {
 
-    public static void gotoHomeActivity() {
+    public static void gotoHomeActivity(Boolean login) {
         Context context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(context, HomeActivity.class);
+        //intent.putExtra(Constants.LOGIN_SUCCESS, login);
         context.startActivity(intent);
         ((AppCompatActivity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         ((AppCompatActivity) context).finish();

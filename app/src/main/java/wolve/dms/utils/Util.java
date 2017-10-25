@@ -619,7 +619,10 @@ public class Util {
             e.printStackTrace();
         }
         return unixtime;
+    }
 
+    public static String CurrentMonthYear(){
+        return new SimpleDateFormat("MM-yyyy").format(Calendar.getInstance().getTime());
     }
 
     public static long TimeStamp1(String ddMMyyyy){
@@ -824,7 +827,6 @@ public class Util {
 
     public static void setDistrictList(JSONArray result){
         mListDistricts = new ArrayList<>();
-        mListDistricts.add(0, "Chọn quận");
         try {
             for (int i=0; i<result.length(); i++){
                 JSONObject object = result.getJSONObject(i);
@@ -835,7 +837,8 @@ public class Util {
                 }
             }
 
-            //Collections.sort(mListDistricts, String.CASE_INSENSITIVE_ORDER);
+            Collections.sort(mListDistricts, String.CASE_INSENSITIVE_ORDER);
+            mListDistricts.add(0, "Chọn quận");
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -1,13 +1,19 @@
 package wolve.dms.activity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +27,7 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -70,8 +77,8 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     public GoogleMap mMap;
     public SupportMapFragment mapFragment;
     private ImageView btnBack;
-    private CTextView tvTrash;
-    private Button btnSubmit, btnEditLocation;
+    private CTextView tvTrash , btnEditLocation;
+    private Button btnSubmit;
     private FloatingActionButton btnShopCart, btnCurrentLocation;
     private TextView tvTitle;
     private CInputForm edName, edPhone , edAdress, edStreet, edDistrict, edCity, edNote , edShopType, edShopName;
@@ -86,9 +93,9 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     private RelativeLayout rlHeader;
 
 
-    private CartCheckinReasonAdapter cartCheckinReasonAdapter;
-    private CustomerCheckinsAdapter customerCheckinsAdapter;
-    private CustomerBillsAdapter customerBillsAdapter;
+//    private CartCheckinReasonAdapter cartCheckinReasonAdapter;
+//    private CustomerCheckinsAdapter customerCheckinsAdapter;
+//    private CustomerBillsAdapter customerBillsAdapter;
     private CustomerViewpagerAdapter viewpagerAdapter;
     private Customer currentCustomer;
     private List<Checkin> listCheckins = new ArrayList<>();
@@ -98,8 +105,6 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     private int currentPosition=0;
     private String firstName ="";
     private float bottomSheetHeight;
-    private final String MAP_EDIT = "CHỈNH VỊ TRÍ";
-    private final String MAP_SAVE = "LƯU VỊ TRÍ";
 
 
     @Override
@@ -117,7 +122,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         coParent = (CoordinatorLayout) findViewById(R.id.customer_parent);
         rlHeader = (RelativeLayout) findViewById(R.id.customer_header);
         btnSubmit = (Button) findViewById(R.id.add_customer_submit);
-        btnEditLocation = (Button) findViewById(R.id.add_customer_editlocation);
+        btnEditLocation = (CTextView) findViewById(R.id.add_customer_editlocation);
         btnCurrentLocation = (FloatingActionButton) findViewById(R.id.add_customer_currentlocation);
         btnBack = (ImageView) findViewById(R.id.icon_back);
         btnShopCart = (FloatingActionButton) findViewById(R.id.add_customer_shopcart);
@@ -219,7 +224,6 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 e.printStackTrace();
             }
         }
-        btnEditLocation.setText(MAP_EDIT);
         if (currentCustomer.getInt("id") !=0){
             tvTrash.setVisibility(User.getCurrentUser().getString("role").equals("MANAGER") ? View.VISIBLE : View.GONE);
             btnSubmit.setText("CHECK_IN & CẬP NHẬT");
@@ -262,6 +266,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         btnCurrentLocation.setOnClickListener(this);
         btnShopCart.setOnClickListener(this);
         coParent.getViewTreeObserver().addOnGlobalLayoutListener(this) ;
+        //edPhone.setOnLongClickListener(this);
     }
 
     private void setupBottomSheet() {
@@ -274,9 +279,18 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             int lastState = BottomSheetBehavior.STATE_COLLAPSED;
 
             @Override
-            public void onStateChanged(View bottomSheet, int newState) {
-
-                int windowHeight = Util.getWindowSize().heightPixels;
+            public void onStateChanged(View bottomSheet, int newState){
+                if (newState == BottomSheetBehavior.STATE_EXPANDED){
+                    if (tvTrash.getVisibility() == View.VISIBLE){
+                        tvTrash.setVisibility(View.GONE);
+                    }
+                }else if (newState == BottomSheetBehavior.STATE_COLLAPSED){
+                    if (currentCustomer.getInt("id") !=0){
+                        tvTrash.setVisibility(User.getCurrentUser().getString("role").equals("MANAGER") ? View.VISIBLE : View.GONE);
+                    }else {
+                        tvTrash.setVisibility(View.GONE);
+                    }
+                }
 
             }
 
@@ -297,6 +311,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         viewPager.setAdapter(viewpagerAdapter);
         viewPager.setCurrentItem(currentPosition);
         viewPager.setOffscreenPageLimit(2);
+
 
         for (int i=0; i<listTitle.size(); i++){
             TabLayout.Tab tab = tabLayout.getTabAt(i);
@@ -674,22 +689,21 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     private void btnLocationEvent(){
-        switch (btnEditLocation.getText().toString().trim()){
-            case MAP_EDIT:
-                mMap.getUiSettings().setScrollGesturesEnabled(true);
-                btnEditLocation.setText(MAP_SAVE);
-                btnEditLocation.setBackgroundResource(R.drawable.btn_confirm_blue);
-                btnCurrentLocation.setVisibility(View.VISIBLE);
+        if (btnEditLocation.getText().toString().trim().equals(getResources().getString(R.string.icon_edit_map))){
+            mMap.getUiSettings().setScrollGesturesEnabled(true);
+            btnEditLocation.setText(getResources().getString(R.string.icon_save));
+            btnEditLocation.setBackgroundResource(R.drawable.bg_blue_rounded_button);
+            btnCurrentLocation.setVisibility(View.VISIBLE);
+            btnSubmit.setVisibility(View.GONE);
 
-                break;
-
-            case MAP_SAVE:
-                mMap.getUiSettings().setScrollGesturesEnabled(false);
-                btnEditLocation.setText(MAP_EDIT);
-                btnEditLocation.setBackgroundResource(R.drawable.btn_confirm_red);
-                btnCurrentLocation.setVisibility(View.GONE);
-                break;
+        }else if (btnEditLocation.getText().toString().trim().equals(getResources().getString(R.string.icon_save))){
+            mMap.getUiSettings().setScrollGesturesEnabled(false);
+            btnEditLocation.setText(getResources().getString(R.string.icon_edit_map));
+            btnEditLocation.setBackgroundResource(R.drawable.bg_red_rounded_button);
+            btnCurrentLocation.setVisibility(View.GONE);
+            btnSubmit.setVisibility(View.VISIBLE);
         }
+
     }
 
     private Double getTotalMoney(List<Bill> list){
@@ -715,5 +729,31 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     }
 
 
-
+//    @Override
+//    public boolean onLongClick(View v) {
+//        if (!edPhone.getText().toString().trim().equals("")){
+//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+//                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, Constants.REQUEST_PHONE_PERMISSION);
+//
+//                //return;
+//            }
+//
+//            Intent callIntent = new Intent(Intent.ACTION_CALL);
+//            callIntent.setData(Uri.parse("tel:" + Uri.encode(edPhone.getText().toString().trim())));
+//            callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            startActivity(callIntent);
+//        }
+//
+//        return true;
+//    }
+//
+//    @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        if (requestCode == Constants.REQUEST_PHONE_PERMISSION) {
+//            if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+//                Util.quickMessage("Không thể gọi do chưa được cấp quyền", null, null);
+//
+//            }
+//        }
+//
+//    }
 }

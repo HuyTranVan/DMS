@@ -10,6 +10,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -55,8 +56,9 @@ import wolve.dms.utils.Util;
 
 public class ShopCartActivity extends BaseActivity implements  View.OnClickListener, RadioGroup.OnCheckedChangeListener {
     private ImageView btnBack;
-    private Button btnSubmit, btnDate;
-    private TextView tvTitle, tvTotal;
+    private Button btnSubmit;
+    private TextView tvTitle, tvTotal, tvRemain;
+    private EditText edPaid;
     private CInputForm tvNote;
     private RadioGroup rgBill;
     private RadioButton rdCash, rdDebt;
@@ -87,10 +89,12 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     public void findViewById() {
         btnSubmit = (Button) findViewById(R.id.cart_submit);
         btnBack = (ImageView) findViewById(R.id.icon_back);
-        btnDate = (Button) findViewById(R.id.cart_date);
         tvTitle = (TextView) findViewById(R.id.cart_title);
         tvTotal = (TextView) findViewById(R.id.cart_total);
+        tvRemain = (TextView) findViewById(R.id.cart_remain);
+        edPaid = (EditText) findViewById(R.id.cart_paid);
         tvNote = (CInputForm) findViewById(R.id.cart_note);
+        rgBill = (RadioGroup) findViewById(R.id.cart_radiogroup);
         btnAdd = (FloatingActionButton) findViewById(R.id.cart_add_product);
         btnAddPromotion = (FloatingActionButton) findViewById(R.id.cart_add_promotion);
         rvProducts = (RecyclerView) findViewById(R.id.cart_rvproduct);
@@ -126,14 +130,8 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         btnSubmit.setOnClickListener(this);
         btnAdd.setOnClickListener(this);
         btnAddPromotion.setOnClickListener(this);
-
+        rgBill.setOnCheckedChangeListener(this);
         DatePickerEvent();
-        btnDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fromDatePickerDialog.show();
-            }
-        });
     }
 
     @Override
@@ -175,14 +173,15 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         Util.getInstance().getCurrentActivity().finish();
 
-
     }
 
     private void createRVProduct(final List<Product> list){
+
         adapterProducts = new CartProductsAdapter(list, new CallbackChangePrice() {
             @Override
             public void NewPrice(Double price) {
                 tvTotal.setText(Util.FormatMoney(price));
+
                 rvProducts.requestLayout();
                 rvProducts.invalidate();
             }
@@ -213,8 +212,26 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     @Override
     public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
         switch (checkedId){
-            case R.id.customer_radio_status_interested:
+            case R.id.cart_radiobutton_cash:
+                edPaid.setText(tvTotal.getText().toString().replace(".",""));
+                tvRemain.setText("0");
+                break;
 
+            case R.id.cart_radiobutton_debt:
+
+
+                Log.e("value",Util.valueMoney(edPaid.getText().toString().trim()) +"\n" + Util.valueMoney(tvTotal.getText().toString().trim()) );
+
+                if (edPaid.getText().toString().trim().replace(".","").equals(tvTotal.getText().toString().trim())){
+
+
+                    edPaid.setText("0");
+                    tvRemain.setText(tvTotal.getText().toString());
+
+                }else {
+                    tvRemain.setText(Util.FormatMoney(Util.valueMoney(tvTotal.getText().toString()) - Util.valueMoney(edPaid.getText().toString().trim().equals("") ? "0" : edPaid.getText().toString().trim())));
+
+                }
                 break;
 
         }
@@ -258,6 +275,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                             product.put("totalMoney", product.getDouble("unitPrice"));
                             product.put("discount", 0);
                             adapterProducts.addItemProduct(product);
+                            btnAddPromotion.setVisibility(adapterProducts.getItemCount() >0 ?View.VISIBLE : View.GONE);
                         }
 
                     } catch (JSONException e) {
@@ -286,7 +304,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
             params.put("customerId", currentCustomer.getInt("id"));
             params.put("distributorId", Distributor.getCurrentDistributorId());
             params.put("userId", User.getCurrentUserId());
-            params.put("note", tvNote.getText().toString().equals("")? "" : Util.TimeStamp1(tvNote.getText().toString()));
+            params.put("note", tvNote.getText().toString().trim());
 
             JSONArray array = new JSONArray();
             for (int i=0; i< listProductChoice.size(); i++){
@@ -298,8 +316,6 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 array.put(object);
             }
             params.put("billDetails", (Object) array);
-
-            Log.e("params", params.toString());
 
             CustomerConnect.PostBill(params.toString(), new CallbackJSONObject() {
                 @Override
@@ -344,9 +360,8 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
             }
 
         },Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
-
-
     }
+
 
 
 

@@ -2,10 +2,12 @@ package wolve.dms.activity;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.IdRes;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -40,6 +42,9 @@ import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackListProduct;
 import wolve.dms.controls.CInputForm;
 import wolve.dms.controls.CTextView;
+import wolve.dms.libraries.MySwipeRefreshLayout;
+import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialog;
+import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialogFragment;
 import wolve.dms.models.Bill;
 import wolve.dms.models.Customer;
 import wolve.dms.models.Distributor;
@@ -53,14 +58,15 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class StatisticalActivity extends BaseActivity implements  View.OnClickListener {
+public class StatisticalActivity extends BaseActivity implements  View.OnClickListener , SwipeRefreshLayout.OnRefreshListener{
     private ImageView btnBack;
     private TextView tvTitle, tvDate;
     private CTextView tvIcon;
     private ViewPager viewPager;
     private TabLayout tabLayout;
-    private StatisticalViewpagerAdapter pageAdapter;
+    private MySwipeRefreshLayout swipeRefreshLayout;
 
+    private StatisticalViewpagerAdapter pageAdapter;
     List<Bill> listBill = new ArrayList<>();
     private int[] icons = new int[]{R.string.icon_chart,
             R.string.icon_bill,
@@ -85,17 +91,16 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         tabLayout = (TabLayout) findViewById(R.id.statistical_tabs);
         tvDate = (TextView) findViewById(R.id.statistical_date_text);
         tvIcon = (CTextView) findViewById(R.id.statistical_date_icon);
+        swipeRefreshLayout = (MySwipeRefreshLayout) findViewById(R.id.statistical_swipelayout);
 
 
     }
 
     @Override
     public void initialData() {
+
         setupViewPager(viewPager);
         setupTabLayout(tabLayout);
-
-
-
 
     }
 
@@ -103,6 +108,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     public void addEvent() {
         btnBack.setOnClickListener(this);
         tvIcon.setOnClickListener(this);
+        swipeRefreshLayout.setOnRefreshListener(this);
 
     }
 
@@ -117,7 +123,8 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     @Override
     protected void onResume() {
         super.onResume();
-        loadAllCustomer();
+        tvDate.setText(Util.CurrentMonthYear());
+        loadAllCustomer(tvDate.getText().toString(), true);
     }
 
     public void setupViewPager(ViewPager viewPager) {
@@ -158,6 +165,12 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         }
     }
 
+    @Override
+    public void onRefresh() {
+        swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#2196f3"));
+        loadAllCustomer(tvDate.getText().toString(), false);
+    }
+
     private void returnPreviousScreen(){
         Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         Util.getInstance().getCurrentActivity().finish();
@@ -166,56 +179,62 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     }
 
     private void monthPicker() {
-        final Calendar c = Calendar.getInstance();
-
-        int y = c.get(Calendar.YEAR)+4;
-        int m = c.get(Calendar.MONTH)-2;
-        int d = c.get(Calendar.DAY_OF_MONTH);
-        final String[] MONTH = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-
-        DatePickerDialog dp = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        String erg = "";
-                        erg = String.valueOf(dayOfMonth);
-                        erg += "." + String.valueOf(monthOfYear + 1);
-                        erg += "." + year;
-
-                        tvDate.setText(erg);
-
-                    }
-
-                }, y, m, d);
-        dp.setTitle("Calender");
-
-        dp.show();
+        SimpleDatePickerDialogFragment datePickerDialogFragment;
+        Calendar calendar = Calendar.getInstance(Locale.getDefault());
+        datePickerDialogFragment = SimpleDatePickerDialogFragment.getInstance(
+                calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH));
+        datePickerDialogFragment.setOnDateSetListener(new SimpleDatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(int year, int monthOfYear) {
+                tvDate.setText(monthOfYear+1 +"-" + year);
+                loadAllCustomer(tvDate.getText().toString(), true);
+            }
+        });
+        datePickerDialogFragment.show(getSupportFragmentManager(), null);
     }
 
-    private void loadAllCustomer(){
-        String param = "&billingfrom="+ Util.TimeStamp1("01-09-2017") + "&billingto="+ Util.TimeStamp1("30-09-2017");
-        CustomerConnect.ListBill(param, new CallbackJSONArray() {
+    private void loadAllCustomer(String month, Boolean showLoading){
+        CustomerConnect.ListBill(paramDate(month), new CallbackJSONArray() {
             @Override
             public void onResponse(JSONArray result) {
+                swipeRefreshLayout.setRefreshing(false);
                 try {
                     listBill = new ArrayList<Bill>();
                     for (int i=0; i<result.length(); i++){
-                        Bill customer = new Bill(result.getJSONObject(i));
-                        listBill.add(customer);
+                        Bill bill = new Bill(result.getJSONObject(i));
+                        listBill.add(bill);
                     }
                     Util.dashboardFragment.reloadData(listBill);
+                    Util.billsFragment.reloadData(listBill);
+                    Util.productFragment.reloadData(listBill);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
 
             @Override
             public void onError(String error) {
-
+                swipeRefreshLayout.setRefreshing(false);
             }
-        }, true);
+        }, showLoading);
     }
 
+    private String paramDate(String month){
+        String yearNo = month.split("-")[1];
+        String monthStart = month.split("-")[0].length() ==1 ? "0"+month.split("-")[0] : month.split("-")[0];
+        String monthNext = null;
+        int next = Integer.parseInt(monthStart) + 1;
+        if (next == 13){
+            monthNext = "01";
+            yearNo = String.valueOf(Integer.parseInt(yearNo)+1);
+        }else if (String.valueOf(next).length() ==1){
+            monthNext = "0" + String.valueOf(next);
+        }else {
+            monthNext = String.valueOf(next);
+        }
 
+        return "&billingFrom="+ Util.TimeStamp1("01-"+ monthStart +"-" + yearNo) + "&billingTo="+ Util.TimeStamp1("01-"+ monthNext +"-" + yearNo);
+
+    }
 
 }

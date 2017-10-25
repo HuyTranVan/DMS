@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/input_data_parent"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/_5sdp">
+    android:layout_height="wrap_content">
 
 
     <EditText
@@ -29,7 +28,7 @@
         android:textSize="@dimen/_14sdp"
         android:textColor="@color/black_text_color_hint"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="@dimen/_2sdp"
+        android:layout_marginLeft="@dimen/_5sdp"
         app:customFont="@string/font_awesome"/>
 
     <wolve.dms.controls.CTextView

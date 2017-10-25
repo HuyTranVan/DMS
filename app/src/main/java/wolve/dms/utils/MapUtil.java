@@ -11,9 +11,11 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.util.Log;
+import android.view.ViewGroup;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
@@ -294,6 +296,12 @@ public class MapUtil{
             marker.showInfoWindow();
             isNew = false;
         }
+    }
+
+    public static void changeFragmentHeight(Fragment fragment, int height) {
+        ViewGroup.LayoutParams params = fragment.getView().getLayoutParams();
+        params.height = height;
+        fragment.getView().setLayoutParams(params);
     }
 
 }

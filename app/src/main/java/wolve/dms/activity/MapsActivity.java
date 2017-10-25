@@ -9,11 +9,17 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.inputmethod.EditorInfo;
@@ -47,14 +53,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
+import wolve.dms.adapter.MapListCustomerAdapter;
+import wolve.dms.adapter.StatisticalBillsAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.apiconnect.LocationConnect;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.callback.CallbackJSONObject;
+import wolve.dms.models.Bill;
 import wolve.dms.models.Customer;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomDialog;
@@ -70,7 +81,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         GoogleMap.OnCameraIdleListener, GoogleMap.OnInfoWindowClickListener,
         GoogleMap.OnMapLongClickListener, RadioGroup.OnCheckedChangeListener ,
         GoogleMap.OnInfoWindowLongClickListener, GoogleMap.OnCameraMoveListener,
-        GoogleMap.OnMarkerClickListener{
+        GoogleMap.OnMarkerClickListener,ViewTreeObserver.OnGlobalLayoutListener{
     public GoogleMap mMap;
     public Marker currentMarker;
     private FloatingActionMenu btnNewCustomer;
@@ -79,9 +90,15 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     private DialogPlus dialog;
     private Spinner mSpinner;
     private RadioGroup rdFilter;
+    private BottomSheetBehavior mBottomSheetBehavior;
+    private LinearLayout lnBottomSheet;
+    private CoordinatorLayout coParent;
+    private RecyclerView rvCustomer;
+    private TextView tvCount;
 
     private ArrayList<Customer> listCustomer = new ArrayList<>();
-    //private LatLng currentLatlng;
+    private MapListCustomerAdapter adapter;
+    private float bottomSheetHeight;
     private Handler mHandler = new Handler();
 
     @Override
@@ -106,12 +123,15 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         btnPhoneNumber = (FloatingActionButton) findViewById(R.id.map_new_addphone);
         mSpinner = (Spinner) findViewById(R.id.map_spinner);
         rdFilter = (RadioGroup) findViewById(R.id.map_filter);
+        coParent = (CoordinatorLayout) findViewById(R.id.map_parent);
+        lnBottomSheet = (LinearLayout) findViewById(R.id.map_bottom_sheet);
+        rvCustomer = (RecyclerView) findViewById(R.id.map_rvcustomer);
+        tvCount = (TextView) findViewById(R.id.map_countcustomer);
 
         btnLocation.setColorNormalResId(R.color.colorWhite);
         btnLocation.setColorPressedResId(R.color.colorGrey);
         btnNewCustomer.setMenuButtonColorNormalResId(R.color.colorBlue);
         btnNewCustomer.setMenuButtonColorPressedResId(R.color.colorBlueDark);
-
 
     }
 
@@ -132,6 +152,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         btnMaintain.setOnClickListener(this);
         rdFilter.setOnCheckedChangeListener(this);
         btnPhoneNumber.setOnClickListener(this);
+        coParent.getViewTreeObserver().addOnGlobalLayoutListener(this) ;
     }
 
     @Override
@@ -149,6 +170,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
                 mMap.setOnCameraMoveListener(MapsActivity.this);
                 triggerCurrentLocation(new LatLng(getCurLocation().getLatitude(), getCurLocation().getLongitude()), 16);
                 loadAllCustomerDependLocation(getCurLocation().getLatitude(), getCurLocation().getLongitude(), getCheckedFilter());
+                mSpinner.setSelection(0);
                 break;
 
             case R.id.map_new_repair:
@@ -205,6 +227,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
             @Override
             public void onMapClick(LatLng latLng) {
                 btnNewCustomer.close(true);
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
         mMap.setOnMarkerClickListener(this);
@@ -241,10 +264,46 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
             if (dialog != null && dialog.isShowing()){
                 dialog.dismiss();
             }else {
-                Transaction.gotoHomeActivityRight(false);
+                Transaction.gotoHomeActivityRight(true);
             }
         }
         return true;
+    }
+
+    private void setupBottomSheet() {
+        bottomSheetHeight = Util.convertDp2Px(57);
+        mBottomSheetBehavior = BottomSheetBehavior.from(lnBottomSheet);
+        mBottomSheetBehavior.setPeekHeight((int) bottomSheetHeight);
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            int lastState = BottomSheetBehavior.STATE_COLLAPSED;
+
+            @Override
+            public void onStateChanged(View bottomSheet, int newState) {
+
+                int windowHeight = Util.getWindowSize().heightPixels;
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    MapUtil.changeFragmentHeight(mapFragment, windowHeight - (int) Util.convertDp2Px(57));
+                    MapUtil.getInstance().reboundMap();
+
+                } else if(newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    MapUtil.changeFragmentHeight(mapFragment, windowHeight - Math.round(bottomSheetHeight));
+                    MapUtil.getInstance().reboundMap();
+
+                } else if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                    MapUtil.changeFragmentHeight(mapFragment, windowHeight);
+//                    MapUtil.getInstance().reboundMap();
+                }
+            }
+
+            @Override
+            public void onSlide(View bottomSheet, float slideOffset) {
+                Util.changeFragmentHeight(mapFragment, Math.round(Util.getWindowSize().heightPixels - bottomSheetHeight * slideOffset));
+                MapUtil.getInstance().reboundMap();
+
+            }
+        });
     }
 
     private void setupSpinner(){
@@ -433,6 +492,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
 
                     }
                     addMarkertoMap(listCustomer, isAll, true);
+                    tvCount.setText(String.valueOf(listCustomer.size()));
+                    createRVCustomer(listCustomer);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -457,6 +518,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
                         listCustomer.add(new Customer(result.getJSONObject(i)));
                     }
                     addMarkertoMap(listCustomer, isAll, false);
+                    tvCount.setText(String.valueOf(listCustomer.size()));
+                    createRVCustomer(listCustomer);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -504,10 +567,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
                 e.printStackTrace();
             }
         }
-//        else if (data.getStringExtra(Constants.CUSTOMER) == null){
-//            onCameraMove();
-//        }
-
     }
 
     //update Current marker when move
@@ -668,5 +727,29 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     }
 
 
+    @Override
+    public void onGlobalLayout() {
+        coParent.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        int height = coParent.getHeight()/2 ;
+        ViewGroup.LayoutParams params = lnBottomSheet.getLayoutParams();
+        params.height = height;
+        lnBottomSheet.requestLayout();
+
+        setupBottomSheet();
+    }
+
+    public void createRVCustomer(List<Customer> list){
+
+        adapter = new MapListCustomerAdapter(list, new CallbackClickAdapter() {
+            @Override
+            public void onRespone(String data, int position) {
+
+            }
+        });
+        rvCustomer.setAdapter(adapter);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        rvCustomer.setLayoutManager(layoutManager);
+        rvCustomer.setNestedScrollingEnabled(true);
+    }
 }
 

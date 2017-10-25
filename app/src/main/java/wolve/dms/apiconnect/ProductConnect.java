@@ -10,6 +10,7 @@ import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.libraries.CustomDeleteMethod;
 import wolve.dms.libraries.CustomGetMethod;
 import wolve.dms.libraries.CustomPostMethod;
+import wolve.dms.libraries.CustomPostMethodMulti;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
 
@@ -145,7 +146,7 @@ public class ProductConnect {
 
         String url = Api_link.PRODUCT_NEW ;
 
-        new CustomPostMethod(url,params,false, new Callback() {
+        new CustomPostMethodMulti(url,params, new Callback() {
             @Override
             public void onResponse(JSONObject result) {
                 Util.getInstance().stopLoading(stopLoading);

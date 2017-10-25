@@ -23,6 +23,8 @@ public class Constants {
     public final static String IS_PROMOTION = "BÁN VÀ KHUYẾN MÃI";
     public final static String NO_PROMOTION = "CHỈ BÁN";
 
+    public final static String LOGIN_SUCCESS = "login_success";
+
     public final static int RESULT_CUSTOMER_ACTIVITY = 1000;
     public final static int RESULT_SHOPCART_ACTIVITY = 1001;
     public final static int REQUEST_CHOOSE_IMAGE = 1002;
@@ -51,13 +53,13 @@ public class Constants {
                 Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_status)};
         String[] texts = new String[]{
                 "Bán hàng",
-                "Doanh thu",
+                "Thống kê",
                 "Nhân viên",
                 "Sản phẩm",
                 "Trạng thái"};
         String[] colors = new String[]{
                 "Bán hàng",
-                "Doanh thu",
+                "Thống kê",
                 "Nhân viên",
                 "Sản phẩm",
                 "Trạng thái"};
@@ -119,7 +121,5 @@ public class Constants {
 
         return result;
     }
-
-
 
 }
