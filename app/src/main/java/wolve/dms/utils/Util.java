@@ -32,6 +32,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -50,8 +51,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.net.URLEncoder;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -60,6 +64,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -73,6 +78,7 @@ import wolve.dms.activity.StatisticalBillsFragment;
 import wolve.dms.activity.StatisticalDashboardFragment;
 import wolve.dms.activity.StatisticalProductFragment;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.models.Bill;
 import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.models.Province;
@@ -143,10 +149,6 @@ public class Util {
         cal.setTimeInMillis(time);
         String date = DateFormat.format("dd-MM-yyyy", cal).toString();
         return date;
-    }
-
-    public static void showToast(String message){
-        Toast.makeText(Util.getInstance().getCurrentActivity(), message, Toast.LENGTH_SHORT).show();
     }
 
     public void showLoading() {
@@ -224,25 +226,29 @@ public class Util {
         SnackbarManager.show(snb, Util.getInstance().getCurrentActivity()); // where it is displayed
     }
 
-    public static void setStore(String title, int nValue) {
-        CustomSharedPrefer customSharedPrefer = new CustomSharedPrefer(Util.getInstance().getCurrentActivity());
-        customSharedPrefer.setInt(title, nValue);
+    public static void showToast(String message){
+        Toast.makeText(Util.getInstance().getCurrentActivity(), message, Toast.LENGTH_SHORT).show();
     }
 
-    public static int getStore(String title) {
-        CustomSharedPrefer customSharedPrefer = new CustomSharedPrefer(Util.getInstance().getCurrentActivity());
-        return customSharedPrefer.getInt(title);
-    }
-
-    public static void setBadge(int nBadge) {
-        try {
-            ShortcutBadger.applyCount(Util.getInstance().getCurrentActivity(), nBadge); //for 1.1.4+
-            // Badges.setBadge(Util.getInstance().getCurrentActivity(), nBadge);
-        } catch (Exception e) {
-            Log.e(Constants.DMS_LOGS, e.getMessage());
-        }
-        setStore(Constants.BADGE, nBadge);
-    }
+//    public static void setStore(String title, int nValue) {
+//        CustomSharedPrefer customSharedPrefer = new CustomSharedPrefer(Util.getInstance().getCurrentActivity());
+//        customSharedPrefer.setInt(title, nValue);
+//    }
+//
+//    public static int getStore(String title) {
+//        CustomSharedPrefer customSharedPrefer = new CustomSharedPrefer(Util.getInstance().getCurrentActivity());
+//        return customSharedPrefer.getInt(title);
+//    }
+//
+//    public static void setBadge(int nBadge) {
+//        try {
+//            ShortcutBadger.applyCount(Util.getInstance().getCurrentActivity(), nBadge); //for 1.1.4+
+//            // Badges.setBadge(Util.getInstance().getCurrentActivity(), nBadge);
+//        } catch (Exception e) {
+//            Log.e(Constants.DMS_LOGS, e.getMessage());
+//        }
+//        setStore(Constants.BADGE, nBadge);
+//    }
 
     public static String AssetJSONFile(Context context, String filename) {
         String json = null;
@@ -589,12 +595,12 @@ public class Util {
     }
 
     public static String CurrentTimeStampString(){
-        SimpleDateFormat dfm = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat dfm = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 
         long unixtime = 0;
         try
         {
-            unixtime = dfm.parse(new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(Calendar.getInstance().getTime())).getTime();
+            unixtime = dfm.parse(new SimpleDateFormat("dd-MM-yyyy HH:mm").format(Calendar.getInstance().getTime())).getTime();
             unixtime=unixtime/1000;
         }
         catch (ParseException e)
@@ -623,6 +629,10 @@ public class Util {
 
     public static String CurrentMonthYear(){
         return new SimpleDateFormat("MM-yyyy").format(Calendar.getInstance().getTime());
+    }
+
+    public static String CurrentMonthYearHour(){
+        return new SimpleDateFormat("dd-MM-yyyy HH:mm").format(Calendar.getInstance().getTime());
     }
 
     public static long TimeStamp1(String ddMMyyyy){
@@ -886,6 +896,89 @@ public class Util {
 
     public static Double valueMoney(String money){
         return Double.parseDouble(money.replace(".",""));
+    }
+
+    public static Double valueMoney(EditText edText){
+        return Double.parseDouble(edText.getText().toString().trim().replace(".",""));
+    }
+
+    public static Double valueMoney(TextView edText){
+        return Double.parseDouble(edText.getText().toString().trim().replace(".",""));
+    }
+
+    public static Double getTotalMoney(List<Bill> list){
+        Double money =0.0;
+        for (int i=0; i<list.size(); i++){
+            money += list.get(i).getDouble("total");
+        }
+        return money;
+    }
+
+    public static Double getTotalPaid(List<Bill> list){
+        Double money =0.0;
+        for (int i=0; i<list.size(); i++){
+            money += list.get(i).getDouble("paid");
+        }
+        return money;
+    }
+
+    public static Double getTotalDebt(List<Bill> list){
+        Double money =0.0;
+        for (int i=0; i<list.size(); i++){
+            money += list.get(i).getDouble("debt");
+        }
+        return money;
+    }
+
+    public static Double getTotalProfit(List<Bill> list){
+        Double profit =0.0;
+        try {
+            for (int i=0; i<list.size(); i++){
+                JSONArray arrayDetail = list.get(i).getJSONArray("billDetails");
+                if (arrayDetail.length() >0){
+                    for (int j=0 ; j<arrayDetail.length(); j++){
+                        JSONObject objectDetail = arrayDetail.getJSONObject(j);
+                        profit += (objectDetail.getDouble("unitPrice") - objectDetail.getDouble("discount") - objectDetail.getDouble("purchasePrice"))
+                                * objectDetail.getDouble("quantity");
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            return profit;
+        }
+        return profit;
+    }
+
+    public static class CurrencyUtil {
+
+        public static String format(double v, String unit) {
+            return String.format(Locale.getDefault(), "%,.0f" + " " + unit, v).replace(",", ".");
+        }
+
+        public static String format(double v) {
+            return String.format(Locale.getDefault(), "%,.0f", v).replace(",", ".");
+        }
+
+        public static String format(long v) {
+            return String.format(Locale.getDefault(), "%,d", v).replace(",", ".");
+        }
+
+        public static String format(String v) {
+            return String.format(Locale.getDefault(), "%,d", Long.valueOf(v)).replace(",", ".");
+        }
+
+        public static String convertDecimalToString(String price) {
+            return convertDecimalToString(BigDecimal.valueOf(Double.valueOf(price)));
+        }
+
+        public static String convertDecimalToString(BigDecimal price) {
+            DecimalFormatSymbols fsymbol = new DecimalFormatSymbols();
+            fsymbol.setDecimalSeparator(',');
+            fsymbol.setGroupingSeparator('.');
+            DecimalFormat dmf = new DecimalFormat("#,#.#", fsymbol);
+            dmf.setGroupingSize(3);
+            return dmf.format(price);
+        }
     }
 
 

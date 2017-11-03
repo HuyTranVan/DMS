@@ -54,7 +54,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     @Override
     public void initialData() {
         if (BuildConfig.DEBUG_FLAG ){
-            CustomSharedPrefer customSharedPrefer = new CustomSharedPrefer(Util.getInstance().getCurrentActivity());
+            CustomSharedPrefer customSharedPrefer = new CustomSharedPrefer();
             edUsername.setText(customSharedPrefer.getString(Constants.USER_USERNAME));
             edPassword.setText(customSharedPrefer.getString(Constants.USER_PASSWORD));
             if (!edUsername.getText().toString().trim().equals("") && !edPassword.getText().toString().trim().equals("")){
@@ -86,12 +86,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
             @Override
             public void onResponse(JSONObject result) {
                 try {
-                    CustomSharedPrefer customShared = new CustomSharedPrefer(Util.getInstance().getCurrentActivity());
+                    CustomSharedPrefer customShared = new CustomSharedPrefer();
                     User user = new User(result);
                     Distributor distributor = new Distributor(result.getJSONObject("distributor"));
 
                     user.setToken(result.getString("token"));
                     user.setId_user(result.getString("id"));
+                    //user.setDisplayName(result.getString("displayName"));
 
                     customShared.setObject(Constants.USER, user);
                     customShared.setObject(Constants.DISTRIBUTOR, distributor);

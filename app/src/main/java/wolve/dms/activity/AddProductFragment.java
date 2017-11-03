@@ -36,7 +36,6 @@ import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.controls.CInputForm;
-import wolve.dms.libraries.CustomPostMultiPart;
 import wolve.dms.libraries.RestClientHelper;
 import wolve.dms.models.Product;
 import wolve.dms.utils.Constants;
@@ -61,7 +60,7 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
     private ProductActivity mActivity;
     private ArrayList<String> listGroup = new ArrayList<>();
     private ArrayList<String> listBoolean = new ArrayList<>();
-    private String imageChangeUri ;
+    private Uri imageChangeUri ;
 
     @Nullable
     @Override
@@ -117,6 +116,7 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
         btnBack.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
         btnLoadImage.setOnClickListener(this);
+        imgProduct.setOnClickListener(this);
     }
 
     private void initializeView() {
@@ -150,11 +150,16 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
                 startImageChooser();
                 break;
 
+            case R.id.add_product_image:
+                startImageChooser();
+                break;
+
         }
     }
 
     private void startImageChooser() {
         // Kiểm tra permission với android sdk >= 23
+        imageChangeUri = Uri.fromFile(Util.getOutputMediaFile());
         if (Build.VERSION.SDK_INT <= 19) {
             Intent i = new Intent();
             i.setType("image/*");
@@ -191,28 +196,61 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
             });
 
         }else {
-            String param = String.format(Api_link.PRODUCT_CREATE_PARAM, product == null? "" : "id="+ product.getString("id") +"&",
-                    Util.encodeString(edName.getText().toString()),
-                    edIsPromotion.getText().toString().trim().equals(Constants.IS_PROMOTION) ? true: false,
-                    Integer.parseInt(edUnitPrice.getText().toString().trim().replace(",","")),
-                    Integer.parseInt(edPurchasePrice.getText().toString().trim().replace(",","")),
-                    Integer.parseInt(edVolume.getText().toString().trim().replace(",","")),
-                    defineGroupId(edGroup.getText().toString().trim()));
+//            ArrayMap<String, Object> param = new ArrayMap<>();
+////            try {
+//            param.put("id", product == null? null : product.getString("id"));
+//            param.put("promotion", edIsPromotion.getText().toString().trim().equals(Constants.IS_PROMOTION) ? true: false);
+//            param.put("unitPrice", edUnitPrice.getText().toString().trim().replace(",",""));
+//            param.put("purchasePrice", edPurchasePrice.getText().toString().trim().replace(",",""));
+//            param.put("volume", edVolume.getText().toString().trim().replace(",",""));
+//            param.put("productGroup.id", defineGroupId(edGroup.getText().toString().trim()));
+////            param.put("image", Util.getRealPathFromURI(imageChangeUri));
+//
+//            ArrayMap<String, File> mapFile = new ArrayMap<>();
+//            String urlImage = Util.getRealPathFromURI(imageChangeUri);
+//            mapFile.put("image", new File("//" + urlImage));
+//
+//
+//
+//            ProductConnect.CreateProductMultipart(param,mapFile, new CallbackJSONObject() {
+//                @Override
+//                public void onResponse(JSONObject result) {
+//                    Log.e("ket qua", result.toString());
+//                }
+//
+//                @Override
+//                public void onError(String error) {
+//
+//                }
+//            }, true);
 
 
-            ProductConnect.CreateProduct(param, new CallbackJSONObject() {
-                @Override
-                public void onResponse(JSONObject result) {
+            JSONObject param = new JSONObject();
+            try {
+                param.put("id", product == null? null : product.getString("id"));
+                param.put("promotion", edIsPromotion.getText().toString().trim().equals(Constants.IS_PROMOTION) ? true: false);
+                param.put("unitPrice", edUnitPrice.getText().toString().trim().replace(",",""));
+                param.put("purchasePrice", edPurchasePrice.getText().toString().trim().replace(",",""));
+                param.put("volume", edVolume.getText().toString().trim().replace(",",""));
+                param.put("productGroup.id", defineGroupId(edGroup.getText().toString().trim()));
+                param.put("image", Util.getRealPathFromURI(imageChangeUri));
 
-                    getActivity().getSupportFragmentManager().popBackStack();
-                    mActivity.loadProductGroup();
-                }
+                ProductConnect.CreateProductMultipart(param, new CallbackJSONObject() {
+                    @Override
+                    public void onResponse(JSONObject result) {
+                        Log.e("ket qua", result.toString());
+                    }
 
-                @Override
-                public void onError(String error) {
+                    @Override
+                    public void onError(String error) {
 
-                }
-            }, true);
+                    }
+                }, true);
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -220,20 +258,15 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CHOOSE_IMAGE){
             if (data != null){
-                imageChangeUri = Util.getRealPathFromURI(data.getData());
-                Glide.with(this).load(imageChangeUri).fitCenter().into(imgProduct);
-                uploadImage(data.getData());
-//                Crop.of(Uri.parse(data.getData().toString()), Uri.fromFile(Util.getOutputMediaFile())).asSquare().start(getActivity(), this);
+                Crop.of(Uri.parse(data.getData().toString()), imageChangeUri).asSquare().withMaxSize(150,150).start(getActivity(), AddProductFragment.this);
 
             }
 
         } else if (requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
-            imageChangeUri = Util.getRealPathFromURI(data.getData());
             Glide.with(this).load(imageChangeUri).fitCenter().into(imgProduct);
 
         } else if (requestCode == Crop.REQUEST_CROP) {
             if (resultCode == RESULT_OK) {
-                imageChangeUri = Util.getRealPathFromURI(data.getData());
                 Glide.with(this).load(imageChangeUri).fitCenter().into(imgProduct);
 
             } else if (resultCode == Crop.RESULT_ERROR) {
@@ -241,40 +274,6 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
 
             }
         }
-
-    }
-
-    private void uploadImage(Uri  uri){
-        File file = new File(imageChangeUri);
-//        OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
-//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
-//        os.close();
-        Log.e("string", file.toString());
-        Util.getInstance().showLoading();
-        new CustomPostMultiPart(Api_link.PRODUCT_NEW, "image", file, new Callback() {
-            @Override
-            public void onResponse(JSONObject result) {
-                Util.getInstance().stopLoading(true);
-                try {
-                    if (result.getInt("status") == 200) {
-                        //listener.onResponse(result.getJSONArray("data"));
-
-                    } else {
-                        //listener.onError("Unknow error");
-                    }
-                } catch (JSONException e) {
-                    //listener.onError(e.toString());
-                }
-            }
-
-            @Override
-            public void onError(String error) {
-                //listener.onError(error);
-                Util.getInstance().stopLoading(true);
-            }
-        }).execute();
-
-
 
     }
 

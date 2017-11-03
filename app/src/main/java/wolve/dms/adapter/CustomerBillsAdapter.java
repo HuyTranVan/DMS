@@ -23,9 +23,12 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackChangePrice;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
+import wolve.dms.callback.CallbackUpdateBill;
 import wolve.dms.controls.CTextView;
 import wolve.dms.models.Bill;
 import wolve.dms.models.BillDetail;
+import wolve.dms.models.Customer;
+import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.CustomDialog;
 import wolve.dms.utils.Util;
@@ -39,12 +42,14 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackDeleteAdapter mDelete;
+    private CallbackUpdateBill mUpdate;
 
-    public CustomerBillsAdapter(List<Bill> data, CallbackDeleteAdapter mDelete) {
+    public CustomerBillsAdapter(List<Bill> data, CallbackDeleteAdapter mDelete, CallbackUpdateBill mUpdate) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mData = data;
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mDelete = mDelete;
+        this.mUpdate = mUpdate;
         Collections.reverse(mData);
     }
 
@@ -98,8 +103,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
                                 CustomerConnect.DeleteBill(param, new CallbackJSONObject() {
                                     @Override
                                     public void onResponse(JSONObject result) {
-                                        mDelete.onDelete(mData.get(position).BillstoString(), mData.size() -1);
-                                        mData.remove(position);
+                                        mDelete.onDelete(mData.get(position).BillstoString(), position);
                                         notifyDataSetChanged();
                                     }
 
@@ -115,6 +119,15 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
 
 
                     return true;
+                }
+            });
+
+            holder.lnParent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mData.get(position).getDouble("debt") != 0){
+                        mUpdate.onUpdate(mData.get(position), position);
+                    }
                 }
             });
 
@@ -157,12 +170,5 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
         return mData;
     }
 
-//    public Double getTotalMoney(){
-//        Double money =0.0;
-//        for (int i=0; i<mData.size(); i++){
-//            money += mData.get(i).getDouble("total");
-//        }
-//        return money;
-//    }
 
 }

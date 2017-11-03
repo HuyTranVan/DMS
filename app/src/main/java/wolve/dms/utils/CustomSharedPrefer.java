@@ -17,7 +17,8 @@ public class CustomSharedPrefer {
     SharedPreferences prefs;
 
     public final static String MY_PREFS = "MyPrefs";
-    public CustomSharedPrefer(Context context){
+    public CustomSharedPrefer(){
+        Context context = Util.getInstance().getCurrentActivity();
         if(context != null)
             prefs = context.getSharedPreferences(
                     MY_PREFS, Context.MODE_PRIVATE);

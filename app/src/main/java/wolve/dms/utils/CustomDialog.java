@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.View;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 
 import org.json.JSONException;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,10 +33,13 @@ import wolve.dms.adapter.CartProductDialogAdapter;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickProduct;
 import wolve.dms.callback.CallbackListProduct;
+import wolve.dms.callback.CallbackPayBill;
 import wolve.dms.callback.CallbackStatus;
 import wolve.dms.controls.CTextView;
+import wolve.dms.models.Customer;
 import wolve.dms.models.Product;
 import wolve.dms.models.Status;
+import wolve.dms.models.User;
 
 /**
  * Created by macos on 9/28/17.
@@ -250,11 +255,11 @@ public class CustomDialog {
         tvTitle.setText(product.getString("name"));
         tvUnitPrice.setText(Util.FormatMoney(product.getDouble("unitPrice")));
         edDiscount.setText(String.valueOf(Math.round(product.getDouble("discount"))));
-        tvNetPrice.setText(Util.FormatMoney(product.getDouble("unitPrice") - product.getDouble("discount")  ));
+        tvNetPrice.setText(Util.FormatMoney(product.getDouble("unitPrice") - product.getDouble("discount")));
         edQuantity.setText(String.valueOf(Math.round(product.getDouble("quantity"))));
         tvTotal.setText(Util.FormatMoney(product.getDouble("quantity") * (product.getDouble("unitPrice") - product.getDouble("discount"))));
 
-        edDiscount.setFilters(new InputFilter[]{new InputFilter.LengthFilter(product.getString("unitPrice").length() -1)});
+        edDiscount.setFilters(new InputFilter[]{new InputFilter.LengthFilter(tvUnitPrice.getText().toString().trim().replace(".","").length() -1)});
 
 
         edQuantity.requestFocus();
@@ -271,12 +276,12 @@ public class CustomDialog {
             @Override public void afterTextChanged(Editable s) {
                 String text = s.toString();
                 if (!text.equals("")){
-                    if (Double.parseDouble(text) > product.getDouble("unitPrice")){
+                    if (Util.valueMoney(text) > product.getDouble("unitPrice")){
                         Toast.makeText(Util.getInstance().getCurrentActivity(), "Vui lòng nhập giá tiền nhỏ hơn giá niêm yết",Toast.LENGTH_SHORT).show();
 
                     }else {
                         if (text.length() >0){
-                            tvNetPrice.setText(Util.FormatMoney(product.getDouble("unitPrice") - Double.parseDouble(text)));
+                            tvNetPrice.setText(Util.FormatMoney(product.getDouble("unitPrice") - Util.valueMoney(text)));
                             tvTotal.setText(Util.FormatMoney(Double.parseDouble(edQuantity.getText().toString()) * (product.getDouble("unitPrice") - Double.parseDouble(text))));
                         }
                     }
@@ -328,8 +333,7 @@ public class CustomDialog {
                 if (edQuantity.getText().toString().equals("") || edQuantity.getText().toString().equals("0")){
                     Toast.makeText(Util.getInstance().getCurrentActivity(), "Vui lòng nhập số lượng >0 ",Toast.LENGTH_SHORT).show();
 
-                }
-                else {
+                } else {
                     try {
                         Product newProduct = product;
                         newProduct.put("quantity", Integer.parseInt(edQuantity.getText().toString()));
@@ -386,6 +390,129 @@ public class CustomDialog {
                 dialogResult.dismiss();
             }
         });
+
+
+    }
+
+    public static void showDialogInputPaid(String title, String totalTitle, Double total, final CallbackPayBill mListener){
+        final Dialog dialogResult = CustomDialog.showCustomDialog(R.layout.view_input_paid);
+        TextView tvTitle = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_title);
+        final TextView tvTotal = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_total);
+        final TextView tvTotalTitle = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_total_title);
+        final EditText edPaid = (EditText) dialogResult.findViewById(R.id.dialog_input_paid_paid);
+        final TextView tvRemain = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_remain);
+        Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
+        Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
+
+        tvTotal.setText(Util.FormatMoney(total));
+        edPaid.setText("");
+        tvRemain.setText(Util.FormatMoney(total));
+        Util.showKeyboard(edPaid);
+
+        edPaid.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String text = s.toString();
+
+                if (!text.equals("")){
+                    tvRemain.setText(Util.FormatMoney(Util.valueMoney(tvTotal) - Util.valueMoney(text)));
+                }else {
+                    tvRemain.setText(tvTotal.getText().toString());
+                }
+
+                try {
+                    edPaid.removeTextChangedListener(this);
+                    //Store current selection and string length
+                    int currentSelection = edPaid.getSelectionStart();
+                    int prevStringLength = edPaid.getText().length();
+
+                    String valueInString = edPaid.getText().toString();
+                    if (!TextUtils.isEmpty(valueInString)) {
+                        String str = edPaid.getText().toString().trim().replaceAll(",|\\s|\\.", "");
+                        String newString = Util.CurrencyUtil.convertDecimalToString(new BigDecimal(str));
+                        edPaid.setText(newString);
+                        //Set new selection
+                        int selection = currentSelection + (newString.length() - prevStringLength);
+                        edPaid.setSelection(selection);
+                    }
+                    edPaid.addTextChangedListener(this);
+                    return;
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    edPaid.addTextChangedListener(this);
+                }
+
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogResult.dismiss();
+            }
+        });
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (edPaid.getText().toString().equals("") || edPaid.getText().toString().equals("0") ){
+                    dialogResult.dismiss();
+                    mListener.OnRespone(Util.valueMoney(tvTotal) , 0.0);
+
+                }else if (!edPaid.getText().toString().equals("") && !edPaid.getText().toString().equals("0") ){
+                    if (Util.valueMoney(edPaid) > Util.valueMoney(tvTotal)){
+                        Util.showToast("Số tiền nhập nhỏ hơn số tiền nợ!");
+                    }else {
+                        dialogResult.dismiss();
+                        mListener.OnRespone(Util.valueMoney(tvTotal) , Util.valueMoney(edPaid));
+                    }
+
+
+                }
+
+            }
+        });
+    }
+
+    public static void showDialogBillImage(Customer customer,String total,  List<Product> listProduct, final CallbackPayBill mListener){
+        final Dialog dialogResult = CustomDialog.showCustomDialog(R.layout.view_dialog_bill);
+        dialogResult.setCancelable(true);
+        TextView tvShopName = (TextView) dialogResult.findViewById(R.id.dialog_bill_shopname);
+        TextView tvCustomerName = (TextView) dialogResult.findViewById(R.id.dialog_bill_customer);
+        TextView tvPhone = (TextView) dialogResult.findViewById(R.id.dialog_bill_phone);
+        TextView tvAddress = (TextView) dialogResult.findViewById(R.id.dialog_bill_address);
+        TextView tvDate = (TextView) dialogResult.findViewById(R.id.dialog_bill_time);
+        TextView tvSalesman = (TextView) dialogResult.findViewById(R.id.dialog_bill_sale);
+        TextView tvTotal = (TextView) dialogResult.findViewById(R.id.dialog_bill_total);
+        RecyclerView rvBill = (RecyclerView) dialogResult.findViewById(R.id.dialog_bill_rvbill);
+
+
+        tvShopName.setText(Constants.getShopInfo(customer.getString("shopType") , null) + " "+ customer.getString("signBoard"));
+        tvCustomerName.setText(customer.getString("name") == null? "" : customer.getString("name"));
+        tvPhone.setText(customer.getString("phone") == null? "" : customer.getString("phone"));
+        tvAddress.setText((customer.getString("address") == null? "" : customer.getString("address")) +" " +customer.getString("street") + " "+ customer.getString("district"));
+        tvDate.setText(Util.CurrentMonthYearHour());
+        tvSalesman.setText(User.getFullName());
+        tvTotal.setText(total);
+
+
+
+//        Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
+//        Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
+
+
+
+
+
 
 
     }

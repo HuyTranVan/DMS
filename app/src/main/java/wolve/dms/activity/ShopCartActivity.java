@@ -1,29 +1,37 @@
 package wolve.dms.activity;
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Intent;
-import android.support.annotation.IdRes;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
+import com.orhanobut.dialogplus.DialogPlus;
+import com.orhanobut.dialogplus.OnBackPressListener;
+import com.orhanobut.dialogplus.ViewHolder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,14 +40,15 @@ import java.util.Locale;
 
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
+import wolve.dms.adapter.CartProductDialogAdapter;
 import wolve.dms.adapter.CartProductsAdapter;
 import wolve.dms.adapter.CartPromotionsAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
-import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackChangePrice;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackListProduct;
+import wolve.dms.callback.CallbackPayBill;
 import wolve.dms.controls.CInputForm;
 import wolve.dms.models.Customer;
 import wolve.dms.models.Distributor;
@@ -47,24 +56,21 @@ import wolve.dms.models.Product;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomDialog;
-import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
 /**
  * Created by macos on 9/16/17.
  */
 
-public class ShopCartActivity extends BaseActivity implements  View.OnClickListener, RadioGroup.OnCheckedChangeListener {
+public class ShopCartActivity extends BaseActivity implements  View.OnClickListener {
     private ImageView btnBack;
     private Button btnSubmit;
-    private TextView tvTitle, tvTotal, tvRemain;
-    private EditText edPaid;
+    private TextView tvTitle, tvTotal;
     private CInputForm tvNote;
-    private RadioGroup rgBill;
-    private RadioButton rdCash, rdDebt;
     private RecyclerView rvProducts, rvPromotions;
     private FloatingActionButton btnAdd, btnAddPromotion;
     private RelativeLayout rlCover;
+    private DialogPlus dialog;
 
     private DatePickerDialog fromDatePickerDialog;
 
@@ -91,10 +97,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         btnBack = (ImageView) findViewById(R.id.icon_back);
         tvTitle = (TextView) findViewById(R.id.cart_title);
         tvTotal = (TextView) findViewById(R.id.cart_total);
-        tvRemain = (TextView) findViewById(R.id.cart_remain);
-        edPaid = (EditText) findViewById(R.id.cart_paid);
         tvNote = (CInputForm) findViewById(R.id.cart_note);
-        rgBill = (RadioGroup) findViewById(R.id.cart_radiogroup);
         btnAdd = (FloatingActionButton) findViewById(R.id.cart_add_product);
         btnAddPromotion = (FloatingActionButton) findViewById(R.id.cart_add_promotion);
         rvProducts = (RecyclerView) findViewById(R.id.cart_rvproduct);
@@ -130,7 +133,6 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         btnSubmit.setOnClickListener(this);
         btnAdd.setOnClickListener(this);
         btnAddPromotion.setOnClickListener(this);
-        rgBill.setOnCheckedChangeListener(this);
         DatePickerEvent();
     }
 
@@ -152,7 +154,8 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 break;
 
             case R.id.cart_submit:
-                submitBill();
+//                choicePayMethod();
+                createBillImage();
 
                 break;
 
@@ -176,7 +179,6 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     }
 
     private void createRVProduct(final List<Product> list){
-
         adapterProducts = new CartProductsAdapter(list, new CallbackChangePrice() {
             @Override
             public void NewPrice(Double price) {
@@ -207,34 +209,6 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         rvPromotions.setNestedScrollingEnabled(false);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(), LinearLayoutManager.VERTICAL, false);
         rvPromotions.setLayoutManager(layoutManager);
-    }
-
-    @Override
-    public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
-        switch (checkedId){
-            case R.id.cart_radiobutton_cash:
-                edPaid.setText(tvTotal.getText().toString().replace(".",""));
-                tvRemain.setText("0");
-                break;
-
-            case R.id.cart_radiobutton_debt:
-
-
-                Log.e("value",Util.valueMoney(edPaid.getText().toString().trim()) +"\n" + Util.valueMoney(tvTotal.getText().toString().trim()) );
-
-                if (edPaid.getText().toString().trim().replace(".","").equals(tvTotal.getText().toString().trim())){
-
-
-                    edPaid.setText("0");
-                    tvRemain.setText(tvTotal.getText().toString());
-
-                }else {
-                    tvRemain.setText(Util.FormatMoney(Util.valueMoney(tvTotal.getText().toString()) - Util.valueMoney(edPaid.getText().toString().trim().equals("") ? "0" : edPaid.getText().toString().trim())));
-
-                }
-                break;
-
-        }
     }
 
     private void showDialogProduct(String title, final Boolean isPromotion){
@@ -287,20 +261,14 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         });
     }
 
-    private void submitBill(){
-        List<Product> listProductChoice = new ArrayList<>();
+    private void submitBill(Double total, Double paid){
+        List<Product> listProductChoice = getListProduct();
 
-        for (int i=0; i<adapterProducts.getAllDataProduct().size(); i++){
-            listProductChoice.add(adapterProducts.getAllDataProduct().get(i));
-        }
-        for (int j=0; j<adapterPromotions.getAllDataPromotion().size(); j++){
-            listProductChoice.add(adapterPromotions.getAllDataPromotion().get(j));
-        }
         try {
             JSONObject params = new JSONObject();
-            params.put("debt", 0);
-            params.put("total", Util.valueMoney(tvTotal.getText().toString()));
-            params.put("paid", Util.valueMoney(tvTotal.getText().toString()));
+            params.put("debt", total - paid);
+            params.put("total", total);
+            params.put("paid", paid);
             params.put("customerId", currentCustomer.getInt("id"));
             params.put("distributorId", Distributor.getCurrentDistributorId());
             params.put("userId", User.getCurrentUserId());
@@ -316,7 +284,6 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 array.put(object);
             }
             params.put("billDetails", (Object) array);
-
             CustomerConnect.PostBill(params.toString(), new CallbackJSONObject() {
                 @Override
                 public void onResponse(JSONObject result) {
@@ -345,8 +312,21 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
+
+    private List<Product> getListProduct(){
+        List<Product> listProductChoice = new ArrayList<>();
+
+        for (int i=0; i<adapterProducts.getAllDataProduct().size(); i++){
+            listProductChoice.add(adapterProducts.getAllDataProduct().get(i));
+        }
+        for (int j=0; j<adapterPromotions.getAllDataPromotion().size(); j++){
+            listProductChoice.add(adapterPromotions.getAllDataPromotion().get(j));
+        }
+
+        return listProductChoice;
+    }
+
 
     private void DatePickerEvent(){
         fromDatePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
@@ -360,6 +340,64 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
             }
 
         },Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+    }
+
+    private void choicePayMethod(){
+        dialog = DialogPlus.newDialog(this)
+                .setContentHolder(new ViewHolder(R.layout.view_choice_pay_method))
+                .setGravity(Gravity.BOTTOM)
+                .setBackgroundColorResId(R.drawable.colorwhite_corner)
+                .setMargin(10,10,10,10)
+                .setPadding(20,30,20,20)
+                .setInAnimation(R.anim.slide_up)
+                .setOnBackPressListener(new OnBackPressListener() {
+                    @Override
+                    public void onBackPressed(DialogPlus dialogPlus) {
+                        dialogPlus.dismiss();
+                    }
+                }).create();
+
+        LinearLayout lnCash = (LinearLayout) dialog.findViewById(R.id.view_pay_method_cash);
+        LinearLayout lnDebt = (LinearLayout) dialog.findViewById(R.id.view_pay_method_debt);
+
+        lnCash.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                submitBill(Util.valueMoney(tvTotal) , Util.valueMoney(tvTotal));
+
+            }
+        });
+
+        lnDebt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+
+                showDialogInputPaid();
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void createBillImage(){
+        CustomDialog.showDialogBillImage(currentCustomer,tvTotal.getText().toString(), getListProduct(), new CallbackPayBill() {
+            @Override
+            public void OnRespone(Double total, Double pay) {
+
+            }
+        });
+    }
+
+
+    private void showDialogInputPaid() {
+        CustomDialog.showDialogInputPaid("Nhập số tiến khách trả", "Tổng tiền hóa đơn", Util.valueMoney(tvTotal.getText().toString()), new CallbackPayBill() {
+                    @Override
+                    public void OnRespone(Double total, Double pay) {
+                        submitBill(total, pay);
+                    }
+                });
     }
 
 

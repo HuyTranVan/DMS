@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/dialog_input_paid_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorWhite">
+
+    <TextView
+        android:id="@+id/dialog_input_paid_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_25sdp"
+        android:background="@drawable/bg_header_top"
+        android:text="NHẬP SỐ TIỀN KHÁCH TRẢ"
+        android:textAllCaps="true"
+        android:textSize="@dimen/_12sdp"
+        android:textColor="@color/black_text_color"
+        android:gravity="center"/>
+
+
+
+    <LinearLayout
+        android:id="@+id/dialog_input_paid_body"
+        android:layout_below="@+id/dialog_input_paid_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:minHeight="@dimen/_30sdp">
+
+            <TextView
+                android:id="@+id/dialog_input_paid_total_title"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.6"
+                android:text="Tổng tiền hóa đơn"
+                android:textSize="@dimen/_12sdp"
+                android:paddingLeft="@dimen/_10sdp"
+                android:gravity="center_vertical"/>
+
+            <TextView
+                android:id="@+id/dialog_input_paid_total"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.4"
+                android:text="2000"
+                android:textSize="@dimen/_14sdp"
+                android:textColor="@color/black_text_color"
+                android:paddingRight="@dimen/_10sdp"
+                android:gravity="center_vertical|right"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="#0d000000"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:minHeight="@dimen/_30sdp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.6"
+                android:text="Khách trả"
+                android:textSize="@dimen/_12sdp"
+                android:paddingLeft="@dimen/_10sdp"
+                android:gravity="center_vertical"/>
+
+            <EditText
+                android:id="@+id/dialog_input_paid_paid"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.4"
+                android:background="@drawable/colorwhite_borderred_corner"
+                android:text=""
+                android:textSize="@dimen/_12sdp"
+                android:inputType="number"
+                android:gravity="right|center_vertical"
+                android:maxLength="12"
+                android:paddingRight="@dimen/_10sdp"
+                android:layout_margin="@dimen/_4sdp"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="#0d000000"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:minHeight="@dimen/_30sdp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.6"
+                android:text="Còn lại"
+                android:textSize="@dimen/_12sdp"
+                android:paddingLeft="@dimen/_10sdp"
+                android:gravity="center_vertical"/>
+
+            <TextView
+                android:id="@+id/dialog_input_paid_remain"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.4"
+                android:text="2000"
+                android:textSize="@dimen/_14sdp"
+                android:textColor="@color/colorBlue"
+                android:paddingRight="@dimen/_10sdp"
+                android:gravity="center_vertical|right"/>
+
+        </LinearLayout>
+
+        <include android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            layout="@layout/view_bottom_dialog_button"/>
+
+        <!--<View-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="2px"-->
+            <!--android:background="@color/colorGrey"/>-->
+
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="horizontal">-->
+
+            <!--<Button-->
+                <!--android:id="@+id/dialog_input_paid_cancel"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="@dimen/_30sdp"-->
+                <!--android:layout_weight="0.5"-->
+                <!--android:background="?selectableItemBackground"-->
+                <!--android:textColor="@color/black_text_color_hint"-->
+                <!--android:text="Quay lại"-->
+                <!--android:textSize="@dimen/_12sdp"-->
+                <!--android:textAllCaps="true"-->
+                <!--android:layout_gravity="center"/>-->
+
+            <!--<View-->
+                <!--android:layout_width="1dp"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:background="@color/colorGrey"-->
+                <!--android:layout_marginTop="@dimen/_2sdp"-->
+                <!--android:layout_marginBottom="@dimen/_2sdp"/>-->
+
+            <!--<Button-->
+                <!--android:id="@+id/dialog_input_paid_submit"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="@dimen/_30sdp"-->
+                <!--android:layout_weight="0.5"-->
+                <!--android:background="?selectableItemBackground"-->
+                <!--android:textColor="@color/colorRed"-->
+                <!--android:text="Thanh toán"-->
+                <!--android:textSize="@dimen/_12sdp"-->
+                <!--android:textAllCaps="true"-->
+                <!--android:layout_gravity="center"/>-->
+
+        <!--</LinearLayout>-->
+
+
+
+
+    </LinearLayout>
+
+
+
+
+</RelativeLayout>

@@ -59,6 +59,10 @@
     <string name="icon_bill">&#xf022;</string>
     <string name="icon_save">&#xf0c7;</string>
     <string name="icon_edit_map">&#xf279;</string>
+    <string name="icon_money">&#xf0d6;</string>
+    <string name="icon_warning">&#xf071;</string>
+    <string name="icon_print">&#xf02f;</string>
+
 
 
     <string name="login_username">Nhập tài khoản hoặc SĐT</string>

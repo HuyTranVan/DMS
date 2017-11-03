@@ -373,7 +373,7 @@
     <LinearLayout
         android:id="@+id/customer_bottom_sheet"
         android:layout_width="match_parent"
-        android:layout_height="57dp"
+        android:layout_height="88dp"
         android:orientation="vertical"
         android:background="#f4f4f4"
         app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
@@ -383,25 +383,64 @@
             android:layout_height="2dp"
             android:background="#75b9b3b3"/>
 
-        <RelativeLayout
+        <android.support.design.widget.TabLayout
+            android:id="@+id/customer_tabs"
+            android:layout_width="wrap_content"
+            android:layout_height="56dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:layout_marginLeft="@dimen/_20sdp"
+            app:tabIndicatorColor="@color/colorGreen"
+            app:tabIndicatorHeight="3dp"
+            app:tabMode="fixed"
+            app:tabSelectedTextColor="@color/colorGreen"
+            app:tabTextAppearance="@style/NavigationTabTextAppeareance"
+            app:tabTextColor="@color/black_text_color_hint" />
+
+        <LinearLayout
+            android:id="@+id/customer_paid_parent"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="30dp"
+            android:background="@color/colorWhite"
+            android:orientation="horizontal"
+            android:weightSum="3">
 
-            <android.support.design.widget.TabLayout
-                android:id="@+id/customer_tabs"
-                android:layout_width="wrap_content"
-                android:layout_height="56dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:layout_marginLeft="@dimen/_20sdp"
-                app:tabIndicatorColor="@color/colorGreen"
-                app:tabIndicatorHeight="3dp"
-                app:tabMode="fixed"
-                app:tabSelectedTextColor="@color/colorGreen"
-                app:tabTextAppearance="@style/NavigationTabTextAppeareance"
-                app:tabTextColor="@color/black_text_color_hint" />
+            <TextView
+                android:id="@+id/customer_paid_debt"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textColor="@color/colorRed"
+                android:text="con no"
+                android:textSize="@dimen/_10sdp"
+                android:gravity="center_vertical|right"
+                android:paddingRight="@dimen/_10sdp"/>
 
-        </RelativeLayout>
+            <TextView
+                android:id="@+id/customer_paid_paid"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="con no"
+                android:textSize="@dimen/_10sdp"
+                android:gravity="center_vertical|right"
+                android:paddingRight="@dimen/_10sdp"/>
+
+            <TextView
+                android:id="@+id/customer_paid_total"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textColor="@color/colorBlue"
+                android:text="con no"
+                android:textSize="@dimen/_10sdp"
+                android:gravity="center_vertical|right"
+                android:paddingRight="@dimen/_10sdp"/>
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#75b9b3b3"/>
 
         <android.support.v4.view.ViewPager
             android:id="@+id/customer_viewpager"

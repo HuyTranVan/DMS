@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/view_pay_method_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/colorwhite_corner"
+    tools:ignore="WebViewLayout"
+    android:orientation="vertical">
+
+
+        <LinearLayout
+            android:id="@+id/view_pay_method_cash"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal"
+            android:background="?selectableItemBackground">
+
+                <wolve.dms.controls.CTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:text="@string/icon_money"
+                    android:textSize="@dimen/_12sdp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/_20sdp"
+                    app:customFont ="@string/font_awesome"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tiền mặt"
+                    android:textColor="@color/black_text_color"
+                    android:textSize="@dimen/_12sdp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/_20sdp" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:background="#e0e0e0"/>
+
+
+        <LinearLayout
+            android:id="@+id/view_pay_method_debt"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal"
+            android:background="?selectableItemBackground">
+
+                <wolve.dms.controls.CTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:text="@string/icon_warning"
+                    android:textSize="@dimen/_12sdp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/_20sdp"
+                    app:customFont ="@string/font_awesome"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nợ lại"
+                    android:textColor="@color/black_text_color"
+                    android:textSize="@dimen/_12sdp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/_20sdp" />
+
+        </LinearLayout>
+
+</LinearLayout>
+

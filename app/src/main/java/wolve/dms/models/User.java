@@ -13,6 +13,9 @@ import wolve.dms.utils.Util;
  */
 public class User extends BaseModel {
     String token;
+    String id_user;
+    String displayName;
+    static User currentUser;
 
     public String getId_user() {
         return id_user;
@@ -26,8 +29,13 @@ public class User extends BaseModel {
         User.currentUser = currentUser;
     }
 
-    String id_user;
-    static User currentUser;
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
 
     public User() {
         jsonObject = null;
@@ -46,7 +54,7 @@ public class User extends BaseModel {
     }
 
     public static User getCurrentUser(){
-        CustomSharedPrefer customSharedPrefer = new CustomSharedPrefer(Util.getInstance().getCurrentActivity());
+        CustomSharedPrefer customSharedPrefer = new CustomSharedPrefer();
         if(customSharedPrefer.getObject(Constants.USER, User.class) == null){
             currentUser = new User();
         }else {
@@ -69,4 +77,12 @@ public class User extends BaseModel {
         return id_user;
     }
 
+    public static String getFullName(){
+        String name = "";
+        User currentUser = User.getCurrentUser();
+        if (currentUser != null && currentUser.getToken() != null) {
+            name = currentUser.getString("displayName");
+        }
+        return name;
+    }
 }

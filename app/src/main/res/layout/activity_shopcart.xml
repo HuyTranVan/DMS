@@ -29,52 +29,8 @@
             android:textColor="@color/black_text_color"
             android:singleLine="true"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/icon_back"
-            android:layout_toLeftOf="@+id/cart_radiogroup"/>
-
-        <RadioGroup
-            android:id="@+id/cart_radiogroup"
-            android:layout_width="@dimen/_120sdp"
-            android:layout_height="@dimen/_25sdp"
-            android:background="@drawable/pink_out_line"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginRight="@dimen/_10sdp"
-            android:checkedButton="@+id/cart_radiobutton_cash"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true">
-
-            <RadioButton
-                android:id="@+id/cart_radiobutton_cash"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="0.5"
-                android:background="@drawable/toggle_widget_background"
-                android:text="Tiền mặt"
-                android:textSize="@dimen/_10sdp"
-                android:textColor="@drawable/text_white_selected"
-                android:button="@null"
-                android:layout_marginLeft="1dp"
-                android:layout_marginTop="1dp"
-                android:layout_marginBottom="1dp"
-                android:gravity="center"/>
-
-            <RadioButton
-                android:id="@+id/cart_radiobutton_debt"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/toggle_widget_background"
-                android:layout_weight="0.5"
-                android:text="Công nợ"
-                android:textSize="@dimen/_10sdp"
-                android:textColor="@drawable/text_white_selected"
-                android:button="@null"
-                android:layout_marginBottom="1dp"
-                android:layout_marginTop="1dp"
-                android:layout_marginRight="1dp"
-                android:gravity="center"/>
-
-        </RadioGroup>
+            android:gravity="center"
+            android:layout_toRightOf="@+id/icon_back"/>
 
     </RelativeLayout>
 
@@ -112,68 +68,6 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="@dimen/_5sdp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.7"
-                android:text="Đã trả:"
-                android:textColor="@color/black_text_color_hint"
-                android:gravity="right"
-                android:textSize="@dimen/_12sdp"/>
-
-            <EditText
-                android:id="@+id/cart_paid"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.3"
-                android:background="@drawable/colorwhite_bordergrey_corner"
-                android:gravity="right"
-                android:inputType="number"
-                android:paddingRight="@dimen/_10sdp"
-                android:paddingLeft="@dimen/_10sdp"
-                android:paddingTop="@dimen/_5sdp"
-                android:paddingBottom="@dimen/_5sdp"
-                android:textColor="@color/black_text_color"
-                android:textSize="@dimen/_14sdp"
-                android:layout_marginRight="@dimen/_5sdp"
-                android:layout_marginLeft="@dimen/_5sdp"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="@dimen/_5sdp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.7"
-                android:text="Còn lại:"
-                android:textColor="@color/black_text_color_hint"
-                android:gravity="right"
-                android:textSize="@dimen/_12sdp"/>
-
-            <TextView
-                android:id="@+id/cart_remain"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.3"
-                android:text=""
-                android:gravity="right"
-                android:textColor="@color/black_text_color"
-                android:textSize="@dimen/_14sdp"
-                android:paddingRight="@dimen/_10sdp"/>
-
-        </LinearLayout>
-
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -182,6 +76,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorGrey"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginTop="@dimen/_2sdp"/>
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/cart_rvproduct"
@@ -230,7 +131,8 @@
         android:background="@color/colorWhite"
         android:gravity="center"
         android:layout_below="@+id/cart_header"
-        android:clickable="true">
+        android:clickable="true"
+        android:visibility="visible">
 
         <wolve.dms.controls.CTextView
             android:id="@+id/cart_icon"

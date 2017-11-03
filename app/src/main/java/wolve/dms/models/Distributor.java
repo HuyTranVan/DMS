@@ -44,7 +44,7 @@ public class Distributor extends BaseModel{
     }
 
     public static Distributor getCurrentDistributor(){
-        CustomSharedPrefer customSharedPrefer = new CustomSharedPrefer(Util.getInstance().getCurrentActivity());
+        CustomSharedPrefer customSharedPrefer = new CustomSharedPrefer();
         if(customSharedPrefer.getObject(Constants.DISTRIBUTOR, User.class) == null){
             currentDistributor = new Distributor();
         }else {

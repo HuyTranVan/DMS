@@ -1,19 +1,12 @@
 package wolve.dms.activity;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.support.annotation.IdRes;
-import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +20,6 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -48,20 +40,21 @@ import wolve.dms.R;
 import wolve.dms.adapter.CustomerBillsAdapter;
 import wolve.dms.adapter.CustomerCheckinsAdapter;
 import wolve.dms.adapter.CustomerViewpagerAdapter;
-import wolve.dms.adapter.CartCheckinReasonAdapter;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackChangePrice;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
+import wolve.dms.callback.CallbackPayBill;
 import wolve.dms.callback.CallbackStatus;
+import wolve.dms.callback.CallbackUpdateBill;
 import wolve.dms.controls.CInputForm;
 import wolve.dms.controls.CTextView;
 import wolve.dms.controls.WorkaroundMapFragment;
 import wolve.dms.models.Bill;
 import wolve.dms.models.Checkin;
 import wolve.dms.models.Customer;
+import wolve.dms.models.Distributor;
 import wolve.dms.models.Status;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
@@ -80,7 +73,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     private CTextView tvTrash , btnEditLocation;
     private Button btnSubmit;
     private FloatingActionButton btnShopCart, btnCurrentLocation;
-    private TextView tvTitle;
+    private TextView tvTitle, tvTotal, tvDebt, tvPaid;
     private CInputForm edName, edPhone , edAdress, edStreet, edDistrict, edCity, edNote , edShopType, edShopName;
     private RadioGroup rgStatus;
     private RadioButton rdInterested, rdNotInterested, rdOrdered;
@@ -88,21 +81,18 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     private ViewPager viewPager;
     private TabLayout tabLayout;
     private BottomSheetBehavior mBottomSheetBehavior;
-    private LinearLayout lnBottomSheet;
+    private LinearLayout lnBottomSheet, lnPaidParent;
     private CoordinatorLayout coParent;
     private RelativeLayout rlHeader;
 
 
-//    private CartCheckinReasonAdapter cartCheckinReasonAdapter;
-//    private CustomerCheckinsAdapter customerCheckinsAdapter;
-//    private CustomerBillsAdapter customerBillsAdapter;
     private CustomerViewpagerAdapter viewpagerAdapter;
     private Customer currentCustomer;
     private List<Checkin> listCheckins = new ArrayList<>();
     private List<Bill> listBills = new ArrayList<>();
-    private List<RecyclerView.Adapter> listAdapter = new ArrayList<>();
+    private List<RecyclerView.Adapter> listAdapter;
     private Status currentStatus= Util.mListStatus.get(0);
-    private int currentPosition=0;
+    private int currentState= BottomSheetBehavior.STATE_COLLAPSED;
     private String firstName ="";
     private float bottomSheetHeight;
 
@@ -145,6 +135,10 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         viewPager = (ViewPager) findViewById(R.id.customer_viewpager);
         tabLayout = (TabLayout) findViewById(R.id.customer_tabs);
         lnBottomSheet = (LinearLayout) findViewById(R.id.customer_bottom_sheet);
+        lnPaidParent = (LinearLayout) findViewById(R.id.customer_paid_parent);
+        tvTotal = (TextView) findViewById(R.id.customer_paid_total);
+        tvDebt = (TextView) findViewById(R.id.customer_paid_debt);
+        tvPaid = (TextView) findViewById(R.id.customer_paid_paid);
 
         //fix MapView in ScrollView
         mapFragment = (WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.add_customer_map);
@@ -159,7 +153,6 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
     @Override
     public void initialData() {
-        //loadReasonList();
         tabLayout.setupWithViewPager(viewPager);
 
         String bundle = getIntent().getExtras().getString(Constants.CUSTOMER);
@@ -207,18 +200,9 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                     for (int i=0; i<array.length(); i++){
                         listBills.add(new Bill(array.getJSONObject(i)));
                     }
-                    currentPosition = listBills.size();
                 }
 
-                listAdapter.add(0, new CustomerCheckinsAdapter(listCheckins));
-                listAdapter.add(1, new CustomerBillsAdapter(listBills, new CallbackDeleteAdapter() {
-                    @Override
-                    public void onDelete(String data, int position) {
-                        deleteBill(position);
-                        viewpagerAdapter.notifyDataSetChanged();
-                    }
-                }));
-                setupViewPager(listAdapter);
+                setupViewPager(listCheckins, listBills);
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -270,16 +254,27 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     private void setupBottomSheet() {
-        bottomSheetHeight = Util.convertDp2Px(57);
+        if (listBills.size() >0){
+            lnPaidParent.setVisibility(View.VISIBLE);
+            bottomSheetHeight = Util.convertDp2Px(88);
+
+        }else {
+            lnPaidParent.setVisibility(View.GONE);
+            bottomSheetHeight = Util.convertDp2Px(58);
+
+        }
+
         mBottomSheetBehavior = BottomSheetBehavior.from(lnBottomSheet);
         mBottomSheetBehavior.setPeekHeight((int) bottomSheetHeight);
-        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        mBottomSheetBehavior.setState(currentState);
 
         mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             int lastState = BottomSheetBehavior.STATE_COLLAPSED;
 
             @Override
             public void onStateChanged(View bottomSheet, int newState){
+                currentState = newState;
+
                 if (newState == BottomSheetBehavior.STATE_EXPANDED){
                     if (tvTrash.getVisibility() == View.VISIBLE){
                         tvTrash.setVisibility(View.GONE);
@@ -297,22 +292,89 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             @Override
             public void onSlide(View bottomSheet, float slideOffset) {
 
-
             }
         });
     }
 
-    private void setupViewPager(List<RecyclerView.Adapter> listadapter){
-        ArrayList<String> listTitle = new ArrayList<>();
+    private void setupViewPager(List<Checkin> listcheckin, final List<Bill> listbill){
+        showMoneyOverview(listbill);
+        setupBottomSheet();
+
+        int currentPosition = listbill.size();
+
+        final List<String> listTitle = new ArrayList<>();
         listTitle.add(0,"CHECK_IN");
         listTitle.add(1, "HÓA ĐƠN");
 
-        viewpagerAdapter = new CustomerViewpagerAdapter(listadapter, listTitle, getTotalMoney(listBills));
+        final List<RecyclerView.Adapter> listadapter = new ArrayList<>();
+
+        listadapter.add(0, new CustomerCheckinsAdapter(listcheckin));
+        listadapter.add(1, new CustomerBillsAdapter(listbill, new CallbackDeleteAdapter() {
+            @Override
+            public void onDelete(String data, int position) {
+                listbill.remove(position);
+                showMoneyOverview(listbill);
+                reloadBillCount(listbill.size());
+
+                setupBottomSheet();
+            }
+        }, new CallbackUpdateBill() {
+            @Override
+            public void onUpdate(final Bill bill, int position) {
+
+                CustomDialog.showDialogInputPaid("Nhập số tiền khách trả", "Nợ còn lại", bill.getDouble("debt"), new CallbackPayBill() {
+                    @Override
+                    public void OnRespone(Double total, Double pay) {
+                        try {
+                            JSONObject params = new JSONObject();
+                            params.put("debt", total - pay);
+                            params.put("total", total);
+                            params.put("paid", pay);
+                            params.put("id", bill.getInt("id"));
+                            params.put("customerId", new JSONObject(bill.getString("customer")).getString("id"));
+                            params.put("distributorId", Distributor.getCurrentDistributorId());
+                            params.put("userId", User.getCurrentUserId());
+//                            params.put("note", bill.getString("note") + Util.CurrentTimeStamp() + " trả " + Util.FormatMoney(pay));
+                            params.put("note", "billlll");
+
+                            params.put("billDetails", null);
+                            CustomerConnect.PostBill(params.toString(), new CallbackJSONObject() {
+                                @Override
+                                public void onResponse(JSONObject result) {
+                                    //get customer detail from serer
+
+                                    String s = result.toString();
+
+                                }
+
+                                @Override
+                                public void onError(String error) {
+
+                                }
+                            }, true);
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+
+
+            }
+        }));
+
+        viewpagerAdapter = new CustomerViewpagerAdapter(listadapter, listTitle);
         viewPager.setAdapter(viewpagerAdapter);
         viewPager.setCurrentItem(currentPosition);
         viewPager.setOffscreenPageLimit(2);
 
+        createTabLayout(listTitle, listadapter);
 
+    }
+
+    private void createTabLayout(List<String> listTitle, List<RecyclerView.Adapter> listadapter ){
         for (int i=0; i<listTitle.size(); i++){
             TabLayout.Tab tab = tabLayout.getTabAt(i);
             View customView = LayoutInflater.from(this).inflate(R.layout.view_customer_badge, null);
@@ -331,6 +393,19 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         }
     }
 
+    private void reloadBillCount(int count){
+        TabLayout.Tab tab = tabLayout.getTabAt(1);
+        TextView tabTextTitle = (TextView) tab.getCustomView().findViewById(R.id.tabNotify);
+
+        if (count <=0){
+            tabTextTitle.setVisibility(View.GONE);
+        }else {
+            tabTextTitle.setVisibility(View.VISIBLE);
+            tabTextTitle.setText(String.valueOf(count));
+        }
+
+    }
+
     @Override
     public void onClick(View v) {
         Util.hideKeyboard(v);
@@ -343,8 +418,10 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             case R.id.add_customer_submit:
                 if (currentCustomer.getInt("id") ==0){
                     submitCustomerCheckin(currentStatus);
+
                 }else {
                     loadReasonList();
+
                 }
 
                 break;
@@ -497,8 +574,6 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         LatLng curLocation = new LatLng(currentCustomer.getDouble("lat"), currentCustomer.getDouble("lng"));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(curLocation, 18), 200, null);
 
-
-
     }
 
     @Override
@@ -578,15 +653,10 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                         listBills.add(new Bill(array.getJSONObject(i)));
                     }
 
+                    setupViewPager(listCheckins, listBills);
                 }
-                listAdapter.add(1, new CustomerBillsAdapter(listBills, new CallbackDeleteAdapter() {
-                    @Override
-                    public void onDelete(String data, int position) {
-                        deleteBill(position);
-                        viewpagerAdapter.notifyDataSetChanged();
-                    }
-                }));
-                setupViewPager(listAdapter);
+
+
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -706,26 +776,10 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
     }
 
-    private Double getTotalMoney(List<Bill> list){
-        Double money =0.0;
-        for (int i=0; i<list.size(); i++){
-            money += list.get(i).getDouble("total");
-        }
-        return money;
-    }
-
-    private void deleteBill(int count){
-        TabLayout.Tab tab = tabLayout.getTabAt(1);
-        TextView tabTextTitle = (TextView) tabLayout.getTabAt(1).getCustomView().findViewById(R.id.tabNotify);
-        tabTextTitle.setText(String.valueOf(count));
-
-        if (count <=0){
-            tabTextTitle.setVisibility(View.GONE);
-        }else {
-            tabTextTitle.setVisibility(View.VISIBLE);
-            tabTextTitle.setText(String.valueOf(count));
-        }
-
+    private void showMoneyOverview(List<Bill> list){
+        tvTotal.setText("Tổng: " + Util.FormatMoney(Util.getTotalMoney(list)));
+        tvPaid.setText("Trả: " + Util.FormatMoney(Util.getTotalPaid(list)));
+        tvDebt.setText("Nợ: " + Util.FormatMoney(Util.getTotalDebt(list)));
     }
 
 

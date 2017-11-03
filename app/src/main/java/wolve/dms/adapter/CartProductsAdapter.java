@@ -54,7 +54,7 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
 
     @Override
     public ProductDialogShopCartAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mLayoutInflater.inflate(R.layout.adapter_cart_products_item, parent, false);
+        View itemView = mLayoutInflater.inflate(R.layout.adapter_bill_item, parent, false);
         return new ProductDialogShopCartAdapterViewHolder(itemView);
     }
 

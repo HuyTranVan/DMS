@@ -160,21 +160,16 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
     }
 
     private void setupIncomeChart(List<Bill> list){
-//        chartIncome.animateY(1000, Easing.EasingOption.Linear);
-        float income =0.0f;
-        float debt =-12000000.0f;
-        float profit =-30000000.0f;
+        float total = Util.getTotalMoney(list).floatValue();
+        float debt =Util.getTotalDebt(list).floatValue();
+        float income = Util.getTotalMoney(list).floatValue() - debt;
+        float profit =Util.getTotalProfit(list).floatValue();
 
-        for (int i=0; i<list.size(); i++){
-            income += list.get(i).getDouble("total");
-            debt += list.get(i).getDouble("debt");
-        }
-
-        float[] inputData = new float[]{income , debt , profit};
+        float[] inputData = new float[]{total, income , debt , profit};
 
         List<Column> columns = new ArrayList<Column>();
 
-        for (int i = 0; i < 3; ++i) {
+        for (int i = 0; i < 4; ++i) {
             List<SubcolumnValue> values = new ArrayList<SubcolumnValue>();
             SubcolumnValue subcolumnValue = new SubcolumnValue(inputData[i], ChartUtils.nextColor());
             subcolumnValue.setLabel(Util.FormatMoney((double) inputData[i]));
@@ -190,9 +185,10 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         ColumnChartData data = new ColumnChartData(columns);
 
         List<AxisValue> axisValues = new ArrayList<AxisValue>();
-        axisValues.add(new AxisValue(0, "Doanh thu".toCharArray()));
-        axisValues.add(new AxisValue(1, "Công nợ".toCharArray()));
-        axisValues.add(new AxisValue(2, "Lợi nhuận".toCharArray()));
+        axisValues.add(new AxisValue(0, "Tổng doanh thu".toCharArray()));
+        axisValues.add(new AxisValue(1, "Tiền đã thu".toCharArray()));
+        axisValues.add(new AxisValue(2, "Công nợ".toCharArray()));
+        axisValues.add(new AxisValue(3, "Lợi nhuận".toCharArray()));
         Axis axisX = new Axis(axisValues);
 
         data.setAxisXBottom(axisX);
@@ -213,10 +209,10 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
 
         chartIncome.setColumnChartData(data);
 
-
-
-
     }
+
+
+
 
 
 }

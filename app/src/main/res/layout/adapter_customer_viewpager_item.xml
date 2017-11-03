@@ -5,15 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/customer_viewpager_item_total"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/_5sdp"
-        android:paddingRight="@dimen/_5sdp"
-        android:gravity="right"
-        android:text="Tong: "
-        android:textColor="@color/colorRed"/>
+    <!--<TextView-->
+        <!--android:id="@+id/customer_viewpager_item_total"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:paddingTop="@dimen/_5sdp"-->
+        <!--android:paddingRight="@dimen/_5sdp"-->
+        <!--android:gravity="right"-->
+        <!--android:text="Tong: "-->
+        <!--android:textColor="@color/colorRed"/>-->
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/customer_viewpager_item_rv"

@@ -1,8 +1,13 @@
 package wolve.dms.apiconnect;
 
+import android.support.v4.util.ArrayMap;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.File;
+import java.io.IOException;
 
 import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackJSONArray;
@@ -10,7 +15,10 @@ import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.libraries.CustomDeleteMethod;
 import wolve.dms.libraries.CustomGetMethod;
 import wolve.dms.libraries.CustomPostMethod;
-import wolve.dms.libraries.CustomPostMethodMulti;
+import wolve.dms.libraries.CustomPostMultiPart;
+import wolve.dms.libraries.MultipartUtility;
+import wolve.dms.libraries.RestClientHelper;
+import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
 
@@ -110,7 +118,6 @@ public class ProductConnect {
         }).execute();
     }
 
-
     public static void ListProduct(final CallbackJSONArray listener, final Boolean stopLoading){
         Util.getInstance().showLoading();
 
@@ -141,12 +148,41 @@ public class ProductConnect {
         }).execute();
     }
 
-    public static void CreateProduct(String params,final CallbackJSONObject listener, final Boolean stopLoading){
-        Util.getInstance().showLoading();
+//    public static void CreateProduct(String params,final CallbackJSONObject listener, final Boolean stopLoading){
+//        Util.getInstance().showLoading();
+//
+//        String url = Api_link.PRODUCT_NEW ;
+//
+//        new CustomPostMethodMulti(url,params, new Callback() {
+//            @Override
+//            public void onResponse(JSONObject result) {
+//                Util.getInstance().stopLoading(stopLoading);
+//                try {
+//                    if (result.getInt("status") == 200) {
+//                        listener.onResponse(result.getJSONObject("data"));
+//
+//                    } else {
+//                        listener.onError("Unknow error");
+//                    }
+//                } catch (JSONException e) {
+//                    listener.onError(e.toString());
+//                }
+//            }
+//
+//
+//            @Override
+//            public void onError(String error) {
+//                listener.onError(error);
+//                Util.getInstance().stopLoading(stopLoading);
+//            }
+//        }).execute();
+//    }
 
+    public static void CreateProductMultipart(JSONObject params, final CallbackJSONObject listener, final Boolean stopLoading){
+        Util.getInstance().showLoading();
         String url = Api_link.PRODUCT_NEW ;
 
-        new CustomPostMethodMulti(url,params, new Callback() {
+        new CustomPostMultiPart(url,params, new Callback() {
             @Override
             public void onResponse(JSONObject result) {
                 Util.getInstance().stopLoading(stopLoading);

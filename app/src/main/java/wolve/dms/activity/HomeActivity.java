@@ -56,7 +56,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         adapter.notifyDataSetChanged();
         rvItems.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new GridLayoutManager(this, 3);
-        //linearLayoutManager.setAutoMeasureEnabled(false);
         rvItems.setLayoutManager(linearLayoutManager);
 
     }
@@ -97,7 +96,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             }
 
             this.doubleBackToExitPressedOnce = true;
-            Util.getInstance().showToast("Ấn Back để thoát khỏi ứng dụng");
+            Util.showToast("Ấn Back để thoát khỏi ứng dụng");
 
             new Handler().postDelayed(new Runnable() {
 

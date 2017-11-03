@@ -27,15 +27,13 @@ public class CustomerViewpagerAdapter extends PagerAdapter {
     private Context mContext;
     private LayoutInflater inflater;
     private List<RecyclerView.Adapter> listAdapter = new ArrayList<>();
-    private  ArrayList<String> listTitle = new ArrayList<>();
-    private Double totalBill;
+    private  List<String> listTitle = new ArrayList<>();
     private View view;
 
-    public CustomerViewpagerAdapter( List<RecyclerView.Adapter> listAdapter, ArrayList<String > title, Double totalBill){
+    public CustomerViewpagerAdapter( List<RecyclerView.Adapter> listAdapter, List<String > title){
         this.mContext = Util.getInstance().getCurrentActivity();
         this.listAdapter = listAdapter;
         this.listTitle = title;
-        this.totalBill = totalBill;
     }
 
     @Override
@@ -53,20 +51,7 @@ public class CustomerViewpagerAdapter extends PagerAdapter {
         inflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         view = inflater.inflate(R.layout.adapter_customer_viewpager_item,container,false);
         RecyclerView rvList = (RecyclerView) view.findViewById(R.id.customer_viewpager_item_rv);
-        TextView tvTotal = (TextView) view.findViewById(R.id.customer_viewpager_item_total);
 
-        if (position == 0){
-            tvTotal.setVisibility(View.GONE);
-        }else {
-            if (listAdapter.get(position).getItemCount() ==0){
-                tvTotal.setVisibility(View.GONE);
-            }else {
-                tvTotal.setVisibility(View.VISIBLE);
-                CustomerBillsAdapter adapter = (CustomerBillsAdapter) listAdapter.get(position);
-                tvTotal.setText("Tổng cộng: " +Util.FormatMoney(getTotalMoney(adapter.getAllBill())));
-            }
-
-        }
 
         //setup List
         listAdapter.get(position).notifyDataSetChanged();
@@ -117,13 +102,13 @@ public class CustomerViewpagerAdapter extends PagerAdapter {
     public void updateNewTotalPrice(Double total){
     }
 
-    public Double getTotalMoney(List<Bill> list){
-        Double money =0.0;
-        for (int i=0; i<list.size(); i++){
-            money += list.get(i).getDouble("total");
-        }
-        return money;
-    }
+//    public Double getTotalMoney(List<Bill> list){
+//        Double money =0.0;
+//        for (int i=0; i<list.size(); i++){
+//            money += list.get(i).getDouble("total");
+//        }
+//        return money;
+//    }
 
 
 }

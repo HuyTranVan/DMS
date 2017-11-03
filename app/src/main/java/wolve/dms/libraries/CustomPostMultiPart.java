@@ -35,14 +35,15 @@ public class CustomPostMultiPart extends AsyncTask<String, Void, String> {
     private String charset ="UTF-8";
     private OutputStream outputStream;
     private PrintWriter writer;
-    private String baseUrl,token, id_user, fieldName;
-    private File fileUpload;
+    private String baseUrl,token, id_user;
+    private String boundary;
+    private JSONObject param;
+    private String response = "";
 
-    public CustomPostMultiPart(String url, String fieldName, File uploadFile, Callback listener) {
+    public CustomPostMultiPart(String url, JSONObject params, Callback listener) {
         this.mListener = listener;
         this.baseUrl = url;
-        this.fieldName = fieldName;
-        this.fileUpload = uploadFile;
+        this.param = params;
 
         User currentUser = User.getCurrentUser();
         if (currentUser != null && currentUser.getToken() != null) {
@@ -55,85 +56,47 @@ public class CustomPostMultiPart extends AsyncTask<String, Void, String> {
         Log.d("url: ", baseUrl);
         Log.d("token: ", token);
         Log.d("id_nv: ", id_user);
-        Log.d("params: ", fieldName);
-        String boundary = "===" + System.currentTimeMillis() + "===";
-        StringBuffer response = null;
+        Log.d("params: ", param.toString());
+        //Open connection
+
+        boundary = "===" + System.currentTimeMillis() + "===";
         try {
             URL url = new URL(baseUrl);
-            Log.e("URL", "URL : " + baseUrl.toString());
             httpConn = (HttpURLConnection) url.openConnection();
             httpConn.setUseCaches(false);
             httpConn.setDoOutput(true); // indicates POST method
             httpConn.setDoInput(true);
-            httpConn.setReadTimeout(5000);
-            httpConn.setConnectTimeout(5000);
-            httpConn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + "===" + System.currentTimeMillis() + "===");
+            httpConn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
             httpConn.setRequestProperty("x-wolver-accesstoken", token);
             httpConn.setRequestProperty("x-wolver-accessid", id_user);
-
-            httpConn.setRequestProperty(token, id_user);
-
 
             outputStream = httpConn.getOutputStream();
             writer = new PrintWriter(new OutputStreamWriter(outputStream, charset), true);
 
-            String fileName = fileUpload.getName();
-            writer.append("--" + boundary).append(LINE_FEED);
-            writer.append("Content-Disposition: form-data; name=\"" + fieldName + "\"; filename=\"" + fileName + "\"").append(LINE_FEED);
-            writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(fileName)).append(LINE_FEED);
-            writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
-            writer.append(LINE_FEED);
-            writer.flush();
+            File file = new File(param.getString("image"));
+            addFilePart("image", file);
 
-            int countByte = 0;
-            FileInputStream inputStream = new FileInputStream(fileUpload);
+            addFormField("promotion", param.getString("promotion"));
+            addFormField("unitPrice", param.getString("unitPrice"));
+            addFormField("purchasePrice", param.getString("purchasePrice"));
+            addFormField("volume", param.getString("volume"));
+            addFormField("productGroup.id", param.getString("productGroup.id"));
 
-            byte[] buffer = new byte[4096];
-            int bytesRead = -1;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-
-            }
-            outputStream.flush();
-            inputStream.close();
-
-//            writer.append(LINE_FEED);
-//            writer.flush();
+            response = finish();
 
 
-            response = new StringBuffer();
-
-            writer.append(LINE_FEED).flush();
-            writer.append("--" + boundary + "--").append(LINE_FEED);
-            writer.close();
-
-
-            int status = httpConn.getResponseCode();
-            if (status == HttpURLConnection.HTTP_OK) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(httpConn.getInputStream()));
-                String line = null;
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
-                reader.close();
-                httpConn.disconnect();
-            } else {
-                throw new IOException("Server returned non-OK status: " + status);
-            }
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
-            return "errorCode: 01";
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            return "errorCode: 02";
         } catch (IOException e) {
             e.printStackTrace();
-            return "errorCode: 03";
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
-        Log.d("output: ", String.valueOf(response));
-        return String.valueOf(response);
+        return response;
     }
 
     @Override protected void onPostExecute(String response) {
@@ -157,6 +120,79 @@ public class CustomPostMultiPart extends AsyncTask<String, Void, String> {
         }
 
     }
+
+    public void addFormField(String name, String value) {
+        writer.append("--" + boundary).append(LINE_FEED);
+        writer.append("Content-Disposition: form-data; name=\"" + name + "\"").append(LINE_FEED);
+        writer.append("Content-Type: text/plain; charset=" + charset).append(LINE_FEED);
+        writer.append(LINE_FEED);
+        writer.append(value).append(LINE_FEED);
+        writer.flush();
+    }
+
+    public void addFilePart(String fieldName, final File uploadFile) throws IOException {
+        String fileName = uploadFile.getName();
+        writer.append("--" + boundary).append(LINE_FEED);
+        writer.append("Content-Disposition: form-data; name=\"" + fieldName + "\"; filename=\"" + fileName + "\"").append(LINE_FEED);
+        writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(fileName)).append(LINE_FEED);
+        writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
+        writer.append(LINE_FEED);
+        writer.flush();
+
+        int countByte = 0;
+        FileInputStream inputStream = new FileInputStream(uploadFile);
+        byte[] buffer = new byte[4096];
+        int bytesRead = -1;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
+
+//            if(progressListener != null) {
+//                countByte += bytesRead;
+//                int progress = (int)((countByte / (float) uploadFile.length()) * 100);
+//                progressListener.progress(progress);
+//            }
+        }
+        outputStream.flush();
+        inputStream.close();
+
+        writer.append(LINE_FEED);
+        writer.flush();
+
+//        if(progressListener != null) {
+//            progressListener.progress(100);
+//        }
+    }
+
+
+    public void addHeaderField(String name, String value) {
+        writer.append(name + ": " + value).append(LINE_FEED);
+        writer.flush();
+    }
+
+    public String finish() throws IOException {
+        StringBuffer response = new StringBuffer();
+
+        writer.append(LINE_FEED).flush();
+        writer.append("--" + boundary + "--").append(LINE_FEED);
+        writer.close();
+
+        // checks server's status code first
+        int status = httpConn.getResponseCode();
+        if (status == HttpURLConnection.HTTP_OK) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(httpConn.getInputStream()));
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            reader.close();
+            httpConn.disconnect();
+        } else {
+            throw new IOException("Server returned non-OK status: " + status);
+        }
+
+        return response.toString();
+    }
+
 
 }
 

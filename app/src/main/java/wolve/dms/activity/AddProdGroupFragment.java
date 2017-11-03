@@ -93,8 +93,7 @@ public class AddProdGroupFragment extends Fragment implements View.OnClickListen
                     });
 
                 }else {
-                    String param = null;
-                    param = String.format(Api_link.PRODUCTGROUP_CREATE_PARAM, productGroup == null? "" : "id="+ productGroup.getString("id") +"&",
+                    String param = String.format(Api_link.PRODUCTGROUP_CREATE_PARAM, productGroup == null? "" : "id="+ productGroup.getString("id") +"&",
                                 Util.encodeString(edInput.getText().toString()));
 
 
