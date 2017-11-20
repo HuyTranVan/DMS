@@ -1,5 +1,6 @@
 package wolve.dms.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -9,8 +10,11 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
@@ -93,7 +97,7 @@ public class MapUtil{
 
             Canvas canvas = new Canvas(bitmap);
             Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            paint.setColor(ContextCompat.getColor(mContext, textColor));
+            paint.setColor(textColor);
             paint.setTextSize((int) (14 * scale));
             paint.setShadowLayer(1f, 0f, 1f, Color.DKGRAY);
 
@@ -169,9 +173,10 @@ public class MapUtil{
         return objectResult;
     }
 
-    public void addListMarkerToMap(final GoogleMap mMap, final ArrayList<Customer> listCustomer, String filter, Boolean isBound) {
+    public String addListMarkerToMap(final GoogleMap mMap, final ArrayList<Customer> listCustomer, String filter, Boolean isBound) {
         currentMap = mMap;
         markers = new ArrayList<>();
+        int count =0;
 
         for (int i = 0; i < listCustomer.size(); i++) {
             try {
@@ -180,18 +185,21 @@ public class MapUtil{
                 if (filter.equals(Constants.MARKER_ALL)){
 //                    markers.add(addMarkerToMap(mMap, customer));
                     addMarkerToMap(mMap, customer);
+                    count +=1;
 
                 }else if (filter.equals(Constants.MARKER_INTERESTED)){
                     int markertype = new JSONObject(customer.getString("status")).getInt("id");
                     if (markertype == 1 || markertype == 3){
 //                        markers.add(addMarkerToMap(mMap, customer));
                         addMarkerToMap(mMap, customer);
+                        count +=1;
                     }
                 }else if (filter.equals(Constants.MARKER_ORDERED)){
                     int markertype = new JSONObject(customer.getString("status")).getInt("id");
                     if (markertype == 3){
 //                        markers.add(addMarkerToMap(mMap, customer));
                         addMarkerToMap(mMap, customer);
+                        count +=1;
                     }
                 }
 
@@ -206,6 +214,7 @@ public class MapUtil{
             reboundMap();
         }
 
+        return String.format("%d/%d",count, listCustomer.size());
     }
 
     public static Marker addMarkerToMap(GoogleMap mMap, Customer customer ){

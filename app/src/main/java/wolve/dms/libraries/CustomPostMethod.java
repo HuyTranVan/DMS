@@ -1,6 +1,5 @@
 package wolve.dms.libraries;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -15,7 +14,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.net.URLEncoder;
 
 import wolve.dms.callback.Callback;
 import wolve.dms.models.User;
@@ -28,8 +26,6 @@ public class CustomPostMethod extends AsyncTask<String, Void, String> {
     private Callback mListener = null;
     private String baseUrl, mParams;
 
-    private String token ="";
-    private String id_user ="";
     private Boolean isJsonType= false;
 
     public CustomPostMethod(String url,String params,Boolean isJsonType, Callback listener) {
@@ -38,17 +34,15 @@ public class CustomPostMethod extends AsyncTask<String, Void, String> {
         this.mParams = params;
         this.isJsonType = isJsonType;
 
-        User currentUser = User.getCurrentUser();
-        if (currentUser != null && currentUser.getToken() != null) {
-            token = currentUser.getToken();
-            id_user = currentUser.getId_user();
-        }
+//        User currentUser = User.getCurrentUser();
+//        if (currentUser != null && currentUser.getToken() != null) {
+//            token = currentUser.getToken();
+//            id_user = currentUser.getId_user();
+//        }
     }
 
     @Override protected String doInBackground(String... params) {
         Log.d("url: ", baseUrl);
-        Log.d("token: ", token);
-        Log.d("id_nv: ", id_user);
         Log.d("params: ", mParams);
 
     String url = baseUrl;
@@ -62,8 +56,8 @@ public class CustomPostMethod extends AsyncTask<String, Void, String> {
         con.setRequestMethod("POST");
         con.setRequestProperty("User-Agent", "Mozilla/5.0");
         con.setRequestProperty("Content-Type",isJsonType? "application/json":"application/x-www-form-urlencoded");
-        con.setRequestProperty("x-wolver-accesstoken", token);
-        con.setRequestProperty("x-wolver-accessid", id_user);
+        con.setRequestProperty("x-wolver-accesstoken", User.getToken());
+        con.setRequestProperty("x-wolver-accessid", User.getUserId());
 
         String urlParameters = mParams;
 
@@ -105,11 +99,11 @@ public class CustomPostMethod extends AsyncTask<String, Void, String> {
         if (response.contains("errorCode")){
             mListener.onError(response);
             if (response.contains("errorCode: 01")){
-                Util.getInstance().quickMessage("Lỗi kết nối server ", null, null);
+                Util.getInstance().showSnackbar("Lỗi kết nối server ", null, null);
             }else if (response.contains("errorCode: 02")){
-                Util.getInstance().quickMessage("Lỗi đường truyền ", null, null);
+                Util.getInstance().showSnackbar("Lỗi đường truyền ", null, null);
             }else if (response.contains("errorCode: 03")){
-                Util.getInstance().quickMessage("Lỗi kết nối server ", null, null);
+                Util.getInstance().showSnackbar("Lỗi kết nối server ", null, null);
             }
         }else {
             try {
@@ -117,7 +111,7 @@ public class CustomPostMethod extends AsyncTask<String, Void, String> {
 
             } catch (JSONException e) {
                 mListener.onError("Data error");
-                Util.getInstance().quickMessage("Lỗi dữ liệu", null, null);
+                Util.getInstance().showSnackbar("Lỗi dữ liệu", null, null);
             }
         }
 

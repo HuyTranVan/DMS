@@ -1,11 +1,9 @@
 package wolve.dms.models;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomSharedPrefer;
-import wolve.dms.utils.Util;
+import wolve.dms.utils.CustomSQL;
 
 /**
  * Created by macos on 9/16/17.
@@ -44,11 +42,10 @@ public class Distributor extends BaseModel{
     }
 
     public static Distributor getCurrentDistributor(){
-        CustomSharedPrefer customSharedPrefer = new CustomSharedPrefer();
-        if(customSharedPrefer.getObject(Constants.DISTRIBUTOR, User.class) == null){
+        if(CustomSQL.getObject(Constants.DISTRIBUTOR, User.class) == null){
             currentDistributor = new Distributor();
         }else {
-            currentDistributor = customSharedPrefer.getObject(Constants.DISTRIBUTOR, Distributor.class);
+            currentDistributor = CustomSQL.getObject(Constants.DISTRIBUTOR, Distributor.class);
         }
         return currentDistributor;
     }

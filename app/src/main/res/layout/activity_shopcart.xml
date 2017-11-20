@@ -30,15 +30,58 @@
             android:singleLine="true"
             android:layout_centerVertical="true"
             android:gravity="center"
-            android:layout_toRightOf="@+id/icon_back"/>
+            android:layout_toRightOf="@+id/icon_back"
+            android:layout_toLeftOf="@+id/cart_bluetooth_printer"/>
+
+
+        <ImageView
+            android:id="@+id/cart_bluetooth_printer"
+            android:layout_width="@dimen/_35sdp"
+            android:layout_height="match_parent"
+            android:background="?selectableItemBackground"
+            android:layout_alignParentRight="true"
+            android:gravity="center"
+            android:src="@drawable/ic_logo"
+            android:layout_margin="@dimen/_5sdp"/>
+
+
 
     </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/cart_printer_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorLightGrey"
+        android:layout_below="@+id/cart_header"
+        android:padding="@dimen/_4sdp">
+
+        <TextView
+            android:id="@+id/cart_printer_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:textSize="@dimen/_8sdp"
+            android:textColor="@color/black_text_color"
+            android:singleLine="true"
+            android:layout_centerInParent="true"
+            android:padding="@dimen/_2sdp"
+            />
+
+        <ProgressBar
+            android:id="@+id/cart_printer_progress"
+            android:layout_width="@dimen/_15sdp"
+            android:layout_height="@dimen/_15sdp"
+            android:layout_toRightOf="@+id/cart_printer_name"/>
+    </RelativeLayout>
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_below="@+id/cart_header">
+        android:layout_below="@+id/cart_printer_group">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -130,15 +173,14 @@
         android:layout_height="match_parent"
         android:background="@color/colorWhite"
         android:gravity="center"
-        android:layout_below="@+id/cart_header"
+        android:layout_below="@+id/cart_printer_group"
         android:clickable="true"
         android:visibility="visible">
 
-        <wolve.dms.controls.CTextView
+        <wolve.dms.controls.CTextIcon
             android:id="@+id/cart_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:customFont="@string/font_awesome"
             android:text="@string/icon_bill"
             android:textSize="@dimen/_30sdp"
             android:textColor="@color/black_text_color_hint"

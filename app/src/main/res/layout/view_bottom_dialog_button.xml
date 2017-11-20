@@ -39,7 +39,7 @@
             android:layout_height="@dimen/_30sdp"
             android:layout_weight="0.5"
             android:background="?selectableItemBackground"
-            android:textColor="@color/colorRed"
+            android:textColor="@color/colorBlue"
             android:text="Thanh toán"
             android:textSize="@dimen/_12sdp"
             android:textAllCaps="true"

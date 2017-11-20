@@ -1,37 +1,28 @@
 package wolve.dms.utils;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.ArrayMap;
+import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +41,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.InetAddress;
@@ -69,21 +61,13 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cn.pedant.SweetAlert.SweetAlertDialog;
-import me.leolin.shortcutbadger.ShortcutBadger;
-import wolve.dms.BaseActivity;
-import wolve.dms.R;
 import wolve.dms.activity.MapsActivity;
 import wolve.dms.activity.StatisticalBillsFragment;
 import wolve.dms.activity.StatisticalDashboardFragment;
 import wolve.dms.activity.StatisticalProductFragment;
-import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.models.Bill;
 import wolve.dms.models.Product;
-import wolve.dms.models.ProductGroup;
 import wolve.dms.models.Province;
-import wolve.dms.models.Status;
-import wolve.dms.models.User;
 
 public class Util {
     private static Util util;
@@ -98,12 +82,12 @@ public class Util {
 
 
 
-    public static ArrayList<Status> mListStatus;
+    //public static ArrayList<Status> mListStatus;
     public static ArrayList<Province> mListProvinces;
-    public static ArrayList<String> mListDistricts;
-    public static ArrayList<ProductGroup> mListProductGroup;
-    public static ArrayList<Product> mListProduct;
-    public static ArrayList<Product> mListPromotion;
+    //public static ArrayList<String> mListDistricts;
+    //public static ArrayList<ProductGroup> mListProductGroup;
+    //public static ArrayList<Product> mListProduct;
+    //public static ArrayList<Product> mListPromotion;
     private DisplayMetrics windowSize;
     private static int PLAY_SERVICES_RESOLUTION_REQUEST = 1462;
 
@@ -169,26 +153,6 @@ public class Util {
         }
     }
 
-    public void showLocationLoading(final String message) {
-        if (cDialogLocation == null) {
-            cDialogLocation = KProgressHUD.create(getCurrentActivity())
-                    .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
-                    .setDetailsLabel(message)
-                    .setCancellable(false)
-                    .setAnimationSpeed(2)
-                    .setBackgroundColor(Color.parseColor("#40000000"))
-                    .setDimAmount(0.5f)
-                    .show();
-        }
-    }
-
-    public void stopLocationLoading() {
-        if (cDialogLocation != null && cDialogLocation.isShowing()) {
-            cDialogLocation.dismiss();
-            cDialogLocation = null;
-        }
-    }
-
     public void stopLoading(Boolean stop) {
         if (stop){
             if (cDialog != null && cDialog.isShowing() || cDialog != null) {
@@ -214,7 +178,7 @@ public class Util {
         return true;
     }
 
-    public static void quickMessage(String content, String actionlabel, ActionClickListener actionListener) {
+    public static void showSnackbar(String content, String actionlabel, ActionClickListener actionListener) {
         Snackbar snb = Snackbar.with(Util.getInstance().getCurrentActivity().getApplicationContext())
                 .type(SnackbarType.MULTI_LINE) // Set is as a multi-line snackbar
                 .text(content) // text to be displayed
@@ -271,7 +235,7 @@ public class Util {
 
     public static boolean checkInternetConnection() {
         if (!isInternetAvailable()) {
-            Util.quickMessage("Không có kết nối.", null, null);
+            Util.showSnackbar("Không có kết nối.", null, null);
         }
 
         return isInternetAvailable();
@@ -366,33 +330,6 @@ public class Util {
         SimpleDateFormat dateFormat = new SimpleDateFormat(format);
         String dateStr = dateFormat.format(new Date(timeStamp));
         return dateStr;
-    }
-
-    public void showImage(String url) {
-        Uri imageUri = Uri.parse(url);
-        final Dialog builder = new Dialog(getCurrentActivity());
-        builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        builder.getWindow().setBackgroundDrawable(
-                new ColorDrawable(Color.TRANSPARENT));
-        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-                //nothing;
-            }
-        });
-
-        ImageView imageView = new ImageView(getCurrentActivity());
-        //imageView.setImageURI(imageUri);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                builder.dismiss();
-            }
-        });
-        builder.addContentView(imageView, new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
-        builder.show();
     }
 
     public static void showKeyboard(Context context, final EditText editText) {
@@ -508,28 +445,6 @@ public class Util {
         return jMap;
     }
 
-    public static Location readGeoTagImage(String imagePath)
-    {
-        Location loc = new Location("");
-        try {
-            ExifInterface exif = new ExifInterface(imagePath);
-            float [] latlong = new float[2] ;
-            if(exif.getLatLong(latlong)){
-                loc.setLatitude(latlong[0]);
-                loc.setLongitude(latlong[1]);
-            }
-            String date = exif.getAttribute(ExifInterface.TAG_DATETIME);
-            SimpleDateFormat fmt_Exif = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
-            loc.setTime(fmt_Exif.parse(date).getTime());
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return loc;
-    }
-
     public static boolean isEmailValid(String email) {
         boolean isValid = false;
 
@@ -579,9 +494,7 @@ public class Util {
 
     //using parse for local category
     public static File getOutputMediaFile() {
-        File mediaStorageDir = new File(
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                Constants.IMAGES_DIRECTORY
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), Constants.IMAGES_DIRECTORY
         );
 
         if (!mediaStorageDir.exists()) {
@@ -632,7 +545,7 @@ public class Util {
     }
 
     public static String CurrentMonthYearHour(){
-        return new SimpleDateFormat("dd-MM-yyyy HH:mm").format(Calendar.getInstance().getTime());
+        return new SimpleDateFormat("dd-MM-yyyy  HH:mm").format(Calendar.getInstance().getTime());
     }
 
     public static long TimeStamp1(String ddMMyyyy){
@@ -741,31 +654,11 @@ public class Util {
         String[] projection = {MediaStore.Images.Media.DATA};
         Cursor cursor = Util.getInstance().getCurrentActivity().getContentResolver().query(uri, projection, null, null, null);
         if (cursor != null) {
-            int column_index = cursor
-                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
             cursor.moveToFirst();
             return cursor.getString(column_index);
         }
         return uri.getPath();
-    }
-
-    public static ArrayList<JSONObject> sortTimeSchedule(ArrayList<JSONObject> data){
-        ArrayList<JSONObject> listReult = new ArrayList<>();
-        long currentTime = CurrentTimeStamp();
-        try {
-            for (int i=0 ; i<data.size(); i++){
-                if (data.get(i).getLong("scheduleTime") > currentTime){
-                    listReult.add(0,data.get(i));
-                }else {
-                    listReult.add(listReult.size(),data.get(i));
-                }
-
-
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return listReult;
     }
 
     public static String encodeString(String value){
@@ -811,17 +704,17 @@ public class Util {
         return list;
     }
 
-    public static void setStatusList(JSONArray result){
-        mListStatus = new ArrayList<>();
-        try {
-            for (int i=0; i<result.length(); i++){
-                Status status = new Status(result.getJSONObject(i));
-                mListStatus.add(status);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
+//    public static void setStatusList(JSONArray result){
+//        mListStatus = new ArrayList<>();
+//        try {
+//            for (int i=0; i<result.length(); i++){
+//                Status status = new Status(result.getJSONObject(i));
+//                mListStatus.add(status);
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public static void setProvincesList(JSONArray result){
         mListProvinces = new ArrayList<>();
@@ -835,64 +728,64 @@ public class Util {
         }
     }
 
-    public static void setDistrictList(JSONArray result){
-        mListDistricts = new ArrayList<>();
-        try {
-            for (int i=0; i<result.length(); i++){
-                JSONObject object = result.getJSONObject(i);
-                if (!object.getString("name").contains(" ")){
-                    mListDistricts.add(object.getString("type") + " " + object.getString("name"));
-                }else {
-                    mListDistricts.add(object.getString("name"));
-                }
-            }
+//    public static void setDistrictList(JSONArray result){
+//        mListDistricts = new ArrayList<>();
+//        try {
+//            for (int i=0; i<result.length(); i++){
+//                JSONObject object = result.getJSONObject(i);
+//                if (!object.getString("name").contains(" ")){
+//                    mListDistricts.add(object.getString("type") + " " + object.getString("name"));
+//                }else {
+//                    mListDistricts.add(object.getString("name"));
+//                }
+//            }
+//
+//            Collections.sort(mListDistricts, String.CASE_INSENSITIVE_ORDER);
+//            mListDistricts.add(0, "Chọn quận");
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
-            Collections.sort(mListDistricts, String.CASE_INSENSITIVE_ORDER);
-            mListDistricts.add(0, "Chọn quận");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
+//    public static void setProductGroupList(JSONArray result){
+//        mListProductGroup = new ArrayList<>();
+//        try {
+//            for (int i=0; i<result.length(); i++){
+//                ProductGroup productGroup = new ProductGroup(result.getJSONObject(i));
+//                mListProductGroup.add(productGroup);
+//            }
+//
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
-    public static void setProductGroupList(JSONArray result){
-        mListProductGroup = new ArrayList<>();
-        try {
-            for (int i=0; i<result.length(); i++){
-                ProductGroup productGroup = new ProductGroup(result.getJSONObject(i));
-                mListProductGroup.add(productGroup);
-            }
+//    public static void setProductList(JSONArray result){
+//        mListProduct = new ArrayList<>();
+//        try {
+//            for (int i=0; i<result.length(); i++){
+//                Product product = new Product(result.getJSONObject(i));
+////                product.put("totalMoney", product.getDouble("unitPrice"));
+////                product.put("quantity", 1);
+////                product.put("discount", 0);
+////                product.put("checked", false);
+//                mListProduct.add(product);
+//            }
+//            setPromotionList(mListProduct);
+//
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void setProductList(JSONArray result){
-        mListProduct = new ArrayList<>();
-        try {
-            for (int i=0; i<result.length(); i++){
-                Product product = new Product(result.getJSONObject(i));
-//                product.put("totalMoney", product.getDouble("unitPrice"));
-//                product.put("quantity", 1);
-//                product.put("discount", 0);
-//                product.put("checked", false);
-                mListProduct.add(product);
-            }
-            setPromotionList(mListProduct);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void setPromotionList(ArrayList<Product> listProducts){
-        mListPromotion = new ArrayList<>();
-        for (int i=0; i<listProducts.size(); i++){
-            if (listProducts.get(i).getBoolean("promotion")){
-                mListPromotion.add(listProducts.get(i));
-            }
-        }
-    }
+//    public static void setPromotionList(ArrayList<Product> listProducts){
+//        mListPromotion = new ArrayList<>();
+//        for (int i=0; i<listProducts.size(); i++){
+//            if (listProducts.get(i).getBoolean("promotion")){
+//                mListPromotion.add(listProducts.get(i));
+//            }
+//        }
+//    }
 
     public static Double valueMoney(String money){
         return Double.parseDouble(money.replace(".",""));
@@ -947,6 +840,14 @@ public class Util {
             return profit;
         }
         return profit;
+    }
+
+    public static Double getTotalMoneyProduct(List<Product> list){
+        Double sum = 0.0;
+        for (int i = 0; i < list.size(); i++) {
+            sum += list.get(i).getDouble("totalMoney");
+        }
+        return sum;
     }
 
     public static class CurrencyUtil {

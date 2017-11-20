@@ -29,7 +29,7 @@ import wolve.dms.utils.Util;
 
 public class CInputForm extends FrameLayout {
     private EditText edInput;
-    private CTextView tvIcon, tvDropdown;
+    private CTextIcon tvIcon, tvDropdown;
     private Context mContext;
     private View mLayout;
     private ArrayList<String> listDropdown = new ArrayList<>();
@@ -57,8 +57,8 @@ public class CInputForm extends FrameLayout {
         mLayout = findViewById(R.id.input_data_parent);
 
         edInput = (EditText) mLayout.findViewById(R.id.input_data_content);
-        tvIcon = (CTextView) mLayout.findViewById(R.id.input_data_icon);
-        tvDropdown = (CTextView) mLayout.findViewById(R.id.input_data_dropdown);
+        tvIcon = (CTextIcon) mLayout.findViewById(R.id.input_data_icon);
+        tvDropdown = (CTextIcon) mLayout.findViewById(R.id.input_data_dropdown);
 
     }
 

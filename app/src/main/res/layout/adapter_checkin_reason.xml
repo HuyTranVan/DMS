@@ -19,7 +19,8 @@
         android:paddingTop="@dimen/_5sdp"
         android:paddingBottom="@dimen/_5sdp"/>
 
-    <View
+    <TextView
+        android:id="@+id/checkin_reason_line"
         android:layout_width="match_parent"
         android:layout_height="1dip"
         android:background="#0d000000"/>

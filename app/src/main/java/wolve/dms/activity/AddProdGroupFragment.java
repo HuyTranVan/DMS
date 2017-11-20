@@ -20,7 +20,7 @@ import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.controls.CInputForm;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomDialog;
+import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
 
 /**
@@ -85,7 +85,7 @@ public class AddProdGroupFragment extends Fragment implements View.OnClickListen
 
             case R.id.add_productgroup_submit:
                 if (edInput.getText().toString().trim().equals("")){
-                    CustomDialog.alertWithCancelButton(null, "Nhập tên nhóm sản phẩm", "đồng ý", null, new CallbackBoolean() {
+                    CustomCenterDialog.alertWithCancelButton(null, "Nhập tên nhóm sản phẩm", "đồng ý", null, new CallbackBoolean() {
                         @Override
                         public void onRespone(Boolean result) {
 

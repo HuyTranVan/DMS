@@ -20,17 +20,14 @@ import java.util.List;
 import wolve.dms.R;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackChangePrice;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackUpdateBill;
-import wolve.dms.controls.CTextView;
+import wolve.dms.controls.CTextIcon;
 import wolve.dms.models.Bill;
 import wolve.dms.models.BillDetail;
-import wolve.dms.models.Customer;
-import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
-import wolve.dms.utils.CustomDialog;
+import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
 
 /**
@@ -95,8 +92,8 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
             holder.tvicon.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    if(User.getCurrentUser().getString("role").equals("MANAGER")){
-                        CustomDialog.alertWithCancelButton(null, "Bạn muốn xóa hóa đơn " + Util.DateString(mData.get(position).getLong("updateAt")), "ĐỒNG Ý","HỦY", new CallbackBoolean() {
+                    if(User.getRole().equals("MANAGER")){
+                        CustomCenterDialog.alertWithCancelButton(null, "Bạn muốn xóa hóa đơn " + Util.DateString(mData.get(position).getLong("updateAt")), "ĐỒNG Ý","HỦY", new CallbackBoolean() {
                             @Override
                             public void onRespone(Boolean result) {
                                 String param = String.valueOf(mData.get(position).getInt("id"));
@@ -144,7 +141,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
     public class CustomerBillsAdapterViewHolder extends RecyclerView.ViewHolder {
         private TextView tvDate, tvHour, tvPay, tvDebt, tvTotal;
         private RecyclerView rvBillDetail;
-        private CTextView tvicon;
+        private CTextIcon tvicon;
         private View vLineUpper, vLineUnder;
         private LinearLayout lnParent;
 
@@ -160,7 +157,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
             vLineUnder = (View) itemView.findViewById(R.id.bills_item_under);
             vLineUpper = (View) itemView.findViewById(R.id.bills_item_upper);
             lnParent = (LinearLayout) itemView.findViewById(R.id.bills_item_content_parent);
-            tvicon = (CTextView) itemView.findViewById(R.id.bills_item_icon);
+            tvicon = (CTextIcon) itemView.findViewById(R.id.bills_item_icon);
 
         }
 

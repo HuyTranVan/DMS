@@ -37,7 +37,7 @@
                 android:layout_centerInParent="true"/>
 
 
-            <wolve.dms.controls.CTextView
+            <wolve.dms.controls.CTextIcon
                 android:id="@+id/icon_more"
                 android:layout_width="@dimen/_35sdp"
                 android:layout_height="match_parent"
@@ -47,7 +47,7 @@
                 android:gravity="center"
                 android:background="?selectableItemBackground"
                 android:layout_alignParentRight="true"
-                app:customFont="@string/font_awesome"/>
+                />
 
 
         </RelativeLayout>
@@ -74,7 +74,7 @@
                 android:layout_centerInParent="true"/>
 
 
-            <wolve.dms.controls.CTextView
+            <wolve.dms.controls.CTextIcon
                 android:id="@+id/add_customer_editlocation"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/_30sdp"
@@ -85,8 +85,7 @@
                 android:textColor="@color/colorWhite"
                 android:layout_alignParentBottom="true"
                 android:layout_margin="@dimen/_10sdp"
-                android:gravity="center"
-                app:customFont="@string/font_awesome"/>
+                android:gravity="center"/>
 
             <com.github.clans.fab.FloatingActionButton
                 android:id="@+id/add_customer_currentlocation"
@@ -322,19 +321,37 @@
 
                         </LinearLayout>
 
-                        <wolve.dms.controls.CInputForm
-                            android:id="@+id/add_customer_note"
+                        <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:inputType="textCapSentences"
-                            app:textHint="Ghi chú"
-                            app:iconText="@string/icon_comment"
-                            app:textSize="@dimen/_5sdp"
-                            app:iconSize="@dimen/_5sdp"
-                            app:iconColor="@color/colorBlueTransparent"
-                            app:textColor="@color/colorBlue"
-                            app:textColorHint="@color/colorBlueTransparent"/>
+                            android:layout_height="wrap_content">
+
+                            <wolve.dms.controls.CInputForm
+                                android:id="@+id/add_customer_note"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5"
+                                android:inputType="textCapSentences"
+                                android:layout_toLeftOf="@+id/add_customer_dropdown"
+                                app:textHint="Ghi chú"
+                                app:iconText="@string/icon_comment"
+                                app:textSize="@dimen/_5sdp"
+                                app:iconSize="@dimen/_5sdp"
+                                app:iconColor="@color/colorBlueTransparent"
+                                app:textColor="@color/colorBlue"
+                                app:textColorHint="@color/colorBlueTransparent"/>
+
+                            <wolve.dms.controls.CTextIcon
+                                android:id="@+id/add_customer_dropdown"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="?selectableItemBackground"
+                                android:text="@string/icon_down"
+                                android:padding="@dimen/_10sdp"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"/>
+                        </RelativeLayout>
+
+
 
 
 

@@ -31,7 +31,7 @@ public class Api_link {
     public final static String PRODUCT_NEW = BASE_URL + "token/product/create_or_update";
     public final static String PRODUCT_DELETE = BASE_URL + "token/product/";
     public final static String PRODUCTS_PARAM ="?page=%d&size=%d";
-    public final static String PRODUCT_CREATE_PARAM ="%sname=%s&promotion=%s&unitPrice=%d&purchasePrice=%d&volume=%d&productGroup.id=%d";
+    public final static String PRODUCT_CREATE_PARAM ="%sname=%s&promotion=%s&unitPrice=%s&purchasePrice=%s&volume=%s&productGroup.id=%d&image=%s";
 
     public final static String STATUS = BASE_URL + "token/status";
     public final static String STATUS_NEW = BASE_URL + "token/status/create_or_update";

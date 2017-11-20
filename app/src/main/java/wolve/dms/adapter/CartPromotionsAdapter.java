@@ -16,11 +16,10 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.R;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackClickProduct;
 import wolve.dms.callback.CallbackDeleteAdapter;
-import wolve.dms.controls.CTextView;
+import wolve.dms.controls.CTextIcon;
 import wolve.dms.models.Product;
-import wolve.dms.utils.CustomDialog;
+import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
 
 
@@ -97,7 +96,7 @@ public class CartPromotionsAdapter extends RecyclerView.Adapter<CartPromotionsAd
         holder.lnParent.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                CustomDialog.alertWithCancelButton(null, "Xóa " + mData.get(position).getString("name") +" khỏi danh sách" , "ĐỒNG Ý","HỦY", new CallbackBoolean() {
+                CustomCenterDialog.alertWithCancelButton(null, "Xóa " + mData.get(position).getString("name") +" khỏi danh sách" , "ĐỒNG Ý","HỦY", new CallbackBoolean() {
                     @Override
                     public void onRespone(Boolean result) {
                         mDelete.onDelete(mData.get(position).ProducttoString(), position);
@@ -123,7 +122,7 @@ public class CartPromotionsAdapter extends RecyclerView.Adapter<CartPromotionsAd
         private TextView tvName, tvQuantity ;
         private RelativeLayout lnParent;
         private CircleImageView imgProduct;
-        private CTextView btnSub, btnPlus;
+        private CTextIcon btnSub, btnPlus;
 
         public ProductDialogShopCartAdapterViewHolder(View itemView) {
             super(itemView);
@@ -131,8 +130,8 @@ public class CartPromotionsAdapter extends RecyclerView.Adapter<CartPromotionsAd
             tvName = (TextView) itemView.findViewById(R.id.shopcart_promotions_item_name);
             imgProduct = (CircleImageView) itemView.findViewById(R.id.shopcart_promotions_item_image);
             tvQuantity = (TextView) itemView.findViewById(R.id.shopcart_promotions_item_quantity);
-            btnSub = (CTextView) itemView.findViewById(R.id.shopcart_promotions_item_sub);
-            btnPlus = (CTextView) itemView.findViewById(R.id.shopcart_promotions_item_plus);
+            btnSub = (CTextIcon) itemView.findViewById(R.id.shopcart_promotions_item_sub);
+            btnPlus = (CTextIcon) itemView.findViewById(R.id.shopcart_promotions_item_plus);
 
         }
 

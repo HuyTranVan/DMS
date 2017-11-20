@@ -23,24 +23,22 @@ import wolve.dms.utils.Util;
  */
 public class CustomDeleteMethod extends AsyncTask<String, Void, String> {
     private Callback mListener = null;
-    private String baseUrl,token, id_user;
+    private String baseUrl;
 
     public CustomDeleteMethod(String url, Callback listener) {
         mListener = listener;
         this.baseUrl = url;
 
-        User currentUser = User.getCurrentUser();
-        if (currentUser != null && currentUser.getToken() != null) {
-            token = currentUser.getToken();
-            id_user = currentUser.getId_user();
-        }
+//        User currentUser = User.getCurrentUser();
+//        if (currentUser != null && currentUser.getToken() != null) {
+//            token = currentUser.getToken();
+//            id_user = currentUser.getId_user();
+//        }
     }
 
     @Override
         protected String doInBackground(String... params) {
         Log.d("url: ", baseUrl);
-        Log.d("token: ", token);
-        Log.d("id_nv: ", id_user);
 
         StringBuffer response = null;
         URL obj = null;
@@ -50,8 +48,8 @@ public class CustomDeleteMethod extends AsyncTask<String, Void, String> {
 
             con.setRequestMethod("DELETE");
             con.setRequestProperty("User-Agent", "Mozilla/5.0");
-            con.setRequestProperty("x-wolver-accesstoken", token);
-            con.setRequestProperty("x-wolver-accessid", id_user);
+            con.setRequestProperty("x-wolver-accesstoken", User.getToken());
+            con.setRequestProperty("x-wolver-accessid", User.getUserId());
 
             int responseCode = con.getResponseCode();
 
@@ -84,11 +82,11 @@ public class CustomDeleteMethod extends AsyncTask<String, Void, String> {
         if (response.contains("errorCode")){
             mListener.onError(response);
             if (response.contains("errorCode: 01")){
-                Util.getInstance().quickMessage("Lỗi kết nối server ", null, null);
+                Util.getInstance().showSnackbar("Lỗi kết nối server ", null, null);
             }else if (response.contains("errorCode: 02")){
-                Util.getInstance().quickMessage("Lỗi đường truyền ", null, null);
+                Util.getInstance().showSnackbar("Lỗi đường truyền ", null, null);
             }else if (response.contains("errorCode: 03")){
-                Util.getInstance().quickMessage("Lỗi kết nối server", null, null);
+                Util.getInstance().showSnackbar("Lỗi kết nối server", null, null);
             }
         }else {
             try {
@@ -96,7 +94,7 @@ public class CustomDeleteMethod extends AsyncTask<String, Void, String> {
 
             } catch (JSONException e) {
                 mListener.onError("Data error");
-                Util.getInstance().quickMessage("Lỗi dữ liệu", null, null);
+                Util.getInstance().showSnackbar("Lỗi dữ liệu", null, null);
             }
         }
 

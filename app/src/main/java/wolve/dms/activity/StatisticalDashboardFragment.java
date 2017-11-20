@@ -53,6 +53,7 @@ import lecho.lib.hellocharts.view.ColumnChartView;
 import lecho.lib.hellocharts.view.PieChartView;
 import wolve.dms.R;
 import wolve.dms.models.Bill;
+import wolve.dms.models.District;
 import wolve.dms.utils.Util;
 
 /**
@@ -111,18 +112,18 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         //repair data for Chart
         ArrayList<JSONObject> listData = new ArrayList<>();
         try {
-            for (int i=0; i<Util.mListDistricts.size(); i++){
+            for (int i = 0; i< District.getDistrictList().size(); i++){
                 Double total =0.0;
                 for (int j=0; j<list.size(); j++){
                     JSONObject objectCustomer = new JSONObject(list.get(j).getString("customer"));
-                    if (objectCustomer.getString("district").equals(Util.mListDistricts.get(i))){
+                    if (objectCustomer.getString("district").equals(District.getDistrictList().get(i))){
                         total +=list.get(j).getDouble("total");
                     }
 
                 }
 
                 JSONObject district = new JSONObject();
-                district.put("name",Util.mListDistricts.get(i) );
+                district.put("name",District.getDistrictList().get(i) );
                 district.put("total", total);
                 listData.add(district);
             }

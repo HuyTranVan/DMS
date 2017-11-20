@@ -62,7 +62,7 @@
         android:layout_height="match_parent"
         android:text="1,000,000"
         android:textColor="@color/black"
-        android:background="@drawable/colorwhite_1_strokebackground_2dp"
+        android:background="@drawable/colorwhite_strokegrey"
         android:gravity="right|center_vertical"
         android:paddingRight="@dimen/_2sdp"
         android:textSize="@dimen/_14sdp"

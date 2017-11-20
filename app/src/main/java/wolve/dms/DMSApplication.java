@@ -3,6 +3,8 @@ package wolve.dms;
 import android.app.Application;
 
 
+import com.cloudinary.android.MediaManager;
+
 import java.util.Locale;
 
 
@@ -15,6 +17,8 @@ public class DMSApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        MediaManager.init(this);
 
 //        Fabric.with(this, new Crashlytics());
         Locale locale = new Locale("vi", "VN");

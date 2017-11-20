@@ -19,9 +19,9 @@ import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
-import wolve.dms.controls.CTextView;
+import wolve.dms.controls.CTextIcon;
 import wolve.dms.models.Status;
-import wolve.dms.utils.CustomDialog;
+import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
 
 
@@ -77,7 +77,7 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusAdap
             @Override
             public boolean onLongClick(View v) {
                 if (!mData.get(position).getBoolean("defaultStatus")){
-                    CustomDialog.alertWithCancelButton(null, "Bạn muốn xóa trạng thái " + mData.get(position).getString("name"), "ĐỒNG Ý","HỦY", new CallbackBoolean() {
+                    CustomCenterDialog.alertWithCancelButton(null, "Bạn muốn xóa trạng thái " + mData.get(position).getString("name"), "ĐỒNG Ý","HỦY", new CallbackBoolean() {
                         @Override
                         public void onRespone(Boolean result) {
                             String param = String.valueOf(mData.get(position).getInt("id"));
@@ -95,7 +95,7 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusAdap
                         }
                     });
                 }else {
-                    Util.quickMessage("Không thể xóa trạng thái này", null , null);
+                    Util.showSnackbar("Không thể xóa trạng thái này", null , null);
                 }
 
 
@@ -114,14 +114,14 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusAdap
 
     public class StatusAdapterViewHolder extends RecyclerView.ViewHolder {
         private TextView tvName, tvColor;
-        private CTextView tvIconDefault;
+        private CTextIcon tvIconDefault;
         private LinearLayout lnParent;
 
         public StatusAdapterViewHolder(View itemView) {
             super(itemView);
             tvName = (TextView) itemView.findViewById(R.id.status_item_name);
             tvColor = (TextView) itemView.findViewById(R.id.status_item_color);
-            tvIconDefault = (CTextView) itemView.findViewById(R.id.status_item_icon_default);
+            tvIconDefault = (CTextIcon) itemView.findViewById(R.id.status_item_icon_default);
             lnParent = (LinearLayout) itemView.findViewById(R.id.status_item_parent);
         }
 

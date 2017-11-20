@@ -11,30 +11,32 @@
 
 
         <LinearLayout
-            android:id="@+id/view_pay_method_cash"
+            android:id="@+id/choice_2method_parent1"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:orientation="horizontal"
+            android:clickable="true"
             android:background="?selectableItemBackground">
 
-                <wolve.dms.controls.CTextView
+                <wolve.dms.controls.CTextIcon
+                    android:id="@+id/choice_2method_icon1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="right"
                     android:text="@string/icon_money"
-                    android:textSize="@dimen/_12sdp"
+                    android:textSize="@dimen/_14sdp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="@dimen/_20sdp"
-                    app:customFont ="@string/font_awesome"/>
+                    android:layout_marginLeft="@dimen/_20sdp"/>
 
                 <TextView
+                    android:id="@+id/choice_2method_text1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Tiền mặt"
                     android:textColor="@color/black_text_color"
-                    android:textSize="@dimen/_12sdp"
+                    android:textSize="@dimen/_14sdp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="@dimen/_20sdp" />
+                    android:layout_marginLeft="@dimen/_20sdp"/>
 
         </LinearLayout>
 
@@ -45,30 +47,32 @@
 
 
         <LinearLayout
-            android:id="@+id/view_pay_method_debt"
+            android:id="@+id/choice_2method_parent2"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:orientation="horizontal"
             android:background="?selectableItemBackground">
 
-                <wolve.dms.controls.CTextView
+                <wolve.dms.controls.CTextIcon
+                    android:id="@+id/choice_2method_icon2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="right"
                     android:text="@string/icon_warning"
-                    android:textSize="@dimen/_12sdp"
+                    android:textSize="@dimen/_14sdp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="@dimen/_20sdp"
-                    app:customFont ="@string/font_awesome"/>
+                    android:layout_marginLeft="@dimen/_20sdp"/>
 
                 <TextView
+                    android:id="@+id/choice_2method_text2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Nợ lại"
                     android:textColor="@color/black_text_color"
-                    android:textSize="@dimen/_12sdp"
+                    android:textSize="@dimen/_14sdp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="@dimen/_20sdp" />
+                    android:layout_marginLeft="@dimen/_20sdp"
+                    android:clickable="false"/>
 
         </LinearLayout>
 

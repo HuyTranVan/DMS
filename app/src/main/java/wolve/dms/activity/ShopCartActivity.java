@@ -1,6 +1,5 @@
 package wolve.dms.activity;
 
-import android.app.DatePickerDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -8,22 +7,21 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Build;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.github.clans.fab.FloatingActionButton;
+import com.soundcloud.android.crop.Crop;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,11 +29,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
@@ -51,20 +46,19 @@ import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackListProduct;
 import wolve.dms.callback.CallbackPayBill;
 import wolve.dms.controls.CInputForm;
-import wolve.dms.controls.CTextView;
 import wolve.dms.libraries.printerdriver.PrinterCommands;
 import wolve.dms.libraries.printerdriver.UtilPrinter;
 import wolve.dms.models.Customer;
 import wolve.dms.models.Distributor;
-import wolve.dms.models.Printer;
 import wolve.dms.models.Product;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
-import wolve.dms.utils.StringUtil;
-import wolve.dms.utils.Transaction;
+import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.utils.Constants.REQUEST_CHOOSE_IMAGE;
 
 /**
  * Created by macos on 9/16/17.
@@ -77,11 +71,12 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     private CInputForm tvNote;
     private RecyclerView rvProducts, rvPromotions;
     private FloatingActionButton btnAdd, btnAddPromotion;
-    private RelativeLayout rlCover;
-    private CTextView btnPrinter;
+    private RelativeLayout rlCover, rlBluetooth;
+    private ProgressBar printerProgress;
+    private ImageView imgLogo;
 
-    private DatePickerDialog fromDatePickerDialog;
     private static final int REQUEST_ENABLE_BT = 0*1000;
+    private static final String BLUETOOTH_STATUS = "Danh sách Bluetooth (%d)";
 
     private CartProductsAdapter adapterProducts;
     private CartPromotionsAdapter adapterPromotions;
@@ -93,6 +88,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     static private BluetoothAdapter mBluetoothAdapter = null;
     private static BluetoothSocket btsocket;
     private static OutputStream outputStream;
+    private Uri imageChangeUri ;
 
     @Override
     public int getResourceLayout() {
@@ -116,8 +112,10 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         rvProducts =  findViewById(R.id.cart_rvproduct);
         rvPromotions =  findViewById(R.id.cart_rvpromotion);
         rlCover =  findViewById(R.id.cart_cover);
-        btnPrinter = findViewById(R.id.cart_bluetooth_printer);
+        imgLogo = findViewById(R.id.cart_bluetooth_printer);
         tvPrinterName = findViewById(R.id.cart_printer_name);
+        rlBluetooth = findViewById(R.id.cart_printer_group);
+        printerProgress = findViewById(R.id.cart_printer_progress);
 
     }
 
@@ -137,26 +135,11 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         if (listInitialProduct.size() <=0){
             showDialogProduct("CHỌN SẢN PHẨM BÁN", false);
         }
+        Glide.with(this).load(CustomSQL.getString("logo")).placeholder(R.drawable.ic_logo).centerCrop().into(imgLogo);
         createRVProduct(listInitialProduct);
         createRVPromotion(listInitialPromotion);
+        registerBluetooth();
 
-        if(btsocket != null){
-            tvPrinterName.setVisibility(View.VISIBLE);
-            tvPrinterName.setText("Đang kết nối: "+ btsocket.getRemoteDevice().getName());
-
-            try {
-                outputStream = btsocket.getOutputStream();
-            } catch (IOException e) {
-                Util.showToast("Không thể kết nối");
-                tvPrinterName.setVisibility(View.GONE);
-            }
-
-        }else {
-            tvPrinterName.setVisibility(View.GONE);
-        }
-
-        IntentFilter btIntentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(mBTReceiver, btIntentFilter);
 
     }
 
@@ -166,8 +149,8 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         btnSubmit.setOnClickListener(this);
         btnAdd.setOnClickListener(this);
         btnAddPromotion.setOnClickListener(this);
-        btnPrinter.setOnClickListener(this);
-        DatePickerEvent();
+        imgLogo.setOnClickListener(this);
+        rlBluetooth.setOnClickListener(this);
     }
 
     @Override
@@ -191,8 +174,6 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 choicePayMethod();
 //                createBillImage();
 
-
-
                 break;
 
             case R.id.cart_add_product:
@@ -204,11 +185,11 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 break;
 
             case R.id.cart_bluetooth_printer:
-                if(btsocket == null){
-                    Transaction.gotoBluetoothListActivity();
-                }
+                startImageChooser();
+                break;
 
-
+            case R.id.cart_printer_group:
+                showListBluetooth(listDevice);
                 break;
         }
     }
@@ -258,9 +239,10 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     private void showDialogProduct(String title, final Boolean isPromotion){
         listProducts = new ArrayList<>();
         try {
-            for (int i=0 ; i<Util.mListProduct.size(); i++){
-                Util.mListProduct.get(i).put("checked", false);
-                listProducts.add(Util.mListProduct.get(i));
+            for (int i=0 ; i<Product.getProductList().size(); i++){
+                Product product = Product.getProductList().get(i);
+                product.put("checked", false);
+                listProducts.add(product);
 
             }
         } catch (JSONException e) {
@@ -315,7 +297,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
             params.put("paid", paid);
             params.put("customerId", currentCustomer.getInt("id"));
             params.put("distributorId", Distributor.getCurrentDistributorId());
-            params.put("userId", User.getCurrentUserId());
+            params.put("userId", User.getUserId());
             params.put("note", tvNote.getText().toString().trim());
 
             JSONArray array = new JSONArray();
@@ -328,6 +310,11 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 array.put(object);
             }
             params.put("billDetails", (Object) array);
+
+            flushBillDetail(total, paid);
+
+            Thread.sleep(1000);
+
             CustomerConnect.PostBill(params.toString(), new CallbackJSONObject() {
                 @Override
                 public void onResponse(JSONObject result) {
@@ -355,6 +342,8 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
         } catch (JSONException e) {
             e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -371,31 +360,26 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         return listProductChoice;
     }
 
-    private void DatePickerEvent(){
-        fromDatePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                Calendar newDate = Calendar.getInstance();
-                newDate.set(year, monthOfYear, dayOfMonth);
-                tvNote.setText(new SimpleDateFormat("dd-MM-yyyy", Locale.US).format(newDate.getTime()));
-
-
-            }
-
-        },Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
-    }
-
     private void choicePayMethod(){
-        CustomBottomDialog.choicePayMethod(new CustomBottomDialog.PayMethodResult() {
+        CustomBottomDialog.choiceTwoOption(getString(R.string.icon_money), "Thu tiền mặt",
+                getString(R.string.icon_warning),"Công nợ", new CustomBottomDialog.TwoMethodListener() {
             @Override
-            public void OnCash(Boolean cash) {
-                submitBill(Util.valueMoney(tvTotal) , Util.valueMoney(tvTotal));
+            public void Method1(Boolean one) {
+                Util.getInstance().showLoading("Đang in...");
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        submitBill(Util.valueMoney(tvTotal) , Util.valueMoney(tvTotal));
+
+                    }
+                }); thread.start();
             }
 
             @Override
-            public void OnDebt(Boolean debt) {
+            public void Method2(Boolean two) {
                 showDialogInputPaid();
             }
+
         });
 
     }
@@ -418,154 +402,99 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 });
     }
 
-    private void printCustomText(String msg, int size, int align) {
-        //Print config "mode"
-        byte[] cc = new byte[]{0x1B,0x21,0x05};  // 0- normal size text
-        //byte[] cc1 = new byte[]{0x1B,0x21,0x00};  // 0- normal size text
-        byte[] bb = new byte[]{0x1B,0x21,0x00};  // 1- only bold text
-        byte[] bb2 = new byte[]{0x1B,0x21,0x20}; // 2- bold with medium text
-        byte[] bb3 = new byte[]{0x1B,0x21,0x30}; // 3- bold with large text
-        try {
-            switch (size){
-                case 0:
-                    outputStream.write(cc);
-                    break;
-                case 1:
-                    outputStream.write(bb);
-                    break;
-                case 2:
-                    outputStream.write(bb2);
-                    break;
-                case 3:
-                    outputStream.write(bb3);
-                    break;
-            }
-
-            switch (align){
-                case 0:
-                    //left align
-                    outputStream.write(PrinterCommands.ESC_ALIGN_LEFT);
-                    break;
-                case 1:
-                    //center align
-                    outputStream.write(PrinterCommands.ESC_ALIGN_CENTER);
-                    break;
-                case 2:
-                    //right align
-                    outputStream.write(PrinterCommands.ESC_ALIGN_RIGHT);
-                    break;
-            }
-            outputStream.write(StringUtil.unAccent(msg).getBytes());
-            outputStream.write(PrinterCommands.LF);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    //print photo
-    public void printPhoto(int img) {
-        try {
-            Bitmap bmp = BitmapFactory.decodeResource(getResources(), img);
-            if(bmp!=null){
-                byte[] command = UtilPrinter.decodeBitmap(bmp);
-                outputStream.write(PrinterCommands.ESC_ALIGN_CENTER);
-
-                outputStream.write(command);
-
-            }else{
-                Util.showToast("The file isn't exists");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Util.showToast("The file isn't exists");
-        }
-    }
-
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        try {
-//            btsocket = ListBluetoothActivity.getSocket();
-//            if(btsocket != null){
-//                tvPrinterName.setVisibility(View.VISIBLE);
-//                tvPrinterName.setText("Đang kết nối: "+ btsocket.getRemoteDevice().getName());
-//
-//                outputStream = btsocket.getOutputStream();
-//
-//                flushBillDetai();
-//
-//            }else {
-//                tvPrinterName.setVisibility(View.GONE);
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-
     @Override
     public void onActivityResult(int reqCode, int resultCode, Intent intent) {
         super.onActivityResult(reqCode, resultCode, intent);
+        if (reqCode == REQUEST_CHOOSE_IMAGE){
+            if (intent != null){
+                Crop.of(Uri.parse(intent.getData().toString()), imageChangeUri).withAspect(35,15).withMaxSize(350,150).start(this);
 
-        switch (reqCode) {
-            case REQUEST_ENABLE_BT:
+            }
 
-                if (resultCode == RESULT_OK) {
+        } else if (reqCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
+            Glide.with(this).load(imageChangeUri).fitCenter().into(imgLogo);
+
+        } else if (reqCode == Crop.REQUEST_CROP) {
+            if (resultCode == RESULT_OK) {
+                Glide.with(this).load(imageChangeUri).fitCenter().into(imgLogo);
+                CustomSQL.setString("logo", Util.getRealPathFromURI(imageChangeUri));
+
+            } else if (resultCode == Crop.RESULT_ERROR) {
+                Util.showToast(Crop.getError(intent).getMessage());
+
+            }
+        } else if (reqCode == REQUEST_ENABLE_BT && resultCode == RESULT_OK){
+                try {
                     Set<BluetoothDevice> btDeviceList = mBluetoothAdapter.getBondedDevices();
-                    try {
-                        if (btDeviceList.size() > 0) {
-
-                            for (BluetoothDevice device : btDeviceList) {
-                                if (btDeviceList.contains(device) == false) {
-                                    listDevice.add(device);
-
+                    if (btDeviceList.size() > 0) {
+                        for (BluetoothDevice device : btDeviceList) {
+                            if (btDeviceList.contains(device) == false) {
+                                if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))){
+                                    connectBluetoothDevice(device);
                                 }
+
+                                listDevice.add(device);
+                                tvPrinterName.setText(String.format(BLUETOOTH_STATUS, listDevice.size()));
+
                             }
                         }
-                    } catch (Exception ex) {
                     }
+                } catch (Exception ex) {
                 }
+                mBluetoothAdapter.startDiscovery();
+            }
 
-                break;
-        }
-        mBluetoothAdapter.startDiscovery();
+
 
     }
 
-    private void flushBillDetai(){
+    private void flushBillDetail(Double total, Double paid){
         //print command
         try {
-            Thread.sleep(1000);
+            //Thread.sleep(1000);
 
-            outputStream.write(0x1C); outputStream.write(0x2E); // Cancels Chinese  character mode (FS .)
-            outputStream.write(0x1B); outputStream.write(0x74); outputStream.write(0x10); // Select character code table (ESC t n) - n = 16(0x10) for WPC1252
-
-            //printPhoto(R.drawable.ic_logo);
-
-            outputStream.write(PrinterCommands.FEED_LINE);
-            outputStream.write(PrinterCommands.FEED_LINE);
-
-            printCustomText("  HOA DON  ",3,1);
-
-
-            outputStream.write(PrinterCommands.FEED_LINE);
+            UtilPrinter.printPhoto(outputStream,CustomSQL.getString("logo"));
+            UtilPrinter.printCustomText(outputStream,"CTY TNHH XNK TRAN VU ANH",1,1);
+            UtilPrinter.printCustomText(outputStream, "1 duong 57,P.Binh Trung Dong,Q 2", 1,1);
+            UtilPrinter.printCustomText(outputStream,"Hotline: 0931072223",4,1);
+            UtilPrinter.printCustomText(outputStream,"www.wolver.vn",4,1);
             outputStream.write(PrinterCommands.FEED_LINE);
 
-            printCustomText("KH     :  " + Constants.getShopInfo(currentCustomer.getString("shopType") , null) + " "+ currentCustomer.getString("signBoard") , 1,0);
-            printCustomText("SDT    :  " + currentCustomer.getString("phone"), 1,0);
-            printCustomText("NGAY   :  " + Util.CurrentMonthYearHour(),1,0);
-            printCustomText("N.VIEN :  " + User.getFullName(), 1,0);
-            printCustomText("----------------",3,1);
+            UtilPrinter.printCustomText(outputStream, "  HOA DON BAN HANG ",3,1);
             outputStream.write(PrinterCommands.FEED_LINE);
 
+            UtilPrinter.printCustomText(outputStream,"CH     :  " + Constants.getShopInfo(currentCustomer.getString("shopType") , null) + " "+ currentCustomer.getString("signBoard") , 1,0);
+            UtilPrinter.printCustomText(outputStream,"KH     :  " + currentCustomer.getString("name"), 1,0);
+            UtilPrinter.printCustomText(outputStream,"SDT    :  " + currentCustomer.getString("phone"), 1,0);
+            UtilPrinter.printCustomText(outputStream,"NGAY   :  " + Util.CurrentMonthYearHour(),1,0);
+            UtilPrinter.printCustomText(outputStream,"N.VIEN :  " + User.getFullName(), 1,0);
+            UtilPrinter.printCustomText(outputStream,"---------------------",3,1);
 
+            List<Product> listProduct = getListProduct();
+            for (int i=0; i<listProduct.size(); i++){
+                UtilPrinter.printCustomText(outputStream,String.format("%d.%s (%s)" ,i+1, listProduct.get(i).getString("name"), Util.FormatMoney(listProduct.get(i).getDouble("unitPrice"))) , 1,0);
+                String discount = listProduct.get(i).getDouble("discount") == 0? "" : " -" + Util.FormatMoney(listProduct.get(i).getDouble("discount"));
+                UtilPrinter.printCustom2Text(outputStream ,
+                        "   "+ Util.FormatMoney(listProduct.get(i).getDouble("quantity")) + "x" + Util.FormatMoney(listProduct.get(i).getDouble("unitPrice")) + discount ,
+                        Util.FormatMoney(listProduct.get(i).getDouble("totalMoney")) , 1,0);
+
+                if (i != listProduct.size() -1){
+                    UtilPrinter.printCustomText(outputStream,"--------------------------------",1,1);
+                }
+            }
+            UtilPrinter.printCustomText(outputStream,"---------------------",3,1);
+            UtilPrinter.printCustom2Text(outputStream,"TONG:", Util.FormatMoney(total),4,2);
+            UtilPrinter.printCustom2Text(outputStream,"TRA:", Util.FormatMoney(paid),4,2);
+            UtilPrinter.printCustom2Text(outputStream,"CON LAI:", Util.FormatMoney(total - paid),4,2);
+            UtilPrinter.printCustomText(outputStream,"---------------------",3,1);
+            UtilPrinter.printCustomText(outputStream, "Tran trong cam on quy khach hang", 1,1);
+            outputStream.write(PrinterCommands.FEED_LINE);
+            outputStream.write(PrinterCommands.FEED_LINE);
+            outputStream.write(PrinterCommands.FEED_LINE);
             outputStream.flush();
+            Util.getInstance().stopLoading(true);
 
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -595,26 +524,41 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         }
     }
 
+    private void registerBluetooth() {
+        try {
+            if (initDevicesList() != 0) {
+                this.finish();
+                return;
+            }
+
+        } catch (Exception ex) {
+            this.finish();
+            return;
+        }
+        IntentFilter btIntentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(mBTReceiver, btIntentFilter);
+
+        printerProgress.setVisibility(View.VISIBLE);
+        tvPrinterName.setText(String.format(BLUETOOTH_STATUS, listDevice.size()));
+
+    }
+
     private void connectBluetoothDevice(final BluetoothDevice device) {
         if (mBluetoothAdapter == null) {
             return;
         }
-
-        if (mBluetoothAdapter.isDiscovering()) {
-            mBluetoothAdapter.cancelDiscovery();
-        }
-
-        Util.showToast("Connecting to " + device.getName());
+        Util.showSnackbar("Connecting to " + device.getName(), null, null);
 
         Thread connectThread = new Thread(new Runnable() {
-
             @Override
             public void run() {
                 try {
-                    UUID uuid = device.getUuids()[0].getUuid();
-                    btsocket = device.createRfcommSocketToServiceRecord(uuid);
+                    if (device.getUuids()!= null){
+                        UUID uuid = device.getUuids()[0].getUuid();
+                        btsocket = device.createRfcommSocketToServiceRecord(uuid);
+                        btsocket.connect();
+                    }
 
-                    btsocket.connect();
                 } catch (IOException ex) {
                     runOnUiThread(socketErrorRunnable);
                     try {
@@ -629,15 +573,44 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
                         @Override
                         public void run() {
-                            finish();
+                            try {
+                                if (btsocket != null){
+                                    tvPrinterName.setText("Đang kết nối: "+ btsocket.getRemoteDevice().getName());
+                                    printerProgress.setVisibility(View.GONE);
+
+                                    CustomSQL.setString(Constants.BLUETOOTH_DEVICE, btsocket.getRemoteDevice().getAddress());
+                                    outputStream = btsocket.getOutputStream();
+                                }
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            //mBluetoothAdapter.cancelDiscovery();
 
                         }
                     });
                 }
             }
-        });
+        });connectThread.start();
+    }
 
-        connectThread.start();
+    private void showListBluetooth(List<BluetoothDevice> list){
+        CustomCenterDialog.showBluetoothDevices(list, new BluetoothListAdapter.CallbackBluetooth() {
+            @Override
+            public void OnDevice(BluetoothDevice device) {
+                try {
+                    if (btsocket != null){
+                        btsocket.close();
+                        btsocket = null;
+                    }
+                    connectBluetoothDevice(device);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
     }
 
     private final BroadcastReceiver mBTReceiver = new BroadcastReceiver() {
@@ -646,7 +619,14 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
             String action = intent.getAction();
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
+                if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))){
+                    connectBluetoothDevice(device);
+                }
+
                 listDevice.add(device);
+                tvPrinterName.setText(String.format(BLUETOOTH_STATUS, listDevice.size()));
+
             }
         }
     };
@@ -661,6 +641,65 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         }
     };
 
+    private int initDevicesList() {
+        try {
+            if (btsocket != null) {
+                btsocket.close();
+
+                btsocket = null;
+            }
+
+            if (mBluetoothAdapter != null) {
+                mBluetoothAdapter.cancelDiscovery();
+            }
+
+            finalize();
+
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null) {
+            Util.showToast("Bluetooth not supported!!");
+
+            return -1;
+        }
+
+        if (mBluetoothAdapter.isDiscovering()) {
+            mBluetoothAdapter.cancelDiscovery();
+        }
+
+
+        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        try {
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        } catch (Exception ex) {
+            return -2;
+        }
+
+        //Util.showToast("Getting all available Bluetooth Devices");
+
+        return 0;
+
+    }
+
+    private void startImageChooser() {
+        // Kiểm tra permission với android sdk >= 23
+        imageChangeUri = Uri.fromFile(Util.getOutputMediaFile());
+        if (Build.VERSION.SDK_INT <= 19) {
+            Intent i = new Intent();
+            i.setType("image/*");
+            i.setAction(Intent.ACTION_GET_CONTENT);
+            i.addCategory(Intent.CATEGORY_OPENABLE);
+            startActivityForResult(i, REQUEST_CHOOSE_IMAGE);
+
+        } else if (Build.VERSION.SDK_INT > 19) {
+            Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
+        }
+
+    }
 
 
 

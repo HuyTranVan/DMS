@@ -8,14 +8,13 @@
     android:layout_margin="@dimen/_2sdp"
     android:background="@drawable/colorwhite_borderred_corner">
 
-    <wolve.dms.controls.CTextView
+    <wolve.dms.controls.CTextIcon
         android:id="@+id/item_home_icon"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_weight="0.8"
         android:textSize="@dimen/_40sdp"
         android:textColor="@color/black_text_color_hint"
-        app:customFont="@string/font_awesome"
         android:text="@string/icon_camera"
         android:layout_gravity="center_horizontal"
         android:gravity="center"/>

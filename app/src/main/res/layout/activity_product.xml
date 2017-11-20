@@ -51,18 +51,17 @@
                 android:layout_centerVertical="true"
                 android:paddingLeft="@dimen/_10sdp">
 
-                <wolve.dms.controls.CTextView
+                <wolve.dms.controls.CTextIcon
                     android:id="@+id/product_icon_group"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/icon_heart"
                     android:textSize="@dimen/_14sdp"
                     android:textColor="@color/colorRed"
-                    app:customFont="@string/font_awesome"
                     android:layout_centerVertical="true"/>
 
 
-                <wolve.dms.controls.CTextView
+                <wolve.dms.controls.CTextIcon
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="NHÓM SẢN PHẨM"
@@ -70,7 +69,6 @@
                     android:textColor="@color/colorRed"
                     android:layout_toRightOf="@+id/product_icon_group"
                     android:layout_marginLeft="@dimen/_10sdp"
-                    app:customFont="@string/font_semibold"
                     android:layout_centerVertical="true"/>
 
                 <ImageView
@@ -105,18 +103,17 @@
                 android:layout_centerVertical="true"
                 android:paddingLeft="@dimen/_10sdp">
 
-                <wolve.dms.controls.CTextView
+                <wolve.dms.controls.CTextIcon
                     android:id="@+id/product_icon_product"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/icon_heart"
                     android:textSize="@dimen/_14sdp"
                     android:textColor="@color/colorRed"
-                    app:customFont="@string/font_awesome"
                     android:layout_centerVertical="true"/>
 
 
-                <wolve.dms.controls.CTextView
+                <wolve.dms.controls.CTextIcon
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="SẢN PHẨM"
@@ -124,7 +121,6 @@
                     android:textColor="@color/colorRed"
                     android:layout_toRightOf="@+id/product_icon_product"
                     android:layout_marginLeft="@dimen/_10sdp"
-                    app:customFont="@string/font_semibold"
                     android:layout_centerVertical="true"/>
 
                 <ImageView

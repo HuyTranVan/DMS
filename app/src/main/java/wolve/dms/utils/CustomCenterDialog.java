@@ -2,6 +2,7 @@ package wolve.dms.utils;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.bluetooth.BluetoothDevice;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,6 +29,7 @@ import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import wolve.dms.R;
+import wolve.dms.adapter.BluetoothListAdapter;
 import wolve.dms.adapter.CartCheckinReasonAdapter;
 import wolve.dms.adapter.CartProductDialogAdapter;
 import wolve.dms.callback.CallbackBoolean;
@@ -35,9 +37,10 @@ import wolve.dms.callback.CallbackClickProduct;
 import wolve.dms.callback.CallbackListProduct;
 import wolve.dms.callback.CallbackPayBill;
 import wolve.dms.callback.CallbackStatus;
-import wolve.dms.controls.CTextView;
+import wolve.dms.controls.CTextIcon;
 import wolve.dms.models.Customer;
 import wolve.dms.models.Product;
+import wolve.dms.models.ProductGroup;
 import wolve.dms.models.Status;
 import wolve.dms.models.User;
 
@@ -45,7 +48,7 @@ import wolve.dms.models.User;
  * Created by macos on 9/28/17.
  */
 
-public class CustomDialog {
+public class CustomCenterDialog {
 
     public static Dialog showCustomDialog(int resId) {
         AlertDialog.Builder adb = new AlertDialog.Builder(Util.getInstance().getCurrentActivity());
@@ -172,20 +175,22 @@ public class CustomDialog {
     }
 
     public static void showDialogChoiceProduct(String title, List<Product> listProduct,Boolean isPromotion, final CallbackListProduct callback){
-        final Dialog dialogResult = CustomDialog.showCustomDialog(R.layout.view_dialog_select_product);
+        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_select_product);
         TextView tvTitle = (TextView) dialogResult.findViewById(R.id.dialog_choice_product_title);
         final RadioGroup radioGroup = (RadioGroup) dialogResult.findViewById(R.id.dialog_choice_product_radiogroup);
         RecyclerView rvProduct = (RecyclerView) dialogResult.findViewById(R.id.dialog_choice_product_rvProduct);
-        Button btnCancel = (Button) dialogResult.findViewById(R.id.dialog_choice_product_cancel);
-        Button btnSubmit = (Button) dialogResult.findViewById(R.id.dialog_choice_product_submit);
+        Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
+        Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
 
+        btnCancel.setText("HỦY");
+        btnSubmit.setText("HOÀN TẤT");
         tvTitle.setText(title);
         int initialPosition = 0;
-        int initialGroupId = Util.mListProductGroup.get(initialPosition).getInt("id");
+        int initialGroupId = ProductGroup.getProductGroupList().get(initialPosition).getInt("id");
 
-        for (int i=0; i<Util.mListProductGroup.size(); i++){
+        for (int i=0; i<ProductGroup.getProductGroupList().size(); i++){
             RadioButton radioButton = new RadioButton(Util.getInstance().getCurrentActivity());
-            radioButton.setText(Util.mListProductGroup.get(i).getString("name"));
+            radioButton.setText(ProductGroup.getProductGroupList().get(i).getString("name"));
             radioButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
             radioButton.setId(i);
 
@@ -208,7 +213,7 @@ public class CustomDialog {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 int position = group.getCheckedRadioButtonId();
-                int groupId = Util.mListProductGroup.get(position).getInt("id");
+                int groupId = ProductGroup.getProductGroupList().get(position).getInt("id");
                 adapter.reloadList(groupId);
 
             }
@@ -239,19 +244,21 @@ public class CustomDialog {
     }
 
     public static void showDialogEditProduct(final Product product, final CallbackClickProduct callbackClickProduct){
-        final Dialog dialogResult = CustomDialog.showCustomDialog(R.layout.view_dialog_edit_product);
+        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_edit_product);
 
-        final Button btnCancel = (Button) dialogResult.findViewById(R.id.dialog_edit_product_cancel);
-        final Button btnSubmit = (Button) dialogResult.findViewById(R.id.dialog_edit_product_submit);
-        TextView tvTitle = (TextView) dialogResult.findViewById(R.id.dialog_edit_product_title);
-        TextView tvUnitPrice = (TextView) dialogResult.findViewById(R.id.dialog_edit_product_unitprice);
-        final TextView tvNetPrice = (TextView) dialogResult.findViewById(R.id.dialog_edit_product_netprice);
-        final TextView tvTotal = (TextView) dialogResult.findViewById(R.id.dialog_edit_product_total);
-        final EditText edDiscount = (EditText) dialogResult.findViewById(R.id.dialog_edit_product_discount);
-        final EditText edQuantity = (EditText) dialogResult.findViewById(R.id.dialog_edit_product_quantity);
-        CTextView tvSub = (CTextView) dialogResult.findViewById(R.id.dialog_edit_product_sub);
-        CTextView tvPlus = (CTextView) dialogResult.findViewById(R.id.dialog_edit_product_plus);
+        final Button btnCancel = dialogResult.findViewById(R.id.btn_cancel);
+        final Button btnSubmit = dialogResult.findViewById(R.id.btn_submit);
+        TextView tvTitle = dialogResult.findViewById(R.id.dialog_edit_product_title);
+        TextView tvUnitPrice = dialogResult.findViewById(R.id.dialog_edit_product_unitprice);
+        final TextView tvNetPrice = dialogResult.findViewById(R.id.dialog_edit_product_netprice);
+        final TextView tvTotal =  dialogResult.findViewById(R.id.dialog_edit_product_total);
+        final EditText edDiscount =  dialogResult.findViewById(R.id.dialog_edit_product_discount);
+        final EditText edQuantity = dialogResult.findViewById(R.id.dialog_edit_product_quantity);
+        CTextIcon tvSub = dialogResult.findViewById(R.id.dialog_edit_product_sub);
+        CTextIcon tvPlus =  dialogResult.findViewById(R.id.dialog_edit_product_plus);
 
+        btnCancel.setText("HỦY");
+        btnSubmit.setText("LƯU");
         tvTitle.setText(product.getString("name"));
         tvUnitPrice.setText(Util.FormatMoney(product.getDouble("unitPrice")));
         edDiscount.setText(String.valueOf(Math.round(product.getDouble("discount"))));
@@ -259,8 +266,7 @@ public class CustomDialog {
         edQuantity.setText(String.valueOf(Math.round(product.getDouble("quantity"))));
         tvTotal.setText(Util.FormatMoney(product.getDouble("quantity") * (product.getDouble("unitPrice") - product.getDouble("discount"))));
 
-        edDiscount.setFilters(new InputFilter[]{new InputFilter.LengthFilter(tvUnitPrice.getText().toString().trim().replace(".","").length() -1)});
-
+        edDiscount.setFilters(new InputFilter[]{new InputFilter.LengthFilter(tvUnitPrice.getText().toString().trim().replace(".","").length() )});
 
         edQuantity.requestFocus();
         edQuantity.setSelection(edQuantity.getText().toString().length());
@@ -355,12 +361,14 @@ public class CustomDialog {
     }
 
     public static void showCheckinReason(String title, List<Status> listStatus, final CallbackStatus callback){
-        final Dialog dialogResult = CustomDialog.showCustomDialog(R.layout.view_dialog_select_status);
-        TextView tvTitle = (TextView) dialogResult.findViewById(R.id.dialog_choice_status_title);
-        RecyclerView rvStatus = (RecyclerView) dialogResult.findViewById(R.id.dialog_choice_status_rvStatus);
-        Button btnCancel = (Button) dialogResult.findViewById(R.id.dialog_choice_status_cancel);
-        Button btnSubmit = (Button) dialogResult.findViewById(R.id.dialog_choice_status_submit);
+        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_select_status);
+        TextView tvTitle = dialogResult.findViewById(R.id.dialog_choice_status_title);
+        RecyclerView rvStatus = dialogResult.findViewById(R.id.dialog_choice_status_rvStatus);
+        Button btnCancel = dialogResult.findViewById(R.id.btn_cancel);
+        Button btnSubmit = dialogResult.findViewById(R.id.btn_submit);
 
+        btnCancel.setText("HỦY");
+        btnSubmit.setText("CHỈ CẬP NHẬT");
         tvTitle.setText(title);
 
         final CartCheckinReasonAdapter adapter = new CartCheckinReasonAdapter(listStatus, new CallbackStatus() {
@@ -395,7 +403,7 @@ public class CustomDialog {
     }
 
     public static void showDialogInputPaid(String title, String totalTitle, Double total, final CallbackPayBill mListener){
-        final Dialog dialogResult = CustomDialog.showCustomDialog(R.layout.view_input_paid);
+        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_input_paid);
         TextView tvTitle = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_title);
         final TextView tvTotal = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_total);
         final TextView tvTotalTitle = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_total_title);
@@ -484,7 +492,7 @@ public class CustomDialog {
     }
 
     public static void showDialogBillImage(Customer customer,String total,  List<Product> listProduct, final CallbackPayBill mListener){
-        final Dialog dialogResult = CustomDialog.showCustomDialog(R.layout.view_dialog_bill);
+        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_bill);
         dialogResult.setCancelable(true);
         TextView tvShopName = (TextView) dialogResult.findViewById(R.id.dialog_bill_shopname);
         TextView tvCustomerName = (TextView) dialogResult.findViewById(R.id.dialog_bill_customer);
@@ -505,18 +513,29 @@ public class CustomDialog {
         tvTotal.setText(total);
 
 
+    }
 
-//        Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
-//        Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
+    public static void showBluetoothDevices(List<BluetoothDevice> listDevice, final BluetoothListAdapter.CallbackBluetooth mListener){
+        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_select_bluetooth_device);
+        dialogResult.setCancelable(true);
+        dialogResult.setCanceledOnTouchOutside(true);
+        TextView tvTitle =  dialogResult.findViewById(R.id.dialog_select_bluetooth_title);
+        RecyclerView rvBluetooth =  dialogResult.findViewById(R.id.dialog_select_bluetooth_rvdevice);
 
-
-
-
-
+        BluetoothListAdapter adapter = new BluetoothListAdapter(listDevice, new BluetoothListAdapter.CallbackBluetooth() {
+            @Override
+            public void OnDevice(BluetoothDevice device) {
+                mListener.OnDevice(device);
+                dialogResult.dismiss();
+            }
+        });
+        rvBluetooth.setAdapter(adapter);
+        rvBluetooth.setHasFixedSize(true);
+        rvBluetooth.setNestedScrollingEnabled(false);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(), LinearLayoutManager.VERTICAL, false);
+        rvBluetooth.setLayoutManager(layoutManager);
 
 
     }
-
-
 
 }

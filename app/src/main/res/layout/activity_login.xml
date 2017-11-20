@@ -48,7 +48,7 @@
                     android:orientation="horizontal"
                     android:background="@drawable/colorwhite_cornerred">
 
-                    <wolve.dms.controls.CTextView
+                    <wolve.dms.controls.CTextIcon
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="0.15"
@@ -57,7 +57,6 @@
                         android:textAlignment="center"
                         android:textColor="@color/black_text_icon"
                         android:textSize="@dimen/_16sdp"
-                        app:customFont="@string/font_awesome"
                         app:textWhite="false" />
 
                     <View
@@ -87,7 +86,7 @@
                     android:background="@drawable/colorwhite_cornerred"
                     android:layout_marginTop="@dimen/_5sdp">
 
-                    <wolve.dms.controls.CTextView
+                    <wolve.dms.controls.CTextIcon
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="0.15"
@@ -96,7 +95,6 @@
                         android:textAlignment="center"
                         android:textColor="@color/black_text_icon"
                         android:textSize="@dimen/_16sdp"
-                        app:customFont="@string/font_awesome"
                         app:textWhite="false" />
 
                     <View

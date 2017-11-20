@@ -9,20 +9,20 @@ import android.util.Log;
 import wolve.dms.R;
 
 
-public class CTextView extends android.support.v7.widget.AppCompatTextView {
+public class CTextIcon extends android.support.v7.widget.AppCompatTextView {
     private static final String TAG = "TextView";
 
-    public CTextView(Context context) {
+    public CTextIcon(Context context) {
         super(context);
     }
 
-    public CTextView(Context context, AttributeSet attrs) {
+    public CTextIcon(Context context, AttributeSet attrs) {
         super(context, attrs);
         setCustomFont(context, attrs);
         //setCustomTextColor(context, attrs);
     }
 
-    public CTextView(Context context, AttributeSet attrs, int defStyle) {
+    public CTextIcon(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         setCustomFont(context, attrs);
         //setCustomTextColor(context, attrs);
@@ -38,7 +38,7 @@ public class CTextView extends android.support.v7.widget.AppCompatTextView {
     public boolean setCustomFont(Context ctx, String asset) {
         Typeface tf = null;
         try {
-            tf = Typeface.createFromAsset(ctx.getAssets(), asset);
+            tf = Typeface.createFromAsset(ctx.getAssets(), "font_awesome.ttf");
         } catch (Exception e) {
             Log.e(TAG, "Could not get typeface: "+e.getMessage());
             return false;

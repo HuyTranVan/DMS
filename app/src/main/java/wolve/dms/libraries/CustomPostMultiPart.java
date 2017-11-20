@@ -35,7 +35,7 @@ public class CustomPostMultiPart extends AsyncTask<String, Void, String> {
     private String charset ="UTF-8";
     private OutputStream outputStream;
     private PrintWriter writer;
-    private String baseUrl,token, id_user;
+    private String baseUrl;
     private String boundary;
     private JSONObject param;
     private String response = "";
@@ -45,17 +45,15 @@ public class CustomPostMultiPart extends AsyncTask<String, Void, String> {
         this.baseUrl = url;
         this.param = params;
 
-        User currentUser = User.getCurrentUser();
-        if (currentUser != null && currentUser.getToken() != null) {
-            token = currentUser.getToken();
-            id_user = currentUser.getId_user();
-        }
+//        User currentUser = User.getCurrentUser();
+//        if (currentUser != null && currentUser.getToken() != null) {
+//            token = currentUser.getToken();
+//            id_user = currentUser.getId_user();
+//        }
     }
 
     @Override protected String doInBackground(String... params) {
         Log.d("url: ", baseUrl);
-        Log.d("token: ", token);
-        Log.d("id_nv: ", id_user);
         Log.d("params: ", param.toString());
         //Open connection
 
@@ -66,9 +64,9 @@ public class CustomPostMultiPart extends AsyncTask<String, Void, String> {
             httpConn.setUseCaches(false);
             httpConn.setDoOutput(true); // indicates POST method
             httpConn.setDoInput(true);
-            httpConn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
-            httpConn.setRequestProperty("x-wolver-accesstoken", token);
-            httpConn.setRequestProperty("x-wolver-accessid", id_user);
+            httpConn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+            httpConn.setRequestProperty("x-wolver-accesstoken", User.getToken());
+            httpConn.setRequestProperty("x-wolver-accessid", User.getUserId());
 
             outputStream = httpConn.getOutputStream();
             writer = new PrintWriter(new OutputStreamWriter(outputStream, charset), true);
@@ -103,11 +101,11 @@ public class CustomPostMultiPart extends AsyncTask<String, Void, String> {
         if (response.contains("errorCode")){
             mListener.onError(response);
             if (response.contains("errorCode: 01")){
-                Util.getInstance().quickMessage("Lỗi kết nối server ", null, null);
+                Util.getInstance().showSnackbar("Lỗi kết nối server ", null, null);
             }else if (response.contains("errorCode: 02")){
-                Util.getInstance().quickMessage("Lỗi đường truyền ", null, null);
+                Util.getInstance().showSnackbar("Lỗi đường truyền ", null, null);
             }else if (response.contains("errorCode: 03")){
-                Util.getInstance().quickMessage("Lỗi kết nối server ", null, null);
+                Util.getInstance().showSnackbar("Lỗi kết nối server ", null, null);
             }
         }else {
             try {
@@ -115,7 +113,7 @@ public class CustomPostMultiPart extends AsyncTask<String, Void, String> {
 
             } catch (JSONException e) {
                 mListener.onError("Data error");
-                Util.getInstance().quickMessage("Lỗi dữ liệu", null, null);
+                Util.getInstance().showSnackbar("Lỗi dữ liệu", null, null);
             }
         }
 

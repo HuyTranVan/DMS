@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,17 +18,10 @@ import java.util.Comparator;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.apiconnect.CustomerConnect;
-import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackDeleteAdapter;
-import wolve.dms.callback.CallbackJSONObject;
-import wolve.dms.controls.CTextView;
 import wolve.dms.models.Bill;
 import wolve.dms.models.BillDetail;
 import wolve.dms.models.Customer;
-import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomDialog;
 import wolve.dms.utils.Util;
 
 /**

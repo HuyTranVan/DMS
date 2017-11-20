@@ -21,7 +21,7 @@
             android:layout_above="@+id/bills_item_icon"
             android:layout_centerHorizontal="true"/>
 
-        <wolve.dms.controls.CTextView
+        <wolve.dms.controls.CTextIcon
             android:id="@+id/bills_item_icon"
             android:layout_width="@dimen/_16sdp"
             android:layout_height="@dimen/_16sdp"
@@ -30,8 +30,7 @@
             android:text="@string/icon_bill"
             android:textSize="@dimen/_8sdp"
             android:gravity="center"
-            android:layout_centerVertical="true"
-            app:customFont="@string/font_awesome"/>
+            android:layout_centerVertical="true"/>
 
         <View
             android:id="@+id/bills_item_under"

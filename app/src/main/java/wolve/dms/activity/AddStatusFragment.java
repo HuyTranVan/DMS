@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,19 +20,15 @@ import com.turkialkhateeb.materialcolorpicker.ColorListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
 import wolve.dms.R;
 import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.apiconnect.StatusConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.controls.CInputForm;
-import wolve.dms.models.Product;
 import wolve.dms.models.Status;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomDialog;
+import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
 
 /**
@@ -143,7 +138,7 @@ public class AddStatusFragment extends Fragment implements View.OnClickListener,
 
             case R.id.add_status_submit:
                 if (edName.getText().toString().trim().equals("")){
-                    CustomDialog.alertWithCancelButton(null, "Vui lòng nhập đủ thông tin", "đồng ý", null, new CallbackBoolean() {
+                    CustomCenterDialog.alertWithCancelButton(null, "Vui lòng nhập đủ thông tin", "đồng ý", null, new CallbackBoolean() {
                         @Override
                         public void onRespone(Boolean result) {
 

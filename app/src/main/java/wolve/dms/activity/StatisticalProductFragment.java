@@ -1,8 +1,6 @@
 package wolve.dms.activity;
 
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,14 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.TextView;
-
-import com.turkialkhateeb.materialcolorpicker.ColorChooserDialog;
-import com.turkialkhateeb.materialcolorpicker.ColorListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,16 +18,8 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.StatisticalProductGroupAdapter;
-import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.StatusConnect;
-import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackJSONObject;
-import wolve.dms.controls.CInputForm;
 import wolve.dms.models.Bill;
 import wolve.dms.models.BillDetail;
-import wolve.dms.models.Status;
-import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomDialog;
 import wolve.dms.utils.Util;
 
 /**

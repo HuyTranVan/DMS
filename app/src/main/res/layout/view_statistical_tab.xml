@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:gravity="center">
 
-    <wolve.dms.controls.CTextView
+    <wolve.dms.controls.CTextIcon
         android:id="@+id/statistical_tab_icon"
         android:layout_width="20dp"
         android:layout_height="20dp"
@@ -14,8 +14,7 @@
         android:textSize="@dimen/_12sdp"
         android:textColor="@drawable/text_blue_selected"
         android:gravity="center"
-        android:layout_marginRight="5dp"
-        app:customFont="@string/font_awesome"/>
+        android:layout_marginRight="5dp"/>
 
     <TextView
         android:id="@+id/statistical_tab_title"

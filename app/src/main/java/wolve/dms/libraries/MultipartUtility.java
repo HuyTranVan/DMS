@@ -34,15 +34,12 @@ public class MultipartUtility {
     private OutputStream outputStream;
     private PrintWriter writer;
 
-    private String token ="";
-    private String id_user ="";
-
     public MultipartUtility(String requestURL) throws IOException {
-        User currentUser = User.getCurrentUser();
-        if (currentUser != null && currentUser.getToken() != null) {
-            token = currentUser.getToken();
-            id_user = currentUser.getId_user();
-        }
+//        User currentUser = User.getCurrentUser();
+//        if (currentUser != null && currentUser.getToken() != null) {
+//            token = currentUser.getToken();
+//            id_user = currentUser.getId_user();
+//        }
 
         boundary = "===" + System.currentTimeMillis() + "===";
 
@@ -53,8 +50,8 @@ public class MultipartUtility {
         httpConn.setDoOutput(true); // indicates POST method
         httpConn.setDoInput(true);
         httpConn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
-        httpConn.setRequestProperty("x-wolver-accesstoken", token);
-        httpConn.setRequestProperty("x-wolver-accessid", id_user);
+        httpConn.setRequestProperty("x-wolver-accesstoken", User.getToken());
+        httpConn.setRequestProperty("x-wolver-accessid", User.getUserId());
 
         outputStream = httpConn.getOutputStream();
         writer = new PrintWriter(new OutputStreamWriter(outputStream, charset), true);

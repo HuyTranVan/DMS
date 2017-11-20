@@ -40,7 +40,7 @@ public class StatisticalProductGroupAdapter extends RecyclerView.Adapter<Statist
 
     public StatisticalProductGroupAdapter(List<BillDetail> data) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
-        this.mData = Util.mListProductGroup;
+        this.mData = ProductGroup.getProductGroupList();
         this.mListDetail = data;
         this.mContext = Util.getInstance().getCurrentActivity();
 
@@ -90,13 +90,13 @@ public class StatisticalProductGroupAdapter extends RecyclerView.Adapter<Statist
     private List<Product> sumProductByGroup(int groupId){
         List<Product> productList = new ArrayList<>();
 
-        for(int i=0; i<Util.mListProduct.size(); i++){
+        for(int i=0; i< Product.getProductList().size(); i++){
             try {
-                int groupid = new JSONObject(Util.mListProduct.get(i).getString("productGroup")).getInt("id");
+                int groupid = new JSONObject(Product.getProductList().get(i).getString("productGroup")).getInt("id");
                 int sumQuantity =0;
                 if (groupId == groupid){
                     for (int j=0; j<mListDetail.size(); j++){
-                        if (mListDetail.get(j).getInt("productId") == Util.mListProduct.get(i).getInt("id")){
+                        if (mListDetail.get(j).getInt("productId") == Product.getProductList().get(i).getInt("id")){
                             sumQuantity += mListDetail.get(j).getInt("quantity");
                         }
                     }
@@ -105,7 +105,7 @@ public class StatisticalProductGroupAdapter extends RecyclerView.Adapter<Statist
 
                 if (sumQuantity !=0){
                     Product product = new Product(new JSONObject());
-                    product.put("name", Util.mListProduct.get(i).getString("name"));
+                    product.put("name", Product.getProductList().get(i).getString("name"));
                     product.put("sumquantity", sumQuantity);
 
                     productList.add(product);

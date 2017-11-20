@@ -11,7 +11,7 @@ import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.PermissionChecker;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -28,6 +28,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -57,18 +58,18 @@ import java.util.List;
 
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
+import wolve.dms.adapter.CustomWindowAdapter;
 import wolve.dms.adapter.MapListCustomerAdapter;
-import wolve.dms.adapter.StatisticalBillsAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.apiconnect.LocationConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.callback.CallbackJSONObject;
-import wolve.dms.models.Bill;
 import wolve.dms.models.Customer;
+import wolve.dms.models.District;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomDialog;
+import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.MapUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
@@ -95,6 +96,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     private CoordinatorLayout coParent;
     private RecyclerView rvCustomer;
     private TextView tvCount;
+    private ProgressBar progressLoading;
 
     private ArrayList<Customer> listCustomer = new ArrayList<>();
     private MapListCustomerAdapter adapter;
@@ -127,6 +129,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         lnBottomSheet = (LinearLayout) findViewById(R.id.map_bottom_sheet);
         rvCustomer = (RecyclerView) findViewById(R.id.map_rvcustomer);
         tvCount = (TextView) findViewById(R.id.map_countcustomer);
+        progressLoading = findViewById(R.id.map_loading);
 
         btnLocation.setColorNormalResId(R.color.colorWhite);
         btnLocation.setColorPressedResId(R.color.colorGrey);
@@ -218,6 +221,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
             }, 500);
         }
 
+        mMap.setInfoWindowAdapter(new CustomWindowAdapter());
         mMap.setOnCameraMoveListener(this);
         mMap.setOnCameraIdleListener(this);
         mMap.setOnInfoWindowClickListener(this);
@@ -246,7 +250,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
             }
         }else  if (requestCode == Constants.REQUEST_PHONE_PERMISSION) {
             if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                Util.quickMessage("Không thể gọi do chưa được cấp quyền", null, null);
+                Util.showSnackbar("Không thể gọi do chưa được cấp quyền", null, null);
 
             }
         }
@@ -307,7 +311,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     }
 
     private void setupSpinner(){
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, R.layout.view_spinner_item, Util.mListDistricts);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, R.layout.view_spinner_item, District.getDistrictList());
 
         dataAdapter.setDropDownViewResource(R.layout.view_spinner_item);
         mSpinner.setAdapter(dataAdapter);
@@ -492,7 +496,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
 
                     }
                     addMarkertoMap(listCustomer, isAll, true);
-                    tvCount.setText(String.valueOf(listCustomer.size()));
                     createRVCustomer(listCustomer);
 
                 } catch (JSONException e) {
@@ -509,16 +512,18 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     }
 
     private void loadAllCustomerDependLocation(Double lat , Double lng, final String isAll){
+        progressLoading.setVisibility(View.VISIBLE);
+
         CustomerConnect.ListCustomerLocation(Util.encodeString(String.valueOf(lat)), Util.encodeString(String.valueOf(lng)), new CallbackJSONArray() {
             @Override
             public void onResponse(JSONArray result) {
+                progressLoading.setVisibility(View.GONE);
                 try {
                     listCustomer = new ArrayList<Customer>();
                     for (int i=0; i<result.length(); i++){
                         listCustomer.add(new Customer(result.getJSONObject(i)));
                     }
                     addMarkertoMap(listCustomer, isAll, false);
-                    tvCount.setText(String.valueOf(listCustomer.size()));
                     createRVCustomer(listCustomer);
 
                 } catch (JSONException e) {
@@ -527,7 +532,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
             }
             @Override
             public void onError(String error) {
-
+                progressLoading.setVisibility(View.GONE);
             }
 
         }, true);
@@ -644,6 +649,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         switch (checkedId){
             case R.id.map_filter_all:
                 addMarkertoMap(listCustomer, Constants.MARKER_ALL, true);
+
                 break;
 
             case R.id.map_filter_interested:
@@ -660,7 +666,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         mMap.clear();
         LatLng currentPoint = new LatLng(Util.getInstance().getCurrentLocation().getLatitude(), Util.getInstance().getCurrentLocation().getLongitude());
         currentMarker = mMap.addMarker(new MarkerOptions().anchor(0.5f, 0.5f).position(currentPoint).flat(true).icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_location)));
-        MapUtil.getInstance().addListMarkerToMap(mMap, list, filter, isBound);
+        tvCount.setText(MapUtil.getInstance().addListMarkerToMap(mMap, list, filter, isBound));
 
     }
 
@@ -670,12 +676,12 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         final String phone = customer.getString("phone");
 
         if (!phone.equals("")){
-            CustomDialog.alertWithCancelButton(null, "Gọi điện thoại cho " + customer.getString("name") + " (" + customer.getString("phone") +")", "ĐỒNG Ý","HỦY", new CallbackBoolean() {
+            CustomCenterDialog.alertWithCancelButton(null, "Gọi điện thoại cho " + customer.getString("name") + " (" + customer.getString("phone") +")", "ĐỒNG Ý","HỦY", new CallbackBoolean() {
                 @Override
                 public void onRespone(Boolean result) {
-                    if (ActivityCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(MapsActivity.this, new String[]{Manifest.permission.CALL_PHONE}, Constants.REQUEST_PHONE_PERMISSION);
-
+                    if (PermissionChecker.checkSelfPermission(MapsActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+//                        ActivityCompat.requestPermissions(MapsActivity.this, new String[]{Manifest.permission.CALL_PHONE}, Constants.REQUEST_PHONE_PERMISSION);
+                        mapFragment.requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, Constants.REQUEST_PHONE_PERMISSION);
                         return;
                     }
 
@@ -686,7 +692,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
                 }
             });
         }else {
-            Util.quickMessage("Khách hàng chưa có số điện thoại", null, null);
+            Util.showSnackbar("Khách hàng chưa có số điện thoại", null, null);
         }
 
 

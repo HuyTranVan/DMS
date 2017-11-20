@@ -8,20 +8,23 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.R;
 import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
-import wolve.dms.controls.CTextView;
+import wolve.dms.controls.CTextIcon;
 import wolve.dms.models.Product;
-import wolve.dms.utils.CustomDialog;
+import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
 
 
@@ -65,6 +68,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
             holder.tvPrice.setText(Util.FormatMoney(mData.get(position).getDouble("unitPrice")));
             holder.tvGroup.setText(new JSONObject(mData.get(position).getString("productGroup")).getString("name"));
             holder.tvGift.setVisibility(mData.get(position).getBoolean("promotion")?View.VISIBLE : View.GONE);
+            if (mData.get(position).getString("image") != null && !mData.get(position).getString("image").equals("null") && !mData.get(position).getString("image").equals("http://lubsolution.com/mydms/staticnull")){
+                Glide.with(mContext).load(mData.get(position).getString("image")).centerCrop().into(holder.imageProduct);
+
+            }else {
+                Glide.with(mContext).load( R.drawable.ic_wolver).centerCrop().into(holder.imageProduct);
+
+            }
+
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -82,7 +93,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
         holder.rlParent.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                CustomDialog.alertWithCancelButton(null, "Bạn muốn xóa sản phẩm " + mData.get(position).getString("name"), "ĐỒNG Ý","HỦY", new CallbackBoolean() {
+                CustomCenterDialog.alertWithCancelButton(null, "Bạn muốn xóa sản phẩm " + mData.get(position).getString("name"), "ĐỒNG Ý","HỦY", new CallbackBoolean() {
                     @Override
                     public void onRespone(Boolean result) {
                         String param = String.valueOf(mData.get(position).getInt("id"));
@@ -114,16 +125,18 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
 
     public class ProductAdapterViewHolder extends RecyclerView.ViewHolder {
         private TextView tvName, tvGroup, tvPrice;
-        private CTextView tvGift;
+        private CTextIcon tvGift;
         private RelativeLayout rlParent;
+        private CircleImageView imageProduct;
 
         public ProductAdapterViewHolder(View itemView) {
             super(itemView);
             tvName = (TextView) itemView.findViewById(R.id.product_item_name);
             tvGroup = (TextView) itemView.findViewById(R.id.product_item_group);
             tvPrice = (TextView) itemView.findViewById(R.id.product_item_unitprice);
-            tvGift = (CTextView) itemView.findViewById(R.id.product_item_gift);
+            tvGift = (CTextIcon) itemView.findViewById(R.id.product_item_gift);
             rlParent = (RelativeLayout) itemView.findViewById(R.id.product_item_parent);
+            imageProduct = itemView.findViewById(R.id.product_item_image);
         }
 
     }

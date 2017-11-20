@@ -40,7 +40,7 @@
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/statistical_date_icon"/>
 
-        <wolve.dms.controls.CTextView
+        <wolve.dms.controls.CTextIcon
             android:id="@+id/statistical_date_icon"
             android:layout_width="@dimen/_35sdp"
             android:layout_height="match_parent"
@@ -49,8 +49,7 @@
             android:gravity="center"
             android:textColor="@color/black_text_color_hint"
             android:background="?selectableItemBackground"
-            android:layout_alignParentRight="true"
-            app:customFont="@string/font_awesome"/>
+            android:layout_alignParentRight="true"/>
 
 
     </RelativeLayout>

@@ -57,6 +57,8 @@ public class CartCheckinReasonAdapter extends RecyclerView.Adapter<CartCheckinRe
     @Override
     public void onBindViewHolder(final ReasonAdapterViewHolder holder, final int position) {
         holder.tvName.setText(mData.get(position).getString("name"));
+        holder.tvLine.setVisibility(position == mData.size() -1 ? View.GONE : View.VISIBLE);
+
         holder.lnParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,13 +75,14 @@ public class CartCheckinReasonAdapter extends RecyclerView.Adapter<CartCheckinRe
 
 
     public class ReasonAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvName;
+        private TextView tvName, tvLine;
         private LinearLayout lnParent;
 
         public ReasonAdapterViewHolder(View itemView) {
             super(itemView);
             tvName = (TextView) itemView.findViewById(R.id.checkin_reason_name);
             lnParent = (LinearLayout) itemView.findViewById(R.id.checkin_reason_parent);
+            tvLine = itemView.findViewById(R.id.checkin_reason_line);
         }
 
     }

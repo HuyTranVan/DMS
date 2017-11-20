@@ -7,18 +7,17 @@
     android:layout_height="wrap_content"
     android:background="?selectableItemBackground">
 
-    <CheckBox
-        android:id="@+id/shopcart_dialog_product_item_checkbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/_5sdp"/>
+    <!--<CheckBox-->
+        <!--android:id="@+id/shopcart_dialog_product_item_checkbox"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:layout_marginLeft="@dimen/_5sdp"/>-->
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/shopcart_dialog_product_item_image"
         android:layout_width="@dimen/_22sdp"
         android:layout_height="@dimen/_22sdp"
-        android:layout_toRightOf="@+id/shopcart_dialog_product_item_checkbox"
         android:layout_margin="@dimen/_5sdp"
         android:src="@drawable/icon_lubricant_bottle"
         app:civ_border_width="1dip"
@@ -51,13 +50,13 @@
             android:text="20,000"
             android:gravity="right|center_vertical"
             android:textSize="@dimen/_12sdp"
-            android:textColor="@color/colorBlue"
+            android:textColor="@color/black"
             android:paddingRight="@dimen/_5sdp"/>
 
     </LinearLayout>
 
-    <View
-        android:id="@+id/product_item_seperateline"
+    <TextView
+        android:id="@+id/shopcart_dialog_product_item_line"
         android:layout_width="match_parent"
         android:layout_height="1dip"
         android:background="#0d000000"

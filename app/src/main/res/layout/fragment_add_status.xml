@@ -65,15 +65,14 @@
                 android:gravity="center_vertical"
                 android:paddingLeft="@dimen/_25sdp"/>
 
-            <wolve.dms.controls.CTextView
+            <wolve.dms.controls.CTextIcon
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/icon_edit"
                 android:textSize="@dimen/_14sdp"
                 android:textColor="@color/black_text_color_hint"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="@dimen/_2sdp"
-                app:customFont="@string/font_awesome"/>
+                android:layout_marginLeft="@dimen/_2sdp"/>
 
             <TextView
                 android:id="@+id/add_status_color"

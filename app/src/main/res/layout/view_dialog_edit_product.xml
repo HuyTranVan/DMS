@@ -16,8 +16,6 @@
         android:textColor="@color/black_text_color"
         android:gravity="center"/>
 
-
-
     <LinearLayout
         android:id="@+id/dialog_edit_product_body"
         android:layout_below="@+id/dialog_edit_product_title"
@@ -117,7 +115,7 @@
                 android:layout_weight="0.4"
                 android:text="2000"
                 android:textSize="@dimen/_14sdp"
-                android:textColor="@color/colorBlue"
+                android:textColor="@color/colorRed"
                 android:paddingRight="@dimen/_10sdp"
                 android:gravity="center_vertical|right"/>
 
@@ -150,7 +148,7 @@
                 android:orientation="horizontal"
                 android:layout_weight="0.4">
 
-                <wolve.dms.controls.CTextView
+                <wolve.dms.controls.CTextIcon
                     android:id="@+id/dialog_edit_product_sub"
                     android:layout_width="@dimen/_30sdp"
                     android:layout_height="match_parent"
@@ -159,8 +157,7 @@
                     android:textSize="@dimen/_16sdp"
                     android:textColor="@color/black_text_color_hint"
                     android:gravity="center"
-                    android:rotation="270"
-                    app:customFont="@string/font_awesome"/>
+                    android:rotation="270"/>
 
                 <EditText
                     android:id="@+id/dialog_edit_product_quantity"
@@ -175,7 +172,7 @@
                     android:layout_margin="@dimen/_2sdp"
                     android:gravity="center"/>
 
-                <wolve.dms.controls.CTextView
+                <wolve.dms.controls.CTextIcon
                     android:id="@+id/dialog_edit_product_plus"
                     android:layout_width="@dimen/_30sdp"
                     android:layout_height="match_parent"
@@ -184,8 +181,7 @@
                     android:textSize="@dimen/_16sdp"
                     android:textColor="@color/black_text_color_hint"
                     android:gravity="center"
-                    android:rotation="90"
-                    app:customFont="@string/font_awesome"/>
+                    android:rotation="90"/>
             </LinearLayout>
 
 
@@ -219,7 +215,7 @@
                 android:layout_weight="0.4"
                 android:text="2000"
                 android:textSize="@dimen/_14sdp"
-                android:textColor="@color/colorBlue"
+                android:textColor="@color/colorRed"
                 android:paddingRight="@dimen/_10sdp"
                 android:gravity="center_vertical|right"/>
 
@@ -230,44 +226,9 @@
             android:layout_height="2px"
             android:background="#0d000000"/>
 
-
-        <LinearLayout
+        <include android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="@dimen/_10sdp">
-
-            <Button
-                android:id="@+id/dialog_edit_product_cancel"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_25sdp"
-                android:layout_weight="0.5"
-                android:background="@drawable/btn_cancel_grey"
-                android:textColor="@color/colorWhite"
-                android:text="hủy"
-                android:textSize="@dimen/_12sdp"
-                android:textAllCaps="true"
-                android:layout_gravity="center"
-                android:layout_marginLeft="@dimen/_20sdp"
-                android:layout_marginRight="@dimen/_20sdp"/>
-
-            <Button
-                android:id="@+id/dialog_edit_product_submit"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_25sdp"
-                android:layout_weight="0.5"
-                android:background="@drawable/btn_confirm_orange"
-                android:textColor="@color/colorWhite"
-                android:text="lưu"
-                android:textSize="@dimen/_12sdp"
-                android:textAllCaps="true"
-                android:layout_gravity="center"
-                android:layout_marginLeft="@dimen/_20sdp"
-                android:layout_marginRight="@dimen/_20sdp"/>
-
-        </LinearLayout>
-
-
+            layout="@layout/view_bottom_dialog_button"/>
 
 
     </LinearLayout>

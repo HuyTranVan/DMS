@@ -14,6 +14,8 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -22,7 +24,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomDialog;
+import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
 
 import static wolve.dms.utils.Constants.REQUEST_PERMISSION_LOCATION;
@@ -182,7 +184,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             ex.printStackTrace();
         }
         if (!gps_enabled) {
-            CustomDialog.alertWithButton("Xác thực quyền truy cập vị trí", "Bạn cần mở GPS truy cập vị trí để sử dụng toàn bộ tính năng phần mềm", "Bật GPS", new CallbackBoolean() {
+            CustomCenterDialog.alertWithButton("Xác thực quyền truy cập vị trí", "Bạn cần mở GPS truy cập vị trí để sử dụng toàn bộ tính năng phần mềm", "Bật GPS", new CallbackBoolean() {
                 @Override
                 public void onRespone(Boolean result) {
                     final Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
@@ -192,8 +194,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                 }
             });
         } else {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if ( PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
                 return;
             }
@@ -209,8 +211,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public boolean checkLocationPermission() {
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            CustomDialog.alertWithButton("Xác thực quyền truy cập vị trí", "Bạn cần cho phép ứng dụng truy cập vị trí để sử dụng toàn bộ tính năng phần mềm", "Xác nhận", new CallbackBoolean() {
+        if (PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            CustomCenterDialog.alertWithButton("Xác thực quyền truy cập vị trí", "Bạn cần cho phép ứng dụng truy cập vị trí để sử dụng toàn bộ tính năng phần mềm", "Xác nhận", new CallbackBoolean() {
                 @Override
                 public void onRespone(Boolean result) {
                     ActivityCompat.requestPermissions(Util.getInstance().getCurrentActivity(),
@@ -228,7 +230,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void updateLastLocation() {
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
 

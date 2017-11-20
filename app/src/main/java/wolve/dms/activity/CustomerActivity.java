@@ -47,9 +47,10 @@ import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackPayBill;
 import wolve.dms.callback.CallbackStatus;
+import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.CallbackUpdateBill;
 import wolve.dms.controls.CInputForm;
-import wolve.dms.controls.CTextView;
+import wolve.dms.controls.CTextIcon;
 import wolve.dms.controls.WorkaroundMapFragment;
 import wolve.dms.models.Bill;
 import wolve.dms.models.Checkin;
@@ -58,7 +59,8 @@ import wolve.dms.models.Distributor;
 import wolve.dms.models.Status;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomDialog;
+import wolve.dms.utils.CustomCenterDialog;
+import wolve.dms.utils.CustomDropdow;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -70,7 +72,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     public GoogleMap mMap;
     public SupportMapFragment mapFragment;
     private ImageView btnBack;
-    private CTextView tvTrash , btnEditLocation;
+    private CTextIcon tvTrash , btnEditLocation, tvDropdown;
     private Button btnSubmit;
     private FloatingActionButton btnShopCart, btnCurrentLocation;
     private TextView tvTitle, tvTotal, tvDebt, tvPaid;
@@ -91,7 +93,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     private List<Checkin> listCheckins = new ArrayList<>();
     private List<Bill> listBills = new ArrayList<>();
     private List<RecyclerView.Adapter> listAdapter;
-    private Status currentStatus= Util.mListStatus.get(0);
+    private Status currentStatus= Status.getStatusList().get(0);
     private int currentState= BottomSheetBehavior.STATE_COLLAPSED;
     private String firstName ="";
     private float bottomSheetHeight;
@@ -112,11 +114,11 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         coParent = (CoordinatorLayout) findViewById(R.id.customer_parent);
         rlHeader = (RelativeLayout) findViewById(R.id.customer_header);
         btnSubmit = (Button) findViewById(R.id.add_customer_submit);
-        btnEditLocation = (CTextView) findViewById(R.id.add_customer_editlocation);
+        btnEditLocation = (CTextIcon) findViewById(R.id.add_customer_editlocation);
         btnCurrentLocation = (FloatingActionButton) findViewById(R.id.add_customer_currentlocation);
         btnBack = (ImageView) findViewById(R.id.icon_back);
         btnShopCart = (FloatingActionButton) findViewById(R.id.add_customer_shopcart);
-        tvTrash = (CTextView) findViewById(R.id.icon_more);
+        tvTrash = (CTextIcon) findViewById(R.id.icon_more);
         tvTitle = (TextView) findViewById(R.id.add_customer_title);
         edName = (CInputForm) findViewById(R.id.add_customer_name);
         edPhone = (CInputForm) findViewById(R.id.add_customer_phone);
@@ -139,6 +141,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         tvTotal = (TextView) findViewById(R.id.customer_paid_total);
         tvDebt = (TextView) findViewById(R.id.customer_paid_debt);
         tvPaid = (TextView) findViewById(R.id.customer_paid_paid);
+        tvDropdown = findViewById(R.id.add_customer_dropdown);
 
         //fix MapView in ScrollView
         mapFragment = (WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.add_customer_map);
@@ -209,7 +212,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             }
         }
         if (currentCustomer.getInt("id") !=0){
-            tvTrash.setVisibility(User.getCurrentUser().getString("role").equals("MANAGER") ? View.VISIBLE : View.GONE);
+            tvTrash.setVisibility(User.getRole().equals("MANAGER") ? View.VISIBLE : View.GONE);
             btnSubmit.setText("CHECK_IN & CẬP NHẬT");
         }else {
             tvTrash.setVisibility(View.GONE);
@@ -250,7 +253,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         btnCurrentLocation.setOnClickListener(this);
         btnShopCart.setOnClickListener(this);
         coParent.getViewTreeObserver().addOnGlobalLayoutListener(this) ;
-        //edPhone.setOnLongClickListener(this);
+        tvDropdown.setOnClickListener(this);
     }
 
     private void setupBottomSheet() {
@@ -281,7 +284,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                     }
                 }else if (newState == BottomSheetBehavior.STATE_COLLAPSED){
                     if (currentCustomer.getInt("id") !=0){
-                        tvTrash.setVisibility(User.getCurrentUser().getString("role").equals("MANAGER") ? View.VISIBLE : View.GONE);
+                        tvTrash.setVisibility(User.getRole().equals("MANAGER") ? View.VISIBLE : View.GONE);
                     }else {
                         tvTrash.setVisibility(View.GONE);
                     }
@@ -322,7 +325,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             @Override
             public void onUpdate(final Bill bill, int position) {
 
-                CustomDialog.showDialogInputPaid("Nhập số tiền khách trả", "Nợ còn lại", bill.getDouble("debt"), new CallbackPayBill() {
+                CustomCenterDialog.showDialogInputPaid("Nhập số tiền khách trả", "Nợ còn lại", bill.getDouble("debt"), new CallbackPayBill() {
                     @Override
                     public void OnRespone(Double total, Double pay) {
                         try {
@@ -333,7 +336,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                             params.put("id", bill.getInt("id"));
                             params.put("customerId", new JSONObject(bill.getString("customer")).getString("id"));
                             params.put("distributorId", Distributor.getCurrentDistributorId());
-                            params.put("userId", User.getCurrentUserId());
+                            params.put("userId", User.getUserId());
 //                            params.put("note", bill.getString("note") + Util.CurrentTimeStamp() + " trả " + Util.FormatMoney(pay));
                             params.put("note", "billlll");
 
@@ -446,6 +449,15 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 openShopCartScreen(getCurrentCustomer());
 
                 break;
+
+            case R.id.add_customer_dropdown:
+                CustomDropdow.createDropdownStatus(tvDropdown, Status.getStatusList(), new CallbackString() {
+                    @Override
+                    public void Result(String s) {
+                        edNote.setText(s);
+                    }
+                });
+                break;
         }
     }
 
@@ -492,7 +504,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 || edCity.getText().toString().trim().equals("")
                 || edShopName.getText().toString().trim().equals("")
                 || edShopType.getText().toString().trim().equals("")){
-            CustomDialog.alertWithCancelButton(null, "Vui lòng nhập đủ thông tin", "đồng ý", null, new CallbackBoolean() {
+            CustomCenterDialog.alertWithCancelButton(null, "Vui lòng nhập đủ thông tin", "đồng ý", null, new CallbackBoolean() {
                 @Override public void onRespone(Boolean result) {
 
                 }
@@ -548,7 +560,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             String params = String.format(Api_link.SCHECKIN_CREATE_PARAM, customer.getInt("id"),
                     status.getInt("id"),
                     Util.encodeString(edNote.getText().toString().trim()),
-                    User.getCurrentUserId()
+                    User.getUserId()
             );
 
             CustomerConnect.PostCheckin(params, new CallbackJSONObject() {
@@ -589,7 +601,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     private void deleteCustomer(){
-        CustomDialog.alertWithCancelButton(null, "Xóa khách hàng " + edShopType.getText().toString() +" " + currentCustomer.getString("signBoard"), "ĐỒNG Ý","HỦY", new CallbackBoolean() {
+        CustomCenterDialog.alertWithCancelButton(null, "Xóa khách hàng " + edShopType.getText().toString() +" " + currentCustomer.getString("signBoard"), "ĐỒNG Ý","HỦY", new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
                 CustomerConnect.DeleteCustomer(currentCustomer.getString("id"), new CallbackJSONObject() {
@@ -669,17 +681,17 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
         switch (checkedId){
             case R.id.customer_radio_status_interested:
-                currentStatus = Util.mListStatus.get(0);
+                currentStatus = Status.getStatusList().get(0);
 
                 break;
 
             case R.id.customer_radio_status_nointerested:
-                currentStatus = Util.mListStatus.get(1);
+                currentStatus = Status.getStatusList().get(1);
 
                 break;
 
             case R.id.customer_radio_status_ordered:
-                currentStatus = Util.mListStatus.get(2);
+                currentStatus = Status.getStatusList().get(2);
 
                 break;
 
@@ -687,7 +699,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     private void loadReasonList() {
-        CustomDialog.showCheckinReason("CHECK_IN", Util.mListStatus, new CallbackStatus() {
+        CustomCenterDialog.showCheckinReason("CHECK_IN", Status.getStatusList(), new CallbackStatus() {
             @Override
             public void Status(Status status) {
                 if (status == null){
@@ -804,7 +816,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 //    @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 //        if (requestCode == Constants.REQUEST_PHONE_PERMISSION) {
 //            if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-//                Util.quickMessage("Không thể gọi do chưa được cấp quyền", null, null);
+//                Util.showSnackbar("Không thể gọi do chưa được cấp quyền", null, null);
 //
 //            }
 //        }

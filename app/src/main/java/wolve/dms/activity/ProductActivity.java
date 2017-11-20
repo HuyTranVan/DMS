@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.cloudinary.android.MediaManager;
 import com.soundcloud.android.crop.Crop;
 
 import org.json.JSONArray;
@@ -72,7 +73,7 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
 
     @Override
     public void initialData() {
-
+        MediaManager.init(this);
     }
 
     @Override
@@ -139,7 +140,7 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
         }, false);
     }
 
-    protected void loadProduct() {
+    public void loadProduct() {
         ProductConnect.ListProduct(new CallbackJSONArray() {
             @Override
             public void onResponse(JSONArray result) {

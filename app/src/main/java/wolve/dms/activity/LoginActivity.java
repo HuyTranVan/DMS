@@ -1,12 +1,10 @@
 package wolve.dms.activity;
 
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,14 +13,12 @@ import wolve.dms.BuildConfig;
 import wolve.dms.R;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.UserConnect;
-import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomSharedPrefer;
+import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Transaction;
-import wolve.dms.utils.Util;
 
 /**
  * Created by macos on 9/13/17.
@@ -54,9 +50,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     @Override
     public void initialData() {
         if (BuildConfig.DEBUG_FLAG ){
-            CustomSharedPrefer customSharedPrefer = new CustomSharedPrefer();
-            edUsername.setText(customSharedPrefer.getString(Constants.USER_USERNAME));
-            edPassword.setText(customSharedPrefer.getString(Constants.USER_PASSWORD));
+            edUsername.setText(CustomSQL.getString(Constants.USER_USERNAME));
+            edPassword.setText(CustomSQL.getString(Constants.USER_PASSWORD));
             if (!edUsername.getText().toString().trim().equals("") && !edPassword.getText().toString().trim().equals("")){
                 doLogin();
             }
@@ -86,22 +81,17 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
             @Override
             public void onResponse(JSONObject result) {
                 try {
-                    CustomSharedPrefer customShared = new CustomSharedPrefer();
                     User user = new User(result);
                     Distributor distributor = new Distributor(result.getJSONObject("distributor"));
 
-                    user.setToken(result.getString("token"));
-                    user.setId_user(result.getString("id"));
-                    //user.setDisplayName(result.getString("displayName"));
+                    CustomSQL.setObject(Constants.USER, user);
+                    CustomSQL.setObject(Constants.DISTRIBUTOR, distributor);
+                    CustomSQL.setString(Constants.USER_USERNAME, edUsername.getText().toString().trim());
+                    CustomSQL.setString(Constants.USER_PASSWORD, edPassword.getText().toString().trim());
 
-                    customShared.setObject(Constants.USER, user);
-                    customShared.setObject(Constants.DISTRIBUTOR, distributor);
-
-                    customShared.setString(Constants.USER_USERNAME, edUsername.getText().toString().trim());
-                    customShared.setString(Constants.USER_PASSWORD, edPassword.getText().toString().trim());
-
-                    Transaction.gotoHomeActivity(true);
                     Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
+                    Transaction.gotoHomeActivity(true);
+
 
                 } catch (JSONException e) {
                     e.printStackTrace();

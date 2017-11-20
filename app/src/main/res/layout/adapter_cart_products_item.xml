@@ -112,7 +112,7 @@
                 android:orientation="horizontal"
                 android:layout_weight="0.4">
 
-                <wolve.dms.controls.CTextView
+                <wolve.dms.controls.CTextIcon
                     android:id="@+id/shopcart_products_item_sub"
                     android:layout_width="@dimen/_25sdp"
                     android:layout_height="@dimen/_25sdp"
@@ -121,8 +121,7 @@
                     android:textSize="@dimen/_16sdp"
                     android:textColor="@color/black_text_color_hint"
                     android:gravity="center"
-                    android:rotation="270"
-                    app:customFont="@string/font_awesome"/>
+                    android:rotation="270"/>
 
                 <TextView
                     android:id="@+id/shopcart_products_item_quantity"
@@ -138,7 +137,7 @@
                     android:layout_marginTop="@dimen/_2sdp"
                     android:layout_marginBottom="@dimen/_2sdp"/>
 
-                <wolve.dms.controls.CTextView
+                <wolve.dms.controls.CTextIcon
                     android:id="@+id/shopcart_products_item_plus"
                     android:layout_width="@dimen/_25sdp"
                     android:layout_height="@dimen/_25sdp"
@@ -147,8 +146,7 @@
                     android:textSize="@dimen/_16sdp"
                     android:textColor="@color/black_text_color_hint"
                     android:gravity="center"
-                    android:rotation="90"
-                    app:customFont="@string/font_awesome"/>
+                    android:rotation="90"/>
             </LinearLayout>
 
 

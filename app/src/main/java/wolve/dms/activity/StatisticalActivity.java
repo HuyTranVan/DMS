@@ -1,29 +1,18 @@
 package wolve.dms.activity;
 
-import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.graphics.Color;
-import android.support.annotation.IdRes;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -31,27 +20,14 @@ import java.util.Locale;
 
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
-import wolve.dms.adapter.CartProductsAdapter;
-import wolve.dms.adapter.CartPromotionsAdapter;
 import wolve.dms.adapter.StatisticalViewpagerAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
-import wolve.dms.callback.CallbackChangePrice;
-import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONArray;
-import wolve.dms.callback.CallbackJSONObject;
-import wolve.dms.callback.CallbackListProduct;
-import wolve.dms.controls.CInputForm;
-import wolve.dms.controls.CTextView;
+import wolve.dms.controls.CTextIcon;
 import wolve.dms.libraries.MySwipeRefreshLayout;
 import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialog;
 import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialogFragment;
 import wolve.dms.models.Bill;
-import wolve.dms.models.Customer;
-import wolve.dms.models.Distributor;
-import wolve.dms.models.Product;
-import wolve.dms.models.User;
-import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomDialog;
 import wolve.dms.utils.Util;
 
 /**
@@ -61,7 +37,7 @@ import wolve.dms.utils.Util;
 public class StatisticalActivity extends BaseActivity implements  View.OnClickListener , SwipeRefreshLayout.OnRefreshListener{
     private ImageView btnBack;
     private TextView tvTitle, tvDate;
-    private CTextView tvIcon;
+    private CTextIcon tvIcon;
     private ViewPager viewPager;
     private TabLayout tabLayout;
     private MySwipeRefreshLayout swipeRefreshLayout;
@@ -90,7 +66,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         viewPager = (ViewPager) findViewById(R.id.statistical_viewpager);
         tabLayout = (TabLayout) findViewById(R.id.statistical_tabs);
         tvDate = (TextView) findViewById(R.id.statistical_date_text);
-        tvIcon = (CTextView) findViewById(R.id.statistical_date_icon);
+        tvIcon = (CTextIcon) findViewById(R.id.statistical_date_icon);
         swipeRefreshLayout = (MySwipeRefreshLayout) findViewById(R.id.statistical_swipelayout);
 
 

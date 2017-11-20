@@ -1,17 +1,23 @@
 package wolve.dms.activity;
 
 import android.Manifest;
+import android.content.ClipData;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.util.ArrayMap;
+import android.support.v4.content.FileProvider;
+import android.support.v4.content.PermissionChecker;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,30 +26,37 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.Resource;
+import com.cloudinary.android.MediaManager;
+import com.cloudinary.android.Utils;
+import com.cloudinary.android.callback.ErrorInfo;
+import com.cloudinary.android.callback.UploadCallback;
 import com.soundcloud.android.crop.Crop;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.ArrayList;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import wolve.dms.BuildConfig;
 import wolve.dms.R;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.ProductConnect;
-import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackJSONObject;
+import wolve.dms.callback.CallbackString;
 import wolve.dms.controls.CInputForm;
-import wolve.dms.libraries.RestClientHelper;
 import wolve.dms.models.Product;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomDialog;
+import wolve.dms.utils.CustomBottomDialog;
+import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
 
 import static android.app.Activity.RESULT_OK;
 import static wolve.dms.utils.Constants.REQUEST_CHOOSE_IMAGE;
+import static wolve.dms.utils.Constants.REQUEST_IMAGE_CAPTURE;
 
 /**
  * Created by macos on 9/16/17.
@@ -53,7 +66,7 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
     private View view;
     private ImageView btnBack;
     private CInputForm edName, edUnitPrice, edPurchasePrice, edGroup, edVolume, edIsPromotion;
-    private Button btnSubmit , btnLoadImage;
+    private Button btnSubmit ;
     private CircleImageView imgProduct;
 
     private Product product;
@@ -61,6 +74,9 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
     private ArrayList<String> listGroup = new ArrayList<>();
     private ArrayList<String> listBoolean = new ArrayList<>();
     private Uri imageChangeUri ;
+
+
+    private Handler backgroundHandler;
 
     @Nullable
     @Override
@@ -75,6 +91,8 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
     }
 
     private void intitialData() {
+
+
         for (int i=0; i<mActivity.listProductGroup.size(); i++){
             listGroup.add(mActivity.listProductGroup.get(i).getString("name"));
         }
@@ -89,24 +107,32 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
         edIsPromotion.setText(listBoolean.get(0));
 
         String bundle = getArguments().getString(Constants.PRODUCT);
-        if (bundle != null){
-            try {
-                product = new Product(new JSONObject(bundle));
+        try {
+            if (bundle != null){
 
-                edName.setText(product.getString("name"));
-                edUnitPrice.setText(product.getString("unitPrice"));
-                edPurchasePrice.setText(product.getString("purchasePrice"));
-                edGroup.setText(new JSONObject(product.getString("productGroup")).getString("name"));
-                edVolume.setText(product.getString("volume"));
-                edIsPromotion.setText(product.getBoolean("promotion")? Constants.IS_PROMOTION :Constants.NO_PROMOTION);
-            } catch (JSONException e) {
-                e.printStackTrace();
+                    product = new Product(new JSONObject(bundle));
+
+                    edName.setText(product.getString("name"));
+                    edUnitPrice.setText(product.getString("unitPrice"));
+                    edPurchasePrice.setText(product.getString("purchasePrice"));
+                    edGroup.setText(new JSONObject(product.getString("productGroup")).getString("name"));
+                    edVolume.setText(product.getString("volume"));
+                    edIsPromotion.setText(product.getBoolean("promotion")? Constants.IS_PROMOTION :Constants.NO_PROMOTION);
+                    Glide.with(this).load(product.getString("image")).centerCrop().into(imgProduct);
+
+            }else {
+                product = new Product(new JSONObject());
+                product.put("id",0);
             }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE ,Manifest.permission.READ_EXTERNAL_STORAGE }, Constants.REQUEST_READ_PERMISSION);
+        if (PermissionChecker.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED
+                || PermissionChecker.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                ||PermissionChecker.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE ,Manifest.permission.READ_EXTERNAL_STORAGE ,Manifest.permission.CAMERA }, Constants.REQUEST_READ_PERMISSION);
+
             return;
         }
 
@@ -115,11 +141,11 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
     private void addEvent() {
         btnBack.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
-        btnLoadImage.setOnClickListener(this);
         imgProduct.setOnClickListener(this);
     }
 
     private void initializeView() {
+        mActivity = (ProductActivity) getActivity();
         edName = (CInputForm) view.findViewById(R.id.add_product_name);
         edUnitPrice = (CInputForm) view.findViewById(R.id.add_product_unit_price);
         edPurchasePrice = (CInputForm) view.findViewById(R.id.add_product_purchase_price);
@@ -128,10 +154,8 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
         edIsPromotion = (CInputForm) view.findViewById(R.id.add_product_promotion);
         btnSubmit = (Button) view.findViewById(R.id.add_product_submit);
         btnBack = (ImageView) view.findViewById(R.id.icon_back);
-        btnLoadImage = (Button) view.findViewById(R.id.add_product_choiceimage);
         imgProduct = (CircleImageView) view.findViewById(R.id.add_product_image);
 
-        mActivity = (ProductActivity) getActivity();
     }
 
     @Override
@@ -146,16 +170,31 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
                 submitProduct();
                 break;
 
-            case R.id.add_product_choiceimage:
-                startImageChooser();
-                break;
-
             case R.id.add_product_image:
-                startImageChooser();
+                choiceGalleryCamera();
                 break;
 
         }
     }
+
+    private void choiceGalleryCamera(){
+        CustomBottomDialog.choiceTwoOption(getString(R.string.icon_image),
+                "Chọn ảnh thư viện",
+                getString(R.string.icon_camera),
+                "Chụp ảnh",
+                new CustomBottomDialog.TwoMethodListener() {
+                    @Override
+                    public void Method1(Boolean one) {
+                        startImageChooser();
+                    }
+
+                    @Override
+                    public void Method2(Boolean two) {
+                        startCamera();
+                    }
+                });
+    }
+
 
     private void startImageChooser() {
         // Kiểm tra permission với android sdk >= 23
@@ -171,6 +210,15 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
             Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
         }
+    }
+
+    public void startCamera() {
+//        imageChangeUri = Uri.fromFile(Util.getOutputMediaFile());
+        imageChangeUri = FileProvider.getUriForFile(getActivity(), BuildConfig.APPLICATION_ID + ".provider", Util.getOutputMediaFile());
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT,imageChangeUri );
+        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
 
     }
 
@@ -188,7 +236,7 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
         if (edName.getText().toString().trim().equals("")
                 || edUnitPrice.getText().toString().trim().equals("")
                 || edPurchasePrice.getText().toString().trim().equals("")){
-            CustomDialog.alertWithCancelButton(null, "Vui lòng nhập đủ thông tin", "đồng ý", null, new CallbackBoolean() {
+            CustomCenterDialog.alertWithCancelButton(null, "Vui lòng nhập đủ thông tin", "đồng ý", null, new CallbackBoolean() {
                 @Override
                 public void onRespone(Boolean result) {
 
@@ -196,81 +244,75 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
             });
 
         }else {
-//            ArrayMap<String, Object> param = new ArrayMap<>();
-////            try {
-//            param.put("id", product == null? null : product.getString("id"));
-//            param.put("promotion", edIsPromotion.getText().toString().trim().equals(Constants.IS_PROMOTION) ? true: false);
-//            param.put("unitPrice", edUnitPrice.getText().toString().trim().replace(",",""));
-//            param.put("purchasePrice", edPurchasePrice.getText().toString().trim().replace(",",""));
-//            param.put("volume", edVolume.getText().toString().trim().replace(",",""));
-//            param.put("productGroup.id", defineGroupId(edGroup.getText().toString().trim()));
-////            param.put("image", Util.getRealPathFromURI(imageChangeUri));
-//
-//            ArrayMap<String, File> mapFile = new ArrayMap<>();
-//            String urlImage = Util.getRealPathFromURI(imageChangeUri);
-//            mapFile.put("image", new File("//" + urlImage));
-//
-//
-//
-//            ProductConnect.CreateProductMultipart(param,mapFile, new CallbackJSONObject() {
-//                @Override
-//                public void onResponse(JSONObject result) {
-//                    Log.e("ket qua", result.toString());
-//                }
-//
-//                @Override
-//                public void onError(String error) {
-//
-//                }
-//            }, true);
-
-
-            JSONObject param = new JSONObject();
-            try {
-                param.put("id", product == null? null : product.getString("id"));
-                param.put("promotion", edIsPromotion.getText().toString().trim().equals(Constants.IS_PROMOTION) ? true: false);
-                param.put("unitPrice", edUnitPrice.getText().toString().trim().replace(",",""));
-                param.put("purchasePrice", edPurchasePrice.getText().toString().trim().replace(",",""));
-                param.put("volume", edVolume.getText().toString().trim().replace(",",""));
-                param.put("productGroup.id", defineGroupId(edGroup.getText().toString().trim()));
-                param.put("image", Util.getRealPathFromURI(imageChangeUri));
-
-                ProductConnect.CreateProductMultipart(param, new CallbackJSONObject() {
+            if (imageChangeUri != null){
+                uploadImage(new CallbackString() {
                     @Override
-                    public void onResponse(JSONObject result) {
-                        Log.e("ket qua", result.toString());
-                    }
-
-                    @Override
-                    public void onError(String error) {
+                    public void Result(String s) {
+                        updateProduct(s);
 
                     }
-                }, true);
+                });
+            }else {
+                if (product != null && product.getString("image").equals("")){
+                    updateProduct(product.getString("image"));
+                }else {
+                    updateProduct("");
+                }
 
-
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
+
+
+
         }
+    }
+
+    private void updateProduct(String urlImage){
+        String param = String.format(Api_link.PRODUCT_CREATE_PARAM,
+                product.getInt("id") == 0? "" : "id="+ product.getString("id") +"&",
+                Util.encodeString(edName.getText().toString().trim()),
+                edIsPromotion.getText().toString().trim().equals(Constants.IS_PROMOTION) ? true: false,
+                edUnitPrice.getText().toString().trim().replace(",",""),
+                edPurchasePrice.getText().toString().trim().replace(",",""),
+                edVolume.getText().toString().trim().replace(",",""),
+                defineGroupId(edGroup.getText().toString().trim()),
+                urlImage);
+
+        ProductConnect.CreateProduct(param, new CallbackJSONObject() {
+            @Override
+            public void onResponse(JSONObject result) {
+                Log.e("ket qua", result.toString());
+                getActivity().getSupportFragmentManager().popBackStack();
+                mActivity.loadProduct();
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        }, true);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CHOOSE_IMAGE){
+        if (requestCode == REQUEST_CHOOSE_IMAGE ){
             if (data != null){
-                Crop.of(Uri.parse(data.getData().toString()), imageChangeUri).asSquare().withMaxSize(150,150).start(getActivity(), AddProductFragment.this);
+                Crop.of(Uri.parse(data.getData().toString()), imageChangeUri).asSquare().withMaxSize(100,100).start(getActivity(), AddProductFragment.this);
 
             }
 
-        } else if (requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
-            Glide.with(this).load(imageChangeUri).fitCenter().into(imgProduct);
+        }else if (requestCode == REQUEST_IMAGE_CAPTURE){
+            Crop.of(imageChangeUri, imageChangeUri).asSquare().withMaxSize(100,100).start(getActivity(), AddProductFragment.this);
+
+        }
+        else if (requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
+            Glide.with(this).load(imageChangeUri).centerCrop().into(imgProduct);
 
         } else if (requestCode == Crop.REQUEST_CROP) {
             if (resultCode == RESULT_OK) {
-                Glide.with(this).load(imageChangeUri).fitCenter().into(imgProduct);
+                Glide.with(this).load(imageChangeUri).centerCrop().into(imgProduct);
 
             } else if (resultCode == Crop.RESULT_ERROR) {
-                Toast.makeText(getActivity(), Crop.getError(data).getMessage(), Toast.LENGTH_SHORT).show();
+                Util.showToast(Crop.getError(data).getMessage());
 
             }
         }
@@ -286,6 +328,43 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
             }
         }
     }
+
+    private void uploadImage(final CallbackString mListener){
+        Util.getInstance().showLoading();
+        MediaManager.get().upload(imageChangeUri).callback(new UploadCallback() {
+            @Override
+            public void onStart(String requestId) {
+
+                // your code here
+            }
+            @Override
+            public void onProgress(String requestId, long bytes, long totalBytes) {
+                // example code starts here
+                Double progress = (double) bytes/totalBytes;
+                // post progress to app UI (e.g. progress bar, notification)
+                // example code ends here
+            }
+            @Override
+            public void onSuccess(String requestId, Map resultData) {
+                mListener.Result(resultData.get("url").toString());
+
+                // your code here
+            }
+            @Override
+            public void onError(String requestId, ErrorInfo error) {
+                // your code here
+                Util.getInstance().stopLoading(true);
+            }
+            @Override
+            public void onReschedule(String requestId, ErrorInfo error) {
+                // your code here
+                Util.getInstance().stopLoading(true);
+            }}).dispatch();
+    }
+
+
+
+
 
 
 }

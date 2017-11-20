@@ -32,12 +32,23 @@
 
     </RelativeLayout>
 
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/add_product_image"
+        android:layout_width="@dimen/_80sdp"
+        android:layout_height="@dimen/_80sdp"
+        app:civ_border_width="1dip"
+        app:civ_border_color="@color/colorBlueTransparent"
+        android:src="@drawable/icon_lubricant_bottle"
+        android:layout_margin="@dimen/_10sdp"
+        android:layout_gravity="center"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingLeft="@dimen/_10sdp"
         android:paddingRight="@dimen/_10sdp">
+
 
         <wolve.dms.controls.CInputForm
             android:id="@+id/add_product_name"
@@ -92,33 +103,26 @@
             app:textColor="@color/colorBlue"
             app:iconColor="@color/colorBlue"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="horizontal">-->
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/add_product_image"
-                android:layout_width="@dimen/_50sdp"
-                android:layout_height="@dimen/_50sdp"
-                android:layout_margin="@dimen/_10sdp"
-                app:civ_border_width="1dip"
-                app:civ_border_color="@color/colorGrey"
-                android:src="@drawable/icon_lubricant_bottle"/>
+            <!---->
 
-            <Button
-                android:id="@+id/add_product_choiceimage"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/_20sdp"
-                android:minWidth="@dimen/_80sdp"
-                android:background="@drawable/btn_confirm_orange"
-                android:layout_marginLeft="@dimen/_20sdp"
-                android:text="chọn ảnh"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_10sdp"
-                android:layout_gravity="center_vertical"/>
-        </LinearLayout>
+            <!--<Button-->
+                <!--android:id="@+id/add_product_choiceimage"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="@dimen/_20sdp"-->
+                <!--android:minWidth="@dimen/_80sdp"-->
+                <!--android:background="@drawable/btn_confirm_orange"-->
+                <!--android:layout_marginLeft="@dimen/_20sdp"-->
+                <!--android:text="chọn ảnh"-->
+                <!--android:textAllCaps="true"-->
+                <!--android:textColor="@color/white"-->
+                <!--android:textSize="@dimen/_10sdp"-->
+                <!--android:layout_gravity="center_vertical"/>-->
+        <!--</LinearLayout>-->
 
 
     </LinearLayout>

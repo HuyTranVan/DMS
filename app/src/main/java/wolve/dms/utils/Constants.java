@@ -28,20 +28,30 @@ public class Constants {
     public final static int RESULT_CUSTOMER_ACTIVITY = 1000;
     public final static int RESULT_SHOPCART_ACTIVITY = 1001;
     public final static int REQUEST_CHOOSE_IMAGE = 1002;
-    public final static int REQUEST_READ_PERMISSION = 1003;
-    public final static int REQUEST_PERMISSION_LOCATION = 2;
-    public final static int REQUEST_PHONE_PERMISSION = 8;
-
-    public final static String BADGE = "badge";
-
+    public final static int REQUEST_IMAGE_CAPTURE = 1003;
+    public final static int REQUEST_READ_PERMISSION = 1004;
+    public final static int RESULT_BLUETOOTH_ACTIVITY = 1005;
+    public final static int REQUEST_PERMISSION_LOCATION = 1006;
+    public final static int REQUEST_CAMERA_PERMISSION = 1007;
+    public final static int REQUEST_PHONE_PERMISSION = 1008;
     public final static String RESULT_ERROR_TITLE = "Có lỗi xảy ra";
     public final static String RESULT = "result";
     public final static boolean RESULT_FALSE = false;
     public final static String RESULT_MESSAGE = "message";
 
+    public final static String BADGE = "badge";
+
+
+
     public final static String MARKER_ALL = "all";
     public final static String MARKER_INTERESTED = "interested";
     public final static String MARKER_ORDERED = "ordered";
+    public static final String BLUETOOTH_DEVICE ="bluetooth_device" ;
+    public static final String STATUS_LIST = "status_list";
+    public static final String DISTRICT_LIST = "district_list";
+    public static final String PRODUCTGROUP_LIST = "productgroup_list";
+    public static final String PRODUCT_LIST = "product_list";
+
 
     //Home constant
     public static ArrayList<JSONObject> HomeItemList(){

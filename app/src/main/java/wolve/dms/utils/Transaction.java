@@ -3,6 +3,7 @@ package wolve.dms.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 
 import wolve.dms.R;
@@ -13,6 +14,8 @@ import wolve.dms.activity.ProductActivity;
 import wolve.dms.activity.ShopCartActivity;
 import wolve.dms.activity.StatisticalActivity;
 import wolve.dms.activity.StatusActivity;
+
+import static android.net.sip.SipErrorCode.TIME_OUT;
 
 
 public class Transaction {
@@ -38,6 +41,7 @@ public class Transaction {
 
     public static void gotoMapsActivity() {
         Context context = Util.getInstance().getCurrentActivity();
+
         Intent intent = new Intent(context, MapsActivity.class);
         context.startActivity(intent);
         ((AppCompatActivity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
@@ -82,6 +86,7 @@ public class Transaction {
         context.startActivity(intent);
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
+
 
 
 }
