@@ -1,6 +1,7 @@
 package wolve.dms;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
@@ -10,6 +11,7 @@ import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -18,13 +20,17 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 
 
 import com.google.android.gms.maps.model.LatLng;
+import com.orhanobut.dialogplus.DialogPlus;
 
+import wolve.dms.activities.MapsActivity;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
+import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
 import static wolve.dms.utils.Constants.REQUEST_PERMISSION_LOCATION;
@@ -34,6 +40,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     private LocationManager mLocationManager;
     float LOCATION_REFRESH_DISTANCE = 1;
     long LOCATION_REFRESH_TIME = 100;
+    public DialogPlus dialog;
+    private boolean doubleBackToExitPressedOnce = false;
 
 
     @Override
@@ -66,6 +74,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         if(isAnimation){
             manager.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,R.anim.slide_in_left, R.anim.slide_out_right);
+
         }
 
         manager.replace(setIdContainer(), fragment, tag)
@@ -240,5 +249,61 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        switch (Util.getInstance().getCurrentActivity().getLocalClassName()){
+            case "activities.MapsActivity":
+                if (dialog != null && dialog.isShowing()){
+                    dialog.dismiss();
+                }else {
+                    Transaction.gotoHomeActivityRight(true);
+                }
 
+                break;
+
+            case "activities.HomeActivity":
+                if (doubleBackToExitPressedOnce) {
+                    finish();
+                }
+
+                this.doubleBackToExitPressedOnce = true;
+                Util.showToast("Ấn Back để thoát khỏi ứng dụng");
+
+                new Handler().postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        doubleBackToExitPressedOnce = false;
+                    }
+                }, 2000);
+
+                break;
+
+            case "activities.StatisticalActivity":
+                finish();
+                Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+
+                break;
+
+        }
+    }
+
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        if (keyCode == KeyEvent.KEYCODE_BACK){
+//            switch (Util.getInstance().getCurrentActivity().getLocalClassName()){
+//                case ".activities.MapsActivity":
+//                    if (dialog != null && dialog.isShowing()){
+//                        dialog.dismiss();
+//                    }else {
+//                        Transaction.gotoHomeActivityRight(true);
+//                    }
+//
+//                    break;
+//            }
+//
+//
+//        }
+//        return true;
+//    }
 }

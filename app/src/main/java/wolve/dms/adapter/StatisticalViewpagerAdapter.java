@@ -64,7 +64,7 @@ public class StatisticalViewpagerAdapter extends FragmentPagerAdapter{
     }
 
     public View getTabView(int position) {
-        View tab = LayoutInflater.from(mContext).inflate(R.layout.view_statistical_tab, null);
+        View tab = LayoutInflater.from(mContext).inflate(R.layout.view_tab_statistical, null);
         TextView tvTitle = (TextView) tab.findViewById(R.id.statistical_tab_title);
         CTextIcon tvIcon = (CTextIcon) tab.findViewById(R.id.statistical_tab_icon);
 

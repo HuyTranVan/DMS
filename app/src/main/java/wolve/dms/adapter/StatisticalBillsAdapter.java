@@ -18,6 +18,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.callback.CallbackString;
 import wolve.dms.models.Bill;
 import wolve.dms.models.BillDetail;
 import wolve.dms.models.Customer;
@@ -32,11 +33,13 @@ public class StatisticalBillsAdapter extends RecyclerView.Adapter<StatisticalBil
     private List<Bill> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
+    private CallbackString mListener;
 
-    public StatisticalBillsAdapter(List<Bill> data) {
+    public StatisticalBillsAdapter(List<Bill> data , CallbackString callbackString) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mData = data;
         this.mContext = Util.getInstance().getCurrentActivity();
+        this.mListener = callbackString;
 
         Collections.sort(mData, new Comparator<Bill>(){
             @Override
@@ -59,7 +62,7 @@ public class StatisticalBillsAdapter extends RecyclerView.Adapter<StatisticalBil
 //            holder.lnParent.setBackground(( position % 2 ) == 0 ?  mContext.getResources().getDrawable(R.drawable.colorgrey_corner):
 //                    mContext.getResources().getDrawable(R.drawable.colorwhite_bordergrey_corner));
 
-            Customer customer = new Customer(mData.get(position).getJsonObject("customer"));
+            final Customer customer = new Customer(mData.get(position).getJsonObject("customer"));
 
             holder.tvDate.setText(Util.DateString(mData.get(position).getLong("updateAt")));
             holder.tvHour.setText(Util.HourString(mData.get(position).getLong("updateAt")));
@@ -90,6 +93,13 @@ public class StatisticalBillsAdapter extends RecyclerView.Adapter<StatisticalBil
             }else if (position==mData.size()-1){
                 holder.vLineUnder.setVisibility(View.GONE);
             }
+
+            holder.tvNumber.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mListener.Result(customer.getString("id"));
+                }
+            });
 
 
         } catch (JSONException e) {

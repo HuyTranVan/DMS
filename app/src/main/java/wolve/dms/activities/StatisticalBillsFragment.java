@@ -1,5 +1,6 @@
-package wolve.dms.activity;
+package wolve.dms.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,11 +11,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.json.JSONObject;
+
 import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.StatisticalBillsAdapter;
+import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.callback.CallbackJSONObject;
+import wolve.dms.callback.CallbackString;
 import wolve.dms.models.Bill;
+import wolve.dms.utils.Constants;
+import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
 /**
@@ -78,11 +86,36 @@ public class StatisticalBillsFragment extends Fragment implements View.OnClickLi
         tvTotal.setText("Tổng cộng: "+ Util.FormatMoney(total));
         tvCount.setText("Số lượng hóa đơn: " + list.size());
 
-        adapter = new StatisticalBillsAdapter(list);
+        adapter = new StatisticalBillsAdapter(list, new CallbackString() {
+            @Override
+            public void Result(String s) {
+                CustomerConnect.GetCustomerDetail(s, new CallbackJSONObject() {
+                    @Override
+                    public void onResponse(JSONObject result) {
+                        Transaction.gotoCustomerActivity(result.toString());
+
+                    }
+
+                    @Override
+                    public void onError(String error) {
+
+                    }
+                }, true);
+            }
+        });
         rvBill.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(mActivity, LinearLayoutManager.VERTICAL, false);
         rvBill.setLayoutManager(layoutManager);
         rvBill.setNestedScrollingEnabled(true);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (data.getStringExtra(Constants.CUSTOMER) != null && requestCode == Constants.RESULT_CUSTOMER_ACTIVITY){
+            //reloadData();
+        }
     }
 
 

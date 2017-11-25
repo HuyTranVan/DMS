@@ -1,4 +1,4 @@
-package wolve.dms.activity;
+package wolve.dms.activities;
 
 import android.graphics.Color;
 import android.support.design.widget.TabLayout;
@@ -74,7 +74,6 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
     @Override
     public void initialData() {
-
         setupViewPager(viewPager);
         setupTabLayout(tabLayout);
 
@@ -86,14 +85,6 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         tvIcon.setOnClickListener(this);
         swipeRefreshLayout.setOnRefreshListener(this);
 
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK){
-            returnPreviousScreen();
-        }
-        return true;
     }
 
     @Override
@@ -128,7 +119,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         Util.hideKeyboard(v);
         switch (v.getId()){
             case R.id.icon_back:
-                returnPreviousScreen();
+                onBackPressed();
 
                 break;
 
@@ -147,12 +138,6 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         loadAllCustomer(tvDate.getText().toString(), false);
     }
 
-    private void returnPreviousScreen(){
-        Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-        Util.getInstance().getCurrentActivity().finish();
-
-
-    }
 
     private void monthPicker() {
         SimpleDatePickerDialogFragment datePickerDialogFragment;

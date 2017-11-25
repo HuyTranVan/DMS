@@ -1,4 +1,4 @@
-package wolve.dms.activity;
+package wolve.dms.activities;
 
 import android.Manifest;
 import android.content.Intent;
@@ -88,7 +88,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     private FloatingActionMenu btnNewCustomer;
     private FloatingActionButton btnLocation, btnRepair, btnWash, btnAccesary, btnMaintain, btnPhoneNumber;
     public SupportMapFragment mapFragment;
-    private DialogPlus dialog;
     private Spinner mSpinner;
     private RadioGroup rdFilter;
     private BottomSheetBehavior mBottomSheetBehavior;
@@ -96,6 +95,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     private CoordinatorLayout coParent;
     private RecyclerView rvCustomer;
     private TextView tvCount;
+    private ImageView btnBack;
     private ProgressBar progressLoading;
 
     private ArrayList<Customer> listCustomer = new ArrayList<>();
@@ -130,6 +130,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         rvCustomer = (RecyclerView) findViewById(R.id.map_rvcustomer);
         tvCount = (TextView) findViewById(R.id.map_countcustomer);
         progressLoading = findViewById(R.id.map_loading);
+        btnBack = findViewById(R.id.map_back);
 
         btnLocation.setColorNormalResId(R.color.colorWhite);
         btnLocation.setColorPressedResId(R.color.colorGrey);
@@ -156,6 +157,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         rdFilter.setOnCheckedChangeListener(this);
         btnPhoneNumber.setOnClickListener(this);
         coParent.getViewTreeObserver().addOnGlobalLayoutListener(this) ;
+        btnBack.setOnClickListener(this);
     }
 
     @Override
@@ -172,7 +174,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
             case R.id.map_current_location:
                 mMap.setOnCameraMoveListener(MapsActivity.this);
                 triggerCurrentLocation(new LatLng(getCurLocation().getLatitude(), getCurLocation().getLongitude()), 16);
-                loadAllCustomerDependLocation(getCurLocation().getLatitude(), getCurLocation().getLongitude(), getCheckedFilter());
+                loadAllCustomerDependLocation(true, getCurLocation().getLatitude(), getCurLocation().getLongitude());
                 mSpinner.setSelection(0);
                 break;
 
@@ -202,6 +204,10 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
 
                 break;
 
+            case R.id.map_back:
+                onBackPressed();
+                break;
+
         }
 
     }
@@ -216,7 +222,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
             h.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    loadAllCustomerDependLocation(getCurLocation().getLatitude(), getCurLocation().getLongitude(), getCheckedFilter());
+                    loadAllCustomerDependLocation(true, getCurLocation().getLatitude(), getCurLocation().getLongitude());
                 }
             }, 500);
         }
@@ -260,18 +266,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     @Override
     public void onCameraIdle() {
 
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK){
-            if (dialog != null && dialog.isShowing()){
-                dialog.dismiss();
-            }else {
-                Transaction.gotoHomeActivityRight(true);
-            }
-        }
-        return true;
     }
 
     private void setupBottomSheet() {
@@ -492,10 +486,23 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
                 try {
                     listCustomer = new ArrayList<Customer>();
                     for (int i=0; i<result.length(); i++){
-                        listCustomer.add(new Customer(result.getJSONObject(i)));
+
+                        Customer customer = new Customer(result.getJSONObject(i));
+                        int customerStatus = new JSONObject(customer.getString("status")).getInt("id");
+                        customer.put("checkinCount", new JSONArray(customer.getString("checkIns")).length());
+
+                        if (customerStatus ==1){
+                            customer.put("icon", R.drawable.ico_pin_red);
+                        }else if (customerStatus == 2){
+                            customer.put("icon", R.drawable.ico_pin_grey);
+                        }else {
+                            customer.put("icon", R.drawable.ico_pin_blue);
+
+                        }
+                        listCustomer.add(customer);
 
                     }
-                    addMarkertoMap(listCustomer, isAll, true);
+                    addMarkertoMap(true,listCustomer, isAll, true);
                     createRVCustomer(listCustomer);
 
                 } catch (JSONException e) {
@@ -511,7 +518,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         }, true);
     }
 
-    private void loadAllCustomerDependLocation(Double lat , Double lng, final String isAll){
+    private void loadAllCustomerDependLocation(final Boolean clearMap, Double lat , Double lng){
         progressLoading.setVisibility(View.VISIBLE);
 
         CustomerConnect.ListCustomerLocation(Util.encodeString(String.valueOf(lat)), Util.encodeString(String.valueOf(lng)), new CallbackJSONArray() {
@@ -521,9 +528,21 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
                 try {
                     listCustomer = new ArrayList<Customer>();
                     for (int i=0; i<result.length(); i++){
-                        listCustomer.add(new Customer(result.getJSONObject(i)));
+                        Customer customer = new Customer(result.getJSONObject(i));
+                        int customerStatus = new JSONObject(customer.getString("status")).getInt("id");
+                        customer.put("checkinCount", new JSONArray(customer.getString("checkIns")).length());
+
+                        if (customerStatus ==1){
+                            customer.put("icon", R.drawable.ico_pin_red);
+                        }else if (customerStatus == 2){
+                            customer.put("icon", R.drawable.ico_pin_grey);
+                        }else {
+                            customer.put("icon", R.drawable.ico_pin_blue);
+
+                        }
+                        listCustomer.add(customer);
                     }
-                    addMarkertoMap(listCustomer, isAll, false);
+                    addMarkertoMap(clearMap,listCustomer, getCheckedFilter(), false);
                     createRVCustomer(listCustomer);
 
                 } catch (JSONException e) {
@@ -648,25 +667,25 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
         switch (checkedId){
             case R.id.map_filter_all:
-                addMarkertoMap(listCustomer, Constants.MARKER_ALL, true);
+                addMarkertoMap(false,listCustomer, Constants.MARKER_ALL, true);
 
                 break;
 
             case R.id.map_filter_interested:
-                addMarkertoMap(listCustomer, Constants.MARKER_INTERESTED, true);
+                addMarkertoMap(false, listCustomer, Constants.MARKER_INTERESTED, true);
                 break;
 
             case R.id.map_filter_ordered:
-                addMarkertoMap(listCustomer, Constants.MARKER_ORDERED, true);
+                addMarkertoMap(false, listCustomer, Constants.MARKER_ORDERED, true);
                 break;
         }
     }
 
-    private void addMarkertoMap(ArrayList<Customer> list, String filter, Boolean isBound){
+    private void addMarkertoMap(Boolean clearMap, ArrayList<Customer> list, String filter, Boolean isBound){
         mMap.clear();
         LatLng currentPoint = new LatLng(Util.getInstance().getCurrentLocation().getLatitude(), Util.getInstance().getCurrentLocation().getLongitude());
         currentMarker = mMap.addMarker(new MarkerOptions().anchor(0.5f, 0.5f).position(currentPoint).flat(true).icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_location)));
-        tvCount.setText(MapUtil.getInstance().addListMarkerToMap(mMap, list, filter, isBound));
+        tvCount.setText(MapUtil.getInstance().addListMarkerToMap(clearMap, mMap, list, filter, isBound));
 
     }
 
@@ -708,7 +727,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     private Runnable mFilterTask = new Runnable() {
         @Override public void run() {
             LatLng curLocation =  mMap.getCameraPosition().target;
-            loadAllCustomerDependLocation(curLocation.latitude, curLocation.longitude, getCheckedFilter());
+            loadAllCustomerDependLocation(false, curLocation.latitude, curLocation.longitude);
         }
     };
 
@@ -731,7 +750,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
 
         return true;
     }
-
 
     @Override
     public void onGlobalLayout() {

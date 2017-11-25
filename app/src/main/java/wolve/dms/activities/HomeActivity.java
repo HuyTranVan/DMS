@@ -1,9 +1,7 @@
-package wolve.dms.activity;
+package wolve.dms.activities;
 
-import android.content.ContentProviderOperation;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.ContactsContract;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,10 +9,6 @@ import android.view.KeyEvent;
 import android.view.View;
 
 import org.json.JSONArray;
-
-import java.util.ArrayList;
-
-import android.widget.Toast;
 
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
@@ -28,7 +22,6 @@ import wolve.dms.models.District;
 import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.models.Status;
-import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -38,7 +31,7 @@ import wolve.dms.utils.Util;
 
 public class HomeActivity extends BaseActivity implements View.OnClickListener, CallbackClickAdapter {
     private RecyclerView rvItems;
-    private boolean doubleBackToExitPressedOnce = false;
+//    private boolean doubleBackToExitPressedOnce = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,27 +75,27 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (doubleBackToExitPressedOnce) {
-                Util.getInstance().getCurrentActivity().finish();
-            }
-
-            this.doubleBackToExitPressedOnce = true;
-            Util.showToast("Ấn Back để thoát khỏi ứng dụng");
-
-            new Handler().postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
-                    doubleBackToExitPressedOnce = false;
-                }
-            }, 2000);
-        }
-
-        return true;
-    }
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        if (keyCode == KeyEvent.KEYCODE_BACK) {
+//            if (doubleBackToExitPressedOnce) {
+//                Util.getInstance().getCurrentActivity().finish();
+//            }
+//
+//            this.doubleBackToExitPressedOnce = true;
+//            Util.showToast("Ấn Back để thoát khỏi ứng dụng");
+//
+//            new Handler().postDelayed(new Runnable() {
+//
+//                @Override
+//                public void run() {
+//                    doubleBackToExitPressedOnce = false;
+//                }
+//            }, 2000);
+//        }
+//
+//        return true;
+//    }
 
     @Override
     public void onClick(View v) {

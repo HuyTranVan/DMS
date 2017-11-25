@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import org.json.JSONException;
 
 import java.util.ArrayList;
@@ -55,6 +57,14 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
         holder.tvUnitPrice.setText(Util.FormatMoney(mData.get(position).getDouble("totalMoney")));
         holder.tvDiscount.setText(Util.FormatMoney(mData.get(position).getDouble("discount")));
         holder.tvQuantity.setText(mData.get(position).getInt("quantity").toString());
+
+        if (mData.get(position).getString("image") != null && !mData.get(position).getString("image").equals("null") && !mData.get(position).getString("image").equals("http://lubsolution.com/mydms/staticnull")){
+            Glide.with(mContext).load(mData.get(position).getString("image")).centerCrop().into(holder.imgProduct);
+
+        }else {
+            Glide.with(mContext).load( R.drawable.ic_wolver).centerCrop().into(holder.imgProduct);
+
+        }
 
         holder.lnParent.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -93,8 +93,7 @@
                 android:id="@+id/statistical_viewpager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/colorWhite"
-                />
+                android:background="@color/colorWhite" />
 
         </LinearLayout>
     </wolve.dms.libraries.MySwipeRefreshLayout>

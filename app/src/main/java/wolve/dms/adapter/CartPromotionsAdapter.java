@@ -70,7 +70,7 @@ public class CartPromotionsAdapter extends RecyclerView.Adapter<CartPromotionsAd
                     int currentQuantity = mData.get(position).getInt("quantity");
                     if ( currentQuantity > 1){
                         mData.get(position).put("quantity", currentQuantity -1);
-                        mData.get(position).put("totalMoney", (currentQuantity -1)* mData.get(position).getDouble("unitPrice"));
+                        //mData.get(position).put("totalMoney", (currentQuantity -1)* mData.get(position).getDouble("unitPrice"));
                         notifyItemChanged(position);
                     }
                 } catch (JSONException e) {
@@ -84,7 +84,7 @@ public class CartPromotionsAdapter extends RecyclerView.Adapter<CartPromotionsAd
                 try {
                     int currentQuantity = mData.get(position).getInt("quantity");
                     mData.get(position).put("quantity", currentQuantity +1);
-                    mData.get(position).put("totalMoney", (currentQuantity +1)* mData.get(position).getDouble("unitPrice"));
+                    //mData.get(position).put("totalMoney", (currentQuantity +1)* mData.get(position).getDouble("unitPrice"));
                     notifyItemChanged(position);
 
                 } catch (JSONException e) {

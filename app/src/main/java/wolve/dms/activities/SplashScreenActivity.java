@@ -1,13 +1,9 @@
-package wolve.dms.activity;
+package wolve.dms.activities;
 
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Window;
-import android.view.WindowManager;
-
-import org.json.JSONArray;
 
 import wolve.dms.R;
 import wolve.dms.utils.Util;

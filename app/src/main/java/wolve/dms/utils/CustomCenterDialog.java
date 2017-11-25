@@ -50,6 +50,11 @@ import wolve.dms.models.User;
 
 public class CustomCenterDialog {
 
+    public interface ButtonCallback{
+        void Submit(Boolean boolSubmit);
+        void Cancel(Boolean boolCancel);
+    }
+
     public static Dialog showCustomDialog(int resId) {
         AlertDialog.Builder adb = new AlertDialog.Builder(Util.getInstance().getCurrentActivity());
         final Dialog d = adb.setView(new View(Util.getInstance().getCurrentActivity())).create();
@@ -169,6 +174,35 @@ public class CustomCenterDialog {
                         });
                 dialog.setCanceledOnTouchOutside(false);
                 dialog.setCancelable(false);
+                dialog.show();
+            }
+        });
+    }
+
+    public static void alertWithCancelButton2(final String title, final String message, final String confirm, final String cancel, final ButtonCallback callback) {
+        Util.getInstance().getCurrentActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                SweetAlertDialog dialog = new SweetAlertDialog(Util.getInstance().getCurrentActivity(), SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText(title)
+                        .setContentText(message)
+                        .setConfirmText(confirm)
+                        .setCancelText(cancel)
+                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismissWithAnimation();
+                                callback.Cancel(true);
+                            }
+                        })
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+                                sDialog.dismissWithAnimation();
+                                callback.Submit(true);
+                            }
+                        });
+                dialog.setCanceledOnTouchOutside(true);
+                dialog.setCancelable(true);
                 dialog.show();
             }
         });

@@ -3,19 +3,16 @@ package wolve.dms.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 
 import wolve.dms.R;
-import wolve.dms.activity.CustomerActivity;
-import wolve.dms.activity.HomeActivity;
-import wolve.dms.activity.MapsActivity;
-import wolve.dms.activity.ProductActivity;
-import wolve.dms.activity.ShopCartActivity;
-import wolve.dms.activity.StatisticalActivity;
-import wolve.dms.activity.StatusActivity;
-
-import static android.net.sip.SipErrorCode.TIME_OUT;
+import wolve.dms.activities.CustomerActivity;
+import wolve.dms.activities.HomeActivity;
+import wolve.dms.activities.MapsActivity;
+import wolve.dms.activities.ProductActivity;
+import wolve.dms.activities.ShopCartActivity;
+import wolve.dms.activities.StatisticalActivity;
+import wolve.dms.activities.StatusActivity;
 
 
 public class Transaction {

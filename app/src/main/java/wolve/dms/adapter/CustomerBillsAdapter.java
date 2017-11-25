@@ -22,10 +22,12 @@ import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
+import wolve.dms.callback.CallbackPayBill;
 import wolve.dms.callback.CallbackUpdateBill;
 import wolve.dms.controls.CTextIcon;
 import wolve.dms.models.Bill;
 import wolve.dms.models.BillDetail;
+import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
@@ -123,7 +125,58 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
                 @Override
                 public void onClick(View v) {
                     if (mData.get(position).getDouble("debt") != 0){
-                        mUpdate.onUpdate(mData.get(position), position);
+                        CustomCenterDialog.showDialogInputPaid("Nhập số tiền khách trả", "Nợ còn lại", mData.get(position).getDouble("debt"), new CallbackPayBill() {
+                            @Override
+                            public void OnRespone(Double total, Double pay) {
+                                try {
+                                    JSONObject params = new JSONObject();
+                                    params.put("debt", total - pay);
+                                    params.put("total", total);
+                                    params.put("paid", pay);
+                                    params.put("id", mData.get(position).getInt("id"));
+                                    params.put("customerId", new JSONObject(mData.get(position).getString("customer")).getString("id"));
+                                    params.put("distributorId", Distributor.getCurrentDistributorId());
+                                    params.put("userId", User.getUserId());
+//                            params.put("note", bill.getString("note") + Util.CurrentTimeStamp() + " trả " + Util.FormatMoney(pay));
+                                    params.put("note", "billlll");
+
+                                    params.put("billDetails", null);
+                                    CustomerConnect.PostBill(params.toString(), new CallbackJSONObject() {
+                                        @Override
+                                        public void onResponse(JSONObject result) {
+                                            //get customer detail from serer
+                                            try {
+                                                mData.get(position).put("debt", result.getDouble("debt"));
+                                                mData.get(position).put("total", result.getDouble("total"));
+                                                mData.get(position).put("paid", result.getDouble("paid"));
+                                                notifyItemChanged(position);
+
+                                                mUpdate.onUpdate(mData.get(position), position);
+
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+
+                                            String s = result.toString();
+
+                                        }
+
+                                        @Override
+                                        public void onError(String error) {
+
+                                        }
+                                    }, true);
+
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+
+
+
+
                     }
                 }
             });

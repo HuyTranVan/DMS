@@ -1,4 +1,4 @@
-package wolve.dms.activity;
+package wolve.dms.activities;
 
 import android.graphics.Color;
 import android.os.Bundle;

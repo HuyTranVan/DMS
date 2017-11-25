@@ -1,4 +1,4 @@
-package wolve.dms.activity;
+package wolve.dms.activities;
 
 import android.view.View;
 import android.widget.Button;

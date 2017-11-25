@@ -18,7 +18,7 @@ public class DMSApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        MediaManager.init(this);
+        MediaManager.init(getApplicationContext());
 
 //        Fabric.with(this, new Crashlytics());
         Locale locale = new Locale("vi", "VN");

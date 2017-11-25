@@ -1,14 +1,12 @@
-package wolve.dms.activity;
+package wolve.dms.activities;
 
 import android.Manifest;
-import android.content.ClipData;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,7 +15,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.PermissionChecker;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,9 +23,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.Resource;
 import com.cloudinary.android.MediaManager;
-import com.cloudinary.android.Utils;
 import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
 import com.soundcloud.android.crop.Crop;
@@ -92,7 +87,6 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
 
     private void intitialData() {
 
-
         for (int i=0; i<mActivity.listProductGroup.size(); i++){
             listGroup.add(mActivity.listProductGroup.get(i).getString("name"));
         }
@@ -101,7 +95,7 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
         listBoolean.add(1,Constants.NO_PROMOTION);
 
         edGroup.setDropdownList(listGroup);
-        edGroup.setText(listGroup.get(0));
+        edGroup.setText(listGroup.get(mActivity.currentPosition));
 
         edIsPromotion.setDropdownList(listBoolean);
         edIsPromotion.setText(listBoolean.get(0));
@@ -110,15 +104,22 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
         try {
             if (bundle != null){
 
-                    product = new Product(new JSONObject(bundle));
+                product = new Product(new JSONObject(bundle));
 
-                    edName.setText(product.getString("name"));
-                    edUnitPrice.setText(product.getString("unitPrice"));
-                    edPurchasePrice.setText(product.getString("purchasePrice"));
-                    edGroup.setText(new JSONObject(product.getString("productGroup")).getString("name"));
-                    edVolume.setText(product.getString("volume"));
-                    edIsPromotion.setText(product.getBoolean("promotion")? Constants.IS_PROMOTION :Constants.NO_PROMOTION);
+                edName.setText(product.getString("name"));
+                edUnitPrice.setText(product.getString("unitPrice"));
+                edPurchasePrice.setText(product.getString("purchasePrice"));
+                edGroup.setText(new JSONObject(product.getString("productGroup")).getString("name"));
+                edVolume.setText(product.getString("volume"));
+                edIsPromotion.setText(product.getBoolean("promotion")? Constants.IS_PROMOTION :Constants.NO_PROMOTION);
+
+                if (product.getString("image") != null && !product.getString("image").equals("null") && !product.getString("image").equals("http://lubsolution.com/mydms/staticnull")){
                     Glide.with(this).load(product.getString("image")).centerCrop().into(imgProduct);
+
+                }else {
+                    Glide.with(this).load( R.drawable.ic_wolver).centerCrop().into(imgProduct);
+
+                }
 
             }else {
                 product = new Product(new JSONObject());
@@ -253,7 +254,7 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
                     }
                 });
             }else {
-                if (product != null && product.getString("image").equals("")){
+                if (product != null && product.getString("image").startsWith("http")){
                     updateProduct(product.getString("image"));
                 }else {
                     updateProduct("");

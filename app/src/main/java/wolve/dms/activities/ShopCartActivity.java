@@ -1,4 +1,4 @@
-package wolve.dms.activity;
+package wolve.dms.activities;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -89,6 +89,9 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     private static BluetoothSocket btsocket;
     private static OutputStream outputStream;
     private Uri imageChangeUri ;
+    private Double currentDebt;
+    private final String shortLine ="---------------------";
+    private final String longLine = "--------------------------------";
 
     @Override
     public int getResourceLayout() {
@@ -126,6 +129,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
             try {
                 currentCustomer = new Customer(new JSONObject(bundle));
                 tvTitle.setText(Constants.getShopInfo(currentCustomer.getString("shopType") , null) +" - " + currentCustomer.getString("signBoard") );
+                currentDebt = currentCustomer.getDouble("debt");
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -287,64 +291,91 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         });
     }
 
-    private void submitBill(Double total, Double paid){
-        List<Product> listProductChoice = getListProduct();
+    private void submitBill(final Double total, final Double paid){
+        Util.getInstance().showLoading("Đang in...");
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<Product> listProductChoice = getListProduct();
 
-        try {
-            JSONObject params = new JSONObject();
-            params.put("debt", total - paid);
-            params.put("total", total);
-            params.put("paid", paid);
-            params.put("customerId", currentCustomer.getInt("id"));
-            params.put("distributorId", Distributor.getCurrentDistributorId());
-            params.put("userId", User.getUserId());
-            params.put("note", tvNote.getText().toString().trim());
+                try {
+                    final JSONObject params = new JSONObject();
+                    params.put("debt", total - paid);
+                    params.put("total", total);
+                    params.put("paid", paid);
+                    params.put("customerId", currentCustomer.getInt("id"));
+                    params.put("distributorId", Distributor.getCurrentDistributorId());
+                    params.put("userId", User.getUserId());
+                    params.put("note", tvNote.getText().toString().trim());
 
-            JSONArray array = new JSONArray();
-            for (int i=0; i< listProductChoice.size(); i++){
-                JSONObject object = new JSONObject();
-                object.put("productId", listProductChoice.get(i).getInt("id"));
-                object.put("discount", listProductChoice.get(i).getDouble("discount"));
-                object.put("quantity", listProductChoice.get(i).getDouble("quantity"));
+                    JSONArray array = new JSONArray();
+                    for (int i=0; i< listProductChoice.size(); i++){
+                        JSONObject object = new JSONObject();
+                        object.put("productId", listProductChoice.get(i).getInt("id"));
+                        object.put("discount", listProductChoice.get(i).getDouble("discount"));
+                        object.put("quantity", listProductChoice.get(i).getDouble("quantity"));
 
-                array.put(object);
+                        array.put(object);
+                    }
+                    params.put("billDetails", (Object) array);
+
+                    if (btsocket != null && btsocket.isConnected()){
+                        flushBillDetail(total, paid);
+                        Thread.sleep(1000);
+                        CustomCenterDialog.alertWithCancelButton2("TIẾP TỤC", "In thêm hoặc tiếp tục thanh toán", "TIẾP TỤC", "IN LẠI", new CustomCenterDialog.ButtonCallback() {
+                            @Override
+                            public void Submit(Boolean boolSubmit) {
+                                postBills(params.toString());
+
+                            }
+
+                            @Override
+                            public void Cancel(Boolean boolCancel) {
+                                submitBill(total,paid);
+                            }
+
+                        });
+                    }else {
+                        postBills(params.toString());
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
             }
-            params.put("billDetails", (Object) array);
+        }); thread.start();
 
-            flushBillDetail(total, paid);
 
-            Thread.sleep(1000);
+    }
 
-            CustomerConnect.PostBill(params.toString(), new CallbackJSONObject() {
-                @Override
-                public void onResponse(JSONObject result) {
-                    //get customer detail from serer
-                    String param = currentCustomer.getString("id");
-                    CustomerConnect.GetCustomerDetail(param, new CallbackJSONObject() {
-                        @Override
-                        public void onResponse(JSONObject result) {
-                            returnPreviousScreen(new Customer(result));
+    private void postBills(String params){
+        CustomerConnect.PostBill(params, new CallbackJSONObject() {
+            @Override
+            public void onResponse(JSONObject result) {
+                //get customer detail from serer
+                String param = currentCustomer.getString("id");
+                CustomerConnect.GetCustomerDetail(param, new CallbackJSONObject() {
+                    @Override
+                    public void onResponse(JSONObject result) {
+                        returnPreviousScreen(new Customer(result));
 
-                        }
+                    }
 
-                        @Override
-                        public void onError(String error) {
+                    @Override
+                    public void onError(String error) {
 
-                        }
-                    }, true);
-                }
+                    }
+                }, true);
+            }
 
-                @Override
-                public void onError(String error) {
+            @Override
+            public void onError(String error) {
 
-                }
-            }, false);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+            }
+        }, false);
     }
 
     private List<Product> getListProduct(){
@@ -365,14 +396,8 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 getString(R.string.icon_warning),"Công nợ", new CustomBottomDialog.TwoMethodListener() {
             @Override
             public void Method1(Boolean one) {
-                Util.getInstance().showLoading("Đang in...");
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        submitBill(Util.valueMoney(tvTotal) , Util.valueMoney(tvTotal));
+                submitBill(Util.valueMoney(tvTotal) , Util.valueMoney(tvTotal));
 
-                    }
-                }); thread.start();
             }
 
             @Override
@@ -384,20 +409,12 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
     }
 
-    private void createBillImage(){
-        CustomCenterDialog.showDialogBillImage(currentCustomer,tvTotal.getText().toString(), getListProduct(), new CallbackPayBill() {
-            @Override
-            public void OnRespone(Double total, Double pay) {
-
-            }
-        });
-    }
-
     private void showDialogInputPaid() {
         CustomCenterDialog.showDialogInputPaid("Nhập số tiến khách trả", "Tổng tiền hóa đơn", Util.valueMoney(tvTotal.getText().toString()), new CallbackPayBill() {
                     @Override
-                    public void OnRespone(Double total, Double pay) {
+                    public void OnRespone(final Double total, final Double pay) {
                         submitBill(total, pay);
+
                     }
                 });
     }
@@ -449,10 +466,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     }
 
     private void flushBillDetail(Double total, Double paid){
-        //print command
         try {
-            //Thread.sleep(1000);
-
             UtilPrinter.printPhoto(outputStream,CustomSQL.getString("logo"));
             UtilPrinter.printCustomText(outputStream,"CTY TNHH XNK TRAN VU ANH",1,1);
             UtilPrinter.printCustomText(outputStream, "1 duong 57,P.Binh Trung Dong,Q 2", 1,1);
@@ -463,12 +477,12 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
             UtilPrinter.printCustomText(outputStream, "  HOA DON BAN HANG ",3,1);
             outputStream.write(PrinterCommands.FEED_LINE);
 
-            UtilPrinter.printCustomText(outputStream,"CH     :  " + Constants.getShopInfo(currentCustomer.getString("shopType") , null) + " "+ currentCustomer.getString("signBoard") , 1,0);
-            UtilPrinter.printCustomText(outputStream,"KH     :  " + currentCustomer.getString("name"), 1,0);
-            UtilPrinter.printCustomText(outputStream,"SDT    :  " + currentCustomer.getString("phone"), 1,0);
-            UtilPrinter.printCustomText(outputStream,"NGAY   :  " + Util.CurrentMonthYearHour(),1,0);
-            UtilPrinter.printCustomText(outputStream,"N.VIEN :  " + User.getFullName(), 1,0);
-            UtilPrinter.printCustomText(outputStream,"---------------------",3,1);
+            UtilPrinter.printCustomText(outputStream,"CH    :  " + Constants.getShopInfo(currentCustomer.getString("shopType") , null) + " "+ currentCustomer.getString("signBoard") , 1,0);
+            UtilPrinter.printCustomText(outputStream,"KH    :  " + currentCustomer.getString("name"), 1,0);
+            UtilPrinter.printCustomText(outputStream,"SDT   :  " + currentCustomer.getString("phone"), 1,0);
+            UtilPrinter.printCustomText(outputStream,"NGAY  :  " + Util.CurrentMonthYearHour(),1,0);
+            UtilPrinter.printCustomText(outputStream,"N.VIEN:  " + User.getFullName(), 1,0);
+            UtilPrinter.printCustomText(outputStream,shortLine,3,1);
 
             List<Product> listProduct = getListProduct();
             for (int i=0; i<listProduct.size(); i++){
@@ -479,14 +493,18 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                         Util.FormatMoney(listProduct.get(i).getDouble("totalMoney")) , 1,0);
 
                 if (i != listProduct.size() -1){
-                    UtilPrinter.printCustomText(outputStream,"--------------------------------",1,1);
+                    UtilPrinter.printCustomText(outputStream,longLine,1,1);
                 }
             }
-            UtilPrinter.printCustomText(outputStream,"---------------------",3,1);
+            UtilPrinter.printCustomText(outputStream,shortLine,3,1);
             UtilPrinter.printCustom2Text(outputStream,"TONG:", Util.FormatMoney(total),4,2);
+            if (currentDebt != 0){
+                UtilPrinter.printCustom2Text(outputStream,"NO CU:", Util.FormatMoney(currentDebt),4,2);
+            }
             UtilPrinter.printCustom2Text(outputStream,"TRA:", Util.FormatMoney(paid),4,2);
-            UtilPrinter.printCustom2Text(outputStream,"CON LAI:", Util.FormatMoney(total - paid),4,2);
-            UtilPrinter.printCustomText(outputStream,"---------------------",3,1);
+            UtilPrinter.printCustomText(outputStream,longLine,1,1);
+            UtilPrinter.printCustom2Text(outputStream,"CON LAI:", Util.FormatMoney(total + currentDebt - paid),4,2);
+            UtilPrinter.printCustomText(outputStream,shortLine,3,1);
             UtilPrinter.printCustomText(outputStream, "Tran trong cam on quy khach hang", 1,1);
             outputStream.write(PrinterCommands.FEED_LINE);
             outputStream.write(PrinterCommands.FEED_LINE);

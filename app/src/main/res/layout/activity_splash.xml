@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorRed"
-    tools:context="wolve.dms.activity.SplashScreenActivity">
+    tools:context="wolve.dms.activities.SplashScreenActivity">
 
     <ImageView
         android:layout_width="@dimen/_100sdp"

@@ -319,11 +319,13 @@ public class UtilPrinter {
 
 
             }else{
-                Util.showToast("The file isn't exists");
+                Log.e("file", "The file isn't exists");
+                //Util.showToast("The file isn't exists");
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            Util.showToast("The file isn't exists");
+            //e.printStackTrace();
+            Log.e("file", "The file isn't exists");
+            //Util.showToast("The file isn't exists");
         }
     }
 

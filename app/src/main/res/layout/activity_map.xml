@@ -13,15 +13,31 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <Spinner
-        android:id="@+id/map_spinner"
-        android:layout_width="@dimen/_80sdp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/spinner_bg"
-        android:layout_marginTop="@dimen/_5sdp"
-        android:layout_marginRight="@dimen/_10sdp"
-        android:overlapAnchor="false"
-        android:layout_gravity="right"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/bg_toolbar">
+
+        <ImageView
+            android:id="@+id/map_back"
+            android:layout_width="?attr/actionBarSize"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_gravity="right"
+            android:src="@drawable/ic_arrow_back_white"
+            android:padding="@dimen/_10sdp"/>
+
+        <Spinner
+            android:id="@+id/map_spinner"
+            android:layout_width="@dimen/_80sdp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/spinner_bg"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:overlapAnchor="false"/>
+    </RelativeLayout>
+
 
     <com.github.clans.fab.FloatingActionButton
         android:id="@+id/map_current_location"

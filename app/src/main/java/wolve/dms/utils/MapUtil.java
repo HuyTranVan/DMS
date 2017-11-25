@@ -56,7 +56,8 @@ public class MapUtil{
     public Marker currentMarker;
     private int currentStep;
     private GoogleMap currentMap;
-    public static List<Marker> markers;
+    public static List<Marker> markers = new ArrayList<>();
+    public int count =0;
 
     public static synchronized MapUtil getInstance() {
         if (util == null)
@@ -173,35 +174,47 @@ public class MapUtil{
         return objectResult;
     }
 
-    public String addListMarkerToMap(final GoogleMap mMap, final ArrayList<Customer> listCustomer, String filter, Boolean isBound) {
+    public String addListMarkerToMap(Boolean clearMap, final GoogleMap mMap, final ArrayList<Customer> listCustomer, String filter, Boolean isBound) {
         currentMap = mMap;
-        markers = new ArrayList<>();
-        int count =0;
+        List<Customer> currentCustomers = new ArrayList<>();
+//        if (clearMap){
+//            markers = new ArrayList<>();
+//            currentCustomers = listCustomer;
+//        }else {
+//            for (int a = 0; a< markers.size() ; a++){
+//                if (Integer.parseInt(markers.get(a).getSnippet()) != listCustomer.get(i).getInt("id"))
+//            }
+//        }
+
 
         for (int i = 0; i < listCustomer.size(); i++) {
+
             try {
-                Customer customer = listCustomer.get(i);
+                {
+                    Customer customer = listCustomer.get(i);
 
-                if (filter.equals(Constants.MARKER_ALL)){
-//                    markers.add(addMarkerToMap(mMap, customer));
-                    addMarkerToMap(mMap, customer);
-                    count +=1;
-
-                }else if (filter.equals(Constants.MARKER_INTERESTED)){
-                    int markertype = new JSONObject(customer.getString("status")).getInt("id");
-                    if (markertype == 1 || markertype == 3){
-//                        markers.add(addMarkerToMap(mMap, customer));
+                    if (filter.equals(Constants.MARKER_ALL)){
                         addMarkerToMap(mMap, customer);
                         count +=1;
-                    }
-                }else if (filter.equals(Constants.MARKER_ORDERED)){
-                    int markertype = new JSONObject(customer.getString("status")).getInt("id");
-                    if (markertype == 3){
-//                        markers.add(addMarkerToMap(mMap, customer));
-                        addMarkerToMap(mMap, customer);
-                        count +=1;
+
+                    }else if (filter.equals(Constants.MARKER_INTERESTED)){
+                        int markertype = new JSONObject(customer.getString("status")).getInt("id");
+                        if (markertype == 1 || markertype == 3){
+                            addMarkerToMap(mMap, customer);
+                            count +=1;
+                        }
+                    }else if (filter.equals(Constants.MARKER_ORDERED)){
+                        int markertype = new JSONObject(customer.getString("status")).getInt("id");
+                        if (markertype == 3){
+                            addMarkerToMap(mMap, customer);
+                            count +=1;
+                        }
                     }
                 }
+                for (int j=0; j<markers.size(); j++){
+
+                }
+
 
 
             } catch (JSONException e) {
@@ -220,32 +233,14 @@ public class MapUtil{
     public static Marker addMarkerToMap(GoogleMap mMap, Customer customer ){
         Marker currentMarker = null;
         LatLng markerPosition = new LatLng(customer.getDouble("lat"), customer.getDouble("lng"));
-        String title = Constants.getShopInfo(customer.getString("shopType"), null) +" " + customer.getString("signBoard");
-        String add = customer.getString("address") + " " + customer.getString("street") ;
 
-        try {
-            int markertype = new JSONObject(customer.getString("status")).getInt("id");
-            int checkinCount = customer.getInt("checkinCount");
-            int icon = 0;
-            if (markertype ==1){
-                icon = R.drawable.ico_pin_red;
-            }else if (markertype == 2){
-                icon = R.drawable.ico_pin_grey;
-            }else {
-                icon = R.drawable.ico_pin_blue;
+        currentMarker = mMap.addMarker(new MarkerOptions().position(markerPosition));
+        Bitmap bitmap = GetBitmapMarker(Util.getInstance().getCurrentActivity(), customer.getInt("icon"), customer.getString("checkinCount"), R.color.pin_waiting);
+        currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
+        currentMarker.setTag(customer.CustomerJSONObject());
+        currentMarker.setSnippet(customer.getString("id"));
 
-            }
-
-            currentMarker = mMap.addMarker(new MarkerOptions().position(markerPosition).snippet(add).title(title));
-            Bitmap bitmap = GetBitmapMarker(Util.getInstance().getCurrentActivity(), icon, String.valueOf(checkinCount), R.color.pin_waiting);
-            currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
-            currentMarker.setTag(customer.CustomerJSONObject());
-
-            markers.add(currentMarker);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        markers.add(currentMarker);
 
         return currentMarker;
     }

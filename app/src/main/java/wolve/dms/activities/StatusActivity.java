@@ -1,4 +1,4 @@
-package wolve.dms.activity;
+package wolve.dms.activities;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,7 +23,6 @@ import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.models.Status;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.Transaction;
-import wolve.dms.utils.Util;
 
 /**
  * Created by macos on 9/16/17.

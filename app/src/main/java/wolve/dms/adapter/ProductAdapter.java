@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.R;
@@ -24,6 +25,7 @@ import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.controls.CTextIcon;
 import wolve.dms.models.Product;
+import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
 
@@ -33,18 +35,27 @@ import wolve.dms.utils.Util;
  */
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductAdapterViewHolder> {
-    private ArrayList<Product> mData = new ArrayList<>();
+    private List<Product> mData = new ArrayList<>();
+    private ProductGroup mGroup;
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackClickAdapter mListener;
     private CallbackDeleteAdapter mDeleteListener;
 
-    public ProductAdapter( ArrayList<Product> list, CallbackClickAdapter callbackClickAdapter, CallbackDeleteAdapter callbackDeleteAdapter) {
+    public ProductAdapter(ProductGroup group, List<Product> list, CallbackClickAdapter callbackClickAdapter, CallbackDeleteAdapter callbackDeleteAdapter) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
-        this.mData = list;
+//        this.mData = list;
+        this.mGroup = group;
         this.mListener = callbackClickAdapter;
         this.mDeleteListener = callbackDeleteAdapter;
+
+        for (int i=0; i< list.size(); i++){
+            ProductGroup productGroup = new ProductGroup(list.get(i).getJsonObject("productGroup"));
+            if (productGroup.getInt("id")== group.getInt("id")){
+                mData.add(list.get(i));
+            }
+        }
 
     }
 

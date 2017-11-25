@@ -1,4 +1,4 @@
-package wolve.dms.activity;
+package wolve.dms.activities;
 
 import android.content.Intent;
 import android.support.annotation.IdRes;
@@ -324,44 +324,8 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         }, new CallbackUpdateBill() {
             @Override
             public void onUpdate(final Bill bill, int position) {
-
-                CustomCenterDialog.showDialogInputPaid("Nhập số tiền khách trả", "Nợ còn lại", bill.getDouble("debt"), new CallbackPayBill() {
-                    @Override
-                    public void OnRespone(Double total, Double pay) {
-                        try {
-                            JSONObject params = new JSONObject();
-                            params.put("debt", total - pay);
-                            params.put("total", total);
-                            params.put("paid", pay);
-                            params.put("id", bill.getInt("id"));
-                            params.put("customerId", new JSONObject(bill.getString("customer")).getString("id"));
-                            params.put("distributorId", Distributor.getCurrentDistributorId());
-                            params.put("userId", User.getUserId());
-//                            params.put("note", bill.getString("note") + Util.CurrentTimeStamp() + " trả " + Util.FormatMoney(pay));
-                            params.put("note", "billlll");
-
-                            params.put("billDetails", null);
-                            CustomerConnect.PostBill(params.toString(), new CallbackJSONObject() {
-                                @Override
-                                public void onResponse(JSONObject result) {
-                                    //get customer detail from serer
-
-                                    String s = result.toString();
-
-                                }
-
-                                @Override
-                                public void onError(String error) {
-
-                                }
-                            }, true);
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
+                showMoneyOverview(listbill);
+                Util.showToast("Thanh toán thành công");
 
 
 
@@ -380,7 +344,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     private void createTabLayout(List<String> listTitle, List<RecyclerView.Adapter> listadapter ){
         for (int i=0; i<listTitle.size(); i++){
             TabLayout.Tab tab = tabLayout.getTabAt(i);
-            View customView = LayoutInflater.from(this).inflate(R.layout.view_customer_badge, null);
+            View customView = LayoutInflater.from(this).inflate(R.layout.view_tab_customer, null);
             TextView tabTextTitle = (TextView) customView.findViewById(R.id.tabNotify);
             TextView textTitle = (TextView) customView.findViewById(R.id.tabTitle);
             textTitle.setText(listTitle.get(i));
@@ -478,6 +442,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                     final Customer responseCustomer = new Customer(result);
                     try {
                         currentCustomer.put("id", responseCustomer.getInt("id"));
+                        currentCustomer.put("debt", Util.getTotalDebt(listBills));
                         Transaction.gotoShopCartActivity(responseCustomer.CustomertoString());
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -492,7 +457,13 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             }, true);
 
         }else {
-            Transaction.gotoShopCartActivity(customer.CustomertoString());
+            try {
+                customer.put("debt", Util.getTotalDebt(listBills));
+                Transaction.gotoShopCartActivity(customer.CustomertoString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
         }
 
     }
@@ -794,32 +765,4 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         tvDebt.setText("Nợ: " + Util.FormatMoney(Util.getTotalDebt(list)));
     }
 
-
-//    @Override
-//    public boolean onLongClick(View v) {
-//        if (!edPhone.getText().toString().trim().equals("")){
-//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-//                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, Constants.REQUEST_PHONE_PERMISSION);
-//
-//                //return;
-//            }
-//
-//            Intent callIntent = new Intent(Intent.ACTION_CALL);
-//            callIntent.setData(Uri.parse("tel:" + Uri.encode(edPhone.getText().toString().trim())));
-//            callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            startActivity(callIntent);
-//        }
-//
-//        return true;
-//    }
-//
-//    @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        if (requestCode == Constants.REQUEST_PHONE_PERMISSION) {
-//            if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-//                Util.showSnackbar("Không thể gọi do chưa được cấp quyền", null, null);
-//
-//            }
-//        }
-//
-//    }
 }
