@@ -20,6 +20,8 @@ public class Api_link {
 
     public final static String LOGIN = BASE_URL + "auth/login";
     public final static String LOGIN_PARAM ="phone=%s&password=%s";
+    public final static String LOGOUT= BASE_URL + "auth/logout";
+    public final static String LOGOUT_PARAM ="x-wolver-accesstoken=%s&x-wolver-accessid=%s";
 
     public final static String PRODUCT_GROUPS = BASE_URL + "token/productGroups";
     public final static String PRODUCT_GROUP_NEW = BASE_URL + "token/productGroup/create_or_update";

@@ -33,7 +33,7 @@ public class AddProdGroupFragment extends Fragment implements View.OnClickListen
     private CInputForm edInput;
     private Button btnSubmit;
     private ProductGroup productGroup;
-    private ProductActivity mActivity;
+    private ProductGroupActivity mActivity;
 
     @Nullable
     @Override
@@ -72,7 +72,7 @@ public class AddProdGroupFragment extends Fragment implements View.OnClickListen
         btnSubmit = (Button) view.findViewById(R.id.add_productgroup_submit);
         btnBack = (ImageView) view.findViewById(R.id.icon_back);
 
-        mActivity = (ProductActivity) getActivity();
+        mActivity = (ProductGroupActivity) getActivity();
     }
 
     @Override

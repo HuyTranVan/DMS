@@ -43,9 +43,7 @@ import wolve.dms.utils.Transaction;
 
 public class ProductActivity extends BaseActivity implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener{
     private ImageView btnBack;
-    private RecyclerView rvProduct, rvProductGroup;
     private ProductGroupAdapter productGroupAdapter;
-    private ImageView btnAddGroup;
     private FloatingActionButton btnAddProduct;
     private ViewPager viewPager;
     private TabLayout tabLayout;
@@ -70,9 +68,6 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
     @Override
     public void findViewById() {
         btnBack = (ImageView) findViewById(R.id.icon_back);
-//        rvProduct = (RecyclerView) findViewById(R.id.product_rvproduct);
-//        rvProductGroup = (RecyclerView) findViewById(R.id.product_rvproductgroup);
-        btnAddGroup = (ImageView) findViewById(R.id.product_addgroup);
         btnAddProduct = (FloatingActionButton) findViewById(R.id.product_add_new);
         viewPager = (ViewPager) findViewById(R.id.product_viewpager);
         tabLayout = (TabLayout) findViewById(R.id.product_tabs);
@@ -82,20 +77,13 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
 
     @Override
     public void initialData() {
-
+        loadProductGroup(true);
         tabLayout.setupWithViewPager(viewPager);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        loadProductGroup();
     }
 
     @Override
     public void addEvent() {
         btnBack.setOnClickListener(this);
-        btnAddGroup.setOnClickListener(this);
         swipeRefreshLayout.setOnRefreshListener(this);
         btnAddProduct.setOnClickListener(this);
     }
@@ -104,12 +92,7 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.icon_back:
-                Transaction.gotoHomeActivityRight(true);
-                break;
-
-            case R.id.product_addgroup:
-                openFragmentNewProductGroup(null);
-
+                onBackPressed();
                 break;
 
             case R.id.product_add_new:
@@ -119,25 +102,10 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
         }
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK){
-            Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.product_parent);
-            if(mFragment != null && mFragment instanceof AddProdGroupFragment
-                    ||mFragment != null && mFragment instanceof AddProductFragment) {
-                getSupportFragmentManager().popBackStack();
-            }else {
-                Transaction.gotoHomeActivityRight(true);
-            }
-
-        }
-        return true;
-    }
-
-    protected void loadProductGroup() {
+    protected void loadProductGroup(Boolean loading) {
         listProductGroup = new ArrayList<>();
 
-        ProductConnect.ListProductGroup(new CallbackJSONArray() {
+        ProductConnect.ListProductGroup(loading, new CallbackJSONArray() {
             @Override
             public void onResponse(JSONArray result) {
                 //createRVProductGroup(result);
@@ -187,67 +155,67 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
         }, true);
     }
 
-    private void createRVProductGroup(JSONArray jsonArray){
-        listProductGroup = new ArrayList<>();
-
-        for (int i=0; i<jsonArray.length(); i++){
-            try {
-                ProductGroup productGroup = new ProductGroup(jsonArray.getJSONObject(i));
-                listProductGroup.add(productGroup);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        }
-        productGroupAdapter = new ProductGroupAdapter(listProductGroup, new CallbackClickAdapter() {
-            @Override
-            public void onRespone(String data, int position) {
-                openFragmentNewProductGroup(data);
-            }
-
-        }, new CallbackDeleteAdapter() {
-            @Override
-            public void onDelete(String data, int position) {
-                loadProductGroup();
-            }
-        });
-        rvProductGroup.setAdapter(productGroupAdapter);
-        rvProductGroup.setHasFixedSize(true);
-        rvProductGroup.setNestedScrollingEnabled(false);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        rvProductGroup.setLayoutManager(layoutManager);
-    }
-
-    private void createRVProduct(JSONArray jsonArray){
-        listProduct = new ArrayList<>();
-
-        for (int i=0; i<jsonArray.length(); i++){
-            try {
-                Product product = new Product(jsonArray.getJSONObject(i));
-                listProduct.add(product);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        }
-//        productAdapter = new ProductAdapter(listProduct, new CallbackClickAdapter() {
+//    private void createRVProductGroup(JSONArray jsonArray){
+//        listProductGroup = new ArrayList<>();
+//
+//        for (int i=0; i<jsonArray.length(); i++){
+//            try {
+//                ProductGroup productGroup = new ProductGroup(jsonArray.getJSONObject(i));
+//                listProductGroup.add(productGroup);
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//
+//        }
+//        productGroupAdapter = new ProductGroupAdapter(listProductGroup, new CallbackClickAdapter() {
 //            @Override
 //            public void onRespone(String data, int position) {
-//                openFragmentNewProduct(data);
+//                openFragmentNewProductGroup(data);
 //            }
 //
 //        }, new CallbackDeleteAdapter() {
 //            @Override
 //            public void onDelete(String data, int position) {
-//                loadProductGroup();
+//                loadProductGroup(true);
 //            }
 //        });
-        rvProduct.setAdapter(productAdapter);
-        rvProduct.setHasFixedSize(true);
-        rvProduct.setNestedScrollingEnabled(false);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        rvProduct.setLayoutManager(layoutManager);
-    }
+//        rvProductGroup.setAdapter(productGroupAdapter);
+//        rvProductGroup.setHasFixedSize(true);
+//        rvProductGroup.setNestedScrollingEnabled(false);
+//        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+//        rvProductGroup.setLayoutManager(layoutManager);
+//    }
+//
+//    private void createRVProduct(JSONArray jsonArray){
+//        listProduct = new ArrayList<>();
+//
+//        for (int i=0; i<jsonArray.length(); i++){
+//            try {
+//                Product product = new Product(jsonArray.getJSONObject(i));
+//                listProduct.add(product);
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//
+//        }
+////        productAdapter = new ProductAdapter(listProduct, new CallbackClickAdapter() {
+////            @Override
+////            public void onRespone(String data, int position) {
+////                openFragmentNewProduct(data);
+////            }
+////
+////        }, new CallbackDeleteAdapter() {
+////            @Override
+////            public void onDelete(String data, int position) {
+////                loadProductGroup();
+////            }
+////        });
+//        rvProduct.setAdapter(productAdapter);
+//        rvProduct.setHasFixedSize(true);
+//        rvProduct.setNestedScrollingEnabled(false);
+//        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+//        rvProduct.setLayoutManager(layoutManager);
+//    }
 
     private void openFragmentNewProductGroup(String productgroup){
         AddProdGroupFragment groupFragment = new AddProdGroupFragment();
@@ -277,7 +245,7 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
             }, new CallbackDeleteAdapter() {
                 @Override
                 public void onDelete(String data, int position) {
-                    loadProductGroup();
+                    loadProductGroup(true);
                 }
             });
 
@@ -334,6 +302,6 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
     @Override
     public void onRefresh() {
         swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#2196f3"));
-        loadProductGroup();
+        loadProductGroup(false);
     }
 }

@@ -11,14 +11,37 @@
         android:layout_weight="0.5">
 
         <ImageView
+            android:id="@+id/home_image"
             android:layout_width="@dimen/_100sdp"
             android:layout_height="@dimen/_100sdp"
             android:src="@drawable/ic_app"
             android:layout_centerInParent="true"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Distribution management system"
+            android:textSize="@dimen/_8sdp"
+            android:layout_below="@id/home_image"
+            android:textAllCaps="true"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/colorRed"
+            android:padding="@dimen/_5sdp"/>
+
+        <wolve.dms.controls.CTextIcon
+            android:id="@+id/home_logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/icon_logout"
+            android:textColor="@color/black_text_color_hint"
+            android:textSize="@dimen/_14sdp"
+            android:padding="@dimen/_10sdp"
+            android:layout_alignParentRight="true"/>
+
     </RelativeLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -29,7 +52,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LubSolution_DMS"
+            android:textSize="@dimen/_6sdp"
+            android:padding="@dimen/_5sdp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"/>
 
-    </LinearLayout>
+
+    </RelativeLayout>
+
 
 </LinearLayout>

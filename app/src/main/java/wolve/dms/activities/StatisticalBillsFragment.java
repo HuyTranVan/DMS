@@ -83,8 +83,8 @@ public class StatisticalBillsFragment extends Fragment implements View.OnClickLi
         for (int i=0; i<list.size(); i++){
             total +=list.get(i).getDouble("total");
         }
-        tvTotal.setText("Tổng cộng: "+ Util.FormatMoney(total));
-        tvCount.setText("Số lượng hóa đơn: " + list.size());
+        tvCount.setText(String.format("Số lượng hóa đơn: %s", list.size()));
+        tvTotal.setText(String.format("Tổng cộng: %s", Util.FormatMoney(total)));
 
         adapter = new StatisticalBillsAdapter(list, new CallbackString() {
             @Override
@@ -109,14 +109,7 @@ public class StatisticalBillsFragment extends Fragment implements View.OnClickLi
         rvBill.setNestedScrollingEnabled(true);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if (data.getStringExtra(Constants.CUSTOMER) != null && requestCode == Constants.RESULT_CUSTOMER_ACTIVITY){
-            //reloadData();
-        }
-    }
 
 
 }

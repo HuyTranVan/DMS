@@ -8,6 +8,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.github.clans.fab.FloatingActionButton;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -31,7 +33,7 @@ import wolve.dms.utils.Transaction;
 public class StatusActivity extends BaseActivity implements View.OnClickListener{
     private ImageView btnBack;
     private RecyclerView rvStatus;
-    private ImageView btnAddStatus;
+    private FloatingActionButton btnAddStatus;
 
     private StatusAdapter statusAdapter;
     private ArrayList<Status> listStatus ;
@@ -50,7 +52,7 @@ public class StatusActivity extends BaseActivity implements View.OnClickListener
     public void findViewById() {
         btnBack = (ImageView) findViewById(R.id.icon_back);
         rvStatus = (RecyclerView) findViewById(R.id.status_rvstatus);
-        btnAddStatus = (ImageView) findViewById(R.id.status_addnew);
+        btnAddStatus = findViewById(R.id.status_addnew);
 
     }
 
@@ -75,7 +77,7 @@ public class StatusActivity extends BaseActivity implements View.OnClickListener
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.icon_back:
-                Transaction.gotoHomeActivityRight(true);
+                onBackPressed();
                 break;
 
             case R.id.status_addnew:
@@ -84,20 +86,6 @@ public class StatusActivity extends BaseActivity implements View.OnClickListener
                 break;
 
         }
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK){
-            Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.status_parent);
-            if(mFragment != null && mFragment instanceof AddStatusFragment) {
-                getSupportFragmentManager().popBackStack();
-            }else {
-                Transaction.gotoHomeActivityRight(true);
-            }
-
-        }
-        return true;
     }
 
 

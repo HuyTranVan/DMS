@@ -9,8 +9,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -28,6 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +43,7 @@ import wolve.dms.adapter.BluetoothListAdapter;
 import wolve.dms.adapter.CartProductsAdapter;
 import wolve.dms.adapter.CartPromotionsAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackChangePrice;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
@@ -48,6 +52,7 @@ import wolve.dms.callback.CallbackPayBill;
 import wolve.dms.controls.CInputForm;
 import wolve.dms.libraries.printerdriver.PrinterCommands;
 import wolve.dms.libraries.printerdriver.UtilPrinter;
+import wolve.dms.models.Bill;
 import wolve.dms.models.Customer;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.Product;
@@ -85,13 +90,19 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     private List<Product> listInitialProduct = new ArrayList<>();
     private List<Product> listInitialPromotion = new ArrayList<>();
     private List<BluetoothDevice> listDevice = new ArrayList<>();
+    private List<Bill> listBills = new ArrayList<>();
     static private BluetoothAdapter mBluetoothAdapter = null;
     private static BluetoothSocket btsocket;
     private static OutputStream outputStream;
     private Uri imageChangeUri ;
-    private Double currentDebt;
     private final String shortLine ="---------------------";
     private final String longLine = "--------------------------------";
+
+    byte[] readBuffer;
+    int readBufferPosition;
+    volatile boolean stopWorker;
+    Thread workerThread;
+    InputStream mmInputStream;
 
     @Override
     public int getResourceLayout() {
@@ -129,7 +140,14 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
             try {
                 currentCustomer = new Customer(new JSONObject(bundle));
                 tvTitle.setText(Constants.getShopInfo(currentCustomer.getString("shopType") , null) +" - " + currentCustomer.getString("signBoard") );
-                currentDebt = currentCustomer.getDouble("debt");
+                //currentDebt = currentCustomer.getDouble("debt");
+
+                if (!currentCustomer.getString("bills").equals("[]")){
+                    JSONArray array = new JSONArray(currentCustomer.getString("bills"));
+                    for (int i=0; i<array.length(); i++){
+                        listBills.add(new Bill(array.getJSONObject(i)));
+                    }
+                }
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -320,30 +338,38 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                     params.put("billDetails", (Object) array);
 
                     if (btsocket != null && btsocket.isConnected()){
-                        flushBillDetail(total, paid);
-                        Thread.sleep(1000);
-                        CustomCenterDialog.alertWithCancelButton2("TIẾP TỤC", "In thêm hoặc tiếp tục thanh toán", "TIẾP TỤC", "IN LẠI", new CustomCenterDialog.ButtonCallback() {
+                        flushBillDetail(total, paid, new CallbackBoolean() {
                             @Override
-                            public void Submit(Boolean boolSubmit) {
-                                postBills(params.toString());
+                            public void onRespone(Boolean result) {
 
+                                Util.getInstance().stopLoading(true);
+//                                Thread.sleep(1000);
+                                CustomCenterDialog.alertWithCancelButton2("TIẾP TỤC", "In thêm hoặc tiếp tục thanh toán", "TIẾP TỤC", "IN LẠI", new CustomCenterDialog.ButtonCallback() {
+                                    @Override
+                                    public void Submit(Boolean boolSubmit) {
+                                        postBills(params.toString());
+
+                                    }
+
+                                    @Override
+                                    public void Cancel(Boolean boolCancel) {
+                                        submitBill(total,paid);
+                                    }
+
+                                });
                             }
-
-                            @Override
-                            public void Cancel(Boolean boolCancel) {
-                                submitBill(total,paid);
-                            }
-
                         });
+
                     }else {
                         postBills(params.toString());
                     }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
+//                catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
 
             }
         }); thread.start();
@@ -465,21 +491,24 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
     }
 
-    private void flushBillDetail(Double total, Double paid){
+    private void flushBillDetail(Double total, Double paid, CallbackBoolean mListener){
         try {
             UtilPrinter.printPhoto(outputStream,CustomSQL.getString("logo"));
             UtilPrinter.printCustomText(outputStream,"CTY TNHH XNK TRAN VU ANH",1,1);
             UtilPrinter.printCustomText(outputStream, "1 duong 57,P.Binh Trung Dong,Q 2", 1,1);
-            UtilPrinter.printCustomText(outputStream,"Hotline: 0931072223",4,1);
+            UtilPrinter.printCustomText(outputStream,"Phone:0931.07.22.23",4,1);
             UtilPrinter.printCustomText(outputStream,"www.wolver.vn",4,1);
             outputStream.write(PrinterCommands.FEED_LINE);
 
-            UtilPrinter.printCustomText(outputStream, "  HOA DON BAN HANG ",3,1);
+            UtilPrinter.printCustomText(outputStream, "HÓA ĐƠN BÁN HÀNG",3,1);
             outputStream.write(PrinterCommands.FEED_LINE);
 
             UtilPrinter.printCustomText(outputStream,"CH    :  " + Constants.getShopInfo(currentCustomer.getString("shopType") , null) + " "+ currentCustomer.getString("signBoard") , 1,0);
             UtilPrinter.printCustomText(outputStream,"KH    :  " + currentCustomer.getString("name"), 1,0);
-            UtilPrinter.printCustomText(outputStream,"SDT   :  " + currentCustomer.getString("phone"), 1,0);
+            UtilPrinter.printCustomText(outputStream,"SDT   :  " + Util.PhoneFormat(currentCustomer.getString("phone")), 1,0);
+            String add = String.format("%s, %s", currentCustomer.getString("street"), currentCustomer.getString("district"));
+            String address = add.length()>23 ? add.substring(0,23) : add;
+            UtilPrinter.printCustomText(outputStream,"D.CHI :  " + address , 1,0);
             UtilPrinter.printCustomText(outputStream,"NGAY  :  " + Util.CurrentMonthYearHour(),1,0);
             UtilPrinter.printCustomText(outputStream,"N.VIEN:  " + User.getFullName(), 1,0);
             UtilPrinter.printCustomText(outputStream,shortLine,3,1);
@@ -489,7 +518,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 UtilPrinter.printCustomText(outputStream,String.format("%d.%s (%s)" ,i+1, listProduct.get(i).getString("name"), Util.FormatMoney(listProduct.get(i).getDouble("unitPrice"))) , 1,0);
                 String discount = listProduct.get(i).getDouble("discount") == 0? "" : " -" + Util.FormatMoney(listProduct.get(i).getDouble("discount"));
                 UtilPrinter.printCustom2Text(outputStream ,
-                        "   "+ Util.FormatMoney(listProduct.get(i).getDouble("quantity")) + "x" + Util.FormatMoney(listProduct.get(i).getDouble("unitPrice")) + discount ,
+                        " "+ Util.FormatMoney(listProduct.get(i).getDouble("quantity")) + "x" + Util.FormatMoney(listProduct.get(i).getDouble("unitPrice")) + discount ,
                         Util.FormatMoney(listProduct.get(i).getDouble("totalMoney")) , 1,0);
 
                 if (i != listProduct.size() -1){
@@ -498,19 +527,35 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
             }
             UtilPrinter.printCustomText(outputStream,shortLine,3,1);
             UtilPrinter.printCustom2Text(outputStream,"TONG:", Util.FormatMoney(total),4,2);
-            if (currentDebt != 0){
-                UtilPrinter.printCustom2Text(outputStream,"NO CU:", Util.FormatMoney(currentDebt),4,2);
+
+            Double sumDebt =0.0;
+            for (int j=0; j<listBills.size(); j++){
+
+                if (listBills.get(j).getDouble("debt") > 0){
+                    sumDebt += listBills.get(j).getDouble("debt");
+                    UtilPrinter.printCustom2Text(outputStream,"NO "+ Util.DateMonthString(listBills.get(j).getLong("createAt")), Util.FormatMoney(listBills.get(j).getDouble("debt")),4,2);
+
+                }
             }
+
+            if (listBills.size() >0){
+                UtilPrinter.printCustomText(outputStream,longLine,1,1);
+            }
+
             UtilPrinter.printCustom2Text(outputStream,"TRA:", Util.FormatMoney(paid),4,2);
             UtilPrinter.printCustomText(outputStream,longLine,1,1);
-            UtilPrinter.printCustom2Text(outputStream,"CON LAI:", Util.FormatMoney(total + currentDebt - paid),4,2);
+            UtilPrinter.printCustom2Text(outputStream,"CON LAI:", Util.FormatMoney(total + sumDebt - paid),4,2);
             UtilPrinter.printCustomText(outputStream,shortLine,3,1);
             UtilPrinter.printCustomText(outputStream, "Tran trong cam on quy khach hang", 1,1);
             outputStream.write(PrinterCommands.FEED_LINE);
             outputStream.write(PrinterCommands.FEED_LINE);
             outputStream.write(PrinterCommands.FEED_LINE);
             outputStream.flush();
-            Util.getInstance().stopLoading(true);
+
+            mListener.onRespone(true);
+            //Util.getInstance().stopLoading(true);
+
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -561,7 +606,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
     }
 
-    private void connectBluetoothDevice(final BluetoothDevice device) {
+    private void connectBluetoothDevice(final BluetoothDevice device){
         if (mBluetoothAdapter == null) {
             return;
         }
@@ -598,12 +643,16 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
                                     CustomSQL.setString(Constants.BLUETOOTH_DEVICE, btsocket.getRemoteDevice().getAddress());
                                     outputStream = btsocket.getOutputStream();
+                                    mmInputStream = btsocket.getInputStream();
+
+
+                                    mBluetoothAdapter.cancelDiscovery();
                                 }
 
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            //mBluetoothAdapter.cancelDiscovery();
+
 
                         }
                     });
@@ -617,11 +666,12 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
             @Override
             public void OnDevice(BluetoothDevice device) {
                 try {
+                    connectBluetoothDevice(device);
                     if (btsocket != null){
                         btsocket.close();
                         btsocket = null;
                     }
-                    connectBluetoothDevice(device);
+
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -718,8 +768,6 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         }
 
     }
-
-
 
 
 }

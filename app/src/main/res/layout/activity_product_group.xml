@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/status_parent"
+    android:id="@+id/product_parent"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorWhite">
 
     <RelativeLayout
-        android:id="@+id/status_header"
+        android:id="@+id/product_group_header"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_35sdp"
         android:background="@drawable/bg_header_top">
@@ -22,24 +22,24 @@
             android:background="?selectableItemBackground"/>
 
         <TextView
+            android:id="@+id/product_group_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="DANH SÁCH TRẠNG THÁI"
+            android:text="DANH SÁCH NHÓM SẢN PHẨM"
             android:textSize="@dimen/_14sdp"
             android:textColor="@color/black_text_color"/>
-
 
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/status_rvstatus"
+        android:id="@+id/product_group_rvgroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/status_header"/>
+        android:layout_below="@+id/product_group_header"/>
 
     <com.github.clans.fab.FloatingActionButton
-        android:id="@+id/status_addnew"
+        android:id="@+id/product_group_add_new"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_add_white_18dp"
@@ -48,8 +48,6 @@
         android:layout_alignParentRight="true"
         app:fab_size="normal"
         style="@style/MenuButtonsBlue"/>
-
-
 
 
 </RelativeLayout>

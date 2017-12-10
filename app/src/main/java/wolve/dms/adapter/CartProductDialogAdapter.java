@@ -96,7 +96,7 @@ public class CartProductDialogAdapter extends RecyclerView.Adapter<CartProductDi
         holder.tvLine.setVisibility(position == mData.size() -1 ? View.GONE : View.VISIBLE);
         holder.lnParent.setBackgroundColor(mData.get(position).getBoolean("checked") ? Color.parseColor("#0d000000") : Color.parseColor("#ffffff") );
 
-        if (mData.get(position).getString("image") != null && !mData.get(position).getString("image").equals("null") && !mData.get(position).getString("image").equals("http://lubsolution.com/mydms/staticnull")){
+        if (!Util.checkImageNull(mData.get(position).getString("image")) ){
             Glide.with(mContext).load(mData.get(position).getString("image")).centerCrop().into(holder.imgProduct);
 
         }else {

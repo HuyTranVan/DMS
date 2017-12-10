@@ -58,25 +58,21 @@ public class Constants {
         String[] icons = new String[]{
                 Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_home),
                 Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_chart),
-                Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_group),
-                Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_product_group),
-                Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_status)};
+                Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_setting),
+                Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_username)};
         String[] texts = new String[]{
                 "Bán hàng",
                 "Thống kê",
-                "Nhân viên",
-                "Sản phẩm",
-                "Trạng thái"};
+                "Cài đặt",
+                "Tài khoản"};
         String[] colors = new String[]{
                 "Bán hàng",
                 "Thống kê",
-                "Nhân viên",
-                "Sản phẩm",
-                "Trạng thái"};
+                "Cài đặt",
+                "Tài khoản"};
         String[] roles = new String[]{
                 "SALE",
                 "SALE",
-                "MANAGER",
                 "MANAGER",
                 "MANAGER"};
 

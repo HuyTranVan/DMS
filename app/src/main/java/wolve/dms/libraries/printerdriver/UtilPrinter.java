@@ -215,6 +215,7 @@ public class UtilPrinter {
                     break;
             }
             outputStream.write(StringUtil.unAccent(msg).getBytes());
+//            outputStream.write(msg.getBytes("Windows-1258"));
             outputStream.write(PrinterCommands.FEED_LINE);
 
         } catch (IOException e) {
@@ -332,4 +333,25 @@ public class UtilPrinter {
     //outputStream.write(0x1C); outputStream.write(0x2E); // Cancels Chinese  character mode (FS .)
     //outputStream.write(0x1B); outputStream.write(0x74); outputStream.write(0x10); // Select character code table (ESC t n) - n = 16(0x10) for WPC1252
 
+    public static byte[] convertExtendedAscii(String input)
+    {
+        int length = input.length();
+        byte[] retVal = new byte[length];
+
+        for(int i=0; i<length; i++)
+        {
+            char c = input.charAt(i);
+
+            if (c < 127)
+            {
+                retVal[i] = (byte)c;
+            }
+            else
+            {
+                retVal[i] = (byte)(c - 256);
+            }
+        }
+
+        return retVal;
+    }
 }

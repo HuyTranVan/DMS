@@ -30,26 +30,71 @@
             android:layout_toRightOf="@+id/icon_back"/>
 
 
-        <TextView
-            android:id="@+id/statistical_date_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tháng"
-            android:textSize="@dimen/_14sdp"
-            android:textColor="@color/black_text_color"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/statistical_date_icon"/>
+        <!--<TextView-->
+            <!--android:id="@+id/statistical_date_text"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Tháng"-->
+            <!--android:textSize="@dimen/_14sdp"-->
+            <!--android:textColor="@color/black_text_color"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_toLeftOf="@+id/statistical_date_icon"/>-->
 
-        <wolve.dms.controls.CTextIcon
-            android:id="@+id/statistical_date_icon"
-            android:layout_width="@dimen/_35sdp"
-            android:layout_height="match_parent"
-            android:text="@string/icon_schedule"
-            android:textSize="@dimen/_16sdp"
-            android:gravity="center"
-            android:textColor="@color/black_text_color_hint"
-            android:background="?selectableItemBackground"
-            android:layout_alignParentRight="true"/>
+        <!--<wolve.dms.controls.CTextIcon-->
+            <!--android:id="@+id/statistical_date_icon"-->
+            <!--android:layout_width="@dimen/_35sdp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:text="@string/icon_schedule"-->
+            <!--android:textSize="@dimen/_16sdp"-->
+            <!--android:gravity="center"-->
+            <!--android:textColor="@color/black_text_color_hint"-->
+            <!--android:background="?selectableItemBackground"-->
+            <!--android:layout_alignParentRight="true"/>-->
+
+        <RadioGroup
+            android:checkedButton="@+id/statistical_filter_month"
+            android:id="@+id/statistical_filter"
+            android:layout_width="@dimen/_140sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:background="@drawable/pink_out_line"
+            android:orientation="horizontal"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_alignParentRight="true">
+
+            <RadioButton
+                android:id="@+id/statistical_filter_month"
+                android:layout_marginTop="1dp"
+                android:layout_marginBottom="1dp"
+                android:layout_marginLeft="1dp"
+                android:background="@drawable/toggle_widget_background"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:button="@null"
+                android:gravity="center"
+                android:text="Chọn tháng"
+                android:textColor="@drawable/text_white_selected"
+                android:textSize="@dimen/_10sdp"
+                />
+
+            <RadioButton
+                android:id="@+id/statistical_filter_date"
+                android:layout_marginRight="1dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginBottom="1dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/toggle_widget_background"
+                android:button="@null"
+                android:gravity="center"
+                android:text="Chọn ngày"
+                android:textColor="@drawable/text_white_selected"
+                android:textSize="@dimen/_10sdp"/>
+
+        </RadioGroup>
+
 
 
     </RelativeLayout>

@@ -1,5 +1,7 @@
 package wolve.dms.activities;
 
+import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,7 +20,9 @@ import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
+import wolve.dms.utils.FitScrollWithFullscreen;
 import wolve.dms.utils.Transaction;
+import wolve.dms.utils.Util;
 
 /**
  * Created by macos on 9/13/17.
@@ -28,6 +32,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     private EditText edUsername, edPassword;
     private Button btnSubmit;
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        FitScrollWithFullscreen.assistActivity(this, 2);
+    }
 
     @Override
     public int getResourceLayout() {
@@ -68,7 +77,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.login_submit:
-                doLogin();
+                if (Util.isEmpty(edUsername) || Util.isEmpty(edPassword)){
+                    Util.showToast("Vui lòng nhập đủ thông tin");
+                }else {
+                    doLogin();
+                }
+
                 break;
         }
 

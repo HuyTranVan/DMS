@@ -101,7 +101,16 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_centerVertical="true"
-            android:background="#e5e5e5" />
+            android:background="@color/colorLightGrey" />
+
+        <TextView
+            android:id="@+id/bills_item_note"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Default"
+            android:padding="@dimen/_5sdp"
+            android:textColor="@color/black_text_color"
+            android:textSize="@dimen/_8sdp" />
 
 
         <LinearLayout
@@ -150,6 +159,8 @@
                 android:textSize="@dimen/_8sdp" />
 
         </LinearLayout>
+
+
 
 
     </LinearLayout>

@@ -30,17 +30,6 @@
             android:textSize="@dimen/_14sdp"
             android:textColor="@color/black_text_color"/>
 
-        <ImageView
-            android:id="@+id/product_addgroup"
-            android:layout_width="@dimen/_35sdp"
-            android:layout_height="match_parent"
-            android:tint="@color/colorBlue"
-            android:background="?selectableItemBackground"
-            android:src="@drawable/ic_add_black_18dp"
-            android:padding="@dimen/_8sdp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"/>
-
     </RelativeLayout>
 
     <wolve.dms.libraries.MySwipeRefreshLayout

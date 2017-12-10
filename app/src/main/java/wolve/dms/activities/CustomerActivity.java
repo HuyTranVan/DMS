@@ -27,6 +27,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -442,7 +444,8 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                     final Customer responseCustomer = new Customer(result);
                     try {
                         currentCustomer.put("id", responseCustomer.getInt("id"));
-                        currentCustomer.put("debt", Util.getTotalDebt(listBills));
+
+                        responseCustomer.put("bills", "[]");
                         Transaction.gotoShopCartActivity(responseCustomer.CustomertoString());
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -458,7 +461,8 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
         }else {
             try {
-                customer.put("debt", Util.getTotalDebt(listBills));
+                JSONArray array = new JSONArray(currentCustomer.getString("bills"));
+                customer.put("bills", array.toString());
                 Transaction.gotoShopCartActivity(customer.CustomertoString());
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -592,11 +596,8 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK){
-            backEvent();
-        }
-        return true;
+    public void onBackPressed() {
+        backEvent();
     }
 
     private void backEvent(){

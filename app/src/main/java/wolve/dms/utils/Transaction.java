@@ -8,14 +8,24 @@ import android.support.v7.app.AppCompatActivity;
 import wolve.dms.R;
 import wolve.dms.activities.CustomerActivity;
 import wolve.dms.activities.HomeActivity;
+import wolve.dms.activities.LoginActivity;
 import wolve.dms.activities.MapsActivity;
 import wolve.dms.activities.ProductActivity;
+import wolve.dms.activities.ProductGroupActivity;
 import wolve.dms.activities.ShopCartActivity;
 import wolve.dms.activities.StatisticalActivity;
 import wolve.dms.activities.StatusActivity;
 
 
 public class Transaction {
+
+    public static void gotoLoginActivityRight() {
+        Context context = Util.getInstance().getCurrentActivity();
+        Intent intent = new Intent(context, LoginActivity.class);
+        context.startActivity(intent);
+        ((AppCompatActivity) context).overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        ((AppCompatActivity) context).finish();
+    }
 
     public static void gotoHomeActivity(Boolean login) {
         Context context = Util.getInstance().getCurrentActivity();
@@ -48,6 +58,14 @@ public class Transaction {
     public static void gotoProductActivity() {
         Context context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(context, ProductActivity.class);
+        context.startActivity(intent);
+        ((AppCompatActivity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        ((AppCompatActivity) context).finish();
+    }
+
+    public static void gotoProductGroupActivity() {
+        Context context = Util.getInstance().getCurrentActivity();
+        Intent intent = new Intent(context, ProductGroupActivity.class);
         context.startActivity(intent);
         ((AppCompatActivity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         ((AppCompatActivity) context).finish();

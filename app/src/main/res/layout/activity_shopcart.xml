@@ -127,17 +127,23 @@
                     android:layout_alignParentBottom="true"
                     android:layout_marginTop="@dimen/_2sdp"/>
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/cart_rvproduct"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:clipToPadding="false"
-                    android:paddingTop="@dimen/_5sdp"/>
+                    android:layout_height="wrap_content">
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/cart_rvpromotion"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/cart_rvproduct"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:paddingTop="@dimen/_5sdp"/>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/cart_rvpromotion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/cart_rvproduct"/>
+                </RelativeLayout>
 
                 <wolve.dms.controls.CInputForm
                     android:id="@+id/cart_note"

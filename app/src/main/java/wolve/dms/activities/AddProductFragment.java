@@ -14,6 +14,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.PermissionChecker;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +34,7 @@ import com.soundcloud.android.crop.Crop;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -113,7 +117,7 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
                 edVolume.setText(product.getString("volume"));
                 edIsPromotion.setText(product.getBoolean("promotion")? Constants.IS_PROMOTION :Constants.NO_PROMOTION);
 
-                if (product.getString("image") != null && !product.getString("image").equals("null") && !product.getString("image").equals("http://lubsolution.com/mydms/staticnull")){
+                if (!Util.checkImageNull(product.getString("image"))){
                     Glide.with(this).load(product.getString("image")).centerCrop().into(imgProduct);
 
                 }else {
@@ -143,6 +147,9 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
         btnBack.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
         imgProduct.setOnClickListener(this);
+        unitPriceEvent();
+        purchasePriceEvent();
+
     }
 
     private void initializeView() {
@@ -254,7 +261,9 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
                     }
                 });
             }else {
-                if (product != null && product.getString("image").startsWith("http")){
+                if (product.getInt("id") ==0){
+                    updateProduct("");
+                }else if (product.getString("image").startsWith("http")){
                     updateProduct(product.getString("image"));
                 }else {
                     updateProduct("");
@@ -297,12 +306,12 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CHOOSE_IMAGE ){
             if (data != null){
-                Crop.of(Uri.parse(data.getData().toString()), imageChangeUri).asSquare().withMaxSize(100,100).start(getActivity(), AddProductFragment.this);
+                Crop.of(Uri.parse(data.getData().toString()), imageChangeUri).asSquare().withMaxSize(200,200).start(getActivity(), AddProductFragment.this);
 
             }
 
         }else if (requestCode == REQUEST_IMAGE_CAPTURE){
-            Crop.of(imageChangeUri, imageChangeUri).asSquare().withMaxSize(100,100).start(getActivity(), AddProductFragment.this);
+            Crop.of(imageChangeUri, imageChangeUri).asSquare().withMaxSize(200,200).start(getActivity(), AddProductFragment.this);
 
         }
         else if (requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
@@ -363,9 +372,12 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
             }}).dispatch();
     }
 
+    private void unitPriceEvent(){
 
+    }
 
+    private void purchasePriceEvent(){
 
-
+    }
 
 }

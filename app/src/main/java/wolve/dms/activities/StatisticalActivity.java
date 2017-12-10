@@ -1,5 +1,7 @@
 package wolve.dms.activities;
 
+import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -7,12 +9,16 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -28,6 +34,8 @@ import wolve.dms.libraries.MySwipeRefreshLayout;
 import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialog;
 import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialogFragment;
 import wolve.dms.models.Bill;
+import wolve.dms.utils.Constants;
+import wolve.dms.utils.MapUtil;
 import wolve.dms.utils.Util;
 
 /**
@@ -36,17 +44,22 @@ import wolve.dms.utils.Util;
 
 public class StatisticalActivity extends BaseActivity implements  View.OnClickListener , SwipeRefreshLayout.OnRefreshListener{
     private ImageView btnBack;
-    private TextView tvTitle, tvDate;
-    private CTextIcon tvIcon;
+    private TextView tvTitle;
     private ViewPager viewPager;
     private TabLayout tabLayout;
     private MySwipeRefreshLayout swipeRefreshLayout;
+    private RadioGroup rdGroup;
+    private RadioButton rdMonth, rdDate;
+    private DatePickerDialog datePickerDialog;
 
     private StatisticalViewpagerAdapter pageAdapter;
     List<Bill> listBill = new ArrayList<>();
     private int[] icons = new int[]{R.string.icon_chart,
             R.string.icon_bill,
             R.string.icon_product_group};
+    private final String MONTH_DEFAULT ="Chọn tháng";
+    private final String DATE_DEFAULT ="Chọn ngày";
+    private String currentDate;
 
 
     @Override
@@ -65,10 +78,10 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         tvTitle = (TextView) findViewById(R.id.statistical_title);
         viewPager = (ViewPager) findViewById(R.id.statistical_viewpager);
         tabLayout = (TabLayout) findViewById(R.id.statistical_tabs);
-        tvDate = (TextView) findViewById(R.id.statistical_date_text);
-        tvIcon = (CTextIcon) findViewById(R.id.statistical_date_icon);
         swipeRefreshLayout = (MySwipeRefreshLayout) findViewById(R.id.statistical_swipelayout);
-
+        rdGroup = findViewById(R.id.statistical_filter);
+        rdMonth = findViewById(R.id.statistical_filter_month);
+        rdDate = findViewById(R.id.statistical_filter_date);
 
     }
 
@@ -82,16 +95,19 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     @Override
     public void addEvent() {
         btnBack.setOnClickListener(this);
-        tvIcon.setOnClickListener(this);
         swipeRefreshLayout.setOnRefreshListener(this);
+        rdMonth.setOnClickListener(this);
+        rdDate.setOnClickListener(this);
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        tvDate.setText(Util.CurrentMonthYear());
-        loadAllCustomer(tvDate.getText().toString(), true);
+        rdMonth.setText(Util.CurrentMonthYear());
+        rdDate.setText(DATE_DEFAULT);
+        currentDate = rdMonth.getText().toString();
+        loadAllCustomer(currentDate, true);
     }
 
     public void setupViewPager(ViewPager viewPager) {
@@ -123,8 +139,21 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
                 break;
 
-            case R.id.statistical_date_icon:
+            case R.id.statistical_filter_month:
+                rdMonth.setText(rdMonth.getText().toString().equals(MONTH_DEFAULT) ? Util.CurrentMonthYear(): rdMonth.getText().toString()) ;
+                rdDate.setText(DATE_DEFAULT);
+                currentDate = rdMonth.getText().toString();
                 monthPicker();
+
+
+                break;
+
+            case R.id.statistical_filter_date:
+                rdMonth.setText(MONTH_DEFAULT);
+                rdDate.setText(rdDate.getText().toString().equals(DATE_DEFAULT) ? Util.CurrentMonthYear(): rdDate.getText().toString()) ;
+//                rdDate.setText(Util.CurrentDayMonthYear());
+                currentDate = rdDate.getText().toString();
+                datePicker();
 
                 break;
 
@@ -132,30 +161,48 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         }
     }
 
-    @Override
-    public void onRefresh() {
-        swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#2196f3"));
-        loadAllCustomer(tvDate.getText().toString(), false);
-    }
+    private void datePicker() {
+        datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
 
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Calendar newDate = Calendar.getInstance();
+                newDate.set(year, monthOfYear, dayOfMonth);
+                rdDate.setText(new SimpleDateFormat("dd-MM-yyyy", Locale.US).format(newDate.getTime()));
+                currentDate = rdDate.getText().toString();
+                loadAllCustomer(currentDate, true);
+
+            }
+
+        },Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+
+        datePickerDialog.show();
+
+
+    }
 
     private void monthPicker() {
         SimpleDatePickerDialogFragment datePickerDialogFragment;
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
-        datePickerDialogFragment = SimpleDatePickerDialogFragment.getInstance(
-                calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH));
+        datePickerDialogFragment = SimpleDatePickerDialogFragment.getInstance(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH));
         datePickerDialogFragment.setOnDateSetListener(new SimpleDatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(int year, int monthOfYear) {
-                tvDate.setText(monthOfYear+1 +"-" + year);
-                loadAllCustomer(tvDate.getText().toString(), true);
+                rdMonth.setText(monthOfYear+1 +"-" + year);
+                currentDate = rdMonth.getText().toString();
+                loadAllCustomer(currentDate, true);
             }
         });
         datePickerDialogFragment.show(getSupportFragmentManager(), null);
     }
 
-    private void loadAllCustomer(String month, Boolean showLoading){
-        CustomerConnect.ListBill(paramDate(month), new CallbackJSONArray() {
+    @Override
+    public void onRefresh() {
+        swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#2196f3"));
+        loadAllCustomer(currentDate, false);
+    }
+
+    private void loadAllCustomer(String param, Boolean showLoading){
+        CustomerConnect.ListBill(paramDate(param), new CallbackJSONArray() {
             @Override
             public void onResponse(JSONArray result) {
                 swipeRefreshLayout.setRefreshing(false);
@@ -180,21 +227,45 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         }, showLoading);
     }
 
-    private String paramDate(String month){
-        String yearNo = month.split("-")[1];
-        String monthStart = month.split("-")[0].length() ==1 ? "0"+month.split("-")[0] : month.split("-")[0];
-        String monthNext = null;
-        int next = Integer.parseInt(monthStart) + 1;
-        if (next == 13){
-            monthNext = "01";
-            yearNo = String.valueOf(Integer.parseInt(yearNo)+1);
-        }else if (String.valueOf(next).length() ==1){
-            monthNext = "0" + String.valueOf(next);
+    private String paramDate(String datemonth){
+        String result ="&billingFrom=%s&billingTo=%s";
+
+        if (datemonth.split("-").length ==2){
+            String yearStart = datemonth.split("-")[1];
+            String yearNext = datemonth.split("-")[1];
+            String monthStart = datemonth.split("-")[0].length() ==1 ? "0"+datemonth.split("-")[0] : datemonth.split("-")[0];
+            String monthNext = null;
+            int next = Integer.parseInt(monthStart) + 1;
+
+            if (next == 13){
+                monthNext = "01";
+                yearNext = String.valueOf(Integer.parseInt(yearNext)+1);
+
+            }else if (String.valueOf(next).length() ==1){
+                monthNext = "0" + String.valueOf(next);
+            }else {
+                monthNext = String.valueOf(next);
+            }
+            result = String.format(result, Util.TimeStamp1("01-"+ monthStart +"-" + yearStart) ,Util.TimeStamp1("01-"+ monthNext +"-" + yearNext));
+
         }else {
-            monthNext = String.valueOf(next);
+            long startDate =  Util.TimeStamp1(datemonth);
+            long nextDate = Util.TimeStamp1(datemonth) + 86400000;
+            result = String.format(result, startDate, nextDate);
+
         }
 
-        return "&billingFrom="+ Util.TimeStamp1("01-"+ monthStart +"-" + yearNo) + "&billingTo="+ Util.TimeStamp1("01-"+ monthNext +"-" + yearNo);
+
+        return result;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data.getStringExtra(Constants.CUSTOMER) != null && requestCode == Constants.RESULT_CUSTOMER_ACTIVITY){
+            //reloadData();
+        }
+
 
     }
 

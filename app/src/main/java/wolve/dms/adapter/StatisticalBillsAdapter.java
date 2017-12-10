@@ -44,7 +44,7 @@ public class StatisticalBillsAdapter extends RecyclerView.Adapter<StatisticalBil
         Collections.sort(mData, new Comparator<Bill>(){
             @Override
             public int compare(Bill lhs, Bill rhs) {
-                return lhs.getDouble("updateAt").compareTo(rhs.getDouble("updateAt"));
+                return lhs.getDouble("createAt").compareTo(rhs.getDouble("createAt"));
             }
         });
         Collections.reverse(mData);
@@ -64,8 +64,8 @@ public class StatisticalBillsAdapter extends RecyclerView.Adapter<StatisticalBil
 
             final Customer customer = new Customer(mData.get(position).getJsonObject("customer"));
 
-            holder.tvDate.setText(Util.DateString(mData.get(position).getLong("updateAt")));
-            holder.tvHour.setText(Util.HourString(mData.get(position).getLong("updateAt")));
+            holder.tvDate.setText(Util.DateString(mData.get(position).getLong("createAt")));
+            holder.tvHour.setText(Util.HourString(mData.get(position).getLong("createAt")));
             holder.tvTotal.setText("Tổng: "+ Util.FormatMoney(mData.get(position).getDouble("total")));
             holder.tvPay.setText("Trả: "+ Util.FormatMoney(mData.get(position).getDouble("paid")));
             holder.tvDebt.setText("Nợ: "+ Util.FormatMoney(mData.get(position).getDouble("debt")));

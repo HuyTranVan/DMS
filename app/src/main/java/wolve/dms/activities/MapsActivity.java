@@ -1,6 +1,9 @@
 package wolve.dms.activities;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
@@ -42,6 +45,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -55,6 +59,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
@@ -173,9 +178,10 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         switch (view.getId()){
             case R.id.map_current_location:
                 mMap.setOnCameraMoveListener(MapsActivity.this);
+                MapUtil.resetMarker();
                 triggerCurrentLocation(new LatLng(getCurLocation().getLatitude(), getCurLocation().getLongitude()), 16);
-                loadAllCustomerDependLocation(true, getCurLocation().getLatitude(), getCurLocation().getLongitude());
                 mSpinner.setSelection(0);
+
                 break;
 
             case R.id.map_new_repair:
@@ -215,16 +221,13 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
         if (getCurLocation() != null){
-            triggerCurrentLocation(new LatLng(getCurLocation().getLatitude(), getCurLocation().getLongitude()), 15);
-            final Handler h = new Handler();
-            h.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    loadAllCustomerDependLocation(true, getCurLocation().getLatitude(), getCurLocation().getLongitude());
-                }
-            }, 500);
+            MapUtil.resetMarker();
+            LatLng latLng = new LatLng(getCurLocation().getLatitude(), getCurLocation().getLongitude());
+            currentMarker = mMap.addMarker(new MarkerOptions().anchor(0.5f, 0.5f).position(latLng).flat(true).icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_location)));
+
+            //addCurrentMarker();
+            triggerCurrentLocation(latLng, 15);
         }
 
         mMap.setInfoWindowAdapter(new CustomWindowAdapter());
@@ -244,6 +247,14 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
 
 
     }
+
+//    private void addCurrentMarker(){
+//        //mMap.clear();
+//        MapUtil.resetMarker();
+//
+//        //LatLng currentPoint = new LatLng(Util.getInstance().getCurrentLocation().getLatitude(), Util.getInstance().getCurrentLocation().getLongitude());
+//        //currentMarker = mMap.addMarker(new MarkerOptions().anchor(0.5f, 0.5f).position(currentPoint).flat(true).icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_location)));
+//    }
 
     @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == Constants.REQUEST_PERMISSION_LOCATION) {
@@ -283,11 +294,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
                 int windowHeight = Util.getWindowSize().heightPixels;
                 if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
                     MapUtil.changeFragmentHeight(mapFragment, windowHeight - (int) Util.convertDp2Px(57));
-                    MapUtil.getInstance().reboundMap();
+                    MapUtil.reboundMap(mMap);
 
                 } else if(newState == BottomSheetBehavior.STATE_EXPANDED) {
                     MapUtil.changeFragmentHeight(mapFragment, windowHeight - Math.round(bottomSheetHeight));
-                    MapUtil.getInstance().reboundMap();
+                    MapUtil.reboundMap(mMap);
 
                 } else if (newState == BottomSheetBehavior.STATE_HIDDEN) {
                     MapUtil.changeFragmentHeight(mapFragment, windowHeight);
@@ -298,7 +309,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
             @Override
             public void onSlide(View bottomSheet, float slideOffset) {
                 Util.changeFragmentHeight(mapFragment, Math.round(Util.getWindowSize().heightPixels - bottomSheetHeight * slideOffset));
-                MapUtil.getInstance().reboundMap();
+                MapUtil.getInstance().reboundMap(mMap);
 
             }
         });
@@ -479,29 +490,20 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     }
 
     private void loadAllCustomer(String district, final String isAll){
+        progressLoading.setVisibility(View.VISIBLE);
         String param = "district="+ Util.encodeString(district);
         CustomerConnect.ListCustomer(param, new CallbackJSONArray() {
             @Override
             public void onResponse(JSONArray result) {
+                progressLoading.setVisibility(View.GONE);
                 try {
                     listCustomer = new ArrayList<Customer>();
                     for (int i=0; i<result.length(); i++){
-
-                        Customer customer = new Customer(result.getJSONObject(i));
-                        int customerStatus = new JSONObject(customer.getString("status")).getInt("id");
-                        customer.put("checkinCount", new JSONArray(customer.getString("checkIns")).length());
-
-                        if (customerStatus ==1){
-                            customer.put("icon", R.drawable.ico_pin_red);
-                        }else if (customerStatus == 2){
-                            customer.put("icon", R.drawable.ico_pin_grey);
-                        }else {
-                            customer.put("icon", R.drawable.ico_pin_blue);
-
-                        }
-                        listCustomer.add(customer);
+                        listCustomer.add(setCustomerMarker(new Customer(result.getJSONObject(i))));
 
                     }
+
+                    MapUtil.resetMarker();
                     addMarkertoMap(true,listCustomer, isAll, true);
                     createRVCustomer(listCustomer);
 
@@ -513,9 +515,34 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
 
             @Override
             public void onError(String error) {
-
+                progressLoading.setVisibility(View.GONE);
             }
         }, true);
+    }
+
+    private Customer setCustomerMarker(Customer customer){
+        Customer currentCustomer = customer;
+        try {
+            int customerStatus = new JSONObject(currentCustomer.getString("status")).getInt("id");
+//            currentCustomer.put("checkincount", new JSONArray(currentCustomer.getString("checkIns")).length());
+            currentCustomer.put("checkincount", currentCustomer.getInt("checkinCount"));
+            currentCustomer.put("status", customerStatus);
+
+            if (customerStatus ==1){
+                currentCustomer.put("icon", R.drawable.ico_pin_red);
+            }else if (customerStatus == 2){
+                currentCustomer.put("icon", R.drawable.ico_pin_grey);
+            }else {
+                currentCustomer.put("icon", R.drawable.ico_pin_blue);
+
+            }
+
+
+        } catch (JSONException e) {
+
+        }
+
+        return currentCustomer;
     }
 
     private void loadAllCustomerDependLocation(final Boolean clearMap, Double lat , Double lng){
@@ -528,19 +555,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
                 try {
                     listCustomer = new ArrayList<Customer>();
                     for (int i=0; i<result.length(); i++){
-                        Customer customer = new Customer(result.getJSONObject(i));
-                        int customerStatus = new JSONObject(customer.getString("status")).getInt("id");
-                        customer.put("checkinCount", new JSONArray(customer.getString("checkIns")).length());
-
-                        if (customerStatus ==1){
-                            customer.put("icon", R.drawable.ico_pin_red);
-                        }else if (customerStatus == 2){
-                            customer.put("icon", R.drawable.ico_pin_grey);
-                        }else {
-                            customer.put("icon", R.drawable.ico_pin_blue);
-
-                        }
-                        listCustomer.add(customer);
+                        listCustomer.add(setCustomerMarker(new Customer(result.getJSONObject(i))));
                     }
                     addMarkertoMap(clearMap,listCustomer, getCheckedFilter(), false);
                     createRVCustomer(listCustomer);
@@ -585,7 +600,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         if (data.getStringExtra(Constants.CUSTOMER) != null && requestCode == Constants.RESULT_CUSTOMER_ACTIVITY){
             try {
                 Customer customer =new Customer(new JSONObject(data.getStringExtra(Constants.CUSTOMER)));
-                MapUtil.showUpdatedMarker(mMap, customer);
+                MapUtil.showUpdatedMarker(mMap, setCustomerMarker(customer));
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -613,14 +628,14 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
                 double lng = t * toPosition.longitude + (1 - t) * startLatLng.longitude;
                 double lat = t * toPosition.latitude + (1 - t) * startLatLng.latitude;
                 LatLng newLatLng = new LatLng(lat, lng);
-                Log.d(Constants.DMS_LOGS, "Moving to" + newLatLng);
+                Log.e(Constants.DMS_LOGS, "Moving to" + newLatLng);
                 if (currentMarker != null && currentMarker.isVisible()){
                     currentMarker.setPosition(newLatLng);
                 }
 
 
                 if (t < 1.0) {
-                    handler.postDelayed(this, 5000);
+                    handler.postDelayed(this, 16);
                 }
 
             }
@@ -667,25 +682,29 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
         switch (checkedId){
             case R.id.map_filter_all:
-                addMarkertoMap(false,listCustomer, Constants.MARKER_ALL, true);
+                tvCount.setText(MapUtil.updateCustomerFilter(Constants.MARKER_ALL));
 
                 break;
 
             case R.id.map_filter_interested:
-                addMarkertoMap(false, listCustomer, Constants.MARKER_INTERESTED, true);
+                tvCount.setText(MapUtil.updateCustomerFilter(Constants.MARKER_INTERESTED));
+
                 break;
 
             case R.id.map_filter_ordered:
-                addMarkertoMap(false, listCustomer, Constants.MARKER_ORDERED, true);
+                tvCount.setText(MapUtil.updateCustomerFilter(Constants.MARKER_ORDERED));
+
                 break;
         }
     }
 
     private void addMarkertoMap(Boolean clearMap, ArrayList<Customer> list, String filter, Boolean isBound){
-        mMap.clear();
-        LatLng currentPoint = new LatLng(Util.getInstance().getCurrentLocation().getLatitude(), Util.getInstance().getCurrentLocation().getLongitude());
-        currentMarker = mMap.addMarker(new MarkerOptions().anchor(0.5f, 0.5f).position(currentPoint).flat(true).icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_location)));
-        tvCount.setText(MapUtil.getInstance().addListMarkerToMap(clearMap, mMap, list, filter, isBound));
+        //mMap.clear();
+//        LatLng currentPoint = new LatLng(Util.getInstance().getCurrentLocation().getLatitude(), Util.getInstance().getCurrentLocation().getLongitude());
+        tvCount.setText(MapUtil.addListMarkerToMap(clearMap, mMap, list, filter, isBound));
+//        if (clearMap){
+//            currentMarker = mMap.addMarker(new MarkerOptions().anchor(0.5f, 0.5f).position(currentPoint).flat(true).icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_location)));
+//        }
 
     }
 
@@ -746,7 +765,9 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     @Override
     public boolean onMarkerClick(Marker marker) {
         mMap.setOnCameraMoveListener(null);
-        marker.showInfoWindow();
+        if (marker.getTag() != null){
+            marker.showInfoWindow();
+        }
 
         return true;
     }

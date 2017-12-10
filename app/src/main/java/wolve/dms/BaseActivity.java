@@ -26,6 +26,8 @@ import android.view.KeyEvent;
 import com.google.android.gms.maps.model.LatLng;
 import com.orhanobut.dialogplus.DialogPlus;
 
+import wolve.dms.activities.AddProdGroupFragment;
+import wolve.dms.activities.AddProductFragment;
 import wolve.dms.activities.MapsActivity;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.utils.Constants;
@@ -73,8 +75,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         FragmentTransaction manager = this.getSupportFragmentManager().beginTransaction();
 
         if(isAnimation){
-            manager.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,R.anim.slide_in_left, R.anim.slide_out_right);
-
+//            manager.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,R.anim.slide_in_left, R.anim.slide_out_right);
+            manager.setCustomAnimations(R.anim.slide_up, R.anim.slide_down,R.anim.slide_in_bottom, R.anim.slide_out_bottom);
         }
 
         manager.replace(setIdContainer(), fragment, tag)
@@ -136,7 +138,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         @Override
         public void onLocationChanged(final Location location) {
 
-            if (Util.getInstance().getCurrentActivity().getLocalClassName().equals("activity.MapsActivity") ){
+            if (Util.getInstance().getCurrentActivity().getLocalClassName().equals("activities.MapsActivity") ){
                 if (Util.getInstance().getCurrentLocation() != null){
                     Util.mapsActivity.animateMarker(
                             new LatLng(Util.getInstance().getCurrentLocation().getLatitude(), Util.getInstance().getCurrentLocation().getLongitude()) ,
@@ -284,6 +286,44 @@ public abstract class BaseActivity extends AppCompatActivity {
                 Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
 
                 break;
+
+            case "activities.ProductGroupActivity":
+                Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.product_parent);
+                if(mFragment != null && mFragment instanceof AddProdGroupFragment
+                        ||mFragment != null && mFragment instanceof AddProductFragment) {
+                    getSupportFragmentManager().popBackStack();
+                }else {
+                    Transaction.gotoHomeActivityRight(true);
+                }
+
+                break;
+
+
+            case "activities.ProductActivity":
+                mFragment = getSupportFragmentManager().findFragmentById(R.id.product_parent);
+                if(mFragment != null && mFragment instanceof AddProdGroupFragment
+                        ||mFragment != null && mFragment instanceof AddProductFragment) {
+                    getSupportFragmentManager().popBackStack();
+                }else {
+                    Transaction.gotoHomeActivityRight(true);
+                }
+
+                break;
+
+            case "activities.StatusActivity":
+                mFragment = getSupportFragmentManager().findFragmentById(R.id.product_parent);
+                if(mFragment != null && mFragment instanceof AddProdGroupFragment
+                        ||mFragment != null && mFragment instanceof AddProductFragment) {
+                    getSupportFragmentManager().popBackStack();
+                }else {
+                    Transaction.gotoHomeActivityRight(true);
+                }
+
+                break;
+
+
+
+
 
         }
     }

@@ -38,8 +38,9 @@ import wolve.dms.utils.Util;
 
 public class ProductConnect {
 
-    public static void ListProductGroup(final CallbackJSONArray listener, final Boolean stopLoading){
-        Util.getInstance().showLoading();
+    public static void ListProductGroup(Boolean loading, final CallbackJSONArray listener, final Boolean stopLoading){
+        if (loading)
+            Util.getInstance().showLoading();
 
         String url = Api_link.PRODUCT_GROUPS+ String.format(Api_link.PRODUCTGROUPS_PARAM, 1,10);
 

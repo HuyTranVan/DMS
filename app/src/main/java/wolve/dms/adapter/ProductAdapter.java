@@ -79,7 +79,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
             holder.tvPrice.setText(Util.FormatMoney(mData.get(position).getDouble("unitPrice")));
             holder.tvGroup.setText(new JSONObject(mData.get(position).getString("productGroup")).getString("name"));
             holder.tvGift.setVisibility(mData.get(position).getBoolean("promotion")?View.VISIBLE : View.GONE);
-            if (mData.get(position).getString("image") != null && !mData.get(position).getString("image").equals("null") && !mData.get(position).getString("image").equals("http://lubsolution.com/mydms/staticnull")){
+            if (!Util.checkImageNull(mData.get(position).getString("image"))){
                 Glide.with(mContext).load(mData.get(position).getString("image")).centerCrop().into(holder.imageProduct);
 
             }else {

@@ -15,6 +15,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import wolve.dms.R;
@@ -49,7 +50,13 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mDelete = mDelete;
         this.mUpdate = mUpdate;
+        Collections.sort(mData, new Comparator<Bill>(){
+            public int compare(Bill obj1, Bill obj2) {
+                return obj1.getString("createAt").compareToIgnoreCase(obj2.getString("createAt"));
+            }
+        });
         Collections.reverse(mData);
+
     }
 
     @Override
@@ -64,11 +71,17 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
 //            holder.lnParent.setBackground(( position % 2 ) == 0 ?  mContext.getResources().getDrawable(R.drawable.colorgrey_corner):
 //                    mContext.getResources().getDrawable(R.drawable.colorwhite_bordergrey_corner));
 
-            holder.tvDate.setText(Util.DateString(mData.get(position).getLong("updateAt")));
-            holder.tvHour.setText(Util.HourString(mData.get(position).getLong("updateAt")));
+            holder.tvDate.setText(Util.DateString(mData.get(position).getLong("createAt")));
+            holder.tvHour.setText(Util.HourString(mData.get(position).getLong("createAt")));
             holder.tvTotal.setText("Tổng: "+ Util.FormatMoney(mData.get(position).getDouble("total")));
             holder.tvPay.setText("Trả: "+ Util.FormatMoney(mData.get(position).getDouble("paid")));
             holder.tvDebt.setText("Nợ: "+ Util.FormatMoney(mData.get(position).getDouble("debt")));
+            if (mData.get(position).getString("note").equals("")){
+                holder.tvNote.setVisibility(View.GONE);
+            }else {
+                holder.tvNote.setVisibility(View.VISIBLE);
+                holder.tvNote.setText(mData.get(position).getString("note"));
+            }
 
             JSONArray arrayBillDetail = new JSONArray(mData.get(position).getString("billDetails"));
             List<BillDetail> listBillDetail = new ArrayList<>();
@@ -130,15 +143,22 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
                             public void OnRespone(Double total, Double pay) {
                                 try {
                                     JSONObject params = new JSONObject();
-                                    params.put("debt", total - pay);
-                                    params.put("total", total);
-                                    params.put("paid", pay);
+//                                    params.put("createAt",mData.get(position).getLong("createAt"));
+//                                    params.put("updateAt",mData.get(position).getLong("updateAt"));
+                                    params.put("debt", mData.get(position).getDouble("total") - mData.get(position).getDouble("paid") - pay);
+                                    params.put("total", mData.get(position).getDouble("total"));
+                                    params.put("paid", mData.get(position).getDouble("paid") + pay);
                                     params.put("id", mData.get(position).getInt("id"));
                                     params.put("customerId", new JSONObject(mData.get(position).getString("customer")).getString("id"));
                                     params.put("distributorId", Distributor.getCurrentDistributorId());
                                     params.put("userId", User.getUserId());
-//                            params.put("note", bill.getString("note") + Util.CurrentTimeStamp() + " trả " + Util.FormatMoney(pay));
-                                    params.put("note", "billlll");
+//                            params.put("note", "test .hoa");
+                                    if (mData.get(position).getString("note").equals("")){
+                                        params.put("note", String.format("%s tra %s", Util.CurrentMonthYearHour() , Util.FormatMoney(pay)));
+                                    }else {
+                                        params.put("note", mData.get(position).getString("note") + String.format("\n%s tra %s", Util.CurrentMonthYearHour() , Util.FormatMoney(pay)));
+                                    }
+
 
                                     params.put("billDetails", null);
                                     CustomerConnect.PostBill(params.toString(), new CallbackJSONObject() {
@@ -149,6 +169,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
                                                 mData.get(position).put("debt", result.getDouble("debt"));
                                                 mData.get(position).put("total", result.getDouble("total"));
                                                 mData.get(position).put("paid", result.getDouble("paid"));
+                                                mData.get(position).put("note", result.getString("note"));
                                                 notifyItemChanged(position);
 
                                                 mUpdate.onUpdate(mData.get(position), position);
@@ -192,7 +213,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
     }
 
     public class CustomerBillsAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvDate, tvHour, tvPay, tvDebt, tvTotal;
+        private TextView tvDate, tvHour, tvPay, tvDebt, tvTotal, tvNote;
         private RecyclerView rvBillDetail;
         private CTextIcon tvicon;
         private View vLineUpper, vLineUnder;
@@ -211,6 +232,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
             vLineUpper = (View) itemView.findViewById(R.id.bills_item_upper);
             lnParent = (LinearLayout) itemView.findViewById(R.id.bills_item_content_parent);
             tvicon = (CTextIcon) itemView.findViewById(R.id.bills_item_icon);
+            tvNote = itemView.findViewById(R.id.bills_item_note);
 
         }
 

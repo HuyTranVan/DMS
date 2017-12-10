@@ -32,12 +32,13 @@
         android:layout_height="wrap_content"
         android:background="@color/colorWhite"
         android:clipToPadding="false"
+        android:layout_marginBottom="@dimen/_32sdp"
         android:paddingTop="@dimen/_10sdp"
         android:paddingBottom="@dimen/_5sdp"/>
 
     <include android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_below="@+id/dialog_choice_product_rvProduct"
+        android:layout_alignParentBottom="true"
         layout="@layout/view_bottom_dialog_button"/>
 
 </RelativeLayout>

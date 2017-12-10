@@ -45,6 +45,7 @@
 
     <application
         android:name=".DMSApplication"
+        android:configChanges="layoutDirection|locale"
         android:allowBackup="true"
         android:icon="@drawable/ic_app"
         android:label="@string/app_name"
@@ -106,6 +107,14 @@
 
         <activity
             android:name=".activities.ProductActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/FullScreen"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+
+
+        <activity
+            android:name=".activities.ProductGroupActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/FullScreen"

@@ -55,9 +55,10 @@ public class MapUtil{
     private int step;
     public Marker currentMarker;
     private int currentStep;
-    private GoogleMap currentMap;
-    public static List<Marker> markers = new ArrayList<>();
-    public int count =0;
+    //private GoogleMap currentMap;
+    public static List<Marker> markers;
+    public static List<Customer> customers ;
+    public static int count =0;
 
     public static synchronized MapUtil getInstance() {
         if (util == null)
@@ -66,7 +67,13 @@ public class MapUtil{
         return util;
     }
 
-    public void reboundMap() {
+    public static void resetMarker(){
+        customers = new ArrayList<>();
+        markers = new ArrayList<>();
+        count =0;
+    }
+
+    public static void reboundMap(GoogleMap mMap) {
         if (markers.size() >= 1) {
             LatLngBounds.Builder builder = new LatLngBounds.Builder();
             for (Marker marker : markers) {
@@ -76,7 +83,7 @@ public class MapUtil{
 
             int padding = 50; // offset from edges of the map in pixels
             CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-            currentMap.moveCamera(cu);
+            mMap.moveCamera(cu);
         }
 
     }
@@ -174,72 +181,102 @@ public class MapUtil{
         return objectResult;
     }
 
-    public String addListMarkerToMap(Boolean clearMap, final GoogleMap mMap, final ArrayList<Customer> listCustomer, String filter, Boolean isBound) {
-        currentMap = mMap;
-        List<Customer> currentCustomers = new ArrayList<>();
-//        if (clearMap){
-//            markers = new ArrayList<>();
-//            currentCustomers = listCustomer;
-//        }else {
-//            for (int a = 0; a< markers.size() ; a++){
-//                if (Integer.parseInt(markers.get(a).getSnippet()) != listCustomer.get(i).getInt("id"))
-//            }
-//        }
+    public static String addListMarkerToMap(Boolean clearMap, final GoogleMap mMap, final ArrayList<Customer> listCustomer, String filter, Boolean isBound) {
+        if (clearMap){
+            resetMarker();
+            //mMap.clear();
+            customers = listCustomer;
 
-
-        for (int i = 0; i < listCustomer.size(); i++) {
-
-            try {
-                {
-                    Customer customer = listCustomer.get(i);
-
-                    if (filter.equals(Constants.MARKER_ALL)){
-                        addMarkerToMap(mMap, customer);
+            for (int i = 0; i < customers.size(); i++) {
+                switch (filter){
+                    case Constants.MARKER_ALL:
+                        addMarkerToMap(mMap, customers.get(i), true);
                         count +=1;
+                        break;
 
-                    }else if (filter.equals(Constants.MARKER_INTERESTED)){
-                        int markertype = new JSONObject(customer.getString("status")).getInt("id");
-                        if (markertype == 1 || markertype == 3){
-                            addMarkerToMap(mMap, customer);
+                    case Constants.MARKER_INTERESTED:
+                        if (customers.get(i).getInt("status") == 1 || customers.get(i).getInt("status") == 3){
+                            addMarkerToMap(mMap, customers.get(i), true);
                             count +=1;
+                        }else {
+                            addMarkerToMap(mMap, listCustomer.get(i), false);
                         }
-                    }else if (filter.equals(Constants.MARKER_ORDERED)){
-                        int markertype = new JSONObject(customer.getString("status")).getInt("id");
-                        if (markertype == 3){
-                            addMarkerToMap(mMap, customer);
+                        break;
+
+                    case Constants.MARKER_ORDERED:
+                        if (customers.get(i).getInt("status") == 3){
+                            addMarkerToMap(mMap, customers.get(i), true);
                             count +=1;
+                        }else {
+                            addMarkerToMap(mMap, listCustomer.get(i), false);
                         }
-                    }
+                        break;
                 }
-                for (int j=0; j<markers.size(); j++){
-
-                }
-
-
-
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
 
+        }else {
+            for (int a=0; a<listCustomer.size(); a++){
+                List<Customer> tempCustomers = customers;
+
+                Boolean check = false;
+                for (int b=0; b<tempCustomers.size(); b++){
+                    int nu1 = listCustomer.get(a).getInt("id");
+                    int nu2 = tempCustomers.get(b).getInt("id");
+                    if (nu1 == nu2){
+                        check = true;
+                        break;
+                    }
+                }
+
+                if (!check){
+                    customers.add(listCustomer.get(a));
+                    switch (filter){
+                        case Constants.MARKER_ALL:
+                            addMarkerToMap(mMap, listCustomer.get(a), true);
+                            count +=1;
+                            break;
+
+                        case Constants.MARKER_INTERESTED:
+                            if (listCustomer.get(a).getInt("status") == 1 || listCustomer.get(a).getInt("status") == 3){
+                                addMarkerToMap(mMap, listCustomer.get(a), true);
+                                count +=1;
+                            }else {
+                                addMarkerToMap(mMap, listCustomer.get(a), false);
+                            }
+                            break;
+
+                        case Constants.MARKER_ORDERED:
+                            if (listCustomer.get(a).getInt("status") == 3){
+                                addMarkerToMap(mMap, listCustomer.get(a), true);
+                                count +=1;
+                            }else {
+                                addMarkerToMap(mMap, listCustomer.get(a), false);
+                            }
+                            break;
+                    }
+                }
+
+            }
         }
 
         if (isBound){
-            reboundMap();
+            reboundMap(mMap);
         }
 
-        return String.format("%d/%d",count, listCustomer.size());
+        return String.format("%d/%d",count, customers.size());
     }
 
-    public static Marker addMarkerToMap(GoogleMap mMap, Customer customer ){
+    public static Marker addMarkerToMap(GoogleMap mMap, Customer customer , Boolean isShow){
         Marker currentMarker = null;
-        LatLng markerPosition = new LatLng(customer.getDouble("lat"), customer.getDouble("lng"));
 
+        LatLng markerPosition = new LatLng(customer.getDouble("lat"), customer.getDouble("lng"));
         currentMarker = mMap.addMarker(new MarkerOptions().position(markerPosition));
-        Bitmap bitmap = GetBitmapMarker(Util.getInstance().getCurrentActivity(), customer.getInt("icon"), customer.getString("checkinCount"), R.color.pin_waiting);
+        Bitmap bitmap = GetBitmapMarker(Util.getInstance().getCurrentActivity(), customer.getInt("icon"), customer.getString("checkincount"), R.color.pin_waiting);
         currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
         currentMarker.setTag(customer.CustomerJSONObject());
         currentMarker.setSnippet(customer.getString("id"));
 
+        currentMarker.setVisible(isShow);
         markers.add(currentMarker);
 
         return currentMarker;
@@ -281,7 +318,7 @@ public class MapUtil{
                     if (object.getString("id").equals(customer.getString("id"))){
                         markers.get(i).remove();
 
-                        Marker marker = addMarkerToMap(mMap, customer);
+                        Marker marker = addMarkerToMap(mMap, customer, true);
                         marker.showInfoWindow();
 
 
@@ -296,16 +333,87 @@ public class MapUtil{
         }
 
         if (isNew){
-            Marker marker = addMarkerToMap(mMap, customer);
+            Marker marker = addMarkerToMap(mMap, customer, true);
             marker.showInfoWindow();
             isNew = false;
         }
+    }
+
+    public static void removeMarker(){
+        markers = new ArrayList<>();
+//        for (int i=0; i<markers.size(); i++){
+//            markers.
+//        }
     }
 
     public static void changeFragmentHeight(Fragment fragment, int height) {
         ViewGroup.LayoutParams params = fragment.getView().getLayoutParams();
         params.height = height;
         fragment.getView().setLayoutParams(params);
+    }
+
+    public static String updateCustomerFilter(String filter){
+        switch (filter){
+            case Constants.MARKER_ALL:
+                for (int i=0; i<markers.size(); i++){
+                    if (!markers.get(i).isVisible()){
+                        markers.get(i).setVisible(true);
+                    }
+                }
+
+                break;
+
+            case Constants.MARKER_INTERESTED:
+                for (int i=0; i<markers.size(); i++){
+                    try {
+                        if (markers.get(i).getTag() != null){
+                            JSONObject object = new JSONObject(markers.get(i).getTag().toString());
+                            if (object.getInt("status") !=1 && object.getInt("status") !=3){
+                                markers.get(i).setVisible(false);
+                                //count -=1;
+
+                            }else if (!markers.get(i).isVisible()){
+                                markers.get(i).setVisible(true);
+                                //count +=1;
+                            }
+                        }
+
+                    } catch (JSONException e) {
+//                e.printStackTrace();
+                    }
+                }
+
+                break;
+
+            case Constants.MARKER_ORDERED:
+                for (int i=0; i<markers.size(); i++){
+                    try {
+                        if (markers.get(i).getTag() != null){
+                            JSONObject object = new JSONObject(markers.get(i).getTag().toString());
+                            if (object.getInt("status") !=3){
+                                markers.get(i).setVisible(false);
+                                //count -=1;
+
+                            }else if (!markers.get(i).isVisible()){
+                                markers.get(i).setVisible(true);
+                                //count +=1;
+                            }
+                        }
+
+                    } catch (JSONException e) {
+//                e.printStackTrace();
+                    }
+                }
+
+                break;
+        }
+        count =0;
+        for (int i=0; i<markers.size(); i++){
+            if (markers.get(i).isVisible()){
+                count +=1;
+            }
+        }
+        return String.format("%d/%d",count, customers.size());
     }
 
 }

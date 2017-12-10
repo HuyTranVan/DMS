@@ -542,6 +542,10 @@ public class Util {
         return new SimpleDateFormat("MM-yyyy").format(Calendar.getInstance().getTime());
     }
 
+    public static String CurrentDayMonthYear(){
+        return new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
+    }
+
     public static String CurrentMonthYearHour(){
         return new SimpleDateFormat("dd-MM-yyyy  HH:mm").format(Calendar.getInstance().getTime());
     }
@@ -878,6 +882,64 @@ public class Util {
             dmf.setGroupingSize(3);
             return dmf.format(price);
         }
+    }
+
+    public static Boolean checkImageNull(String imglink){
+        Boolean check = true;
+        if (imglink!= null && !imglink.equals("null") && !imglink.equals("http://lubsolution.com/mydms/staticnull") && !imglink.equals("http://lubsolution.com/mydms/static") && !imglink.equals("")){
+            check = false;
+        }else {
+            check = true;
+        }
+
+        return check;
+    }
+
+    public static String PhoneFormat(String phone) {
+        String currentPhone ="";
+
+        switch (phone.replace(".","").length()) {
+            case 5:
+                currentPhone = phone.subSequence(0, 4) + "." + phone.subSequence(4, 5);
+                break;
+
+            case 6:
+                currentPhone = phone.subSequence(0, 4) + "." + phone.subSequence(4, 6);
+                break;
+
+            case 7:
+                currentPhone = phone.subSequence(0, 4) + "." + phone.subSequence(4, 7);
+                break;
+
+            case 8:
+                currentPhone = phone.subSequence(0, 4) + "." + phone.subSequence(4, 7)+ "." + phone.subSequence(7, 8);
+                break;
+
+            case 9:
+                currentPhone = phone.subSequence(0, 4) + "." + phone.subSequence(4, 7)+ "." + phone.subSequence(7, 9);
+                break;
+
+            case 10:
+                currentPhone = phone.subSequence(0, 4) + "." + phone.subSequence(4, 7) + "." + phone .subSequence(7, 10);
+                break;
+
+            case 11:
+                currentPhone = phone.subSequence(0, 5) + "." + phone.subSequence(5, 8) + "." + phone .subSequence(8, 11);
+                break;
+
+            default:
+                currentPhone = phone;
+                break;
+        }
+
+        return currentPhone;
+    }
+
+    public static boolean isEmpty(EditText etText) {
+        if (etText.getText().toString().trim().length() > 0)
+            return false;
+
+        return true;
     }
 
 
