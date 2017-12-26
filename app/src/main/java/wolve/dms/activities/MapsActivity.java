@@ -72,12 +72,15 @@ import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.models.Customer;
+import wolve.dms.models.Distributor;
 import wolve.dms.models.District;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.MapUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.utils.MapUtil.removeMarker;
 
 /**
  * Created by macos on 9/14/17.
@@ -178,7 +181,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         switch (view.getId()){
             case R.id.map_current_location:
                 mMap.setOnCameraMoveListener(MapsActivity.this);
-                MapUtil.resetMarker();
+                //MapUtil.resetMarker();
                 triggerCurrentLocation(new LatLng(getCurLocation().getLatitude(), getCurLocation().getLongitude()), 16);
                 mSpinner.setSelection(0);
 
@@ -247,14 +250,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
 
 
     }
-
-//    private void addCurrentMarker(){
-//        //mMap.clear();
-//        MapUtil.resetMarker();
-//
-//        //LatLng currentPoint = new LatLng(Util.getInstance().getCurrentLocation().getLatitude(), Util.getInstance().getCurrentLocation().getLongitude());
-//        //currentMarker = mMap.addMarker(new MarkerOptions().anchor(0.5f, 0.5f).position(currentPoint).flat(true).icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_location)));
-//    }
 
     @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == Constants.REQUEST_PERMISSION_LOCATION) {
@@ -499,7 +494,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
                 try {
                     listCustomer = new ArrayList<Customer>();
                     for (int i=0; i<result.length(); i++){
-                        listCustomer.add(setCustomerMarker(new Customer(result.getJSONObject(i))));
+                        JSONObject object = result.getJSONObject(i);
+                        if (object.getJSONObject("distributor").getString("id").equals(Distributor.getDistributorId()) || Distributor.getLocation().contains(object.getString("district"))){
+                            listCustomer.add(setCustomerMarker(new Customer(object)));
+
+                        }
 
                     }
 
@@ -555,7 +554,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
                 try {
                     listCustomer = new ArrayList<Customer>();
                     for (int i=0; i<result.length(); i++){
-                        listCustomer.add(setCustomerMarker(new Customer(result.getJSONObject(i))));
+                        JSONObject object = result.getJSONObject(i);
+                        if (object.getJSONObject("distributor").getString("id").equals(Distributor.getDistributorId()) || Distributor.getLocation().contains(object.getString("district"))){
+                            listCustomer.add(setCustomerMarker(new Customer(object)));
+
+                        }
                     }
                     addMarkertoMap(clearMap,listCustomer, getCheckedFilter(), false);
                     createRVCustomer(listCustomer);
@@ -596,15 +599,22 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        mMap.setOnCameraMoveListener(MapsActivity.this);
         if (data.getStringExtra(Constants.CUSTOMER) != null && requestCode == Constants.RESULT_CUSTOMER_ACTIVITY){
-            try {
-                Customer customer =new Customer(new JSONObject(data.getStringExtra(Constants.CUSTOMER)));
-                MapUtil.showUpdatedMarker(mMap, setCustomerMarker(customer));
+            String responseString = data.getStringExtra(Constants.CUSTOMER);
 
-            } catch (JSONException e) {
-                e.printStackTrace();
+            if (responseString.startsWith("delete")){
+                removeMarker(responseString.split("-")[1]);
+            }else {
+                try {
+                    Customer customer =new Customer(new JSONObject(responseString));
+                    MapUtil.showUpdatedMarker(mMap, setCustomerMarker(customer));
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
+
         }
     }
 
@@ -699,12 +709,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     }
 
     private void addMarkertoMap(Boolean clearMap, ArrayList<Customer> list, String filter, Boolean isBound){
-        //mMap.clear();
-//        LatLng currentPoint = new LatLng(Util.getInstance().getCurrentLocation().getLatitude(), Util.getInstance().getCurrentLocation().getLongitude());
         tvCount.setText(MapUtil.addListMarkerToMap(clearMap, mMap, list, filter, isBound));
-//        if (clearMap){
-//            currentMarker = mMap.addMarker(new MarkerOptions().anchor(0.5f, 0.5f).position(currentPoint).flat(true).icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_location)));
-//        }
+
 
     }
 

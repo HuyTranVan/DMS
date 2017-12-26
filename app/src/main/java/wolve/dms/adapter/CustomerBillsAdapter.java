@@ -150,7 +150,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
                                     params.put("paid", mData.get(position).getDouble("paid") + pay);
                                     params.put("id", mData.get(position).getInt("id"));
                                     params.put("customerId", new JSONObject(mData.get(position).getString("customer")).getString("id"));
-                                    params.put("distributorId", Distributor.getCurrentDistributorId());
+                                    params.put("distributorId", Distributor.getDistributorId());
                                     params.put("userId", User.getUserId());
 //                            params.put("note", "test .hoa");
                                     if (mData.get(position).getString("note").equals("")){

@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.callback.CallbackStatus;
 import wolve.dms.models.Status;
 import wolve.dms.utils.Util;
 
@@ -22,23 +21,31 @@ import wolve.dms.utils.Util;
  */
 
 public class CartCheckinReasonAdapter extends RecyclerView.Adapter<CartCheckinReasonAdapter.ReasonAdapterViewHolder> {
-    private List<Status> mData = new ArrayList<>();
+    private List<Status> mStatus = new ArrayList<>();
+    private List<String> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackStatus callbackStatus;
+
+    public interface CallbackStatus {
+        void Status(Status status);
+        void UpdateOnly();
+    }
 
 
     public CartCheckinReasonAdapter(List<Status> list, CallbackStatus callbackStatus) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.callbackStatus = callbackStatus ;
+        //this.mStatus = list;
 
         for (int i=0; i<list.size(); i++){
             if (!list.get(i).getBoolean("defaultStatus")){
-                this.mData.add(list.get(i));
+                this.mData.add(list.get(i).getString("name"));
+                this.mStatus.add(list.get(i));
             }
         }
-
+        mData.add("Chỉ lưu thông tin cập nhật");
 
     }
 
@@ -48,21 +55,21 @@ public class CartCheckinReasonAdapter extends RecyclerView.Adapter<CartCheckinRe
         return new ReasonAdapterViewHolder(itemView);
     }
 
-    public void addItems(ArrayList<Status> list){
-        mData = new ArrayList<>();
-        mData.addAll(list);
-        notifyDataSetChanged();
-    }
-
     @Override
     public void onBindViewHolder(final ReasonAdapterViewHolder holder, final int position) {
-        holder.tvName.setText(mData.get(position).getString("name"));
+        holder.tvName.setText(mData.get(position));
+
         holder.tvLine.setVisibility(position == mData.size() -1 ? View.GONE : View.VISIBLE);
 
         holder.lnParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                callbackStatus.Status(mData.get(position));
+                if (position == mData.size()-1){
+                    callbackStatus.UpdateOnly();
+                }else {
+                    callbackStatus.Status(mStatus.get(position));
+                }
+
             }
         });
 

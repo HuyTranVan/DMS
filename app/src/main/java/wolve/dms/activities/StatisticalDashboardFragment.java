@@ -26,7 +26,9 @@ import lecho.lib.hellocharts.view.ColumnChartView;
 import lecho.lib.hellocharts.view.PieChartView;
 import wolve.dms.R;
 import wolve.dms.models.Bill;
+import wolve.dms.models.Distributor;
 import wolve.dms.models.District;
+import wolve.dms.models.User;
 import wolve.dms.utils.Util;
 
 /**
@@ -137,7 +139,10 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         float total = Util.getTotalMoney(list).floatValue();
         float debt =Util.getTotalDebt(list).floatValue();
         float income = Util.getTotalMoney(list).floatValue() - debt;
-        float profit =Util.getTotalProfit(list).floatValue();
+        float profit = 0.0f;
+        if (Distributor.getDistributorId().equals("1")){
+            profit =Util.getTotalProfit(list).floatValue();
+        }
 
         float[] inputData = new float[]{total, income , debt , profit};
 

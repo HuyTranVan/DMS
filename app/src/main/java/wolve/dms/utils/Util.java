@@ -46,6 +46,7 @@ import java.net.InetAddress;
 import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.Normalizer;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -78,14 +79,7 @@ public class Util {
     public static StatisticalBillsFragment billsFragment;
     public static StatisticalProductFragment productFragment;
 
-
-
-    //public static ArrayList<Status> mListStatus;
     public static ArrayList<Province> mListProvinces;
-    //public static ArrayList<String> mListDistricts;
-    //public static ArrayList<ProductGroup> mListProductGroup;
-    //public static ArrayList<Product> mListProduct;
-    //public static ArrayList<Product> mListPromotion;
     private DisplayMetrics windowSize;
     private static int PLAY_SERVICES_RESOLUTION_REQUEST = 1462;
 
@@ -940,6 +934,12 @@ public class Util {
             return false;
 
         return true;
+    }
+
+    public static String unAccent(String s) {
+        String temp = Normalizer.normalize(s, Normalizer.Form.NFD);
+        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+        return pattern.matcher(temp).replaceAll("").replaceAll("Đ", "D").replace("đ", "");
     }
 
 

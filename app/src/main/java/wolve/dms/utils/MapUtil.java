@@ -69,6 +69,11 @@ public class MapUtil{
 
     public static void resetMarker(){
         customers = new ArrayList<>();
+        if (markers != null && markers.size()>0){
+            for (int i =0 ; i<markers.size(); i++){
+                markers.get(i).remove();
+            }
+        }
         markers = new ArrayList<>();
         count =0;
     }
@@ -182,11 +187,11 @@ public class MapUtil{
     }
 
     public static String addListMarkerToMap(Boolean clearMap, final GoogleMap mMap, final ArrayList<Customer> listCustomer, String filter, Boolean isBound) {
+
         if (clearMap){
             resetMarker();
             //mMap.clear();
             customers = listCustomer;
-
             for (int i = 0; i < customers.size(); i++) {
                 switch (filter){
                     case Constants.MARKER_ALL:
@@ -214,7 +219,7 @@ public class MapUtil{
                 }
             }
 
-        }else {
+        }else if (listCustomer != null){
             for (int a=0; a<listCustomer.size(); a++){
                 List<Customer> tempCustomers = customers;
 
@@ -339,11 +344,21 @@ public class MapUtil{
         }
     }
 
-    public static void removeMarker(){
-        markers = new ArrayList<>();
-//        for (int i=0; i<markers.size(); i++){
-//            markers.
-//        }
+    public static void removeMarker(String id){
+        for (int i=0; i<markers.size(); i++){
+            try {
+                if (markers.get(i).getTag() != null){
+                    JSONObject object = new JSONObject(markers.get(i).getTag().toString());
+                    if (object.getString("id").equals(id)){
+                        markers.get(i).remove();
+                        break;
+                    }
+                }
+
+            } catch (JSONException e) {
+//                e.printStackTrace();
+            }
+        }
     }
 
     public static void changeFragmentHeight(Fragment fragment, int height) {

@@ -52,124 +52,12 @@
 
         </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/add_customer_map_parent"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_150sdp"
-            android:focusableInTouchMode="false"
-            android:layout_below="@+id/customer_header">
-
-            <fragment
-                android:id="@+id/add_customer_map"
-                android:name="com.google.android.gms.maps.SupportMapFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                class="wolve.dms.controls.WorkaroundMapFragment"/>
-
-            <ImageView
-                android:id="@+id/add_customer_marker"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_pin"
-                android:layout_centerInParent="true"/>
-
-
-            <wolve.dms.controls.CTextIcon
-                android:id="@+id/add_customer_editlocation"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/_30sdp"
-                android:minWidth="@dimen/_30sdp"
-                android:background="@drawable/bg_red_rounded_button"
-                android:text="@string/icon_edit_map"
-                android:textSize="@dimen/_12sdp"
-                android:textColor="@color/colorWhite"
-                android:layout_alignParentBottom="true"
-                android:layout_margin="@dimen/_10sdp"
-                android:gravity="center"/>
-
-            <com.github.clans.fab.FloatingActionButton
-                android:id="@+id/add_customer_currentlocation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_my_location_black_18dp"
-                android:layout_margin="@dimen/_5sdp"
-                android:layout_alignParentBottom="true"
-                android:layout_above="@+id/map_new_customer"
-                android:layout_alignParentRight="true"
-                app:fab_size="mini"
-                app:fab_colorNormal="@color/colorWhite"
-                app:fab_colorPressed="@color/colorGrey"
-                android:alpha="0.7"
-                android:visibility="gone"/>
-
-
-        </RelativeLayout>
-
-        <RadioGroup
-            android:id="@+id/customer_radiogroup_status"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_30sdp"
-            android:layout_below="@+id/add_customer_map_parent"
-            android:background="@drawable/pink_out_line"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:weightSum="9"
-            android:layout_marginLeft="@dimen/_20sdp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_marginRight="@dimen/_20sdp"
-            android:checkedButton="@+id/customer_radio_status_interested">
-
-            <RadioButton
-                android:id="@+id/customer_radio_status_interested"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="3"
-                android:background="@drawable/toggle_widget_background"
-                android:text="Quan tâm"
-                android:textSize="@dimen/_12sdp"
-                android:textColor="@drawable/text_white_selected"
-                android:button="@null"
-                android:layout_marginLeft="1dp"
-                android:layout_marginTop="1dp"
-                android:layout_marginBottom="1dp"
-                android:gravity="center"/>
-
-            <RadioButton
-                android:id="@+id/customer_radio_status_nointerested"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/toggle_widget_background"
-                android:layout_weight="3"
-                android:text="0 quan tâm"
-                android:textSize="@dimen/_12sdp"
-                android:textColor="@drawable/text_white_selected"
-                android:button="@null"
-                android:layout_margin="1dp"
-                android:gravity="center"/>
-
-            <RadioButton
-                android:id="@+id/customer_radio_status_ordered"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/toggle_widget_background"
-                android:layout_weight="3"
-                android:text="Đã Order"
-                android:textSize="@dimen/_12sdp"
-                android:textColor="@drawable/text_white_selected"
-                android:button="@null"
-                android:layout_marginBottom="1dp"
-                android:layout_marginTop="1dp"
-                android:layout_marginRight="1dp"
-                android:gravity="center"/>
-
-        </RadioGroup>
-
         <ScrollView
             android:id="@+id/customer_scrollview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:nestedScrollingEnabled="true"
-            android:layout_below="@+id/customer_radiogroup_status"
+            android:layout_below="@+id/customer_header"
             android:layout_marginBottom="60dp">
 
             <LinearLayout
@@ -178,6 +66,118 @@
                 android:orientation="vertical"
                 android:background="@color/colorWhite"
                 android:clickable="true">
+
+                <RelativeLayout
+                    android:id="@+id/add_customer_map_parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_150sdp"
+                    android:focusableInTouchMode="false"
+                    android:layout_below="@+id/customer_header">
+
+                    <fragment
+                        android:id="@+id/add_customer_map"
+                        android:name="com.google.android.gms.maps.SupportMapFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        class="wolve.dms.controls.WorkaroundMapFragment"/>
+
+                    <ImageView
+                        android:id="@+id/add_customer_marker"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_pin"
+                        android:layout_centerInParent="true"/>
+
+
+                    <wolve.dms.controls.CTextIcon
+                        android:id="@+id/add_customer_editlocation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/_30sdp"
+                        android:minWidth="@dimen/_30sdp"
+                        android:background="@drawable/bg_red_rounded_button"
+                        android:text="@string/icon_edit_map"
+                        android:textSize="@dimen/_12sdp"
+                        android:textColor="@color/colorWhite"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="@dimen/_10sdp"
+                        android:layout_marginLeft="@dimen/_10sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:gravity="center"/>
+
+                    <com.github.clans.fab.FloatingActionButton
+                        android:id="@+id/add_customer_currentlocation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_my_location_black_18dp"
+                        android:layout_marginLeft="@dimen/_5sdp"
+                        android:layout_above="@+id/add_customer_editlocation"
+                        app:fab_size="mini"
+                        app:fab_colorNormal="@color/colorWhite"
+                        app:fab_colorPressed="@color/colorGrey"
+                        android:alpha="0.7"
+                        android:visibility="gone"/>
+
+
+                </RelativeLayout>
+
+                <RadioGroup
+                    android:id="@+id/customer_radiogroup_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_below="@+id/add_customer_map_parent"
+                    android:background="@drawable/pink_out_line"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:weightSum="9"
+                    android:layout_marginLeft="@dimen/_20sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginRight="@dimen/_20sdp"
+                    android:checkedButton="@+id/customer_radio_status_interested">
+
+                    <RadioButton
+                        android:id="@+id/customer_radio_status_interested"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="3"
+                        android:background="@drawable/toggle_widget_background"
+                        android:text="Quan tâm"
+                        android:textSize="@dimen/_12sdp"
+                        android:textColor="@drawable/text_white_selected"
+                        android:button="@null"
+                        android:layout_marginLeft="1dp"
+                        android:layout_marginTop="1dp"
+                        android:layout_marginBottom="1dp"
+                        android:gravity="center"/>
+
+                    <RadioButton
+                        android:id="@+id/customer_radio_status_nointerested"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/toggle_widget_background"
+                        android:layout_weight="3"
+                        android:text="0 quan tâm"
+                        android:textSize="@dimen/_12sdp"
+                        android:textColor="@drawable/text_white_selected"
+                        android:button="@null"
+                        android:layout_margin="1dp"
+                        android:gravity="center"/>
+
+                    <RadioButton
+                        android:id="@+id/customer_radio_status_ordered"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/toggle_widget_background"
+                        android:layout_weight="3"
+                        android:text="Đã Order"
+                        android:textSize="@dimen/_12sdp"
+                        android:textColor="@drawable/text_white_selected"
+                        android:button="@null"
+                        android:layout_marginBottom="1dp"
+                        android:layout_marginTop="1dp"
+                        android:layout_marginRight="1dp"
+                        android:gravity="center"/>
+
+                </RadioGroup>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -334,8 +334,6 @@
                                 android:layout_toLeftOf="@+id/add_customer_dropdown"
                                 app:textHint="Ghi chú"
                                 app:iconText="@string/icon_comment"
-                                app:textSize="@dimen/_5sdp"
-                                app:iconSize="@dimen/_5sdp"
                                 app:iconColor="@color/colorBlueTransparent"
                                 app:textColor="@color/colorBlue"
                                 app:textColorHint="@color/colorBlueTransparent"/>

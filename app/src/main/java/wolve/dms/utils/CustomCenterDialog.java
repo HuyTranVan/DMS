@@ -36,7 +36,6 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickProduct;
 import wolve.dms.callback.CallbackListProduct;
 import wolve.dms.callback.CallbackPayBill;
-import wolve.dms.callback.CallbackStatus;
 import wolve.dms.controls.CTextIcon;
 import wolve.dms.models.Customer;
 import wolve.dms.models.Product;
@@ -394,21 +393,25 @@ public class CustomCenterDialog {
 
     }
 
-    public static void showCheckinReason(String title, List<Status> listStatus, final CallbackStatus callback){
+    public static void showCheckinReason(String title, List<Status> listStatus, final CartCheckinReasonAdapter.CallbackStatus callback){
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_select_status);
         TextView tvTitle = dialogResult.findViewById(R.id.dialog_choice_status_title);
         RecyclerView rvStatus = dialogResult.findViewById(R.id.dialog_choice_status_rvStatus);
         Button btnCancel = dialogResult.findViewById(R.id.btn_cancel);
-        Button btnSubmit = dialogResult.findViewById(R.id.btn_submit);
 
         btnCancel.setText("HỦY");
-        btnSubmit.setText("CHỈ CẬP NHẬT");
         tvTitle.setText(title);
 
-        final CartCheckinReasonAdapter adapter = new CartCheckinReasonAdapter(listStatus, new CallbackStatus() {
+        final CartCheckinReasonAdapter adapter = new CartCheckinReasonAdapter(listStatus, new CartCheckinReasonAdapter.CallbackStatus() {
             @Override
             public void Status(Status status) {
                 callback.Status(status);
+                dialogResult.dismiss();
+            }
+
+            @Override
+            public void UpdateOnly() {
+                callback.UpdateOnly();
                 dialogResult.dismiss();
             }
         });
@@ -424,15 +427,6 @@ public class CustomCenterDialog {
                 dialogResult.dismiss();
             }
         });
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                callback.Status(null);
-                dialogResult.dismiss();
-            }
-        });
-
 
     }
 

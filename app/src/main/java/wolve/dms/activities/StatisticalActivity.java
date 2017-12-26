@@ -7,7 +7,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.ImageView;
@@ -29,13 +28,12 @@ import wolve.dms.R;
 import wolve.dms.adapter.StatisticalViewpagerAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackJSONArray;
-import wolve.dms.controls.CTextIcon;
 import wolve.dms.libraries.MySwipeRefreshLayout;
 import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialog;
 import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialogFragment;
 import wolve.dms.models.Bill;
+import wolve.dms.models.Distributor;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.MapUtil;
 import wolve.dms.utils.Util;
 
 /**
@@ -107,7 +105,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         rdMonth.setText(Util.CurrentMonthYear());
         rdDate.setText(DATE_DEFAULT);
         currentDate = rdMonth.getText().toString();
-        loadAllCustomer(currentDate, true);
+        loadAllBill(currentDate, true);
     }
 
     public void setupViewPager(ViewPager viewPager) {
@@ -169,7 +167,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                 newDate.set(year, monthOfYear, dayOfMonth);
                 rdDate.setText(new SimpleDateFormat("dd-MM-yyyy", Locale.US).format(newDate.getTime()));
                 currentDate = rdDate.getText().toString();
-                loadAllCustomer(currentDate, true);
+                loadAllBill(currentDate, true);
 
             }
 
@@ -189,7 +187,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
             public void onDateSet(int year, int monthOfYear) {
                 rdMonth.setText(monthOfYear+1 +"-" + year);
                 currentDate = rdMonth.getText().toString();
-                loadAllCustomer(currentDate, true);
+                loadAllBill(currentDate, true);
             }
         });
         datePickerDialogFragment.show(getSupportFragmentManager(), null);
@@ -198,10 +196,10 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     @Override
     public void onRefresh() {
         swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#2196f3"));
-        loadAllCustomer(currentDate, false);
+        loadAllBill(currentDate, false);
     }
 
-    private void loadAllCustomer(String param, Boolean showLoading){
+    private void loadAllBill(String param, Boolean showLoading){
         CustomerConnect.ListBill(paramDate(param), new CallbackJSONArray() {
             @Override
             public void onResponse(JSONArray result) {
@@ -210,7 +208,10 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                     listBill = new ArrayList<Bill>();
                     for (int i=0; i<result.length(); i++){
                         Bill bill = new Bill(result.getJSONObject(i));
-                        listBill.add(bill);
+                        if (bill.getJsonObject("distributor").getString("id").equals(Distributor.getDistributorId())){
+                            listBill.add(bill);
+                        }
+
                     }
                     Util.dashboardFragment.reloadData(listBill);
                     Util.billsFragment.reloadData(listBill);

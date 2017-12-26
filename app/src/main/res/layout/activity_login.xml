@@ -85,13 +85,24 @@
                             android:id="@+id/login_username"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="0.85"
+                            android:layout_weight="0.7"
                             android:background="@color/text_color_white_hint"
                             android:hint="@string/login_username"
                             android:inputType="textEmailAddress"
                             android:padding="10dp"
                             android:text=""
                             android:textSize="@dimen/_12sdp" />
+
+                        <wolve.dms.controls.CTextIcon
+                            android:id="@+id/login_keyboard"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:background="?selectableItemBackground"
+                            android:layout_weight="0.15"
+                            android:textSize="@dimen/_14sdp"
+                            android:text="@string/icon_keyboard"
+                            android:gravity="center"
+                            android:paddingRight="@dimen/_5sdp"/>
 
                     </LinearLayout>
 

@@ -9,7 +9,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import wolve.dms.utils.StringUtil;
 import wolve.dms.utils.Util;
 
 /**
@@ -214,8 +213,8 @@ public class UtilPrinter {
                     outputStream.write(PrinterCommands.ESC_ALIGN_RIGHT);
                     break;
             }
-            outputStream.write(StringUtil.unAccent(msg).getBytes());
-//            outputStream.write(msg.getBytes("Windows-1258"));
+            outputStream.write(Util.unAccent(msg).getBytes());
+//            outputStream.write(msg.getBytes());
             outputStream.write(PrinterCommands.FEED_LINE);
 
         } catch (IOException e) {
@@ -281,7 +280,7 @@ public class UtilPrinter {
                     space = space+" ";
                 }
             }
-            outputStream.write((StringUtil.unAccent(msg1) + space + StringUtil.unAccent(msg2)).getBytes());
+            outputStream.write((Util.unAccent(msg1) + space + Util.unAccent(msg2)).getBytes());
             outputStream.write(PrinterCommands.FEED_LINE);
 
         } catch (IOException e) {

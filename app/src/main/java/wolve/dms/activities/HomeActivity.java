@@ -1,31 +1,23 @@
 package wolve.dms.activities;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.HomeAdapter;
-import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.apiconnect.LocationConnect;
 import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.apiconnect.StatusConnect;
-import wolve.dms.apiconnect.UserConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackJSONArray;
-import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.controls.CTextIcon;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.District;
@@ -47,19 +39,11 @@ import wolve.dms.utils.Util;
 public class HomeActivity extends BaseActivity implements View.OnClickListener, CallbackClickAdapter {
     private RecyclerView rvItems;
     private CTextIcon btnLogout;
+    private TextView tvFullname;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
-
-    private void createListItem() {
-        HomeAdapter adapter = new HomeAdapter(HomeActivity.this);
-        adapter.notifyDataSetChanged();
-        rvItems.setAdapter(adapter);
-        LinearLayoutManager linearLayoutManager = new GridLayoutManager(this, 3);
-        rvItems.setLayoutManager(linearLayoutManager);
-
     }
 
     @Override
@@ -76,19 +60,30 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     public void findViewById() {
         rvItems= (RecyclerView) findViewById(R.id.home_rvitems);
         btnLogout = findViewById(R.id.home_logout);
+        tvFullname = findViewById(R.id.home_fullname);
     }
 
     @Override
     public void initialData() {
         createListItem();
         loadCurrentData();
+        tvFullname.setText(String.format("%s (%s)",User.getFullName(), User.getRole()));
 
+    }
+
+    private void createListItem() {
+        HomeAdapter adapter = new HomeAdapter(HomeActivity.this);
+        adapter.notifyDataSetChanged();
+        rvItems.setAdapter(adapter);
+        LinearLayoutManager linearLayoutManager = new GridLayoutManager(this, 3);
+        rvItems.setLayoutManager(linearLayoutManager);
 
     }
 
     @Override
     public void addEvent() {
         btnLogout.setOnClickListener(this);
+        tvFullname.setOnClickListener(this);
     }
 
     @Override
@@ -101,7 +96,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     private void doLogout() {
-        CustomCenterDialog.alertWithCancelButton(null, "Đăng xuất tài khoản hiện tại " , "ĐỒNG Ý","HỦY", new CallbackBoolean() {
+        CustomCenterDialog.alertWithCancelButton(null, String.format("Đăng xuất tài khoản %s",User.getFullName()) , "ĐỒNG Ý","HỦY", new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
                 CustomSQL.setString(Constants.USER_USERNAME,"");
@@ -140,11 +135,16 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 break;
 
             case 2:
-                choiceSetup();
+                if (Distributor.getDistributorId().equals("1")){
+                    choiceSetupItem();
+                }else {
+                    Util.showToast("Chưa hỗ trợ");
+                }
+
                 break;
 
             case 3:
-
+                Util.showToast("Chưa hỗ trợ");
                 break;
 
             case 4:
@@ -199,7 +199,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     private void loadProductGroup(Boolean cancelLoading){
-        ProductConnect.ListProductGroup(true, new CallbackJSONArray() {
+        ProductConnect.ListProductGroup(false, new CallbackJSONArray() {
             @Override
             public void onResponse(JSONArray result) {
                 ProductGroup.saveProductGroupList(result);
@@ -228,14 +228,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         }, cancelLoading);
     }
 
-    private void choiceSetup(){
+    private void choiceSetupItem(){
         CustomBottomDialog.choiceFourOption(getString(R.string.icon_group), "Nhân viên",
                 getString(R.string.icon_product_group), "Nhóm sản phẩm",
                 getString(R.string.icon_product), "Sản phẩm",
                 getString(R.string.icon_comment), "Trạng thái", new CustomBottomDialog.FourMethodListener() {
                     @Override
                     public void Method1(Boolean one) {
-                        Util.showToast("Chưa sẵn sàng");
+                        Util.showToast("Chưa hỗ trợ");
                     }
 
                     @Override

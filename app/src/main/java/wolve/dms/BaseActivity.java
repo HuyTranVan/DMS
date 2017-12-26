@@ -137,6 +137,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private final LocationListener mLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(final Location location) {
+            Util.getInstance().stopLoading(true);
 
             if (Util.getInstance().getCurrentActivity().getLocalClassName().equals("activities.MapsActivity") ){
                 if (Util.getInstance().getCurrentLocation() != null){
@@ -147,8 +148,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                 }
             }
             Util.getInstance().setCurrentLocation(location);
-            Util.getInstance().stopLoading(true);
-//            Util.getInstance().stopLocationLoading();
 
         }
 
@@ -187,7 +186,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void checkIsEnabledGPS(boolean isDisplayedPopup) {
         boolean gps_enabled = false;
         try {
-//            Util.getInstance().showLocationLoading("Kiểm tra thông tin vị trí");
             Util.getInstance().showLoading("Kiểm tra thông tin vị trí");
             gps_enabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
@@ -210,10 +208,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                 return;
             }
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
-                    LOCATION_REFRESH_DISTANCE, mLocationListener);
-            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOCATION_REFRESH_TIME,
-                    LOCATION_REFRESH_DISTANCE, mLocationListener);
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE, mLocationListener);
+            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE, mLocationListener);
 
             updateLastLocation();
         }
@@ -328,22 +324,5 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        if (keyCode == KeyEvent.KEYCODE_BACK){
-//            switch (Util.getInstance().getCurrentActivity().getLocalClassName()){
-//                case ".activities.MapsActivity":
-//                    if (dialog != null && dialog.isShowing()){
-//                        dialog.dismiss();
-//                    }else {
-//                        Transaction.gotoHomeActivityRight(true);
-//                    }
-//
-//                    break;
-//            }
-//
-//
-//        }
-//        return true;
-//    }
+
 }

@@ -9,10 +9,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -178,7 +176,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK){
-            returnPreviousScreen(currentCustomer);
+            returnCustomerActivity(currentCustomer);
         }
         return true;
     }
@@ -188,7 +186,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         Util.hideKeyboard(v);
         switch (v.getId()){
             case R.id.icon_back:
-                returnPreviousScreen(currentCustomer);
+                returnCustomerActivity(currentCustomer);
 
                 break;
 
@@ -216,7 +214,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         }
     }
 
-    private void returnPreviousScreen(Customer customer){
+    private void returnCustomerActivity(Customer customer){
         Intent returnIntent = new Intent();
         returnIntent.putExtra(Constants.CUSTOMER_CART, customer.CustomertoString());
         setResult(Constants.RESULT_SHOPCART_ACTIVITY,returnIntent);
@@ -322,7 +320,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                     params.put("total", total);
                     params.put("paid", paid);
                     params.put("customerId", currentCustomer.getInt("id"));
-                    params.put("distributorId", Distributor.getCurrentDistributorId());
+                    params.put("distributorId", Distributor.getDistributorId());
                     params.put("userId", User.getUserId());
                     params.put("note", tvNote.getText().toString().trim());
 
@@ -386,7 +384,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 CustomerConnect.GetCustomerDetail(param, new CallbackJSONObject() {
                     @Override
                     public void onResponse(JSONObject result) {
-                        returnPreviousScreen(new Customer(result));
+                        returnCustomerActivity(new Customer(result));
 
                     }
 

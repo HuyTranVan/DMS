@@ -1,6 +1,7 @@
 package wolve.dms.activities;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
@@ -39,6 +40,7 @@ import java.util.List;
 
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
+import wolve.dms.adapter.CartCheckinReasonAdapter;
 import wolve.dms.adapter.CustomerBillsAdapter;
 import wolve.dms.adapter.CustomerCheckinsAdapter;
 import wolve.dms.adapter.CustomerViewpagerAdapter;
@@ -48,7 +50,6 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackPayBill;
-import wolve.dms.callback.CallbackStatus;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.CallbackUpdateBill;
 import wolve.dms.controls.CInputForm;
@@ -63,6 +64,7 @@ import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomDropdow;
+import wolve.dms.utils.FitScrollWithFullscreen;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -100,6 +102,11 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     private String firstName ="";
     private float bottomSheetHeight;
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        FitScrollWithFullscreen.assistActivity(this, 1);
+    }
 
     @Override
     public int getResourceLayout() {
@@ -170,7 +177,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 edPhone.setText(currentCustomer.getString("phone") == null? "" : currentCustomer.getString("phone"));
                 edAdress.setText((currentCustomer.getString("address") == null? "" : currentCustomer.getString("address")));
                 edStreet.setText(currentCustomer.getString("street") == null? "" : currentCustomer.getString("street"));
-                edNote.setTextHint(currentCustomer.getString("note") == null? "Ghi chú" : "Ghi chú: " +currentCustomer.getString("note"));
+                edNote.setText(currentCustomer.getString("note"));
                 edDistrict.setText(currentCustomer.getString("district"));
                 edCity.setText(currentCustomer.getString("province"));
                 edShopName.setText(currentCustomer.getString("signBoard"));
@@ -213,12 +220,25 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 e.printStackTrace();
             }
         }
-        if (currentCustomer.getInt("id") !=0){
-            tvTrash.setVisibility(User.getRole().equals("MANAGER") ? View.VISIBLE : View.GONE);
-            btnSubmit.setText("CHECK_IN & CẬP NHẬT");
-        }else {
-            tvTrash.setVisibility(View.GONE);
-            btnSubmit.setText("CẬP NHẬT");
+        try {
+
+            if (currentCustomer.getInt("id") !=0){
+                tvTrash.setVisibility(User.getRole().equals("MANAGER") ? View.VISIBLE : View.GONE);
+
+                if (currentCustomer.getJsonObject("distributor").getString("id").equals(Distributor.getDistributorId())){
+                    tvTrash.setVisibility(View.VISIBLE);
+                }else {
+                    tvTrash.setVisibility(View.GONE);
+                }
+               btnSubmit.setText("CHECK_IN & CẬP NHẬT");
+
+            }else {
+
+                tvTrash.setVisibility(View.GONE);
+                btnSubmit.setText("CẬP NHẬT");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
         if (edShopName.getText().toString().trim().equals("")){
@@ -301,45 +321,54 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         });
     }
 
-    private void setupViewPager(List<Checkin> listcheckin, final List<Bill> listbill){
-        showMoneyOverview(listbill);
-        setupBottomSheet();
-
-        int currentPosition = listbill.size();
-
-        final List<String> listTitle = new ArrayList<>();
-        listTitle.add(0,"CHECK_IN");
-        listTitle.add(1, "HÓA ĐƠN");
-
-        final List<RecyclerView.Adapter> listadapter = new ArrayList<>();
-
-        listadapter.add(0, new CustomerCheckinsAdapter(listcheckin));
-        listadapter.add(1, new CustomerBillsAdapter(listbill, new CallbackDeleteAdapter() {
-            @Override
-            public void onDelete(String data, int position) {
-                listbill.remove(position);
-                showMoneyOverview(listbill);
-                reloadBillCount(listbill.size());
-
-                setupBottomSheet();
+    private void setupViewPager(List<Checkin> listcheckin, List<Bill> listbills){
+        final List<Bill> listbill = new ArrayList<>();
+        try {
+            for (int i=0; i<listbills.size(); i++){
+                if (listbills.get(i).getJsonObject("distributor").getString("id").equals(Distributor.getDistributorId())){
+                    listbill.add(listbills.get(i));
+                }
             }
-        }, new CallbackUpdateBill() {
-            @Override
-            public void onUpdate(final Bill bill, int position) {
-                showMoneyOverview(listbill);
-                Util.showToast("Thanh toán thành công");
 
+            showMoneyOverview(listbill);
+            setupBottomSheet();
 
+            int currentPosition = listbill.size();
 
-            }
-        }));
+            final List<String> listTitle = new ArrayList<>();
+            listTitle.add(0,"CHECK_IN");
+            listTitle.add(1, "HÓA ĐƠN");
 
-        viewpagerAdapter = new CustomerViewpagerAdapter(listadapter, listTitle);
-        viewPager.setAdapter(viewpagerAdapter);
-        viewPager.setCurrentItem(currentPosition);
-        viewPager.setOffscreenPageLimit(2);
+            final List<RecyclerView.Adapter> listadapter = new ArrayList<>();
 
-        createTabLayout(listTitle, listadapter);
+            listadapter.add(0, new CustomerCheckinsAdapter(listcheckin));
+            listadapter.add(1, new CustomerBillsAdapter(listbill, new CallbackDeleteAdapter() {
+                @Override
+                public void onDelete(String data, int position) {
+                    listbill.remove(position);
+                    showMoneyOverview(listbill);
+                    reloadBillCount(listbill.size());
+                    setupBottomSheet();
+
+                }
+            }, new CallbackUpdateBill() {
+                @Override
+                public void onUpdate(final Bill bill, int position) {
+                    showMoneyOverview(listbill);
+                    Util.showToast("Thanh toán thành công");
+
+                }
+            }));
+
+            viewpagerAdapter = new CustomerViewpagerAdapter(listadapter, listTitle);
+            viewPager.setAdapter(viewpagerAdapter);
+            viewPager.setCurrentItem(currentPosition);
+            viewPager.setOffscreenPageLimit(2);
+
+            createTabLayout(listTitle, listadapter);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -385,8 +414,12 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 break;
 
             case R.id.add_customer_submit:
-                if (currentCustomer.getInt("id") ==0){
-                    submitCustomerCheckin(currentStatus);
+                if (currentCustomer.getInt("id") == 0){
+                    if(currentStatus.getInt("id") == 1){
+                        loadReasonList();
+                    }else {
+                        submitCustomerCheckin(currentStatus, true);
+                    }
 
                 }else {
                     loadReasonList();
@@ -396,7 +429,11 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 break;
 
             case R.id.icon_more:
-                deleteCustomer();
+                if (listBills.size() >0){
+                    Util.showToast("Không thể xóa khách hàng có phát sinh hóa đơn");
+                }else {
+                    deleteCustomer();
+                }
 
                 break;
 
@@ -427,9 +464,9 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         }
     }
 
-    private void returnPreviousScreen(Customer customer){
+    private void returnPreviousScreen(String customer){
         Intent returnIntent = new Intent();
-        returnIntent.putExtra(Constants.CUSTOMER, customer != null? customer.CustomertoString() : null);
+        returnIntent.putExtra(Constants.CUSTOMER, customer != null? customer : null);
         setResult(Constants.RESULT_CUSTOMER_ACTIVITY,returnIntent);
         Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         Util.getInstance().getCurrentActivity().finish();
@@ -499,7 +536,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 @Override
                 public void onResponse(JSONObject result) {
                     final Customer responseCustomer = new Customer(result);
-                    returnPreviousScreen(responseCustomer);
+                    returnPreviousScreen(responseCustomer.CustomertoString());
 
                 }
 
@@ -512,13 +549,13 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
     }
 
-    private void submitCustomerCheckin(final Status status){
+    private void submitCustomerCheckin(final Status status, final Boolean backtoMap){
         if (checkInputField()){
             CustomerConnect.CreateCustomer(createParamCustomer(getCurrentCustomer()), new CallbackJSONObject() {
                 @Override
                 public void onResponse(JSONObject result) {
                     final Customer responseCustomer = new Customer(result);
-                    submitCheckin(responseCustomer, status);
+                    submitCheckin(responseCustomer, status, backtoMap);
 
                 }
 
@@ -531,7 +568,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
     }
 
-    private void submitCheckin(final Customer customer, Status status){
+    private void submitCheckin(final Customer customer, Status status, final Boolean backtoMap){
             String params = String.format(Api_link.SCHECKIN_CREATE_PARAM, customer.getInt("id"),
                     status.getInt("id"),
                     Util.encodeString(edNote.getText().toString().trim()),
@@ -541,7 +578,10 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             CustomerConnect.PostCheckin(params, new CallbackJSONObject() {
                 @Override
                 public void onResponse(JSONObject result) {
-                    returnPreviousScreen(customer);
+                    if (backtoMap){
+                        returnPreviousScreen(customer.CustomertoString());
+                    }
+
                 }
 
                 @Override
@@ -582,7 +622,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 CustomerConnect.DeleteCustomer(currentCustomer.getString("id"), new CallbackJSONObject() {
                     @Override
                     public void onResponse(JSONObject result) {
-                        returnPreviousScreen(null);
+                        returnPreviousScreen(String.format("delete-%s",currentCustomer.getString("id")));
                     }
 
                     @Override
@@ -617,20 +657,8 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 if (customer.getString("bills") != null ){
                     JSONArray array = new JSONArray(customer.getString("bills"));
                     if (array.length() >0){
-                        if (currentStatus.getInt("id") != 3){
-                            rdOrdered.setChecked(true);
-                            CustomerConnect.CreateCustomer(createParamCustomer(getCurrentCustomer()), new CallbackJSONObject() {
-                                @Override
-                                public void onResponse(JSONObject result) {
-                                }
-
-                                @Override
-                                public void onError(String error) {
-
-                                }
-                            }, true);
-                        }
-
+                        rdOrdered.setChecked(true);
+                        submitCustomerCheckin(currentStatus, false);
                     }
                     listBills = new ArrayList<>();
                     for (int i=0; i<array.length(); i++){
@@ -671,14 +699,16 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     private void loadReasonList() {
-        CustomCenterDialog.showCheckinReason("CHECK_IN", Status.getStatusList(), new CallbackStatus() {
+        CustomCenterDialog.showCheckinReason("CHỌN TRẠNG THÁI CẬP NHẬT", Status.getStatusList(), new CartCheckinReasonAdapter.CallbackStatus() {
             @Override
             public void Status(Status status) {
-                if (status == null){
-                    submitCustomer();
-                }else {
-                    submitCustomerCheckin(status );
-                }
+                submitCustomerCheckin(status, true );
+
+            }
+
+            @Override
+            public void UpdateOnly() {
+                submitCustomer();
             }
         });
 
@@ -710,7 +740,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     private String createParamCustomer(Customer customer){
-        String param = String.format(Api_link.CUSTOMER_CREATE_PARAM, customer.getInt("id") == 0? "" : "id="+ customer.getString("id") +"&",
+        String param = String.format(Api_link.CUSTOMER_CREATE_PARAM, customer.getInt("id") == 0? "" : String.format("id=%s&",customer.getString("id") ),
                 Util.encodeString(customer.getString("name")),//name
                 Util.encodeString(customer.getString("signBoard")),//signBoard
                 Util.encodeString(customer.getString("address")), //address
@@ -723,7 +753,8 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 customer.getDouble("lng"), //lng
                 customer.getInt("volumeEstimate"), //province
                 Util.encodeString(customer.getString("shopType")), //shopType
-                customer.getInt("status.id") //currentStatusId
+                customer.getInt("status.id"), //currentStatusId
+                Distributor.getDistributorId() //DistributorId
         );
 
         return param;

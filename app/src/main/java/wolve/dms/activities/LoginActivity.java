@@ -1,6 +1,7 @@
 package wolve.dms.activities;
 
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +17,7 @@ import wolve.dms.R;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.UserConnect;
 import wolve.dms.callback.CallbackJSONObject;
+import wolve.dms.controls.CTextIcon;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
@@ -31,6 +33,8 @@ import wolve.dms.utils.Util;
 public class LoginActivity extends BaseActivity implements View.OnClickListener{
     private EditText edUsername, edPassword;
     private Button btnSubmit;
+    private CTextIcon btnKeyboard;
+    private Boolean detectNumberKeyboard = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,14 +57,18 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         edUsername = (EditText) findViewById(R.id.login_username);
         edPassword = (EditText) findViewById(R.id.login_password);
         btnSubmit = (Button) findViewById(R.id.login_submit);
+        btnKeyboard = findViewById(R.id.login_keyboard);
 
     }
 
     @Override
     public void initialData() {
+        edUsername.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+        edUsername.setText(CustomSQL.getString(Constants.USER_USERNAME));
+        edPassword.setText(CustomSQL.getString(Constants.USER_PASSWORD));
+
         if (BuildConfig.DEBUG_FLAG ){
-            edUsername.setText(CustomSQL.getString(Constants.USER_USERNAME));
-            edPassword.setText(CustomSQL.getString(Constants.USER_PASSWORD));
             if (!edUsername.getText().toString().trim().equals("") && !edPassword.getText().toString().trim().equals("")){
                 doLogin();
             }
@@ -71,6 +79,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     @Override
     public void addEvent() {
         btnSubmit.setOnClickListener(this);
+        btnKeyboard.setOnClickListener(this);
     }
 
     @Override
@@ -82,6 +91,17 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                 }else {
                     doLogin();
                 }
+
+                break;
+
+            case R.id.login_keyboard:
+                if (!detectNumberKeyboard){
+                    edUsername.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+                }else {
+                    edUsername.setInputType(InputType.TYPE_CLASS_TEXT);
+                }
+                detectNumberKeyboard = !detectNumberKeyboard;
 
                 break;
         }

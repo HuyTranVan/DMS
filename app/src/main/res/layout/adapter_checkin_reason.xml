@@ -14,10 +14,10 @@
         android:layout_height="wrap_content"
         android:text="Default"
         android:textColor="@color/black_text_color"
-        android:textSize="@dimen/_10sdp"
+        android:textSize="@dimen/_12sdp"
         android:paddingLeft="@dimen/_10sdp"
-        android:paddingTop="@dimen/_5sdp"
-        android:paddingBottom="@dimen/_5sdp"/>
+        android:paddingTop="@dimen/_8sdp"
+        android:paddingBottom="@dimen/_8sdp"/>
 
     <TextView
         android:id="@+id/checkin_reason_line"

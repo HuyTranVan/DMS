@@ -205,7 +205,6 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
 
 
     private void startImageChooser() {
-        // Kiểm tra permission với android sdk >= 23
         imageChangeUri = Uri.fromFile(Util.getOutputMediaFile());
         if (Build.VERSION.SDK_INT <= 19) {
             Intent i = new Intent();
