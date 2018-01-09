@@ -236,6 +236,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                     @Override
                     public void Method1(Boolean one) {
                         Util.showToast("Chưa hỗ trợ");
+                        Transaction.gotoTestActivity();
                     }
 
                     @Override

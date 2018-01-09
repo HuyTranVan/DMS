@@ -30,26 +30,6 @@
             android:layout_toRightOf="@+id/icon_back"/>
 
 
-        <!--<TextView-->
-            <!--android:id="@+id/statistical_date_text"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="Tháng"-->
-            <!--android:textSize="@dimen/_14sdp"-->
-            <!--android:textColor="@color/black_text_color"-->
-            <!--android:layout_centerVertical="true"-->
-            <!--android:layout_toLeftOf="@+id/statistical_date_icon"/>-->
-
-        <!--<wolve.dms.controls.CTextIcon-->
-            <!--android:id="@+id/statistical_date_icon"-->
-            <!--android:layout_width="@dimen/_35sdp"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:text="@string/icon_schedule"-->
-            <!--android:textSize="@dimen/_16sdp"-->
-            <!--android:gravity="center"-->
-            <!--android:textColor="@color/black_text_color_hint"-->
-            <!--android:background="?selectableItemBackground"-->
-            <!--android:layout_alignParentRight="true"/>-->
 
         <RadioGroup
             android:checkedButton="@+id/statistical_filter_month"
@@ -99,49 +79,54 @@
 
     </RelativeLayout>
 
-    <wolve.dms.libraries.MySwipeRefreshLayout
+    <LinearLayout
+        android:id="@+id/statistical_tablayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@+id/statistical_header">
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:background="#75b9b3b3"/>
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/statistical_tabs"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:background="#f4f4f4"
+            app:tabGravity="fill"
+            app:tabIndicatorColor="@color/colorBlue"
+            app:tabIndicatorHeight="3dp"
+            app:tabMode="fixed"
+            app:tabSelectedTextColor="@color/colorBlue"
+            app:tabTextAppearance="@style/NavigationTabTextAppeareance"
+            app:tabTextColor="@color/black_text_color_hint" />
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:background="#75b9b3b3"/>
+
+
+
+
+    </LinearLayout>
+
+    <wolve.dms.libraries.swiperefreshlayout.SwipeRefreshLayout
         android:id="@+id/statistical_swipelayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/statistical_header">
+        android:layout_below="@+id/statistical_tablayout">
 
-        <LinearLayout
+        <android.support.v4.view.ViewPager
+            android:id="@+id/statistical_viewpager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:background="@color/colorWhite" />
 
-            <View
-                android:layout_width="wrap_content"
-                android:layout_height="1dp"
-                android:background="#75b9b3b3"/>
-
-            <android.support.design.widget.TabLayout
-                android:id="@+id/statistical_tabs"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_35sdp"
-                android:background="#f4f4f4"
-                app:tabGravity="fill"
-                app:tabIndicatorColor="@color/colorBlue"
-                app:tabIndicatorHeight="3dp"
-                app:tabMode="fixed"
-                app:tabSelectedTextColor="@color/colorBlue"
-                app:tabTextAppearance="@style/NavigationTabTextAppeareance"
-                app:tabTextColor="@color/black_text_color_hint" />
-
-            <View
-                android:layout_width="wrap_content"
-                android:layout_height="1dp"
-                android:background="#75b9b3b3"/>
-
-
-            <android.support.v4.view.ViewPager
-                android:id="@+id/statistical_viewpager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/colorWhite" />
-
-        </LinearLayout>
-    </wolve.dms.libraries.MySwipeRefreshLayout>
+    </wolve.dms.libraries.swiperefreshlayout.SwipeRefreshLayout>
 
 
 

@@ -64,6 +64,15 @@ public class User extends BaseModel {
         return role;
     }
 
+    public static String getPhone(){
+        String phone = "";
+        User currentUser = CustomSQL.getObject(Constants.USER, User.class);
+
+        if (currentUser != null) {
+            phone = currentUser.getString("phone");
+        }
+        return phone;
+    }
 
 
 }

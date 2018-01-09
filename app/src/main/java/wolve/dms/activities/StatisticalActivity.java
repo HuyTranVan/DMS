@@ -2,11 +2,9 @@ package wolve.dms.activities;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.ImageView;
@@ -28,7 +26,7 @@ import wolve.dms.R;
 import wolve.dms.adapter.StatisticalViewpagerAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackJSONArray;
-import wolve.dms.libraries.MySwipeRefreshLayout;
+
 import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialog;
 import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialogFragment;
 import wolve.dms.models.Bill;
@@ -40,12 +38,12 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class StatisticalActivity extends BaseActivity implements  View.OnClickListener , SwipeRefreshLayout.OnRefreshListener{
+public class StatisticalActivity extends BaseActivity implements  View.OnClickListener , wolve.dms.libraries.swiperefreshlayout.SwipeRefreshLayout.OnRefreshListener{
     private ImageView btnBack;
     private TextView tvTitle;
     private ViewPager viewPager;
     private TabLayout tabLayout;
-    private MySwipeRefreshLayout swipeRefreshLayout;
+    private wolve.dms.libraries.swiperefreshlayout.SwipeRefreshLayout swipeRefreshLayout;
     private RadioGroup rdGroup;
     private RadioButton rdMonth, rdDate;
     private DatePickerDialog datePickerDialog;
@@ -58,6 +56,9 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     private final String MONTH_DEFAULT ="Chọn tháng";
     private final String DATE_DEFAULT ="Chọn ngày";
     private String currentDate;
+    private int mDate = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+    private int mMonth = Calendar.getInstance().get(Calendar.MONTH);
+    private int mYear = Calendar.getInstance().get(Calendar.YEAR);
 
 
     @Override
@@ -76,7 +77,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         tvTitle = (TextView) findViewById(R.id.statistical_title);
         viewPager = (ViewPager) findViewById(R.id.statistical_viewpager);
         tabLayout = (TabLayout) findViewById(R.id.statistical_tabs);
-        swipeRefreshLayout = (MySwipeRefreshLayout) findViewById(R.id.statistical_swipelayout);
+        swipeRefreshLayout = (wolve.dms.libraries.swiperefreshlayout.SwipeRefreshLayout) findViewById(R.id.statistical_swipelayout);
         rdGroup = findViewById(R.id.statistical_filter);
         rdMonth = findViewById(R.id.statistical_filter_month);
         rdDate = findViewById(R.id.statistical_filter_date);
@@ -163,6 +164,10 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
 
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                mDate = dayOfMonth;
+                mMonth = monthOfYear;
+                mYear = year;
+
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
                 rdDate.setText(new SimpleDateFormat("dd-MM-yyyy", Locale.US).format(newDate.getTime()));
@@ -170,8 +175,9 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                 loadAllBill(currentDate, true);
 
             }
+        }, mYear, mMonth, mDate);
 
-        },Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+//        },Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
 
         datePickerDialog.show();
 
@@ -180,11 +186,15 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
     private void monthPicker() {
         SimpleDatePickerDialogFragment datePickerDialogFragment;
-        Calendar calendar = Calendar.getInstance(Locale.getDefault());
-        datePickerDialogFragment = SimpleDatePickerDialogFragment.getInstance(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH));
+//        Calendar calendar = Calendar.getInstance(Locale.getDefault());
+//        datePickerDialogFragment = SimpleDatePickerDialogFragment.getInstance(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH));
+        datePickerDialogFragment = SimpleDatePickerDialogFragment.getInstance(mYear, mMonth);
         datePickerDialogFragment.setOnDateSetListener(new SimpleDatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(int year, int monthOfYear) {
+                mMonth = monthOfYear;
+                mYear =year;
+
                 rdMonth.setText(monthOfYear+1 +"-" + year);
                 currentDate = rdMonth.getText().toString();
                 loadAllBill(currentDate, true);
@@ -195,7 +205,8 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
     @Override
     public void onRefresh() {
-        swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#2196f3"));
+//        swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#2196f3"));
+        swipeRefreshLayout.setColorScheme(R.color.colorBlue , R.color.colorBlueDark , R.color.colorBlueDark , R.color.colorBlue );
         loadAllBill(currentDate, false);
     }
 

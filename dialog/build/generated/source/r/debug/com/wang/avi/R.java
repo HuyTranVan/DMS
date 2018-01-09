@@ -8,28 +8,28 @@ package com.wang.avi;
 
 public final class R {
     public static final class attr {
-        public static int indicatorColor = 0x7f010009;
-        public static int indicatorName = 0x7f010008;
-        public static int maxHeight = 0x7f010007;
-        public static int maxWidth = 0x7f010005;
-        public static int minHeight = 0x7f010006;
-        public static int minWidth = 0x7f010004;
+        public static int indicatorColor = 0x7f0400b7;
+        public static int indicatorName = 0x7f0400b8;
+        public static int maxHeight = 0x7f0400dd;
+        public static int maxWidth = 0x7f0400de;
+        public static int minHeight = 0x7f0400e1;
+        public static int minWidth = 0x7f0400e2;
     }
     public static final class string {
-        public static int app_name = 0x7f050022;
+        public static int app_name = 0x7f150021;
     }
     public static final class style {
-        public static int AVLoadingIndicatorView = 0x7f07009f;
-        public static int AVLoadingIndicatorView_Large = 0x7f0700a0;
-        public static int AVLoadingIndicatorView_Small = 0x7f0700a1;
+        public static int AVLoadingIndicatorView = 0x7f160001;
+        public static int AVLoadingIndicatorView_Large = 0x7f160002;
+        public static int AVLoadingIndicatorView_Small = 0x7f160003;
     }
     public static final class styleable {
-        public static int[] AVLoadingIndicatorView = { 0x7f010004, 0x7f010005, 0x7f010006, 0x7f010007, 0x7f010008, 0x7f010009 };
-        public static int AVLoadingIndicatorView_indicatorColor = 5;
-        public static int AVLoadingIndicatorView_indicatorName = 4;
-        public static int AVLoadingIndicatorView_maxHeight = 3;
-        public static int AVLoadingIndicatorView_maxWidth = 1;
-        public static int AVLoadingIndicatorView_minHeight = 2;
-        public static int AVLoadingIndicatorView_minWidth = 0;
+        public static int[] AVLoadingIndicatorView = { 0x7f0400b7, 0x7f0400b8, 0x7f0400dd, 0x7f0400de, 0x7f0400e1, 0x7f0400e2 };
+        public static int AVLoadingIndicatorView_indicatorColor = 0;
+        public static int AVLoadingIndicatorView_indicatorName = 1;
+        public static int AVLoadingIndicatorView_maxHeight = 2;
+        public static int AVLoadingIndicatorView_maxWidth = 3;
+        public static int AVLoadingIndicatorView_minHeight = 4;
+        public static int AVLoadingIndicatorView_minWidth = 5;
     }
 }

@@ -13,6 +13,8 @@ public class Api_link {
     public final static String BASE_PHOTO_URL = BuildConfig.UPLOAD_URL;
     public final static String MAP_API = "https://maps.googleapis.com/maps/api/";
 
+    public final static String LOGO_BILL = "http://res.cloudinary.com/lubsolution/image/upload/v1514902531/wolver_logo.jpg";
+
     public final static String PROVINCES = BASE_URL + "provinces";
     public final static String DISTRICTS = BASE_URL + "districts?provinceid=";
 

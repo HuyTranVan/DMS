@@ -96,6 +96,17 @@ dependencies {
     compile 'com.google.android.gms:play-services:11.0.1'
     compile 'com.google.android.gms:play-services-maps:11.0.1'
     compile 'com.google.android.gms:play-services-identity:11.0.1'
+    //Drive
+    //compile 'com.google.android.gms:play-services-auth:11.4.0'
+    compile 'pub.devrel:easypermissions:0.3.0'
+    compile('com.google.api-client:google-api-client-android:1.23.0') {
+        exclude group: 'org.apache.httpcomponents'
+    }
+    compile('com.google.apis:google-api-services-sheets:v4-rev496-1.23.0') {
+        exclude group: 'org.apache.httpcomponents'
+    }
+
+
     //FCM
     compile 'com.google.firebase:firebase-messaging:11.0.1'
     compile 'com.google.firebase:firebase-core:11.0.1'
@@ -130,6 +141,9 @@ dependencies {
     compile 'com.github.lecho:hellocharts-library:1.5.8@aar'
     compile 'com.squareup.okhttp:okhttp:2.7.5'
     //calendar
+
+
+
 
 }
 //apply plugin: 'com.google.gms.google-services'

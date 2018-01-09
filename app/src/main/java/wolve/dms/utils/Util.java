@@ -499,6 +499,20 @@ public class Util {
                 "IMG_" + timeStamp + ".jpeg");
     }
 
+    public static File getOutputMediaFileLogo() {
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), Constants.IMAGES_DIRECTORY);
+
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                return null;
+            }
+        }
+
+        CustomSQL.setString("logo",mediaStorageDir.getPath() + File.separator +"logo.jpeg" );
+
+        return new File(mediaStorageDir.getPath() + File.separator +"logo.jpeg");
+    }
+
     public static String CurrentTimeStampString(){
         SimpleDateFormat dfm = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 
@@ -792,6 +806,7 @@ public class Util {
     }
 
     public static Double valueMoney(TextView edText){
+
         return Double.parseDouble(edText.getText().toString().trim().replace(".",""));
     }
 

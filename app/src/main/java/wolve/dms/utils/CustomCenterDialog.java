@@ -3,6 +3,9 @@ package wolve.dms.utils;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,12 +14,16 @@ import android.text.InputFilter;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,13 +75,16 @@ public class CustomCenterDialog {
         lp.height = WindowManager.LayoutParams.MATCH_PARENT;
 
         d.getWindow().setAttributes(lp);
+
         d.show();
         d.setContentView(resId);
+
 
         d.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 
         return d;
     }
+
 
     public static Dialog showCustomDialogNotCancel(int resId) {
         AlertDialog.Builder adb = new AlertDialog.Builder(Util.getInstance().getCurrentActivity());

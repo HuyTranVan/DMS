@@ -15,6 +15,7 @@ import wolve.dms.activities.ProductGroupActivity;
 import wolve.dms.activities.ShopCartActivity;
 import wolve.dms.activities.StatisticalActivity;
 import wolve.dms.activities.StatusActivity;
+import wolve.dms.activities.TestActivity;
 
 
 public class Transaction {
@@ -102,6 +103,11 @@ public class Transaction {
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
-
+    public static void gotoTestActivity() {
+        Activity context = Util.getInstance().getCurrentActivity();
+        Intent intent = new Intent(context, TestActivity.class);
+        context.startActivity(intent);
+        context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
 
 }
