@@ -1,9 +1,5 @@
 package wolve.dms.apiconnect;
 
-import android.os.AsyncTask;
-import android.support.v4.util.ArrayMap;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,19 +13,13 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Iterator;
-import java.util.Map;
 
 import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.callback.CallbackJSONObject;
-import wolve.dms.libraries.CustomDeleteMethod;
-import wolve.dms.libraries.CustomGetMethod;
-import wolve.dms.libraries.CustomPostMethod;
-import wolve.dms.libraries.CustomPostMultiPart;
-import wolve.dms.libraries.MultipartUtility;
-import wolve.dms.libraries.RestClientHelper;
-import wolve.dms.models.User;
-import wolve.dms.utils.Constants;
+import wolve.dms.libraries.connectapi.CustomDeleteMethod;
+import wolve.dms.libraries.connectapi.CustomGetMethod;
+import wolve.dms.libraries.connectapi.CustomPostMethod;
 import wolve.dms.utils.Util;
 
 /**

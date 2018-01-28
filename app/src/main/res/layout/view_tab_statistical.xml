@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:gravity="center">
 
-    <wolve.dms.controls.CTextIcon
+    <wolve.dms.customviews.CTextIcon
         android:id="@+id/statistical_tab_icon"
         android:layout_width="20dp"
         android:layout_height="20dp"

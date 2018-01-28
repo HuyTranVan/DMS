@@ -10,6 +10,5 @@ public abstract class CallbackJSONArray {
 
     public abstract void onResponse(JSONArray result);
 
-
     public abstract void onError(String error);
 }

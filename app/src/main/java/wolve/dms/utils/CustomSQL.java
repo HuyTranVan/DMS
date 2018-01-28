@@ -105,5 +105,13 @@ public class CustomSQL {
 
     }
 
+    public static void clear(){
+        prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
+        if(prefs != null){
+            prefs.edit().clear().commit();
+        }
+
+    }
+
 
 }

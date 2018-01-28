@@ -1,9 +1,6 @@
 package wolve.dms.activities;
 
 import android.Manifest;
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
@@ -45,7 +42,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -59,7 +55,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
@@ -86,7 +81,7 @@ import static wolve.dms.utils.MapUtil.removeMarker;
  * Created by macos on 9/14/17.
  */
 
-public class MapsActivity extends BaseActivity implements OnMapReadyCallback,View.OnClickListener,
+public class MapsActivity extends BaseActivity implements OnMapReadyCallback,View.OnClickListener,CallbackBoolean,
         GoogleMap.OnCameraIdleListener, GoogleMap.OnInfoWindowClickListener,
         GoogleMap.OnMapLongClickListener, RadioGroup.OnCheckedChangeListener ,
         GoogleMap.OnInfoWindowLongClickListener, GoogleMap.OnCameraMoveListener,
@@ -171,9 +166,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     @Override
     protected void onResume() {
         super.onResume();
-        if (Util.getInstance().currentLocation == null) {
-            checkLocationPermission();
-        }
+//        checkGPS(this);
+
     }
 
     @Override
@@ -224,14 +218,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        if (getCurLocation() != null){
-            MapUtil.resetMarker();
-            LatLng latLng = new LatLng(getCurLocation().getLatitude(), getCurLocation().getLongitude());
-            currentMarker = mMap.addMarker(new MarkerOptions().anchor(0.5f, 0.5f).position(latLng).flat(true).icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_location)));
 
-            //addCurrentMarker();
-            triggerCurrentLocation(latLng, 15);
-        }
+        checkGPS(this);
 
         mMap.setInfoWindowAdapter(new CustomWindowAdapter());
         mMap.setOnCameraMoveListener(this);
@@ -254,7 +242,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == Constants.REQUEST_PERMISSION_LOCATION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED ) {
-                checkIsEnabledGPS();
+                checkGPS(this);
 
             }else {
                 Toast.makeText(this, "Cấp quyền truy cập không thành công!", Toast.LENGTH_LONG).show();
@@ -280,34 +268,34 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         mBottomSheetBehavior.setPeekHeight((int) bottomSheetHeight);
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
-        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            int lastState = BottomSheetBehavior.STATE_COLLAPSED;
-
-            @Override
-            public void onStateChanged(View bottomSheet, int newState) {
-
-                int windowHeight = Util.getWindowSize().heightPixels;
-                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                    MapUtil.changeFragmentHeight(mapFragment, windowHeight - (int) Util.convertDp2Px(57));
-                    MapUtil.reboundMap(mMap);
-
-                } else if(newState == BottomSheetBehavior.STATE_EXPANDED) {
-                    MapUtil.changeFragmentHeight(mapFragment, windowHeight - Math.round(bottomSheetHeight));
-                    MapUtil.reboundMap(mMap);
-
-                } else if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                    MapUtil.changeFragmentHeight(mapFragment, windowHeight);
-//                    MapUtil.getInstance().reboundMap();
-                }
-            }
-
-            @Override
-            public void onSlide(View bottomSheet, float slideOffset) {
-                Util.changeFragmentHeight(mapFragment, Math.round(Util.getWindowSize().heightPixels - bottomSheetHeight * slideOffset));
-                MapUtil.getInstance().reboundMap(mMap);
-
-            }
-        });
+//        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+//            int lastState = BottomSheetBehavior.STATE_COLLAPSED;
+//
+//            @Override
+//            public void onStateChanged(View bottomSheet, int newState) {
+//
+////                int windowHeight = Util.getWindowSize().heightPixels;
+////                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+////                    MapUtil.changeFragmentHeight(mapFragment, windowHeight - (int) Util.convertDp2Px(57));
+////                    MapUtil.reboundMap(mMap);
+////
+////                } else if(newState == BottomSheetBehavior.STATE_EXPANDED) {
+////                    MapUtil.changeFragmentHeight(mapFragment, windowHeight - Math.round(bottomSheetHeight));
+////                    MapUtil.reboundMap(mMap);
+////
+////                } else if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+////                    MapUtil.changeFragmentHeight(mapFragment, windowHeight);
+//////                    MapUtil.getInstance().reboundMap();
+////                }
+//            }
+//
+//            @Override
+//            public void onSlide(View bottomSheet, float slideOffset) {
+////                Util.changeFragmentHeight(mapFragment, Math.round(Util.getWindowSize().heightPixels - bottomSheetHeight * slideOffset));
+////                MapUtil.getInstance().reboundMap(mMap);
+//
+//            }
+//        });
     }
 
     private void setupSpinner(){
@@ -801,6 +789,16 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         rvCustomer.setLayoutManager(layoutManager);
         rvCustomer.setNestedScrollingEnabled(true);
+    }
+
+    @Override
+    public void onRespone(Boolean result) {
+        MapUtil.resetMarker();
+        LatLng latLng = new LatLng(getCurLocation().getLatitude(), getCurLocation().getLongitude());
+        currentMarker = mMap.addMarker(new MarkerOptions().anchor(0.5f, 0.5f).position(latLng).flat(true).icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_location)));
+
+        //addCurrentMarker();
+        triggerCurrentLocation(latLng, 15);
     }
 }
 

@@ -56,22 +56,30 @@ public class Constants {
     //Home constant
     public static ArrayList<JSONObject> HomeItemList(){
         String[] icons = new String[]{
-                Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_home),
+                Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_edit_map),
                 Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_chart),
+                Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_import),
+                Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_notify),
                 Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_setting),
                 Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_username)};
         String[] texts = new String[]{
                 "Bán hàng",
                 "Thống kê",
+                "Xuất nhập tồn",
+                "Thông báo",
                 "Cài đặt",
                 "Tài khoản"};
         String[] colors = new String[]{
                 "Bán hàng",
                 "Thống kê",
+                "Xuất nhập tồn",
+                "Thông báo",
                 "Cài đặt",
                 "Tài khoản"};
         String[] roles = new String[]{
                 "SALE",
+                "SALE",
+                "MANAGER",
                 "SALE",
                 "MANAGER",
                 "MANAGER"};

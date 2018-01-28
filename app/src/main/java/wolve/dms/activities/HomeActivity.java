@@ -1,6 +1,11 @@
 package wolve.dms.activities;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.PermissionChecker;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -8,6 +13,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.List;
 
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
@@ -15,10 +23,13 @@ import wolve.dms.adapter.HomeAdapter;
 import wolve.dms.apiconnect.LocationConnect;
 import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.apiconnect.StatusConnect;
+import wolve.dms.apiconnect.SystemConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackJSONArray;
-import wolve.dms.controls.CTextIcon;
+import wolve.dms.callback.CallbackList;
+import wolve.dms.customviews.CTextIcon;
+import wolve.dms.libraries.ItemDecorationGridSpace;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.District;
 import wolve.dms.models.Product;
@@ -31,6 +42,8 @@ import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.utils.Constants.REQUEST_PERMISSION_LOCATION;
 
 /**
  * Created by macos on 9/15/17.
@@ -77,6 +90,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         rvItems.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new GridLayoutManager(this, 3);
         rvItems.setLayoutManager(linearLayoutManager);
+        rvItems.addItemDecoration(new ItemDecorationGridSpace((int) Util.convertDp2Px(1),3));
 
     }
 
@@ -99,8 +113,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         CustomCenterDialog.alertWithCancelButton(null, String.format("Đăng xuất tài khoản %s",User.getFullName()) , "ĐỒNG Ý","HỦY", new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
-                CustomSQL.setString(Constants.USER_USERNAME,"");
-                CustomSQL.setString(Constants.USER_PASSWORD,"");
+//                CustomSQL.setString(Constants.USER_USERNAME,"");
+//                CustomSQL.setString(Constants.USER_PASSWORD,"");
+                CustomSQL.clear();
                 Transaction.gotoLoginActivityRight();
 
             }
@@ -126,20 +141,21 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     public void onRespone(String data, int position) {
         switch (position){
             case 0:
+                if (PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(Util.getInstance().getCurrentActivity(),
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_PERMISSION_LOCATION);
+                    return;
+                }
                 Transaction.gotoMapsActivity();
+
                 break;
 
             case 1:
                 Transaction.gotoStatisticalActivity();
-
                 break;
 
             case 2:
-                if (Distributor.getDistributorId().equals("1")){
-                    choiceSetupItem();
-                }else {
-                    Util.showToast("Chưa hỗ trợ");
-                }
+                Util.showToast("Chưa hỗ trợ");
 
                 break;
 
@@ -148,24 +164,56 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 break;
 
             case 4:
+                if (Distributor.getDistributorId().equals("1")){
+                    choiceSetupItem();
+                }else {
+                    Util.showToast("Chưa hỗ trợ");
+                }
+                break;
 
+            case 5:
+                Util.showToast("Chưa hỗ trợ");
                 break;
         }
     }
 
     private void loadCurrentData() {
-        StatusConnect.ListStatus(new CallbackJSONArray() {
+        SystemConnect.getAllData(new CallbackList() {
             @Override
-            public void onResponse(JSONArray result) {
-                Status.saveStatusList(result);
-                loadDistrict(false);
+            public void onResponse(List result) {
+                try {
+                    Status.saveStatusList(new JSONArray(result.get(0)));
+                    District.saveDistrictList(new JSONArray(result.get(1)));
+                    ProductGroup.saveProductGroupList(new JSONArray(result.get(2)));
+                    Product.saveProductList(new JSONArray(result.get(3)));
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
             }
 
             @Override
             public void onError(String error) {
 
             }
-        }, false);
+        }, true);
+
+
+
+//        StatusConnect.ListStatus(new CallbackJSONArray() {
+//            @Override
+//            public void onResponse(JSONArray result) {
+//                Status.saveStatusList(result);
+//                loadDistrict(false);
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        }, false);
     }
 
     private void loadProvince(Boolean cancelLoading){
@@ -256,6 +304,17 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 });
     }
 
+    @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == Constants.REQUEST_PERMISSION_LOCATION) {
+            if (grantResults[0] == PackageManager.PERMISSION_DENIED || grantResults[1] == PackageManager.PERMISSION_DENIED ) {
+                Util.showToast("Cấp quyền truy cập không thành công");
 
+            }else {
+                Transaction.gotoMapsActivity();
+            }
+
+        }
+
+    }
 
 }

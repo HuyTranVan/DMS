@@ -17,7 +17,7 @@ import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackJSONObject;
-import wolve.dms.controls.CInputForm;
+import wolve.dms.customviews.CInputForm;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;

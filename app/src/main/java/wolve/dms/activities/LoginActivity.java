@@ -2,7 +2,6 @@ package wolve.dms.activities;
 
 import android.os.Bundle;
 import android.text.InputType;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,12 +16,12 @@ import wolve.dms.R;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.UserConnect;
 import wolve.dms.callback.CallbackJSONObject;
-import wolve.dms.controls.CTextIcon;
+import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
-import wolve.dms.utils.FitScrollWithFullscreen;
+import wolve.dms.libraries.FitScrollWithFullscreen;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 

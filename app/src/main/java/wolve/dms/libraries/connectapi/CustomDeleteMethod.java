@@ -1,8 +1,7 @@
-package wolve.dms.libraries;
+package wolve.dms.libraries.connectapi;
 
 import android.os.AsyncTask;
 import android.util.Log;
-
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,19 +21,14 @@ import wolve.dms.utils.Util;
 /**
  * Created by tranhuy on 7/22/16.
  */
-public class CustomGetMethod extends AsyncTask<String, Void, String> {
+public class CustomDeleteMethod extends AsyncTask<String, Void, String> {
     private Callback mListener = null;
     private String baseUrl;
 
-    public CustomGetMethod(String url, Callback listener) {
+    public CustomDeleteMethod(String url, Callback listener) {
         mListener = listener;
         this.baseUrl = url;
 
-//        User currentUser = User.getCurrentUser();
-//        if (currentUser != null && currentUser.getToken() != null) {
-//            token = currentUser.getToken();
-//            id_user = currentUser.getId_user();
-//        }
     }
 
     @Override
@@ -47,7 +41,7 @@ public class CustomGetMethod extends AsyncTask<String, Void, String> {
             obj = new URL(baseUrl);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
-            con.setRequestMethod("GET");
+            con.setRequestMethod("DELETE");
             con.setRequestProperty("User-Agent", "Mozilla/5.0");
             con.setRequestProperty("x-wolver-accesstoken", User.getToken());
             con.setRequestProperty("x-wolver-accessid", User.getUserId());

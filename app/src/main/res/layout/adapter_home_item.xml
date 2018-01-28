@@ -5,15 +5,14 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="@dimen/_100sdp"
-    android:layout_margin="@dimen/_2sdp"
-    android:background="@drawable/colorwhite_borderred_corner">
+    android:background="@drawable/colorwhite_pressed">
 
-    <wolve.dms.controls.CTextIcon
+    <wolve.dms.customviews.CTextIcon
         android:id="@+id/item_home_icon"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_weight="0.8"
-        android:textSize="@dimen/_40sdp"
+        android:layout_weight="0.7"
+        android:textSize="@dimen/_30sdp"
         android:textColor="@color/black_text_color_hint"
         android:text="@string/icon_camera"
         android:layout_gravity="center_horizontal"
@@ -23,7 +22,7 @@
         android:id="@+id/item_home_text"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_weight="0.2"
+        android:layout_weight="0.3"
         android:text="Bán hàng"
         android:layout_alignParentBottom="true"
         android:textColor="@color/black_text_color"

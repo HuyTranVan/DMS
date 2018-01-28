@@ -15,12 +15,10 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.github.clans.fab.FloatingActionButton;
 import com.soundcloud.android.crop.Crop;
 
 import org.json.JSONArray;
@@ -47,8 +45,9 @@ import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackListProduct;
 import wolve.dms.callback.CallbackPayBill;
-import wolve.dms.controls.CInputForm;
-import wolve.dms.libraries.DownloadImage;
+import wolve.dms.customviews.CInputForm;
+import wolve.dms.customviews.CTextIcon;
+import wolve.dms.libraries.connectapi.DownloadImage;
 import wolve.dms.libraries.printerdriver.PrinterCommands;
 import wolve.dms.libraries.printerdriver.UtilPrinter;
 import wolve.dms.models.Bill;
@@ -71,12 +70,14 @@ import static wolve.dms.utils.Constants.REQUEST_CHOOSE_IMAGE;
 public class ShopCartActivity extends BaseActivity implements  View.OnClickListener {
     private ImageView btnBack;
     private Button btnSubmit;
-    private TextView tvTitle, tvTotal, tvPrinterName;
+    private CTextIcon tvBluetooth;
+    private TextView tvTitle, tvTotal, btnAdd, btnAddPromotion;
+            //tvPrinterName;
     private CInputForm tvNote;
     private RecyclerView rvProducts, rvPromotions;
-    private FloatingActionButton btnAdd, btnAddPromotion;
-    private RelativeLayout rlCover, rlBluetooth;
-    private ProgressBar printerProgress;
+    private RelativeLayout rlCover;
+            //rlBluetooth;
+    //private ProgressBar printerProgress;
     private ImageView imgLogo;
 
     private static final int REQUEST_ENABLE_BT = 0*1000;
@@ -121,9 +122,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         rvPromotions =  findViewById(R.id.cart_rvpromotion);
         rlCover =  findViewById(R.id.cart_cover);
         imgLogo = findViewById(R.id.cart_bluetooth_printer);
-        tvPrinterName = findViewById(R.id.cart_printer_name);
-        rlBluetooth = findViewById(R.id.cart_printer_group);
-        printerProgress = findViewById(R.id.cart_printer_progress);
+        tvBluetooth = findViewById(R.id.cart_bluetooth);
 
     }
 
@@ -136,12 +135,14 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 tvTitle.setText(Constants.getShopInfo(currentCustomer.getString("shopType") , null) +" - " + currentCustomer.getString("signBoard") );
                 //currentDebt = currentCustomer.getDouble("debt");
 
-                if (!currentCustomer.getString("bills").equals("[]")){
-                    JSONArray array = new JSONArray(currentCustomer.getString("bills"));
-                    for (int i=0; i<array.length(); i++){
-                        listBills.add(new Bill(array.getJSONObject(i)));
-                    }
+                JSONArray array = new JSONArray(currentCustomer.getString("bills"));
+                for (int i=0; i<array.length(); i++){
+                    listBills.add(new Bill(array.getJSONObject(i)));
                 }
+
+//                if (!currentCustomer.getString("bills").equals("[]")){
+//
+//                }
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -174,7 +175,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         btnAdd.setOnClickListener(this);
         btnAddPromotion.setOnClickListener(this);
         imgLogo.setOnClickListener(this);
-        rlBluetooth.setOnClickListener(this);
+        tvBluetooth.setOnClickListener(this);
     }
 
     @Override
@@ -212,7 +213,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 startImageChooser();
                 break;
 
-            case R.id.cart_printer_group:
+            case R.id.cart_bluetooth:
                 showListBluetooth(listDevice);
                 break;
         }
@@ -340,10 +341,31 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                     params.put("billDetails", (Object) array);
 
                     if (btsocket != null && btsocket.isConnected()){
-                        flushBillDetail(total, paid, new CallbackBoolean() {
+//                        flushBillDetail(total, paid, new CallbackBoolean() {
+//                            @Override
+//                            public void onRespone(Boolean result) {
+//
+//                                Util.getInstance().stopLoading(true);
+////                                Thread.sleep(1000);
+//                                CustomCenterDialog.alertWithCancelButton2("TIẾP TỤC", "In thêm hoặc tiếp tục thanh toán", "TIẾP TỤC", "IN LẠI", new CustomCenterDialog.ButtonCallback() {
+//                                    @Override
+//                                    public void Submit(Boolean boolSubmit) {
+//                                        postBills(params.toString());
+//
+//                                    }
+//
+//                                    @Override
+//                                    public void Cancel(Boolean boolCancel) {
+//                                        submitBill(total,paid);
+//                                    }
+//
+//                                });
+//                            }
+//                        });
+
+                        CustomerConnect.printBill(outputStream, currentCustomer, getListProduct(), listBills, paid, new CallbackBoolean() {
                             @Override
                             public void onRespone(Boolean result) {
-
                                 Util.getInstance().stopLoading(true);
 //                                Thread.sleep(1000);
                                 CustomCenterDialog.alertWithCancelButton2("TIẾP TỤC", "In thêm hoặc tiếp tục thanh toán", "TIẾP TỤC", "IN LẠI", new CustomCenterDialog.ButtonCallback() {
@@ -480,7 +502,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                                 }
 
                                 listDevice.add(device);
-                                tvPrinterName.setText(String.format(BLUETOOTH_STATUS, listDevice.size()));
+                                //tvPrinterName.setText(String.format(BLUETOOTH_STATUS, listDevice.size()));
 
                             }
                         }
@@ -495,6 +517,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     }
 
     private void flushBillDetail(Double total, Double paid, CallbackBoolean mListener){
+
         try {
             if (CustomSQL.getString("logo").equals("")){
                 UtilPrinter.printDrawablePhoto(outputStream, getResources().getDrawable(R.drawable.ic_logo_print));
@@ -619,8 +642,8 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         IntentFilter btIntentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(mBTReceiver, btIntentFilter);
 
-        printerProgress.setVisibility(View.VISIBLE);
-        tvPrinterName.setText(String.format(BLUETOOTH_STATUS, listDevice.size()));
+        //printerProgress.setVisibility(View.VISIBLE);
+        //tvPrinterName.setText(String.format(BLUETOOTH_STATUS, listDevice.size()));
 
     }
 
@@ -656,8 +679,10 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                         public void run() {
                             try {
                                 if (btsocket != null){
-                                    tvPrinterName.setText("Đang kết nối: "+ btsocket.getRemoteDevice().getName());
-                                    printerProgress.setVisibility(View.GONE);
+                                    tvBluetooth.setText(R.string.icon_bluetooth_connected);
+                                    tvBluetooth.setTextColor(getResources().getColor(R.color.colorBlue));
+                                    //tvPrinterName.setText("Đang kết nối: "+ btsocket.getRemoteDevice().getName());
+                                    //printerProgress.setVisibility(View.GONE);
 
                                     CustomSQL.setString(Constants.BLUETOOTH_DEVICE, btsocket.getRemoteDevice().getAddress());
                                     outputStream = btsocket.getOutputStream();
@@ -709,7 +734,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 }
 
                 listDevice.add(device);
-                tvPrinterName.setText(String.format(BLUETOOTH_STATUS, listDevice.size()));
+                //tvPrinterName.setText(String.format(BLUETOOTH_STATUS, listDevice.size()));
 
             }
         }

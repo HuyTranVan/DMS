@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorWhite">
+    android:background="@color/colorGrey">
 
     <RelativeLayout
+        android:id="@+id/home_info"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.5">
+        android:background="@color/colorWhite"
+        android:layout_above="@+id/home_rvitems"
+        android:layout_marginBottom="1dp">
 
         <ImageView
             android:id="@+id/home_image"
@@ -47,7 +50,7 @@
                 android:paddingBottom="@dimen/_10sdp"
                 android:paddingLeft="@dimen/_10sdp"/>
 
-            <wolve.dms.controls.CTextIcon
+            <wolve.dms.customviews.CTextIcon
                 android:id="@+id/home_logout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -63,28 +66,10 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/home_rvitems"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_weight="0.5">
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"/>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/home_rvitems"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="LubSolution_DMS"
-            android:textSize="@dimen/_6sdp"
-            android:padding="@dimen/_5sdp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"/>
-
-
-    </RelativeLayout>
-
-
-</LinearLayout>
+</RelativeLayout>

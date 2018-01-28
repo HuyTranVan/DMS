@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         
-        <wolve.dms.controls.CTextIcon
+        <wolve.dms.customviews.CTextIcon
             android:id="@+id/status_item_icon_default"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

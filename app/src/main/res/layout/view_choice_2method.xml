@@ -18,7 +18,7 @@
             android:clickable="true"
             android:background="?selectableItemBackground">
 
-                <wolve.dms.controls.CTextIcon
+                <wolve.dms.customviews.CTextIcon
                     android:id="@+id/choice_2method_icon1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -53,7 +53,7 @@
             android:orientation="horizontal"
             android:background="?selectableItemBackground">
 
-                <wolve.dms.controls.CTextIcon
+                <wolve.dms.customviews.CTextIcon
                     android:id="@+id/choice_2method_icon2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

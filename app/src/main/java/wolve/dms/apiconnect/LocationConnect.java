@@ -9,9 +9,7 @@ import java.util.Locale;
 import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.callback.CallbackJSONObject;
-import wolve.dms.libraries.CustomGetMethod;
-import wolve.dms.libraries.CustomPostMethod;
-import wolve.dms.libraries.RestClientHelper;
+import wolve.dms.libraries.connectapi.CustomGetMethod;
 import wolve.dms.utils.Util;
 
 /**

@@ -3,6 +3,7 @@ package wolve.dms.activities;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import lecho.lib.hellocharts.listener.ColumnChartOnValueSelectListener;
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.AxisValue;
 import lecho.lib.hellocharts.model.Column;
@@ -61,7 +63,17 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
     }
 
     private void addEvent() {
+        chartIncome.setOnValueTouchListener(new ColumnChartOnValueSelectListener() {
+            @Override
+            public void onValueSelected(int columnIndex, int subcolumnIndex, SubcolumnValue value) {
+                Log.e("chart", columnIndex +" % " + subcolumnIndex +" & " + value.toString());
+            }
 
+            @Override
+            public void onValueDeselected() {
+
+            }
+        });
     }
 
     private void initializeView() {

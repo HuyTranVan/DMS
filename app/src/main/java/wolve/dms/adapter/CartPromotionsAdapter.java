@@ -17,7 +17,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.R;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackDeleteAdapter;
-import wolve.dms.controls.CTextIcon;
+import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.Product;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;

@@ -37,7 +37,7 @@
                 android:layout_centerInParent="true"/>
 
 
-            <wolve.dms.controls.CTextIcon
+            <wolve.dms.customviews.CTextIcon
                 android:id="@+id/icon_more"
                 android:layout_width="@dimen/_35sdp"
                 android:layout_height="match_parent"
@@ -79,7 +79,7 @@
                         android:name="com.google.android.gms.maps.SupportMapFragment"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        class="wolve.dms.controls.WorkaroundMapFragment"/>
+                        class="wolve.dms.customviews.WorkaroundMapFragment"/>
 
                     <ImageView
                         android:id="@+id/add_customer_marker"
@@ -89,7 +89,7 @@
                         android:layout_centerInParent="true"/>
 
 
-                    <wolve.dms.controls.CTextIcon
+                    <wolve.dms.customviews.CTextIcon
                         android:id="@+id/add_customer_editlocation"
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/_30sdp"
@@ -200,7 +200,7 @@
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
 
-                            <wolve.dms.controls.CInputForm
+                            <wolve.dms.customviews.CInputForm
                                 android:id="@+id/add_customer_shoptype"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -215,7 +215,7 @@
                                 android:background="@color/colorGrey"
                                 android:layout_margin="@dimen/_5sdp"/>
 
-                            <wolve.dms.controls.CInputForm
+                            <wolve.dms.customviews.CInputForm
                                 android:id="@+id/add_customer_shopname"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -231,7 +231,7 @@
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
 
-                            <wolve.dms.controls.CInputForm
+                            <wolve.dms.customviews.CInputForm
                                 android:id="@+id/add_customer_name"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -246,7 +246,7 @@
                                 android:background="@color/colorGrey"
                                 android:layout_margin="@dimen/_5sdp"/>
 
-                            <wolve.dms.controls.CInputForm
+                            <wolve.dms.customviews.CInputForm
                                 android:id="@+id/add_customer_phone"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -262,7 +262,7 @@
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
 
-                            <wolve.dms.controls.CInputForm
+                            <wolve.dms.customviews.CInputForm
                                 android:id="@+id/add_customer_adress"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -277,7 +277,7 @@
                                 android:background="@color/colorGrey"
                                 android:layout_margin="@dimen/_5sdp"/>
 
-                            <wolve.dms.controls.CInputForm
+                            <wolve.dms.customviews.CInputForm
                                 android:id="@+id/add_customer_street"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -295,7 +295,7 @@
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
 
-                            <wolve.dms.controls.CInputForm
+                            <wolve.dms.customviews.CInputForm
                                 android:id="@+id/add_customer_district"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -310,7 +310,7 @@
                                 android:background="@color/colorGrey"
                                 android:layout_margin="@dimen/_5sdp"/>
 
-                            <wolve.dms.controls.CInputForm
+                            <wolve.dms.customviews.CInputForm
                                 android:id="@+id/add_customer_city"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -325,7 +325,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
 
-                            <wolve.dms.controls.CInputForm
+                            <wolve.dms.customviews.CInputForm
                                 android:id="@+id/add_customer_note"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -338,7 +338,7 @@
                                 app:textColor="@color/colorBlue"
                                 app:textColorHint="@color/colorBlueTransparent"/>
 
-                            <wolve.dms.controls.CTextIcon
+                            <wolve.dms.customviews.CTextIcon
                                 android:id="@+id/add_customer_dropdown"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"

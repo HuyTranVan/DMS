@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 import wolve.dms.R;
 import wolve.dms.callback.CallbackClickAdapter;
-import wolve.dms.controls.CTextIcon;
+import wolve.dms.customviews.CTextIcon;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
 

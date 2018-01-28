@@ -82,6 +82,7 @@ public class Util {
     public static ArrayList<Province> mListProvinces;
     private DisplayMetrics windowSize;
     private static int PLAY_SERVICES_RESOLUTION_REQUEST = 1462;
+    public static Toast currentToast;
 
     public void setCurrentLocation(Location currentLocation) {
         this.currentLocation = currentLocation;
@@ -183,28 +184,12 @@ public class Util {
     }
 
     public static void showToast(String message){
-        Toast.makeText(Util.getInstance().getCurrentActivity(), message, Toast.LENGTH_SHORT).show();
+        if (currentToast!= null) {
+            currentToast.cancel();
+        }
+        currentToast = Toast.makeText(Util.getInstance().getCurrentActivity(), message, Toast.LENGTH_SHORT);
+        currentToast.show();
     }
-
-//    public static void setStore(String title, int nValue) {
-//        CustomSharedPrefer customSharedPrefer = new CustomSharedPrefer(Util.getInstance().getCurrentActivity());
-//        customSharedPrefer.setInt(title, nValue);
-//    }
-//
-//    public static int getStore(String title) {
-//        CustomSharedPrefer customSharedPrefer = new CustomSharedPrefer(Util.getInstance().getCurrentActivity());
-//        return customSharedPrefer.getInt(title);
-//    }
-//
-//    public static void setBadge(int nBadge) {
-//        try {
-//            ShortcutBadger.applyCount(Util.getInstance().getCurrentActivity(), nBadge); //for 1.1.4+
-//            // Badges.setBadge(Util.getInstance().getCurrentActivity(), nBadge);
-//        } catch (Exception e) {
-//            Log.e(Constants.DMS_LOGS, e.getMessage());
-//        }
-//        setStore(Constants.BADGE, nBadge);
-//    }
 
     public static String AssetJSONFile(Context context, String filename) {
         String json = null;

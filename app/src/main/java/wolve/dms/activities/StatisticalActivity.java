@@ -38,12 +38,12 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class StatisticalActivity extends BaseActivity implements  View.OnClickListener , wolve.dms.libraries.swiperefreshlayout.SwipeRefreshLayout.OnRefreshListener{
+public class StatisticalActivity extends BaseActivity implements  View.OnClickListener {
     private ImageView btnBack;
     private TextView tvTitle;
     private ViewPager viewPager;
     private TabLayout tabLayout;
-    private wolve.dms.libraries.swiperefreshlayout.SwipeRefreshLayout swipeRefreshLayout;
+//    private wolve.dms.libraries.swiperefreshlayout.SwipeRefreshLayout swipeRefreshLayout;
     private RadioGroup rdGroup;
     private RadioButton rdMonth, rdDate;
     private DatePickerDialog datePickerDialog;
@@ -77,7 +77,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         tvTitle = (TextView) findViewById(R.id.statistical_title);
         viewPager = (ViewPager) findViewById(R.id.statistical_viewpager);
         tabLayout = (TabLayout) findViewById(R.id.statistical_tabs);
-        swipeRefreshLayout = (wolve.dms.libraries.swiperefreshlayout.SwipeRefreshLayout) findViewById(R.id.statistical_swipelayout);
+//        swipeRefreshLayout = (wolve.dms.libraries.swiperefreshlayout.SwipeRefreshLayout) findViewById(R.id.statistical_swipelayout);
         rdGroup = findViewById(R.id.statistical_filter);
         rdMonth = findViewById(R.id.statistical_filter_month);
         rdDate = findViewById(R.id.statistical_filter_date);
@@ -86,6 +86,11 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
     @Override
     public void initialData() {
+        rdMonth.setText(Util.CurrentMonthYear());
+        rdDate.setText(DATE_DEFAULT);
+        currentDate = rdMonth.getText().toString();
+        loadAllBill(currentDate, true);
+
         setupViewPager(viewPager);
         setupTabLayout(tabLayout);
 
@@ -94,19 +99,10 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     @Override
     public void addEvent() {
         btnBack.setOnClickListener(this);
-        swipeRefreshLayout.setOnRefreshListener(this);
+//        swipeRefreshLayout.setOnRefreshListener(this);
         rdMonth.setOnClickListener(this);
         rdDate.setOnClickListener(this);
 
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        rdMonth.setText(Util.CurrentMonthYear());
-        rdDate.setText(DATE_DEFAULT);
-        currentDate = rdMonth.getText().toString();
-        loadAllBill(currentDate, true);
     }
 
     public void setupViewPager(ViewPager viewPager) {
@@ -117,6 +113,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         viewPager.setAdapter(pageAdapter);
         //viewPager.setCurrentItem(Util.currentHomeFragment);
         viewPager.setOffscreenPageLimit(4);
+
     }
 
     public void setupTabLayout(TabLayout tabLayout) {
@@ -203,18 +200,18 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         datePickerDialogFragment.show(getSupportFragmentManager(), null);
     }
 
-    @Override
-    public void onRefresh() {
-//        swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#2196f3"));
-        swipeRefreshLayout.setColorScheme(R.color.colorBlue , R.color.colorBlueDark , R.color.colorBlueDark , R.color.colorBlue );
-        loadAllBill(currentDate, false);
-    }
+//    @Override
+//    public void onRefresh() {
+////        swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#2196f3"));
+//        swipeRefreshLayout.setColorScheme(R.color.colorBlue , R.color.colorBlueDark , R.color.colorBlueDark , R.color.colorBlue );
+//        loadAllBill(currentDate, false);
+//    }
 
     private void loadAllBill(String param, Boolean showLoading){
         CustomerConnect.ListBill(paramDate(param), new CallbackJSONArray() {
             @Override
             public void onResponse(JSONArray result) {
-                swipeRefreshLayout.setRefreshing(false);
+                //swipeRefreshLayout.setRefreshing(false);
                 try {
                     listBill = new ArrayList<Bill>();
                     for (int i=0; i<result.length(); i++){
@@ -234,7 +231,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
             @Override
             public void onError(String error) {
-                swipeRefreshLayout.setRefreshing(false);
+                //swipeRefreshLayout.setRefreshing(false);
             }
         }, showLoading);
     }

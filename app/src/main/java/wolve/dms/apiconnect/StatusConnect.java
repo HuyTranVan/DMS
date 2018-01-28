@@ -6,10 +6,9 @@ import org.json.JSONObject;
 import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.callback.CallbackJSONObject;
-import wolve.dms.libraries.CustomDeleteMethod;
-import wolve.dms.libraries.CustomGetMethod;
-import wolve.dms.libraries.CustomPostMethod;
-import wolve.dms.utils.Constants;
+import wolve.dms.libraries.connectapi.CustomDeleteMethod;
+import wolve.dms.libraries.connectapi.CustomGetMethod;
+import wolve.dms.libraries.connectapi.CustomPostMethod;
 import wolve.dms.utils.Util;
 
 /**

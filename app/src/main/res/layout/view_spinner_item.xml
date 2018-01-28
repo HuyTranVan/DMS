@@ -7,4 +7,4 @@
     android:minWidth="@dimen/_80sdp"
     android:textColor="@color/black_text_color"
     android:gravity="center"
-    android:textSize="@dimen/_12sdp" />
+    android:textSize="@dimen/_12sdp"/>

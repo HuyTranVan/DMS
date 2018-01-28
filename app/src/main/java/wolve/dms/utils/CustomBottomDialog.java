@@ -10,7 +10,7 @@ import com.orhanobut.dialogplus.OnBackPressListener;
 import com.orhanobut.dialogplus.ViewHolder;
 
 import wolve.dms.R;
-import wolve.dms.controls.CTextIcon;
+import wolve.dms.customviews.CTextIcon;
 
 /**
  * Created by macos on 9/28/17.

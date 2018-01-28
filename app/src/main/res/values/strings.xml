@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Wolver DMS</string>
+    <string name="app_name">DMS</string>
     <string name="map_id">AIzaSyCJ-4zFtAI6ZVWSXY8E2xxM_EyLqXtwCXE</string>
 
 
@@ -42,6 +42,7 @@
     <string name="icon_account">&#xf013;</string>
     <string name="icon_home">&#xf015;</string>
     <string name="icon_plus">&#xf067;</string>
+    <string name="icon_minus">&#xf068;</string>
     <string name="icon_product_group">&#xf0e8;</string>
     <string name="icon_product">&#xf02d;</string>
     <string name="icon_price">&#xf155;</string>
@@ -63,6 +64,10 @@
     <string name="icon_warning">&#xf071;</string>
     <string name="icon_print">&#xf02f;</string>
     <string name="icon_keyboard">&#xf11c;</string>
+    <string name="icon_import">&#xf187;</string>
+    <string name="icon_notify">&#xf0a1;</string>
+    <string name="icon_bluetooth">&#xf294;</string>
+    <string name="icon_bluetooth_connected">&#xf293;</string>
 
 
 

@@ -32,7 +32,7 @@
 
     </RelativeLayout>
 
-    <wolve.dms.controls.CInputForm
+    <wolve.dms.customviews.CInputForm
         android:id="@+id/add_productgroup_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

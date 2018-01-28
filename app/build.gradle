@@ -27,14 +27,7 @@ android {
 
             buildConfigField "String", "SERVER_URL", '"http://lubsolution.com:9000/"'
             buildConfigField "String", "UPLOAD_URL", '"http://lubsolution.com:9000/"'
-//            applicationVariants.all { variant ->
-//                variant.outputs.all { output ->
-//                    def date = new Date();
-//                    def formatDate = date.format('ddMMyyyy')
-//                    output.outputFile = new File(output.outputFileName.parent,
-//                            output.outputFileName.name.replace("app-debug", "${variant.versionName}_DEV"))
-//                    //output.outputFile.name.replace("app-debug", String.format("%s_%s", "DMS_Dev", formatDate)))
-//                }
+
             android.applicationVariants.all {
                 variant -> variant.outputs.all {
                     outputFileName = "${variant.name}-${variant.versionName}-DEV.apk"
@@ -48,13 +41,7 @@ android {
             signingConfig signingConfigs.config
             buildConfigField "String", "SERVER_URL", '"http://lubsolution.com:9000/"'
             buildConfigField "String", "UPLOAD_URL", '"http://lubsolution.com:9000/"'
-//            applicationVariants.all { variant ->
-//                variant.outputs.each { output ->
-//                    output.outputFile = new File(
-//                            output.outputFile.parent,
-//                            output.outputFile.name.replace(".apk", "-${variant.versionName}.apk"))
-//                }
-//            }
+
             android.applicationVariants.all { variant ->
                 variant.outputs.all {
                     outputFileName = "${variant.name}-${variant.versionName}.apk"

@@ -19,7 +19,7 @@ import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
-import wolve.dms.controls.CTextIcon;
+import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.Status;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;

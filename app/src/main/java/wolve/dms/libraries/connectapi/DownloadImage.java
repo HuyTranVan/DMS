@@ -1,4 +1,4 @@
-package wolve.dms.libraries;
+package wolve.dms.libraries.connectapi;
 
 import android.content.Context;
 import android.graphics.Bitmap;

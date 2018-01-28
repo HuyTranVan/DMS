@@ -2,6 +2,7 @@ package wolve.dms;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
@@ -18,6 +19,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -52,7 +54,18 @@ public abstract class BaseActivity extends AppCompatActivity {
         setContentView(getResourceLayout());
         Util.getInstance().setCurrentActivity(this);
         findViewById();
-        initialData();
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                initialData();
+
+            }
+        }, 400);
+
+//        initialData();
+
         addEvent();
     }
 
@@ -74,9 +87,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         fragment.setArguments(bundle);
         FragmentTransaction manager = this.getSupportFragmentManager().beginTransaction();
 
-        if(isAnimation){
+        if (isAnimation) {
 //            manager.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,R.anim.slide_in_left, R.anim.slide_out_right);
-            manager.setCustomAnimations(R.anim.slide_up, R.anim.slide_down,R.anim.slide_in_bottom, R.anim.slide_out_bottom);
+            manager.setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_in_bottom, R.anim.slide_out_bottom);
         }
 
         manager.replace(setIdContainer(), fragment, tag)
@@ -95,10 +108,9 @@ public abstract class BaseActivity extends AppCompatActivity {
             fragmentReplace = fragment;
         }
         FragmentTransaction manager = this.getSupportFragmentManager().beginTransaction();
-        if(isAnimation){
-            manager.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,R.anim.slide_in_left, R.anim.slide_out_right);
+        if (isAnimation) {
+            manager.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
         }
-
 
 
         manager.replace(setIdContainer(), fragmentReplace, tag)
@@ -139,10 +151,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         public void onLocationChanged(final Location location) {
             Util.getInstance().stopLoading(true);
 
-            if (Util.getInstance().getCurrentActivity().getLocalClassName().equals("activities.MapsActivity") ){
-                if (Util.getInstance().getCurrentLocation() != null){
+            if (Util.getInstance().getCurrentActivity().getLocalClassName().equals("activities.MapsActivity")) {
+                if (Util.getInstance().getCurrentLocation() != null) {
                     Util.mapsActivity.animateMarker(
-                            new LatLng(Util.getInstance().getCurrentLocation().getLatitude(), Util.getInstance().getCurrentLocation().getLongitude()) ,
+                            new LatLng(Util.getInstance().getCurrentLocation().getLatitude(), Util.getInstance().getCurrentLocation().getLongitude()),
                             new LatLng(location.getLatitude(), location.getLongitude()));
 
                 }
@@ -179,19 +191,12 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     };
 
-    public void checkIsEnabledGPS() {
-        checkIsEnabledGPS(false);
-    }
-
-    public void checkIsEnabledGPS(boolean isDisplayedPopup) {
+    public void checkGPS(CallbackBoolean mListener) {
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         boolean gps_enabled = false;
-        try {
-            Util.getInstance().showLoading("Kiểm tra thông tin vị trí");
-            gps_enabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        Util.getInstance().showLoading("Kiểm tra thông tin vị trí");
+        gps_enabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
         if (!gps_enabled) {
             CustomCenterDialog.alertWithButton("Xác thực quyền truy cập vị trí", "Bạn cần mở GPS truy cập vị trí để sử dụng toàn bộ tính năng phần mềm", "Bật GPS", new CallbackBoolean() {
                 @Override
@@ -199,52 +204,27 @@ public abstract class BaseActivity extends AppCompatActivity {
                     final Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                     startActivity(intent);
                     Util.getInstance().stopLoading(true);
-                    //checkIsEnabledGPS(true);
+
                 }
             });
         } else {
-            if ( PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE, mLocationListener);
             mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE, mLocationListener);
+            Util.getInstance().stopLoading(true);
 
-            updateLastLocation();
+            //UPDATE LAST LOCATION
+            Criteria criteria = new Criteria();
+            criteria.setAccuracy(Criteria.ACCURACY_FINE);
+            Location curLocation = mLocationManager.getLastKnownLocation(mLocationManager.getBestProvider(criteria, true));
+            if(curLocation != null) {
+                Util.getInstance().setCurrentLocation(curLocation);
+                mListener.onRespone(true);
+            }
         }
 
-    }
-
-    public boolean checkLocationPermission() {
-        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        if (PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            CustomCenterDialog.alertWithButton("Xác thực quyền truy cập vị trí", "Bạn cần cho phép ứng dụng truy cập vị trí để sử dụng toàn bộ tính năng phần mềm", "Xác nhận", new CallbackBoolean() {
-                @Override
-                public void onRespone(Boolean result) {
-                    ActivityCompat.requestPermissions(Util.getInstance().getCurrentActivity(),
-                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_PERMISSION_LOCATION);
-                }
-            });
-            return false;
-        }
-        checkIsEnabledGPS();
-
-        return true;
-
-    }
-
-    public void updateLastLocation() {
-        Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        if (PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-
-        Location curLocation = mLocationManager.getLastKnownLocation(mLocationManager.getBestProvider(criteria, true));
-        if(curLocation != null) {
-            Util.getInstance().setCurrentLocation(curLocation);
-        }
     }
 
     @Override
@@ -323,6 +303,5 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         }
     }
-
 
 }

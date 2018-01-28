@@ -8,7 +8,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,8 +27,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,12 +46,11 @@ import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
-import wolve.dms.callback.CallbackPayBill;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.CallbackUpdateBill;
-import wolve.dms.controls.CInputForm;
-import wolve.dms.controls.CTextIcon;
-import wolve.dms.controls.WorkaroundMapFragment;
+import wolve.dms.customviews.CInputForm;
+import wolve.dms.customviews.CTextIcon;
+import wolve.dms.customviews.WorkaroundMapFragment;
 import wolve.dms.models.Bill;
 import wolve.dms.models.Checkin;
 import wolve.dms.models.Customer;
@@ -64,7 +60,7 @@ import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomDropdow;
-import wolve.dms.utils.FitScrollWithFullscreen;
+import wolve.dms.libraries.FitScrollWithFullscreen;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -165,6 +161,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
     @Override
     public void initialData() {
+        mapFragment.getMapAsync(this);
         tabLayout.setupWithViewPager(viewPager);
 
         String bundle = getIntent().getExtras().getString(Constants.CUSTOMER);
@@ -266,7 +263,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
     @Override
     public void addEvent() {
-        mapFragment.getMapAsync(this);
+
         btnBack.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
         tvTrash.setOnClickListener(this);

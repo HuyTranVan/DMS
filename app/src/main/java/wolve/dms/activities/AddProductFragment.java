@@ -14,9 +14,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.PermissionChecker;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +31,6 @@ import com.soundcloud.android.crop.Crop;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -46,7 +42,7 @@ import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackString;
-import wolve.dms.controls.CInputForm;
+import wolve.dms.customviews.CInputForm;
 import wolve.dms.models.Product;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;

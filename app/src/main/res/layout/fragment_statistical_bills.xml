@@ -10,25 +10,70 @@
 
         <TextView
             android:id="@+id/statistical_bills_count"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5"
+            android:layout_weight="0.2"
             android:text="tong cong"
             android:padding="@dimen/_5sdp"
-            android:gravity="right"
             android:textSize="@dimen/_10sdp"
-            android:textColor="@color/colorRed"/>
+            android:textColor="@color/orange_dark"/>
 
-        <TextView
-            android:id="@+id/statistical_bills_total"
-            android:layout_width="match_parent"
+        <RadioGroup
+            android:id="@+id/statistical_bills_totalgroup"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5"
-            android:text="tong cong"
-            android:padding="@dimen/_5sdp"
-            android:gravity="right"
-            android:textSize="@dimen/_10sdp"
-            android:textColor="@color/colorBlue"/>
+            android:layout_weight="0.8"
+            android:orientation="horizontal">
+
+
+            <RadioButton
+                android:id="@+id/statistical_bills_debt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="tong cong"
+                android:padding="@dimen/_5sdp"
+                android:textSize="@dimen/_10sdp"
+                android:textColor="@color/colorRed"
+                android:backgroundTint="@color/colorRed"
+                android:buttonTint="@color/colorRed"
+                />
+
+            <RadioButton
+                android:id="@+id/statistical_bills_total"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="tong cong"
+                android:padding="@dimen/_5sdp"
+                android:textSize="@dimen/_10sdp"
+                android:textColor="@color/colorBlue"
+                android:checked="true"
+                android:backgroundTint="@color/colorBlue"
+                android:buttonTint="@color/colorBlue"/>
+
+        </RadioGroup>
+
+        <!--<TextView-->
+            <!--android:id="@+id/statistical_bills_debt"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="0.35"-->
+            <!--android:text="tong cong"-->
+            <!--android:padding="@dimen/_5sdp"-->
+            <!--android:textSize="@dimen/_10sdp"-->
+            <!--android:textColor="@color/colorRed"/>-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/statistical_bills_total"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="0.35"-->
+            <!--android:text="tong cong"-->
+            <!--android:padding="@dimen/_5sdp"-->
+            <!--android:gravity="right"-->
+            <!--android:textSize="@dimen/_10sdp"-->
+            <!--android:textColor="@color/colorBlue"/>-->
     </LinearLayout>
 
     <View

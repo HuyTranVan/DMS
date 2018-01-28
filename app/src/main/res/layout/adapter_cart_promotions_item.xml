@@ -46,7 +46,7 @@
                 android:orientation="horizontal"
                 android:layout_weight="0.45">
 
-                <wolve.dms.controls.CTextIcon
+                <wolve.dms.customviews.CTextIcon
                     android:id="@+id/shopcart_promotions_item_sub"
                     android:layout_width="@dimen/_35sdp"
                     android:layout_height="@dimen/_35sdp"
@@ -70,7 +70,7 @@
                     android:textSize="@dimen/_10sdp"
                     android:layout_gravity="center_vertical"/>
 
-                <wolve.dms.controls.CTextIcon
+                <wolve.dms.customviews.CTextIcon
                     android:id="@+id/shopcart_promotions_item_plus"
                     android:layout_width="@dimen/_35sdp"
                     android:layout_height="@dimen/_35sdp"

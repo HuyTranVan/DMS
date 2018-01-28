@@ -26,11 +26,9 @@ import wolve.dms.utils.Util;
 
 public class CustomerBillsDetailAdapter extends RecyclerView.Adapter<CustomerBillsDetailAdapter.CustomerBillsDetailAdapterViewHolder> {
     private List<BillDetail> mData = new ArrayList<>();
-    private LayoutInflater mLayoutInflater;
     private Context mContext;
 
     public CustomerBillsDetailAdapter(List<BillDetail> data) {
-        this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mData = data;
         this.mContext = Util.getInstance().getCurrentActivity();
 
@@ -44,12 +42,12 @@ public class CustomerBillsDetailAdapter extends RecyclerView.Adapter<CustomerBil
 
     @Override
     public void onBindViewHolder(final CustomerBillsDetailAdapterViewHolder holder, final int position) {
-//            holder.lnParent.setBackgroundResource(( position % 2 ) == 0 ? R.color.colorLightGrey: R.color.colorWhite);
-            holder.tvName.setText(mData.get(position).getString("productName"));
-            holder.tvQuantity.setText(mData.get(position).getInt("quantity") + "x" + Util.FormatMoney(mData.get(position).getDouble("unitPrice")));
-            holder.tvDiscount.setText(mData.get(position).getDouble("discount") ==0 ? "--" : "- "+ Util.FormatMoney(mData.get(position).getDouble("discount")));
-            Double sumMoney = mData.get(position).getInt("quantity") * (mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount"));
-            holder.tvTotal.setText(Util.FormatMoney(sumMoney));
+        Double  netMoney = mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount");
+        Double sumMoney = mData.get(position).getInt("quantity") * (mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount"));
+        holder.tvName.setText(mData.get(position).getString("productName"));
+        holder.tvQuantity.setText(netMoney ==0 ? String.format("SL: %s",mData.get(position).getInt("quantity")) :String.format("%sx%s", mData.get(position).getInt("quantity") ,  Util.FormatMoney(netMoney) ));
+        holder.tvTotal.setText(sumMoney ==0 ? "--" : Util.FormatMoney(sumMoney));
+
     }
 
     @Override
@@ -58,14 +56,13 @@ public class CustomerBillsDetailAdapter extends RecyclerView.Adapter<CustomerBil
     }
 
     public class CustomerBillsDetailAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvName, tvQuantity, tvDiscount, tvTotal;
+        private TextView tvName, tvQuantity, tvTotal;
         private LinearLayout lnParent;
 
         public CustomerBillsDetailAdapterViewHolder(View itemView) {
             super(itemView);
             tvName = (TextView) itemView.findViewById(R.id.customer_billdetail_item_name);
             tvQuantity = (TextView) itemView.findViewById(R.id.customer_billdetail_item_quantity);
-            tvDiscount = (TextView) itemView.findViewById(R.id.customer_billdetail_item_discount);
             tvTotal = (TextView) itemView.findViewById(R.id.customer_billdetail_item_total);
             lnParent = (LinearLayout) itemView.findViewById(R.id.customer_billdetail_item_parent);
 

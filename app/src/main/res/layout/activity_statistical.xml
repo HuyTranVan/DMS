@@ -114,19 +114,20 @@
 
     </LinearLayout>
 
-    <wolve.dms.libraries.swiperefreshlayout.SwipeRefreshLayout
-        android:id="@+id/statistical_swipelayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/statistical_tablayout">
+    <!--<wolve.dms.libraries.swiperefreshlayout.SwipeRefreshLayout-->
+        <!--android:id="@+id/statistical_swipelayout"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@+id/statistical_tablayout">-->
 
         <android.support.v4.view.ViewPager
             android:id="@+id/statistical_viewpager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorWhite" />
+            android:background="@color/colorWhite"
+            android:layout_below="@+id/statistical_tablayout"/>
 
-    </wolve.dms.libraries.swiperefreshlayout.SwipeRefreshLayout>
+    <!--</wolve.dms.libraries.swiperefreshlayout.SwipeRefreshLayout>-->
 
 
 

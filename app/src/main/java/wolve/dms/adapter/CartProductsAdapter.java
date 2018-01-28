@@ -20,7 +20,7 @@ import wolve.dms.R;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackChangePrice;
 import wolve.dms.callback.CallbackClickProduct;
-import wolve.dms.controls.CTextIcon;
+import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.Product;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
@@ -57,6 +57,8 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
         holder.tvUnitPrice.setText(Util.FormatMoney(mData.get(position).getDouble("totalMoney")));
         holder.tvDiscount.setText(Util.FormatMoney(mData.get(position).getDouble("discount")));
         holder.tvQuantity.setText(mData.get(position).getInt("quantity").toString());
+
+        holder.btnSub.setVisibility(mData.get(position).getInt("quantity") >1 ? View.VISIBLE :View.GONE);
 
         if (mData.get(position).getString("image") != null && !mData.get(position).getString("image").equals("null") && !mData.get(position).getString("image").equals("http://lubsolution.com/mydms/staticnull")){
             Glide.with(mContext).load(mData.get(position).getString("image")).centerCrop().into(holder.imgProduct);
@@ -98,6 +100,7 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
                     int currentQuantity = mData.get(position).getInt("quantity");
                     if ( currentQuantity > 1){
                         mData.get(position).put("quantity", currentQuantity -1);
+
                         mData.get(position).put("totalMoney", (currentQuantity -1)* mData.get(position).getDouble("unitPrice"));
                         mChangePrice.NewPrice(updatePrice(mData));
                         notifyItemChanged(position);

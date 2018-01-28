@@ -50,7 +50,7 @@
         android:paddingRight="@dimen/_10sdp">
 
 
-        <wolve.dms.controls.CInputForm
+        <wolve.dms.customviews.CInputForm
             android:id="@+id/add_product_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
             app:textHint="Nhập tên sản phẩm"
             app:iconText="@string/icon_product"/>
 
-        <wolve.dms.controls.CInputForm
+        <wolve.dms.customviews.CInputForm
             android:id="@+id/add_product_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -68,7 +68,7 @@
             app:textColor="@color/colorBlue"
             app:iconColor="@color/colorBlue"/>
 
-        <wolve.dms.controls.CInputForm
+        <wolve.dms.customviews.CInputForm
             android:id="@+id/add_product_unit_price"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -77,7 +77,7 @@
             app:iconText="@string/icon_price"
             />
 
-        <wolve.dms.controls.CInputForm
+        <wolve.dms.customviews.CInputForm
             android:id="@+id/add_product_purchase_price"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
             app:textHint="Giá nhập hàng"
             app:iconText="@string/icon_purchase"/>
 
-        <wolve.dms.controls.CInputForm
+        <wolve.dms.customviews.CInputForm
             android:id="@+id/add_product_volume"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -93,7 +93,7 @@
             app:textHint="Khối lượng"
             app:iconText="@string/icon_weight"/>
 
-        <wolve.dms.controls.CInputForm
+        <wolve.dms.customviews.CInputForm
             android:id="@+id/add_product_promotion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

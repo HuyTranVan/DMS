@@ -1,17 +1,12 @@
 package wolve.dms.apiconnect;
 
-import android.support.v4.media.session.MediaControllerCompat;
-import android.support.v4.util.ArrayMap;
-import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackJSONObject;
-import wolve.dms.libraries.CustomGetMethod;
-import wolve.dms.libraries.CustomPostMethod;
-import wolve.dms.utils.ApiHelper;
+import wolve.dms.libraries.connectapi.CustomGetMethod;
+import wolve.dms.libraries.connectapi.CustomPostMethod;
 import wolve.dms.utils.Util;
 
 /**

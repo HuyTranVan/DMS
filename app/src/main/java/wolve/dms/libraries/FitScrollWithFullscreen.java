@@ -1,4 +1,4 @@
-package wolve.dms.utils;
+package wolve.dms.libraries;
 
 import android.app.Activity;
 import android.graphics.Rect;
