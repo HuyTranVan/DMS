@@ -15,6 +15,9 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.ArrayMap;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -64,6 +67,7 @@ import wolve.dms.activities.MapsActivity;
 import wolve.dms.activities.StatisticalBillsFragment;
 import wolve.dms.activities.StatisticalDashboardFragment;
 import wolve.dms.activities.StatisticalProductFragment;
+import wolve.dms.callback.CallbackString;
 import wolve.dms.models.Bill;
 import wolve.dms.models.Product;
 import wolve.dms.models.Province;
@@ -941,6 +945,56 @@ public class Util {
         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
         return pattern.matcher(temp).replaceAll("").replaceAll("Đ", "D").replace("đ", "");
     }
+
+    public static void textMoneyEvent(final EditText edText, final CallbackString mlistener){
+        edText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String text = s.toString();
+
+                try {
+                    edText.removeTextChangedListener(this);
+                    //Store current selection and string length
+                    int currentSelection = edText.getSelectionStart();
+                    int prevStringLength = edText.getText().length();
+
+                    String valueInString = edText.getText().toString();
+                    if (!TextUtils.isEmpty(valueInString)) {
+                        String str = edText.getText().toString().trim().replaceAll(",|\\s|\\.", "");
+                        String newString = Util.CurrencyUtil.convertDecimalToString(new BigDecimal(str));
+                        edText.setText(newString);
+                        //Set new selection
+                        int selection = currentSelection + (newString.length() - prevStringLength);
+                        edText.setSelection(selection);
+
+
+                    }
+                    mlistener.Result(valueInString);
+                    edText.addTextChangedListener(this);
+
+                    return;
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    edText.addTextChangedListener(this);
+                }
+
+            }
+        });
+
+
+    }
+
+
 
 
 }

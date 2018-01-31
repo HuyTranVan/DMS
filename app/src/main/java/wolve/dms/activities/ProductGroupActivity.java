@@ -135,7 +135,7 @@ public class ProductGroupActivity extends BaseActivity implements View.OnClickLi
             public void onError(String error) {
 
             }
-        }, false);
+        }, true);
     }
 
 

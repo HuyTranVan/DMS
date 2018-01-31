@@ -263,7 +263,6 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
     @Override
     public void addEvent() {
-
         btnBack.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
         tvTrash.setOnClickListener(this);

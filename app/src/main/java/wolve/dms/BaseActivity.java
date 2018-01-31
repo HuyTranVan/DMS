@@ -1,9 +1,14 @@
 package wolve.dms;
 
 import android.Manifest;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
@@ -28,25 +33,33 @@ import android.view.KeyEvent;
 import com.google.android.gms.maps.model.LatLng;
 import com.orhanobut.dialogplus.DialogPlus;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.UUID;
+
 import wolve.dms.activities.AddProdGroupFragment;
 import wolve.dms.activities.AddProductFragment;
 import wolve.dms.activities.MapsActivity;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
+import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
+import static wolve.dms.utils.Constants.REQUEST_ENABLE_BT;
 import static wolve.dms.utils.Constants.REQUEST_PERMISSION_LOCATION;
 
 
 public abstract class BaseActivity extends AppCompatActivity {
     private LocationManager mLocationManager;
-    float LOCATION_REFRESH_DISTANCE = 1;
-    long LOCATION_REFRESH_TIME = 100;
+    private float LOCATION_REFRESH_DISTANCE = 1;
+    private long LOCATION_REFRESH_TIME = 100;
     public DialogPlus dialog;
     private boolean doubleBackToExitPressedOnce = false;
-
+    static private BluetoothAdapter mBluetoothAdapter = null;
+    private static BluetoothSocket btsocket;
+    private static OutputStream outputStream;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,17 +75,15 @@ public abstract class BaseActivity extends AppCompatActivity {
                 initialData();
 
             }
-        }, 400);
+        }, 200);
 
 //        initialData();
 
         addEvent();
     }
 
-    //get resource layout
     public abstract int getResourceLayout();
 
-    //set id container for change fragment
     public abstract int setIdContainer();
 
     public abstract void findViewById();
@@ -127,23 +138,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onResume();
         Util.getInstance().setCurrentActivity(this);
 
-    }
-
-    @Override
-    protected void onDestroy() {
-        Util.getInstance().stopLoading(true);
-        super.onDestroy();
-
-    }
-
-    private String getDeviceName() {
-        String manufacturer = Build.MANUFACTURER;
-        String model = Build.MODEL;
-        if (model.startsWith(manufacturer)) {
-            return Util.getInstance().capitalize(model);
-        } else {
-            return Util.getInstance().capitalize(manufacturer) + " " + model;
-        }
     }
 
     private final LocationListener mLocationListener = new LocationListener() {
@@ -300,8 +294,178 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 
 
-
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        Util.getInstance().stopLoading(true);
+        try {
+            if(btsocket!= null){
+                outputStream.close();
+                btsocket.close();
+                btsocket = null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        super.onDestroy();
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        try {
+            unregisterReceiver(mBTReceiver);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void registerBluetooth() {
+        try {
+            if (initDevicesList() != 0) {
+                this.finish();
+                return;
+            }
+
+        } catch (Exception ex) {
+            this.finish();
+            return;
+        }
+        IntentFilter btIntentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(mBTReceiver, btIntentFilter);
+
+    }
+
+    private final BroadcastReceiver mBTReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
+                if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))){
+                    connectBluetoothDevice(device);
+                }
+
+//                listDevice.add(device);
+
+            }
+        }
+    };
+
+    private Runnable socketErrorRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+            Util.showToast("Cannot establish connection");
+            mBluetoothAdapter.startDiscovery();
+
+        }
+    };
+
+    private int initDevicesList() {
+        try {
+            if (btsocket != null) {
+                btsocket.close();
+
+                btsocket = null;
+            }
+
+            if (mBluetoothAdapter != null) {
+                mBluetoothAdapter.cancelDiscovery();
+            }
+
+            finalize();
+
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null) {
+            Util.showToast("Bluetooth not supported!!");
+
+            return -1;
+        }
+
+        if (mBluetoothAdapter.isDiscovering()) {
+            mBluetoothAdapter.cancelDiscovery();
+        }
+
+
+        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        try {
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        } catch (Exception ex) {
+            return -2;
+        }
+
+        //Util.showToast("Getting all available Bluetooth Devices");
+
+        return 0;
+
+    }
+
+    private void connectBluetoothDevice(final BluetoothDevice device){
+        if (mBluetoothAdapter == null) {
+            return;
+        }
+        Util.showSnackbar("Connecting to " + device.getName(), null, null);
+
+        Thread connectThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (device.getUuids()!= null){
+                        UUID uuid = device.getUuids()[0].getUuid();
+                        btsocket = device.createRfcommSocketToServiceRecord(uuid);
+                        btsocket.connect();
+                    }
+
+                } catch (IOException ex) {
+                    runOnUiThread(socketErrorRunnable);
+                    try {
+                        btsocket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    btsocket = null;
+                    return;
+                } finally {
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            try {
+                                if (btsocket != null){
+//                                    tvBluetooth.setText(R.string.icon_bluetooth_connected);
+//                                    tvBluetooth.setTextColor(getResources().getColor(R.color.colorBlue));
+                                    //tvPrinterName.setText("Đang kết nối: "+ btsocket.getRemoteDevice().getName());
+                                    //printerProgress.setVisibility(View.GONE);
+
+                                    CustomSQL.setString(Constants.BLUETOOTH_DEVICE, btsocket.getRemoteDevice().getAddress());
+                                    outputStream = btsocket.getOutputStream();
+
+                                    mBluetoothAdapter.cancelDiscovery();
+                                }
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+
+                        }
+                    });
+                }
+            }
+        });connectThread.start();
+    }
+
+
 
 }

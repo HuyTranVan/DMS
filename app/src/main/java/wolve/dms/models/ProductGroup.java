@@ -27,6 +27,15 @@ public class ProductGroup extends BaseModel{
         jsonObject = objOrder;
     }
 
+    public ProductGroup(String objOrder) {
+        try {
+            jsonObject = new JSONObject(objOrder);
+        } catch (JSONException e) {
+//            e.printStackTrace();
+            jsonObject = new JSONObject();
+        }
+    }
+
     public String ProductGrouptoString(){
         return jsonObject.toString();
     }

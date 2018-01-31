@@ -24,8 +24,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="LUB Distribution management system"
-            android:textSize="@dimen/_10sdp"
+            android:text="LUB Solution dms"
+            android:textSize="@dimen/_16sdp"
             android:layout_below="@id/splash_icon"
             android:textAllCaps="true"
             android:textStyle="bold"

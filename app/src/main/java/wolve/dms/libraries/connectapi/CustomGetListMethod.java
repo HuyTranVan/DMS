@@ -27,16 +27,17 @@ import wolve.dms.utils.Util;
 public class CustomGetListMethod extends AsyncTask<String, Void, List<String>> {
     private CallbackList mListener = null;
     private String[] listURL;
-    private List<String> listRespone;
 
     public CustomGetListMethod(String[] listUrl, CallbackList listener) {
         this.mListener = listener;
         this.listURL = listUrl;
-        this.listRespone = new ArrayList<>();
+
     }
 
     @Override
         protected List<String> doInBackground(String... params) {
+        List<String> listRespone = new ArrayList<>();
+
         for (int i=0; i<listURL.length; i++){
             try {
                 URL obj = new URL(listURL[i]);
@@ -76,6 +77,7 @@ public class CustomGetListMethod extends AsyncTask<String, Void, List<String>> {
 
     @Override
     protected void onPostExecute(List<String> responses) {
+        List<String> listResult = new ArrayList<>();
         if (responses == null){
             mListener.onError("Lỗi kết nối server ");
             Util.getInstance().showSnackbar("Lỗi kết nối server ", null, null);
@@ -85,7 +87,7 @@ public class CustomGetListMethod extends AsyncTask<String, Void, List<String>> {
                 try {
                     JSONObject object = new JSONObject(responses.get(i));
                     if (object.getInt("status") == 200) {
-                        listRespone.add(object.getString("data"));
+                        listResult.add(object.getString("data"));
 
                     } else {
                         Util.getInstance().showSnackbar("Lỗi dữ liệu", null, null);
@@ -97,8 +99,10 @@ public class CustomGetListMethod extends AsyncTask<String, Void, List<String>> {
                 }
 
             }
-
+            mListener.onResponse(listResult);
         }
+
+
 
     }
 }

@@ -309,7 +309,7 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
             Crop.of(imageChangeUri, imageChangeUri).asSquare().withMaxSize(200,200).start(getActivity(), AddProductFragment.this);
 
         }
-        else if (requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
+        else if (data != null && requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
             Glide.with(this).load(imageChangeUri).centerCrop().into(imgProduct);
 
         } else if (requestCode == Crop.REQUEST_CROP) {

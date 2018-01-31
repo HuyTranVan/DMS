@@ -24,6 +24,7 @@ import wolve.dms.R;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackClickProduct;
 import wolve.dms.models.Product;
+import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Util;
 
 
@@ -33,51 +34,28 @@ import wolve.dms.utils.Util;
 
 public class CartProductDialogAdapter extends RecyclerView.Adapter<CartProductDialogAdapter.ProductDialogShopCartAdapterViewHolder> {
     private List<Product> mData = new ArrayList<>();
-    private List<Product> allData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
-    private Boolean isPromotion;
+//    private Boolean isPromotion;
 
-    public CartProductDialogAdapter(List<Product> list, int productGroupId, Boolean ispromotion) {
+    public CartProductDialogAdapter(List<Product> list, ProductGroup group) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
-        this.allData = list;
-        this.isPromotion = ispromotion;
+        //this.mData = list;
+        //this.isPromotion = ispromotion;
 
-        for (int i=0 ; i<allData.size(); i++){
+        int groupId = group.getInt("id");
+        for (int i=0 ; i<list.size(); i++){
             try {
-                int groupid = new JSONObject(allData.get(i).getString("productGroup")).getInt("id");
-                if (!isPromotion){
-                    if (productGroupId == groupid){
-                        this.mData.add(allData.get(i));
-                    }
-                }else {
-                    if (productGroupId == groupid && allData.get(i).getBoolean("promotion")){
-                        this.mData.add(allData.get(i));
-                    }
+                int groupid = new JSONObject(list.get(i).getString("productGroup")).getInt("id");
+                if (groupId == groupid){
+                    this.mData.add(list.get(i));
                 }
 
             } catch (JSONException e){
                 e.printStackTrace();
             }
         }
-    }
-
-    public void reloadList(int groupId){
-        mData = new ArrayList<>();
-        for (int i=0 ; i<allData.size(); i++){
-            try {
-                int groupid = new JSONObject(allData.get(i).getString("productGroup")).getInt("id");
-                if (groupId == groupid){
-                    mData.add(allData.get(i));
-
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        notifyDataSetChanged();
     }
 
     @Override

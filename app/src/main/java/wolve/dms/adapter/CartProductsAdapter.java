@@ -30,7 +30,7 @@ import wolve.dms.utils.Util;
  * Created by tranhuy on 5/24/17.
  */
 
-public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapter.ProductDialogShopCartAdapterViewHolder> {
+public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapter.CartProductsViewHolder> {
     private List<Product> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
@@ -46,18 +46,21 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
 
 
     @Override
-    public ProductDialogShopCartAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public CartProductsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = mLayoutInflater.inflate(R.layout.adapter_cart_products_item, parent, false);
-        return new ProductDialogShopCartAdapterViewHolder(itemView);
+        return new CartProductsViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(final ProductDialogShopCartAdapterViewHolder holder, final int position) {
-        holder.tvName.setText(String.format("%s (%s)",mData.get(position).getString("name"),Util.FormatMoney(mData.get(position).getDouble("unitPrice")) ));
-        holder.tvUnitPrice.setText(Util.FormatMoney(mData.get(position).getDouble("totalMoney")));
-        holder.tvDiscount.setText(Util.FormatMoney(mData.get(position).getDouble("discount")));
-        holder.tvQuantity.setText(mData.get(position).getInt("quantity").toString());
+    public void onBindViewHolder(final CartProductsViewHolder holder, final int position) {
+        holder.tvName.setText(mData.get(position).getString("name"));
+        holder.tvUnitPrice.setText(String.format("đ  %s",Util.FormatMoney(mData.get(position).getDouble("unitPrice"))));
+        holder.tvTotal.setText(String.format("%s đ",Util.FormatMoney(mData.get(position).getDouble("totalMoney"))));
 
+        Double discount = mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount");
+        holder.tvQuantityDisplay.setText(String.format("%s x %s",mData.get(position).getString("quantity"), Util.FormatMoney(discount) ));
+
+        holder.tvQuantity.setText(mData.get(position).getString("quantity"));
         holder.btnSub.setVisibility(mData.get(position).getInt("quantity") >1 ? View.VISIBLE :View.GONE);
 
         if (mData.get(position).getString("image") != null && !mData.get(position).getString("image").equals("null") && !mData.get(position).getString("image").equals("http://lubsolution.com/mydms/staticnull")){
@@ -101,7 +104,8 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
                     if ( currentQuantity > 1){
                         mData.get(position).put("quantity", currentQuantity -1);
 
-                        mData.get(position).put("totalMoney", (currentQuantity -1)* mData.get(position).getDouble("unitPrice"));
+                        Double discount = mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount");
+                        mData.get(position).put("totalMoney", (currentQuantity -1)* discount);
                         mChangePrice.NewPrice(updatePrice(mData));
                         notifyItemChanged(position);
                     }
@@ -116,7 +120,8 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
                 try {
                     int currentQuantity = mData.get(position).getInt("quantity");
                     mData.get(position).put("quantity", currentQuantity +1);
-                    mData.get(position).put("totalMoney", (currentQuantity +1)* mData.get(position).getDouble("unitPrice"));
+                    Double discount = mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount");
+                    mData.get(position).put("totalMoney", (currentQuantity + 1)* discount);
                     mChangePrice.NewPrice(updatePrice(mData));
                     notifyItemChanged(position);
 
@@ -151,22 +156,25 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
         return mData.size();
     }
 
-    public class ProductDialogShopCartAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvName, tvUnitPrice, tvQuantity ,tvDiscount;
+    public class CartProductsViewHolder extends RecyclerView.ViewHolder {
+        private TextView tvName, tvUnitPrice, tvQuantity ,tvQuantityDisplay, tvTotal;
         private RelativeLayout lnParent;
         private CircleImageView imgProduct;
         private CTextIcon btnSub, btnPlus;
 
-        public ProductDialogShopCartAdapterViewHolder(View itemView) {
+        public CartProductsViewHolder(View itemView) {
             super(itemView);
             lnParent = (RelativeLayout) itemView.findViewById(R.id.shopcart_products_item_parent);
+            imgProduct = (CircleImageView) itemView.findViewById(R.id.shopcart_products_item_image);
             tvName = (TextView) itemView.findViewById(R.id.shopcart_products_item_name);
             tvUnitPrice = (TextView) itemView.findViewById(R.id.shopcart_products_item_unitprice);
-            imgProduct = (CircleImageView) itemView.findViewById(R.id.shopcart_products_item_image);
+            tvQuantityDisplay = itemView.findViewById(R.id.shopcart_products_item_quantity_display);
+
             tvQuantity = (TextView) itemView.findViewById(R.id.shopcart_products_item_quantity);
             btnSub = (CTextIcon) itemView.findViewById(R.id.shopcart_products_item_sub);
             btnPlus = (CTextIcon) itemView.findViewById(R.id.shopcart_products_item_plus);
-            tvDiscount = (TextView) itemView.findViewById(R.id.shopcart_products_item_discount);
+            tvTotal = (TextView) itemView.findViewById(R.id.shopcart_products_item_total);
+
 
         }
 

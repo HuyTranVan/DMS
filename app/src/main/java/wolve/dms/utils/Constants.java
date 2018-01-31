@@ -39,6 +39,8 @@ public class Constants {
     public final static boolean RESULT_FALSE = false;
     public final static String RESULT_MESSAGE = "message";
 
+    public static final int REQUEST_ENABLE_BT = 0*1000;
+
     public final static String BADGE = "badge";
 
 

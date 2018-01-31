@@ -36,6 +36,7 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickProduct;
 import wolve.dms.callback.CallbackListProduct;
 import wolve.dms.callback.CallbackPayBill;
+import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.Customer;
 import wolve.dms.models.Product;
@@ -57,8 +58,6 @@ public class CustomCenterDialog {
     public static Dialog showCustomDialog(int resId) {
         AlertDialog.Builder adb = new AlertDialog.Builder(Util.getInstance().getCurrentActivity());
         final Dialog d = adb.setView(new View(Util.getInstance().getCurrentActivity())).create();
-        //create corner edge for dialog
-//        d.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         d.getWindow().setBackgroundDrawableResource(R.drawable.colorwhite_corner_large);
 
         d.setCanceledOnTouchOutside(false);
@@ -210,50 +209,95 @@ public class CustomCenterDialog {
         });
     }
 
-    public static void showDialogChoiceProduct(String title, List<Product> listProduct,Boolean isPromotion, final CallbackListProduct callback){
+//    public static void showDialogChoiceProduct(String title, List<Product> listProduct,Boolean isPromotion, final CallbackListProduct callback){
+//        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_select_product);
+//        TextView tvTitle = (TextView) dialogResult.findViewById(R.id.dialog_choice_product_title);
+//        final RadioGroup radioGroup = (RadioGroup) dialogResult.findViewById(R.id.dialog_choice_product_radiogroup);
+//        RecyclerView rvProduct = (RecyclerView) dialogResult.findViewById(R.id.dialog_choice_product_rvProduct);
+//        Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
+//        Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
+//
+//        btnCancel.setText("HỦY");
+//        btnSubmit.setText("HOÀN TẤT");
+//        tvTitle.setText(title);
+//        int initialPosition = 0;
+//        int initialGroupId = ProductGroup.getProductGroupList().get(initialPosition).getInt("id");
+//
+//        for (int i=0; i<ProductGroup.getProductGroupList().size(); i++){
+//            RadioButton radioButton = new RadioButton(Util.getInstance().getCurrentActivity());
+//            radioButton.setText(ProductGroup.getProductGroupList().get(i).getString("name"));
+//            radioButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+//            radioButton.setId(i);
+//
+//            RadioGroup.LayoutParams llp = new RadioGroup.LayoutParams(RadioGroup.LayoutParams.WRAP_CONTENT, RadioGroup.LayoutParams.WRAP_CONTENT);
+//            llp.setMargins(0, 0, 10, 0); // llp.setMargins(left, top, right, bottom);
+//            radioButton.setLayoutParams(llp);
+//
+//            radioButton.setChecked(i == initialPosition ? true : false);
+//            radioGroup.addView(radioButton);
+//        }
+//
+//        final CartProductDialogAdapter adapter = new CartProductDialogAdapter(listProduct, initialGroupId, isPromotion);
+//        rvProduct.setAdapter(adapter);
+//        rvProduct.setHasFixedSize(true);
+//        rvProduct.setNestedScrollingEnabled(false);
+//        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(), LinearLayoutManager.VERTICAL, false);
+//        rvProduct.setLayoutManager(layoutManager);
+//
+//        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(RadioGroup group, int checkedId) {
+//                int position = group.getCheckedRadioButtonId();
+//                int groupId = ProductGroup.getProductGroupList().get(position).getInt("id");
+//                adapter.reloadList(groupId);
+//
+//            }
+//        });
+//
+//        btnCancel.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                dialogResult.dismiss();
+//            }
+//        });
+//        btnSubmit.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                List<Product> listChecked = new ArrayList<Product>();
+//                for (int i=0; i<adapter.getAllData().size(); i++){
+//                    if (adapter.getAllData().get(i).getBoolean("checked")){
+//                        listChecked.add(adapter.getAllData().get(i));
+//                    }
+//                }
+//                callback.Products(listChecked);
+//                dialogResult.dismiss();
+//            }
+//        });
+//
+//
+//    }
+
+    public static void showDialogChoiceProduct(String title, List<Product> listProduct, ProductGroup group, final CallbackListProduct callback){
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_select_product);
         TextView tvTitle = (TextView) dialogResult.findViewById(R.id.dialog_choice_product_title);
-        final RadioGroup radioGroup = (RadioGroup) dialogResult.findViewById(R.id.dialog_choice_product_radiogroup);
+        //final RadioGroup radioGroup = (RadioGroup) dialogResult.findViewById(R.id.dialog_choice_product_radiogroup);
         RecyclerView rvProduct = (RecyclerView) dialogResult.findViewById(R.id.dialog_choice_product_rvProduct);
         Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
         Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
 
         btnCancel.setText("HỦY");
         btnSubmit.setText("HOÀN TẤT");
-        tvTitle.setText(title);
+        tvTitle.setText(String.format("%s %s", title, group.getString("name")));
         int initialPosition = 0;
         int initialGroupId = ProductGroup.getProductGroupList().get(initialPosition).getInt("id");
 
-        for (int i=0; i<ProductGroup.getProductGroupList().size(); i++){
-            RadioButton radioButton = new RadioButton(Util.getInstance().getCurrentActivity());
-            radioButton.setText(ProductGroup.getProductGroupList().get(i).getString("name"));
-            radioButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
-            radioButton.setId(i);
-
-            RadioGroup.LayoutParams llp = new RadioGroup.LayoutParams(RadioGroup.LayoutParams.WRAP_CONTENT, RadioGroup.LayoutParams.WRAP_CONTENT);
-            llp.setMargins(0, 0, 10, 0); // llp.setMargins(left, top, right, bottom);
-            radioButton.setLayoutParams(llp);
-
-            radioButton.setChecked(i == initialPosition ? true : false);
-            radioGroup.addView(radioButton);
-        }
-
-        final CartProductDialogAdapter adapter = new CartProductDialogAdapter(listProduct, initialGroupId, isPromotion);
+        final CartProductDialogAdapter adapter = new CartProductDialogAdapter(listProduct, group);
         rvProduct.setAdapter(adapter);
         rvProduct.setHasFixedSize(true);
         rvProduct.setNestedScrollingEnabled(false);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(), LinearLayoutManager.VERTICAL, false);
         rvProduct.setLayoutManager(layoutManager);
-
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                int position = group.getCheckedRadioButtonId();
-                int groupId = ProductGroup.getProductGroupList().get(position).getInt("id");
-                adapter.reloadList(groupId);
-
-            }
-        });
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -285,41 +329,34 @@ public class CustomCenterDialog {
         final Button btnCancel = dialogResult.findViewById(R.id.btn_cancel);
         final Button btnSubmit = dialogResult.findViewById(R.id.btn_submit);
         TextView tvTitle = dialogResult.findViewById(R.id.dialog_edit_product_title);
-        TextView tvUnitPrice = dialogResult.findViewById(R.id.dialog_edit_product_unitprice);
+        EditText tvUnitPrice = dialogResult.findViewById(R.id.dialog_edit_product_unitprice);
         final TextView tvNetPrice = dialogResult.findViewById(R.id.dialog_edit_product_netprice);
         final TextView tvTotal =  dialogResult.findViewById(R.id.dialog_edit_product_total);
         final EditText edDiscount =  dialogResult.findViewById(R.id.dialog_edit_product_discount);
         final EditText edQuantity = dialogResult.findViewById(R.id.dialog_edit_product_quantity);
-        CTextIcon tvSub = dialogResult.findViewById(R.id.dialog_edit_product_sub);
-        CTextIcon tvPlus =  dialogResult.findViewById(R.id.dialog_edit_product_plus);
 
         btnCancel.setText("HỦY");
         btnSubmit.setText("LƯU");
         tvTitle.setText(product.getString("name"));
         tvUnitPrice.setText(Util.FormatMoney(product.getDouble("unitPrice")));
-        edDiscount.setText(String.valueOf(Math.round(product.getDouble("discount"))));
+
+        edDiscount.setText(product.getDouble("discount") ==0 ? "" : String.valueOf(Math.round(product.getDouble("discount"))));
         tvNetPrice.setText(Util.FormatMoney(product.getDouble("unitPrice") - product.getDouble("discount")));
         edQuantity.setText(String.valueOf(Math.round(product.getDouble("quantity"))));
         tvTotal.setText(Util.FormatMoney(product.getDouble("quantity") * (product.getDouble("unitPrice") - product.getDouble("discount"))));
 
-        edDiscount.setFilters(new InputFilter[]{new InputFilter.LengthFilter(tvUnitPrice.getText().toString().trim().replace(".","").length() )});
+        edDiscount.setFilters(new InputFilter[]{new InputFilter.LengthFilter(tvUnitPrice.getText().toString().trim().length() )});
 
         edQuantity.requestFocus();
         edQuantity.setSelection(edQuantity.getText().toString().length());
         Util.showKeyboard(edQuantity);
 
-        edDiscount.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-            @Override public void afterTextChanged(Editable s) {
-                String text = s.toString();
+        Util.textMoneyEvent(edDiscount, new CallbackString() {
+            @Override
+            public void Result(String text) {
                 if (!text.equals("")){
                     if (Util.valueMoney(text) > product.getDouble("unitPrice")){
-                        Toast.makeText(Util.getInstance().getCurrentActivity(), "Vui lòng nhập giá tiền nhỏ hơn giá niêm yết",Toast.LENGTH_SHORT).show();
+                        Util.showToast("Vui lòng nhập giá tiền nhỏ hơn giá niêm yết");
 
                     }else {
                         if (text.length() >0){
@@ -327,8 +364,11 @@ public class CustomCenterDialog {
                             tvTotal.setText(Util.FormatMoney(Double.parseDouble(edQuantity.getText().toString()) * (product.getDouble("unitPrice") - Double.parseDouble(text))));
                         }
                     }
-                }
+                }else {
+                    tvNetPrice.setText(Util.FormatMoney(product.getDouble("unitPrice")));
+                    tvTotal.setText(Util.FormatMoney(Double.parseDouble(edQuantity.getText().toString()) * (product.getDouble("unitPrice"))));
 
+                }
             }
         });
 
@@ -348,21 +388,21 @@ public class CustomCenterDialog {
 
         });
 
-        tvSub.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Integer.parseInt(edQuantity.getText().toString()) > 0 ){
-                    edQuantity.setText(String.valueOf(Integer.parseInt(edQuantity.getText().toString()) - 1));
-                }
-            }
-        });
-
-        tvPlus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                edQuantity.setText(String.valueOf(Integer.parseInt(edQuantity.getText().toString()) + 1));
-            }
-        });
+//        tvSub.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (Integer.parseInt(edQuantity.getText().toString()) > 0 ){
+//                    edQuantity.setText(String.valueOf(Integer.parseInt(edQuantity.getText().toString()) - 1));
+//                }
+//            }
+//        });
+//
+//        tvPlus.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                edQuantity.setText(String.valueOf(Integer.parseInt(edQuantity.getText().toString()) + 1));
+//            }
+//        });
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -448,51 +488,62 @@ public class CustomCenterDialog {
         tvRemain.setText(Util.FormatMoney(total));
         Util.showKeyboard(edPaid);
 
-        edPaid.addTextChangedListener(new TextWatcher() {
+        Util.textMoneyEvent(edPaid, new CallbackString() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String text = s.toString();
-
-                if (!text.equals("")){
-                    tvRemain.setText(Util.FormatMoney(Util.valueMoney(tvTotal) - Util.valueMoney(text)));
+            public void Result(String s) {
+                if (!s.equals("")){
+                    tvRemain.setText(Util.FormatMoney(Util.valueMoney(tvTotal) - Util.valueMoney(s)));
                 }else {
                     tvRemain.setText(tvTotal.getText().toString());
                 }
-
-                try {
-                    edPaid.removeTextChangedListener(this);
-                    //Store current selection and string length
-                    int currentSelection = edPaid.getSelectionStart();
-                    int prevStringLength = edPaid.getText().length();
-
-                    String valueInString = edPaid.getText().toString();
-                    if (!TextUtils.isEmpty(valueInString)) {
-                        String str = edPaid.getText().toString().trim().replaceAll(",|\\s|\\.", "");
-                        String newString = Util.CurrencyUtil.convertDecimalToString(new BigDecimal(str));
-                        edPaid.setText(newString);
-                        //Set new selection
-                        int selection = currentSelection + (newString.length() - prevStringLength);
-                        edPaid.setSelection(selection);
-                    }
-                    edPaid.addTextChangedListener(this);
-                    return;
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    edPaid.addTextChangedListener(this);
-                }
-
             }
         });
+
+//        edPaid.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//                String text = s.toString();
+//
+//                if (!text.equals("")){
+//                    tvRemain.setText(Util.FormatMoney(Util.valueMoney(tvTotal) - Util.valueMoney(text)));
+//                }else {
+//                    tvRemain.setText(tvTotal.getText().toString());
+//                }
+//
+//                try {
+//                    edPaid.removeTextChangedListener(this);
+//                    //Store current selection and string length
+//                    int currentSelection = edPaid.getSelectionStart();
+//                    int prevStringLength = edPaid.getText().length();
+//
+//                    String valueInString = edPaid.getText().toString();
+//                    if (!TextUtils.isEmpty(valueInString)) {
+//                        String str = edPaid.getText().toString().trim().replaceAll(",|\\s|\\.", "");
+//                        String newString = Util.CurrencyUtil.convertDecimalToString(new BigDecimal(str));
+//                        edPaid.setText(newString);
+//                        //Set new selection
+//                        int selection = currentSelection + (newString.length() - prevStringLength);
+//                        edPaid.setSelection(selection);
+//                    }
+//                    edPaid.addTextChangedListener(this);
+//                    return;
+//                } catch (Exception ex) {
+//                    ex.printStackTrace();
+//                    edPaid.addTextChangedListener(this);
+//                }
+//
+//            }
+//        });
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -503,6 +554,7 @@ public class CustomCenterDialog {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Util.hideKeyboard(v);
                 if (edPaid.getText().toString().equals("") || edPaid.getText().toString().equals("0") ){
                     dialogResult.dismiss();
                     mListener.OnRespone(Util.valueMoney(tvTotal) , 0.0);

@@ -9,12 +9,16 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -35,18 +39,21 @@ import java.util.UUID;
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.BluetoothListAdapter;
+import wolve.dms.adapter.CartGroupButtonAdapter;
 import wolve.dms.adapter.CartProductsAdapter;
 import wolve.dms.adapter.CartPromotionsAdapter;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackChangePrice;
+import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackListProduct;
 import wolve.dms.callback.CallbackPayBill;
 import wolve.dms.customviews.CInputForm;
 import wolve.dms.customviews.CTextIcon;
+import wolve.dms.libraries.ItemDecorationGridSpace;
 import wolve.dms.libraries.connectapi.DownloadImage;
 import wolve.dms.libraries.printerdriver.PrinterCommands;
 import wolve.dms.libraries.printerdriver.UtilPrinter;
@@ -54,14 +61,18 @@ import wolve.dms.models.Bill;
 import wolve.dms.models.Customer;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.Product;
+import wolve.dms.models.ProductGroup;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomSQL;
+import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
 import static wolve.dms.utils.Constants.REQUEST_CHOOSE_IMAGE;
+import static wolve.dms.utils.Constants.REQUEST_ENABLE_BT;
+import static wolve.dms.utils.Transaction.gotoImageChooser;
 
 /**
  * Created by macos on 9/16/17.
@@ -71,32 +82,26 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     private ImageView btnBack;
     private Button btnSubmit;
     private CTextIcon tvBluetooth;
-    private TextView tvTitle, tvTotal, btnAdd, btnAddPromotion;
-            //tvPrinterName;
+    private TextView tvTitle, tvTotal; //btnAdd, btnAddPromotion;
     private CInputForm tvNote;
-    private RecyclerView rvProducts, rvPromotions;
+    private RecyclerView rvProducts, rvPromotions, rvButtonGroup;
     private RelativeLayout rlCover;
-            //rlBluetooth;
-    //private ProgressBar printerProgress;
     private ImageView imgLogo;
-
-    private static final int REQUEST_ENABLE_BT = 0*1000;
-    private static final String BLUETOOTH_STATUS = "Danh sách Bluetooth (%d)";
+    private LinearLayout lnSubmitGroup;
 
     private CartProductsAdapter adapterProducts;
     private CartPromotionsAdapter adapterPromotions;
+    private CartGroupButtonAdapter groupButtonAdapter;
     private Customer currentCustomer;
-    private List<Product> listProducts = new ArrayList<>();
+    protected List<Product> listProducts = new ArrayList<>();
     private List<Product> listInitialProduct = new ArrayList<>();
     private List<Product> listInitialPromotion = new ArrayList<>();
     private List<BluetoothDevice> listDevice = new ArrayList<>();
     private List<Bill> listBills = new ArrayList<>();
-    static private BluetoothAdapter mBluetoothAdapter = null;
+    private BluetoothAdapter mBluetoothAdapter = null;
     private static BluetoothSocket btsocket;
     private static OutputStream outputStream;
     private Uri imageChangeUri ;
-    private final String shortLine ="---------------------";
-    private final String longLine = "--------------------------------";
 
 
     @Override
@@ -106,7 +111,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
     @Override
     public int setIdContainer() {
-        return 0;
+        return R.id.cart_parent;
     }
 
     @Override
@@ -116,46 +121,42 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         tvTitle =  findViewById(R.id.cart_title);
         tvTotal =  findViewById(R.id.cart_total);
         tvNote =  findViewById(R.id.cart_note);
-        btnAdd =  findViewById(R.id.cart_add_product);
-        btnAddPromotion =  findViewById(R.id.cart_add_promotion);
+        lnSubmitGroup = findViewById(R.id.cart_submit_group);
+        //btnAdd =  findViewById(R.id.cart_add_product);
+        //btnAddPromotion =  findViewById(R.id.cart_add_promotion);
         rvProducts =  findViewById(R.id.cart_rvproduct);
         rvPromotions =  findViewById(R.id.cart_rvpromotion);
         rlCover =  findViewById(R.id.cart_cover);
         imgLogo = findViewById(R.id.cart_bluetooth_printer);
         tvBluetooth = findViewById(R.id.cart_bluetooth);
+        rvButtonGroup = findViewById(R.id.cart_rvGroupButton);
 
     }
 
     @Override
     public void initialData() {
         String bundle = getIntent().getExtras().getString(Constants.CUSTOMER_CART);
+        createRVButtonGroup(ProductGroup.getProductGroupList());
         if (bundle != null){
             try {
                 currentCustomer = new Customer(new JSONObject(bundle));
                 tvTitle.setText(Constants.getShopInfo(currentCustomer.getString("shopType") , null) +" - " + currentCustomer.getString("signBoard") );
-                //currentDebt = currentCustomer.getDouble("debt");
 
                 JSONArray array = new JSONArray(currentCustomer.getString("bills"));
                 for (int i=0; i<array.length(); i++){
                     listBills.add(new Bill(array.getJSONObject(i)));
                 }
 
-//                if (!currentCustomer.getString("bills").equals("[]")){
-//
-//                }
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
-        if (listInitialProduct.size() <=0){
-            showDialogProduct("CHỌN SẢN PHẨM BÁN", false);
-        }
-
         if (!CustomSQL.getString("logo").equals("")){
             Glide.with(this).load(CustomSQL.getString("logo")).centerCrop().into(imgLogo);
 
+            Log.e("logo", CustomSQL.getString("logo"));
         }else {
             new DownloadImage(this, imgLogo, Api_link.LOGO_BILL).execute();
         }
@@ -163,6 +164,8 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         //Glide.with(this).load(CustomSQL.getString("logo")).placeholder(R.drawable.ic_logo_print).centerCrop().into(imgLogo);
         createRVProduct(listInitialProduct);
         createRVPromotion(listInitialPromotion);
+
+
         registerBluetooth();
 
 
@@ -172,18 +175,19 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     public void addEvent() {
         btnBack.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
-        btnAdd.setOnClickListener(this);
-        btnAddPromotion.setOnClickListener(this);
         imgLogo.setOnClickListener(this);
         tvBluetooth.setOnClickListener(this);
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK){
+    public void onBackPressed() {
+        Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.cart_parent);
+        if(mFragment != null && mFragment instanceof ChoiceProductFragment) {
+            getSupportFragmentManager().popBackStack();
+        }else {
             returnCustomerActivity(currentCustomer);
         }
-        return true;
+
     }
 
     @Override
@@ -197,20 +201,12 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
             case R.id.cart_submit:
                 choicePayMethod();
-//                createBillImage();
 
-                break;
-
-            case R.id.cart_add_product:
-                showDialogProduct("CHON SẢN PHẨM BÁN", false);
-                break;
-
-            case R.id.cart_add_promotion:
-                showDialogProduct("CHON SẢN PHẨM TẶNG KÈM", true);
                 break;
 
             case R.id.cart_bluetooth_printer:
-                startImageChooser();
+                imageChangeUri = Uri.fromFile(Util.getOutputMediaFile());
+                gotoImageChooser();
                 break;
 
             case R.id.cart_bluetooth:
@@ -228,6 +224,26 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
     }
 
+    private void createRVButtonGroup(final List<ProductGroup> list){
+        lnSubmitGroup.setVisibility(View.GONE);
+
+        groupButtonAdapter = new CartGroupButtonAdapter(list, new CallbackClickAdapter() {
+            @Override
+            public void onRespone(String data, int position) {
+                ProductGroup productGroup = new ProductGroup(data);
+                Bundle bundle = new Bundle();
+                bundle.putString(Constants.PRODUCTGROUP, productGroup.ProductGrouptoString());
+                changeFragment(new ChoiceProductFragment() , bundle, true);
+
+            }
+        });
+        rvButtonGroup.setAdapter(groupButtonAdapter);
+        rvButtonGroup.setHasFixedSize(true);
+        rvButtonGroup.setNestedScrollingEnabled(false);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(), LinearLayoutManager.HORIZONTAL, false);
+        rvButtonGroup.setLayoutManager(layoutManager);
+    }
+
     private void createRVProduct(final List<Product> list){
         adapterProducts = new CartProductsAdapter(list, new CallbackChangePrice() {
             @Override
@@ -236,6 +252,8 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
                 rvProducts.requestLayout();
                 rvProducts.invalidate();
+
+                lnSubmitGroup.setVisibility(adapterProducts.getAllDataProduct().size()>0 ? View.VISIBLE : View.GONE);
             }
         }) ;
         rvProducts.setAdapter(adapterProducts);
@@ -261,55 +279,89 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         rvPromotions.setLayoutManager(layoutManager);
     }
 
-    private void showDialogProduct(String title, final Boolean isPromotion){
-        listProducts = new ArrayList<>();
-        try {
-            for (int i=0 ; i<Product.getProductList().size(); i++){
-                Product product = Product.getProductList().get(i);
-                product.put("checked", false);
-                listProducts.add(product);
+//    private void showDialogProduct(String title, final Boolean isPromotion, ProductGroup group){
+//        listProducts = new ArrayList<>();
+//        try {
+//            for (int i=0 ; i<Product.getProductList().size(); i++){
+//                Product product = Product.getProductList().get(i);
+//                product.put("checked", false);
+//                listProducts.add(product);
+//
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        CustomCenterDialog.showDialogChoiceProduct(title ,listProducts,group, new CallbackListProduct() {
+//            @Override
+//            public void Products(List<Product> list_product) {
+//                for (int i=0; i<list_product.size(); i++){
+//                    try {
+//                        Product product = new Product(new JSONObject()) ;
+//                        product.put("id", list_product.get(i).getInt("id"));
+//                        product.put("name", list_product.get(i).getString("name"));
+//                        product.put("productGroup", list_product.get(i).getString("productGroup"));
+//                        product.put("promotion", list_product.get(i).getBoolean("promotion"));
+//                        product.put("unitPrice", list_product.get(i).getDouble("unitPrice"));
+//                        product.put("purchasePrice", list_product.get(i).getDouble("purchasePrice"));
+//                        product.put("volume", list_product.get(i).getInt("volume"));
+//                        product.put("image", list_product.get(i).getString("image"));
+//                        product.put("imageUrl", list_product.get(i).getString("imageUrl"));
+//                        product.put("checked", list_product.get(i).getBoolean("checked"));
+//                        product.put("isPromotion", isPromotion);
+//                        product.put("quantity", 1);
+//
+//                        if (isPromotion){
+//                            product.put("totalMoney",0);
+//                            product.put("discount", product.getDouble("unitPrice"));
+//                            adapterPromotions.addItemPromotion(product);
+//                        }else {
+//                            product.put("totalMoney", product.getDouble("unitPrice"));
+//                            product.put("discount", 0);
+//                            adapterProducts.addItemProduct(product);
+//                            //btnAddPromotion.setVisibility(adapterProducts.getItemCount() >0 ?View.VISIBLE : View.GONE);
+//                        }
+//
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//                rlCover.setVisibility(list_product.size() <=0? View.VISIBLE: View.GONE);
+//            }
+//        });
+//    }
 
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        CustomCenterDialog.showDialogChoiceProduct(title ,listProducts,isPromotion, new CallbackListProduct() {
-            @Override
-            public void Products(List<Product> list_product) {
-                for (int i=0; i<list_product.size(); i++){
-                    try {
-                        Product product = new Product(new JSONObject()) ;
-                        product.put("id", list_product.get(i).getInt("id"));
-                        product.put("name", list_product.get(i).getString("name"));
-                        product.put("productGroup", list_product.get(i).getString("productGroup"));
-                        product.put("promotion", list_product.get(i).getBoolean("promotion"));
-                        product.put("unitPrice", list_product.get(i).getDouble("unitPrice"));
-                        product.put("purchasePrice", list_product.get(i).getDouble("purchasePrice"));
-                        product.put("volume", list_product.get(i).getInt("volume"));
-                        product.put("image", list_product.get(i).getString("image"));
-                        product.put("imageUrl", list_product.get(i).getString("imageUrl"));
-                        product.put("checked", list_product.get(i).getBoolean("checked"));
-                        product.put("isPromotion", isPromotion);
-                        product.put("quantity", 1);
+    protected void updatelistProduct(List<Product> list_product, Boolean isPromotion){
+        for (int i=0; i<list_product.size(); i++){
+            try {
+                Product product = new Product(new JSONObject()) ;
+                product.put("id", list_product.get(i).getInt("id"));
+                product.put("name", list_product.get(i).getString("name"));
+                product.put("productGroup", list_product.get(i).getString("productGroup"));
+                product.put("promotion", list_product.get(i).getBoolean("promotion"));
+                product.put("unitPrice", list_product.get(i).getDouble("unitPrice"));
+                product.put("purchasePrice", list_product.get(i).getDouble("purchasePrice"));
+                product.put("volume", list_product.get(i).getInt("volume"));
+                product.put("image", list_product.get(i).getString("image"));
+                product.put("imageUrl", list_product.get(i).getString("imageUrl"));
+                product.put("checked", list_product.get(i).getBoolean("checked"));
+                product.put("isPromotion", isPromotion);
+                product.put("quantity", 1);
 
-                        if (isPromotion){
-                            product.put("totalMoney",0);
-                            product.put("discount", product.getDouble("unitPrice"));
-                            adapterPromotions.addItemPromotion(product);
-                        }else {
-                            product.put("totalMoney", product.getDouble("unitPrice"));
-                            product.put("discount", 0);
-                            adapterProducts.addItemProduct(product);
-                            //btnAddPromotion.setVisibility(adapterProducts.getItemCount() >0 ?View.VISIBLE : View.GONE);
-                        }
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                if (isPromotion){
+                    product.put("totalMoney",0);
+                    product.put("discount", product.getDouble("unitPrice"));
+                    adapterPromotions.addItemPromotion(product);
+                }else {
+                    product.put("totalMoney", product.getDouble("unitPrice"));
+                    product.put("discount", 0);
+                    adapterProducts.addItemProduct(product);
+                    //btnAddPromotion.setVisibility(adapterProducts.getItemCount() >0 ?View.VISIBLE : View.GONE);
                 }
-                rlCover.setVisibility(list_product.size() <=0? View.VISIBLE: View.GONE);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        });
+        }
     }
 
     private void submitBill(final Double total, final Double paid){
@@ -317,87 +369,85 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                List<Product> listProductChoice = getListProduct();
+                final String params = createPostBillParam(total, paid, getListProduct());
 
-                try {
-                    final JSONObject params = new JSONObject();
-                    params.put("debt", total - paid);
-                    params.put("total", total);
-                    params.put("paid", paid);
-                    params.put("customerId", currentCustomer.getInt("id"));
-                    params.put("distributorId", Distributor.getDistributorId());
-                    params.put("userId", User.getUserId());
-                    params.put("note", tvNote.getText().toString().trim());
-
-                    JSONArray array = new JSONArray();
-                    for (int i=0; i< listProductChoice.size(); i++){
-                        JSONObject object = new JSONObject();
-                        object.put("productId", listProductChoice.get(i).getInt("id"));
-                        object.put("discount", listProductChoice.get(i).getDouble("discount"));
-                        object.put("quantity", listProductChoice.get(i).getDouble("quantity"));
-
-                        array.put(object);
-                    }
-                    params.put("billDetails", (Object) array);
-
-                    if (btsocket != null && btsocket.isConnected()){
-//                        flushBillDetail(total, paid, new CallbackBoolean() {
-//                            @Override
-//                            public void onRespone(Boolean result) {
+//                try {
+//                    final JSONObject params = new JSONObject();
+//                    params.put("debt", total - paid);
+//                    params.put("total", total);
+//                    params.put("paid", paid);
+//                    params.put("customerId", currentCustomer.getInt("id"));
+//                    params.put("distributorId", Distributor.getDistributorId());
+//                    params.put("userId", User.getUserId());
+//                    params.put("note", tvNote.getText().toString().trim());
 //
-//                                Util.getInstance().stopLoading(true);
-////                                Thread.sleep(1000);
-//                                CustomCenterDialog.alertWithCancelButton2("TIẾP TỤC", "In thêm hoặc tiếp tục thanh toán", "TIẾP TỤC", "IN LẠI", new CustomCenterDialog.ButtonCallback() {
-//                                    @Override
-//                                    public void Submit(Boolean boolSubmit) {
-//                                        postBills(params.toString());
+//                    JSONArray array = new JSONArray();
+//                    for (int i=0; i< listProductChoice.size(); i++){
+//                        JSONObject object = new JSONObject();
+//                        object.put("productId", listProductChoice.get(i).getInt("id"));
+//                        object.put("discount", listProductChoice.get(i).getDouble("discount"));
+//                        object.put("quantity", listProductChoice.get(i).getDouble("quantity"));
 //
-//                                    }
-//
-//                                    @Override
-//                                    public void Cancel(Boolean boolCancel) {
-//                                        submitBill(total,paid);
-//                                    }
-//
-//                                });
-//                            }
-//                        });
+//                        array.put(object);
+//                    }
+//                    params.put("billDetails", (Object) array);
 
-                        CustomerConnect.printBill(outputStream, currentCustomer, getListProduct(), listBills, paid, new CallbackBoolean() {
-                            @Override
-                            public void onRespone(Boolean result) {
-                                Util.getInstance().stopLoading(true);
-//                                Thread.sleep(1000);
-                                CustomCenterDialog.alertWithCancelButton2("TIẾP TỤC", "In thêm hoặc tiếp tục thanh toán", "TIẾP TỤC", "IN LẠI", new CustomCenterDialog.ButtonCallback() {
-                                    @Override
-                                    public void Submit(Boolean boolSubmit) {
-                                        postBills(params.toString());
+                if (btsocket != null && btsocket.isConnected()){
+                    CustomerConnect.printBill(outputStream, currentCustomer, getListProduct(), listBills, paid, new CallbackBoolean() {
+                        @Override
+                        public void onRespone(Boolean result) {
+                            Util.getInstance().stopLoading(true);
+                            CustomCenterDialog.alertWithCancelButton2("TIẾP TỤC", "In thêm hoặc tiếp tục thanh toán", "TIẾP TỤC", "IN LẠI", new CustomCenterDialog.ButtonCallback() {
+                                @Override
+                                public void Submit(Boolean boolSubmit) {
+                                    postBills(params.toString());
 
-                                    }
+                                }
 
-                                    @Override
-                                    public void Cancel(Boolean boolCancel) {
-                                        submitBill(total,paid);
-                                    }
+                                @Override
+                                public void Cancel(Boolean boolCancel) {
+                                    submitBill(total,paid);
+                                }
 
-                                });
-                            }
-                        });
+                            });
+                        }
+                    });
 
-                    }else {
-                        postBills(params.toString());
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                }else {
+                    postBills(params.toString());
                 }
-//                catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
 
             }
         }); thread.start();
 
+    }
+
+    private String createPostBillParam(final Double total, final Double paid, List<Product> listProduct){
+        final JSONObject params = new JSONObject();
+        try {
+            params.put("debt", total - paid);
+            params.put("total", total);
+            params.put("paid", paid);
+            params.put("customerId", currentCustomer.getInt("id"));
+            params.put("distributorId", Distributor.getDistributorId());
+            params.put("userId", User.getUserId());
+            params.put("note", tvNote.getText().toString().trim());
+
+            JSONArray array = new JSONArray();
+            for (int i=0; i< listProduct.size(); i++){
+                JSONObject object = new JSONObject();
+                object.put("productId", listProduct.get(i).getInt("id"));
+                object.put("discount", listProduct.get(i).getDouble("discount"));
+                object.put("quantity", listProduct.get(i).getDouble("quantity"));
+
+                array.put(object);
+            }
+            params.put("billDetails", (Object) array);
+        } catch (JSONException e) {
+//            e.printStackTrace();
+        }
+
+        return params.toString();
 
     }
 
@@ -498,317 +548,212 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                         for (BluetoothDevice device : btDeviceList) {
                             if (btDeviceList.contains(device) == false) {
                                 if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))){
-                                    connectBluetoothDevice(device);
+//                                    connectBluetoothDevice(device);
                                 }
 
                                 listDevice.add(device);
-                                //tvPrinterName.setText(String.format(BLUETOOTH_STATUS, listDevice.size()));
 
                             }
                         }
                     }
                 } catch (Exception ex) {
                 }
-                mBluetoothAdapter.startDiscovery();
+                //mBluetoothAdapter.startDiscovery();
             }
 
 
 
     }
 
-    private void flushBillDetail(Double total, Double paid, CallbackBoolean mListener){
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        try {
+//            if(btsocket!= null){
+//                outputStream.close();
+//                btsocket.close();
+//                btsocket = null;
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
-        try {
-            if (CustomSQL.getString("logo").equals("")){
-                UtilPrinter.printDrawablePhoto(outputStream, getResources().getDrawable(R.drawable.ic_logo_print));
-            }else {
-                UtilPrinter.printPhoto(outputStream,CustomSQL.getString("logo"));
-            }
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        try {
+//            unregisterReceiver(mBTReceiver);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
-            UtilPrinter.printCustomText(outputStream,"CTY TNHH XNK TRAN VU ANH",1,1);
-            UtilPrinter.printCustomText(outputStream, "1 duong 57,P.Binh Trung Dong,Q 2", 1,1);
-            UtilPrinter.printCustomText(outputStream,"ĐT:0931.07.22.23",4,1);
-            UtilPrinter.printCustomText(outputStream,"www.wolver.vn",4,1);
-            outputStream.write(PrinterCommands.FEED_LINE);
+//    private void registerBluetooth() {
+//        try {
+//            if (initDevicesList() != 0) {
+//                this.finish();
+//                return;
+//            }
+//
+//        } catch (Exception ex) {
+//            this.finish();
+//            return;
+//        }
+//        IntentFilter btIntentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+//        registerReceiver(mBTReceiver, btIntentFilter);
+//
+//    }
 
-            UtilPrinter.printCustomText(outputStream, "HÓA ĐƠN BÁN HÀNG",3,1);
-            outputStream.write(PrinterCommands.FEED_LINE);
-
-            UtilPrinter.printCustomText(outputStream,"CH    : " + Constants.getShopInfo(currentCustomer.getString("shopType") , null) + " "+ currentCustomer.getString("signBoard") , 1,0);
-            UtilPrinter.printCustomText(outputStream,"KH    : " + currentCustomer.getString("name"), 1,0);
-
-            String phone = currentCustomer.getString("phone").equals("")? "--" : Util.PhoneFormat(currentCustomer.getString("phone"));
-            UtilPrinter.printCustomText(outputStream,"SDT   : " + phone, 1,0);
-            String add = String.format("%s, %s", currentCustomer.getString("street"), currentCustomer.getString("district"));
-            String address = add.length()>23 ? add.substring(0,23) : add;
-            UtilPrinter.printCustomText(outputStream,"D.CHI : " + address , 1,0);
-            UtilPrinter.printCustomText(outputStream,"NGAY  : " + Util.CurrentMonthYearHour(),1,0);
-            UtilPrinter.printCustomText(outputStream,"N.VIEN: " + User.getFullName(), 1,0);
-            UtilPrinter.printCustomText(outputStream,shortLine,3,1);
-
-            List<Product> listProduct = getListProduct();
-            for (int i=0; i<listProduct.size(); i++){
-                UtilPrinter.printCustomText(outputStream,String.format("%d.%s (%s)" ,i+1, listProduct.get(i).getString("name"), Util.FormatMoney(listProduct.get(i).getDouble("unitPrice"))) , 1,0);
-
-                if (listProduct.get(i).getBoolean("isPromotion")){
-                    UtilPrinter.printCustom2Text(outputStream , "(Khuyen mai)" , Util.FormatMoney(listProduct.get(i).getDouble("totalMoney")) , 1,0);
-
-                }else {
-                    String discount = listProduct.get(i).getDouble("discount") == 0? "" : " -" + Util.FormatMoney(listProduct.get(i).getDouble("discount"));
-                    UtilPrinter.printCustom2Text(outputStream ,
-                            " "+ Util.FormatMoney(listProduct.get(i).getDouble("quantity")) + "x" + Util.FormatMoney(listProduct.get(i).getDouble("unitPrice")) + discount ,
-                            Util.FormatMoney(listProduct.get(i).getDouble("totalMoney")) , 1,0);
-                }
-
-
-                if (i != listProduct.size() -1){
-                    UtilPrinter.printCustomText(outputStream,longLine,1,1);
-                }
-            }
-            UtilPrinter.printCustomText(outputStream,shortLine,3,1);
-            UtilPrinter.printCustom2Text(outputStream,"TONG:", Util.FormatMoney(total),4,2);
-
-            Double sumDebt =0.0;
-            for (int j=0; j<listBills.size(); j++){
-
-                if (listBills.get(j).getDouble("debt") > 0){
-                    sumDebt += listBills.get(j).getDouble("debt");
-                    UtilPrinter.printCustom2Text(outputStream,"NO "+ Util.DateMonthString(listBills.get(j).getLong("createAt")), Util.FormatMoney(listBills.get(j).getDouble("debt")),4,2);
-
-                }
-            }
-
-            if (listBills.size() >0){
-                UtilPrinter.printCustomText(outputStream,longLine,1,1);
-            }
-
-            UtilPrinter.printCustom2Text(outputStream,"TRA:", Util.FormatMoney(paid),4,2);
-            UtilPrinter.printCustomText(outputStream,longLine,1,1);
-            UtilPrinter.printCustom2Text(outputStream,"CON LAI:", Util.FormatMoney(total + sumDebt - paid),4,2);
-            UtilPrinter.printCustomText(outputStream,shortLine,3,1);
-            UtilPrinter.printCustomText(outputStream, String.format("Đặt hàng: %s", Util.PhoneFormat(User.getPhone())), 1,1);
-            UtilPrinter.printCustomText(outputStream, "Tran trong cam on quy khach hang", 1,1);
-            outputStream.write(PrinterCommands.FEED_LINE);
-            outputStream.write(PrinterCommands.FEED_LINE);
-            outputStream.write(PrinterCommands.FEED_LINE);
-            outputStream.flush();
-
-            mListener.onRespone(true);
-            //Util.getInstance().stopLoading(true);
-
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        try {
-            if(btsocket!= null){
-                outputStream.close();
-                btsocket.close();
-                btsocket = null;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        try {
-            unregisterReceiver(mBTReceiver);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void registerBluetooth() {
-        try {
-            if (initDevicesList() != 0) {
-                this.finish();
-                return;
-            }
-
-        } catch (Exception ex) {
-            this.finish();
-            return;
-        }
-        IntentFilter btIntentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(mBTReceiver, btIntentFilter);
-
-        //printerProgress.setVisibility(View.VISIBLE);
-        //tvPrinterName.setText(String.format(BLUETOOTH_STATUS, listDevice.size()));
-
-    }
-
-    private void connectBluetoothDevice(final BluetoothDevice device){
-        if (mBluetoothAdapter == null) {
-            return;
-        }
-        Util.showSnackbar("Connecting to " + device.getName(), null, null);
-
-        Thread connectThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (device.getUuids()!= null){
-                        UUID uuid = device.getUuids()[0].getUuid();
-                        btsocket = device.createRfcommSocketToServiceRecord(uuid);
-                        btsocket.connect();
-                    }
-
-                } catch (IOException ex) {
-                    runOnUiThread(socketErrorRunnable);
-                    try {
-                        btsocket.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    btsocket = null;
-                    return;
-                } finally {
-                    runOnUiThread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            try {
-                                if (btsocket != null){
-                                    tvBluetooth.setText(R.string.icon_bluetooth_connected);
-                                    tvBluetooth.setTextColor(getResources().getColor(R.color.colorBlue));
-                                    //tvPrinterName.setText("Đang kết nối: "+ btsocket.getRemoteDevice().getName());
-                                    //printerProgress.setVisibility(View.GONE);
-
-                                    CustomSQL.setString(Constants.BLUETOOTH_DEVICE, btsocket.getRemoteDevice().getAddress());
-                                    outputStream = btsocket.getOutputStream();
-
-                                    mBluetoothAdapter.cancelDiscovery();
-                                }
-
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
-
-                        }
-                    });
-                }
-            }
-        });connectThread.start();
-    }
+//    private void connectBluetoothDevice(final BluetoothDevice device){
+//        if (mBluetoothAdapter == null) {
+//            return;
+//        }
+//        Util.showSnackbar("Connecting to " + device.getName(), null, null);
+//
+//        Thread connectThread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    if (device.getUuids()!= null){
+//                        UUID uuid = device.getUuids()[0].getUuid();
+//                        btsocket = device.createRfcommSocketToServiceRecord(uuid);
+//                        btsocket.connect();
+//                    }
+//
+//                } catch (IOException ex) {
+//                    runOnUiThread(socketErrorRunnable);
+//                    try {
+//                        btsocket.close();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                    btsocket = null;
+//                    return;
+//                } finally {
+//                    runOnUiThread(new Runnable() {
+//
+//                        @Override
+//                        public void run() {
+//                            try {
+//                                if (btsocket != null){
+//                                    tvBluetooth.setText(R.string.icon_bluetooth_connected);
+//                                    tvBluetooth.setTextColor(getResources().getColor(R.color.colorBlue));
+//                                    //tvPrinterName.setText("Đang kết nối: "+ btsocket.getRemoteDevice().getName());
+//                                    //printerProgress.setVisibility(View.GONE);
+//
+//                                    CustomSQL.setString(Constants.BLUETOOTH_DEVICE, btsocket.getRemoteDevice().getAddress());
+//                                    outputStream = btsocket.getOutputStream();
+//
+//                                    mBluetoothAdapter.cancelDiscovery();
+//                                }
+//
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
+//
+//
+//                        }
+//                    });
+//                }
+//            }
+//        });connectThread.start();
+//    }
 
     private void showListBluetooth(List<BluetoothDevice> list){
-        CustomCenterDialog.showBluetoothDevices(list, new BluetoothListAdapter.CallbackBluetooth() {
-            @Override
-            public void OnDevice(BluetoothDevice device) {
-                try {
-                    connectBluetoothDevice(device);
-                    if (btsocket != null){
-                        btsocket.close();
-                        btsocket = null;
-                    }
-
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        });
+//        CustomCenterDialog.showBluetoothDevices(list, new BluetoothListAdapter.CallbackBluetooth() {
+//            @Override
+//            public void OnDevice(BluetoothDevice device) {
+//                try {
+//                    connectBluetoothDevice(device);
+//                    if (btsocket != null){
+//                        btsocket.close();
+//                        btsocket = null;
+//                    }
+//
+//
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
+//        });
     }
 
-    private final BroadcastReceiver mBTReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+//    private final BroadcastReceiver mBTReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            String action = intent.getAction();
+//            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+//                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+//
+//                if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))){
+//                    connectBluetoothDevice(device);
+//                }
+//
+//                listDevice.add(device);
+//
+//            }
+//        }
+//    };
 
-                if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))){
-                    connectBluetoothDevice(device);
-                }
+//    private Runnable socketErrorRunnable = new Runnable() {
+//
+//        @Override
+//        public void run() {
+//            Util.showToast("Cannot establish connection");
+//            mBluetoothAdapter.startDiscovery();
+//
+//        }
+//    };
+//
+//    private int initDevicesList() {
+//        try {
+//            if (btsocket != null) {
+//                btsocket.close();
+//
+//                btsocket = null;
+//            }
+//
+//            if (mBluetoothAdapter != null) {
+//                mBluetoothAdapter.cancelDiscovery();
+//            }
+//
+//            finalize();
+//
+//        } catch (Throwable throwable) {
+//            throwable.printStackTrace();
+//        }
+//
+//        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//        if (mBluetoothAdapter == null) {
+//            Util.showToast("Bluetooth not supported!!");
+//
+//            return -1;
+//        }
+//
+//        if (mBluetoothAdapter.isDiscovering()) {
+//            mBluetoothAdapter.cancelDiscovery();
+//        }
+//
+//
+//        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//        try {
+//            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+//        } catch (Exception ex) {
+//            return -2;
+//        }
+//
+//        //Util.showToast("Getting all available Bluetooth Devices");
+//
+//        return 0;
+//
+//    }
 
-                listDevice.add(device);
-                //tvPrinterName.setText(String.format(BLUETOOTH_STATUS, listDevice.size()));
-
-            }
-        }
-    };
-
-    private Runnable socketErrorRunnable = new Runnable() {
-
-        @Override
-        public void run() {
-            Util.showToast("Cannot establish connection");
-            mBluetoothAdapter.startDiscovery();
-
-        }
-    };
-
-    private int initDevicesList() {
-        try {
-            if (btsocket != null) {
-                btsocket.close();
-
-                btsocket = null;
-            }
-
-            if (mBluetoothAdapter != null) {
-                mBluetoothAdapter.cancelDiscovery();
-            }
-
-            finalize();
-
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
-
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBluetoothAdapter == null) {
-            Util.showToast("Bluetooth not supported!!");
-
-            return -1;
-        }
-
-        if (mBluetoothAdapter.isDiscovering()) {
-            mBluetoothAdapter.cancelDiscovery();
-        }
 
 
-        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        try {
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-        } catch (Exception ex) {
-            return -2;
-        }
 
-        //Util.showToast("Getting all available Bluetooth Devices");
-
-        return 0;
-
-    }
-
-    private void startImageChooser() {
-        // Kiểm tra permission với android sdk >= 23
-        imageChangeUri = Uri.fromFile(Util.getOutputMediaFile());
-        if (Build.VERSION.SDK_INT <= 19) {
-            Intent i = new Intent();
-            i.setType("image/*");
-            i.setAction(Intent.ACTION_GET_CONTENT);
-            i.addCategory(Intent.CATEGORY_OPENABLE);
-            startActivityForResult(i, REQUEST_CHOOSE_IMAGE);
-
-        } else if (Build.VERSION.SDK_INT > 19) {
-            Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
-        }
-
-    }
 
 
 }

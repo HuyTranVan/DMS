@@ -16,27 +16,29 @@
         android:textColor="@color/black_text_color"
         android:gravity="center"/>
 
-    <RadioGroup
-        android:id="@+id/dialog_choice_product_radiogroup"
-        android:layout_below="@+id/dialog_choice_product_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorGrey"
-        android:orientation="horizontal"
-        android:gravity="center"/>
+    <!--<RadioGroup-->
+        <!--android:id="@+id/dialog_choice_product_radiogroup"-->
+        <!--android:layout_below="@+id/dialog_choice_product_title"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="@color/colorGrey"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:gravity="center"/>-->
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/dialog_choice_product_rvProduct"
-        android:layout_below="@+id/dialog_choice_product_radiogroup"
+        android:layout_below="@+id/dialog_choice_product_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorWhite"
         android:clipToPadding="false"
-        android:layout_marginBottom="@dimen/_32sdp"
         android:paddingTop="@dimen/_10sdp"
-        android:paddingBottom="@dimen/_5sdp"/>
+        android:paddingBottom="@dimen/_5sdp"
+        android:layout_above="@+id/dialog_choice_product_bottom"/>
 
-    <include android:layout_height="wrap_content"
+    <include
+        android:id="@+id/dialog_choice_product_bottom"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:layout_alignParentBottom="true"
         layout="@layout/view_bottom_dialog_button"/>
