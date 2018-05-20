@@ -21,6 +21,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.R;
+import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackClickProduct;
 import wolve.dms.models.Product;
@@ -36,11 +37,13 @@ public class CartProductDialogAdapter extends RecyclerView.Adapter<CartProductDi
     private List<Product> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
+    private CallbackBoolean mListener;
 //    private Boolean isPromotion;
 
-    public CartProductDialogAdapter(List<Product> list, ProductGroup group) {
+    public CartProductDialogAdapter(List<Product> list, ProductGroup group, CallbackBoolean listener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
+        this.mListener = listener;
         //this.mData = list;
         //this.isPromotion = ispromotion;
 
@@ -69,8 +72,6 @@ public class CartProductDialogAdapter extends RecyclerView.Adapter<CartProductDi
     public void onBindViewHolder(final ProductDialogShopCartAdapterViewHolder holder, final int position) {
         holder.tvName.setText(mData.get(position).getString("name"));
         holder.tvUnitPrice.setText(Util.FormatMoney(mData.get(position).getDouble("unitPrice")));
-//        holder.cbCheck.setOnCheckedChangeListener(null);
-//        holder.cbCheck.setChecked(mData.get(position).getBoolean("checked")? true: false);
         holder.tvLine.setVisibility(position == mData.size() -1 ? View.GONE : View.VISIBLE);
         holder.lnParent.setBackgroundColor(mData.get(position).getBoolean("checked") ? Color.parseColor("#0d000000") : Color.parseColor("#ffffff") );
 
@@ -87,39 +88,22 @@ public class CartProductDialogAdapter extends RecyclerView.Adapter<CartProductDi
             public void onClick(View v) {
                 try {
                      if (mData.get(position).getBoolean("checked")){
-    //                     holder.cbCheck.setChecked(false);
-//                         holder.lnParent.setBackgroundColor(Color.parseColor("#0d000000"));
                          mData.get(position).put("checked", false);
-                         notifyItemChanged(position);
+                         holder.lnParent.setBackgroundColor(Color.parseColor("#ffffff") );
+                         //notifyItemChanged(position);
 
                      }else {
-    //                     holder.cbCheck.setChecked(true);
-//                         holder.lnParent.setBackgroundColor(Color.parseColor("#ffffff"));
                          mData.get(position).put("checked", true);
-                        notifyItemChanged(position);
+                         holder.lnParent.setBackgroundColor( Color.parseColor("#0d000000") );
+                         //notifyItemChanged(position);
 
                      }
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
+                mListener.onRespone(checkHasChoosen());
             }
         });
-
-//        holder.cbCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                try {
-//                    if (isChecked){
-//                        mData.get(position).put("checked", true);
-//                        holder.lnParent.setBackgroundColor(Color.parseColor("#0d000000"));
-//                    }else {
-//                        mData.get(position).put("checked", false);
-//                    }
-//                }catch (JSONException e){
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
 
     }
 
@@ -132,14 +116,12 @@ public class CartProductDialogAdapter extends RecyclerView.Adapter<CartProductDi
         private TextView tvName, tvUnitPrice, tvLine;
         private RelativeLayout lnParent;
         private CircleImageView imgProduct;
-//        private CheckBox cbCheck;
 
         public ProductDialogShopCartAdapterViewHolder(View itemView) {
             super(itemView);
             tvName = (TextView) itemView.findViewById(R.id.shopcart_dialog_product_item_name);
             tvUnitPrice = (TextView) itemView.findViewById(R.id.shopcart_dialog_product_item_unitprice);
             imgProduct = (CircleImageView) itemView.findViewById(R.id.shopcart_dialog_product_item_image);
-//            cbCheck = (CheckBox) itemView.findViewById(R.id.shopcart_dialog_product_item_checkbox);
             lnParent = (RelativeLayout) itemView.findViewById(R.id.shopcart_dialog_product_item_parent);
             tvLine = itemView.findViewById(R.id.shopcart_dialog_product_item_line);
         }
@@ -148,6 +130,17 @@ public class CartProductDialogAdapter extends RecyclerView.Adapter<CartProductDi
 
     public List<Product> getAllData(){
         return mData;
+    }
+
+    private Boolean checkHasChoosen(){
+        Boolean check = false;
+        for (int i=0; i<mData.size(); i++){
+            if (mData.get(i).getBoolean("checked")){
+                check = true;
+                break;
+            }
+        }
+        return  check;
     }
 
 

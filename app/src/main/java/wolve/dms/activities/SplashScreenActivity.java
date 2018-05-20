@@ -4,20 +4,47 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import wolve.dms.BaseActivity;
 import wolve.dms.R;
+import wolve.dms.apiconnect.Api_link;
+import wolve.dms.apiconnect.UserConnect;
+import wolve.dms.callback.CallbackJSONObject;
+import wolve.dms.models.Distributor;
+import wolve.dms.models.User;
+import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomSQL;
+import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
-public class SplashScreenActivity extends AppCompatActivity {
+public class SplashScreenActivity extends BaseActivity {
+    private ProgressBar progressBar;
 
-    private static int SPLASH_TIME_OUT = 2000;
+    private int SPLASH_TIME_OUT = 1500;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-//        Fabric.with(this, new Crashlytics());
-        setContentView(R.layout.activity_splash);
-        Util.getInstance().setCurrentActivity(this);
+    public int getResourceLayout() {
+        return R.layout.activity_splash;
+    }
+
+    @Override
+    public int setIdContainer() {
+        return 0;
+    }
+
+    @Override
+    public void findViewById() {
+        progressBar = findViewById(R.id.splash_loading);
+    }
+
+    @Override
+    public void initialData() {
         new Handler().postDelayed(new Runnable() {
 
             /*
@@ -27,51 +54,57 @@ public class SplashScreenActivity extends AppCompatActivity {
 
             @Override
             public void run() {
-                Intent intent = new Intent(SplashScreenActivity.this, LoginActivity.class);
-                startActivity(intent);
-                SplashScreenActivity.this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                finish();
+                if (CustomSQL.getString(Constants.USER_USERNAME).isEmpty()){
+                    Intent intent = new Intent(SplashScreenActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    SplashScreenActivity.this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                    finish();
+                }else {
+                    String params = String.format(Api_link.LOGIN_PARAM,CustomSQL.getString(Constants.USER_USERNAME), CustomSQL.getString(Constants.USER_PASSWORD));
+                    progressBar.setVisibility(View.VISIBLE);
+                    UserConnect.Login(params, new CallbackJSONObject() {
+                        @Override
+                        public void onResponse(JSONObject result) {
+                            progressBar.setVisibility(View.GONE);
+                            try {
+                                User user = new User(result);
+                                Distributor distributor = new Distributor(result.getJSONObject("distributor"));
 
-                return;
+                                CustomSQL.setObject(Constants.USER, user);
+                                CustomSQL.setObject(Constants.DISTRIBUTOR, distributor);
+
+                                Util.showToast("Đăng nhập thành công");
+                                Transaction.gotoHomeActivity(true);
+
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            progressBar.setVisibility(View.GONE);
+                        }
+                    }, false,true);
+                }
+
+
+
+
+                //return;
 
             }
         }, SPLASH_TIME_OUT);
+    }
 
-//        if (Util.getInstance().checkPlayServices()) {
-//            Intent intent = this.getIntent();
-//            Bundle bundle = intent.getExtras();
-//            //FirebaseApp.initializeApp(this);
-////            String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-////            if (refreshedToken != null) {
-////                Log.d("Device TOKEN", refreshedToken);
-////                FirebaseMessaging.getInstance().subscribeToTopic("cs");
-////            }
-//
-//            new Handler().postDelayed(new Runnable() {
-//
-//            /*
-//             * Showing splash screen with a timer. This will be useful when you
-//             * want to show case your app logo_signup / company
-//             */
-//
-//                @Override
-//                public void run() {
-//                    Intent intent = new Intent(SplashScreenActivity.this, LoginActivity.class);
-//                    startActivity(intent);
-//                    SplashScreenActivity.this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-//                    finish();
-//
-//                    return;
-//
-//                }
-//            }, SPLASH_TIME_OUT);
-//        }
+    @Override
+    public void addEvent() {
 
     }
 
     @Override
     protected void onDestroy() {
-        //Util.getInstance().stopLoading();
         super.onDestroy();
     }
 

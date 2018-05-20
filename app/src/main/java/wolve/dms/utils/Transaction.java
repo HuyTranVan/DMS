@@ -8,6 +8,7 @@ import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 
 import wolve.dms.R;
+import wolve.dms.activities.BluetoothListActivity;
 import wolve.dms.activities.CustomerActivity;
 import wolve.dms.activities.HomeActivity;
 import wolve.dms.activities.LoginActivity;
@@ -130,7 +131,13 @@ public class Transaction {
             context.startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
 
         }
+    }
 
+    public static void gotoBluetoothListActivity() {
+        Activity context = Util.getInstance().getCurrentActivity();
+        Intent intent = new Intent(context, BluetoothListActivity.class);
+        context.startActivity(intent);
+        context.overridePendingTransition(R.anim.fade_in_center, R.anim.slide_down);
     }
 
 }

@@ -122,7 +122,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                     CustomSQL.setString(Constants.USER_USERNAME, edUsername.getText().toString().trim());
                     CustomSQL.setString(Constants.USER_PASSWORD, edPassword.getText().toString().trim());
 
-                    Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
+                    Util.showToast("Đăng nhập thành công");
                     Transaction.gotoHomeActivity(true);
 
 
@@ -135,6 +135,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
             public void onError(String error) {
 
             }
-        }, true);
+        }, true,true);
     }
 }

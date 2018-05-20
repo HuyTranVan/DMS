@@ -68,6 +68,7 @@
     <string name="icon_notify">&#xf0a1;</string>
     <string name="icon_bluetooth">&#xf294;</string>
     <string name="icon_bluetooth_connected">&#xf293;</string>
+    <string name="icon_dot">&#xf192;</string>
 
 
 
@@ -78,5 +79,6 @@
     <string name="day_month_year">day month year</string>
     <string name="first_day_selected">First day selected</string>
     <string name="last_day_selected">Last day selected</string>
+
 
 </resources>

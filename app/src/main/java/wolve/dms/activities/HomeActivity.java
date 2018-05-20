@@ -141,21 +141,23 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     public void onRespone(String data, int position) {
         switch (position){
             case 0:
-                if (PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(Util.getInstance().getCurrentActivity(),
-                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_PERMISSION_LOCATION);
-                    return;
-                }
+//                if (PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                    ActivityCompat.requestPermissions(Util.getInstance().getCurrentActivity(),
+//                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_PERMISSION_LOCATION);
+//                    return;
+//                }
                 Transaction.gotoMapsActivity();
 
                 break;
 
             case 1:
                 Transaction.gotoStatisticalActivity();
+
                 break;
 
             case 2:
                 Util.showToast("Chưa hỗ trợ");
+                Transaction.gotoBluetoothListActivity();
 
                 break;
 

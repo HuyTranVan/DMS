@@ -67,8 +67,7 @@
                 android:layout_height="wrap_content"
                 android:hint="Giá NET"
                 android:inputType="number"
-                app:backgroundTint="@color/colorBlueDark"
-                android:focusable="false"/>
+                app:backgroundTint="@color/colorBlueDark"/>
 
         </android.support.design.widget.TextInputLayout>
 

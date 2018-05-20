@@ -82,10 +82,10 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     private ImageView btnBack;
     private Button btnSubmit;
     private CTextIcon tvBluetooth;
-    private TextView tvTitle, tvTotal; //btnAdd, btnAddPromotion;
+    private TextView tvTitle, tvTotal, tvHint; //btnAdd, btnAddPromotion;
     private CInputForm tvNote;
     private RecyclerView rvProducts, rvPromotions, rvButtonGroup;
-    private RelativeLayout rlCover;
+//    private RelativeLayout rlCover;
     private ImageView imgLogo;
     private LinearLayout lnSubmitGroup;
 
@@ -93,15 +93,16 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     private CartPromotionsAdapter adapterPromotions;
     private CartGroupButtonAdapter groupButtonAdapter;
     private Customer currentCustomer;
-    protected List<Product> listProducts = new ArrayList<>();
     private List<Product> listInitialProduct = new ArrayList<>();
     private List<Product> listInitialPromotion = new ArrayList<>();
-    private List<BluetoothDevice> listDevice = new ArrayList<>();
     private List<Bill> listBills = new ArrayList<>();
-    private BluetoothAdapter mBluetoothAdapter = null;
-    private static BluetoothSocket btsocket;
-    private static OutputStream outputStream;
     private Uri imageChangeUri ;
+//    protected List<Product> listProducts = new ArrayList<>();
+//    private List<BluetoothDevice> listDevice = new ArrayList<>();
+//    private BluetoothAdapter mBluetoothAdapter = null;
+//    private static BluetoothSocket btsocket;
+//    private static OutputStream outputStream;
+
 
 
     @Override
@@ -120,13 +121,14 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         btnBack =  findViewById(R.id.icon_back);
         tvTitle =  findViewById(R.id.cart_title);
         tvTotal =  findViewById(R.id.cart_total);
+        tvHint =  findViewById(R.id.cart_hint);
         tvNote =  findViewById(R.id.cart_note);
         lnSubmitGroup = findViewById(R.id.cart_submit_group);
         //btnAdd =  findViewById(R.id.cart_add_product);
         //btnAddPromotion =  findViewById(R.id.cart_add_promotion);
         rvProducts =  findViewById(R.id.cart_rvproduct);
         rvPromotions =  findViewById(R.id.cart_rvpromotion);
-        rlCover =  findViewById(R.id.cart_cover);
+        //rlCover =  findViewById(R.id.cart_cover);
         imgLogo = findViewById(R.id.cart_bluetooth_printer);
         tvBluetooth = findViewById(R.id.cart_bluetooth);
         rvButtonGroup = findViewById(R.id.cart_rvGroupButton);
@@ -147,7 +149,6 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                     listBills.add(new Bill(array.getJSONObject(i)));
                 }
 
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -156,19 +157,13 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         if (!CustomSQL.getString("logo").equals("")){
             Glide.with(this).load(CustomSQL.getString("logo")).centerCrop().into(imgLogo);
 
-            Log.e("logo", CustomSQL.getString("logo"));
         }else {
             new DownloadImage(this, imgLogo, Api_link.LOGO_BILL).execute();
         }
 
-        //Glide.with(this).load(CustomSQL.getString("logo")).placeholder(R.drawable.ic_logo_print).centerCrop().into(imgLogo);
         createRVProduct(listInitialProduct);
         createRVPromotion(listInitialPromotion);
-
-
         registerBluetooth();
-
-
     }
 
     @Override
@@ -177,13 +172,16 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         btnSubmit.setOnClickListener(this);
         imgLogo.setOnClickListener(this);
         tvBluetooth.setOnClickListener(this);
+
     }
 
     @Override
     public void onBackPressed() {
         Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.cart_parent);
         if(mFragment != null && mFragment instanceof ChoiceProductFragment) {
-            getSupportFragmentManager().popBackStack();
+            ChoiceProductFragment fragment = (ChoiceProductFragment) mFragment;
+            fragment.submitProduct();
+            //getSupportFragmentManager().popBackStack();
         }else {
             returnCustomerActivity(currentCustomer);
         }
@@ -210,7 +208,8 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 break;
 
             case R.id.cart_bluetooth:
-                showListBluetooth(listDevice);
+                //showListBluetooth(listDevice);
+                Transaction.gotoBluetoothListActivity();
                 break;
         }
     }
@@ -254,6 +253,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 rvProducts.invalidate();
 
                 lnSubmitGroup.setVisibility(adapterProducts.getAllDataProduct().size()>0 ? View.VISIBLE : View.GONE);
+                tvHint.setVisibility(adapterProducts.getAllDataProduct().size()>0 ? View.VISIBLE : View.GONE);
             }
         }) ;
         rvProducts.setAdapter(adapterProducts);
@@ -270,6 +270,9 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 //                listCurrentPromotion.remove(position);
                 rvPromotions.requestLayout();
                 rvPromotions.invalidate();
+
+                lnSubmitGroup.setVisibility(adapterPromotions.getAllDataPromotion().size()>0 ? View.VISIBLE : View.GONE);
+                tvHint.setVisibility(adapterPromotions.getAllDataPromotion().size()>0 ? View.VISIBLE : View.GONE);
             }
         });
         rvPromotions.setAdapter(adapterPromotions);
@@ -278,57 +281,6 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(), LinearLayoutManager.VERTICAL, false);
         rvPromotions.setLayoutManager(layoutManager);
     }
-
-//    private void showDialogProduct(String title, final Boolean isPromotion, ProductGroup group){
-//        listProducts = new ArrayList<>();
-//        try {
-//            for (int i=0 ; i<Product.getProductList().size(); i++){
-//                Product product = Product.getProductList().get(i);
-//                product.put("checked", false);
-//                listProducts.add(product);
-//
-//            }
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        CustomCenterDialog.showDialogChoiceProduct(title ,listProducts,group, new CallbackListProduct() {
-//            @Override
-//            public void Products(List<Product> list_product) {
-//                for (int i=0; i<list_product.size(); i++){
-//                    try {
-//                        Product product = new Product(new JSONObject()) ;
-//                        product.put("id", list_product.get(i).getInt("id"));
-//                        product.put("name", list_product.get(i).getString("name"));
-//                        product.put("productGroup", list_product.get(i).getString("productGroup"));
-//                        product.put("promotion", list_product.get(i).getBoolean("promotion"));
-//                        product.put("unitPrice", list_product.get(i).getDouble("unitPrice"));
-//                        product.put("purchasePrice", list_product.get(i).getDouble("purchasePrice"));
-//                        product.put("volume", list_product.get(i).getInt("volume"));
-//                        product.put("image", list_product.get(i).getString("image"));
-//                        product.put("imageUrl", list_product.get(i).getString("imageUrl"));
-//                        product.put("checked", list_product.get(i).getBoolean("checked"));
-//                        product.put("isPromotion", isPromotion);
-//                        product.put("quantity", 1);
-//
-//                        if (isPromotion){
-//                            product.put("totalMoney",0);
-//                            product.put("discount", product.getDouble("unitPrice"));
-//                            adapterPromotions.addItemPromotion(product);
-//                        }else {
-//                            product.put("totalMoney", product.getDouble("unitPrice"));
-//                            product.put("discount", 0);
-//                            adapterProducts.addItemProduct(product);
-//                            //btnAddPromotion.setVisibility(adapterProducts.getItemCount() >0 ?View.VISIBLE : View.GONE);
-//                        }
-//
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//                rlCover.setVisibility(list_product.size() <=0? View.VISIBLE: View.GONE);
-//            }
-//        });
-//    }
 
     protected void updatelistProduct(List<Product> list_product, Boolean isPromotion){
         for (int i=0; i<list_product.size(); i++){
@@ -393,7 +345,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 //                    params.put("billDetails", (Object) array);
 
                 if (btsocket != null && btsocket.isConnected()){
-                    CustomerConnect.printBill(outputStream, currentCustomer, getListProduct(), listBills, paid, new CallbackBoolean() {
+                    CustomerConnect.printBill(outputStream, currentCustomer, getListProduct(), listBills,total,  paid, new CallbackBoolean() {
                         @Override
                         public void onRespone(Boolean result) {
                             Util.getInstance().stopLoading(true);
@@ -546,24 +498,79 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                     Set<BluetoothDevice> btDeviceList = mBluetoothAdapter.getBondedDevices();
                     if (btDeviceList.size() > 0) {
                         for (BluetoothDevice device : btDeviceList) {
-                            if (btDeviceList.contains(device) == false) {
-                                if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))){
-//                                    connectBluetoothDevice(device);
-                                }
-
-                                listDevice.add(device);
-
+                            listDevice.add(device);
+                            if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))){
+                                connectBluetoothDevice(device);
                             }
+//                            if (btDeviceList.contains(device) == false) {
+//                                if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))){
+////                                    connectBluetoothDevice(device);
+//                                }
+//
+//                                listDevice.add(device);
+//
+//                            }
                         }
                     }
                 } catch (Exception ex) {
                 }
-                //mBluetoothAdapter.startDiscovery();
+                mBluetoothAdapter.startDiscovery();
             }
 
 
 
     }
+
+    //    private void showDialogProduct(String title, final Boolean isPromotion, ProductGroup group){
+//        listProducts = new ArrayList<>();
+//        try {
+//            for (int i=0 ; i<Product.getProductList().size(); i++){
+//                Product product = Product.getProductList().get(i);
+//                product.put("checked", false);
+//                listProducts.add(product);
+//
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        CustomCenterDialog.showDialogChoiceProduct(title ,listProducts,group, new CallbackListProduct() {
+//            @Override
+//            public void Products(List<Product> list_product) {
+//                for (int i=0; i<list_product.size(); i++){
+//                    try {
+//                        Product product = new Product(new JSONObject()) ;
+//                        product.put("id", list_product.get(i).getInt("id"));
+//                        product.put("name", list_product.get(i).getString("name"));
+//                        product.put("productGroup", list_product.get(i).getString("productGroup"));
+//                        product.put("promotion", list_product.get(i).getBoolean("promotion"));
+//                        product.put("unitPrice", list_product.get(i).getDouble("unitPrice"));
+//                        product.put("purchasePrice", list_product.get(i).getDouble("purchasePrice"));
+//                        product.put("volume", list_product.get(i).getInt("volume"));
+//                        product.put("image", list_product.get(i).getString("image"));
+//                        product.put("imageUrl", list_product.get(i).getString("imageUrl"));
+//                        product.put("checked", list_product.get(i).getBoolean("checked"));
+//                        product.put("isPromotion", isPromotion);
+//                        product.put("quantity", 1);
+//
+//                        if (isPromotion){
+//                            product.put("totalMoney",0);
+//                            product.put("discount", product.getDouble("unitPrice"));
+//                            adapterPromotions.addItemPromotion(product);
+//                        }else {
+//                            product.put("totalMoney", product.getDouble("unitPrice"));
+//                            product.put("discount", 0);
+//                            adapterProducts.addItemProduct(product);
+//                            //btnAddPromotion.setVisibility(adapterProducts.getItemCount() >0 ?View.VISIBLE : View.GONE);
+//                        }
+//
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//                rlCover.setVisibility(list_product.size() <=0? View.VISIBLE: View.GONE);
+//            }
+//        });
+//    }
 
 //    @Override
 //    protected void onDestroy() {
@@ -661,25 +668,25 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 //        });connectThread.start();
 //    }
 
-    private void showListBluetooth(List<BluetoothDevice> list){
-//        CustomCenterDialog.showBluetoothDevices(list, new BluetoothListAdapter.CallbackBluetooth() {
-//            @Override
-//            public void OnDevice(BluetoothDevice device) {
-//                try {
-//                    connectBluetoothDevice(device);
-//                    if (btsocket != null){
-//                        btsocket.close();
-//                        btsocket = null;
-//                    }
-//
-//
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//
-//            }
-//        });
-    }
+//    private void showListBluetooth(List<BluetoothDevice> list){
+////        CustomCenterDialog.showBluetoothDevices(list, new BluetoothListAdapter.CallbackBluetooth() {
+////            @Override
+////            public void OnDevice(BluetoothDevice device) {
+////                try {
+////                    connectBluetoothDevice(device);
+////                    if (btsocket != null){
+////                        btsocket.close();
+////                        btsocket = null;
+////                    }
+////
+////
+////                } catch (IOException e) {
+////                    e.printStackTrace();
+////                }
+////
+////            }
+////        });
+
 
 //    private final BroadcastReceiver mBTReceiver = new BroadcastReceiver() {
 //        @Override
@@ -750,10 +757,5 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 //        return 0;
 //
 //    }
-
-
-
-
-
 
 }

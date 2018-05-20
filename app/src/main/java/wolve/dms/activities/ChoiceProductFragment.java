@@ -73,6 +73,7 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
     private ShopCartActivity mActivity;
     private List<Product> listProducts = new ArrayList<>();
     private CartProductDialogAdapter adapter;
+    private ProductGroup productGroup;
 
 
     @Nullable
@@ -89,6 +90,8 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
 
     private void intitialData() {
         String bundle = getArguments().getString(Constants.PRODUCTGROUP);
+        productGroup = new ProductGroup(bundle);
+        tvTitle.setText(String.format("CHỌN SẢN PHẨM %s", productGroup.getString("name")));
         List<Product> all = Product.getProductList();
         try {
             for (int i=0 ; i<all.size(); i++){
@@ -101,7 +104,7 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        createRVProduct(listProducts, new ProductGroup(bundle));
+        createRVProduct(listProducts, productGroup);
 
     }
 
@@ -136,7 +139,14 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
     }
 
     private void createRVProduct(List<Product> list, ProductGroup group){
-        adapter = new CartProductDialogAdapter(list, group);
+        btnSubmit.setVisibility(View.GONE);
+        adapter = new CartProductDialogAdapter(list, group, new CallbackBoolean() {
+            @Override
+            public void onRespone(Boolean result) {
+                btnSubmit.setVisibility(result? View.VISIBLE : View.GONE);
+
+            }
+        });
         rvProduct.setAdapter(adapter);
         rvProduct.setHasFixedSize(true);
         rvProduct.setNestedScrollingEnabled(false);
@@ -144,7 +154,7 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
         rvProduct.setLayoutManager(layoutManager);
     }
 
-    private void submitProduct(){
+    protected void submitProduct(){
         List<Product> listChecked = new ArrayList<Product>();
         for (int i=0; i<adapter.getAllData().size(); i++){
             if (adapter.getAllData().get(i).getBoolean("checked")){

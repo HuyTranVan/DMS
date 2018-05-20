@@ -45,23 +45,23 @@
 
     </RelativeLayout>
 
-
     <com.github.clans.fab.FloatingActionButton
         android:id="@+id/map_current_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_my_location_black_18dp"
         android:layout_marginLeft="@dimen/_10sdp"
-        android:layout_marginBottom="70dp"
+        android:layout_marginBottom="@dimen/_50sdp"
         android:layout_gravity="bottom"
-        app:fab_size="normal"/>
+        app:fab_size="mini"
+        />
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/map_new_customer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="@dimen/_10sdp"
-        android:layout_marginBottom="70dp"
+        android:layout_marginBottom="@dimen/_50sdp"
         android:layout_gravity="bottom|right"
         fab:menu_fab_size="mini"
         fab:menu_colorNormal="#1565C0"
@@ -145,7 +145,7 @@
                     android:layout_marginTop="1dp"
                     android:layout_marginBottom="1dp"
                     android:layout_marginLeft="1dp"
-                    android:background="@drawable/toggle_widget_background"
+                    android:background="@drawable/toggle_widget_background_left"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -158,11 +158,14 @@
 
                 <RadioButton
                     android:id="@+id/map_filter_interested"
-                    android:layout_margin="1dp"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_marginLeft="0.2dp"
+                    android:layout_marginRight="0.2dp"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@drawable/toggle_widget_background"
+                    android:background="@drawable/toggle_widget_background_center"
                     android:button="@null"
                     android:gravity="center"
                     android:text="Quan tâm"
@@ -177,10 +180,10 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@drawable/toggle_widget_background"
+                    android:background="@drawable/toggle_widget_background_right"
                     android:button="@null"
                     android:gravity="center"
-                    android:text="Ordered"
+                    android:text="Đã mua"
                     android:textColor="@drawable/text_white_selected"
                     android:textSize="@dimen/_10sdp"/>
 

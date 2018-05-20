@@ -21,6 +21,7 @@ import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -192,6 +193,7 @@ public class Util {
             currentToast.cancel();
         }
         currentToast = Toast.makeText(Util.getInstance().getCurrentActivity(), message, Toast.LENGTH_SHORT);
+        currentToast.setGravity(Gravity.BOTTOM, 0, 40);
         currentToast.show();
     }
 
@@ -791,7 +793,8 @@ public class Util {
     }
 
     public static Double valueMoney(EditText edText){
-        return Double.parseDouble(edText.getText().toString().trim().replace(".",""));
+        return Double.parseDouble(edText.getText().toString().equals("0")||edText.getText().toString().equals("")
+                ? "0": edText.getText().toString().trim().replaceAll(",|\\s|\\.", ""));
     }
 
     public static Double valueMoney(TextView edText){
@@ -940,6 +943,24 @@ public class Util {
         return true;
     }
 
+    public static Double moneyValue(EditText editText){
+        if (isEmptyValue(editText))
+            return 0.0;
+        try {
+            return Double.parseDouble(editText.getText().toString().trim().replaceAll(",|\\s|\\.", ""));
+        }catch (NumberFormatException NaN){
+            return 0.0;
+        }
+    }
+
+
+    public static boolean isEmptyValue(EditText editText){
+        if (editText.getText().toString().trim().equals("") || editText.getText().toString().trim().equals(""))
+            return true;
+
+        return false;
+    }
+
     public static String unAccent(String s) {
         String temp = Normalizer.normalize(s, Normalizer.Form.NFD);
         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
@@ -960,7 +981,7 @@ public class Util {
 
             @Override
             public void afterTextChanged(Editable s) {
-                String text = s.toString();
+//                String text = s.toString();
 
                 try {
                     edText.removeTextChangedListener(this);
@@ -979,7 +1000,8 @@ public class Util {
 
 
                     }
-                    mlistener.Result(valueInString);
+//                    edText.setSelection(selection);
+                    mlistener.Result(edText.getText().toString().trim().replaceAll(",|\\s|\\.", ""));
                     edText.addTextChangedListener(this);
 
                     return;
@@ -994,7 +1016,26 @@ public class Util {
 
     }
 
+    public static void textEvent(final EditText edText, final CallbackString mlistener){
+        edText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String text = s.toString().trim();
+                mlistener.Result(text);
+
+            }
+        });
+    }
 
 
 }

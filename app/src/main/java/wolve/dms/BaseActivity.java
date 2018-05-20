@@ -35,11 +35,14 @@ import com.orhanobut.dialogplus.DialogPlus;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import wolve.dms.activities.AddProdGroupFragment;
 import wolve.dms.activities.AddProductFragment;
 import wolve.dms.activities.MapsActivity;
+import wolve.dms.adapter.BluetoothListAdapter;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
@@ -52,14 +55,15 @@ import static wolve.dms.utils.Constants.REQUEST_PERMISSION_LOCATION;
 
 
 public abstract class BaseActivity extends AppCompatActivity {
-    private LocationManager mLocationManager;
-    private float LOCATION_REFRESH_DISTANCE = 1;
-    private long LOCATION_REFRESH_TIME = 100;
+    protected LocationManager mLocationManager;
+    protected float LOCATION_REFRESH_DISTANCE = 1;
+    protected long LOCATION_REFRESH_TIME = 100;
     public DialogPlus dialog;
     private boolean doubleBackToExitPressedOnce = false;
-    static private BluetoothAdapter mBluetoothAdapter = null;
-    private static BluetoothSocket btsocket;
-    private static OutputStream outputStream;
+    protected static BluetoothAdapter mBluetoothAdapter = null;
+    protected static BluetoothSocket btsocket;
+    protected static OutputStream outputStream;
+    protected List<BluetoothDevice> listDevice = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +84,13 @@ public abstract class BaseActivity extends AppCompatActivity {
 //        initialData();
 
         addEvent();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Util.getInstance().setCurrentActivity(this);
+
     }
 
     public abstract int getResourceLayout();
@@ -129,27 +140,21 @@ public abstract class BaseActivity extends AppCompatActivity {
                 .commitAllowingStateLoss();
     }
 
+    //Todo Location SETUP
     public Location getCurLocation() {
         return Util.getInstance().getCurrentLocation();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Util.getInstance().setCurrentActivity(this);
-
-    }
-
-    private final LocationListener mLocationListener = new LocationListener() {
+    protected final LocationListener mLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(final Location location) {
             Util.getInstance().stopLoading(true);
 
             if (Util.getInstance().getCurrentActivity().getLocalClassName().equals("activities.MapsActivity")) {
                 if (Util.getInstance().getCurrentLocation() != null) {
-                    Util.mapsActivity.animateMarker(
-                            new LatLng(Util.getInstance().getCurrentLocation().getLatitude(), Util.getInstance().getCurrentLocation().getLongitude()),
-                            new LatLng(location.getLatitude(), location.getLongitude()));
+//                    Util.mapsActivity.animateMarker(
+//                            new LatLng(Util.getInstance().getCurrentLocation().getLatitude(), Util.getInstance().getCurrentLocation().getLongitude()),
+//                            new LatLng(location.getLatitude(), location.getLongitude()));
 
                 }
             }
@@ -185,41 +190,41 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     };
 
-    public void checkGPS(CallbackBoolean mListener) {
-        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        boolean gps_enabled = false;
-        Util.getInstance().showLoading("Kiểm tra thông tin vị trí");
-        gps_enabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-        if (!gps_enabled) {
-            CustomCenterDialog.alertWithButton("Xác thực quyền truy cập vị trí", "Bạn cần mở GPS truy cập vị trí để sử dụng toàn bộ tính năng phần mềm", "Bật GPS", new CallbackBoolean() {
-                @Override
-                public void onRespone(Boolean result) {
-                    final Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                    startActivity(intent);
-                    Util.getInstance().stopLoading(true);
-
-                }
-            });
-        } else {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE, mLocationListener);
-            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE, mLocationListener);
-            Util.getInstance().stopLoading(true);
-
-            //UPDATE LAST LOCATION
-            Criteria criteria = new Criteria();
-            criteria.setAccuracy(Criteria.ACCURACY_FINE);
-            Location curLocation = mLocationManager.getLastKnownLocation(mLocationManager.getBestProvider(criteria, true));
-            if(curLocation != null) {
-                Util.getInstance().setCurrentLocation(curLocation);
-                mListener.onRespone(true);
-            }
-        }
-
-    }
+//    public void checkGPS(CallbackBoolean mListener) {
+//        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+//        boolean gps_enabled = false;
+//        Util.getInstance().showLoading("Kiểm tra thông tin vị trí");
+//        gps_enabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+//
+//        if (!gps_enabled) {
+//            CustomCenterDialog.alertWithButton("Xác thực quyền truy cập vị trí", "Bạn cần mở GPS truy cập vị trí để sử dụng toàn bộ tính năng phần mềm", "Bật GPS", new CallbackBoolean() {
+//                @Override
+//                public void onRespone(Boolean result) {
+//                    final Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//                    startActivity(intent);
+//                    Util.getInstance().stopLoading(true);
+//
+//                }
+//            });
+//        } else {
+//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                return;
+//            }
+//            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE, mLocationListener);
+//            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE, mLocationListener);
+//            Util.getInstance().stopLoading(true);
+//
+//            //UPDATE LAST LOCATION
+//            Criteria criteria = new Criteria();
+//            criteria.setAccuracy(Criteria.ACCURACY_FINE);
+//            Location curLocation = mLocationManager.getLastKnownLocation(mLocationManager.getBestProvider(criteria, true));
+//            if(curLocation != null) {
+//                Util.getInstance().setCurrentLocation(curLocation);
+//                mListener.onRespone(true);
+//            }
+//        }
+//
+//    }
 
     @Override
     public void onBackPressed() {
@@ -297,6 +302,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    //Todo Bluetooth SETUP
     @Override
     protected void onDestroy() {
         Util.getInstance().stopLoading(true);
@@ -411,7 +417,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
-    private void connectBluetoothDevice(final BluetoothDevice device){
+    protected void connectBluetoothDevice(final BluetoothDevice device){
         if (mBluetoothAdapter == null) {
             return;
         }
@@ -466,6 +472,25 @@ public abstract class BaseActivity extends AppCompatActivity {
         });connectThread.start();
     }
 
+    public void showListBluetooth(List<BluetoothDevice> list) {
+        CustomCenterDialog.showBluetoothDevices(list, new BluetoothListAdapter.CallbackBluetooth() {
+            @Override
+            public void OnDevice(BluetoothDevice device) {
+                try {
+                    connectBluetoothDevice(device);
+                    if (btsocket != null) {
+                        btsocket.close();
+                        btsocket = null;
+                    }
+
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+    }
 
 
 }

@@ -3,14 +3,20 @@ package wolve.dms.activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.Point;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -42,11 +48,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.OnBackPressListener;
+import com.orhanobut.dialogplus.OnCancelListener;
 import com.orhanobut.dialogplus.ViewHolder;
 
 import org.json.JSONArray;
@@ -66,6 +75,7 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.callback.CallbackJSONObject;
+import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.Customer;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.District;
@@ -75,19 +85,20 @@ import wolve.dms.utils.MapUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
+import static wolve.dms.utils.Constants.REQUEST_PERMISSION_LOCATION;
 import static wolve.dms.utils.MapUtil.removeMarker;
 
 /**
  * Created by macos on 9/14/17.
  */
 
-public class MapsActivity extends BaseActivity implements OnMapReadyCallback,View.OnClickListener,CallbackBoolean,
+public class MapsActivity extends BaseActivity implements OnMapReadyCallback, View.OnClickListener,
         GoogleMap.OnCameraIdleListener, GoogleMap.OnInfoWindowClickListener,
-        GoogleMap.OnMapLongClickListener, RadioGroup.OnCheckedChangeListener ,
+        GoogleMap.OnMapLongClickListener, RadioGroup.OnCheckedChangeListener,
         GoogleMap.OnInfoWindowLongClickListener, GoogleMap.OnCameraMoveListener,
-        GoogleMap.OnMarkerClickListener,ViewTreeObserver.OnGlobalLayoutListener{
+        GoogleMap.OnMarkerClickListener, ViewTreeObserver.OnGlobalLayoutListener {
     public GoogleMap mMap;
-    public Marker currentMarker;
+//    public Marker currentMarker;
     private FloatingActionMenu btnNewCustomer;
     private FloatingActionButton btnLocation, btnRepair, btnWash, btnAccesary, btnMaintain, btnPhoneNumber;
     public SupportMapFragment mapFragment;
@@ -100,11 +111,13 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     private TextView tvCount;
     private ImageView btnBack;
     private ProgressBar progressLoading;
+//    private CTextIcon btnLocation;
 
-    private ArrayList<Customer> listCustomer = new ArrayList<>();
+    private List<Customer> listCustomer = new ArrayList<>();
     private MapListCustomerAdapter adapter;
     private float bottomSheetHeight;
     private Handler mHandler = new Handler();
+    private String currentPhone;
 
     @Override
     public int getResourceLayout() {
@@ -135,7 +148,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         progressLoading = findViewById(R.id.map_loading);
         btnBack = findViewById(R.id.map_back);
 
-        btnLocation.setColorNormalResId(R.color.colorWhite);
+        btnLocation.setColorNormalResId(R.color.white_text_color_hint);
         btnLocation.setColorPressedResId(R.color.colorGrey);
         btnNewCustomer.setMenuButtonColorNormalResId(R.color.colorBlue);
         btnNewCustomer.setMenuButtonColorPressedResId(R.color.colorBlueDark);
@@ -159,20 +172,13 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         btnMaintain.setOnClickListener(this);
         rdFilter.setOnCheckedChangeListener(this);
         btnPhoneNumber.setOnClickListener(this);
-        coParent.getViewTreeObserver().addOnGlobalLayoutListener(this) ;
+        coParent.getViewTreeObserver().addOnGlobalLayoutListener(this);
         btnBack.setOnClickListener(this);
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-//        checkGPS(this);
-
-    }
-
-    @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.map_current_location:
                 mMap.setOnCameraMoveListener(MapsActivity.this);
                 //MapUtil.resetMarker();
@@ -218,23 +224,29 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        checkGPS(this);
-
+        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style_map));
         mMap.setInfoWindowAdapter(new CustomWindowAdapter());
         mMap.setOnCameraMoveListener(this);
         mMap.setOnCameraIdleListener(this);
         mMap.setOnInfoWindowClickListener(this);
         mMap.setOnInfoWindowLongClickListener(this);
         mMap.setOnMapLongClickListener(this);
+        mMap.setOnMarkerClickListener(this);
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
+                Util.hideKeyboard(btnNewCustomer);
                 btnNewCustomer.close(true);
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
-        mMap.setOnMarkerClickListener(this);
+
+        if (PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(Util.getInstance().getCurrentActivity(),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_PERMISSION_LOCATION);
+            return;
+        }
+        checkGPS();
 
 
     }
@@ -242,7 +254,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
     @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == Constants.REQUEST_PERMISSION_LOCATION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED ) {
-                checkGPS(this);
+                checkGPS();
 
             }else {
                 Toast.makeText(this, "Cấp quyền truy cập không thành công!", Toast.LENGTH_LONG).show();
@@ -251,6 +263,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         }else  if (requestCode == Constants.REQUEST_PHONE_PERMISSION) {
             if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                 Util.showSnackbar("Không thể gọi do chưa được cấp quyền", null, null);
+
+            }else {
 
             }
         }
@@ -346,7 +360,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
                                                 }
                                             })
                                             .create();
-        LinearLayout lnParent = (LinearLayout) dialog.findViewById(R.id.input_shopnname_parent);
+//        LinearLayout lnParent = (LinearLayout) dialog.findViewById(R.id.input_shopnname_parent);
         TextView tvShopType = (TextView) dialog.findViewById(R.id.input_shopnname_type);
         final EditText edName = (EditText) dialog.findViewById(R.id.input_shopnname_name);
         ImageView btnSubmit = (ImageView) dialog.findViewById(R.id.input_shopnname_submit);
@@ -393,6 +407,12 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
                     @Override
                     public void onBackPressed(DialogPlus dialogPlus) {
                         dialogPlus.dismiss();
+                    }
+                })
+                .setOnCancelListener(new OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogPlus dialog) {
+                        Util.hideKeyboard(btnNewCustomer);
                     }
                 })
                 .create();
@@ -445,8 +465,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
                         customer.put("name","");
                         customer.put("phone", phone);
                     }
-
-
 
                     customer.put("id",0);
                     customer.put("lat", Util.getInstance().getCurrentLocation().getLatitude());
@@ -534,7 +552,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
 
     private void loadAllCustomerDependLocation(final Boolean clearMap, Double lat , Double lng){
         progressLoading.setVisibility(View.VISIBLE);
-
         CustomerConnect.ListCustomerLocation(Util.encodeString(String.valueOf(lat)), Util.encodeString(String.valueOf(lng)), new CallbackJSONArray() {
             @Override
             public void onResponse(JSONArray result) {
@@ -606,39 +623,39 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         }
     }
 
-    //update Current marker when move
-    public  void animateMarker(final LatLng startPosition, final LatLng toPosition) {
-        final double duration = 1000;
-        final Handler handler = new Handler();
-        final long start = SystemClock.uptimeMillis();
-        Projection proj = mMap.getProjection();
-        Point startPoint = proj.toScreenLocation(startPosition);
-        final LatLng startLatLng = proj.fromScreenLocation(startPoint);
-
-        final Interpolator interpolator = new LinearInterpolator();
-
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                long elapsed = SystemClock.uptimeMillis() - start;
-                float t = interpolator.getInterpolation((float) (elapsed / duration));
-                Log.d(Constants.DMS_LOGS, "interpolator t:" + t + "start :" + start + " elapsed :" + elapsed);
-                double lng = t * toPosition.longitude + (1 - t) * startLatLng.longitude;
-                double lat = t * toPosition.latitude + (1 - t) * startLatLng.latitude;
-                LatLng newLatLng = new LatLng(lat, lng);
-                Log.e(Constants.DMS_LOGS, "Moving to" + newLatLng);
-                if (currentMarker != null && currentMarker.isVisible()){
-                    currentMarker.setPosition(newLatLng);
-                }
-
-
-                if (t < 1.0) {
-                    handler.postDelayed(this, 16);
-                }
-
-            }
-        });
-    }
+//    update Current marker when move
+//    public  void animateMarker(final LatLng startPosition, final LatLng toPosition) {
+//        final double duration = 1000;
+//        final Handler handler = new Handler();
+//        final long start = SystemClock.uptimeMillis();
+//        Projection proj = mMap.getProjection();
+//        Point startPoint = proj.toScreenLocation(startPosition);
+//        final LatLng startLatLng = proj.fromScreenLocation(startPoint);
+//
+//        final Interpolator interpolator = new LinearInterpolator();
+//
+//        handler.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                long elapsed = SystemClock.uptimeMillis() - start;
+//                float t = interpolator.getInterpolation((float) (elapsed / duration));
+//                //Log.d(Constants.DMS_LOGS, "interpolator t:" + t + "start :" + start + " elapsed :" + elapsed);
+//                double lng = t * toPosition.longitude + (1 - t) * startLatLng.longitude;
+//                double lat = t * toPosition.latitude + (1 - t) * startLatLng.latitude;
+//                LatLng newLatLng = new LatLng(lat, lng);
+//                Log.e(Constants.DMS_LOGS, "Moving to" + newLatLng);
+//                if (currentMarker != null && currentMarker.isVisible()){
+//                    currentMarker.setPosition(newLatLng);
+//                }
+//
+//
+//                if (t < 1.0) {
+//                    handler.postDelayed(this, 16);
+//                }
+//
+//            }
+//        });
+//    }
 
     @Override
     public void onMapLongClick(final LatLng latLng) {
@@ -696,31 +713,22 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         }
     }
 
-    private void addMarkertoMap(Boolean clearMap, ArrayList<Customer> list, String filter, Boolean isBound){
+    private void addMarkertoMap(Boolean clearMap, List<Customer> list, String filter, Boolean isBound){
         tvCount.setText(MapUtil.addListMarkerToMap(clearMap, mMap, list, filter, isBound));
-
 
     }
 
     @Override
     public void onInfoWindowLongClick(Marker marker) {
         final Customer customer = new Customer((JSONObject) marker.getTag());
-        final String phone = customer.getString("phone");
+        currentPhone = customer.getString("phone");
 
-        if (!phone.equals("")){
+        if (!currentPhone.equals("")){
             CustomCenterDialog.alertWithCancelButton(null, "Gọi điện thoại cho " + customer.getString("name") + " (" + customer.getString("phone") +")", "ĐỒNG Ý","HỦY", new CallbackBoolean() {
                 @Override
                 public void onRespone(Boolean result) {
-                    if (PermissionChecker.checkSelfPermission(MapsActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-//                        ActivityCompat.requestPermissions(MapsActivity.this, new String[]{Manifest.permission.CALL_PHONE}, Constants.REQUEST_PHONE_PERMISSION);
-                        mapFragment.requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, Constants.REQUEST_PHONE_PERMISSION);
-                        return;
-                    }
+                    openCallScreen(currentPhone);
 
-                    Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse("tel:" + Uri.encode(phone)));
-                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(callIntent);
                 }
             });
         }else {
@@ -791,14 +799,62 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback,Vie
         rvCustomer.setNestedScrollingEnabled(true);
     }
 
-    @Override
-    public void onRespone(Boolean result) {
-        MapUtil.resetMarker();
-        LatLng latLng = new LatLng(getCurLocation().getLatitude(), getCurLocation().getLongitude());
-        currentMarker = mMap.addMarker(new MarkerOptions().anchor(0.5f, 0.5f).position(latLng).flat(true).icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_location)));
-
-        //addCurrentMarker();
-        triggerCurrentLocation(latLng, 15);
+    private void openCallScreen(String phone){
+        if (PermissionChecker.checkSelfPermission(MapsActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+//                        ActivityCompat.requestPermissions(MapsActivity.this, new String[]{Manifest.permission.CALL_PHONE}, Constants.REQUEST_PHONE_PERMISSION);
+            mapFragment.requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, Constants.REQUEST_PHONE_PERMISSION);
+            return;
+        }
+        Intent callIntent = new Intent(Intent.ACTION_CALL);
+        callIntent.setData(Uri.parse("tel:" + Uri.encode(phone)));
+        callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(callIntent);
     }
+
+    public void checkGPS() {
+        mMap.setMyLocationEnabled(true);
+
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        boolean gps_enabled = false;
+        Util.getInstance().showLoading("Kiểm tra thông tin vị trí");
+        gps_enabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        if (!gps_enabled) {
+            CustomCenterDialog.alertWithButton("Xác thực quyền truy cập vị trí", "Bạn cần mở GPS truy cập vị trí để sử dụng toàn bộ tính năng phần mềm", "Bật GPS", new CallbackBoolean() {
+                @Override
+                public void onRespone(Boolean result) {
+                    final Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(intent);
+                    Util.getInstance().stopLoading(true);
+
+                }
+            });
+        } else {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE, mLocationListener);
+            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE, mLocationListener);
+            Util.getInstance().stopLoading(true);
+
+            //UPDATE LAST LOCATION
+            Criteria criteria = new Criteria();
+            criteria.setAccuracy(Criteria.ACCURACY_FINE);
+            Location curLocation = mLocationManager.getLastKnownLocation(mLocationManager.getBestProvider(criteria, true));
+            if(curLocation != null) {
+                Util.getInstance().setCurrentLocation(curLocation);
+
+                MapUtil.resetMarker();
+                LatLng latLng = new LatLng(getCurLocation().getLatitude(), getCurLocation().getLongitude());
+//                currentMarker = mMap.addMarker(new MarkerOptions().anchor(0.5f, 0.5f).position(latLng).flat(true).icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_location)));
+
+                //addCurrentMarker();
+                triggerCurrentLocation(latLng, 15);
+
+            }
+        }
+
+    }
+
 }
 

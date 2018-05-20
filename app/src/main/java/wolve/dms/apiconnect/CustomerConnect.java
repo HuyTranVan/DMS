@@ -305,10 +305,10 @@ public class CustomerConnect {
         }).execute();
     }
 
-    public static void printBill(OutputStream outputStream, Customer currentCustomer, List<Product> listProduct, List<Bill> listBills , Double paid, CallbackBoolean mListener){
+    public static void printBill(OutputStream outputStream, Customer currentCustomer, List<Product> listProduct, List<Bill> listBills , Double total, Double paid, CallbackBoolean mListener){
         String shortLine ="---------------------";
         String longLine = "--------------------------------";
-        Double total  = Util.getTotalMoney(listBills);
+//        Double total  = Util.getTotalMoney(listBills);
 
         try {
             if (CustomSQL.getString("logo").equals("")){
@@ -358,7 +358,7 @@ public class CustomerConnect {
                 }
             }
             UtilPrinter.printCustomText(outputStream,shortLine,3,1);
-            UtilPrinter.printCustom2Text(outputStream,"TONG:", Util.FormatMoney(Util.getTotalMoney(listBills)),4,2);
+            UtilPrinter.printCustom2Text(outputStream,"TONG:", Util.FormatMoney(total),4,2);
 
             Double sumDebt =0.0;
             for (int j=0; j<listBills.size(); j++){

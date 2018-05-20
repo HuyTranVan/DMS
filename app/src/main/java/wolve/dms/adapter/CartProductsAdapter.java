@@ -71,6 +71,8 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
 
         }
 
+        holder.tvHighLight.setVisibility(mData.get(position).getDouble("totalMoney") ==0?View.VISIBLE:View.GONE);
+
         holder.lnParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -157,7 +159,7 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
     }
 
     public class CartProductsViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvName, tvUnitPrice, tvQuantity ,tvQuantityDisplay, tvTotal;
+        private TextView tvName, tvUnitPrice, tvQuantity ,tvQuantityDisplay, tvTotal, tvHighLight;
         private RelativeLayout lnParent;
         private CircleImageView imgProduct;
         private CTextIcon btnSub, btnPlus;
@@ -169,8 +171,8 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
             tvName = (TextView) itemView.findViewById(R.id.shopcart_products_item_name);
             tvUnitPrice = (TextView) itemView.findViewById(R.id.shopcart_products_item_unitprice);
             tvQuantityDisplay = itemView.findViewById(R.id.shopcart_products_item_quantity_display);
-
             tvQuantity = (TextView) itemView.findViewById(R.id.shopcart_products_item_quantity);
+            tvHighLight = itemView.findViewById(R.id.shopcart_products_item_highlight);
             btnSub = (CTextIcon) itemView.findViewById(R.id.shopcart_products_item_sub);
             btnPlus = (CTextIcon) itemView.findViewById(R.id.shopcart_products_item_plus);
             tvTotal = (TextView) itemView.findViewById(R.id.shopcart_products_item_total);

@@ -57,7 +57,7 @@ public class MapUtil{
     private int currentStep;
     //private GoogleMap currentMap;
     public static List<Marker> markers;
-    public static List<Customer> customers ;
+    public static List<Customer> customers = new ArrayList<>();
     public static int count =0;
 
     public static synchronized MapUtil getInstance() {
@@ -186,7 +186,7 @@ public class MapUtil{
         return objectResult;
     }
 
-    public static String addListMarkerToMap(Boolean clearMap, final GoogleMap mMap, final ArrayList<Customer> listCustomer, String filter, Boolean isBound) {
+    public static String addListMarkerToMap(Boolean clearMap, final GoogleMap mMap, final List<Customer> listCustomer, String filter, Boolean isBound) {
 
         if (clearMap){
             resetMarker();

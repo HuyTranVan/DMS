@@ -49,11 +49,13 @@
     <application
         android:name=".DMSApplication"
         android:configChanges="layoutDirection|locale"
+
         android:allowBackup="true"
         android:icon="@drawable/lub_icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/lub_icon"
         android:supportsRtl="true"
+        android:largeHeap="true"
         android:theme="@style/FullScreen">
 
         <provider
@@ -139,7 +141,7 @@
             android:name=".activities.ShopCartActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/FullScreen"
+            android:theme= "@style/FullScreen"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
 
         <activity
@@ -154,6 +156,13 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/FullScreen"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+
+        <activity
+            android:name=".activities.BluetoothListActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/CustomDialog"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
 
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />

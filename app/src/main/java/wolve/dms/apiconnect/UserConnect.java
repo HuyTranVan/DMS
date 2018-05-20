@@ -15,8 +15,10 @@ import wolve.dms.utils.Util;
 
 public class UserConnect {
 
-    public static void Login(String params, final CallbackJSONObject listener, final Boolean stopLoading){
-        Util.getInstance().showLoading();
+    public static void Login(String params, final CallbackJSONObject listener,final Boolean showloading, final Boolean stopLoading){
+        if (showloading)
+            Util.getInstance().showLoading();
+
         new CustomPostMethod(Api_link.LOGIN, params,false, new Callback() {
             @Override
             public void onResponse(JSONObject result) {

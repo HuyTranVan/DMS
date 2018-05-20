@@ -38,6 +38,7 @@ import wolve.dms.callback.CallbackListProduct;
 import wolve.dms.callback.CallbackPayBill;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CTextIcon;
+import wolve.dms.libraries.DoubleTextWatcher;
 import wolve.dms.models.Customer;
 import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
@@ -278,51 +279,6 @@ public class CustomCenterDialog {
 //
 //    }
 
-    public static void showDialogChoiceProduct(String title, List<Product> listProduct, ProductGroup group, final CallbackListProduct callback){
-        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_select_product);
-        TextView tvTitle = (TextView) dialogResult.findViewById(R.id.dialog_choice_product_title);
-        //final RadioGroup radioGroup = (RadioGroup) dialogResult.findViewById(R.id.dialog_choice_product_radiogroup);
-        RecyclerView rvProduct = (RecyclerView) dialogResult.findViewById(R.id.dialog_choice_product_rvProduct);
-        Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
-        Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
-
-        btnCancel.setText("HỦY");
-        btnSubmit.setText("HOÀN TẤT");
-        tvTitle.setText(String.format("%s %s", title, group.getString("name")));
-        int initialPosition = 0;
-        int initialGroupId = ProductGroup.getProductGroupList().get(initialPosition).getInt("id");
-
-        final CartProductDialogAdapter adapter = new CartProductDialogAdapter(listProduct, group);
-        rvProduct.setAdapter(adapter);
-        rvProduct.setHasFixedSize(true);
-        rvProduct.setNestedScrollingEnabled(false);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(), LinearLayoutManager.VERTICAL, false);
-        rvProduct.setLayoutManager(layoutManager);
-
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogResult.dismiss();
-            }
-        });
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                List<Product> listChecked = new ArrayList<Product>();
-                for (int i=0; i<adapter.getAllData().size(); i++){
-                    if (adapter.getAllData().get(i).getBoolean("checked")){
-                        listChecked.add(adapter.getAllData().get(i));
-                    }
-                }
-                callback.Products(listChecked);
-                dialogResult.dismiss();
-            }
-        });
-
-
-    }
-
     public static void showDialogEditProduct(final Product product, final CallbackClickProduct callbackClickProduct){
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_edit_product);
 
@@ -330,7 +286,7 @@ public class CustomCenterDialog {
         final Button btnSubmit = dialogResult.findViewById(R.id.btn_submit);
         TextView tvTitle = dialogResult.findViewById(R.id.dialog_edit_product_title);
         EditText tvUnitPrice = dialogResult.findViewById(R.id.dialog_edit_product_unitprice);
-        final TextView tvNetPrice = dialogResult.findViewById(R.id.dialog_edit_product_netprice);
+        final EditText edNetPrice = dialogResult.findViewById(R.id.dialog_edit_product_netprice);
         final TextView tvTotal =  dialogResult.findViewById(R.id.dialog_edit_product_total);
         final EditText edDiscount =  dialogResult.findViewById(R.id.dialog_edit_product_discount);
         final EditText edQuantity = dialogResult.findViewById(R.id.dialog_edit_product_quantity);
@@ -339,9 +295,9 @@ public class CustomCenterDialog {
         btnSubmit.setText("LƯU");
         tvTitle.setText(product.getString("name"));
         tvUnitPrice.setText(Util.FormatMoney(product.getDouble("unitPrice")));
-
         edDiscount.setText(product.getDouble("discount") ==0 ? "" : String.valueOf(Math.round(product.getDouble("discount"))));
-        tvNetPrice.setText(Util.FormatMoney(product.getDouble("unitPrice") - product.getDouble("discount")));
+        edNetPrice.setText(Util.FormatMoney(product.getDouble("unitPrice") - product.getDouble("discount")));
+        edNetPrice.setFocusable(false);
         edQuantity.setText(String.valueOf(Math.round(product.getDouble("quantity"))));
         tvTotal.setText(Util.FormatMoney(product.getDouble("quantity") * (product.getDouble("unitPrice") - product.getDouble("discount"))));
 
@@ -360,47 +316,64 @@ public class CustomCenterDialog {
 
                     }else {
                         if (text.length() >0){
-                            tvNetPrice.setText(Util.FormatMoney(product.getDouble("unitPrice") - Util.valueMoney(text)));
+                            edNetPrice.setText(Util.FormatMoney(product.getDouble("unitPrice") - Util.valueMoney(text)));
                             tvTotal.setText(Util.FormatMoney(Double.parseDouble(edQuantity.getText().toString()) * (product.getDouble("unitPrice") - Double.parseDouble(text))));
                         }
                     }
                 }else {
-                    tvNetPrice.setText(Util.FormatMoney(product.getDouble("unitPrice")));
+                    edNetPrice.setText(Util.FormatMoney(product.getDouble("unitPrice")));
                     tvTotal.setText(Util.FormatMoney(Double.parseDouble(edQuantity.getText().toString()) * (product.getDouble("unitPrice"))));
 
                 }
             }
         });
 
-        edQuantity.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        edNetPrice.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                edNetPrice.setFocusable(true);
+                edNetPrice.setFocusableInTouchMode(true);
+                Util.showKeyboard(v);
 
-            }
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                edNetPrice.addTextChangedListener(new DoubleTextWatcher(edNetPrice, new CallbackString() {
+                    @Override
+                    public void Result(String text) {
+                        if (!text.toString().equals("") && !text.equals("0")){
+                            edDiscount.setText(Util.FormatMoney(product.getDouble("unitPrice") - Util.moneyValue(edNetPrice)));
+                            tvTotal.setText(Util.FormatMoney(Double.parseDouble(text) *  Util.valueMoney(edQuantity)));
 
-            }
-            @Override public void afterTextChanged(Editable s) {
-                String text = s.toString();
-                if (!text.equals("") && !text.equals("0")){
-                    tvTotal.setText(Util.FormatMoney(Double.parseDouble(text) * (product.getDouble("unitPrice") - Double.parseDouble(edDiscount.getText().toString().equals("") ? "0" : edDiscount.getText().toString()))));
-                }
-            }
+                        }else if (text.toString().equals("")){
+                            tvTotal.setText("0");
+                        }
+                    }
+                }));
 
+//                Util.textMoneyEvent(edNetPrice, new CallbackString() {
+//                    @Override
+//                    public void Result(String text) {
+//
+//                    }
+//                });
+                return true;
+            }
         });
 
-//        tvSub.setOnClickListener(new View.OnClickListener() {
+        edDiscount.addTextChangedListener(new DoubleTextWatcher(edQuantity, new CallbackString() {
+            @Override
+            public void Result(String text) {
+                if (!text.toString().equals("") && !text.equals("0")){
+                    tvTotal.setText(Util.FormatMoney(Double.parseDouble(text) * (product.getDouble("unitPrice") - Util.valueMoney(edDiscount))));
+
+                }else if (text.toString().equals("")){
+                    tvTotal.setText("0");
+                }
+            }
+        }));
+
+//        Util.textEvent(edQuantity, new CallbackString() {
 //            @Override
-//            public void onClick(View v) {
-//                if (Integer.parseInt(edQuantity.getText().toString()) > 0 ){
-//                    edQuantity.setText(String.valueOf(Integer.parseInt(edQuantity.getText().toString()) - 1));
-//                }
-//            }
-//        });
+//            public void Result(String text) {
 //
-//        tvPlus.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                edQuantity.setText(String.valueOf(Integer.parseInt(edQuantity.getText().toString()) + 1));
 //            }
 //        });
 
@@ -412,14 +385,20 @@ public class CustomCenterDialog {
         });
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                if (edQuantity.getText().toString().equals("") || edQuantity.getText().toString().equals("0")){
-                    Toast.makeText(Util.getInstance().getCurrentActivity(), "Vui lòng nhập số lượng >0 ",Toast.LENGTH_SHORT).show();
+                if (Util.isEmptyValue(edQuantity) || Util.isEmptyValue(edNetPrice)){
+                    Util.showToast("Vui lòng nhập số lượng >0 ");
 
-                } else {
+                }else if (Util.isEmptyValue(edNetPrice)){
+                    Util.showToast("Vui lòng nhập giá tiền  >0 ");
+
+                }else if (Util.moneyValue(edNetPrice) > product.getDouble("unitPrice")){
+                    Util.showToast("Vui lòng nhập giá tiền nhỏ hơn giá đơn vị ");
+
+                }else{
                     try {
                         Product newProduct = product;
                         newProduct.put("quantity", Integer.parseInt(edQuantity.getText().toString()));
-                        newProduct.put("discount", edDiscount.getText().toString().equals("") ? 0 : Double.parseDouble(edDiscount.getText().toString()));
+                        newProduct.put("discount", edDiscount.getText().toString().equals("") ? 0 : Util.valueMoney(edDiscount));
                         newProduct.put("totalMoney", tvTotal.getText().toString().replace(".",""));
 
                         callbackClickProduct.ProductChoice(newProduct);

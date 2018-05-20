@@ -27,6 +27,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -591,6 +592,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style_map));
         mMap.setOnCameraIdleListener(this);
         mMap.getUiSettings().setScrollGesturesEnabled(false);
 

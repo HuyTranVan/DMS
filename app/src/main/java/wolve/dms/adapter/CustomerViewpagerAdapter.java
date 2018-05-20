@@ -99,16 +99,5 @@ public class CustomerViewpagerAdapter extends PagerAdapter {
         }
     };
 
-    public void updateNewTotalPrice(Double total){
-    }
-
-//    public Double getTotalMoney(List<Bill> list){
-//        Double money =0.0;
-//        for (int i=0; i<list.size(); i++){
-//            money += list.get(i).getDouble("total");
-//        }
-//        return money;
-//    }
-
 
 }
