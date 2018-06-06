@@ -793,8 +793,9 @@ public class Util {
     }
 
     public static Double valueMoney(EditText edText){
-        return Double.parseDouble(edText.getText().toString().equals("0")||edText.getText().toString().equals("")
-                ? "0": edText.getText().toString().trim().replaceAll(",|\\s|\\.", ""));
+        if (edText.getText().toString().equals("0")||edText.getText().toString().equals(""))
+            return 0.0;
+        return Double.parseDouble(edText.getText().toString().trim().replaceAll(",|\\s|\\.", ""));
     }
 
     public static Double valueMoney(TextView edText){

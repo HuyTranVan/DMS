@@ -3,12 +3,10 @@ package wolve.dms.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 
 import wolve.dms.R;
-import wolve.dms.activities.BluetoothListActivity;
 import wolve.dms.activities.CustomerActivity;
 import wolve.dms.activities.HomeActivity;
 import wolve.dms.activities.LoginActivity;
@@ -133,11 +131,5 @@ public class Transaction {
         }
     }
 
-    public static void gotoBluetoothListActivity() {
-        Activity context = Util.getInstance().getCurrentActivity();
-        Intent intent = new Intent(context, BluetoothListActivity.class);
-        context.startActivity(intent);
-        context.overridePendingTransition(R.anim.fade_in_center, R.anim.slide_down);
-    }
 
 }

@@ -146,8 +146,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
             case R.id.statistical_filter_date:
                 rdMonth.setText(MONTH_DEFAULT);
-                rdDate.setText(rdDate.getText().toString().equals(DATE_DEFAULT) ? Util.CurrentMonthYear(): rdDate.getText().toString()) ;
-//                rdDate.setText(Util.CurrentDayMonthYear());
+                rdDate.setText(rdDate.getText().toString().equals(DATE_DEFAULT) ? Util.CurrentDayMonthYear(): rdDate.getText().toString()) ;
                 currentDate = rdDate.getText().toString();
                 datePicker();
 

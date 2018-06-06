@@ -1,6 +1,5 @@
 package wolve.dms.utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -10,19 +9,12 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
-import android.util.Log;
 import android.view.ViewGroup;
-import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
-import android.view.animation.LinearInterpolator;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -56,9 +48,10 @@ public class MapUtil{
     public Marker currentMarker;
     private int currentStep;
     //private GoogleMap currentMap;
-    public static List<Marker> markers;
-    public static List<Customer> customers = new ArrayList<>();
-    public static int count =0;
+    public static List<Marker> markers ;
+    public static List<Customer> customers ;
+    private static int interested =0;
+    private static int ordered =0;
 
     public static synchronized MapUtil getInstance() {
         if (util == null)
@@ -75,7 +68,8 @@ public class MapUtil{
             }
         }
         markers = new ArrayList<>();
-        count =0;
+        interested =0;
+        ordered =0;
     }
 
     public static void reboundMap(GoogleMap mMap) {
@@ -186,92 +180,164 @@ public class MapUtil{
         return objectResult;
     }
 
-    public static String addListMarkerToMap(Boolean clearMap, final GoogleMap mMap, final List<Customer> listCustomer, String filter, Boolean isBound) {
-
+    public static void addListMarkertoMap(Boolean clearMap, final GoogleMap mMap, final List<Customer> listCustomer, String filter, Boolean isBound) {
         if (clearMap){
             resetMarker();
-            //mMap.clear();
             customers = listCustomer;
             for (int i = 0; i < customers.size(); i++) {
-                switch (filter){
-                    case Constants.MARKER_ALL:
-                        addMarkerToMap(mMap, customers.get(i), true);
-                        count +=1;
-                        break;
+                addMarkerToMap(mMap, customers.get(i), filter);
 
-                    case Constants.MARKER_INTERESTED:
-                        if (customers.get(i).getInt("status") == 1 || customers.get(i).getInt("status") == 3){
-                            addMarkerToMap(mMap, customers.get(i), true);
-                            count +=1;
-                        }else {
-                            addMarkerToMap(mMap, listCustomer.get(i), false);
-                        }
-                        break;
+//                switch (filter){
+//                    case Constants.MARKER_ALL:
+//                        addMarkerToMap(mMap, customers.get(i), true);
+//                        if (customers.get(i).getInt("status") == 1 || customers.get(i).getInt("status") == 3){
+//                            addMarkerToMap(mMap, customers.get(i), true);
+//                            interested +=1;
+//                        }else if (customers.get(i).getInt("status") == 3){
+//                            addMarkerToMap(mMap, customers.get(i), true);
+//                            ordered +=1;
+//                        }
+//                        break;
+//
+//                    case Constants.MARKER_INTERESTED:
+//                        if (customers.get(i).getInt("status") == 1 || customers.get(i).getInt("status") == 3){
+//                            addMarkerToMap(mMap, customers.get(i), true);
+//                            interested +=1;
+//                        }else {
+//                            addMarkerToMap(mMap, listCustomer.get(i), false);
+//                        }
+//                        break;
+//
+//                    case Constants.MARKER_ORDERED:
+//                        if (customers.get(i).getInt("status") == 3){
+//                            addMarkerToMap(mMap, customers.get(i), true);
+//                            ordered +=1;
+//                        }else {
+//                            addMarkerToMap(mMap, listCustomer.get(i), false);
+//                        }
+//                        break;
+//                }
+            }
 
-                    case Constants.MARKER_ORDERED:
-                        if (customers.get(i).getInt("status") == 3){
-                            addMarkerToMap(mMap, customers.get(i), true);
-                            count +=1;
-                        }else {
-                            addMarkerToMap(mMap, listCustomer.get(i), false);
+        }else if (listCustomer.size() >0){
+            if (customers.size() >0){
+                for (int a=0; a<listCustomer.size(); a++){
+                    Boolean check = false;
+
+                    for (int b=0; b<customers.size(); b++){
+                        int nu1 = listCustomer.get(a).getInt("id");
+                        int nu2 = customers.get(b).getInt("id");
+                        if (nu1 == nu2){
+                            check = true;
+                            break;
                         }
-                        break;
+                    }
+
+                    if (!check){
+                        customers.add(listCustomer.get(a));
+                        addMarkerToMap(mMap, listCustomer.get(a), filter);
+
+//                        switch (filter){
+//                            case Constants.MARKER_ALL:
+//                                addMarkerToMap(mMap, listCustomer.get(a), true);
+//                                if (listCustomer.get(a).getInt("status") == 1 || listCustomer.get(a).getInt("status") == 3){
+//                                    addMarkerToMap(mMap, listCustomer.get(a), true);
+//                                    interested +=1;
+//                                }else if (listCustomer.get(a).getInt("status") == 3){
+//                                    addMarkerToMap(mMap, listCustomer.get(a), true);
+//                                    ordered +=1;
+//                                }
+//                                break;
+//
+//                            case Constants.MARKER_INTERESTED:
+//                                if (listCustomer.get(a).getInt("status") == 1 || listCustomer.get(a).getInt("status") == 3){
+//                                    addMarkerToMap(mMap, listCustomer.get(a), true);
+//                                    interested +=1;
+//                                }else {
+//                                    addMarkerToMap(mMap, listCustomer.get(a), false);
+//                                }
+//                                break;
+//
+//                            case Constants.MARKER_ORDERED:
+//                                if (listCustomer.get(a).getInt("status") == 3){
+//                                    addMarkerToMap(mMap, listCustomer.get(a), true);
+//                                    ordered +=1;
+//                                }else {
+//                                    addMarkerToMap(mMap, listCustomer.get(a), false);
+//                                }
+//                                break;
+//                        }
+                    }
+
+                }
+            }else {
+                customers = listCustomer;
+                for (int i=0; i<customers.size(); i++){
+                    addMarkerToMap(mMap, customers.get(i), filter);
+//                    switch (filter){
+//                        case Constants.MARKER_ALL:
+//                            addMarkerToMap(mMap, customers.get(i), true);
+//                            if (customers.get(i).getInt("status") == 1 || customers.get(i).getInt("status") == 3){
+//                                addMarkerToMap(mMap, customers.get(i), true);
+//                                interested +=1;
+//                            }else if (customers.get(i).getInt("status") == 3){
+//                                addMarkerToMap(mMap, customers.get(i), true);
+//                                ordered +=1;
+//                            }
+//
+//                            break;
+//
+//                        case Constants.MARKER_INTERESTED:
+//                            if (customers.get(i).getInt("status") == 1 || customers.get(i).getInt("status") == 3){
+//                                addMarkerToMap(mMap, customers.get(i), true);
+//                                interested +=1;
+//                            }else {
+//                                addMarkerToMap(mMap, customers.get(i), false);
+//                            }
+//                            break;
+//
+//                        case Constants.MARKER_ORDERED:
+//                            if (customers.get(i).getInt("status") == 3){
+//                                addMarkerToMap(mMap, customers.get(i), true);
+//                                ordered +=1;
+//                            }else {
+//                                addMarkerToMap(mMap, customers.get(i), false);
+//                            }
+//                            break;
+//                    }
                 }
             }
 
-        }else if (listCustomer != null){
-            for (int a=0; a<listCustomer.size(); a++){
-                List<Customer> tempCustomers = customers;
 
-                Boolean check = false;
-                for (int b=0; b<tempCustomers.size(); b++){
-                    int nu1 = listCustomer.get(a).getInt("id");
-                    int nu2 = tempCustomers.get(b).getInt("id");
-                    if (nu1 == nu2){
-                        check = true;
-                        break;
-                    }
-                }
-
-                if (!check){
-                    customers.add(listCustomer.get(a));
-                    switch (filter){
-                        case Constants.MARKER_ALL:
-                            addMarkerToMap(mMap, listCustomer.get(a), true);
-                            count +=1;
-                            break;
-
-                        case Constants.MARKER_INTERESTED:
-                            if (listCustomer.get(a).getInt("status") == 1 || listCustomer.get(a).getInt("status") == 3){
-                                addMarkerToMap(mMap, listCustomer.get(a), true);
-                                count +=1;
-                            }else {
-                                addMarkerToMap(mMap, listCustomer.get(a), false);
-                            }
-                            break;
-
-                        case Constants.MARKER_ORDERED:
-                            if (listCustomer.get(a).getInt("status") == 3){
-                                addMarkerToMap(mMap, listCustomer.get(a), true);
-                                count +=1;
-                            }else {
-                                addMarkerToMap(mMap, listCustomer.get(a), false);
-                            }
-                            break;
-                    }
-                }
-
-            }
         }
 
         if (isBound){
             reboundMap(mMap);
         }
 
-        return String.format("%d/%d",count, customers.size());
+//        return String.format("%d/%d",interested, customers.size());
     }
 
-    public static Marker addMarkerToMap(GoogleMap mMap, Customer customer , Boolean isShow){
+    public static String countAll(){
+        if (customers.size() >0)
+            return String.format("Tất cả: %d", customers.size());
+        return "Tất cả";
+    }
+
+    public static String countInterested(){
+        if (interested >0)
+            return String.format("Quan tâm: %d", interested);
+        return "Quan tâm";
+    }
+
+    public static String countOrdered(){
+        if (ordered >0)
+            return String.format("Đã mua: %d", ordered);
+        return "Đã mua";
+    }
+
+
+    public static Marker addMarkerToMap(GoogleMap mMap, Customer customer ,String filter){
         Marker currentMarker = null;
 
         LatLng markerPosition = new LatLng(customer.getDouble("lat"), customer.getDouble("lng"));
@@ -281,8 +347,38 @@ public class MapUtil{
         currentMarker.setTag(customer.CustomerJSONObject());
         currentMarker.setSnippet(customer.getString("id"));
 
-        currentMarker.setVisible(isShow);
         markers.add(currentMarker);
+
+        switch (filter){
+            case Constants.MARKER_ALL:
+                currentMarker.setVisible(true);
+                break;
+
+            case Constants.MARKER_INTERESTED:
+                if (customer.getInt("status") == 1 || customer.getInt("status") == 3){
+                    currentMarker.setVisible(true);
+                }else if (customer.getInt("status") == 3){
+                    currentMarker.setVisible(true);
+                }else {
+                    currentMarker.setVisible(false);
+                }
+                break;
+
+            case Constants.MARKER_ORDERED:
+                if (customer.getInt("status") == 3){
+                    currentMarker.setVisible(true);
+                }else {
+                    currentMarker.setVisible(false);
+                }
+                break;
+        }
+
+        if (customer.getInt("status") == 1 || customer.getInt("status") == 3){
+            interested +=1;
+        }
+        if (customer.getInt("status") == 3){
+            ordered +=1;
+        }
 
         return currentMarker;
     }
@@ -323,7 +419,7 @@ public class MapUtil{
                     if (object.getString("id").equals(customer.getString("id"))){
                         markers.get(i).remove();
 
-                        Marker marker = addMarkerToMap(mMap, customer, true);
+                        Marker marker = addMarkerToMap(mMap, customer, Constants.MARKER_ALL);
                         marker.showInfoWindow();
 
 
@@ -338,7 +434,7 @@ public class MapUtil{
         }
 
         if (isNew){
-            Marker marker = addMarkerToMap(mMap, customer, true);
+            Marker marker = addMarkerToMap(mMap, customer, Constants.MARKER_ALL);
             marker.showInfoWindow();
             isNew = false;
         }
@@ -385,11 +481,11 @@ public class MapUtil{
                             JSONObject object = new JSONObject(markers.get(i).getTag().toString());
                             if (object.getInt("status") !=1 && object.getInt("status") !=3){
                                 markers.get(i).setVisible(false);
-                                //count -=1;
+                                //interested -=1;
 
                             }else if (!markers.get(i).isVisible()){
                                 markers.get(i).setVisible(true);
-                                //count +=1;
+                                //interested +=1;
                             }
                         }
 
@@ -407,11 +503,11 @@ public class MapUtil{
                             JSONObject object = new JSONObject(markers.get(i).getTag().toString());
                             if (object.getInt("status") !=3){
                                 markers.get(i).setVisible(false);
-                                //count -=1;
+                                //interested -=1;
 
                             }else if (!markers.get(i).isVisible()){
                                 markers.get(i).setVisible(true);
-                                //count +=1;
+                                //interested +=1;
                             }
                         }
 
@@ -422,13 +518,13 @@ public class MapUtil{
 
                 break;
         }
-        count =0;
+        interested =0;
         for (int i=0; i<markers.size(); i++){
             if (markers.get(i).isVisible()){
-                count +=1;
+                interested +=1;
             }
         }
-        return String.format("%d/%d",count, customers.size());
+        return String.format("%d/%d", interested, customers.size());
     }
 
 }

@@ -94,7 +94,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     private List<Checkin> listCheckins = new ArrayList<>();
     private List<Bill> listBills = new ArrayList<>();
     private List<RecyclerView.Adapter> listAdapter;
-    private Status currentStatus= Status.getStatusList().get(0);
+    private Status currentStatus;
     private int currentState= BottomSheetBehavior.STATE_COLLAPSED;
     private String firstName ="";
     private float bottomSheetHeight;
@@ -164,6 +164,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     public void initialData() {
         mapFragment.getMapAsync(this);
         tabLayout.setupWithViewPager(viewPager);
+        currentStatus= Status.getStatusList().get(0);
 
         String bundle = getIntent().getExtras().getString(Constants.CUSTOMER);
         if (bundle != null){

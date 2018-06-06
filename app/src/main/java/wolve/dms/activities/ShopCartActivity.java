@@ -208,8 +208,9 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 break;
 
             case R.id.cart_bluetooth:
-                //showListBluetooth(listDevice);
-                Transaction.gotoBluetoothListActivity();
+                BluetoothListFragment fragment = new BluetoothListFragment();
+                showFragmentDialog(fragment );
+
                 break;
         }
     }
@@ -493,29 +494,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 Util.showToast(Crop.getError(intent).getMessage());
 
             }
-        } else if (reqCode == REQUEST_ENABLE_BT && resultCode == RESULT_OK){
-                try {
-                    Set<BluetoothDevice> btDeviceList = mBluetoothAdapter.getBondedDevices();
-                    if (btDeviceList.size() > 0) {
-                        for (BluetoothDevice device : btDeviceList) {
-                            listDevice.add(device);
-                            if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))){
-                                connectBluetoothDevice(device);
-                            }
-//                            if (btDeviceList.contains(device) == false) {
-//                                if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))){
-////                                    connectBluetoothDevice(device);
-//                                }
-//
-//                                listDevice.add(device);
-//
-//                            }
-                        }
-                    }
-                } catch (Exception ex) {
-                }
-                mBluetoothAdapter.startDiscovery();
-            }
+        }
 
 
 

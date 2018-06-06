@@ -13,57 +13,35 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <RelativeLayout
+    <com.miguelcatalan.materialsearchview.MaterialSearchView
+        android:id="@+id/map_searchview"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_35sdp"
-        android:background="@drawable/bg_toolbar">
-
-        <ImageView
-            android:id="@+id/map_back"
-            android:layout_width="@dimen/_35sdp"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_arrow_back_white"
-            android:padding="@dimen/_8sdp"/>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/btn_choice_grey"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_marginRight="@dimen/_10sdp">
-
-            <Spinner
-                android:id="@+id/map_spinner"
-                android:layout_width="@dimen/_100sdp"
-                android:layout_height="wrap_content"
-                android:overlapAnchor="false"
-                android:paddingHorizontal="@dimen/_1sdp"
-                />
-        </LinearLayout>
-
-    </RelativeLayout>
-
-    <com.github.clans.fab.FloatingActionButton
-        android:id="@+id/map_current_location"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_my_location_black_18dp"
-        android:layout_marginLeft="@dimen/_10sdp"
-        android:layout_marginBottom="@dimen/_50sdp"
-        android:layout_gravity="bottom"
-        app:fab_size="mini"
-        />
+        android:layout_margin="@dimen/_5sdp"/>
+
+    <!--<RelativeLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="@dimen/_35sdp"-->
+        <!--android:background="@drawable/bg_toolbar">-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/map_back"-->
+            <!--android:layout_width="@dimen/_35sdp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:src="@drawable/ic_arrow_back_white"-->
+            <!--android:padding="@dimen/_8sdp"/>-->
+
+
+    <!--</RelativeLayout>-->
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/map_new_customer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="@dimen/_10sdp"
-        android:layout_marginBottom="@dimen/_50sdp"
+        android:layout_marginBottom="@dimen/_95sdp"
         android:layout_gravity="bottom|right"
-        fab:menu_fab_size="mini"
+        fab:menu_fab_size="normal"
         fab:menu_colorNormal="#1565C0"
         fab:menu_colorPressed="#2272CD"
         fab:menu_colorRipple="#62B2FF">
@@ -111,110 +89,161 @@
 
     </com.github.clans.fab.FloatingActionMenu>
 
-    <LinearLayout
-        android:id="@+id/map_bottom_sheet"
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/map_current_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_my_location_black_18dp"
+        android:layout_marginRight="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_40sdp"
+        android:layout_gravity="bottom|right"
+        app:fab_size="normal"/>
+
+    <Spinner
+        android:id="@+id/map_spinner"
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="wrap_content"
+        android:overlapAnchor="false"
+        android:paddingHorizontal="@dimen/_1sdp"
+        android:layout_gravity="right|center_vertical"
+        />
+
+    <RadioGroup
+        android:checkedButton="@+id/map_filter_all"
+        android:id="@+id/map_filter"
+        android:layout_width="@dimen/_200sdp"
+        android:layout_height="@dimen/_25sdp"
+        android:background="@drawable/pink_out_line"
+        android:orientation="horizontal"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="@dimen/_10sdp">
+
+        <RadioButton
+            android:id="@+id/map_filter_all"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp"
+            android:layout_marginLeft="1dp"
+            android:background="@drawable/toggle_widget_background_left"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:button="@null"
+            android:gravity="center"
+            android:text="Tất cả"
+            android:textColor="@drawable/text_white_selected"
+            android:textSize="@dimen/_10sdp"
+            />
+
+        <RadioButton
+            android:id="@+id/map_filter_interested"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp"
+            android:layout_marginLeft="0.2dp"
+            android:layout_marginRight="0.2dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/toggle_widget_background_center"
+            android:button="@null"
+            android:gravity="center"
+            android:text="Quan tâm"
+            android:textColor="@drawable/text_white_selected"
+            android:textSize="@dimen/_10sdp"/>
+
+        <RadioButton
+            android:id="@+id/map_filter_ordered"
+            android:layout_marginRight="1dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/toggle_widget_background_right"
+            android:button="@null"
+            android:gravity="center"
+            android:text="Đã mua"
+            android:textColor="@drawable/text_white_selected"
+            android:textSize="@dimen/_10sdp"/>
+
+    </RadioGroup>
+
+    <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
+        android:id="@+id/map_loading"
         android:layout_width="match_parent"
-        android:layout_height="57dp"
-        android:background="@color/colorWhite"
-        android:orientation="vertical"
-        android:clickable="true"
-        app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        app:spb_sections_count="4"
+        app:spb_color="@color/colorBlue"
+        app:spb_speed="2.0"
+        app:spb_stroke_width="4dp"
+        app:spb_stroke_separator_length="4dp"
+        app:spb_reversed="false"
+        app:spb_mirror_mode="true"
+        app:spb_progressiveStart_activated="false"
+        app:spb_progressiveStart_speed="1.5"
+        app:spb_progressiveStop_speed="3.4"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="-2dp"
+        android:visibility="gone"/>
 
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="1dp"
-            android:background="@color/black_text_color_hint"/>
+    <!--<LinearLayout-->
+        <!--android:id="@+id/map_bottom_sheet"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="57dp"-->
+        <!--android:background="@color/colorWhite"-->
+        <!--android:orientation="vertical"-->
+        <!--android:clickable="true"-->
+        <!--app:layout_behavior="android.support.design.widget.BottomSheetBehavior">-->
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="@drawable/bg_header_top">
+        <!--<View-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="1dp"-->
+            <!--android:background="@color/black_text_color_hint"/>-->
 
-            <RadioGroup
-                android:checkedButton="@+id/map_filter_all"
-                android:id="@+id/map_filter"
-                android:layout_width="@dimen/_180sdp"
-                android:layout_height="@dimen/_25sdp"
-                android:background="@drawable/pink_out_line"
-                android:orientation="horizontal"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/_10sdp">
+        <!--<RelativeLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:background="@drawable/bg_header_top">-->
 
-                <RadioButton
-                    android:id="@+id/map_filter_all"
-                    android:layout_marginTop="1dp"
-                    android:layout_marginBottom="1dp"
-                    android:layout_marginLeft="1dp"
-                    android:background="@drawable/toggle_widget_background_left"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:button="@null"
-                    android:gravity="center"
-                    android:text="Tất cả"
-                    android:textColor="@drawable/text_white_selected"
-                    android:textSize="@dimen/_10sdp"
-                    />
+            <!--<LinearLayout-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="@drawable/btn_choice_grey"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:layout_marginTop="@dimen/_5sdp"-->
+                <!--android:layout_marginRight="@dimen/_10sdp">-->
 
-                <RadioButton
-                    android:id="@+id/map_filter_interested"
-                    android:layout_marginTop="1dp"
-                    android:layout_marginBottom="1dp"
-                    android:layout_marginLeft="0.2dp"
-                    android:layout_marginRight="0.2dp"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/toggle_widget_background_center"
-                    android:button="@null"
-                    android:gravity="center"
-                    android:text="Quan tâm"
-                    android:textColor="@drawable/text_white_selected"
-                    android:textSize="@dimen/_10sdp"/>
+                <!---->
+            <!--</LinearLayout>-->
 
-                <RadioButton
-                    android:id="@+id/map_filter_ordered"
-                    android:layout_marginRight="1dp"
-                    android:layout_marginTop="1dp"
-                    android:layout_marginBottom="1dp"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/toggle_widget_background_right"
-                    android:button="@null"
-                    android:gravity="center"
-                    android:text="Đã mua"
-                    android:textColor="@drawable/text_white_selected"
-                    android:textSize="@dimen/_10sdp"/>
+            <!--<ProgressBar-->
+                <!--android:id="@+id/map_loading"-->
+                <!--android:layout_width="@dimen/_15sdp"-->
+                <!--android:layout_height="@dimen/_15sdp"-->
+                <!--android:layout_toLeftOf="@+id/map_countcustomer"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:layout_marginRight="@dimen/_5sdp"-->
+                <!--android:indeterminateTint="@color/colorBlue"-->
+                <!--android:visibility="gone"/>-->
 
-            </RadioGroup>
+            <!--<TextView-->
+                <!--android:id="@+id/map_countcustomer"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:layout_marginRight="@dimen/_10sdp"/>-->
 
-            <ProgressBar
-                android:id="@+id/map_loading"
-                android:layout_width="@dimen/_15sdp"
-                android:layout_height="@dimen/_15sdp"
-                android:layout_toLeftOf="@+id/map_countcustomer"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/_5sdp"
-                android:visibility="gone"/>
-
-            <TextView
-                android:id="@+id/map_countcustomer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="@dimen/_10sdp"/>
-
-        </RelativeLayout>
+        <!--</RelativeLayout>-->
 
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/map_rvcustomer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+        <!--<android.support.v7.widget.RecyclerView-->
+            <!--android:id="@+id/map_rvcustomer"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"/>-->
 
-    </LinearLayout>
+    <!--</LinearLayout>-->
 
 
 

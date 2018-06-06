@@ -55,10 +55,8 @@ public class SplashScreenActivity extends BaseActivity {
             @Override
             public void run() {
                 if (CustomSQL.getString(Constants.USER_USERNAME).isEmpty()){
-                    Intent intent = new Intent(SplashScreenActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                    SplashScreenActivity.this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                    finish();
+                    gotoLoginScreen();
+
                 }else {
                     String params = String.format(Api_link.LOGIN_PARAM,CustomSQL.getString(Constants.USER_USERNAME), CustomSQL.getString(Constants.USER_PASSWORD));
                     progressBar.setVisibility(View.VISIBLE);
@@ -78,13 +76,14 @@ public class SplashScreenActivity extends BaseActivity {
 
 
                             } catch (JSONException e) {
-                                e.printStackTrace();
+                                gotoLoginScreen();
                             }
                         }
 
                         @Override
                         public void onError(String error) {
                             progressBar.setVisibility(View.GONE);
+                            gotoLoginScreen();
                         }
                     }, false,true);
                 }
@@ -108,5 +107,11 @@ public class SplashScreenActivity extends BaseActivity {
         super.onDestroy();
     }
 
+    private void gotoLoginScreen(){
+        Intent intent = new Intent(SplashScreenActivity.this, LoginActivity.class);
+        startActivity(intent);
+        SplashScreenActivity.this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        finish();
+    }
 
 }

@@ -158,13 +158,6 @@
             android:theme="@style/FullScreen"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
 
-        <activity
-            android:name=".activities.BluetoothListActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:theme="@style/CustomDialog"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
-
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
 
     </application>

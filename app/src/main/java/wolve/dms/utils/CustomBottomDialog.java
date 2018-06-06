@@ -1,5 +1,7 @@
 package wolve.dms.utils;
 
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -9,7 +11,10 @@ import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.OnBackPressListener;
 import com.orhanobut.dialogplus.ViewHolder;
 
+import java.util.List;
+
 import wolve.dms.R;
+import wolve.dms.adapter.StringAdapter;
 import wolve.dms.customviews.CTextIcon;
 
 /**
@@ -34,6 +39,10 @@ public class CustomBottomDialog {
         void Method2(Boolean two);
         void Method3(Boolean three);
         void Method4(Boolean four);
+    }
+
+    public interface StringListener{
+        void onResponse(String content);
     }
 
     public static void choiceTwoOption(String icon1, String text1, String icon2, String text2, final TwoMethodListener mListener){
@@ -293,5 +302,36 @@ public class CustomBottomDialog {
         dialog.show();
     }
 
+    public static void choiceListPrinter(List<String> list, final StringListener mListener){
+        final DialogPlus dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
+                .setContentHolder(new ViewHolder(R.layout.view_choice_listmethod))
+                .setGravity(Gravity.BOTTOM)
+                .setBackgroundColorResId(R.drawable.colorwhite_corner)
+                .setMargin(10,10,10,10)
+//                .setPadding(20,30,20,20)
+                .setInAnimation(R.anim.slide_up)
+                .setOnBackPressListener(new OnBackPressListener() {
+                    @Override
+                    public void onBackPressed(DialogPlus dialogPlus) {
+                        dialogPlus.dismiss();
+                    }
+                }).create();
 
+        RecyclerView rvList = (RecyclerView) dialog.findViewById(R.id.view_list_method_rv);
+
+        StringAdapter adapter = new StringAdapter(list, new StringListener() {
+            @Override
+            public void onResponse(String content) {
+                dialog.dismiss();
+                mListener.onResponse(content);
+            }
+        });
+        adapter.notifyDataSetChanged();
+        rvList.setAdapter(adapter);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(),LinearLayoutManager.VERTICAL,false);
+        linearLayoutManager.setAutoMeasureEnabled(true);
+        rvList.setLayoutManager(linearLayoutManager);
+
+        dialog.show();
+    }
 }

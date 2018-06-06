@@ -157,7 +157,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
             case 2:
                 Util.showToast("Chưa hỗ trợ");
-                Transaction.gotoBluetoothListActivity();
+//                Transaction.gotoBluetoothListActivity();
 
                 break;
 

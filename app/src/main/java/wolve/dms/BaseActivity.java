@@ -1,6 +1,7 @@
 package wolve.dms;
 
 import android.Manifest;
+import android.app.FragmentManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -20,6 +21,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -60,10 +62,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected long LOCATION_REFRESH_TIME = 100;
     public DialogPlus dialog;
     private boolean doubleBackToExitPressedOnce = false;
-    protected static BluetoothAdapter mBluetoothAdapter = null;
-    protected static BluetoothSocket btsocket;
-    protected static OutputStream outputStream;
-    protected List<BluetoothDevice> listDevice = new ArrayList<>();
+    public static BluetoothAdapter mBluetoothAdapter = null;
+    public static BluetoothSocket btsocket;
+    public static OutputStream outputStream;
+//    protected List<BluetoothDevice> listDevice = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +82,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
             }
         }, 200);
-
-//        initialData();
 
         addEvent();
     }
@@ -131,13 +131,28 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         FragmentTransaction manager = this.getSupportFragmentManager().beginTransaction();
         if (isAnimation) {
-            manager.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
+//            manager.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
+            manager.setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_in_bottom, R.anim.slide_out_bottom);
         }
 
 
         manager.replace(setIdContainer(), fragmentReplace, tag)
                 .addToBackStack(tag)
                 .commitAllowingStateLoss();
+    }
+
+    public void showFragmentDialog(DialogFragment fragment){
+        String tag = fragment.getClass().getSimpleName();
+        DialogFragment myFragment = (DialogFragment) getSupportFragmentManager().findFragmentByTag(tag);
+        DialogFragment fragmentReplace;
+        if (myFragment != null) {
+            fragmentReplace = myFragment;
+        } else {
+            fragmentReplace = fragment;
+        }
+
+        FragmentTransaction manager = this.getSupportFragmentManager().beginTransaction();
+        fragmentReplace.show(manager, tag);
     }
 
     //Todo Location SETUP
@@ -298,7 +313,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 
 
-
         }
     }
 
@@ -347,18 +361,15 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
-    private final BroadcastReceiver mBTReceiver = new BroadcastReceiver() {
+    public final BroadcastReceiver mBTReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
                 if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))){
-                    connectBluetoothDevice(device);
+//                    connectBluetoothDevice(device);
                 }
-
-//                listDevice.add(device);
 
             }
         }
@@ -374,7 +385,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     };
 
-    private int initDevicesList() {
+    public int initDevicesList() {
         try {
             if (btsocket != null) {
                 btsocket.close();
@@ -403,25 +414,22 @@ public abstract class BaseActivity extends AppCompatActivity {
             mBluetoothAdapter.cancelDiscovery();
         }
 
-
         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         try {
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         } catch (Exception ex) {
             return -2;
         }
-
-        //Util.showToast("Getting all available Bluetooth Devices");
+        Util.showToast("Getting all available Bluetooth Devices");
 
         return 0;
 
     }
 
-    protected void connectBluetoothDevice(final BluetoothDevice device){
+    public void connectBluetoothDevice(final BluetoothDevice device, CallbackBoolean mListener){
         if (mBluetoothAdapter == null) {
             return;
         }
-        Util.showSnackbar("Connecting to " + device.getName(), null, null);
 
         Thread connectThread = new Thread(new Runnable() {
             @Override
@@ -449,15 +457,16 @@ public abstract class BaseActivity extends AppCompatActivity {
                         public void run() {
                             try {
                                 if (btsocket != null){
+                                    Util.showSnackbar("Connected to " + device.getName(), null, null);
 //                                    tvBluetooth.setText(R.string.icon_bluetooth_connected);
 //                                    tvBluetooth.setTextColor(getResources().getColor(R.color.colorBlue));
-                                    //tvPrinterName.setText("Đang kết nối: "+ btsocket.getRemoteDevice().getName());
+//                                    tvPrinterName.setText("Đang kết nối: "+ btsocket.getRemoteDevice().getName());
                                     //printerProgress.setVisibility(View.GONE);
 
                                     CustomSQL.setString(Constants.BLUETOOTH_DEVICE, btsocket.getRemoteDevice().getAddress());
                                     outputStream = btsocket.getOutputStream();
-
                                     mBluetoothAdapter.cancelDiscovery();
+
                                 }
 
                             } catch (IOException e) {
@@ -471,26 +480,5 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
         });connectThread.start();
     }
-
-    public void showListBluetooth(List<BluetoothDevice> list) {
-        CustomCenterDialog.showBluetoothDevices(list, new BluetoothListAdapter.CallbackBluetooth() {
-            @Override
-            public void OnDevice(BluetoothDevice device) {
-                try {
-                    connectBluetoothDevice(device);
-                    if (btsocket != null) {
-                        btsocket.close();
-                        btsocket = null;
-                    }
-
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        });
-    }
-
 
 }

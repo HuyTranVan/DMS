@@ -341,24 +341,18 @@ public class CustomCenterDialog {
                         if (!text.toString().equals("") && !text.equals("0")){
                             edDiscount.setText(Util.FormatMoney(product.getDouble("unitPrice") - Util.moneyValue(edNetPrice)));
                             tvTotal.setText(Util.FormatMoney(Double.parseDouble(text) *  Util.valueMoney(edQuantity)));
-
+                            edNetPrice.setSelection(edNetPrice.getText().toString().length());
                         }else if (text.toString().equals("")){
                             tvTotal.setText("0");
                         }
                     }
                 }));
 
-//                Util.textMoneyEvent(edNetPrice, new CallbackString() {
-//                    @Override
-//                    public void Result(String text) {
-//
-//                    }
-//                });
                 return true;
             }
         });
 
-        edDiscount.addTextChangedListener(new DoubleTextWatcher(edQuantity, new CallbackString() {
+        edQuantity.addTextChangedListener(new DoubleTextWatcher(edQuantity, new CallbackString() {
             @Override
             public void Result(String text) {
                 if (!text.toString().equals("") && !text.equals("0")){
@@ -370,12 +364,6 @@ public class CustomCenterDialog {
             }
         }));
 
-//        Util.textEvent(edQuantity, new CallbackString() {
-//            @Override
-//            public void Result(String text) {
-//
-//            }
-//        });
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override

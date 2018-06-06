@@ -4,7 +4,7 @@
     android:id="@+id/dialog_edit_product_parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/colorwhite_corner">
+    android:background="@drawable/colorwhite_corner_large">
 
     <TextView
         android:id="@+id/dialog_bluetooth_list_title"
