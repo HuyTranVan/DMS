@@ -19,6 +19,8 @@ public class Constants {
     public final static String USER_USERNAME = "username";
     public final static String USER_PASSWORD = "password";
     public final static String IMAGES_DIRECTORY = "Wolver_DMS";
+    public final static String ROLE_ADMIN = "MANAGER";
+    public final static String ROLE_SALE = "SALE";
 
     public final static String IS_PROMOTION = "BÁN VÀ KHUYẾN MÃI";
     public final static String NO_PROMOTION = "CHỈ BÁN";
@@ -43,8 +45,6 @@ public class Constants {
 
     public final static String BADGE = "badge";
 
-
-
     public final static String MARKER_ALL = "all";
     public final static String MARKER_INTERESTED = "interested";
     public final static String MARKER_ORDERED = "ordered";
@@ -53,6 +53,12 @@ public class Constants {
     public static final String DISTRICT_LIST = "district_list";
     public static final String PRODUCTGROUP_LIST = "productgroup_list";
     public static final String PRODUCT_LIST = "product_list";
+
+    public static final String CONNECTING_PRINTER = "Đang kết nối máy in ....";
+    public static final String CONNECTED_PRINTER = "Đã kết nối máy in: %s";
+    public static final String CONNECTED_PRINTER_ERROR = "Không thể kết nối tới máy in";
+
+    public static final String ON_MAP_SCREEN = "on_map";
 
 
     //Home constant

@@ -12,6 +12,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.nispok.snackbar.Snackbar;
+import com.nispok.snackbar.listeners.ActionClickListener;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -78,8 +81,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void initialData() {
-        createListItem();
         loadCurrentData();
+        if (CustomSQL.getBoolean(Constants.ON_MAP_SCREEN))
+            Transaction.gotoMapsActivity();
+        createListItem();
         tvFullname.setText(String.format("%s (%s)",User.getFullName(), User.getRole()));
 
     }
@@ -141,11 +146,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     public void onRespone(String data, int position) {
         switch (position){
             case 0:
-//                if (PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//                    ActivityCompat.requestPermissions(Util.getInstance().getCurrentActivity(),
-//                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_PERMISSION_LOCATION);
-//                    return;
-//                }
                 Transaction.gotoMapsActivity();
 
                 break;

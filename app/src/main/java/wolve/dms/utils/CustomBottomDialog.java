@@ -302,12 +302,12 @@ public class CustomBottomDialog {
         dialog.show();
     }
 
-    public static void choiceListPrinter(List<String> list, final StringListener mListener){
+    public static void choiceList(String title, List<String> list, final StringListener mListener){
         final DialogPlus dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
                 .setContentHolder(new ViewHolder(R.layout.view_choice_listmethod))
                 .setGravity(Gravity.BOTTOM)
                 .setBackgroundColorResId(R.drawable.colorwhite_corner)
-                .setMargin(10,10,10,10)
+                .setMargin(20,20,20,20)
 //                .setPadding(20,30,20,20)
                 .setInAnimation(R.anim.slide_up)
                 .setOnBackPressListener(new OnBackPressListener() {
@@ -318,7 +318,9 @@ public class CustomBottomDialog {
                 }).create();
 
         RecyclerView rvList = (RecyclerView) dialog.findViewById(R.id.view_list_method_rv);
+        TextView tvTitle = (TextView) dialog.findViewById(R.id.view_listmethod_title);
 
+        tvTitle.setText(title);
         StringAdapter adapter = new StringAdapter(list, new StringListener() {
             @Override
             public void onResponse(String content) {

@@ -4,15 +4,34 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/view_list_method_parent"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/_350sdp"
     android:background="@drawable/colorwhite_corner"
     tools:ignore="WebViewLayout"
     android:orientation="vertical">
 
+        <TextView
+            android:id="@+id/view_listmethod_title"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_30sdp"
+            android:text="Title"
+            android:textAllCaps="true"
+            android:gravity="center"
+            android:textSize="@dimen/_14sdp"
+            android:textColor="@color/black_text_color"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:background="#10000000"/>
+
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/view_list_method_rv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:paddingTop="@dimen/_5sdp"
+            android:paddingBottom="@dimen/_5sdp"/>
 
 
 </LinearLayout>

@@ -10,6 +10,7 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.WindowManager;
@@ -20,11 +21,19 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.savvi.rangedatepicker.CalendarPickerView;
+
 import org.json.JSONException;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -466,52 +475,6 @@ public class CustomCenterDialog {
             }
         });
 
-//        edPaid.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//                String text = s.toString();
-//
-//                if (!text.equals("")){
-//                    tvRemain.setText(Util.FormatMoney(Util.valueMoney(tvTotal) - Util.valueMoney(text)));
-//                }else {
-//                    tvRemain.setText(tvTotal.getText().toString());
-//                }
-//
-//                try {
-//                    edPaid.removeTextChangedListener(this);
-//                    //Store current selection and string length
-//                    int currentSelection = edPaid.getSelectionStart();
-//                    int prevStringLength = edPaid.getText().length();
-//
-//                    String valueInString = edPaid.getText().toString();
-//                    if (!TextUtils.isEmpty(valueInString)) {
-//                        String str = edPaid.getText().toString().trim().replaceAll(",|\\s|\\.", "");
-//                        String newString = Util.CurrencyUtil.convertDecimalToString(new BigDecimal(str));
-//                        edPaid.setText(newString);
-//                        //Set new selection
-//                        int selection = currentSelection + (newString.length() - prevStringLength);
-//                        edPaid.setSelection(selection);
-//                    }
-//                    edPaid.addTextChangedListener(this);
-//                    return;
-//                } catch (Exception ex) {
-//                    ex.printStackTrace();
-//                    edPaid.addTextChangedListener(this);
-//                }
-//
-//            }
-//        });
-
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -533,8 +496,6 @@ public class CustomCenterDialog {
                         dialogResult.dismiss();
                         mListener.OnRespone(Util.valueMoney(tvTotal) , Util.valueMoney(edPaid));
                     }
-
-
                 }
 
             }
@@ -565,27 +526,76 @@ public class CustomCenterDialog {
 
     }
 
-    public static void showBluetoothDevices(List<BluetoothDevice> listDevice, final BluetoothListAdapter.CallbackBluetooth mListener){
-        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_select_bluetooth_device);
-        dialogResult.setCancelable(true);
-        dialogResult.setCanceledOnTouchOutside(true);
-        TextView tvTitle =  dialogResult.findViewById(R.id.dialog_select_bluetooth_title);
-        RecyclerView rvBluetooth =  dialogResult.findViewById(R.id.dialog_select_bluetooth_rvdevice);
+    public static void showDialogDatePicker(final RadioButton rdButton, final CallbackString mListener){
+        final String result ="&billingFrom=%d&billingTo=%d";
 
-        BluetoothListAdapter adapter = new BluetoothListAdapter(listDevice, new BluetoothListAdapter.CallbackBluetooth() {
+        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_select_datepicker);
+        dialogResult.setCancelable(true);
+        TextView tvTitle = (TextView) dialogResult.findViewById(R.id.title);
+        Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
+        Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
+        final CalendarPickerView calendarView = dialogResult.findViewById(R.id.calendar_view);
+
+        tvTitle.setText("Chọn thời gian");
+        btnSubmit.setText("Chọn");
+        btnCancel.setText("Hủy");
+
+        final Calendar nextYear = Calendar.getInstance();
+        nextYear.add(Calendar.YEAR, 10);
+
+        final Calendar lastYear = Calendar.getInstance();
+        lastYear.add(Calendar.YEAR, -10);
+
+        ArrayList<Integer> list = new ArrayList<>();
+        list.add(1);
+
+//        calendarView.deactivateDates(list);
+        ArrayList<Date> arrayList = new ArrayList<>();
+        try {
+            SimpleDateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy");
+            String strdate = "22-2-2018";
+            String strdate2 = "26-2-2018";
+            Date newdate = dateformat.parse(strdate);
+            Date newdate2 = dateformat.parse(strdate2);
+            arrayList.add(newdate);
+            arrayList.add(newdate2);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        calendarView.init(lastYear.getTime(), nextYear.getTime(),new SimpleDateFormat("MMMM, YYYY", Locale.getDefault()))
+                .inMode(CalendarPickerView.SelectionMode.RANGE)
+                .withSelectedDate(new Date())
+//                .withDeactivateDates(list)
+                .withHighlightedDates(arrayList);
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void OnDevice(BluetoothDevice device) {
-                mListener.OnDevice(device);
+            public void onClick(View v) {
                 dialogResult.dismiss();
             }
         });
-        rvBluetooth.setAdapter(adapter);
-        rvBluetooth.setHasFixedSize(true);
-        rvBluetooth.setNestedScrollingEnabled(false);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(), LinearLayoutManager.VERTICAL, false);
-        rvBluetooth.setLayoutManager(layoutManager);
 
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                long startDate = new Timestamp(calendarView.getSelectedDates().get(0).getTime()).getTime();
+                long lastDate = new Timestamp(calendarView.getSelectedDates().get(calendarView.getSelectedDates().size()-1).getTime()).getTime() ;
+
+                if (calendarView.getSelectedDates().size() ==1){
+                    rdButton.setText(Util.DateString(startDate));
+                }else {
+                    rdButton.setText(String.format("%s\n%s", Util.DateString(startDate) ,Util.DateString(lastDate)));
+                }
+
+
+                mListener.Result(String.format(result, startDate, lastDate+ 86400000));
+                dialogResult.dismiss();
+
+            }
+        });
 
     }
+
 
 }

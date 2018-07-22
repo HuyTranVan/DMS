@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,11 +28,14 @@ import wolve.dms.adapter.StatisticalViewpagerAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackJSONArray;
 
+import wolve.dms.callback.CallbackString;
 import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialog;
 import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialogFragment;
 import wolve.dms.models.Bill;
 import wolve.dms.models.Distributor;
+import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
 
 /**
@@ -43,10 +47,8 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     private TextView tvTitle;
     private ViewPager viewPager;
     private TabLayout tabLayout;
-//    private wolve.dms.libraries.swiperefreshlayout.SwipeRefreshLayout swipeRefreshLayout;
     private RadioGroup rdGroup;
     private RadioButton rdMonth, rdDate;
-    private DatePickerDialog datePickerDialog;
 
     private StatisticalViewpagerAdapter pageAdapter;
     List<Bill> listBill = new ArrayList<>();
@@ -77,7 +79,6 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         tvTitle = (TextView) findViewById(R.id.statistical_title);
         viewPager = (ViewPager) findViewById(R.id.statistical_viewpager);
         tabLayout = (TabLayout) findViewById(R.id.statistical_tabs);
-//        swipeRefreshLayout = (wolve.dms.libraries.swiperefreshlayout.SwipeRefreshLayout) findViewById(R.id.statistical_swipelayout);
         rdGroup = findViewById(R.id.statistical_filter);
         rdMonth = findViewById(R.id.statistical_filter_month);
         rdDate = findViewById(R.id.statistical_filter_date);
@@ -89,7 +90,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         rdMonth.setText(Util.CurrentMonthYear());
         rdDate.setText(DATE_DEFAULT);
         currentDate = rdMonth.getText().toString();
-        loadAllBill(currentDate, true);
+        loadAllBill(paramDate(currentDate), true);
 
         setupViewPager(viewPager);
         setupTabLayout(tabLayout);
@@ -99,7 +100,6 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     @Override
     public void addEvent() {
         btnBack.setOnClickListener(this);
-//        swipeRefreshLayout.setOnRefreshListener(this);
         rdMonth.setOnClickListener(this);
         rdDate.setOnClickListener(this);
 
@@ -157,33 +157,18 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     }
 
     private void datePicker() {
-        datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                mDate = dayOfMonth;
-                mMonth = monthOfYear;
-                mYear = year;
-
-                Calendar newDate = Calendar.getInstance();
-                newDate.set(year, monthOfYear, dayOfMonth);
-                rdDate.setText(new SimpleDateFormat("dd-MM-yyyy", Locale.US).format(newDate.getTime()));
-                currentDate = rdDate.getText().toString();
-                loadAllBill(currentDate, true);
-
+        CustomCenterDialog.showDialogDatePicker(rdDate,new CallbackString() {
+            @Override
+            public void Result(String s) {
+                loadAllBill(s, true);
             }
-        }, mYear, mMonth, mDate);
-
-//        },Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
-
-        datePickerDialog.show();
+        });
 
 
     }
 
     private void monthPicker() {
         SimpleDatePickerDialogFragment datePickerDialogFragment;
-//        Calendar calendar = Calendar.getInstance(Locale.getDefault());
-//        datePickerDialogFragment = SimpleDatePickerDialogFragment.getInstance(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH));
         datePickerDialogFragment = SimpleDatePickerDialogFragment.getInstance(mYear, mMonth);
         datePickerDialogFragment.setOnDateSetListener(new SimpleDatePickerDialog.OnDateSetListener() {
             @Override
@@ -193,32 +178,33 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
                 rdMonth.setText(monthOfYear+1 +"-" + year);
                 currentDate = rdMonth.getText().toString();
-                loadAllBill(currentDate, true);
+                loadAllBill(paramDate(currentDate), true);
             }
         });
         datePickerDialogFragment.show(getSupportFragmentManager(), null);
     }
 
-//    @Override
-//    public void onRefresh() {
-////        swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#2196f3"));
-//        swipeRefreshLayout.setColorScheme(R.color.colorBlue , R.color.colorBlueDark , R.color.colorBlueDark , R.color.colorBlue );
-//        loadAllBill(currentDate, false);
-//    }
-
     private void loadAllBill(String param, Boolean showLoading){
-        CustomerConnect.ListBill(paramDate(param), new CallbackJSONArray() {
+        CustomerConnect.ListBill(param, new CallbackJSONArray() {
             @Override
             public void onResponse(JSONArray result) {
-                //swipeRefreshLayout.setRefreshing(false);
                 try {
                     listBill = new ArrayList<Bill>();
                     for (int i=0; i<result.length(); i++){
-                        Bill bill = new Bill(result.getJSONObject(i));
-                        if (bill.getJsonObject("distributor").getString("id").equals(Distributor.getDistributorId())){
-                            listBill.add(bill);
-                        }
+                        JSONObject objectBill = result.getJSONObject(i);
+                        JSONObject objectUser = objectBill.getJSONObject("user");
 
+                        Bill bill = new Bill(objectBill);
+                        if (bill.getJsonObject("distributor").getInt("id") == Distributor.getId()){
+                            if (User.getRole().equals(Constants.ROLE_ADMIN)){
+                                listBill.add(bill);
+                            }else {
+                                if (User.getId() == objectUser.getInt("id")){
+                                    listBill.add(bill);
+                                }
+                            }
+
+                        }
                     }
                     Util.dashboardFragment.reloadData(listBill);
                     Util.billsFragment.reloadData(listBill);
@@ -230,7 +216,6 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
             @Override
             public void onError(String error) {
-                //swipeRefreshLayout.setRefreshing(false);
             }
         }, showLoading);
     }

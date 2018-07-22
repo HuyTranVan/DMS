@@ -3,7 +3,6 @@ package wolve.dms.activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -11,27 +10,18 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.PermissionChecker;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,23 +49,21 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.CustomWindowAdapter;
-import wolve.dms.adapter.MapListCustomerAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.apiconnect.LocationConnect;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.models.Customer;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.District;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.MapUtil;
 import wolve.dms.utils.Transaction;
@@ -92,29 +80,24 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         GoogleMap.OnCameraIdleListener, GoogleMap.OnInfoWindowClickListener,
         GoogleMap.OnMapLongClickListener, RadioGroup.OnCheckedChangeListener,
         GoogleMap.OnInfoWindowLongClickListener, GoogleMap.OnCameraMoveListener,
-        GoogleMap.OnMarkerClickListener, ViewTreeObserver.OnGlobalLayoutListener {
+        GoogleMap.OnMarkerClickListener {
     public GoogleMap mMap;
     private FloatingActionMenu btnNewCustomer;
     private FloatingActionButton btnLocation, btnRepair, btnWash, btnAccesary, btnMaintain, btnPhoneNumber;
     public SupportMapFragment mapFragment;
-    private Spinner mSpinner;
     private RadioGroup rdFilter;
     private RadioButton rdAll, rdIntersted, rdOrdered;
-//    private BottomSheetBehavior mBottomSheetBehavior;
-//    private LinearLayout lnBottomSheet;
+
     private CoordinatorLayout coParent;
-//    private RecyclerView rvCustomer;
-//    private TextView tvCount;
-//    private ImageView btnBack;
     private SmoothProgressBar progressLoading;
     private MaterialSearchView mSearchView;
 
-//    private MapListCustomerAdapter adapter;
-//    private float bottomSheetHeight;
-    private Handler mHandler = new Handler();
+    private Handler mHandlerMoveMap = new Handler();
+    private Handler mHandlerSearch = new Handler();
     private String currentPhone;
     private FusedLocationProviderClient mFusedLocationClient;
     private Boolean recheckGPS = false;
+    private String mSearchText = "";
 
     @Override
     public int getResourceLayout() {
@@ -136,18 +119,13 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         btnAccesary = (FloatingActionButton) findViewById(R.id.map_new_accessary);
         btnMaintain = (FloatingActionButton) findViewById(R.id.map_new_maintain);
         btnPhoneNumber = (FloatingActionButton) findViewById(R.id.map_new_addphone);
-        mSpinner = (Spinner) findViewById(R.id.map_spinner);
         rdFilter = (RadioGroup) findViewById(R.id.map_filter);
         rdAll = findViewById(R.id.map_filter_all);
         rdIntersted = findViewById(R.id.map_filter_interested);
         rdOrdered = findViewById(R.id.map_filter_ordered);
         coParent = (CoordinatorLayout) findViewById(R.id.map_parent);
-//        lnBottomSheet = (LinearLayout) findViewById(R.id.map_bottom_sheet);
-//        rvCustomer = (RecyclerView) findViewById(R.id.map_rvcustomer);
-//        tvCount = (TextView) findViewById(R.id.map_countcustomer);
         progressLoading = findViewById(R.id.map_loading);
         mSearchView = findViewById(R.id.map_searchview);
-        //        btnBack = findViewById(R.id.map_back);
 
         btnLocation.setColorNormalResId(R.color.white_text_color);
         btnLocation.setColorPressedResId(R.color.colorGrey);
@@ -159,7 +137,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     @Override
     public void initialData() {
         Util.mapsActivity = this;
-        setupSpinner();
         MapUtil.customers = new ArrayList<>();
         MapUtil.markers = new ArrayList<>();
 
@@ -175,8 +152,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         btnMaintain.setOnClickListener(this);
         rdFilter.setOnCheckedChangeListener(this);
         btnPhoneNumber.setOnClickListener(this);
-        coParent.getViewTreeObserver().addOnGlobalLayoutListener(this);
-//        btnBack.setOnClickListener(this);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         onSearchViewEvent();
     }
@@ -195,10 +170,46 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
             @Override
             public void onLocation() {
+                showListDistrict();
+            }
+        });
 
+        mSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (!newText.isEmpty() && newText.length()>1){
+                    mSearchText = newText;
+                    mHandlerSearch.removeCallbacks(delayForSerch);
+                    mHandlerSearch.postDelayed(delayForSerch, 500);
+
+                }
+                return true;
             }
         });
     }
+
+    private Runnable delayForSerch = new Runnable() {
+        @Override
+        public void run() {
+            String param = "name=" + Util.encodeString(mSearchText);
+            CustomerConnect.ListCustomerSearch(param, new CallbackJSONArray() {
+                @Override
+                public void onResponse(JSONArray result) {
+                    mSearchView.setSuggestions(result);
+                }
+
+                @Override
+                public void onError(String error) {
+
+                }
+            }, true);
+        }
+    };
 
     @Override
     protected void onResume() {
@@ -215,7 +226,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 //                MapUtil.resetMarker();
                 LatLng latLng = new LatLng(mMap.getMyLocation().getLatitude(), mMap.getMyLocation().getLongitude());
                 triggerCurrentLocation(latLng, 16);
-                mSpinner.setSelection(0);
 
                 break;
 
@@ -245,9 +255,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
                 break;
 
-//            case R.id.map_back:
-//                onBackPressed();
-//                break;
 
         }
 
@@ -269,7 +276,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             public void onMapClick(LatLng latLng) {
                 Util.hideKeyboard(btnNewCustomer);
                 btnNewCustomer.close(true);
-//                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
 
@@ -304,69 +310,20 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     }
 
-    private void setupBottomSheet() {
-//        bottomSheetHeight = Util.convertDp2Px(57);
-//        mBottomSheetBehavior = BottomSheetBehavior.from(lnBottomSheet);
-//        mBottomSheetBehavior.setPeekHeight((int) bottomSheetHeight);
-//        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-
-//        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-//            int lastState = BottomSheetBehavior.STATE_COLLAPSED;
-//
-//            @Override
-//            public void onStateChanged(View bottomSheet, int newState) {
-//
-////                int windowHeight = Util.getWindowSize().heightPixels;
-////                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-////                    MapUtil.changeFragmentHeight(mapFragment, windowHeight - (int) Util.convertDp2Px(57));
-////                    MapUtil.reboundMap(mMap);
-////
-////                } else if(newState == BottomSheetBehavior.STATE_EXPANDED) {
-////                    MapUtil.changeFragmentHeight(mapFragment, windowHeight - Math.round(bottomSheetHeight));
-////                    MapUtil.reboundMap(mMap);
-////
-////                } else if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-////                    MapUtil.changeFragmentHeight(mapFragment, windowHeight);
-//////                    MapUtil.getInstance().reboundMap();
-////                }
-//            }
-//
-//            @Override
-//            public void onSlide(View bottomSheet, float slideOffset) {
-////                Util.changeFragmentHeight(mapFragment, Math.round(Util.getWindowSize().heightPixels - bottomSheetHeight * slideOffset));
-////                MapUtil.getInstance().reboundMap(mMap);
-//
-//            }
-//        });
-    }
-
-    private void setupSpinner() {
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, R.layout.view_spinner_item, District.getDistrictList());
-
-        dataAdapter.setDropDownViewResource(R.layout.view_spinner_item);
-        mSpinner.setAdapter(dataAdapter);
-        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+    private void showListDistrict(){
+        CustomBottomDialog.choiceList("Chọn quận / huyện", District.getDistrictList(), new CustomBottomDialog.StringListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position != 0) {
-                    mMap.setOnCameraMoveListener(null);
-                    loadCustomersByDistrict(parent.getItemAtPosition(position).toString(), getCheckedFilter());
-
-                }
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
+            public void onResponse(String content) {
+                mSearchView.setText(content);
+                mMap.setOnCameraMoveListener(null);
+                loadCustomersByDistrict(content, getCheckedFilter());
             }
         });
-
     }
 
     public void triggerCurrentLocation(LatLng latLng, int zomm) {
         if (latLng != null) {
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zomm), 400, null);
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zomm), 800, null);
 
         }
 
@@ -643,7 +600,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        mMap.setOnCameraMoveListener(MapsActivity.this);
+//        mMap.setOnCameraMoveListener(MapsActivity.this);
         if (data.getStringExtra(Constants.CUSTOMER) != null && requestCode == Constants.RESULT_CUSTOMER_ACTIVITY) {
             String responseString = data.getStringExtra(Constants.CUSTOMER);
 
@@ -750,8 +707,9 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     @Override
     public void onCameraMove() {
-        mHandler.removeCallbacks(mFilterTask);
-        mHandler.postDelayed(mFilterTask, 1000);
+        Util.hideKeyboard(mSearchView);
+        mHandlerMoveMap.removeCallbacks(mFilterTask);
+        mHandlerMoveMap.postDelayed(mFilterTask, 1000);
 
     }
 
@@ -783,30 +741,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         }
 
         return true;
-    }
-
-    @Override
-    public void onGlobalLayout() {
-//        coParent.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-//        int height = coParent.getHeight() / 2;
-//        ViewGroup.LayoutParams params = lnBottomSheet.getLayoutParams();
-//        params.height = height;
-//        lnBottomSheet.requestLayout();
-//
-//        setupBottomSheet();
-    }
-
-    public void createRVCustomer(List<Customer> list) {
-//        adapter = new MapListCustomerAdapter(list, new CallbackClickAdapter() {
-//            @Override
-//            public void onRespone(String data, int position) {
-//
-//            }
-//        });
-//        rvCustomer.setAdapter(adapter);
-//        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-//        rvCustomer.setLayoutManager(layoutManager);
-//        rvCustomer.setNestedScrollingEnabled(true);
     }
 
     private void openCallScreen(String phone) {
@@ -856,54 +790,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
             }
         }
-
-
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            return;
-//        }
-
-
-//        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-//        boolean gps_enabled = false;
-//        Util.getInstance().showLoading("Kiểm tra thông tin vị trí");
-//        gps_enabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-//        if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-//            CustomCenterDialog.alertWithButton("Xác thực quyền truy cập vị trí", "Bạn cần mở GPS truy cập vị trí để sử dụng toàn bộ tính năng phần mềm", "Bật GPS", new CallbackBoolean() {
-//                @Override
-//                public void onRespone(Boolean result) {
-//                    final Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//                    startActivity(intent);
-////                    Util.getInstance().stopLoading(true);
-//
-//                }
-//            });
-//        } else {
-//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//                return;
-//            }
-//            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE, mLocationListener);
-//            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE, mLocationListener);
-////            Util.getInstance().stopLoading(true);
-//
-//            //UPDATE LAST LOCATION
-//            Criteria criteria = new Criteria();
-//            criteria.setAccuracy(Criteria.ACCURACY_FINE);
-//            Location curLocation = mLocationManager.getLastKnownLocation(mLocationManager.getBestProvider(criteria, true));
-//            if(curLocation != null) {
-//                Util.getInstance().setCurrentLocation(curLocation);
-//
-//                MapUtil.resetMarker();
-//                LatLng latLng = new LatLng(getCurLocation().getLatitude(), getCurLocation().getLongitude());
-////                currentMarker = mMap.addMarker(new MarkerOptions().anchor(0.5f, 0.5f).position(latLng).flat(true).icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_location)));
-//
-//                //addCurrentMarker();
-//                triggerCurrentLocation(latLng, 15);
-//
-//            }
-//        }
-
-//    }
 
 }
 

@@ -30,6 +30,15 @@ public class Distributor extends BaseModel{
         return String.valueOf(id_distributor);
     }
 
+    public static int getId(){
+        int id_distributor = 0;
+        Distributor currentDistributor = CustomSQL.getObject(Constants.DISTRIBUTOR, Distributor.class);
+
+        if (currentDistributor != null) {
+            id_distributor = currentDistributor.getInt("id");
+        }
+        return id_distributor;
+    }
 
     public static String getName(){
         String name = "";

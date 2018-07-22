@@ -50,7 +50,7 @@ public class District extends BaseModel{
                 }
 
                 Collections.sort(mListDistricts, String.CASE_INSENSITIVE_ORDER);
-                mListDistricts.add(0, "Chọn quận");
+//                mListDistricts.add(0, "Chọn quận");
             } catch (JSONException e) {
                 return mListDistricts;
             }

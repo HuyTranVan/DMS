@@ -70,6 +70,18 @@
 
 
         <TextView
+            android:id="@+id/cart_printer_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/black_text_color_hint"
+            android:text="Máy in"
+            android:textColor="@color/white_text_color"
+            android:gravity="center"
+            android:textSize="@dimen/_8sdp"
+            android:padding="@dimen/_2sdp"
+            android:visibility="gone"/>
+
+        <TextView
             android:id="@+id/cart_hint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -2,7 +2,6 @@ package wolve.dms.activities;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,8 +9,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,20 +16,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.BluetoothListAdapter;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackProcess;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomCenterDialog;
-import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Util;
 
 import static android.app.Activity.RESULT_OK;
@@ -50,7 +43,8 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
 //    private static OutputStream outputStream;
     private List<BluetoothDevice> listDevice = new ArrayList<>();
     private BluetoothListAdapter adapter;
-    private BaseActivity mActivity;
+    private BaseActivity baseActivity;
+    private ShopCartActivity mActivity;
 
     @Nullable
     @Override
@@ -65,7 +59,8 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
     }
 
     private void initializeView() {
-        mActivity = (BaseActivity) getActivity();
+        baseActivity = (BaseActivity) getActivity();
+        mActivity = (ShopCartActivity) getActivity();
         btnCancel = view.findViewById(R.id.btn_cancel);
         rvBluetooth = view.findViewById(R.id.dialog_bluetooth_list_rv);
 
@@ -73,7 +68,7 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
 
     private void intitialData() {
         createRVBluetoothList(listDevice);
-        mActivity.registerBluetooth();
+        registerBluetooth();
     }
 
 
@@ -93,11 +88,36 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
     private void createRVBluetoothList(List<BluetoothDevice> list){
         adapter = new BluetoothListAdapter(listDevice, new BluetoothListAdapter.CallbackBluetooth() {
             @Override
-            public void OnDevice(BluetoothDevice device) {
-                mActivity.connectBluetoothDevice(device, new CallbackBoolean() {
+            public void OnDevice(final BluetoothDevice device) {
+                baseActivity.connectBluetoothDevice(device, new CallbackProcess() {
                     @Override
-                    public void onRespone(Boolean result) {
+                    public void onStart() {
+                        Util.getInstance().showLoading("Đang kết nối máy in");
+
+                        mActivity.tvPrinterStatus.setVisibility(View.VISIBLE);
+                        mActivity.tvBluetooth.setVisibility(View.GONE);
+                        mActivity.tvPrinterStatus.setText(Constants.CONNECTING_PRINTER);
+
+                    }
+
+                    @Override
+                    public void onError() {
+                        Util.getInstance().stopLoading(true);
+                        mActivity.tvPrinterStatus.setVisibility(View.GONE);
+                        mActivity.tvBluetooth.setVisibility(View.VISIBLE);
+                        Util.showToast(Constants.CONNECTED_PRINTER_ERROR);
                         finish();
+                    }
+
+                    @Override
+                    public void onSuccess(String name) {
+                        Util.getInstance().stopLoading(true);
+                        Util.showToast(String.format(Constants.CONNECTED_PRINTER, device.getName()));
+                        finish();
+                        mActivity.tvPrinterStatus.setVisibility(View.VISIBLE);
+                        mActivity.tvBluetooth.setVisibility(View.VISIBLE);
+                        mActivity.tvPrinterStatus.setText(String.format(Constants.CONNECTED_PRINTER, device.getName()));
+
                     }
                 });
 
@@ -111,47 +131,34 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
     }
 
 
-//    public void registerBluetooth() {
-//        try {
-//            if (initDevicesList() != 0) {
-//                finish();
-//                return;
-//            }
-//
-//        } catch (Exception ex) {
-//            finish();
-//            return;
-//        }
-//        IntentFilter btIntentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-//        mActivity.registerReceiver(mActivity.mBTReceiver, btIntentFilter);
-//
-//    }
+    public void registerBluetooth() {
+        try {
+            if (initDevicesList() != 0) {
+                finish();
+                return;
+            }
 
-//    private final BroadcastReceiver mBTReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            String action = intent.getAction();
-//            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-//                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-//
-////                if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))){
-////                    connectBluetoothDevice(device);
-////                }
-//                addBluetoothItem2List(device);
-//
-//            }
-//        }
-//    };
+        } catch (Exception ex) {
+            finish();
+            return;
+        }
+        IntentFilter btIntentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        baseActivity.registerReceiver(mBTReceiver, btIntentFilter);
 
-//    private Runnable socketErrorRunnable = new Runnable() {
-//
-//        @Override
-//        public void run() {
-//            Util.showToast("Cannot establish connection");
-//            mBluetoothAdapter.startDiscovery();
-//
-//        }
-//    };
+    }
+
+    private final BroadcastReceiver mBTReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                addBluetoothItem2List(device);
+
+            }
+        }
+    };
+
 
     private int initDevicesList() {
         try {
@@ -213,7 +220,7 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
 //                    }
 //
 //                } catch (IOException ex) {
-//                    mActivity.runOnUiThread(socketErrorRunnable);
+//                    baseActivity.runOnUiThread(socketErrorRunnable);
 //                    try {
 //                        btsocket.close();
 //                    } catch (IOException e) {
@@ -222,7 +229,7 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
 //                    btsocket = null;
 //                    return;
 //                } finally {
-//                    mActivity.runOnUiThread(new Runnable() {
+//                    baseActivity.runOnUiThread(new Runnable() {
 //
 //                        @Override
 //                        public void run() {
@@ -259,7 +266,7 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
 //            @Override
 //            public void OnDevice(BluetoothDevice device) {
 //                try {
-//                    mActivity.connectBluetoothDevice(device);
+//                    baseActivity.connectBluetoothDevice(device);
 //                    if (btsocket != null) {
 //                        btsocket.close();
 //                        btsocket = null;
@@ -283,17 +290,7 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
                 if (btDeviceList.size() > 0) {
                     for (BluetoothDevice device : btDeviceList) {
                         addBluetoothItem2List(device);
-//                        if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))){
-//                            connectBluetoothDevice(device);
-//                        }
-//                            if (btDeviceList.contains(device) == false) {
-//                                if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))){
-////                                    connectBluetoothDevice(device);
-//                                }
-//
-//                                listDevice.add(device);
-//
-//                            }
+
                     }
                 }
             } catch (Exception ex) {

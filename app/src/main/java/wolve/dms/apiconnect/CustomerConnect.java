@@ -122,6 +122,34 @@ public class CustomerConnect {
         }).execute();
     }
 
+    public static void ListCustomerSearch(String param, final CallbackJSONArray listener, final Boolean stopLoading){
+        String url = Api_link.CUSTOMERS+ String.format(Api_link.CUSTOMER_PARAM, 1,7);
+
+        new CustomPostMethod(url,param, false, new Callback() {
+            @Override
+            public void onResponse(JSONObject result) {
+                Util.getInstance().stopLoading(stopLoading);
+                try {
+                    if (result.getInt("status") == 200) {
+                        listener.onResponse(result.getJSONArray("data"));
+
+                    } else {
+                        listener.onError("Unknow error");
+                    }
+                } catch (JSONException e) {
+                    listener.onError(e.toString());
+                }
+            }
+
+
+            @Override
+            public void onError(String error) {
+                listener.onError(error);
+                Util.getInstance().stopLoading(stopLoading);
+            }
+        }).execute();
+    }
+
     public static void DeleteCustomer(String params,final CallbackJSONObject listener, final Boolean stopLoading){
         Util.getInstance().showLoading();
 

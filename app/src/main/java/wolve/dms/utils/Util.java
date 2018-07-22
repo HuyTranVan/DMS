@@ -65,6 +65,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import wolve.dms.activities.MapsActivity;
+import wolve.dms.activities.ShopCartActivity;
 import wolve.dms.activities.StatisticalBillsFragment;
 import wolve.dms.activities.StatisticalDashboardFragment;
 import wolve.dms.activities.StatisticalProductFragment;
@@ -80,6 +81,7 @@ public class Util {
     private KProgressHUD cDialogLocation;
     public Location currentLocation;
     public static MapsActivity mapsActivity;
+    public static ShopCartActivity shopCartActivity;
     public static StatisticalDashboardFragment dashboardFragment;
     public static StatisticalBillsFragment billsFragment;
     public static StatisticalProductFragment productFragment;
@@ -133,6 +135,12 @@ public class Util {
         return date;
     }
 
+    public boolean isLoading(){
+        if (cDialog != null && cDialog.isShowing())
+            return true;
+        return false;
+    }
+
     public void showLoading() {
         showLoading("Đang xử lý...");
     }
@@ -180,10 +188,25 @@ public class Util {
         Snackbar snb = Snackbar.with(Util.getInstance().getCurrentActivity().getApplicationContext())
                 .type(SnackbarType.MULTI_LINE) // Set is as a multi-line snackbar
                 .text(content) // text to be displayed
+                .actionColor(Color.parseColor("#2196f3"))
                 .duration(Snackbar.SnackbarDuration.LENGTH_SHORT);
         if (actionlabel != null) {
             snb.actionLabel(actionlabel).actionListener(actionListener);
         }
+
+        SnackbarManager.show(snb, Util.getInstance().getCurrentActivity()); // where it is displayed
+    }
+
+    public static void showSnackbar(String content, String actionlabel,boolean isIndefinite, ActionClickListener actionListener) {
+        Snackbar snb = Snackbar.with(Util.getInstance().getCurrentActivity().getApplicationContext())
+                .type(SnackbarType.MULTI_LINE) // Set is as a multi-line snackbar
+                .text(content) // text to be displayed
+                .actionColor(Color.parseColor("#2196f3"))
+                .duration(isIndefinite? Snackbar.SnackbarDuration.LENGTH_INDEFINITE : Snackbar.SnackbarDuration.LENGTH_SHORT);
+        if (actionlabel != null) {
+            snb.actionLabel(actionlabel).actionListener(actionListener);
+        }
+
 
         SnackbarManager.show(snb, Util.getInstance().getCurrentActivity()); // where it is displayed
     }
@@ -573,7 +596,7 @@ public class Util {
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         //cal.setTimeInMillis(timestamp*1000);
         cal.setTimeInMillis(timestamp);
-        date = DateFormat.format("dd/MM/yyyy", cal).toString();
+        date = DateFormat.format("dd-MM-yyyy", cal).toString();
 
         return date;
 

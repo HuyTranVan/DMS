@@ -41,6 +41,8 @@ public class Transaction {
     }
 
     public static void gotoHomeActivityRight(Boolean isFinnish) {
+        CustomSQL.setBoolean(Constants.ON_MAP_SCREEN, false);
+
         Context context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(context, HomeActivity.class);
         context.startActivity(intent);
@@ -51,8 +53,9 @@ public class Transaction {
     }
 
     public static void gotoMapsActivity() {
-        Context context = Util.getInstance().getCurrentActivity();
+        CustomSQL.setBoolean(Constants.ON_MAP_SCREEN, true);
 
+        Context context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(context, MapsActivity.class);
         context.startActivity(intent);
         ((AppCompatActivity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);

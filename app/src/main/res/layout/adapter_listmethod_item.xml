@@ -5,7 +5,7 @@
     android:id="@+id/view_list_method_parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/colorwhite_corner"
+    android:background="?selectableItemBackground"
     tools:ignore="WebViewLayout"
     android:orientation="vertical">
 
@@ -25,7 +25,9 @@
             android:id="@+id/list_method_line"
             android:layout_width="match_parent"
             android:layout_height="1dip"
-            android:background="#e0e0e0"/>
+            android:background="#e0e0e0"
+            android:layout_marginLeft="@dimen/_20sdp"
+            android:layout_marginRight="@dimen/_5sdp"/>
 
 </LinearLayout>
 

@@ -33,6 +33,16 @@ public class User extends BaseModel {
         return String.valueOf(id_user);
     }
 
+    public static int getId(){
+        int id_user = 0;
+        User currentUser = CustomSQL.getObject(Constants.USER, User.class);
+
+        if (currentUser != null) {
+            id_user = currentUser.getInt("id");
+        }
+        return id_user;
+    }
+
     public static String getToken(){
         String token = "";
         User currentUser = CustomSQL.getObject(Constants.USER, User.class);

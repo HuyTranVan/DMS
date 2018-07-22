@@ -72,6 +72,7 @@ public class StatisticalBillsAdapter extends RecyclerView.Adapter<StatisticalBil
             holder.tvNumber.setText(String.valueOf(position +1));
             holder.tvsignBoard.setText(Constants.getShopInfo(customer.getString("shopType") , null) + " " + customer.getString("signBoard"));
             holder.tvDistrict.setText(customer.getString("street") + " - " + customer.getString("district"));
+            holder.tvUser.setText(String.format("Nhân viên: %s",mData.get(position).getJsonObject("user").getString("displayName")));
 
             JSONArray arrayBillDetail = new JSONArray(mData.get(position).getString("billDetails"));
             List<BillDetail> listBillDetail = new ArrayList<>();
@@ -113,7 +114,7 @@ public class StatisticalBillsAdapter extends RecyclerView.Adapter<StatisticalBil
     }
 
     public class StatisticalBillsViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvDate, tvHour, tvPay, tvDebt, tvTotal, tvNumber, tvsignBoard, tvDistrict;
+        private TextView tvDate, tvHour, tvPay, tvDebt, tvTotal, tvNumber, tvsignBoard, tvDistrict, tvUser;
         private RecyclerView rvBillDetail;
         private View vLineUpper, vLineUnder;
         private LinearLayout lnParent;
@@ -133,7 +134,7 @@ public class StatisticalBillsAdapter extends RecyclerView.Adapter<StatisticalBil
             tvNumber = (TextView) itemView.findViewById(R.id.statistical_bills_item_number);
             tvsignBoard = (TextView) itemView.findViewById(R.id.statistical_bills_item_signboard);
             tvDistrict = (TextView) itemView.findViewById(R.id.statistical_bills_item_district);
-
+            tvUser = itemView.findViewById(R.id.statistical_bills_item_user);
         }
 
     }

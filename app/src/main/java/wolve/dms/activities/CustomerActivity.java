@@ -1,11 +1,16 @@
 package wolve.dms.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.PermissionChecker;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,12 +27,15 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionButton;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -65,19 +73,21 @@ import wolve.dms.libraries.FitScrollWithFullscreen;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
+import static wolve.dms.utils.Constants.REQUEST_PERMISSION_LOCATION;
+
 /**
  * Created by macos on 9/16/17.
  */
 
-public class CustomerActivity extends BaseActivity implements OnMapReadyCallback,GoogleMap.OnCameraIdleListener ,  View.OnClickListener, RadioGroup.OnCheckedChangeListener,ViewTreeObserver.OnGlobalLayoutListener {
+public class CustomerActivity extends BaseActivity implements OnMapReadyCallback, GoogleMap.OnCameraIdleListener, View.OnClickListener, RadioGroup.OnCheckedChangeListener, ViewTreeObserver.OnGlobalLayoutListener {
     public GoogleMap mMap;
     public SupportMapFragment mapFragment;
     private ImageView btnBack;
-    private CTextIcon tvTrash , btnEditLocation, tvDropdown;
+    private CTextIcon tvTrash, btnEditLocation, tvDropdown;
     private Button btnSubmit;
     private FloatingActionButton btnShopCart, btnCurrentLocation;
     private TextView tvTitle, tvTotal, tvDebt, tvPaid;
-    private CInputForm edName, edPhone , edAdress, edStreet, edDistrict, edCity, edNote , edShopType, edShopName;
+    private CInputForm edName, edPhone, edAdress, edStreet, edDistrict, edCity, edNote, edShopType, edShopName;
     private RadioGroup rgStatus;
     private RadioButton rdInterested, rdNotInterested, rdOrdered;
     private ScrollView scParent;
@@ -95,9 +105,10 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     private List<Bill> listBills = new ArrayList<>();
     private List<RecyclerView.Adapter> listAdapter;
     private Status currentStatus;
-    private int currentState= BottomSheetBehavior.STATE_COLLAPSED;
-    private String firstName ="";
+    private int currentState = BottomSheetBehavior.STATE_COLLAPSED;
+    private String firstName = "";
     private float bottomSheetHeight;
+    private FusedLocationProviderClient mFusedLocationClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,32 +173,32 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
     @Override
     public void initialData() {
-        mapFragment.getMapAsync(this);
+        setupMap();
         tabLayout.setupWithViewPager(viewPager);
-        currentStatus= Status.getStatusList().get(0);
+        currentStatus = Status.getStatusList().get(0);
 
         String bundle = getIntent().getExtras().getString(Constants.CUSTOMER);
-        if (bundle != null){
+        if (bundle != null) {
             try {
                 currentCustomer = new Customer(new JSONObject(bundle));
                 firstName = currentCustomer.getString("name");
 
-                edName.setText(currentCustomer.getString("name") == null? "" : currentCustomer.getString("name"));
-                edPhone.setText(currentCustomer.getString("phone") == null? "" : currentCustomer.getString("phone"));
-                edAdress.setText((currentCustomer.getString("address") == null? "" : currentCustomer.getString("address")));
-                edStreet.setText(currentCustomer.getString("street") == null? "" : currentCustomer.getString("street"));
+                edName.setText(currentCustomer.getString("name") == null ? "" : currentCustomer.getString("name"));
+                edPhone.setText(currentCustomer.getString("phone") == null ? "" : currentCustomer.getString("phone"));
+                edAdress.setText((currentCustomer.getString("address") == null ? "" : currentCustomer.getString("address")));
+                edStreet.setText(currentCustomer.getString("street") == null ? "" : currentCustomer.getString("street"));
                 edNote.setText(currentCustomer.getString("note"));
                 edDistrict.setText(currentCustomer.getString("district"));
                 edCity.setText(currentCustomer.getString("province"));
                 edShopName.setText(currentCustomer.getString("signBoard"));
-                edShopType.setText(Constants.getShopInfo(currentCustomer.getString("shopType") , null));
-                tvTitle.setText(edShopType.getText().toString() +" - " + currentCustomer.getString("signBoard") );
+                edShopType.setText(Constants.getShopInfo(currentCustomer.getString("shopType"), null));
+                tvTitle.setText(edShopType.getText().toString() + " - " + currentCustomer.getString("signBoard"));
 
-                if (currentCustomer.getString("status") != null){
+                if (currentCustomer.getString("status") != null) {
                     currentStatus = new Status(currentCustomer.getJsonObject("status"));
                 }
 
-                switch (currentStatus.getInt("id")){
+                switch (currentStatus.getInt("id")) {
                     case 1:
                         rdInterested.setChecked(true);
                         break;
@@ -199,17 +210,26 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                         break;
                 }
 
-                if (currentCustomer.getString("checkIns") != null ){
+                if (currentCustomer.getString("checkIns") != null) {
                     JSONArray array = new JSONArray(currentCustomer.getString("checkIns"));
-                    for (int i=0; i<array.length(); i++){
+                    for (int i = 0; i < array.length(); i++) {
                         listCheckins.add(new Checkin(array.getJSONObject(i)));
                     }
                 }
 
-                if (currentCustomer.getString("bills") != null ){
+                if (currentCustomer.getString("bills") != null) {
                     JSONArray array = new JSONArray(currentCustomer.getString("bills"));
-                    for (int i=0; i<array.length(); i++){
-                        listBills.add(new Bill(array.getJSONObject(i)));
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject objectBill = array.getJSONObject(i);
+                        JSONObject objectUser = objectBill.getJSONObject("user");
+                        if (User.getRole().equals(Constants.ROLE_ADMIN)){
+                            listBills.add(new Bill(objectBill));
+                        }else {
+                            if (User.getId() == objectUser.getInt("id")){
+                                listBills.add(new Bill(objectBill));
+                            }
+                        }
+
                     }
                 }
 
@@ -221,17 +241,17 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         }
         try {
 
-            if (currentCustomer.getInt("id") !=0){
+            if (currentCustomer.getInt("id") != 0) {
                 tvTrash.setVisibility(User.getRole().equals("MANAGER") ? View.VISIBLE : View.GONE);
 
-                if (currentCustomer.getJsonObject("distributor").getString("id").equals(Distributor.getDistributorId())){
+                if (currentCustomer.getJsonObject("distributor").getString("id").equals(Distributor.getDistributorId())) {
                     tvTrash.setVisibility(View.VISIBLE);
-                }else {
+                } else {
                     tvTrash.setVisibility(View.GONE);
                 }
-               btnSubmit.setText("CHECK_IN & CẬP NHẬT");
+                btnSubmit.setText("CHECK_IN & CẬP NHẬT");
 
-            }else {
+            } else {
 
                 tvTrash.setVisibility(View.GONE);
                 btnSubmit.setText("CẬP NHẬT");
@@ -240,9 +260,9 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             e.printStackTrace();
         }
 
-        if (edShopName.getText().toString().trim().equals("")){
+        if (edShopName.getText().toString().trim().equals("")) {
             edShopName.setSelection();
-        }else {
+        } else {
             edPhone.setSelection();
         }
 
@@ -253,14 +273,18 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         edShopName.addTextChangeListenter(new CInputForm.OnQueryTextListener() {
             @Override
             public boolean textChanged(String query) {
-                if (!firstName.contains("Anh ")){
-                    edName.setText("Anh "+ query.substring(query.trim().lastIndexOf(" ")+1));
+                if (!firstName.contains("Anh ")) {
+                    edName.setText("Anh " + query.substring(query.trim().lastIndexOf(" ") + 1));
                 }
                 tvTitle.setText(edShopType.getText().toString() + " - " + query);
                 return true;
             }
         });
 
+    }
+
+    private void setupMap() {
+        mapFragment.getMapAsync(this);
     }
 
     @Override
@@ -272,16 +296,17 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         btnEditLocation.setOnClickListener(this);
         btnCurrentLocation.setOnClickListener(this);
         btnShopCart.setOnClickListener(this);
-        coParent.getViewTreeObserver().addOnGlobalLayoutListener(this) ;
+        coParent.getViewTreeObserver().addOnGlobalLayoutListener(this);
         tvDropdown.setOnClickListener(this);
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
     }
 
     private void setupBottomSheet() {
-        if (listBills.size() >0){
+        if (listBills.size() > 0) {
             lnPaidParent.setVisibility(View.VISIBLE);
             bottomSheetHeight = Util.convertDp2Px(88);
 
-        }else {
+        } else {
             lnPaidParent.setVisibility(View.GONE);
             bottomSheetHeight = Util.convertDp2Px(58);
 
@@ -295,17 +320,17 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             int lastState = BottomSheetBehavior.STATE_COLLAPSED;
 
             @Override
-            public void onStateChanged(View bottomSheet, int newState){
+            public void onStateChanged(View bottomSheet, int newState) {
                 currentState = newState;
 
-                if (newState == BottomSheetBehavior.STATE_EXPANDED){
-                    if (tvTrash.getVisibility() == View.VISIBLE){
+                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    if (tvTrash.getVisibility() == View.VISIBLE) {
                         tvTrash.setVisibility(View.GONE);
                     }
-                }else if (newState == BottomSheetBehavior.STATE_COLLAPSED){
-                    if (currentCustomer.getInt("id") !=0){
+                } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    if (currentCustomer.getInt("id") != 0) {
                         tvTrash.setVisibility(User.getRole().equals("MANAGER") ? View.VISIBLE : View.GONE);
-                    }else {
+                    } else {
                         tvTrash.setVisibility(View.GONE);
                     }
                 }
@@ -319,11 +344,11 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         });
     }
 
-    private void setupViewPager(List<Checkin> listcheckin, List<Bill> listbills){
+    private void setupViewPager(List<Checkin> listcheckin, List<Bill> listbills) {
         final List<Bill> listbill = new ArrayList<>();
         try {
-            for (int i=0; i<listbills.size(); i++){
-                if (listbills.get(i).getJsonObject("distributor").getString("id").equals(Distributor.getDistributorId())){
+            for (int i = 0; i < listbills.size(); i++) {
+                if (listbills.get(i).getJsonObject("distributor").getString("id").equals(Distributor.getDistributorId())) {
                     listbill.add(listbills.get(i));
                 }
             }
@@ -334,7 +359,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             int currentPosition = listbill.size();
 
             final List<String> listTitle = new ArrayList<>();
-            listTitle.add(0,"CHECK_IN");
+            listTitle.add(0, "CHECK_IN");
             listTitle.add(1, "HÓA ĐƠN");
 
             final List<RecyclerView.Adapter> listadapter = new ArrayList<>();
@@ -370,17 +395,17 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
     }
 
-    private void createTabLayout(List<String> listTitle, List<RecyclerView.Adapter> listadapter ){
-        for (int i=0; i<listTitle.size(); i++){
+    private void createTabLayout(List<String> listTitle, List<RecyclerView.Adapter> listadapter) {
+        for (int i = 0; i < listTitle.size(); i++) {
             TabLayout.Tab tab = tabLayout.getTabAt(i);
             View customView = LayoutInflater.from(this).inflate(R.layout.view_tab_customer, null);
             TextView tabTextTitle = (TextView) customView.findViewById(R.id.tabNotify);
             TextView textTitle = (TextView) customView.findViewById(R.id.tabTitle);
             textTitle.setText(listTitle.get(i));
 
-            if (listadapter.get(i).getItemCount() <=0){
+            if (listadapter.get(i).getItemCount() <= 0) {
                 tabTextTitle.setVisibility(View.GONE);
-            }else {
+            } else {
                 tabTextTitle.setVisibility(View.VISIBLE);
                 tabTextTitle.setText(String.valueOf(listadapter.get(i).getItemCount()));
             }
@@ -389,13 +414,13 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         }
     }
 
-    private void reloadBillCount(int count){
+    private void reloadBillCount(int count) {
         TabLayout.Tab tab = tabLayout.getTabAt(1);
         TextView tabTextTitle = (TextView) tab.getCustomView().findViewById(R.id.tabNotify);
 
-        if (count <=0){
+        if (count <= 0) {
             tabTextTitle.setVisibility(View.GONE);
-        }else {
+        } else {
             tabTextTitle.setVisibility(View.VISIBLE);
             tabTextTitle.setText(String.valueOf(count));
         }
@@ -405,21 +430,21 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     @Override
     public void onClick(View v) {
         Util.hideKeyboard(v);
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.icon_back:
                 backEvent();
 
                 break;
 
             case R.id.add_customer_submit:
-                if (currentCustomer.getInt("id") == 0){
-                    if(currentStatus.getInt("id") == 1){
+                if (currentCustomer.getInt("id") == 0) {
+                    if (currentStatus.getInt("id") == 1) {
                         loadReasonList();
-                    }else {
+                    } else {
                         submitCustomerCheckin(currentStatus, true);
                     }
 
-                }else {
+                } else {
                     loadReasonList();
 
                 }
@@ -427,9 +452,9 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 break;
 
             case R.id.icon_more:
-                if (listBills.size() >0){
+                if (listBills.size() > 0) {
                     Util.showToast("Không thể xóa khách hàng có phát sinh hóa đơn");
-                }else {
+                } else {
                     deleteCustomer();
                 }
 
@@ -441,8 +466,17 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 break;
 
             case R.id.add_customer_currentlocation:
-                LatLng curLocation = new LatLng(getCurLocation().getLatitude(), getCurLocation().getLongitude());
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(curLocation, 18), 400, null);
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        LatLng newLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newLatLng, 18), 800, null);
+
+                    }
+                });
 
                 break;
 
@@ -592,13 +626,22 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        if (PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(Util.getInstance().getCurrentActivity(),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_PERMISSION_LOCATION);
+            return;
+        }
         mMap = googleMap;
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style_map));
-        mMap.setOnCameraIdleListener(this);
+        //mMap.setMyLocationEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
+        mMap.getUiSettings().setRotateGesturesEnabled(false);
         mMap.getUiSettings().setScrollGesturesEnabled(false);
 
+        mMap.setOnCameraIdleListener(this);
+
         LatLng curLocation = new LatLng(currentCustomer.getDouble("lat"), currentCustomer.getDouble("lng"));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(curLocation, 18), 200, null);
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(curLocation, 18), 800, null);
 
     }
 
@@ -704,7 +747,6 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 submitCustomerCheckin(status, true );
 
             }
-
             @Override
             public void UpdateOnly() {
                 submitCustomer();
@@ -780,7 +822,8 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             btnCurrentLocation.setVisibility(View.VISIBLE);
             btnSubmit.setVisibility(View.GONE);
 
-        }else if (btnEditLocation.getText().toString().trim().equals(getResources().getString(R.string.icon_save))){
+        }else if (
+            btnEditLocation.getText().toString().trim().equals(getResources().getString(R.string.icon_save))){
             mMap.getUiSettings().setScrollGesturesEnabled(false);
             btnEditLocation.setText(getResources().getString(R.string.icon_edit_map));
             btnEditLocation.setBackgroundResource(R.drawable.bg_red_rounded_button);

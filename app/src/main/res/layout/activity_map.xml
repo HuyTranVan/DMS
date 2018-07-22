@@ -11,28 +11,40 @@
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 
-    <com.miguelcatalan.materialsearchview.MaterialSearchView
-        android:id="@+id/map_searchview"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_5sdp"/>
+        android:orientation="vertical">
 
-    <!--<RelativeLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="@dimen/_35sdp"-->
-        <!--android:background="@drawable/bg_toolbar">-->
+        <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
+            android:id="@+id/map_loading"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:indeterminate="true"
+            app:spb_sections_count="4"
+            app:spb_color="@color/colorBlue"
+            app:spb_speed="2.0"
+            app:spb_stroke_width="4dp"
+            app:spb_stroke_separator_length="4dp"
+            app:spb_reversed="false"
+            app:spb_mirror_mode="true"
+            app:spb_progressiveStart_activated="false"
+            app:spb_progressiveStart_speed="1.5"
+            app:spb_progressiveStop_speed="3.4"
+            android:visibility="gone"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_marginTop="-4dp"
+            android:layout_below="@+id/map_searchview"/>
 
-        <!--<ImageView-->
-            <!--android:id="@+id/map_back"-->
-            <!--android:layout_width="@dimen/_35sdp"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:src="@drawable/ic_arrow_back_white"-->
-            <!--android:padding="@dimen/_8sdp"/>-->
+        <com.miguelcatalan.materialsearchview.MaterialSearchView
+            android:id="@+id/map_searchview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-
-    <!--</RelativeLayout>-->
+    </RelativeLayout>
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/map_new_customer"
@@ -99,15 +111,6 @@
         android:layout_gravity="bottom|right"
         app:fab_size="normal"/>
 
-    <Spinner
-        android:id="@+id/map_spinner"
-        android:layout_width="@dimen/_100sdp"
-        android:layout_height="wrap_content"
-        android:overlapAnchor="false"
-        android:paddingHorizontal="@dimen/_1sdp"
-        android:layout_gravity="right|center_vertical"
-        />
-
     <RadioGroup
         android:checkedButton="@+id/map_filter_all"
         android:id="@+id/map_filter"
@@ -166,85 +169,5 @@
             android:textSize="@dimen/_10sdp"/>
 
     </RadioGroup>
-
-    <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
-        android:id="@+id/map_loading"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:indeterminate="true"
-        app:spb_sections_count="4"
-        app:spb_color="@color/colorBlue"
-        app:spb_speed="2.0"
-        app:spb_stroke_width="4dp"
-        app:spb_stroke_separator_length="4dp"
-        app:spb_reversed="false"
-        app:spb_mirror_mode="true"
-        app:spb_progressiveStart_activated="false"
-        app:spb_progressiveStart_speed="1.5"
-        app:spb_progressiveStop_speed="3.4"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="-2dp"
-        android:visibility="gone"/>
-
-    <!--<LinearLayout-->
-        <!--android:id="@+id/map_bottom_sheet"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="57dp"-->
-        <!--android:background="@color/colorWhite"-->
-        <!--android:orientation="vertical"-->
-        <!--android:clickable="true"-->
-        <!--app:layout_behavior="android.support.design.widget.BottomSheetBehavior">-->
-
-        <!--<View-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="1dp"-->
-            <!--android:background="@color/black_text_color_hint"/>-->
-
-        <!--<RelativeLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="0dp"-->
-            <!--android:background="@drawable/bg_header_top">-->
-
-            <!--<LinearLayout-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:background="@drawable/btn_choice_grey"-->
-                <!--android:layout_alignParentRight="true"-->
-                <!--android:layout_centerVertical="true"-->
-                <!--android:layout_marginTop="@dimen/_5sdp"-->
-                <!--android:layout_marginRight="@dimen/_10sdp">-->
-
-                <!---->
-            <!--</LinearLayout>-->
-
-            <!--<ProgressBar-->
-                <!--android:id="@+id/map_loading"-->
-                <!--android:layout_width="@dimen/_15sdp"-->
-                <!--android:layout_height="@dimen/_15sdp"-->
-                <!--android:layout_toLeftOf="@+id/map_countcustomer"-->
-                <!--android:layout_centerVertical="true"-->
-                <!--android:layout_marginRight="@dimen/_5sdp"-->
-                <!--android:indeterminateTint="@color/colorBlue"-->
-                <!--android:visibility="gone"/>-->
-
-            <!--<TextView-->
-                <!--android:id="@+id/map_countcustomer"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_centerVertical="true"-->
-                <!--android:layout_alignParentRight="true"-->
-                <!--android:layout_marginRight="@dimen/_10sdp"/>-->
-
-        <!--</RelativeLayout>-->
-
-
-        <!--<android.support.v7.widget.RecyclerView-->
-            <!--android:id="@+id/map_rvcustomer"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"/>-->
-
-    <!--</LinearLayout>-->
-
-
 
 </android.support.design.widget.CoordinatorLayout>

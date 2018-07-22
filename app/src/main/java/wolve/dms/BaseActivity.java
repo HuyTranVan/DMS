@@ -46,6 +46,7 @@ import wolve.dms.activities.AddProductFragment;
 import wolve.dms.activities.MapsActivity;
 import wolve.dms.adapter.BluetoothListAdapter;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackProcess;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomSQL;
@@ -368,7 +369,22 @@ public abstract class BaseActivity extends AppCompatActivity {
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))){
-//                    connectBluetoothDevice(device);
+                    connectBluetoothDevice(device, new CallbackProcess() {
+                        @Override
+                        public void onStart() {
+
+                        }
+
+                        @Override
+                        public void onError() {
+
+                        }
+
+                        @Override
+                        public void onSuccess(String name) {
+
+                        }
+                    });
                 }
 
             }
@@ -420,15 +436,18 @@ public abstract class BaseActivity extends AppCompatActivity {
         } catch (Exception ex) {
             return -2;
         }
-        Util.showToast("Getting all available Bluetooth Devices");
+//        Util.showToast("Getting all available Bluetooth Devices");
 
         return 0;
 
     }
 
-    public void connectBluetoothDevice(final BluetoothDevice device, CallbackBoolean mListener){
+    public void  connectBluetoothDevice(final BluetoothDevice device, final CallbackProcess mListener){
+        mListener.onStart();
         if (mBluetoothAdapter == null) {
+            mListener.onError();
             return;
+
         }
 
         Thread connectThread = new Thread(new Runnable() {
@@ -446,31 +465,37 @@ public abstract class BaseActivity extends AppCompatActivity {
                     try {
                         btsocket.close();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        mListener.onError();
+//                        e.printStackTrace();
                     }
                     btsocket = null;
+
                     return;
                 } finally {
                     runOnUiThread(new Runnable() {
 
                         @Override
                         public void run() {
+
                             try {
                                 if (btsocket != null){
-                                    Util.showSnackbar("Connected to " + device.getName(), null, null);
-//                                    tvBluetooth.setText(R.string.icon_bluetooth_connected);
-//                                    tvBluetooth.setTextColor(getResources().getColor(R.color.colorBlue));
-//                                    tvPrinterName.setText("Đang kết nối: "+ btsocket.getRemoteDevice().getName());
-                                    //printerProgress.setVisibility(View.GONE);
-
+                                    if (Util.getInstance().getCurrentActivity().getLocalClassName().equals("activities.ShopCartActivity")){
+//                                        Util.shopCartActivity.tvBluetooth.setText(R.string.icon_bluetooth_connected);
+//                                        Util.shopCartActivity.tvBluetooth.setTextColor(getResources().getColor(R.color.colorBlue));
+                                    }
                                     CustomSQL.setString(Constants.BLUETOOTH_DEVICE, btsocket.getRemoteDevice().getAddress());
                                     outputStream = btsocket.getOutputStream();
                                     mBluetoothAdapter.cancelDiscovery();
 
+                                    mListener.onSuccess(device.getName());
+                                }else {
+                                    mListener.onError();
                                 }
 
+
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                mListener.onError();
+//                                e.printStackTrace();
                             }
 
 

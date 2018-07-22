@@ -10,10 +10,12 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.PermissionChecker;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -42,9 +44,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.BuildConfig;
 import wolve.dms.R;
 import wolve.dms.adapter.CartProductDialogAdapter;
+import wolve.dms.adapter.ProductAdapter;
+import wolve.dms.adapter.ProductViewpagerAdapter;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackClickAdapter;
+import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CInputForm;
@@ -69,11 +75,15 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
     private TextView tvTitle;
     private RecyclerView rvProduct;
     private Button btnSubmit ;
+    private ViewPager viewPager;
+    private TabLayout tabLayout;
 
     private ShopCartActivity mActivity;
     private List<Product> listProducts = new ArrayList<>();
     private CartProductDialogAdapter adapter;
     private ProductGroup productGroup;
+    private ProductViewpagerAdapter viewpagerAdapter;
+    private int currentPosition =0;
 
 
     @Nullable
@@ -136,6 +146,71 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
                 break;
 
         }
+    }
+
+    private void setupViewPager(final List<ProductGroup> listproductgroup, final List<Product> listproduct){
+        final List<RecyclerView.Adapter> listadapter = new ArrayList<>();
+
+        for (int  i=0; i<listproductgroup.size(); i++){
+//            CartProductDialogAdapter productAdapters = new CartProductDialogAdapter(listproductgroup.get(i), listproduct, new CallbackClickAdapter() {
+//                @Override
+//                public void onRespone(String data, int position) {
+////                    openFragmentNewProduct(data);
+//                }
+//
+//            }, new CallbackDeleteAdapter() {
+//                @Override
+//                public void onDelete(String data, int position) {
+////                    loadProductGroup(true);
+//                }
+//            });
+
+//            listadapter.add(productAdapters);
+        }
+
+        viewpagerAdapter = new ProductViewpagerAdapter(listadapter, listproductgroup);
+        viewPager.setAdapter(viewpagerAdapter);
+        viewPager.setCurrentItem(currentPosition);
+        viewPager.setOffscreenPageLimit(4);
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                currentPosition = position;
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+        for (int i=0; i<listproductgroup.size(); i++){
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
+            View customView = LayoutInflater.from(mActivity).inflate(R.layout.view_tab_product, null);
+//            TextView tabTextTitle = (TextView) customView.findViewById(R.id.tabNotify);
+            TextView textTitle = (TextView) customView.findViewById(R.id.tabTitle);
+
+            textTitle.setText(listproductgroup.get(i).getString("name"));
+
+//            if (listadapter.get(i).getItemCount() <=0){
+//                tabTextTitle.setVisibility(View.GONE);
+//            }else {
+//                tabTextTitle.setVisibility(View.VISIBLE);
+//                tabTextTitle.setText(String.valueOf(listadapter.get(i).getItemCount()));
+//            }
+
+//
+
+            tab.setCustomView(customView);
+        }
+
+
     }
 
     private void createRVProduct(List<Product> list, ProductGroup group){
