@@ -11,4 +11,10 @@
         <attr name="android:textColor" />
         <attr name="android:textColorHint" />
     </declare-styleable>
+
+    <declare-styleable name="CTextViewDefault">
+        <attr name="customFont" format="string"/>
+        <attr name="textWhite" format="boolean"/>
+        <attr name="setActive" format="boolean"/>
+    </declare-styleable>
 </resources>

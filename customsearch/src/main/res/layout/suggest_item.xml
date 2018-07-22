@@ -1,27 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="?attr/actionBarSize">
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/suggestion_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/search_view_text_padding"
-        android:paddingRight="@dimen/search_view_text_padding"
-        android:textColor="#727272"
-        android:layout_centerVertical="true"
-        android:focusable="false"
-        android:textSize="16sp" />
-
-    <ImageView
+    <com.miguelcatalan.materialsearchview.utils.CTextIcon
         android:id="@+id/suggestion_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_centerVertical="true"
-        android:background="@android:color/transparent"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:textSize="18sp"
+        android:gravity="center"
         android:paddingLeft="@dimen/search_icon_padding"
         android:paddingRight="@dimen/search_icon_padding"
         android:focusable="false"
-        android:src="@drawable/ic_suggestion" />
+        android:layout_centerVertical="true"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="5dp"
+        android:layout_toRightOf="@+id/suggestion_icon"
+        android:layout_toLeftOf="@+id/suggestion_contact"
+        android:layout_centerVertical="true">
+
+        <TextView
+            android:id="@+id/suggestion_maintext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingRight="@dimen/search_view_text_padding"
+            android:textColor="@color/black_text_color"
+            android:gravity="center_vertical"
+            android:focusable="false"
+            android:text="adfasdf"
+            android:textSize="16sp"
+            android:singleLine="true"/>
+
+        <TextView
+            android:id="@+id/suggestion_secondtext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingRight="@dimen/search_view_text_padding"
+            android:textColor="@color/black_text_color_hint"
+            android:layout_centerVertical="true"
+            android:gravity="center_vertical"
+            android:focusable="false"
+            android:text="adfasdf"
+            android:textSize="12sp"
+            />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/suggestion_contact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="70dp"
+        android:paddingRight="10dp"
+        android:textColor="#727272"
+        android:layout_centerVertical="true"
+        android:gravity="center_vertical"
+        android:focusable="false"
+        android:text="0909136885"
+        android:textSize="16sp"
+        android:layout_alignParentRight="true"/>
+
+
+    <TextView
+        android:id="@+id/suggestion_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:background="#0d000000"
+        android:layout_alignParentBottom="true"/>
+
 </RelativeLayout>
