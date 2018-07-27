@@ -18,7 +18,7 @@ public class Product extends BaseModel{
     static List<Product> mListProducts = null;
 
     public Product() {
-        jsonObject = null;
+        jsonObject = new JSONObject();
     }
 
     public Product(JSONObject objOrder) {

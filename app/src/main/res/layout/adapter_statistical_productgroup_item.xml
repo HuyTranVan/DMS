@@ -31,6 +31,17 @@
                 android:textColor="@color/colorBlue"
                 android:layout_marginLeft="@dimen/_10sdp"/>
 
+            <TextView
+                android:id="@+id/statistical_productgroup_item_sum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:padding="@dimen/_2sdp"
+                android:text="a"
+                android:textStyle="bold"
+                android:textColor="@color/colorBlueDark"
+                android:layout_marginEnd="@dimen/_15sdp"
+                android:layout_alignParentRight="true"/>
 
         </RelativeLayout>
 

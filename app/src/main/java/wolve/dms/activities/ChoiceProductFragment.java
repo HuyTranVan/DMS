@@ -46,6 +46,7 @@ import wolve.dms.R;
 import wolve.dms.adapter.CartProductDialogAdapter;
 import wolve.dms.adapter.ProductAdapter;
 import wolve.dms.adapter.ProductViewpagerAdapter;
+import wolve.dms.adapter.ShopcartViewpagerAdapter;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.callback.CallbackBoolean;
@@ -73,7 +74,7 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
     private View view;
     private ImageView btnBack;
     private TextView tvTitle;
-    private RecyclerView rvProduct;
+//    private RecyclerView rvProduct;
     private Button btnSubmit ;
     private ViewPager viewPager;
     private TabLayout tabLayout;
@@ -82,8 +83,9 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
     private List<Product> listProducts = new ArrayList<>();
     private CartProductDialogAdapter adapter;
     private ProductGroup productGroup;
-    private ProductViewpagerAdapter viewpagerAdapter;
+    private ShopcartViewpagerAdapter viewpagerAdapter;
     private int currentPosition =0;
+    private List<CartProductDialogAdapter> listadapter;
 
 
     @Nullable
@@ -99,9 +101,9 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
     }
 
     private void intitialData() {
-        String bundle = getArguments().getString(Constants.PRODUCTGROUP);
-        productGroup = new ProductGroup(bundle);
-        tvTitle.setText(String.format("CHỌN SẢN PHẨM %s", productGroup.getString("name")));
+//        String bundle = getArguments().getString(Constants.PRODUCTGROUP);
+//        productGroup = new ProductGroup(bundle);
+//        tvTitle.setText(String.format("CHỌN SẢN PHẨM %s", productGroup.getString("name")));
         List<Product> all = Product.getProductList();
         try {
             for (int i=0 ; i<all.size(); i++){
@@ -114,7 +116,9 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        createRVProduct(listProducts, productGroup);
+//        createRVProduct(listProducts, productGroup);
+        tabLayout.setupWithViewPager(viewPager);
+        setupViewPager(mActivity.listProducts);
 
     }
 
@@ -127,9 +131,11 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
     private void initializeView() {
         mActivity = (ShopCartActivity) getActivity();
         tvTitle = view.findViewById(R.id.cart_choice_header_title);
-        rvProduct = view.findViewById(R.id.cart_choice_rvproduct);
+//        rvProduct = view.findViewById(R.id.cart_choice_rvproduct);
         btnSubmit = (Button) view.findViewById(R.id.cart_choice_submit);
         btnBack = (ImageView) view.findViewById(R.id.icon_back);
+        viewPager = view.findViewById(R.id.cart_choice_viewpager);
+        tabLayout = view.findViewById(R.id.cart_choice_tabs);
 
     }
 
@@ -148,30 +154,25 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
         }
     }
 
-    private void setupViewPager(final List<ProductGroup> listproductgroup, final List<Product> listproduct){
-        final List<RecyclerView.Adapter> listadapter = new ArrayList<>();
+    private void setupViewPager( final List<Product> listproduct){
+        listadapter  = new ArrayList<>();
 
-        for (int  i=0; i<listproductgroup.size(); i++){
-//            CartProductDialogAdapter productAdapters = new CartProductDialogAdapter(listproductgroup.get(i), listproduct, new CallbackClickAdapter() {
-//                @Override
-//                public void onRespone(String data, int position) {
-////                    openFragmentNewProduct(data);
-//                }
-//
-//            }, new CallbackDeleteAdapter() {
-//                @Override
-//                public void onDelete(String data, int position) {
-////                    loadProductGroup(true);
-//                }
-//            });
+        for (int  i=0; i<mActivity.listProductGroups.size(); i++){
+            CartProductDialogAdapter productAdapters = new CartProductDialogAdapter(listproduct, i,mActivity.listProductGroups.get(i), new CartProductDialogAdapter.CallbackViewPager() {
+                @Override
+                public void onChoosen(int position, int count) {
+                    reloadBillCount(position, count);
+                }
+            });
 
-//            listadapter.add(productAdapters);
+            listadapter.add(productAdapters);
+
         }
 
-        viewpagerAdapter = new ProductViewpagerAdapter(listadapter, listproductgroup);
+        viewpagerAdapter = new ShopcartViewpagerAdapter(listadapter, mActivity.listProductGroups);
         viewPager.setAdapter(viewpagerAdapter);
         viewPager.setCurrentItem(currentPosition);
-        viewPager.setOffscreenPageLimit(4);
+        viewPager.setOffscreenPageLimit(3);
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -190,22 +191,14 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
             }
         });
 
-        for (int i=0; i<listproductgroup.size(); i++){
+        for (int i=0; i<mActivity.listProductGroups.size(); i++){
             TabLayout.Tab tab = tabLayout.getTabAt(i);
             View customView = LayoutInflater.from(mActivity).inflate(R.layout.view_tab_product, null);
-//            TextView tabTextTitle = (TextView) customView.findViewById(R.id.tabNotify);
+            TextView tabTextTitle = (TextView) customView.findViewById(R.id.tabNotify);
             TextView textTitle = (TextView) customView.findViewById(R.id.tabTitle);
 
-            textTitle.setText(listproductgroup.get(i).getString("name"));
-
-//            if (listadapter.get(i).getItemCount() <=0){
-//                tabTextTitle.setVisibility(View.GONE);
-//            }else {
-//                tabTextTitle.setVisibility(View.VISIBLE);
-//                tabTextTitle.setText(String.valueOf(listadapter.get(i).getItemCount()));
-//            }
-
-//
+            textTitle.setText(mActivity.listProductGroups.get(i).getString("name"));
+            tabTextTitle.setVisibility(View.GONE);
 
             tab.setCustomView(customView);
         }
@@ -213,31 +206,57 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
 
     }
 
-    private void createRVProduct(List<Product> list, ProductGroup group){
-        btnSubmit.setVisibility(View.GONE);
-        adapter = new CartProductDialogAdapter(list, group, new CallbackBoolean() {
-            @Override
-            public void onRespone(Boolean result) {
-                btnSubmit.setVisibility(result? View.VISIBLE : View.GONE);
+//    private void createRVProduct(List<Product> list, ProductGroup group){
+//        btnSubmit.setVisibility(View.GONE);
+//        adapter = new CartProductDialogAdapter(list, group, new CallbackBoolean() {
+//            @Override
+//            public void onRespone(Boolean result) {
+//                btnSubmit.setVisibility(result? View.VISIBLE : View.GONE);
+//
+//            }
+//        });
+//        rvProduct.setAdapter(adapter);
+//        rvProduct.setHasFixedSize(true);
+//        rvProduct.setNestedScrollingEnabled(false);
+//        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(), LinearLayoutManager.VERTICAL, false);
+//        rvProduct.setLayoutManager(layoutManager);
+//    }
 
-            }
-        });
-        rvProduct.setAdapter(adapter);
-        rvProduct.setHasFixedSize(true);
-        rvProduct.setNestedScrollingEnabled(false);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(), LinearLayoutManager.VERTICAL, false);
-        rvProduct.setLayoutManager(layoutManager);
-    }
-
-    protected void submitProduct(){
+    protected void  submitProduct(){
         List<Product> listChecked = new ArrayList<Product>();
-        for (int i=0; i<adapter.getAllData().size(); i++){
-            if (adapter.getAllData().get(i).getBoolean("checked")){
-                listChecked.add(adapter.getAllData().get(i));
+
+        for (int i=0; i<listadapter.size(); i++){
+            List<Product> listTemp = new ArrayList<>();
+            listTemp = listadapter.get(i).getAllData();
+            for (int j=0; j<listTemp.size(); j++){
+                if (listTemp.get(j).getBoolean("checked")){
+                    listChecked.add(listTemp.get(j));
+                }
             }
         }
+
+
+
         mActivity.updatelistProduct(listChecked, false);
         getActivity().getSupportFragmentManager().popBackStack();
+
+    }
+
+    private void reloadBillCount(int position, int count) {
+        TabLayout.Tab tab = tabLayout.getTabAt(position);
+        View customView = LayoutInflater.from(mActivity).inflate(R.layout.view_tab_product, null);
+        TextView tabTextTitle = (TextView) customView.findViewById(R.id.tabNotify);
+        TextView textTitle = (TextView) customView.findViewById(R.id.tabTitle);
+
+        textTitle.setText(mActivity.listProductGroups.get(position).getString("name"));
+        if (count <= 0) {
+            tabTextTitle.setVisibility(View.GONE);
+        } else {
+            tabTextTitle.setVisibility(View.VISIBLE);
+            tabTextTitle.setText(String.valueOf(count));
+        }
+        tab.setCustomView(null);
+        tab.setCustomView(customView);
 
     }
 

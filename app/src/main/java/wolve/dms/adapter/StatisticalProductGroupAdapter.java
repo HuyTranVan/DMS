@@ -58,6 +58,8 @@ public class StatisticalProductGroupAdapter extends RecyclerView.Adapter<Statist
             holder.tvGroupName.setText(mData.get(position).getString("name"));
             mProduct = sumProductByGroup(mData.get(position).getInt("id"));
 
+            holder.tvGroupSum.setText(sumProductQuantity(mProduct));
+
             StatisticalProductAdapter adapter = new StatisticalProductAdapter(mProduct);
             adapter.notifyDataSetChanged();
             holder.rvGroup.setAdapter(adapter);
@@ -72,13 +74,13 @@ public class StatisticalProductGroupAdapter extends RecyclerView.Adapter<Statist
     }
 
     public class StatisticalProductGroupViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvGroupName;
+        private TextView tvGroupName, tvGroupSum;
         private RecyclerView rvGroup;
         private CardView lnParent;
 
         public StatisticalProductGroupViewHolder(View itemView) {
             super(itemView);
-
+            tvGroupSum = itemView.findViewById(R.id.statistical_productgroup_item_sum);
             tvGroupName = (TextView) itemView.findViewById(R.id.statistical_productgroup_item_group);
             rvGroup = (RecyclerView) itemView.findViewById(R.id.statistical_productgroup_item_rvproduct);
             lnParent = (CardView) itemView.findViewById(R.id.statistical_productgroup_item_content_parent);
@@ -119,6 +121,14 @@ public class StatisticalProductGroupAdapter extends RecyclerView.Adapter<Statist
         return productList;
     }
 
+    private String sumProductQuantity(List<Product> list){
+        int sum = 0;
+        if (list.size()>0)
+            for (int i=0; i<list.size(); i++){
+                sum+= list.get(i).getInt("sumquantity");
+            }
+        return String.valueOf(sum);
+    }
 
 
 }

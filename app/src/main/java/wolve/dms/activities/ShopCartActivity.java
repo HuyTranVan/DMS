@@ -23,6 +23,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.github.clans.fab.FloatingActionButton;
 import com.soundcloud.android.crop.Crop;
 
 import org.json.JSONArray;
@@ -82,28 +83,26 @@ import static wolve.dms.utils.Transaction.gotoImageChooser;
 public class ShopCartActivity extends BaseActivity implements  View.OnClickListener {
     private ImageView btnBack;
     private Button btnSubmit;
-    protected CTextIcon tvBluetooth;
+//    protected CTextIcon tvBluetooth;
     protected TextView tvPrinterStatus;
     private TextView tvTitle, tvTotal;// tvHint; //btnAdd, btnAddPromotion;
     private CInputForm tvNote;
-    private RecyclerView rvProducts, rvPromotions, rvButtonGroup;
-//    private RelativeLayout rlCover;
+    private RecyclerView rvProducts;
+    private RelativeLayout rlCover;
     private ImageView imgLogo;
     private LinearLayout lnSubmitGroup;
+    private FloatingActionButton btnAddProduct;
 
     private CartProductsAdapter adapterProducts;
     private CartPromotionsAdapter adapterPromotions;
     private CartGroupButtonAdapter groupButtonAdapter;
     private Customer currentCustomer;
     private List<Product> listInitialProduct = new ArrayList<>();
-    private List<Product> listInitialPromotion = new ArrayList<>();
+//    private List<Product> listInitialPromotion = new ArrayList<>();
     private List<Bill> listBills = new ArrayList<>();
     private Uri imageChangeUri ;
-//    protected List<Product> listProducts = new ArrayList<>();
-//    private List<BluetoothDevice> listDevice = new ArrayList<>();
-//    private BluetoothAdapter mBluetoothAdapter = null;
-//    private static BluetoothSocket btsocket;
-//    private static OutputStream outputStream;
+    protected List<Product> listProducts = new ArrayList<>();
+    protected List<ProductGroup> listProductGroups = new ArrayList<>();
 
 
 
@@ -130,11 +129,12 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         //btnAdd =  findViewById(R.id.cart_add_product);
         //btnAddPromotion =  findViewById(R.id.cart_add_promotion);
         rvProducts =  findViewById(R.id.cart_rvproduct);
-        rvPromotions =  findViewById(R.id.cart_rvpromotion);
-        //rlCover =  findViewById(R.id.cart_cover);
-        imgLogo = findViewById(R.id.cart_bluetooth_printer);
-        tvBluetooth = findViewById(R.id.cart_bluetooth);
-        rvButtonGroup = findViewById(R.id.cart_rvGroupButton);
+//        rvPromotions =  findViewById(R.id.cart_rvpromotion);
+        rlCover =  findViewById(R.id.cart_cover);
+        imgLogo = findViewById(R.id.cart_logo);
+//        tvBluetooth = findViewById(R.id.cart_bluetooth);
+//        rvButtonGroup = findViewById(R.id.cart_rvGroupButton);
+        btnAddProduct = findViewById(R.id.add_product);
 
     }
 
@@ -142,7 +142,9 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     public void initialData() {
         Util.shopCartActivity = this;
         String bundle = getIntent().getExtras().getString(Constants.CUSTOMER_CART);
-        createRVButtonGroup(ProductGroup.getProductGroupList());
+        lnSubmitGroup.setVisibility(View.GONE);
+        rlCover.setVisibility(View.VISIBLE);
+//        createRVButtonGroup(ProductGroup.getProductGroupList());
         if (bundle != null){
             try {
                 currentCustomer = new Customer(new JSONObject(bundle));
@@ -165,8 +167,10 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
             new DownloadImage(this, imgLogo, Api_link.LOGO_BILL).execute();
         }
 
+        loadListProduct();
+        loadListProductGroup();
         createRVProduct(listInitialProduct);
-        createRVPromotion(listInitialPromotion);
+//        createRVPromotion(listInitialPromotion);
         registerBluetooth();
     }
 
@@ -175,8 +179,8 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         btnBack.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
         imgLogo.setOnClickListener(this);
-        tvBluetooth.setOnClickListener(this);
-
+        tvPrinterStatus.setOnClickListener(this);
+        btnAddProduct.setOnClickListener(this);
     }
 
     @Override
@@ -184,10 +188,11 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.cart_parent);
         if (Util.getInstance().isLoading()){
             Util.getInstance().stopLoading(true);
+
         }else if(mFragment != null && mFragment instanceof ChoiceProductFragment) {
             ChoiceProductFragment fragment = (ChoiceProductFragment) mFragment;
             fragment.submitProduct();
-            //getSupportFragmentManager().popBackStack();
+
         }else {
             returnCustomerActivity(currentCustomer);
         }
@@ -208,14 +213,19 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
                 break;
 
-            case R.id.cart_bluetooth_printer:
+            case R.id.cart_logo:
                 imageChangeUri = Uri.fromFile(Util.getOutputMediaFile());
                 gotoImageChooser();
                 break;
 
-            case R.id.cart_bluetooth:
+            case R.id.cart_printer_status:
                 BluetoothListFragment fragment = new BluetoothListFragment();
                 showFragmentDialog(fragment );
+
+                break;
+
+            case R.id.add_product:
+                changeFragment(new ChoiceProductFragment() , true);
 
                 break;
         }
@@ -230,25 +240,45 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
     }
 
-    private void createRVButtonGroup(final List<ProductGroup> list){
-        lnSubmitGroup.setVisibility(View.GONE);
+    private void loadListProduct(){
+        List<Product> all = Product.getProductList();
+        try {
+            for (int i=0 ; i<all.size(); i++){
+                Product product = all.get(i);
+                product.put("checked", false);
 
-        groupButtonAdapter = new CartGroupButtonAdapter(list, new CallbackClickAdapter() {
-            @Override
-            public void onRespone(String data, int position) {
-                ProductGroup productGroup = new ProductGroup(data);
-                Bundle bundle = new Bundle();
-                bundle.putString(Constants.PRODUCTGROUP, productGroup.ProductGrouptoString());
-                changeFragment(new ChoiceProductFragment() , bundle, true);
+                listProducts.add(product);
 
             }
-        });
-        rvButtonGroup.setAdapter(groupButtonAdapter);
-        rvButtonGroup.setHasFixedSize(true);
-        rvButtonGroup.setNestedScrollingEnabled(false);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(), LinearLayoutManager.HORIZONTAL, false);
-        rvButtonGroup.setLayoutManager(layoutManager);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
+
+    private void loadListProductGroup(){
+        listProductGroups = ProductGroup.getProductGroupList();
+
+    }
+
+//    private void createRVButtonGroup(final List<ProductGroup> list){
+//        lnSubmitGroup.setVisibility(View.GONE);
+//
+//        groupButtonAdapter = new CartGroupButtonAdapter(list, new CallbackClickAdapter() {
+//            @Override
+//            public void onRespone(String data, int position) {
+//                ProductGroup productGroup = new ProductGroup(data);
+//                Bundle bundle = new Bundle();
+//                bundle.putString(Constants.PRODUCTGROUP, productGroup.ProductGrouptoString());
+//                changeFragment(new ChoiceProductFragment() , bundle, true);
+//
+//            }
+//        });
+//        rvButtonGroup.setAdapter(groupButtonAdapter);
+//        rvButtonGroup.setHasFixedSize(true);
+//        rvButtonGroup.setNestedScrollingEnabled(false);
+//        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(), LinearLayoutManager.HORIZONTAL, false);
+//        rvButtonGroup.setLayoutManager(layoutManager);
+//    }
 
     private void createRVProduct(final List<Product> list){
         adapterProducts = new CartProductsAdapter(list, new CallbackChangePrice() {
@@ -260,6 +290,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 rvProducts.invalidate();
 
                 lnSubmitGroup.setVisibility(adapterProducts.getAllDataProduct().size()>0 ? View.VISIBLE : View.GONE);
+                rlCover.setVisibility(adapterProducts.getAllDataProduct().size()>0 ? View.GONE : View.VISIBLE);
 //                tvHint.setVisibility(adapterProducts.getAllDataProduct().size()>0 ? View.VISIBLE : View.GONE);
             }
         }) ;
@@ -270,24 +301,24 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         rvProducts.setLayoutManager(layoutManager);
     }
 
-    private void createRVPromotion(final List<Product> list){
-        adapterPromotions = new CartPromotionsAdapter(list, new CallbackDeleteAdapter() {
-            @Override
-            public void onDelete(String data, int position) {
-//                listCurrentPromotion.remove(position);
-                rvPromotions.requestLayout();
-                rvPromotions.invalidate();
-
-                lnSubmitGroup.setVisibility(adapterPromotions.getAllDataPromotion().size()>0 ? View.VISIBLE : View.GONE);
-//                tvHint.setVisibility(adapterPromotions.getAllDataPromotion().size()>0 ? View.VISIBLE : View.GONE);
-            }
-        });
-        rvPromotions.setAdapter(adapterPromotions);
-        rvPromotions.setHasFixedSize(true);
-        rvPromotions.setNestedScrollingEnabled(false);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(), LinearLayoutManager.VERTICAL, false);
-        rvPromotions.setLayoutManager(layoutManager);
-    }
+//    private void createRVPromotion(final List<Product> list){
+//        adapterPromotions = new CartPromotionsAdapter(list, new CallbackDeleteAdapter() {
+//            @Override
+//            public void onDelete(String data, int position) {
+////                listCurrentPromotion.remove(position);
+//                rvPromotions.requestLayout();
+//                rvPromotions.invalidate();
+//
+//                lnSubmitGroup.setVisibility(adapterPromotions.getAllDataPromotion().size()>0 ? View.VISIBLE : View.GONE);
+////                tvHint.setVisibility(adapterPromotions.getAllDataPromotion().size()>0 ? View.VISIBLE : View.GONE);
+//            }
+//        });
+//        rvPromotions.setAdapter(adapterPromotions);
+//        rvPromotions.setHasFixedSize(true);
+//        rvPromotions.setNestedScrollingEnabled(false);
+//        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(), LinearLayoutManager.VERTICAL, false);
+//        rvPromotions.setLayoutManager(layoutManager);
+//    }
 
     protected void updatelistProduct(List<Product> list_product, Boolean isPromotion){
         for (int i=0; i<list_product.size(); i++){
@@ -326,13 +357,13 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
     private void submitBill(final Double total, final Double paid){
         Util.getInstance().showLoading("Đang in...");
-        final String params = createPostBillParam(total, paid, getListProduct());
+        final String params = createPostBillParam(total, paid, adapterProducts.getAllDataProduct());
         if (btsocket != null && btsocket.isConnected()){
 
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                CustomerConnect.printBill(outputStream, currentCustomer, getListProduct(), listBills,total,  paid, new CallbackBoolean() {
+                CustomerConnect.printBill(outputStream, currentCustomer, adapterProducts.getAllDataProduct(), listBills,total,  paid, new CallbackBoolean() {
                     @Override
                     public void onRespone(Boolean result) {
                         Util.getInstance().stopLoading(true);
@@ -420,19 +451,19 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         }, false);
     }
 
-    private List<Product> getListProduct(){
-        List<Product> listProductChoice = new ArrayList<>();
-
-        for (int i=0; i<adapterProducts.getAllDataProduct().size(); i++){
-            Product product = adapterProducts.getAllDataProduct().get(i);
-            listProductChoice.add(adapterProducts.getAllDataProduct().get(i));
-        }
-        for (int j=0; j<adapterPromotions.getAllDataPromotion().size(); j++){
-            listProductChoice.add(adapterPromotions.getAllDataPromotion().get(j));
-        }
-
-        return listProductChoice;
-    }
+//    private List<Product> getListProduct(){
+//        List<Product> listProductChoice = new ArrayList<>();
+//
+//        for (int i=0; i<adapterProducts.getAllDataProduct().size(); i++){
+//            Product product = adapterProducts.getAllDataProduct().get(i);
+//            listProductChoice.add(adapterProducts.getAllDataProduct().get(i));
+//        }
+////        for (int j=0; j<adapterPromotions.getAllDataPromotion().size(); j++){
+////            listProductChoice.add(adapterPromotions.getAllDataPromotion().get(j));
+////        }
+//
+//        return listProductChoice;
+//    }
 
     private void choicePayMethod(){
         CustomBottomDialog.choiceTwoOption(getString(R.string.icon_money), "Thu tiền mặt",
@@ -492,24 +523,22 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                             connectBluetoothDevice(device, new CallbackProcess() {
                                 @Override
                                 public void onStart() {
-                                    tvPrinterStatus.setVisibility(View.VISIBLE);
-                                    tvBluetooth.setVisibility(View.GONE);
                                     tvPrinterStatus.setText(Constants.CONNECTING_PRINTER);
+                                    tvPrinterStatus.setOnClickListener(null);
 
                                 }
 
                                 @Override
                                 public void onError() {
-                                    tvPrinterStatus.setVisibility(View.GONE);
-                                    tvBluetooth.setVisibility(View.VISIBLE);
+                                    tvPrinterStatus.setText("Chưa kết nối được máy in");
                                     Util.showToast(Constants.CONNECTED_PRINTER_ERROR);
+                                    tvPrinterStatus.setOnClickListener(ShopCartActivity.this);
                                 }
 
                                 @Override
                                 public void onSuccess(String name) {
-                                    tvPrinterStatus.setVisibility(View.VISIBLE);
-                                    tvBluetooth.setVisibility(View.VISIBLE);
                                     tvPrinterStatus.setText(String.format(Constants.CONNECTED_PRINTER, device.getName()));
+                                    tvPrinterStatus.setOnClickListener(ShopCartActivity.this);
                                 }
                             });
                         }

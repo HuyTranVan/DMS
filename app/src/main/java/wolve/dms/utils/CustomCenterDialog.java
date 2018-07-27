@@ -40,7 +40,6 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 import wolve.dms.R;
 import wolve.dms.adapter.BluetoothListAdapter;
 import wolve.dms.adapter.CartCheckinReasonAdapter;
-import wolve.dms.adapter.CartProductDialogAdapter;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickProduct;
 import wolve.dms.callback.CallbackListProduct;
@@ -299,12 +298,14 @@ public class CustomCenterDialog {
         final TextView tvTotal =  dialogResult.findViewById(R.id.dialog_edit_product_total);
         final EditText edDiscount =  dialogResult.findViewById(R.id.dialog_edit_product_discount);
         final EditText edQuantity = dialogResult.findViewById(R.id.dialog_edit_product_quantity);
+        TextView btnChangeToPromotion = dialogResult.findViewById(R.id.dialog_edit_product_topromotion);
+        TextView btnCopyToPromotion = dialogResult.findViewById(R.id.dialog_edit_product_copypromotion);
 
         btnCancel.setText("HỦY");
         btnSubmit.setText("LƯU");
         tvTitle.setText(product.getString("name"));
         tvUnitPrice.setText(Util.FormatMoney(product.getDouble("unitPrice")));
-        edDiscount.setText(product.getDouble("discount") ==0 ? "" : String.valueOf(Math.round(product.getDouble("discount"))));
+        edDiscount.setText(product.getDouble("discount") ==0 ? "" : Util.FormatMoney((double) Math.round(product.getDouble("discount"))));
         edNetPrice.setText(Util.FormatMoney(product.getDouble("unitPrice") - product.getDouble("discount")));
         edNetPrice.setFocusable(false);
         edQuantity.setText(String.valueOf(Math.round(product.getDouble("quantity"))));
@@ -373,6 +374,54 @@ public class CustomCenterDialog {
             }
         }));
 
+        btnChangeToPromotion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    Product newProduct = product;
+                    newProduct.put("quantity", Integer.parseInt(edQuantity.getText().toString()));
+                    newProduct.put("discount", product.getDouble("unitPrice"));
+                    newProduct.put("totalMoney", "0");
+
+                    callbackClickProduct.ProductChoice(newProduct);
+                    dialogResult.dismiss();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        btnCopyToPromotion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    Product newProduct = new Product();
+
+                    newProduct.put("id", product.getString("id"));
+                    newProduct.put("name", product.getString("name"));
+                    newProduct.put("productGroup", product.getString("productGroup"));
+                    newProduct.put("promotion", product.getBoolean("promotion"));
+                    newProduct.put("unitPrice", product.getDouble("unitPrice"));
+                    newProduct.put("purchasePrice", product.getDouble("purchasePrice"));
+                    newProduct.put("volume", product.getLong("volume"));
+                    newProduct.put("image", product.getString("image"));
+                    newProduct.put("imageUrl", product.getString("imageUrl"));
+                    newProduct.put("checked", product.getBoolean("checked"));
+                    newProduct.put("isPromotion", product.getBoolean("isPromotion"));
+                    newProduct.put("quantity", Integer.parseInt(edQuantity.getText().toString()));
+                    newProduct.put("discount", product.getDouble("unitPrice"));
+                    newProduct.put("totalMoney", "0");
+
+                    callbackClickProduct.ProductAdded(newProduct);
+                    dialogResult.dismiss();
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -5,8 +5,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:gravity="center"
-    android:layout_marginLeft="5dp"
-    android:layout_marginRight="5dp">
+    android:layout_marginLeft="2dp"
+    android:layout_marginRight="2dp">
 
     <TextView
         android:id="@+id/tabTitle"
@@ -19,15 +19,20 @@
         android:layout_marginRight="5dp"
         android:layout_marginLeft="5dp"/>
 
-    <!--<TextView-->
-        <!--android:id="@+id/tabNotify"-->
-        <!--android:layout_width="20dp"-->
-        <!--android:layout_height="20dp"-->
-        <!--android:background="@drawable/bg_green_rounded_button"-->
-        <!--android:text=""-->
-        <!--android:textSize="@dimen/tiny"-->
-        <!--android:textColor="@color/colorWhite"-->
-        <!--android:gravity="center"-->
-        <!--android:layout_marginRight="5dp"/>-->
+    <TextView
+        android:id="@+id/tabNotify"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:background="@drawable/bg_blue_rounded_selected"
+        android:text=""
+        android:textSize="@dimen/tiny"
+        android:textColor="@color/colorWhite"
+        android:gravity="center"
+        android:layout_marginRight="5dp"/>
+
+    <!--<View-->
+        <!--android:layout_width="1dip"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:background="#0d000000"/>-->
 
 </LinearLayout>

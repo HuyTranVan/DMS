@@ -71,7 +71,7 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
 
         }
 
-        holder.tvHighLight.setVisibility(mData.get(position).getDouble("totalMoney") ==0?View.VISIBLE:View.GONE);
+        holder.tvRibbon.setVisibility(mData.get(position).getDouble("totalMoney") ==0?View.VISIBLE:View.GONE);
 
         holder.lnParent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,6 +93,13 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
                             e.printStackTrace();
                         }
 
+                    }
+
+                    @Override
+                    public void ProductAdded(Product newProduct) {
+                        mData.add(newProduct);
+                        mChangePrice.NewPrice(updatePrice(mData));
+                        notifyDataSetChanged();
                     }
                 });
             }
@@ -159,7 +166,7 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
     }
 
     public class CartProductsViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvName, tvUnitPrice, tvQuantity ,tvQuantityDisplay, tvTotal, tvHighLight;
+        private TextView tvName, tvUnitPrice, tvQuantity ,tvQuantityDisplay, tvTotal, tvRibbon;
         private RelativeLayout lnParent;
         private CircleImageView imgProduct;
         private CTextIcon btnSub, btnPlus;
@@ -172,7 +179,7 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
             tvUnitPrice = (TextView) itemView.findViewById(R.id.shopcart_products_item_unitprice);
             tvQuantityDisplay = itemView.findViewById(R.id.shopcart_products_item_quantity_display);
             tvQuantity = (TextView) itemView.findViewById(R.id.shopcart_products_item_quantity);
-            tvHighLight = itemView.findViewById(R.id.shopcart_products_item_highlight);
+            tvRibbon = itemView.findViewById(R.id.shopcart_products_item_ribbon);
             btnSub = (CTextIcon) itemView.findViewById(R.id.shopcart_products_item_sub);
             btnPlus = (CTextIcon) itemView.findViewById(R.id.shopcart_products_item_plus);
             tvTotal = (TextView) itemView.findViewById(R.id.shopcart_products_item_total);

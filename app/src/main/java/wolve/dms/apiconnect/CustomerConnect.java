@@ -340,7 +340,7 @@ public class CustomerConnect {
 
         try {
             if (CustomSQL.getString("logo").equals("")){
-                UtilPrinter.printDrawablePhoto(outputStream, Util.getInstance().getCurrentActivity().getResources().getDrawable(R.drawable.ic_logo_print));
+//                UtilPrinter.printDrawablePhoto(outputStream, Util.getInstance().getCurrentActivity().getResources().getDrawable(R.drawable.ic_logo_print));
             }else {
                 UtilPrinter.printPhoto(outputStream,CustomSQL.getString("logo"));
             }

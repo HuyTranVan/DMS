@@ -85,174 +85,6 @@
 
         </android.support.design.widget.TextInputLayout>
 
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:orientation="horizontal"-->
-            <!--android:minHeight="@dimen/_30sdp">-->
-
-            <!--<TextView-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:layout_weight="0.6"-->
-                <!--android:text="Giá sản phẩm"-->
-                <!--android:textSize="@dimen/_12sdp"-->
-                <!--android:paddingLeft="@dimen/_10sdp"-->
-                <!--android:gravity="center_vertical"/>-->
-
-            <!--<TextView-->
-                <!--android:id="@+id/dialog_edit_product_unitprice"-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:layout_weight="0.4"-->
-                <!--android:text="2000"-->
-                <!--android:textSize="@dimen/_14sdp"-->
-                <!--android:textColor="@color/black_text_color"-->
-                <!--android:paddingRight="@dimen/_10sdp"-->
-                <!--android:gravity="center_vertical|right"/>-->
-
-        <!--</LinearLayout>-->
-
-        <!--<View-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="2px"-->
-            <!--android:background="#0d000000"/>-->
-
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:orientation="horizontal"-->
-            <!--android:minHeight="@dimen/_30sdp">-->
-
-            <!--<TextView-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:layout_weight="0.6"-->
-                <!--android:text="Giảm giá (VNĐ)"-->
-                <!--android:textSize="@dimen/_12sdp"-->
-                <!--android:paddingLeft="@dimen/_10sdp"-->
-                <!--android:gravity="center_vertical"/>-->
-
-            <!--<EditText-->
-                <!--android:id="@+id/dialog_edit_product_discount"-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:layout_weight="0.4"-->
-                <!--android:background="@drawable/colorwhite_borderred_corner"-->
-                <!--android:text=""-->
-                <!--android:textSize="@dimen/_12sdp"-->
-                <!--android:inputType="number"-->
-                <!--android:gravity="center"-->
-                <!--android:maxLength="10"-->
-                <!--android:layout_margin="@dimen/_2sdp"/>-->
-
-        <!--</LinearLayout>-->
-
-        <!--<View-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="2px"-->
-            <!--android:background="#0d000000"/>-->
-
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:orientation="horizontal"-->
-            <!--android:minHeight="@dimen/_30sdp">-->
-
-            <!--<TextView-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:layout_weight="0.6"-->
-                <!--android:text="Giá NET"-->
-                <!--android:textSize="@dimen/_12sdp"-->
-                <!--android:paddingLeft="@dimen/_10sdp"-->
-                <!--android:gravity="center_vertical"/>-->
-
-            <!--<TextView-->
-                <!--android:id="@+id/dialog_edit_product_netprice"-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:layout_weight="0.4"-->
-                <!--android:text="2000"-->
-                <!--android:textSize="@dimen/_14sdp"-->
-                <!--android:textColor="@color/colorRed"-->
-                <!--android:paddingRight="@dimen/_10sdp"-->
-                <!--android:gravity="center_vertical|right"/>-->
-
-        <!--</LinearLayout>-->
-
-        <!--<View-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="2px"-->
-            <!--android:background="#0d000000"/>-->
-
-
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:orientation="horizontal"-->
-            <!--android:minHeight="@dimen/_30sdp">-->
-
-            <!--<TextView-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:layout_weight="0.6"-->
-                <!--android:text="Số lượng:"-->
-                <!--android:textSize="@dimen/_12sdp"-->
-                <!--android:paddingLeft="@dimen/_10sdp"-->
-                <!--android:gravity="center_vertical"/>-->
-
-            <!--<LinearLayout-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:orientation="horizontal"-->
-                <!--android:layout_weight="0.4">-->
-
-                <!--<wolve.dms.customviews.CTextIcon-->
-                    <!--android:id="@+id/dialog_edit_product_sub"-->
-                    <!--android:layout_width="@dimen/_30sdp"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:background="?selectableItemBackground"-->
-                    <!--android:text="@string/icon_up"-->
-                    <!--android:textSize="@dimen/_16sdp"-->
-                    <!--android:textColor="@color/black_text_color_hint"-->
-                    <!--android:gravity="center"-->
-                    <!--android:rotation="270"/>-->
-
-                <!--<EditText-->
-                    <!--android:id="@+id/dialog_edit_product_quantity"-->
-                    <!--android:layout_width="0dp"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:layout_weight="0.5"-->
-                    <!--android:background="@drawable/colorwhite_cornerred"-->
-                    <!--android:text="2000"-->
-                    <!--android:maxLength="4"-->
-                    <!--android:textSize="@dimen/_12sdp"-->
-                    <!--android:inputType="number"-->
-                    <!--android:layout_margin="@dimen/_2sdp"-->
-                    <!--android:gravity="center"/>-->
-
-                <!--<wolve.dms.customviews.CTextIcon-->
-                    <!--android:id="@+id/dialog_edit_product_plus"-->
-                    <!--android:layout_width="@dimen/_30sdp"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:background="?selectableItemBackground"-->
-                    <!--android:text="@string/icon_up"-->
-                    <!--android:textSize="@dimen/_16sdp"-->
-                    <!--android:textColor="@color/black_text_color_hint"-->
-                    <!--android:gravity="center"-->
-                    <!--android:rotation="90"/>-->
-            <!--</LinearLayout>-->
-
-
-
-        <!--</LinearLayout>-->
-
-        <!--<View-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="2px"-->
-            <!--android:background="#0d000000"/>-->
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -285,6 +117,32 @@
             android:layout_width="match_parent"
             android:layout_height="2px"
             android:background="#0d000000"/>
+
+        <TextView
+            android:id="@+id/dialog_edit_product_topromotion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackground"
+            android:text="Chuyển sản phẩm thành khuyến mãi"
+            android:textAllCaps="true"
+            android:textColor="@color/colorBlue"
+            android:gravity="center"
+            android:padding="@dimen/_10sdp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="#0d000000"/>
+
+        <TextView
+            android:id="@+id/dialog_edit_product_copypromotion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackground"
+            android:text="Copy thêm khuyến mãi"
+            android:textAllCaps="true"
+            android:gravity="center"
+            android:padding="@dimen/_10sdp"/>
 
         <include android:layout_height="wrap_content"
             android:layout_width="match_parent"

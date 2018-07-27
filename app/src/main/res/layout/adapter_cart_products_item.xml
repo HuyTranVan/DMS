@@ -7,12 +7,13 @@
     android:id="@+id/shopcart_products_item_parent"
     android:background="@drawable/colorwhite_pressed">
 
-    <TextView
-        android:id="@+id/shopcart_products_item_highlight"
-        android:layout_width="@dimen/_3sdp"
-        android:layout_height="match_parent"
-        android:background="@color/colorBlue"
-        android:layout_alignParentLeft="true"/>
+    <!--<TextView-->
+        <!--android:id="@+id/shopcart_products_item_highlight"-->
+        <!--android:layout_width="@dimen/_3sdp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:background="@color/colorBlue"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--/>-->
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/shopcart_products_item_image"
@@ -23,6 +24,18 @@
         app:civ_border_overlay="true"
         app:civ_fill_color="#d5d3d3"
         android:layout_centerVertical="true"/>
+
+
+    <wolve.dms.customviews.CTextIcon
+        android:id="@+id/shopcart_products_item_ribbon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/icon_bookmark"
+        android:layout_marginLeft="@dimen/_2sdp"
+        android:textColor="@color/yellow_pressed"
+        android:textSize="@dimen/_14sdp"/>
+
+
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -37,13 +37,20 @@ public class CartProductDialogAdapter extends RecyclerView.Adapter<CartProductDi
     private List<Product> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
-    private CallbackBoolean mListener;
+    private CallbackViewPager mListener;
+    private int count =0;
+    private int groupPosition;
 //    private Boolean isPromotion;
 
-    public CartProductDialogAdapter(List<Product> list, ProductGroup group, CallbackBoolean listener) {
+    public interface CallbackViewPager{
+        void onChoosen(int position, int count);
+    }
+
+    public CartProductDialogAdapter(List<Product> list, int groupPosition, ProductGroup group, CallbackViewPager listener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mListener = listener;
+        this.groupPosition = groupPosition;
         //this.mData = list;
         //this.isPromotion = ispromotion;
 
@@ -90,18 +97,22 @@ public class CartProductDialogAdapter extends RecyclerView.Adapter<CartProductDi
                      if (mData.get(position).getBoolean("checked")){
                          mData.get(position).put("checked", false);
                          holder.lnParent.setBackgroundColor(Color.parseColor("#ffffff") );
+                         count -=1;
+                         mListener.onChoosen(groupPosition,count);
                          //notifyItemChanged(position);
 
                      }else {
                          mData.get(position).put("checked", true);
-                         holder.lnParent.setBackgroundColor( Color.parseColor("#0d000000") );
+                         holder.lnParent.setBackgroundColor( Color.parseColor("#50000000") );
                          //notifyItemChanged(position);
+                         count +=1;
+                         mListener.onChoosen(groupPosition,count);
 
                      }
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
-                mListener.onRespone(checkHasChoosen());
+
             }
         });
 

@@ -38,9 +38,6 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
     private RecyclerView rvBluetooth;
     private View view;
 
-//    private static BluetoothAdapter mBluetoothAdapter = null;
-//    private static BluetoothSocket btsocket;
-//    private static OutputStream outputStream;
     private List<BluetoothDevice> listDevice = new ArrayList<>();
     private BluetoothListAdapter adapter;
     private BaseActivity baseActivity;
@@ -93,20 +90,18 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
                     @Override
                     public void onStart() {
                         Util.getInstance().showLoading("Đang kết nối máy in");
-
-                        mActivity.tvPrinterStatus.setVisibility(View.VISIBLE);
-                        mActivity.tvBluetooth.setVisibility(View.GONE);
                         mActivity.tvPrinterStatus.setText(Constants.CONNECTING_PRINTER);
+                        mActivity.tvPrinterStatus.setOnClickListener(null);
 
                     }
 
                     @Override
                     public void onError() {
                         Util.getInstance().stopLoading(true);
-                        mActivity.tvPrinterStatus.setVisibility(View.GONE);
-                        mActivity.tvBluetooth.setVisibility(View.VISIBLE);
+                        mActivity.tvPrinterStatus.setText("Chưa kết nối được máy in");
                         Util.showToast(Constants.CONNECTED_PRINTER_ERROR);
                         finish();
+                        mActivity.tvPrinterStatus.setOnClickListener(mActivity);
                     }
 
                     @Override
@@ -114,9 +109,8 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
                         Util.getInstance().stopLoading(true);
                         Util.showToast(String.format(Constants.CONNECTED_PRINTER, device.getName()));
                         finish();
-                        mActivity.tvPrinterStatus.setVisibility(View.VISIBLE);
-                        mActivity.tvBluetooth.setVisibility(View.VISIBLE);
                         mActivity.tvPrinterStatus.setText(String.format(Constants.CONNECTED_PRINTER, device.getName()));
+                        mActivity.tvPrinterStatus.setOnClickListener(mActivity);
 
                     }
                 });
@@ -202,84 +196,6 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
         return 0;
 
     }
-
-//    protected void connectBluetoothDevice(final BluetoothDevice device){
-//        if (mBluetoothAdapter == null) {
-//            return;
-//        }
-//        //Util.showSnackbar("Connecting to " + device.getName(), null, null);
-//
-//        Thread connectThread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    if (device.getUuids()!= null){
-//                        UUID uuid = device.getUuids()[0].getUuid();
-//                        btsocket = device.createRfcommSocketToServiceRecord(uuid);
-//                        btsocket.connect();
-//                    }
-//
-//                } catch (IOException ex) {
-//                    baseActivity.runOnUiThread(socketErrorRunnable);
-//                    try {
-//                        btsocket.close();
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                    btsocket = null;
-//                    return;
-//                } finally {
-//                    baseActivity.runOnUiThread(new Runnable() {
-//
-//                        @Override
-//                        public void run() {
-//                            try {
-//                                if (btsocket != null){
-////                                    tvBluetooth.setText(R.string.icon_bluetooth_connected);
-////                                    tvBluetooth.setTextColor(getResources().getColor(R.color.colorBlue));
-//                                    //tvPrinterName.setText("Đang kết nối: "+ btsocket.getRemoteDevice().getName());
-//                                    //printerProgress.setVisibility(View.GONE);
-//
-//                                    Util.showToast("Đã kết nối");
-//
-//                                    CustomSQL.setString(Constants.BLUETOOTH_DEVICE, btsocket.getRemoteDevice().getAddress());
-//                                    outputStream = btsocket.getOutputStream();
-//
-//                                    mBluetoothAdapter.cancelDiscovery();
-//                                    finish();
-//                                }
-//
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                            }
-//
-//
-//                        }
-//                    });
-//                }
-//            }
-//        });connectThread.start();
-//    }
-
-//    public void showListBluetooth(List<BluetoothDevice> list) {
-//        CustomCenterDialog.showBluetoothDevices(list, new BluetoothListAdapter.CallbackBluetooth() {
-//            @Override
-//            public void OnDevice(BluetoothDevice device) {
-//                try {
-//                    baseActivity.connectBluetoothDevice(device);
-//                    if (btsocket != null) {
-//                        btsocket.close();
-//                        btsocket = null;
-//                    }
-//
-//
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//
-//            }
-//        });
-//    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -12,4 +12,5 @@ import wolve.dms.models.Product;
 
 public interface CallbackClickProduct {
     void ProductChoice(Product product);
+    void ProductAdded(Product newProduct);
 }

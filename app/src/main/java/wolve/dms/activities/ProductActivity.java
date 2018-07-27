@@ -209,10 +209,11 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
         for (int i=0; i<listproductgroup.size(); i++){
             TabLayout.Tab tab = tabLayout.getTabAt(i);
             View customView = LayoutInflater.from(this).inflate(R.layout.view_tab_product, null);
-//            TextView tabTextTitle = (TextView) customView.findViewById(R.id.tabNotify);
+            TextView tabTextTitle = (TextView) customView.findViewById(R.id.tabNotify);
             TextView textTitle = (TextView) customView.findViewById(R.id.tabTitle);
 
             textTitle.setText(listproductgroup.get(i).getString("name"));
+            tabTextTitle.setVisibility(View.GONE);
 
 //            if (listadapter.get(i).getItemCount() <=0){
 //                tabTextTitle.setVisibility(View.GONE);
