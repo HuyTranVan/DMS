@@ -1,35 +1,29 @@
 package wolve.dms.activities;
 
-import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.PermissionChecker;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.nispok.snackbar.Snackbar;
-import com.nispok.snackbar.listeners.ActionClickListener;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.List;
 
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.HomeAdapter;
-import wolve.dms.apiconnect.LocationConnect;
-import wolve.dms.apiconnect.ProductConnect;
-import wolve.dms.apiconnect.StatusConnect;
+import wolve.dms.apiconnect.SheetConnect;
 import wolve.dms.apiconnect.SystemConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickAdapter;
-import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.callback.CallbackList;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.libraries.ItemDecorationGridSpace;
@@ -45,8 +39,6 @@ import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
-
-import static wolve.dms.utils.Constants.REQUEST_PERMISSION_LOCATION;
 
 /**
  * Created by macos on 9/15/17.
@@ -69,7 +61,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public int setIdContainer() {
-        return 0;
+        return R.id.home_parent;
     }
 
     @Override
@@ -157,7 +149,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
             case 2:
                 Util.showToast("Chưa hỗ trợ");
-//                Transaction.gotoBluetoothListActivity();
+                SheetConnect.getALlValue();
+
 
                 break;
 
@@ -202,79 +195,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             }
         }, true);
 
-//        StatusConnect.ListStatus(new CallbackJSONArray() {
-//            @Override
-//            public void onResponse(JSONArray result) {
-//                Status.saveStatusList(result);
-//                loadDistrict(false);
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }, false);
     }
-
-//    private void loadProvince(Boolean cancelLoading){
-//        LocationConnect.getAllProvinces(new CallbackJSONArray() {
-//            @Override
-//            public void onResponse(JSONArray result) {
-//                Util.setProvincesList(result);
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }, true);
-//    }
-//
-//    private void loadDistrict(Boolean cancelLoading){
-//        LocationConnect.getAllDistrict("79", new CallbackJSONArray() {
-//            @Override
-//            public void onResponse(JSONArray result) {
-//                District.saveDistrictList(result);
-//                loadProductGroup(false);
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }, cancelLoading);
-//    }
-//
-//    private void loadProductGroup(Boolean cancelLoading){
-//        ProductConnect.ListProductGroup(false, new CallbackJSONArray() {
-//            @Override
-//            public void onResponse(JSONArray result) {
-//                ProductGroup.saveProductGroupList(result);
-//                loadProducts(true);
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }, cancelLoading);
-//    }
-//
-//    private void loadProducts(Boolean cancelLoading){
-//        ProductConnect.ListProduct(new CallbackJSONArray() {
-//            @Override
-//            public void onResponse(JSONArray result) {
-//                Product.saveProductList(result);
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }, cancelLoading);
-//    }
 
     private void choiceSetupItem(){
         CustomBottomDialog.choiceFourOption(getString(R.string.icon_group), "Nhân viên",
@@ -284,7 +205,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                     @Override
                     public void Method1(Boolean one) {
                         Util.showToast("Chưa hỗ trợ");
-                        Transaction.gotoTestActivity();
+//                        Transaction.gotoTestActivity();
                     }
 
                     @Override
@@ -317,4 +238,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 }

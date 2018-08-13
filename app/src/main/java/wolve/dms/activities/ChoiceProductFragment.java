@@ -237,7 +237,7 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
 
 
 
-        mActivity.updatelistProduct(listChecked, false);
+        mActivity.updatelistProduct(listChecked);
         getActivity().getSupportFragmentManager().popBackStack();
 
     }

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import wolve.dms.R;
 
 public class Constants {
+    public final static String DMS_NAME = "DMS_NAME";
     public final static String DMS_LOGS = "DMS_LOGS";
     public final static String PRODUCTGROUP = "productgroup";
     public final static String PRODUCT = "product";
@@ -18,7 +19,8 @@ public class Constants {
     public final static String DISTRIBUTOR = "distributor";
     public final static String USER_USERNAME = "username";
     public final static String USER_PASSWORD = "password";
-    public final static String IMAGES_DIRECTORY = "Wolver_DMS";
+    public final static String IMAGES_DIRECTORY = "Lubsolution_DMS";
+    public final static String APP_DIRECTORY = "Lubsolution_DMS";
     public final static String ROLE_ADMIN = "MANAGER";
     public final static String ROLE_SALE = "SALE";
 
@@ -26,6 +28,13 @@ public class Constants {
     public final static String NO_PROMOTION = "CHỈ BÁN";
 
     public final static String LOGIN_SUCCESS = "login_success";
+
+    public static final int REQUEST_GOOGLE_PLAY_ACCOUNT_PICKER = 2000;
+    public static final int REQUEST_GOOGLE_PLAY_AUTHORIZATION = 2001;
+    public static final int REQUEST_GOOGLE_PLAY_SERVICES = 2002;
+    public static final int REQUEST_GOOGLE_PLAY_PERMISSION_GET_ACCOUNTS = 2003;
+    public static final String PREF_GOOGLE_PLAY_ACCOUNT_NAME = "accountName";
+    public static final String GOOGLE_PLAY_INSTALL = "This app requires Google Play Services. Please install \n Google Play Services on your device and relaunch this app.";
 
     public final static int RESULT_CUSTOMER_ACTIVITY = 1000;
     public final static int RESULT_SHOPCART_ACTIVITY = 1001;

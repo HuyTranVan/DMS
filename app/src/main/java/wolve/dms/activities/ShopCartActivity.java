@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -83,9 +84,8 @@ import static wolve.dms.utils.Transaction.gotoImageChooser;
 public class ShopCartActivity extends BaseActivity implements  View.OnClickListener {
     private ImageView btnBack;
     private Button btnSubmit;
-//    protected CTextIcon tvBluetooth;
     protected TextView tvPrinterStatus;
-    private TextView tvTitle, tvTotal;// tvHint; //btnAdd, btnAddPromotion;
+    private TextView tvTitle, tvTotal;
     private CInputForm tvNote;
     private RecyclerView rvProducts;
     private RelativeLayout rlCover;
@@ -94,16 +94,12 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     private FloatingActionButton btnAddProduct;
 
     private CartProductsAdapter adapterProducts;
-    private CartPromotionsAdapter adapterPromotions;
-    private CartGroupButtonAdapter groupButtonAdapter;
     private Customer currentCustomer;
     private List<Product> listInitialProduct = new ArrayList<>();
-//    private List<Product> listInitialPromotion = new ArrayList<>();
     private List<Bill> listBills = new ArrayList<>();
     private Uri imageChangeUri ;
     protected List<Product> listProducts = new ArrayList<>();
     protected List<ProductGroup> listProductGroups = new ArrayList<>();
-
 
 
     @Override
@@ -123,17 +119,11 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         tvTitle =  findViewById(R.id.cart_title);
         tvTotal =  findViewById(R.id.cart_total);
         tvPrinterStatus =  findViewById(R.id.cart_printer_status);
-//        tvHint =  findViewById(R.id.cart_hint);
         tvNote =  findViewById(R.id.cart_note);
         lnSubmitGroup = findViewById(R.id.cart_submit_group);
-        //btnAdd =  findViewById(R.id.cart_add_product);
-        //btnAddPromotion =  findViewById(R.id.cart_add_promotion);
         rvProducts =  findViewById(R.id.cart_rvproduct);
-//        rvPromotions =  findViewById(R.id.cart_rvpromotion);
         rlCover =  findViewById(R.id.cart_cover);
         imgLogo = findViewById(R.id.cart_logo);
-//        tvBluetooth = findViewById(R.id.cart_bluetooth);
-//        rvButtonGroup = findViewById(R.id.cart_rvGroupButton);
         btnAddProduct = findViewById(R.id.add_product);
 
     }
@@ -144,7 +134,6 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         String bundle = getIntent().getExtras().getString(Constants.CUSTOMER_CART);
         lnSubmitGroup.setVisibility(View.GONE);
         rlCover.setVisibility(View.VISIBLE);
-//        createRVButtonGroup(ProductGroup.getProductGroupList());
         if (bundle != null){
             try {
                 currentCustomer = new Customer(new JSONObject(bundle));
@@ -170,7 +159,6 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         loadListProduct();
         loadListProductGroup();
         createRVProduct(listInitialProduct);
-//        createRVPromotion(listInitialPromotion);
         registerBluetooth();
     }
 
@@ -260,26 +248,6 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
     }
 
-//    private void createRVButtonGroup(final List<ProductGroup> list){
-//        lnSubmitGroup.setVisibility(View.GONE);
-//
-//        groupButtonAdapter = new CartGroupButtonAdapter(list, new CallbackClickAdapter() {
-//            @Override
-//            public void onRespone(String data, int position) {
-//                ProductGroup productGroup = new ProductGroup(data);
-//                Bundle bundle = new Bundle();
-//                bundle.putString(Constants.PRODUCTGROUP, productGroup.ProductGrouptoString());
-//                changeFragment(new ChoiceProductFragment() , bundle, true);
-//
-//            }
-//        });
-//        rvButtonGroup.setAdapter(groupButtonAdapter);
-//        rvButtonGroup.setHasFixedSize(true);
-//        rvButtonGroup.setNestedScrollingEnabled(false);
-//        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(), LinearLayoutManager.HORIZONTAL, false);
-//        rvButtonGroup.setLayoutManager(layoutManager);
-//    }
-
     private void createRVProduct(final List<Product> list){
         adapterProducts = new CartProductsAdapter(list, new CallbackChangePrice() {
             @Override
@@ -291,7 +259,6 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
                 lnSubmitGroup.setVisibility(adapterProducts.getAllDataProduct().size()>0 ? View.VISIBLE : View.GONE);
                 rlCover.setVisibility(adapterProducts.getAllDataProduct().size()>0 ? View.GONE : View.VISIBLE);
-//                tvHint.setVisibility(adapterProducts.getAllDataProduct().size()>0 ? View.VISIBLE : View.GONE);
             }
         }) ;
         rvProducts.setAdapter(adapterProducts);
@@ -301,26 +268,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         rvProducts.setLayoutManager(layoutManager);
     }
 
-//    private void createRVPromotion(final List<Product> list){
-//        adapterPromotions = new CartPromotionsAdapter(list, new CallbackDeleteAdapter() {
-//            @Override
-//            public void onDelete(String data, int position) {
-////                listCurrentPromotion.remove(position);
-//                rvPromotions.requestLayout();
-//                rvPromotions.invalidate();
-//
-//                lnSubmitGroup.setVisibility(adapterPromotions.getAllDataPromotion().size()>0 ? View.VISIBLE : View.GONE);
-////                tvHint.setVisibility(adapterPromotions.getAllDataPromotion().size()>0 ? View.VISIBLE : View.GONE);
-//            }
-//        });
-//        rvPromotions.setAdapter(adapterPromotions);
-//        rvPromotions.setHasFixedSize(true);
-//        rvPromotions.setNestedScrollingEnabled(false);
-//        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(), LinearLayoutManager.VERTICAL, false);
-//        rvPromotions.setLayoutManager(layoutManager);
-//    }
-
-    protected void updatelistProduct(List<Product> list_product, Boolean isPromotion){
+    protected void updatelistProduct(List<Product> list_product){
         for (int i=0; i<list_product.size(); i++){
             try {
                 Product product = new Product(new JSONObject()) ;
@@ -334,20 +282,11 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 product.put("image", list_product.get(i).getString("image"));
                 product.put("imageUrl", list_product.get(i).getString("imageUrl"));
                 product.put("checked", list_product.get(i).getBoolean("checked"));
-                product.put("isPromotion", isPromotion);
+                product.put("isPromotion", false);
                 product.put("quantity", 1);
-
-                if (isPromotion){
-                    product.put("totalMoney",0);
-                    product.put("discount", product.getDouble("unitPrice"));
-                    adapterPromotions.addItemPromotion(product);
-                }else {
-                    product.put("totalMoney", product.getDouble("unitPrice"));
-                    product.put("discount", 0);
-                    adapterProducts.addItemProduct(product);
-                    //btnAddPromotion.setVisibility(adapterProducts.getItemCount() >0 ?View.VISIBLE : View.GONE);
-
-                }
+                product.put("totalMoney", product.getDouble("unitPrice"));
+                product.put("discount", 0);
+                adapterProducts.addItemProduct(product);
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -356,41 +295,48 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     }
 
     private void submitBill(final Double total, final Double paid){
-        Util.getInstance().showLoading("Đang in...");
         final String params = createPostBillParam(total, paid, adapterProducts.getAllDataProduct());
+
         if (btsocket != null && btsocket.isConnected()){
+            Util.getInstance().showLoading("Đang in...");
 
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                CustomerConnect.printBill(outputStream, currentCustomer, adapterProducts.getAllDataProduct(), listBills,total,  paid, new CallbackBoolean() {
-                    @Override
-                    public void onRespone(Boolean result) {
-                        Util.getInstance().stopLoading(true);
-                        CustomCenterDialog.alertWithCancelButton2("TIẾP TỤC", "In thêm hoặc tiếp tục thanh toán", "TIẾP TỤC", "IN LẠI", new CustomCenterDialog.ButtonCallback() {
-                            @Override
-                            public void Submit(Boolean boolSubmit) {
-                                postBills(params.toString());
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    CustomerConnect.printBill(outputStream, currentCustomer, adapterProducts.getAllDataProduct(), listBills,total,  paid, new CallbackBoolean() {
+                        @Override
+                        public void onRespone(Boolean result) {
+                            Util.getInstance().stopLoading(true);
+                            CustomCenterDialog.alertWithCancelButton2("TIẾP TỤC", "In thêm hoặc tiếp tục thanh toán", "TIẾP TỤC", "IN LẠI", new CustomCenterDialog.ButtonCallback() {
+                                @Override
+                                public void Submit(Boolean boolSubmit) {
+                                    postBills(params.toString());
 
-                            }
+                                }
 
-                            @Override
-                            public void Cancel(Boolean boolCancel) {
-                                submitBill(total,paid);
-                            }
+                                @Override
+                                public void Cancel(Boolean boolCancel) {
+                                    submitBill(total,paid);
+                                }
 
-                        });
-                    }
-                });
+                            });
+                        }
+                    });
 
 
 
-            }
-        }); thread.start();
+                }
+            }); thread.start();
 
         }else {
-            Util.getInstance().stopLoading(true);
-            postBills(params.toString());
+            CustomCenterDialog.alertWithCancelButton(null, "Chưa kết nối máy in. Bạn muốn tiếp tục thanh toán không xuất hóa đơn", "Tiếp tục","hủy", new CallbackBoolean() {
+                @Override
+                public void onRespone(Boolean result) {
+                    postBills(params.toString());
+
+                }
+            });
+
         }
 
     }
@@ -450,20 +396,6 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
             }
         }, false);
     }
-
-//    private List<Product> getListProduct(){
-//        List<Product> listProductChoice = new ArrayList<>();
-//
-//        for (int i=0; i<adapterProducts.getAllDataProduct().size(); i++){
-//            Product product = adapterProducts.getAllDataProduct().get(i);
-//            listProductChoice.add(adapterProducts.getAllDataProduct().get(i));
-//        }
-////        for (int j=0; j<adapterPromotions.getAllDataPromotion().size(); j++){
-////            listProductChoice.add(adapterPromotions.getAllDataPromotion().get(j));
-////        }
-//
-//        return listProductChoice;
-//    }
 
     private void choicePayMethod(){
         CustomBottomDialog.choiceTwoOption(getString(R.string.icon_money), "Thu tiền mặt",

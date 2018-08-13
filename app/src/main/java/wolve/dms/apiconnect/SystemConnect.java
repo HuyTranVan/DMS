@@ -27,7 +27,7 @@ public class SystemConnect {
                 Api_link.STATUS+ String.format(Api_link.STATUS_PARAM, 1,20),
                 Api_link.DISTRICTS + "79",
                 Api_link.PRODUCT_GROUPS+ String.format(Api_link.PRODUCTGROUPS_PARAM, 1,10),
-                Api_link.PRODUCTS+ String.format(Api_link.PRODUCTS_PARAM, 1,100)};
+                Api_link.PRODUCTS+ String.format(Api_link.PRODUCTS_PARAM, 1,500)};
 
         new CustomGetListMethod(url, new CallbackList() {
             @Override

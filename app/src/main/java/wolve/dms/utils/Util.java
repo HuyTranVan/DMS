@@ -1,6 +1,7 @@
 package wolve.dms.utils;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -74,6 +75,8 @@ import wolve.dms.models.Bill;
 import wolve.dms.models.Product;
 import wolve.dms.models.Province;
 
+import static wolve.dms.utils.Constants.REQUEST_GOOGLE_PLAY_SERVICES;
+
 public class Util {
     private static Util util;
     private Activity currentActivity;
@@ -90,6 +93,7 @@ public class Util {
     private DisplayMetrics windowSize;
     private static int PLAY_SERVICES_RESOLUTION_REQUEST = 1462;
     public static Toast currentToast;
+
 
     public void setCurrentLocation(Location currentLocation) {
         this.currentLocation = currentLocation;
@@ -498,6 +502,37 @@ public class Util {
         return listOfAllImages;
     }
 
+
+    public static File createCustomFolder(String name){
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), Constants.APP_DIRECTORY);
+
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                return null;
+            }
+        }
+        return new File(mediaStorageDir.getPath() + File.separator + name);
+    }
+
+    public static File createCustomImageFile(String name){
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), Constants.APP_DIRECTORY);
+
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                return null;
+            }
+        }
+        File imageFile = new File(mediaStorageDir.getPath() + File.separator + "Images");
+        if (!imageFile.exists()) {
+            if (!imageFile.mkdirs()) {
+                return null;
+            }
+        }
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
+        return new File(imageFile.getPath() + File.separator +  String.format("IMG_%s_%s.jpeg", name, timeStamp));
+    }
+
     //using parse for local category
     public static File getOutputMediaFile() {
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), Constants.IMAGES_DIRECTORY
@@ -509,8 +544,18 @@ public class Util {
             }
         }
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
-        return new File(mediaStorageDir.getPath() + File.separator +
-                "IMG_" + timeStamp + ".jpeg");
+        return new File(mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpeg");
+    }
+
+    public static File getOutputMediaFile(String name) {
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), name);
+
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                return null;
+            }
+        }
+        return new File(mediaStorageDir.getPath());
     }
 
     public static File getOutputMediaFileLogo() {
@@ -1059,6 +1104,15 @@ public class Util {
 
             }
         });
+    }
+
+    public static void showGooglePlayServicesAvailabilityErrorDialog(final int connectionStatusCode) {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        Dialog dialog = apiAvailability.getErrorDialog(Util.getInstance().getCurrentActivity(),
+                connectionStatusCode,
+                REQUEST_GOOGLE_PLAY_SERVICES);
+        dialog.show();
+
     }
 
 

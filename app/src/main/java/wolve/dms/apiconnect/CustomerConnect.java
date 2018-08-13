@@ -95,7 +95,7 @@ public class CustomerConnect {
     public static void ListCustomerLocation(String lat, String lng, final CallbackJSONArray listener, final Boolean stopLoading){
         //Util.getInstance().showLoading();
 
-        String url = Api_link.CUSTOMERS_NEAREST+ String.format(Api_link.CUSTOMER_NEAREST_PARAM, lat, lng,1, 30);
+        String url = Api_link.CUSTOMERS_NEAREST+ String.format(Api_link.CUSTOMER_NEAREST_PARAM, lat, lng,1, 20);
 
         new CustomGetMethod(url, new Callback() {
             @Override

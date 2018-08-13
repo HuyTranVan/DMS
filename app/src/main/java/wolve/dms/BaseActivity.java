@@ -1,60 +1,40 @@
 package wolve.dms;
 
-import android.Manifest;
-import android.app.FragmentManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.PermissionChecker;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.KeyEvent;
 
 
-import com.google.android.gms.maps.model.LatLng;
 import com.orhanobut.dialogplus.DialogPlus;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import wolve.dms.activities.AddProdGroupFragment;
 import wolve.dms.activities.AddProductFragment;
-import wolve.dms.activities.MapsActivity;
-import wolve.dms.adapter.BluetoothListAdapter;
-import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackProcess;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
 import static wolve.dms.utils.Constants.REQUEST_ENABLE_BT;
-import static wolve.dms.utils.Constants.REQUEST_PERMISSION_LOCATION;
 
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -505,5 +485,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
         });connectThread.start();
     }
+
+
 
 }

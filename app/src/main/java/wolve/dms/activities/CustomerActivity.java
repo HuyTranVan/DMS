@@ -715,6 +715,9 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }else {
+//            Util.showToast("Error");
+            onResume();
         }
 
     }

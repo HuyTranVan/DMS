@@ -12,6 +12,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.github.clans.fab.FloatingActionButton;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,6 +37,7 @@ import wolve.dms.models.Bill;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
 
@@ -49,9 +52,12 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     private TabLayout tabLayout;
     private RadioGroup rdGroup;
     private RadioButton rdMonth, rdDate;
+    private FloatingActionButton btnEmployeeFilter;
 
     private StatisticalViewpagerAdapter pageAdapter;
-    List<Bill> listBill = new ArrayList<>();
+    protected List<Bill> listBill = new ArrayList<>();
+    protected List<User> listUser = new ArrayList<>();
+    private List<Integer> listUserId = new ArrayList<>();
     private int[] icons = new int[]{R.string.icon_chart,
             R.string.icon_bill,
             R.string.icon_product_group};
@@ -61,6 +67,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     private int mDate = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
     private int mMonth = Calendar.getInstance().get(Calendar.MONTH);
     private int mYear = Calendar.getInstance().get(Calendar.YEAR);
+    private final String ALL_FILTER ="TẤT CẢ";
 
 
     @Override
@@ -82,6 +89,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         rdGroup = findViewById(R.id.statistical_filter);
         rdMonth = findViewById(R.id.statistical_filter_month);
         rdDate = findViewById(R.id.statistical_filter_date);
+        btnEmployeeFilter = findViewById(R.id.statistical_filter_by_employee);
 
     }
 
@@ -90,7 +98,8 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         rdMonth.setText(Util.CurrentMonthYear());
         rdDate.setText(DATE_DEFAULT);
         currentDate = rdMonth.getText().toString();
-        loadAllBill(paramDate(currentDate), true);
+        btnEmployeeFilter.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN) ? View.VISIBLE :View.GONE);
+        loadAllBill(User.getId(), paramDate(currentDate),false, true);
 
         setupViewPager(viewPager);
         setupTabLayout(tabLayout);
@@ -102,6 +111,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         btnBack.setOnClickListener(this);
         rdMonth.setOnClickListener(this);
         rdDate.setOnClickListener(this);
+        btnEmployeeFilter.setOnClickListener(this);
 
     }
 
@@ -152,6 +162,31 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
                 break;
 
+            case R.id.statistical_filter_by_employee:
+                if (listUser.size()>1){
+                    List<String> users = new ArrayList<>();
+                    users.add(0,ALL_FILTER);
+                    for (int i=0; i< listUser.size(); i++){
+                        users.add(listUser.get(i).getString("displayName"));
+                    }
+
+                    CustomBottomDialog.choiceList("Chọn nhân viên", users, new CustomBottomDialog.StringListener() {
+                        @Override
+                        public void onResponse(String content) {
+                            if (content.equals(ALL_FILTER)){
+                                loadAllBill(User.getId(), null, null, true);
+                            }
+                            for (int ii=0; ii<listUser.size(); ii++){
+                                if (content.equals(listUser.get(ii).getString("displayName"))){
+                                    loadAllBill(listUser.get(ii).getInt("id"), null, true, true);
+                                }
+                            }
+
+                        }
+                    });
+                }
+
+                break;
 
         }
     }
@@ -160,7 +195,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         CustomCenterDialog.showDialogDatePicker(rdDate,new CallbackString() {
             @Override
             public void Result(String s) {
-                loadAllBill(s, true);
+                loadAllBill(User.getId(), s, false,true);
             }
         });
 
@@ -178,46 +213,72 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
                 rdMonth.setText(monthOfYear+1 +"-" + year);
                 currentDate = rdMonth.getText().toString();
-                loadAllBill(paramDate(currentDate), true);
+                loadAllBill(User.getId(), paramDate(currentDate), false,true);
             }
         });
         datePickerDialogFragment.show(getSupportFragmentManager(), null);
     }
 
-    private void loadAllBill(String param, Boolean showLoading){
-        CustomerConnect.ListBill(param, new CallbackJSONArray() {
-            @Override
-            public void onResponse(JSONArray result) {
-                try {
-                    listBill = new ArrayList<Bill>();
-                    for (int i=0; i<result.length(); i++){
-                        JSONObject objectBill = result.getJSONObject(i);
-                        JSONObject objectUser = objectBill.getJSONObject("user");
+    private void loadAllBill(final int  userId, String param, Boolean isFilter, Boolean showLoading){
+        if (isFilter == null){
+            Util.dashboardFragment.reloadData(listBill);
+            Util.billsFragment.reloadData(listBill);
+            Util.productFragment.reloadData(listBill);
 
-                        Bill bill = new Bill(objectBill);
-                        if (bill.getJsonObject("distributor").getInt("id") == Distributor.getId()){
-                            if (User.getRole().equals(Constants.ROLE_ADMIN)){
-                                listBill.add(bill);
-                            }else {
-                                if (User.getId() == objectUser.getInt("id")){
-                                    listBill.add(bill);
-                                }
-                            }
-
-                        }
-                    }
-                    Util.dashboardFragment.reloadData(listBill);
-                    Util.billsFragment.reloadData(listBill);
-                    Util.productFragment.reloadData(listBill);
-                } catch (JSONException e) {
-                    e.printStackTrace();
+        } else if (isFilter){
+            List<Bill> tempBills = new ArrayList<>();
+            for (int i=0; i<listBill.size(); i++){
+                User user = new User(listBill.get(i).getJsonObject("user"));
+                if (userId == user.getInt("id")){
+                    tempBills.add(listBill.get(i));
                 }
             }
+            Util.dashboardFragment.reloadData(tempBills);
+            Util.billsFragment.reloadData(tempBills);
+            Util.productFragment.reloadData(tempBills);
 
-            @Override
-            public void onError(String error) {
-            }
-        }, showLoading);
+        }else {
+            CustomerConnect.ListBill(param, new CallbackJSONArray() {
+                @Override
+                public void onResponse(JSONArray result) {
+                    try {
+                        listBill = new ArrayList<Bill>();
+
+
+                        for (int i=0; i<result.length(); i++){
+                            JSONObject objectBill = result.getJSONObject(i);
+                            User user = new User(objectBill.getJSONObject("user"));
+
+                            Bill bill = new Bill(objectBill);
+                            if (bill.getJsonObject("distributor").getInt("id") == Distributor.getId()){
+                                if (!listUserId.contains(user.getInt("id"))){
+                                    listUser.add(user);
+                                    listUserId.add(user.getInt("id"));
+                                }
+
+                                if (User.getRole().equals(Constants.ROLE_ADMIN)){
+                                    listBill.add(bill);
+                                }else {
+                                    if (userId == user.getInt("id")){
+                                        listBill.add(bill);
+                                    }
+                                }
+                            }
+                        }
+                        Util.dashboardFragment.reloadData(listBill);
+                        Util.billsFragment.reloadData(listBill);
+                        Util.productFragment.reloadData(listBill);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onError(String error) {
+                }
+            }, showLoading);
+        }
+
     }
 
     private String paramDate(String datemonth){

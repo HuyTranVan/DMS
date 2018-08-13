@@ -616,6 +616,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 }
             }
 
+        }else {
+            onResume();
         }
     }
 

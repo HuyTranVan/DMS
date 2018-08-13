@@ -2,8 +2,11 @@ package wolve.dms.utils;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -308,7 +311,7 @@ public class CustomBottomDialog {
                 .setGravity(Gravity.BOTTOM)
                 .setBackgroundColorResId(R.drawable.colorwhite_corner)
                 .setMargin(20,20,20,20)
-//                .setPadding(20,30,20,20)
+                .setContentHeight((int) Util.convertDp2Px(400))
                 .setInAnimation(R.anim.slide_up)
                 .setOnBackPressListener(new OnBackPressListener() {
                     @Override

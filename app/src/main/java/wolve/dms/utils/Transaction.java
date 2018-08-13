@@ -16,7 +16,6 @@ import wolve.dms.activities.ProductGroupActivity;
 import wolve.dms.activities.ShopCartActivity;
 import wolve.dms.activities.StatisticalActivity;
 import wolve.dms.activities.StatusActivity;
-import wolve.dms.activities.TestActivity;
 
 import static wolve.dms.utils.Constants.REQUEST_CHOOSE_IMAGE;
 
@@ -109,12 +108,12 @@ public class Transaction {
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
-    public static void gotoTestActivity() {
-        Activity context = Util.getInstance().getCurrentActivity();
-        Intent intent = new Intent(context, TestActivity.class);
-        context.startActivity(intent);
-        context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-    }
+//    public static void gotoTestActivity() {
+//        Activity context = Util.getInstance().getCurrentActivity();
+//        Intent intent = new Intent(context, TestActivity.class);
+//        context.startActivity(intent);
+//        context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+//    }
 
     public static void gotoImageChooser() {
         // Kiểm tra permission với android sdk >= 23

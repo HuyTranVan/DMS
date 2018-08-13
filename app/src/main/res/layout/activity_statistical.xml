@@ -94,7 +94,7 @@
         <android.support.design.widget.TabLayout
             android:id="@+id/statistical_tabs"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_35sdp"
+            android:layout_height="@dimen/_30sdp"
             android:background="#f4f4f4"
             app:tabGravity="fill"
             app:tabIndicatorColor="@color/colorBlue"
@@ -114,21 +114,25 @@
 
     </LinearLayout>
 
-    <!--<wolve.dms.libraries.swiperefreshlayout.SwipeRefreshLayout-->
-        <!--android:id="@+id/statistical_swipelayout"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_below="@+id/statistical_tablayout">-->
+    <android.support.v4.view.ViewPager
+        android:id="@+id/statistical_viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorWhite"
+        android:layout_below="@+id/statistical_tablayout"/>
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/statistical_viewpager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/colorWhite"
-            android:layout_below="@+id/statistical_tablayout"/>
-
-    <!--</wolve.dms.libraries.swiperefreshlayout.SwipeRefreshLayout>-->
-
-
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/statistical_filter_by_employee"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/baseline_filter_list_black_24"
+        android:layout_margin="@dimen/_5sdp"
+        app:layout_anchor="@id/customer_bottom_sheet"
+        app:layout_anchorGravity="right"
+        app:fab_size="normal"
+        app:fab_colorNormal="#40000000"
+        app:fab_colorPressed="#80000000"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"/>
 
 </RelativeLayout>

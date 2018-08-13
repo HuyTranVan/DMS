@@ -12,6 +12,12 @@ public class Api_link {
     public final static String BASE_URL = BuildConfig.SERVER_URL;
     public final static String BASE_PHOTO_URL = BuildConfig.UPLOAD_URL;
     public final static String MAP_API = "https://maps.googleapis.com/maps/api/";
+//    public final static String GOOGLESHEET_KEY ="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms";
+//    public final static String GOOGLESHEET_TAB ="Class Data!A2:E8";
+    public final static String GOOGLESHEET_KEY ="1uooLXWdA6huFaBmRJl6Zs_1H9jOf4-2MVlord2busEU";
+    public final static String GOOGLESHEET_TAB ="Sheet1!A1:d";
+    public final static String GOOGLESHEET_CREDENTIALS_FILE_PATH = "/credentials.json";
+    public final static String GOOGLESHEET_TOKENS_PATH = "tokens";
 
     public final static String LOGO_BILL = "http://res.cloudinary.com/lubsolution/image/upload/v1514902531/wolver_logo.jpg";
 
@@ -59,19 +65,6 @@ public class Api_link {
     public final static String BILL_NEW = BASE_URL + "token/bill/create_or_update";
     public final static String BILL_DELETE = BASE_URL + "token/bill/";
     public final static String BILL_PARAM ="?page=%d&size=%d";
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

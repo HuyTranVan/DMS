@@ -1,5 +1,6 @@
 package wolve.dms.models;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import wolve.dms.utils.Constants;
@@ -21,6 +22,14 @@ public class User extends BaseModel {
 
     public User(JSONObject objOrder) {
         jsonObject = objOrder;
+    }
+
+    public User(String strUser) {
+        try {
+            jsonObject = new JSONObject(strUser);
+        } catch (JSONException e) {
+            jsonObject = new JSONObject();
+        }
     }
 
     public static String getUserId(){
