@@ -21,13 +21,13 @@ public class Distributor extends BaseModel{
 
 
     public static String getDistributorId(){
-        int id_distributor = 0;
+        String id_distributor = "";
         Distributor currentDistributor = CustomSQL.getObject(Constants.DISTRIBUTOR, Distributor.class);
 
         if (currentDistributor != null) {
-            id_distributor = currentDistributor.getInt("id");
+            id_distributor = String.valueOf(currentDistributor.getInt("id"));
         }
-        return String.valueOf(id_distributor);
+        return id_distributor;
     }
 
     public static int getId(){

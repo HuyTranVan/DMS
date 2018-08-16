@@ -306,12 +306,14 @@ public class CustomBottomDialog {
     }
 
     public static void choiceList(String title, List<String> list, final StringListener mListener){
+        int heigh = list.size()>5 ? 400: list.size()*50 +65;
+
         final DialogPlus dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
                 .setContentHolder(new ViewHolder(R.layout.view_choice_listmethod))
                 .setGravity(Gravity.BOTTOM)
                 .setBackgroundColorResId(R.drawable.colorwhite_corner)
                 .setMargin(20,20,20,20)
-                .setContentHeight((int) Util.convertDp2Px(400))
+                .setContentHeight((int) Util.convertDp2Px(heigh))
                 .setInAnimation(R.anim.slide_up)
                 .setOnBackPressListener(new OnBackPressListener() {
                     @Override

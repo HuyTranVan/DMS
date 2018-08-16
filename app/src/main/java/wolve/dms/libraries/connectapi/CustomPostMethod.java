@@ -16,6 +16,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 
 import wolve.dms.callback.Callback;
+import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Util;
 
@@ -58,6 +59,7 @@ public class CustomPostMethod extends AsyncTask<String, Void, String> {
         con.setRequestProperty("Content-Type",isJsonType? "application/json":"application/x-www-form-urlencoded");
         con.setRequestProperty("x-wolver-accesstoken", User.getToken());
         con.setRequestProperty("x-wolver-accessid", User.getUserId());
+        con.setRequestProperty("x-wolver-debtid", Distributor.getDistributorId());
 
         String urlParameters = mParams;
 

@@ -154,7 +154,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
                                     params.put("userId", User.getUserId());
 //                            params.put("note", "test .hoa");
                                     if (mData.get(position).getString("note").equals("")){
-                                        params.put("note", String.format("%s tra %s", Util.CurrentMonthYearHour() , Util.FormatMoney(pay)));
+                                        params.put("note",String.format("%s tra %s", Util.CurrentMonthYearHour() , Util.FormatMoney(pay)));
                                     }else {
                                         params.put("note", mData.get(position).getString("note") + String.format("\n%s tra %s", Util.CurrentMonthYearHour() , Util.FormatMoney(pay)));
                                     }

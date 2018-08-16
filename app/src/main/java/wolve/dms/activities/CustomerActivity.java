@@ -67,6 +67,7 @@ import wolve.dms.models.Distributor;
 import wolve.dms.models.Status;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomDropdow;
 import wolve.dms.libraries.FitScrollWithFullscreen;
@@ -267,8 +268,18 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         }
 
 
-        edShopType.setDropdown(true);
-        edShopType.setDropdownList(Util.arrayToList(Constants.shopName));
+        edShopType.setDropdown(true, new CInputForm.ClickListener() {
+            @Override
+            public void onClick(View view) {
+                CustomBottomDialog.choiceList("CHỌN NHÓM SẢN PHẨM",Util.arrayToList(Constants.shopName) , new CustomBottomDialog.StringListener() {
+                    @Override
+                    public void onResponse(String content) {
+                        edShopType.setText(content);
+                    }
+                });
+            }
+        });
+//        edShopType.setDropdownList(Util.arrayToList(Constants.shopName));
 
         edShopName.addTextChangeListenter(new CInputForm.OnQueryTextListener() {
             @Override

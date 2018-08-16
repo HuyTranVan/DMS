@@ -19,6 +19,8 @@ import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
+import com.google.api.services.sheets.v4.model.Sheet;
+import com.google.api.services.sheets.v4.model.Spreadsheet;
 import com.google.api.services.sheets.v4.model.ValueRange;
 
 import java.io.File;
@@ -38,7 +40,6 @@ import wolve.dms.utils.Util;
 
 
 public class GoogleSheetGet extends AsyncTask<Void, Void, List<List<Object>>> {
-//    private Credential mCredential;
     private String spreadsheetId;
     private String range;
     private NetHttpTransport HTTP_TRANSPORT;
@@ -86,29 +87,40 @@ public class GoogleSheetGet extends AsyncTask<Void, Void, List<List<Object>>> {
         Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials())
                 .setApplicationName(Constants.DMS_NAME)
                 .build();
-        ValueRange response = null;
         try {
-            response = service.spreadsheets().values().get(spreadsheetId, range).execute();
+            ValueRange response = service.spreadsheets().values().get(spreadsheetId, range).execute();
+            values = response.getValues();
+            if (values == null || values.isEmpty()) {
+                System.out.println("No data found.");
+            } else {
+                Log.e("name", values.toString());
+                for (List row : values) {
+
+                }
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-        values = response.getValues();
-        if (values == null || values.isEmpty()) {
-            System.out.println("No data found.");
-        } else {
-            Log.e("name", values.toString());
-            for (List row : values) {
-                // Print columns A and E, which correspond to indices 0 and 4.
-//                System.out.printf("%s, %s\n", row.get(0), row.get(4));
-            }
-        }
+
 
         return values;
     }
 
     @Override
     protected void onPostExecute(List<List<Object>> lists) {
-//        super.onPostExecute(lists);
         mListener.onRespone(lists);
     }
 }
+
+//Get all Tab
+//            Spreadsheet response1= service.spreadsheets().get(spreadsheetId).setIncludeGridData (false).execute ();
+//
+//            List<Sheet> workSheetList = response1.getSheets();
+//
+//            for (Sheet sheet : workSheetList) {
+//                System.out.println(sheet.getProperties().getTitle());
+//            }
+
+
+

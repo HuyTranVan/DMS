@@ -103,27 +103,35 @@ public class CInputForm extends FrameLayout {
             }
 
             if (a.hasValue(R.styleable.CInputForm_isDropdown)) {
-                setDropdown(a.getBoolean(R.styleable.CInputForm_isDropdown, false));
+//                setDropdown(a.getBoolean(R.styleable.CInputForm_isDropdown, false));
             }
 
             a.recycle();
         }
     }
 
-    public void setDropdown(boolean aBoolean) {
+    public void setDropdown(boolean aBoolean, final ClickListener mListener) {
         if (!aBoolean){
             tvDropdown.setVisibility(GONE);
+            edInput.setOnClickListener(null);
         }else {
             tvDropdown.setVisibility(VISIBLE);
             tvDropdown.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Util.hideKeyboard(v);
-                    createDropdown(listDropdown);
+                    mListener.onClick(v);
                 }
             });
 
             edInput.setFocusable(false);
+            edInput.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Util.hideKeyboard(v);
+                    mListener.onClick(v);
+                }
+            });
         }
     }
 
@@ -243,6 +251,10 @@ public class CInputForm extends FrameLayout {
 
     }
 
+    public interface ClickListener {
+        void onClick(View view);
+
+    }
 
 
 }

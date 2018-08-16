@@ -13,7 +13,7 @@
         <TextView
             android:id="@+id/view_listmethod_title"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_30sdp"
+            android:layout_height="45dp"
             android:text="Title"
             android:textAllCaps="true"
             android:gravity="center"
@@ -22,7 +22,7 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dip"
+            android:layout_height="1dp"
             android:background="#10000000"/>
 
         <android.support.v7.widget.RecyclerView

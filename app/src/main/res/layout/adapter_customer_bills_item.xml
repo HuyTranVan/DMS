@@ -43,7 +43,7 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:layout_width="@dimen/_45sdp"
+        android:layout_width="@dimen/_40sdp"
         android:layout_height="match_parent">
 
         <TextView

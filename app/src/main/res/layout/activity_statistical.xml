@@ -121,18 +121,60 @@
         android:background="@color/colorWhite"
         android:layout_below="@+id/statistical_tablayout"/>
 
-    <com.github.clans.fab.FloatingActionButton
-        android:id="@+id/statistical_filter_by_employee"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/baseline_filter_list_black_24"
-        android:layout_margin="@dimen/_5sdp"
-        app:layout_anchor="@id/customer_bottom_sheet"
-        app:layout_anchorGravity="right"
-        app:fab_size="normal"
-        app:fab_colorNormal="#40000000"
-        app:fab_colorPressed="#80000000"
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black_text_color_hint"
+        android:layout_above="@+id/statistical_bottom_group"/>
+
+    <RelativeLayout
+        android:id="@+id/statistical_bottom_group"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_30sdp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"/>
+        android:background="@color/colorGrey"
+        android:gravity="center">
+
+        <wolve.dms.customviews.CTextIcon
+            android:id="@+id/statistical_export"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:text="@string/icon_export"
+            android:textColor="@color/black_text_color_hint"
+            android:textSize="@dimen/_16sdp"
+            android:gravity="center"
+            />
+
+
+        <wolve.dms.customviews.CTextIcon
+            android:id="@+id/statistical_filter_by_employee"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:text="@string/icon_filter"
+            android:textColor="@color/black_text_color_hint"
+            android:textSize="@dimen/_16sdp"
+            android:gravity="center"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_toRightOf="@+id/statistical_export"/>
+
+
+
+    </RelativeLayout>
+
+    <!--<com.github.clans.fab.FloatingActionButton-->
+        <!--android:id="@+id/statistical_filter_by_employee"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:src="@drawable/baseline_filter_list_black_24"-->
+        <!--android:layout_margin="@dimen/_5sdp"-->
+        <!--app:layout_anchor="@id/customer_bottom_sheet"-->
+        <!--app:layout_anchorGravity="right"-->
+        <!--app:fab_size="normal"-->
+        <!--app:fab_colorNormal="#40000000"-->
+        <!--app:fab_colorPressed="#80000000"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_alignParentRight="true"/>-->
 
 </RelativeLayout>

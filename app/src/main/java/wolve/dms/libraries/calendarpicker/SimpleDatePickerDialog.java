@@ -44,7 +44,7 @@ public class SimpleDatePickerDialog extends AlertDialog implements DialogInterfa
 
         Context themeContext = getContext();
         LayoutInflater inflater = LayoutInflater.from(themeContext);
-        View view = inflater.inflate(R.layout.view_month_year_picker, null);
+        View view = inflater.inflate(R.layout.view_dialog_select_monthpicker, null);
         setView(view);
         setButton(BUTTON_POSITIVE, themeContext.getString(android.R.string.ok), this);
         setButton(BUTTON_NEGATIVE, themeContext.getString(android.R.string.cancel), this);

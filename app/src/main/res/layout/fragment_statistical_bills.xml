@@ -54,26 +54,6 @@
 
         </RadioGroup>
 
-        <!--<TextView-->
-            <!--android:id="@+id/statistical_bills_debt"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="0.35"-->
-            <!--android:text="tong cong"-->
-            <!--android:padding="@dimen/_5sdp"-->
-            <!--android:textSize="@dimen/_10sdp"-->
-            <!--android:textColor="@color/colorRed"/>-->
-
-        <!--<TextView-->
-            <!--android:id="@+id/statistical_bills_total"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="0.35"-->
-            <!--android:text="tong cong"-->
-            <!--android:padding="@dimen/_5sdp"-->
-            <!--android:gravity="right"-->
-            <!--android:textSize="@dimen/_10sdp"-->
-            <!--android:textColor="@color/colorBlue"/>-->
     </LinearLayout>
 
     <View
@@ -88,6 +68,8 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/statistical_bills_rvbill"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/_50sdp"/>
 
 </LinearLayout>

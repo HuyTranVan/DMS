@@ -322,7 +322,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             unregisterReceiver(mBTReceiver);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 

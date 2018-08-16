@@ -18,6 +18,7 @@ import java.util.List;
 
 import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackList;
+import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Util;
 
@@ -47,6 +48,7 @@ public class CustomGetListMethod extends AsyncTask<String, Void, List<String>> {
                 con.setRequestProperty("User-Agent", "Mozilla/5.0");
                 con.setRequestProperty("x-wolver-accesstoken", User.getToken());
                 con.setRequestProperty("x-wolver-accessid", User.getUserId());
+                con.setRequestProperty("x-wolver-debtid", Distributor.getDistributorId());
 
                 int responseCode = con.getResponseCode();
 

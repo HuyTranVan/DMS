@@ -12,10 +12,10 @@ public class Api_link {
     public final static String BASE_URL = BuildConfig.SERVER_URL;
     public final static String BASE_PHOTO_URL = BuildConfig.UPLOAD_URL;
     public final static String MAP_API = "https://maps.googleapis.com/maps/api/";
-//    public final static String GOOGLESHEET_KEY ="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms";
-//    public final static String GOOGLESHEET_TAB ="Class Data!A2:E8";
+
     public final static String GOOGLESHEET_KEY ="1uooLXWdA6huFaBmRJl6Zs_1H9jOf4-2MVlord2busEU";
-    public final static String GOOGLESHEET_TAB ="Sheet1!A1:d";
+    public final static String GOOGLESHEET_TAB ="Sheet1!A3:z";
+    public final static String GOOGLESHEET_CUSTOM_TAB ="Sheet1!A%d:z";
     public final static String GOOGLESHEET_CREDENTIALS_FILE_PATH = "/credentials.json";
     public final static String GOOGLESHEET_TOKENS_PATH = "tokens";
 

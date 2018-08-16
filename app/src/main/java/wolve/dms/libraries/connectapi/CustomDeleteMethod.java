@@ -15,6 +15,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 
 import wolve.dms.callback.Callback;
+import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Util;
 
@@ -45,6 +46,7 @@ public class CustomDeleteMethod extends AsyncTask<String, Void, String> {
             con.setRequestProperty("User-Agent", "Mozilla/5.0");
             con.setRequestProperty("x-wolver-accesstoken", User.getToken());
             con.setRequestProperty("x-wolver-accessid", User.getUserId());
+            con.setRequestProperty("x-wolver-debtid", Distributor.getDistributorId());
 
             int responseCode = con.getResponseCode();
 

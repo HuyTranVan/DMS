@@ -32,6 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -66,12 +67,10 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
 
     private Product product;
     private ProductActivity mActivity;
-    private ArrayList<String> listGroup = new ArrayList<>();
-    private ArrayList<String> listBoolean = new ArrayList<>();
+    private List<String> listGroup = new ArrayList<>();
+    private List<String> listBoolean = new ArrayList<>();
     private Uri imageChangeUri ;
 
-
-    private Handler backgroundHandler;
 
     @Nullable
     @Override
@@ -94,11 +93,33 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
         listBoolean.add(0,Constants.IS_PROMOTION);
         listBoolean.add(1,Constants.NO_PROMOTION);
 
-        edGroup.setDropdownList(listGroup);
+//        edGroup.setDropdownList(listGroup);
         edGroup.setText(listGroup.get(mActivity.currentPosition));
+        edGroup.setDropdown(true, new CInputForm.ClickListener() {
+            @Override
+            public void onClick(View view) {
+                CustomBottomDialog.choiceList("CHỌN NHÓM SẢN PHẨM", listGroup, new CustomBottomDialog.StringListener() {
+                    @Override
+                    public void onResponse(String content) {
+                        edGroup.setText(content);
+                    }
+                });
+            }
+        });
 
-        edIsPromotion.setDropdownList(listBoolean);
+//        edIsPromotion.setDropdownList(listBoolean);
         edIsPromotion.setText(listBoolean.get(0));
+        edIsPromotion.setDropdown(true, new CInputForm.ClickListener() {
+            @Override
+            public void onClick(View view) {
+                CustomBottomDialog.choiceList("TÙY CHỌN", listBoolean, new CustomBottomDialog.StringListener() {
+                    @Override
+                    public void onResponse(String content) {
+                        edIsPromotion.setText(content);
+                    }
+                });
+            }
+        });
 
         String bundle = getArguments().getString(Constants.PRODUCT);
         try {
@@ -129,6 +150,11 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
             e.printStackTrace();
         }
 
+        checkPermission();
+
+    }
+
+    private void checkPermission(){
         if (PermissionChecker.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED
                 || PermissionChecker.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
                 ||PermissionChecker.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
@@ -136,13 +162,13 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
 
             return;
         }
-
     }
 
     private void addEvent() {
         btnBack.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
         imgProduct.setOnClickListener(this);
+        edGroup.setOnClickListener(this);
         unitPriceEvent();
         purchasePriceEvent();
 
@@ -176,6 +202,10 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
 
             case R.id.add_product_image:
                 choiceGalleryCamera();
+                break;
+
+            case R.id.add_product_group:
+
                 break;
 
         }

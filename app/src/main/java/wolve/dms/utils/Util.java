@@ -1115,5 +1115,14 @@ public class Util {
 
     }
 
+    public static String convertToUtf(String s){
+
+        try {
+            return URLEncoder.encode(s, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            return s;
+        }
+    }
+
 
 }

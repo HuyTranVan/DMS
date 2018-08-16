@@ -10,6 +10,7 @@ import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -21,19 +22,25 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.StatisticalViewpagerAdapter;
+import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.apiconnect.SheetConnect;
 import wolve.dms.callback.CallbackJSONArray;
 
 import wolve.dms.callback.CallbackString;
+import wolve.dms.customviews.CTextIcon;
 import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialog;
 import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialogFragment;
+import wolve.dms.libraries.connectapi.GoogleSheetGet;
 import wolve.dms.models.Bill;
+import wolve.dms.models.Customer;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
@@ -52,12 +59,14 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     private TabLayout tabLayout;
     private RadioGroup rdGroup;
     private RadioButton rdMonth, rdDate;
-    private FloatingActionButton btnEmployeeFilter;
+    private CTextIcon btnEmployeeFilter, btnExport;
+    private RelativeLayout rlBottom;
 
     private StatisticalViewpagerAdapter pageAdapter;
     protected List<Bill> listBill = new ArrayList<>();
     protected List<User> listUser = new ArrayList<>();
     private List<Integer> listUserId = new ArrayList<>();
+    private List<Object> listSheetID = new ArrayList<>();
     private int[] icons = new int[]{R.string.icon_chart,
             R.string.icon_bill,
             R.string.icon_product_group};
@@ -68,7 +77,6 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     private int mMonth = Calendar.getInstance().get(Calendar.MONTH);
     private int mYear = Calendar.getInstance().get(Calendar.YEAR);
     private final String ALL_FILTER ="TẤT CẢ";
-
 
     @Override
     public int getResourceLayout() {
@@ -90,6 +98,8 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         rdMonth = findViewById(R.id.statistical_filter_month);
         rdDate = findViewById(R.id.statistical_filter_date);
         btnEmployeeFilter = findViewById(R.id.statistical_filter_by_employee);
+        btnExport = findViewById(R.id.statistical_export);
+        rlBottom = findViewById(R.id.statistical_bottom_group);
 
     }
 
@@ -98,7 +108,8 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         rdMonth.setText(Util.CurrentMonthYear());
         rdDate.setText(DATE_DEFAULT);
         currentDate = rdMonth.getText().toString();
-        btnEmployeeFilter.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN) ? View.VISIBLE :View.GONE);
+        rlBottom.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN) ? View.VISIBLE :View.GONE);
+//        loadAllBillIdOnSheet();
         loadAllBill(User.getId(), paramDate(currentDate),false, true);
 
         setupViewPager(viewPager);
@@ -112,6 +123,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         rdMonth.setOnClickListener(this);
         rdDate.setOnClickListener(this);
         btnEmployeeFilter.setOnClickListener(this);
+        btnExport.setOnClickListener(this);
 
     }
 
@@ -188,6 +200,12 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
                 break;
 
+            case R.id.statistical_export:
+                postListbill();
+
+
+                break;
+
         }
     }
 
@@ -198,7 +216,6 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                 loadAllBill(User.getId(), s, false,true);
             }
         });
-
 
     }
 
@@ -217,6 +234,25 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
             }
         });
         datePickerDialogFragment.show(getSupportFragmentManager(), null);
+    }
+
+    private void postListbill(){
+        SheetConnect.getALlValue(new GoogleSheetGet.CallbackListList() {
+            @Override
+            public void onRespone(List<List<Object>> results) {
+                listSheetID = new ArrayList<>();
+                if (results != null){
+                    for (int i=0; i<results.size(); i++){
+                        listSheetID.add(results.get(i).get(0));
+                    }
+                }
+
+                String range = String.format(Api_link.GOOGLESHEET_CUSTOM_TAB, listSheetID.size()+3);
+
+                SheetConnect.postValue(range, getListValueExportToSheet(listBill), true);
+
+            }
+        }, false);
     }
 
     private void loadAllBill(final int  userId, String param, Boolean isFilter, Boolean showLoading){
@@ -243,7 +279,6 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                 public void onResponse(JSONArray result) {
                     try {
                         listBill = new ArrayList<Bill>();
-
 
                         for (int i=0; i<result.length(); i++){
                             JSONObject objectBill = result.getJSONObject(i);
@@ -309,8 +344,36 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
         }
 
-
         return result;
+    }
+
+    private List<List<Object>> getListValueExportToSheet(List<Bill> listbill){
+        List<List<Object>> values = new ArrayList<>();
+        try {
+            for (int i=0; i<listbill.size(); i++){
+                Bill bill = listbill.get(i);
+                if (!listSheetID.toString().contains(bill.getString("id"))){
+                    final Customer customer = new Customer(bill.getJsonObject("customer"));
+                    List<Object> data = new ArrayList<>();
+                    data.add(bill.getString("id"));
+                    data.add(Util.DateString(bill.getLong("createAt")));
+                    data.add(bill.getJsonObject("user").getString("displayName"));
+                    data.add(Constants.getShopInfo(customer.getString("shopType") , null) + " " + customer.getString("signBoard"));
+                    data.add(customer.getString("phone"));
+                    data.add(bill.getDouble("total"));
+                    data.add(bill.getDouble("paid"));
+                    data.add(bill.getDouble("debt"));
+                    data.add(bill.getString("note"));
+
+                    values.add(data);
+                }
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return values;
     }
 
     @Override
@@ -320,7 +383,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
             //reloadData();
         }
 
-
     }
+
 
 }

@@ -1,136 +1,134 @@
 package wolve.dms.libraries.connectapi;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
+import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
+import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.Sheets;
+import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.ValueRange;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import wolve.dms.apiconnect.Api_link;
+import wolve.dms.apiconnect.SheetConnect;
+import wolve.dms.utils.Constants;
+import wolve.dms.utils.Util;
 
-public class GoogleSheetPost extends AsyncTask<Void, Void, List<String>> {
-    private Sheets mService = null;
-    private Exception mLastError = null;
+public class GoogleSheetPost extends AsyncTask<Void, Void, List<List<Object>>> {
+    private String spreadsheetId;
+    private String range;
+    private NetHttpTransport HTTP_TRANSPORT;
+    private JsonFactory JSON_FACTORY;
+    private CallbackListList mListener;
+    private List<String> SCOPES ;
+    private List<List<Object>> mParams;
 
-    public GoogleSheetPost(GoogleAccountCredential credential) {
-        HttpTransport transport = AndroidHttp.newCompatibleTransport();
-        JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-        mService = new Sheets.Builder(
-                transport, jsonFactory, credential)
-                .setApplicationName("Google Sheets API Android Quickstart")
-                .build();
+    public interface CallbackListList{
+        void onRespone(List<List<Object>> results);
     }
 
-    @Override
-    protected List<String> doInBackground(Void... params) {
+    public GoogleSheetPost(String range, List<List<Object>> param, CallbackListList callbackListList) {
+        this.spreadsheetId = Api_link.GOOGLESHEET_KEY;
+        this.range = range;
+        this.mParams = param;
+        this.HTTP_TRANSPORT = new NetHttpTransport();
+        this.mListener = callbackListList;
+        this.JSON_FACTORY = JacksonFactory.getDefaultInstance();
+        this.SCOPES = Collections.singletonList(SheetsScopes.SPREADSHEETS);
+    }
+
+    private Credential getCredentials() {
+        InputStream in = SheetConnect.class.getResourceAsStream(Api_link.GOOGLESHEET_CREDENTIALS_FILE_PATH);
         try {
-            postData();
-            return getDataFromApi();
-        } catch (Exception e) {
-            mLastError = e;
-            cancel(true);
+            GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+
+            GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+                    HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
+                    .setDataStoreFactory(new FileDataStoreFactory(Util.createCustomFolder(Api_link.GOOGLESHEET_TOKENS_PATH)))
+                    .setAccessType("offline")
+                    .build();
+
+            Credential credential = new wolve.dms.libraries.googleauth.AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
+
+            return credential;
+
+        } catch (IOException e) {
             return null;
         }
-    }
 
-    private List<String> getDataFromApi() throws IOException {
-        String spreadsheetId = "13MC4CB_UOP10HwDm7vJQDgBd2vHqie7kn9r3-mdFvU8";
-//            String range = "Class Data!A2:E";
-        String range = "DISTRICT!A1:B";
-        List<String> results = new ArrayList<String>();
-        ValueRange response = this.mService.spreadsheets().values()
-                .get(spreadsheetId, range)
-                .execute();
-
-
-        List<List<Object>> values = response.getValues();
-        if (values != null) {
-//                results.add("Name, Major");
-            for (List row : values) {
-                results.add(row.get(0) + ", " + row.get(1));
-            }
-        }
-        return results;
-    }
-
-
-
-
-
-//    @Override
-//    protected void onPreExecute() {
-//        mOutputText.setText("");
-//        mProgress.show();
-//    }
-
-    @Override
-    protected void onPostExecute(List<String> output) {
-//        mProgress.hide();
-//        if (output == null || output.size() == 0) {
-//            mOutputText.setText("No results returned.");
-//        } else {
-//            output.add(0, "Data retrieved using the Google Sheets API:");
-//            mOutputText.setText(TextUtils.join("\n", output));
-//        }
     }
 
     @Override
-    protected void onCancelled() {
-//        mProgress.hide();
-//        if (mLastError != null) {
-//            if (mLastError instanceof GooglePlayServicesAvailabilityIOException) {
-//                showGooglePlayServicesAvailabilityErrorDialog(
-//                        ((GooglePlayServicesAvailabilityIOException) mLastError)
-//                                .getConnectionStatusCode());
-//            } else if (mLastError instanceof UserRecoverableAuthIOException) { startActivityForResult(
-//                        ((UserRecoverableAuthIOException) mLastError).getIntent(),
-//                        TestGoogleSheet.REQUEST_AUTHORIZATION);
-//            } else {
-//                mOutputText.setText("The following error occurred:\n"
-//                        + mLastError.getMessage());
-//            }
-//        } else {
-//            mOutputText.setText("Request cancelled.");
-//        }
-    }
-
-    private void postData() throws IOException {
-        String spreadsheetId = Api_link.GOOGLESHEET_KEY;
-        String range = Api_link.GOOGLESHEET_TAB;
-        List<List<Object>> values = new ArrayList<>();
-
-        List<Object> data1 = new ArrayList<>();
-        data1.add("objA");
-        data1.add("objB");
-
-        List<Object> data2 = new ArrayList<>();
-        data2.add("Quận N");
-        data2.add("Quận M");
-
-        //There are obviously more dynamic ways to do these, but you get the picture
-        values.add(data1);
-        values.add(data2);
-
-        //Create the valuerange object and set its fields
+    protected List<List<Object>> doInBackground(Void... params) {
+//        String spreadsheetId = Api_link.GOOGLESHEET_KEY;
+//        String range = Api_link.GOOGLESHEET_TAB;
         ValueRange valueRange = new ValueRange();
 
         valueRange.setMajorDimension("ROWS");
         valueRange.setRange(range);
-        valueRange.setValues(values);
+        valueRange.setValues(mParams);
 
         //then gloriously execute this copy-pasted code ;)
-        this.mService.spreadsheets().values()
-                .update(spreadsheetId, range, valueRange)
-                .setValueInputOption("RAW")
-                .execute();
+        Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials())
+                .setApplicationName(Constants.DMS_NAME)
+                .build();
+        try {
+            service.spreadsheets().values()
+                    .update(spreadsheetId, range, valueRange)
+                    .setValueInputOption("RAW")
+                    .execute();
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+//        List<List<Object>> values = new ArrayList<>();
+//        Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials())
+//                .setApplicationName(Constants.DMS_NAME)
+//                .build();
+//        ValueRange response = null;
+//        try {
+//            response = service.spreadsheets().values().get(spreadsheetId, range).execute();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        values = response.getValues();
+//        if (values == null || values.isEmpty()) {
+//            System.out.println("No data found.");
+//        } else {
+//            Log.e("name", values.toString());
+//            for (List row : values) {
+//                // Print columns A and E, which correspond to indices 0 and 4.
+////                System.out.printf("%s, %s\n", row.get(0), row.get(4));
+//            }
+//        }
+
+//        return values;
+        return mParams;
+    }
+
+    @Override
+    protected void onPostExecute(List<List<Object>> lists) {
+//        super.onPostExecute(lists);
+        mListener.onRespone(lists);
     }
 }
+
+
+
