@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.savvi.rangedatepicker.CalendarPickerView;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -40,13 +41,18 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 import wolve.dms.R;
 import wolve.dms.adapter.BluetoothListAdapter;
 import wolve.dms.adapter.CartCheckinReasonAdapter;
+import wolve.dms.adapter.ProductReturnAdapter;
+import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickProduct;
+import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackListProduct;
 import wolve.dms.callback.CallbackPayBill;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.libraries.DoubleTextWatcher;
+import wolve.dms.models.BaseModel;
+import wolve.dms.models.BillDetail;
 import wolve.dms.models.Customer;
 import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
@@ -454,6 +460,76 @@ public class CustomCenterDialog {
                         e.printStackTrace();
                     }
                 }
+
+            }
+        });
+
+
+    }
+
+    public static void showDialogReturnProduct(final int customerId, List<BaseModel> listBill, final CallbackBoolean mListener){
+        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_return_product);
+
+        final Button btnCancel = dialogResult.findViewById(R.id.btn_cancel);
+        final Button btnSubmit = dialogResult.findViewById(R.id.btn_submit);
+        TextView tvTitle = dialogResult.findViewById(R.id.dialog_return_product_title);
+        RecyclerView rvProduct = dialogResult.findViewById(R.id.dialog_return_product_rv);
+        final EditText edNote = dialogResult.findViewById(R.id.dialog_return_product_note);
+
+        btnCancel.setText("HỦY");
+        btnSubmit.setText("LƯU");
+        tvTitle.setText("DANH SÁCH SẢN PHẨM TRẢ");
+
+        final ProductReturnAdapter adapter = new ProductReturnAdapter(listBill);
+        rvProduct.setAdapter(adapter);
+        rvProduct.setHasFixedSize(true);
+        rvProduct.setNestedScrollingEnabled(false);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(), LinearLayoutManager.VERTICAL, false);
+        rvProduct.setLayoutManager(layoutManager);
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogResult.dismiss();
+            }
+        });
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                List<JSONObject> listProductSelected = new ArrayList<>();
+                listProductSelected = adapter.getListSelected();
+
+                if (listProductSelected.size() >0){
+                    Double total =0.0;
+                    try {
+                        for (int i=0; i<listProductSelected.size(); i++){
+                            total += (listProductSelected.get(i).getDouble("unitPrice") - listProductSelected.get(i).getDouble("discount")) *listProductSelected.get(i).getDouble("quantity") ;
+
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    final String params = DataUtil.createPostBillParam(customerId,total, total, adapter.getListSelected(), edNote.getText().toString().trim());
+
+                    CustomerConnect.PostBill(params, new CallbackJSONObject() {
+                        @Override
+                        public void onResponse(JSONObject result) {
+                            mListener.onRespone(true);
+                            dialogResult.dismiss();
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            mListener.onRespone(false);
+                            dialogResult.dismiss();
+
+                        }
+                    }, true);
+                }else {
+                    Util.showToast("Vui lòng chọn số lượng");
+
+                }
+
 
             }
         });

@@ -18,4 +18,8 @@ public class BillDetail extends BaseModel{
     public String BillDetailtoString(){
         return jsonObject.toString();
     }
+
+    public JSONObject BillDetailJSONObject(){
+        return jsonObject;
+    }
 }

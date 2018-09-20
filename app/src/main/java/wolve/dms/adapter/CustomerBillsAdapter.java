@@ -26,10 +26,12 @@ import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackPayBill;
 import wolve.dms.callback.CallbackUpdateBill;
 import wolve.dms.customviews.CTextIcon;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
 import wolve.dms.models.BillDetail;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
+import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
 
@@ -41,15 +43,23 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
     private List<Bill> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
-    private CallbackDeleteAdapter mDelete;
-    private CallbackUpdateBill mUpdate;
+//    private CallbackDeleteAdapter mDelete;
+//    private CallbackUpdateBill mUpdate;
+    private CallbackListObject mListenerList;
+    private CustomBottomDialog.FourMethodListener mListerner;
 
-    public CustomerBillsAdapter(List<Bill> data, CallbackDeleteAdapter mDelete, CallbackUpdateBill mUpdate) {
+    public interface CallbackListObject{
+        void onResponse(List<BaseModel> listResult);
+    }
+
+    public CustomerBillsAdapter(List<Bill> data, CallbackListObject  listener, CustomBottomDialog.FourMethodListener listener4) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mData = data;
         this.mContext = Util.getInstance().getCurrentActivity();
-        this.mDelete = mDelete;
-        this.mUpdate = mUpdate;
+        this.mListenerList = listener;
+        this.mListerner = listener4;
+//        this.mDelete = mDelete;
+//        this.mUpdate = mUpdate;
         Collections.sort(mData, new Comparator<Bill>(){
             public int compare(Bill obj1, Bill obj2) {
                 return obj1.getString("createAt").compareToIgnoreCase(obj2.getString("createAt"));
@@ -84,7 +94,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
             }
 
             JSONArray arrayBillDetail = new JSONArray(mData.get(position).getString("billDetails"));
-            List<BillDetail> listBillDetail = new ArrayList<>();
+            final List<BillDetail> listBillDetail = new ArrayList<>();
             for (int i=0; i<arrayBillDetail.length(); i++){
                 BillDetail billDetail = new BillDetail(arrayBillDetail.getJSONObject(i));
                 listBillDetail.add(billDetail);
@@ -104,103 +114,38 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
                 holder.vLineUnder.setVisibility(View.GONE);
             }
 
-            holder.tvicon.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    if(User.getRole().equals("MANAGER")){
-                        CustomCenterDialog.alertWithCancelButton(null, "Bạn muốn xóa hóa đơn " + Util.DateString(mData.get(position).getLong("updateAt")), "ĐỒNG Ý","HỦY", new CallbackBoolean() {
-                            @Override
-                            public void onRespone(Boolean result) {
-                                String param = String.valueOf(mData.get(position).getInt("id"));
-                                CustomerConnect.DeleteBill(param, new CallbackJSONObject() {
-                                    @Override
-                                    public void onResponse(JSONObject result) {
-                                        mDelete.onDelete(mData.get(position).BillstoString(), position);
-                                        notifyDataSetChanged();
-                                    }
+            holder.tvIcon.setText(String.valueOf(mData.size()-position));
 
-                                    @Override
-                                    public void onError(String error) {
-
-                                    }
-                                }, true);
-                            }
-                        });
-
-                    }
-
-
-                    return true;
-                }
-            });
-
-            holder.lnParent.setOnClickListener(new View.OnClickListener() {
+            holder.tvIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (mData.get(position).getDouble("debt") != 0){
-                        CustomCenterDialog.showDialogInputPaid("Nhập số tiền khách trả", "Nợ còn lại", mData.get(position).getDouble("debt"), new CallbackPayBill() {
-                            @Override
-                            public void OnRespone(Double total, Double pay) {
-                                try {
-                                    JSONObject params = new JSONObject();
-//                                    params.put("createAt",mData.get(position).getLong("createAt"));
-//                                    params.put("updateAt",mData.get(position).getLong("updateAt"));
-                                    params.put("debt", mData.get(position).getDouble("total") - mData.get(position).getDouble("paid") - pay);
-                                    params.put("total", mData.get(position).getDouble("total"));
-                                    params.put("paid", mData.get(position).getDouble("paid") + pay);
-                                    params.put("id", mData.get(position).getInt("id"));
-                                    params.put("customerId", new JSONObject(mData.get(position).getString("customer")).getString("id"));
-                                    params.put("distributorId", Distributor.getDistributorId());
-                                    params.put("userId", User.getUserId());
-//                            params.put("note", "test .hoa");
-                                    if (mData.get(position).getString("note").equals("")){
-                                        params.put("note",String.format("%s tra %s", Util.CurrentMonthYearHour() , Util.FormatMoney(pay)));
-                                    }else {
-                                        params.put("note", mData.get(position).getString("note") + String.format("\n%s tra %s", Util.CurrentMonthYearHour() , Util.FormatMoney(pay)));
-                                    }
-
-
-                                    params.put("billDetails", null);
-                                    CustomerConnect.PostBill(params.toString(), new CallbackJSONObject() {
-                                        @Override
-                                        public void onResponse(JSONObject result) {
-                                            //get customer detail from serer
-                                            try {
-                                                mData.get(position).put("debt", result.getDouble("debt"));
-                                                mData.get(position).put("total", result.getDouble("total"));
-                                                mData.get(position).put("paid", result.getDouble("paid"));
-                                                mData.get(position).put("note", result.getString("note"));
-                                                notifyItemChanged(position);
-
-                                                mUpdate.onUpdate(mData.get(position), position);
-
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
-                                            }
-
-                                            String s = result.toString();
-
-                                        }
-
-                                        @Override
-                                        public void onError(String error) {
-
-                                        }
-                                    }, true);
-
-
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                    CustomBottomDialog.choiceFourOption(mContext.getString(R.string.icon_money), "Thanh toán hóa đơn",
+                            mContext.getString(R.string.icon_print), "In lại hóa đơn",
+                            mContext.getString(R.string.icon_return), "Thu lại hàng",
+                            mContext.getString(R.string.icon_delete), "Xóa hóa đơn", new CustomBottomDialog.FourMethodListener() {
+                                @Override
+                                public void Method1(Boolean one) {
+                                    payBill(position);
                                 }
-                            }
-                        });
 
+                                @Override
+                                public void Method2(Boolean two) {
+                                    mListerner.Method2(true);
+                                }
 
+                                @Override
+                                public void Method3(Boolean three) {
+                                    mListenerList.onResponse(returnProduct(listBillDetail));
+                                }
 
-
-                    }
+                                @Override
+                                public void Method4(Boolean four) {
+                                    deleteBill(position);
+                                }
+                            });
                 }
             });
+
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -215,7 +160,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
     public class CustomerBillsAdapterViewHolder extends RecyclerView.ViewHolder {
         private TextView tvDate, tvHour, tvPay, tvDebt, tvTotal, tvNote;
         private RecyclerView rvBillDetail;
-        private CTextIcon tvicon;
+        private TextView tvIcon;
         private View vLineUpper, vLineUnder;
         private LinearLayout lnParent;
 
@@ -231,7 +176,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
             vLineUnder = (View) itemView.findViewById(R.id.bills_item_under);
             vLineUpper = (View) itemView.findViewById(R.id.bills_item_upper);
             lnParent = (LinearLayout) itemView.findViewById(R.id.bills_item_content_parent);
-            tvicon = (CTextIcon) itemView.findViewById(R.id.bills_item_icon);
+            tvIcon =  (TextView) itemView.findViewById(R.id.bills_item_icon);
             tvNote = itemView.findViewById(R.id.bills_item_note);
 
         }
@@ -242,5 +187,105 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
         return mData;
     }
 
+    private void deleteBill(final int currentPosition){
+        if(User.getRole().equals("MANAGER")){
+            CustomCenterDialog.alertWithCancelButton(null, String.format("Bạn muốn xóa hóa đơn %s với số tiền %s đ",Util.DateString(mData.get(currentPosition).getLong("updateAt")), Util.FormatMoney(mData.get(currentPosition).getDouble("total"))),
+                    "ĐỒNG Ý","HỦY", new CallbackBoolean() {
+                @Override
+                public void onRespone(Boolean result) {
+                    String param = String.valueOf(mData.get(currentPosition).getInt("id"));
+                    CustomerConnect.DeleteBill(param, new CallbackJSONObject() {
+                        @Override
+                        public void onResponse(JSONObject result) {
+                            //mDelete.onDelete(mData.get(currentPosition).BillstoString(), currentPosition);
+                            Util.showToast("Xóa thành công");
+                            mListerner.Method4(true);
+//                            notifyDataSetChanged();
+
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            mListerner.Method4(false);
+                        }
+                    }, true);
+                }
+            });
+
+        }
+    }
+
+    private void payBill(final int currentPosition){
+        if (mData.get(currentPosition).getDouble("debt") != 0){
+            CustomCenterDialog.showDialogInputPaid("Nhập số tiền khách trả", "Nợ còn lại", mData.get(currentPosition).getDouble("debt"), new CallbackPayBill() {
+                @Override
+                public void OnRespone(Double total, Double pay) {
+                    try {
+                        JSONObject params = new JSONObject();
+//                                    params.put("createAt",mData.get(position).getLong("createAt"));
+//                                    params.put("updateAt",mData.get(position).getLong("updateAt"));
+                        params.put("debt", mData.get(currentPosition).getDouble("total") - mData.get(currentPosition).getDouble("paid") - pay);
+                        params.put("total", mData.get(currentPosition).getDouble("total"));
+                        params.put("paid", mData.get(currentPosition).getDouble("paid") + pay);
+                        params.put("id", mData.get(currentPosition).getInt("id"));
+                        params.put("customerId", new JSONObject(mData.get(currentPosition).getString("customer")).getString("id"));
+                        params.put("distributorId", Distributor.getDistributorId());
+                        params.put("userId", User.getUserId());
+//                            params.put("note", "test .hoa");
+                        if (mData.get(currentPosition).getString("note").equals("")){
+                            params.put("note",String.format("%s tra %s", Util.CurrentMonthYearHour() , Util.FormatMoney(pay)));
+                        }else {
+                            params.put("note", mData.get(currentPosition).getString("note") + String.format("\n%s tra %s", Util.CurrentMonthYearHour() , Util.FormatMoney(pay)));
+                        }
+
+
+                        params.put("billDetails", null);
+                        CustomerConnect.PostBill(params.toString(), new CallbackJSONObject() {
+                            @Override
+                            public void onResponse(JSONObject result) {
+                                mListerner.Method1(true);
+
+                                //get customer detail from serer
+//                                try {
+//                                    mData.get(currentPosition).put("debt", result.getDouble("debt"));
+//                                    mData.get(currentPosition).put("total", result.getDouble("total"));
+//                                    mData.get(currentPosition).put("paid", result.getDouble("paid"));
+//                                    mData.get(currentPosition).put("note", result.getString("note"));
+//                                    notifyItemChanged(currentPosition);
+//
+////                                    mUpdate.onUpdate(mData.get(currentPosition), currentPosition);
+//
+//                                } catch (JSONException e) {
+//                                    e.printStackTrace();
+//                                }
+
+
+                            }
+
+                            @Override
+                            public void onError(String error) {
+                                mListerner.Method1(false);
+                            }
+                        }, true);
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }else {
+            Util.showToast("Hóa đơn này đã thanh toán");
+        }
+    }
+
+    private List<BaseModel> returnProduct(List<BillDetail> list){
+        List<BaseModel> listResult = new ArrayList<>();
+        for (int i=0; i<list.size(); i++){
+            listResult.add(list.get(i));
+        }
+        return listResult;
+
+    }
 
 }

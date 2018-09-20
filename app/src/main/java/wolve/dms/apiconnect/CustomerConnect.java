@@ -266,7 +266,7 @@ public class CustomerConnect {
             @Override
             public void onError(String error) {
                 listener.onError(error);
-                Util.getInstance().stopLoading(stopLoading);
+                Util.getInstance().stopLoading(true);
             }
         }).execute();
     }

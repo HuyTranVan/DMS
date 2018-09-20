@@ -72,6 +72,8 @@
     <string name="icon_bookmark">&#xf02e;</string>
     <string name="icon_export">&#xf093;</string>
     <string name="icon_filter">&#xf0b0;</string>
+    <string name="icon_return">&#xf0e2;</string>
+    <string name="icon_delete">&#xf1f8;</string>
 
 
 

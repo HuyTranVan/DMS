@@ -82,7 +82,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="0.4"
                 android:background="@drawable/colorwhite_borderred_corner"
-                android:text=""
+                android:hint="0"
                 android:textSize="@dimen/_12sdp"
                 android:inputType="number"
                 android:gravity="right|center_vertical"

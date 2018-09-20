@@ -39,14 +39,11 @@ import static wolve.dms.utils.Constants.REQUEST_ENABLE_BT;
 
 public abstract class BaseActivity extends AppCompatActivity {
     protected LocationManager mLocationManager;
-    protected float LOCATION_REFRESH_DISTANCE = 1;
-    protected long LOCATION_REFRESH_TIME = 100;
     public DialogPlus dialog;
     private boolean doubleBackToExitPressedOnce = false;
     public static BluetoothAdapter mBluetoothAdapter = null;
     public static BluetoothSocket btsocket;
     public static OutputStream outputStream;
-//    protected List<BluetoothDevice> listDevice = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,42 +183,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     };
 
-//    public void checkGPS(CallbackBoolean mListener) {
-//        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-//        boolean gps_enabled = false;
-//        Util.getInstance().showLoading("Kiểm tra thông tin vị trí");
-//        gps_enabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-//
-//        if (!gps_enabled) {
-//            CustomCenterDialog.alertWithButton("Xác thực quyền truy cập vị trí", "Bạn cần mở GPS truy cập vị trí để sử dụng toàn bộ tính năng phần mềm", "Bật GPS", new CallbackBoolean() {
-//                @Override
-//                public void onRespone(Boolean result) {
-//                    final Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//                    startActivity(intent);
-//                    Util.getInstance().stopLoading(true);
-//
-//                }
-//            });
-//        } else {
-//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//                return;
-//            }
-//            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE, mLocationListener);
-//            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE, mLocationListener);
-//            Util.getInstance().stopLoading(true);
-//
-//            //UPDATE LAST LOCATION
-//            Criteria criteria = new Criteria();
-//            criteria.setAccuracy(Criteria.ACCURACY_FINE);
-//            Location curLocation = mLocationManager.getLastKnownLocation(mLocationManager.getBestProvider(criteria, true));
-//            if(curLocation != null) {
-//                Util.getInstance().setCurrentLocation(curLocation);
-//                mListener.onRespone(true);
-//            }
-//        }
-//
-//    }
-
     @Override
     public void onBackPressed() {
         switch (Util.getInstance().getCurrentActivity().getLocalClassName()){
@@ -303,7 +264,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         Util.getInstance().stopLoading(true);
         try {
             if(btsocket!= null){
-                outputStream.close();
+                if (outputStream != null)
+                    outputStream.close();
                 btsocket.close();
                 btsocket = null;
             }
@@ -443,7 +405,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                 } catch (IOException ex) {
                     runOnUiThread(socketErrorRunnable);
                     try {
-                        btsocket.close();
+                        if (btsocket != null)
+                            btsocket.close();
                     } catch (IOException e) {
                         mListener.onError();
 //                        e.printStackTrace();

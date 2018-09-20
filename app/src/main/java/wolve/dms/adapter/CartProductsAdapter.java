@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackChangePrice;
 import wolve.dms.callback.CallbackClickProduct;
 import wolve.dms.customviews.CTextIcon;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
@@ -198,6 +200,14 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
 
     public List<Product> getAllDataProduct(){
         return mData;
+    }
+
+    public List<JSONObject> getAllData(){
+        List<JSONObject> list = new ArrayList<>();
+        for (int i=0; i<mData.size(); i++){
+            list.add(mData.get(i).ProductJSONObject());
+        }
+        return list;
     }
 
     private Double updatePrice(List<Product> list){

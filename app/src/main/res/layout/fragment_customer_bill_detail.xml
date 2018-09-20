@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorWhite"
+    android:clickable="true">
+
+    <RelativeLayout
+        android:id="@+id/cart_choice_header"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_35sdp"
+        android:background="@drawable/bg_header_top">
+
+        <ImageView
+            android:id="@+id/icon_back"
+            android:layout_width="@dimen/_35sdp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_arrow_back_black_18dp"
+            android:padding="@dimen/_8sdp"
+            android:background="?selectableItemBackground"/>
+
+        <TextView
+            android:id="@+id/header_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="SẢN PHẨM"
+            android:textSize="@dimen/_14sdp"
+            android:textColor="@color/black_text_color"/>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:background="@color/colorLightGrey"
+        android:orientation="horizontal"
+        android:layout_below="@+id/customer_header">
+
+        <TextView
+            android:id="@+id/bill_detail_debt"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textColor="@color/colorRed"
+            android:text="con no"
+            android:textSize="@dimen/_10sdp"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/_5sdp"
+            android:paddingRight="@dimen/_5sdp"/>
+
+        <TextView
+            android:id="@+id/bill_detail_paid"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textColor="@color/black_text_color"
+            android:text="con no"
+            android:textSize="@dimen/_10sdp"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/_5sdp"
+            android:paddingRight="@dimen/_5sdp"/>
+
+        <TextView
+            android:id="@+id/bill_detail_total"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textColor="@color/colorBlue"
+            android:text="con no"
+            android:textSize="@dimen/_10sdp"
+            android:gravity="center_vertical|right"
+            android:paddingLeft="@dimen/_5sdp"
+            android:paddingRight="@dimen/_10sdp"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorGrey"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/bill_detail_rvbill"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:paddingTop="@dimen/_5sdp"
+        android:paddingBottom="@dimen/_5sdp"
+        android:layout_below="@+id/cart_choice_header"/>
+
+
+</LinearLayout>

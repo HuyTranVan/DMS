@@ -464,66 +464,70 @@ public class MapUtil{
     }
 
     public static String updateCustomerFilter(String filter){
-        switch (filter){
-            case Constants.MARKER_ALL:
-                for (int i=0; i<markers.size(); i++){
-                    if (!markers.get(i).isVisible()){
-                        markers.get(i).setVisible(true);
-                    }
-                }
-
-                break;
-
-            case Constants.MARKER_INTERESTED:
-                for (int i=0; i<markers.size(); i++){
-                    try {
-                        if (markers.get(i).getTag() != null){
-                            JSONObject object = new JSONObject(markers.get(i).getTag().toString());
-                            if (object.getInt("status") !=1 && object.getInt("status") !=3){
-                                markers.get(i).setVisible(false);
-                                //interested -=1;
-
-                            }else if (!markers.get(i).isVisible()){
-                                markers.get(i).setVisible(true);
-                                //interested +=1;
-                            }
+        if (markers != null)
+            switch (filter){
+                case Constants.MARKER_ALL:
+                    for (int i=0; i<markers.size(); i++){
+                        if (!markers.get(i).isVisible()){
+                            markers.get(i).setVisible(true);
                         }
-
-                    } catch (JSONException e) {
-//                e.printStackTrace();
                     }
-                }
 
-                break;
+                    break;
 
-            case Constants.MARKER_ORDERED:
-                for (int i=0; i<markers.size(); i++){
-                    try {
-                        if (markers.get(i).getTag() != null){
-                            JSONObject object = new JSONObject(markers.get(i).getTag().toString());
-                            if (object.getInt("status") !=3){
-                                markers.get(i).setVisible(false);
-                                //interested -=1;
+                case Constants.MARKER_INTERESTED:
+                    for (int i=0; i<markers.size(); i++){
+                        try {
+                            if (markers.get(i).getTag() != null){
+                                JSONObject object = new JSONObject(markers.get(i).getTag().toString());
+                                if (object.getInt("status") !=1 && object.getInt("status") !=3){
+                                    markers.get(i).setVisible(false);
+                                    //interested -=1;
 
-                            }else if (!markers.get(i).isVisible()){
-                                markers.get(i).setVisible(true);
-                                //interested +=1;
+                                }else if (!markers.get(i).isVisible()){
+                                    markers.get(i).setVisible(true);
+                                    //interested +=1;
+                                }
                             }
+
+                        } catch (JSONException e) {
+    //                e.printStackTrace();
                         }
-
-                    } catch (JSONException e) {
-//                e.printStackTrace();
                     }
-                }
 
-                break;
-        }
+                    break;
+
+                case Constants.MARKER_ORDERED:
+                    for (int i=0; i<markers.size(); i++){
+                        try {
+                            if (markers.get(i).getTag() != null){
+                                JSONObject object = new JSONObject(markers.get(i).getTag().toString());
+                                if (object.getInt("status") !=3){
+                                    markers.get(i).setVisible(false);
+                                    //interested -=1;
+
+                                }else if (!markers.get(i).isVisible()){
+                                    markers.get(i).setVisible(true);
+                                    //interested +=1;
+                                }
+                            }
+
+                        } catch (JSONException e) {
+    //                e.printStackTrace();
+                        }
+                    }
+
+                    break;
+            }
         interested =0;
-        for (int i=0; i<markers.size(); i++){
-            if (markers.get(i).isVisible()){
-                interested +=1;
+        if (markers != null){
+            for (int i=0; i<markers.size(); i++){
+                if (markers.get(i).isVisible()){
+                    interested +=1;
+                }
             }
         }
+
         return String.format("%d/%d", interested, customers.size());
     }
 

@@ -13,6 +13,10 @@ import java.io.Serializable;
 public class BaseModel implements Serializable {
     JSONObject jsonObject;
 
+    public JSONObject BaseModelJSONObject(){
+        return jsonObject;
+    }
+
     public boolean hasKey(String key) {
         return jsonObject.has(key);
     }

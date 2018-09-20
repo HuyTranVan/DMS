@@ -60,6 +60,7 @@ import wolve.dms.libraries.ItemDecorationGridSpace;
 import wolve.dms.libraries.connectapi.DownloadImage;
 import wolve.dms.libraries.printerdriver.PrinterCommands;
 import wolve.dms.libraries.printerdriver.UtilPrinter;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
 import wolve.dms.models.Customer;
 import wolve.dms.models.Distributor;
@@ -70,6 +71,7 @@ import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomSQL;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -100,6 +102,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     private Uri imageChangeUri ;
     protected List<Product> listProducts = new ArrayList<>();
     protected List<ProductGroup> listProductGroups = new ArrayList<>();
+    private String currentEmulatorDevice ="Google Android SDK built for x86";
 
 
     @Override
@@ -155,11 +158,14 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         }else {
             new DownloadImage(this, imgLogo, Api_link.LOGO_BILL).execute();
         }
-
         loadListProduct();
         loadListProductGroup();
         createRVProduct(listInitialProduct);
-        registerBluetooth();
+
+        if (!Util.getDeviceName().equals(currentEmulatorDevice)){
+            registerBluetooth();
+        }
+
     }
 
     @Override
@@ -295,7 +301,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     }
 
     private void submitBill(final Double total, final Double paid){
-        final String params = createPostBillParam(total, paid, adapterProducts.getAllDataProduct());
+        final String params = DataUtil.createPostBillParam(currentCustomer.getInt("id"),total, paid, adapterProducts.getAllData(), tvNote.getText().toString().trim());
 
         if (btsocket != null && btsocket.isConnected()){
             Util.getInstance().showLoading("Đang in...");
@@ -338,35 +344,6 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
             });
 
         }
-
-    }
-
-    private String createPostBillParam(final Double total, final Double paid, List<Product> listProduct){
-        final JSONObject params = new JSONObject();
-        try {
-            params.put("debt", total - paid);
-            params.put("total", total);
-            params.put("paid", paid);
-            params.put("customerId", currentCustomer.getInt("id"));
-            params.put("distributorId", Distributor.getDistributorId());
-            params.put("userId", User.getUserId());
-            params.put("note", tvNote.getText().toString().trim());
-
-            JSONArray array = new JSONArray();
-            for (int i=0; i< listProduct.size(); i++){
-                JSONObject object = new JSONObject();
-                object.put("productId", listProduct.get(i).getInt("id"));
-                object.put("discount", listProduct.get(i).getDouble("discount"));
-                object.put("quantity", listProduct.get(i).getDouble("quantity"));
-
-                array.put(object);
-            }
-            params.put("billDetails", (Object) array);
-        } catch (JSONException e) {
-//            e.printStackTrace();
-        }
-
-        return params.toString();
 
     }
 

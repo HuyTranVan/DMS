@@ -224,8 +224,10 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             case R.id.map_current_location:
                 mMap.setOnCameraMoveListener(MapsActivity.this);
 //                MapUtil.resetMarker();
-                LatLng latLng = new LatLng(mMap.getMyLocation().getLatitude(), mMap.getMyLocation().getLongitude());
-                triggerCurrentLocation(latLng, 16);
+                if (mMap.getMyLocation() != null){
+                    LatLng latLng = new LatLng(mMap.getMyLocation().getLatitude(), mMap.getMyLocation().getLongitude());
+                    triggerCurrentLocation(latLng, 16);
+                }
 
                 break;
 

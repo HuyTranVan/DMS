@@ -1,8 +1,10 @@
 package wolve.dms.utils;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -14,8 +16,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.ArrayMap;
+import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -71,6 +75,7 @@ import wolve.dms.activities.StatisticalBillsFragment;
 import wolve.dms.activities.StatisticalDashboardFragment;
 import wolve.dms.activities.StatisticalProductFragment;
 import wolve.dms.callback.CallbackString;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
 import wolve.dms.models.Product;
 import wolve.dms.models.Province;
@@ -139,7 +144,7 @@ public class Util {
         return date;
     }
 
-    public boolean isLoading(){
+    public boolean isLoading() {
         if (cDialog != null && cDialog.isShowing())
             return true;
         return false;
@@ -150,7 +155,7 @@ public class Util {
     }
 
     public void showLoading(final String message) {
-        if (cDialog == null || !cDialog.isShowing()  ) {
+        if (cDialog == null || !cDialog.isShowing()) {
 
             cDialog = KProgressHUD.create(getCurrentActivity())
                     .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
@@ -164,7 +169,7 @@ public class Util {
     }
 
     public void stopLoading(Boolean stop) {
-        if (stop){
+        if (stop) {
             if (cDialog != null && cDialog.isShowing() || cDialog != null) {
                 cDialog.dismiss();
                 cDialog = null;
@@ -201,12 +206,12 @@ public class Util {
         SnackbarManager.show(snb, Util.getInstance().getCurrentActivity()); // where it is displayed
     }
 
-    public static void showSnackbar(String content, String actionlabel,boolean isIndefinite, ActionClickListener actionListener) {
+    public static void showSnackbar(String content, String actionlabel, boolean isIndefinite, ActionClickListener actionListener) {
         Snackbar snb = Snackbar.with(Util.getInstance().getCurrentActivity().getApplicationContext())
                 .type(SnackbarType.MULTI_LINE) // Set is as a multi-line snackbar
                 .text(content) // text to be displayed
                 .actionColor(Color.parseColor("#2196f3"))
-                .duration(isIndefinite? Snackbar.SnackbarDuration.LENGTH_INDEFINITE : Snackbar.SnackbarDuration.LENGTH_SHORT);
+                .duration(isIndefinite ? Snackbar.SnackbarDuration.LENGTH_INDEFINITE : Snackbar.SnackbarDuration.LENGTH_SHORT);
         if (actionlabel != null) {
             snb.actionLabel(actionlabel).actionListener(actionListener);
         }
@@ -215,8 +220,8 @@ public class Util {
         SnackbarManager.show(snb, Util.getInstance().getCurrentActivity()); // where it is displayed
     }
 
-    public static void showToast(String message){
-        if (currentToast!= null) {
+    public static void showToast(String message) {
+        if (currentToast != null) {
             currentToast.cancel();
         }
         currentToast = Toast.makeText(Util.getInstance().getCurrentActivity(), message, Toast.LENGTH_SHORT);
@@ -383,23 +388,25 @@ public class Util {
         deleteDir(cacheDir);
         cacheDir.delete();
     }
+
     public static String getCacheThumbnail() {
-        String directory =  getInstance().currentActivity.getCacheDir() + "/thumbnail/";
+        String directory = getInstance().currentActivity.getCacheDir() + "/thumbnail/";
         File directoryCheck = new File(directory);
 
-        if(!directoryCheck.exists())
+        if (!directoryCheck.exists())
             directoryCheck.mkdirs();
         return directory;
     }
+
     public static String getThumbnail(String imageUrl) {
-        if(imageUrl.startsWith("http")) {
+        if (imageUrl.startsWith("http")) {
             return imageUrl;
         }
         File bitmapFile = new File(imageUrl);
         String fileName = bitmapFile.getName();
         String cacheFilename = getCacheThumbnail() + fileName;
         File croppedFileThumbnail = new File(cacheFilename);
-        if(croppedFileThumbnail.exists()) {
+        if (croppedFileThumbnail.exists()) {
             return getCacheThumbnail() + fileName;
         }
         Bitmap bitmap = BitmapFactory.decodeFile(imageUrl);
@@ -408,13 +415,13 @@ public class Util {
         boolean landscape = bitmap.getWidth() > bitmap.getHeight();
 
         float scale_factor;
-        if (landscape) scale_factor = (float)IMAGE_SIZE / bitmap.getHeight();
-        else scale_factor = (float)IMAGE_SIZE / bitmap.getWidth();
+        if (landscape) scale_factor = (float) IMAGE_SIZE / bitmap.getHeight();
+        else scale_factor = (float) IMAGE_SIZE / bitmap.getWidth();
         Matrix matrix = new Matrix();
         matrix.postScale(scale_factor, scale_factor);
 
         Bitmap croppedBitmap;
-        if (landscape){
+        if (landscape) {
             int start = (bitmap.getWidth() - bitmap.getHeight()) / 2;
             croppedBitmap = Bitmap.createBitmap(bitmap, start, 0, bitmap.getHeight(), bitmap.getHeight(), matrix, true);
         } else {
@@ -443,9 +450,9 @@ public class Util {
 
     public static ArrayMap<String, Object> JSON2ArrayMap(JSONObject jObject) {
         Iterator<?> keys = jObject.keys();
-        ArrayMap<String, Object> jMap =  new ArrayMap<>();
-        while( keys.hasNext() ) {
-            String key = (String)keys.next();
+        ArrayMap<String, Object> jMap = new ArrayMap<>();
+        while (keys.hasNext()) {
+            String key = (String) keys.next();
             try {
                 jMap.put(key, jObject.get(key));
             } catch (JSONException e) {
@@ -486,9 +493,9 @@ public class Util {
         column_index_folder_name = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
         while (cursor.moveToNext()) {
             absolutePathOfImage = cursor.getString(column_index_data);
-            if(absolutePathOfImage.contains(".png") | absolutePathOfImage.contains(".PNG")
+            if (absolutePathOfImage.contains(".png") | absolutePathOfImage.contains(".PNG")
                     | absolutePathOfImage.contains(".jpg") | absolutePathOfImage.contains(".JPG")
-                    | absolutePathOfImage.contains(".jpeg") | absolutePathOfImage.contains(".JPEG")){
+                    | absolutePathOfImage.contains(".jpeg") | absolutePathOfImage.contains(".JPEG")) {
 
 
                 listOfAllImages.add(absolutePathOfImage);
@@ -503,7 +510,7 @@ public class Util {
     }
 
 
-    public static File createCustomFolder(String name){
+    public static File createCustomFolder(String name) {
         File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), Constants.APP_DIRECTORY);
 
         if (!mediaStorageDir.exists()) {
@@ -514,7 +521,7 @@ public class Util {
         return new File(mediaStorageDir.getPath() + File.separator + name);
     }
 
-    public static File createCustomImageFile(String name){
+    public static File createCustomImageFile(String name) {
         File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), Constants.APP_DIRECTORY);
 
         if (!mediaStorageDir.exists()) {
@@ -530,7 +537,7 @@ public class Util {
         }
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
-        return new File(imageFile.getPath() + File.separator +  String.format("IMG_%s_%s.jpeg", name, timeStamp));
+        return new File(imageFile.getPath() + File.separator + String.format("IMG_%s_%s.jpeg", name, timeStamp));
     }
 
     //using parse for local category
@@ -567,76 +574,67 @@ public class Util {
             }
         }
 
-        CustomSQL.setString("logo",mediaStorageDir.getPath() + File.separator +"logo.jpeg" );
+        CustomSQL.setString("logo", mediaStorageDir.getPath() + File.separator + "logo.jpeg");
 
-        return new File(mediaStorageDir.getPath() + File.separator +"logo.jpeg");
+        return new File(mediaStorageDir.getPath() + File.separator + "logo.jpeg");
     }
 
-    public static String CurrentTimeStampString(){
+    public static String CurrentTimeStampString() {
         SimpleDateFormat dfm = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 
         long unixtime = 0;
-        try
-        {
+        try {
             unixtime = dfm.parse(new SimpleDateFormat("dd-MM-yyyy HH:mm").format(Calendar.getInstance().getTime())).getTime();
-            unixtime=unixtime/1000;
-        }
-        catch (ParseException e)
-        {
+            unixtime = unixtime / 1000;
+        } catch (ParseException e) {
             e.printStackTrace();
         }
         return String.valueOf(unixtime);
 
     }
 
-    public static long CurrentTimeStamp(){
+    public static long CurrentTimeStamp() {
         SimpleDateFormat dfm = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 
         long unixtime = 0;
-        try
-        {
+        try {
             unixtime = dfm.parse(new SimpleDateFormat("dd-MM-yyyy HH:mm").format(Calendar.getInstance().getTime())).getTime();
             //unixtime=unixtime;
-        }
-        catch (ParseException e)
-        {
+        } catch (ParseException e) {
             e.printStackTrace();
         }
         return unixtime;
     }
 
-    public static String CurrentMonthYear(){
+    public static String CurrentMonthYear() {
         return new SimpleDateFormat("MM-yyyy").format(Calendar.getInstance().getTime());
     }
 
-    public static String CurrentDayMonthYear(){
+    public static String CurrentDayMonthYear() {
         return new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
     }
 
-    public static String CurrentMonthYearHour(){
+    public static String CurrentMonthYearHour() {
         return new SimpleDateFormat("dd-MM-yyyy  HH:mm").format(Calendar.getInstance().getTime());
     }
 
-    public static long TimeStamp1(String ddMMyyyy){
+    public static long TimeStamp1(String ddMMyyyy) {
 
         SimpleDateFormat dfm = new SimpleDateFormat("dd-MM-yyyy");
 
         long unixtime = 0;
-        try
-        {
+        try {
             unixtime = dfm.parse(ddMMyyyy).getTime();
-            unixtime=unixtime;
-        }
-        catch (ParseException e)
-        {
+            unixtime = unixtime;
+        } catch (ParseException e) {
             e.printStackTrace();
         }
         return unixtime;
 
     }
 
-    public static String DateString(long timestamp){
-        String date ="";
+    public static String DateString(long timestamp) {
+        String date = "";
 
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         //cal.setTimeInMillis(timestamp*1000);
@@ -647,8 +645,8 @@ public class Util {
 
     }
 
-    public static String DateHourString(long timestamp){
-        String date ="";
+    public static String DateHourString(long timestamp) {
+        String date = "";
 
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         //cal.setTimeInMillis(timestamp*1000);
@@ -659,8 +657,8 @@ public class Util {
 
     }
 
-    public static String DateMonthString(long timestamp){
-        String date ="";
+    public static String DateMonthString(long timestamp) {
+        String date = "";
 
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         //cal.setTimeInMillis(timestamp*1000);
@@ -671,8 +669,8 @@ public class Util {
 
     }
 
-    public static String YearString(long timestamp){
-        String date ="";
+    public static String YearString(long timestamp) {
+        String date = "";
 
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         //cal.setTimeInMillis(timestamp*1000);
@@ -683,8 +681,8 @@ public class Util {
 
     }
 
-    public static String HourString(long timestamp){
-        String date ="";
+    public static String HourString(long timestamp) {
+        String date = "";
 
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         //cal.setTimeInMillis(timestamp*1000);
@@ -695,8 +693,8 @@ public class Util {
 
     }
 
-    public static String formatTimeDate(long timestamp){
-        String date ="";
+    public static String formatTimeDate(long timestamp) {
+        String date = "";
 
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         //cal.setTimeInMillis(timestamp*1000);
@@ -730,20 +728,20 @@ public class Util {
         return uri.getPath();
     }
 
-    public static String encodeString(String value){
+    public static String encodeString(String value) {
         String encoded = null;
         try {
-            encoded = URLEncoder.encode(value,"utf-8");
+            encoded = URLEncoder.encode(value, "utf-8");
         } catch (UnsupportedEncodingException e) {
             return value;
         }
         return encoded;
     }
 
-    public static String FormatMoney(Double money){
-        String moneyFormated="";
+    public static String FormatMoney(Double money) {
+        String moneyFormated = "";
 
-        moneyFormated = NumberFormat.getNumberInstance(Locale.US).format(money).replace(",",".");
+        moneyFormated = NumberFormat.getNumberInstance(Locale.US).format(money).replace(",", ".");
 
 //        if(money != null){
 //            String mo = money.replace(",","");
@@ -764,9 +762,9 @@ public class Util {
         return moneyFormated;
     }
 
-    public static ArrayList<String> arrayToList(String[] array){
+    public static ArrayList<String> arrayToList(String[] array) {
         ArrayList<String> list = new ArrayList<>();
-        for (int i=0; i<array.length; i++){
+        for (int i = 0; i < array.length; i++) {
             list.add(array[i]);
         }
 
@@ -785,10 +783,10 @@ public class Util {
 //        }
 //    }
 
-    public static void setProvincesList(JSONArray result){
+    public static void setProvincesList(JSONArray result) {
         mListProvinces = new ArrayList<>();
         try {
-            for (int i=0; i<result.length(); i++){
+            for (int i = 0; i < result.length(); i++) {
                 Province province = new Province(result.getJSONObject(i));
                 mListProvinces.add(province);
             }
@@ -856,52 +854,75 @@ public class Util {
 //        }
 //    }
 
-    public static Double valueMoney(String money){
-        return Double.parseDouble(money.replace(".",""));
+    public static Double valueMoney(String money) {
+        return Double.parseDouble(money.replace(".", ""));
     }
 
-    public static Double valueMoney(EditText edText){
-        if (edText.getText().toString().equals("0")||edText.getText().toString().equals(""))
+    public static Double valueMoney(EditText edText) {
+        if (edText.getText().toString().equals("0") || edText.getText().toString().equals(""))
             return 0.0;
         return Double.parseDouble(edText.getText().toString().trim().replaceAll(",|\\s|\\.", ""));
     }
 
-    public static Double valueMoney(TextView edText){
+    public static Double valueMoney(TextView edText) {
 
-        return Double.parseDouble(edText.getText().toString().trim().replace(".",""));
+        return Double.parseDouble(edText.getText().toString().trim().replace(".", ""));
     }
 
-    public static Double getTotalMoney(List<Bill> list){
-        Double money =0.0;
-        for (int i=0; i<list.size(); i++){
+    public static Double getTotalMoney(List<Bill> list) {
+        Double money = 0.0;
+        for (int i = 0; i < list.size(); i++) {
             money += list.get(i).getDouble("total");
         }
         return money;
     }
 
-    public static Double getTotalPaid(List<Bill> list){
-        Double money =0.0;
-        for (int i=0; i<list.size(); i++){
+    public static Double getTotalPaid(List<Bill> list) {
+        Double money = 0.0;
+        for (int i = 0; i < list.size(); i++) {
             money += list.get(i).getDouble("paid");
         }
         return money;
     }
 
-    public static Double getTotalDebt(List<Bill> list){
-        Double money =0.0;
-        for (int i=0; i<list.size(); i++){
+    public static Double getTotalDebt(List<Bill> list) {
+        Double money = 0.0;
+        for (int i = 0; i < list.size(); i++) {
             money += list.get(i).getDouble("debt");
         }
         return money;
     }
 
-    public static Double getTotalProfit(List<Bill> list){
-        Double profit =0.0;
+    public static JSONObject getTotal(List<Bill> list) {
+        JSONObject object = new JSONObject();
+        Double total = 0.0;
+        Double paid = 0.0;
+        Double debt =0.0;
+        for (int i = 0; i < list.size(); i++) {
+            total += list.get(i).getDouble("total");
+            paid += list.get(i).getDouble("paid");
+            debt += list.get(i).getDouble("debt");
+        }
+
         try {
-            for (int i=0; i<list.size(); i++){
+            object.put("total", total);
+            object.put("paid", paid);
+            object.put("debt", debt);
+            object.put("size", list.size());
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return object;
+    }
+
+    public static Double getTotalProfit(List<Bill> list) {
+        Double profit = 0.0;
+        try {
+            for (int i = 0; i < list.size(); i++) {
                 JSONArray arrayDetail = list.get(i).getJSONArray("billDetails");
-                if (arrayDetail.length() >0){
-                    for (int j=0 ; j<arrayDetail.length(); j++){
+                if (arrayDetail.length() > 0) {
+                    for (int j = 0; j < arrayDetail.length(); j++) {
                         JSONObject objectDetail = arrayDetail.getJSONObject(j);
                         profit += (objectDetail.getDouble("unitPrice") - objectDetail.getDouble("discount") - objectDetail.getDouble("purchasePrice"))
                                 * objectDetail.getDouble("quantity");
@@ -914,7 +935,7 @@ public class Util {
         return profit;
     }
 
-    public static Double getTotalMoneyProduct(List<Product> list){
+    public static Double getTotalMoneyProduct(List<Product> list) {
         Double sum = 0.0;
         for (int i = 0; i < list.size(); i++) {
             sum += list.get(i).getDouble("totalMoney");
@@ -954,11 +975,11 @@ public class Util {
         }
     }
 
-    public static Boolean checkImageNull(String imglink){
+    public static Boolean checkImageNull(String imglink) {
         Boolean check = true;
-        if (imglink!= null && !imglink.equals("null") && !imglink.equals("http://lubsolution.com/mydms/staticnull") && !imglink.equals("http://lubsolution.com/mydms/static") && !imglink.equals("")){
+        if (imglink != null && !imglink.equals("null") && !imglink.equals("http://lubsolution.com/mydms/staticnull") && !imglink.equals("http://lubsolution.com/mydms/static") && !imglink.equals("")) {
             check = false;
-        }else {
+        } else {
             check = true;
         }
 
@@ -966,9 +987,9 @@ public class Util {
     }
 
     public static String PhoneFormat(String phone) {
-        String currentPhone ="";
+        String currentPhone = "";
 
-        switch (phone.replace(".","").length()) {
+        switch (phone.replace(".", "").length()) {
             case 5:
                 currentPhone = phone.subSequence(0, 4) + "." + phone.subSequence(4, 5);
                 break;
@@ -982,19 +1003,19 @@ public class Util {
                 break;
 
             case 8:
-                currentPhone = phone.subSequence(0, 4) + "." + phone.subSequence(4, 7)+ "." + phone.subSequence(7, 8);
+                currentPhone = phone.subSequence(0, 4) + "." + phone.subSequence(4, 7) + "." + phone.subSequence(7, 8);
                 break;
 
             case 9:
-                currentPhone = phone.subSequence(0, 4) + "." + phone.subSequence(4, 7)+ "." + phone.subSequence(7, 9);
+                currentPhone = phone.subSequence(0, 4) + "." + phone.subSequence(4, 7) + "." + phone.subSequence(7, 9);
                 break;
 
             case 10:
-                currentPhone = phone.subSequence(0, 4) + "." + phone.subSequence(4, 7) + "." + phone .subSequence(7, 10);
+                currentPhone = phone.subSequence(0, 4) + "." + phone.subSequence(4, 7) + "." + phone.subSequence(7, 10);
                 break;
 
             case 11:
-                currentPhone = phone.subSequence(0, 5) + "." + phone.subSequence(5, 8) + "." + phone .subSequence(8, 11);
+                currentPhone = phone.subSequence(0, 5) + "." + phone.subSequence(5, 8) + "." + phone.subSequence(8, 11);
                 break;
 
             default:
@@ -1012,18 +1033,18 @@ public class Util {
         return true;
     }
 
-    public static Double moneyValue(EditText editText){
+    public static Double moneyValue(EditText editText) {
         if (isEmptyValue(editText))
             return 0.0;
         try {
             return Double.parseDouble(editText.getText().toString().trim().replaceAll(",|\\s|\\.", ""));
-        }catch (NumberFormatException NaN){
+        } catch (NumberFormatException NaN) {
             return 0.0;
         }
     }
 
 
-    public static boolean isEmptyValue(EditText editText){
+    public static boolean isEmptyValue(EditText editText) {
         if (editText.getText().toString().trim().equals("") || editText.getText().toString().trim().equals(""))
             return true;
 
@@ -1036,7 +1057,7 @@ public class Util {
         return pattern.matcher(temp).replaceAll("").replaceAll("Đ", "D").replace("đ", "");
     }
 
-    public static void textMoneyEvent(final EditText edText, final CallbackString mlistener){
+    public static void textMoneyEvent(final EditText edText, final CallbackString mlistener) {
         edText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -1085,7 +1106,7 @@ public class Util {
 
     }
 
-    public static void textEvent(final EditText edText, final CallbackString mlistener){
+    public static void textEvent(final EditText edText, final CallbackString mlistener) {
         edText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -1115,13 +1136,22 @@ public class Util {
 
     }
 
-    public static String convertToUtf(String s){
+    public static String convertToUtf(String s) {
 
         try {
             return URLEncoder.encode(s, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             return s;
         }
+    }
+
+    public static boolean checkForVirtualDevice() {
+        if (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")){
+            return true;
+        }else {
+            return false;
+        }
+
     }
 
 

@@ -12,7 +12,6 @@ import android.widget.FrameLayout;
 
 public class FitScrollWithFullscreen {
     public static void assistActivity (Activity activity, int fixNumber) {
-
         new FitScrollWithFullscreen(activity, fixNumber);
 
     }
@@ -27,6 +26,7 @@ public class FitScrollWithFullscreen {
         mChildOfContent.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             public void onGlobalLayout() {
                 possiblyResizeChildOfContent(fixNumber);
+
             }
         });
         frameLayoutParams = (FrameLayout.LayoutParams) mChildOfContent.getLayoutParams();

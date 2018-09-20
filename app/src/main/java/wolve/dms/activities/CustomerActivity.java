@@ -12,12 +12,15 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.PermissionChecker;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.NestedScrollView;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -60,6 +63,7 @@ import wolve.dms.callback.CallbackUpdateBill;
 import wolve.dms.customviews.CInputForm;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.customviews.WorkaroundMapFragment;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
 import wolve.dms.models.Checkin;
 import wolve.dms.models.Customer;
@@ -87,28 +91,28 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     private CTextIcon tvTrash, btnEditLocation, tvDropdown;
     private Button btnSubmit;
     private FloatingActionButton btnShopCart, btnCurrentLocation;
-    private TextView tvTitle, tvTotal, tvDebt, tvPaid;
+    private TextView  tvTotal, tvDebt , tvBillDetail;
+    protected TextView tvTitle;
     private CInputForm edName, edPhone, edAdress, edStreet, edDistrict, edCity, edNote, edShopType, edShopName;
     private RadioGroup rgStatus;
     private RadioButton rdInterested, rdNotInterested, rdOrdered;
     private ScrollView scParent;
-    private ViewPager viewPager;
-    private TabLayout tabLayout;
-    private BottomSheetBehavior mBottomSheetBehavior;
-    private LinearLayout lnBottomSheet, lnPaidParent;
-    private CoordinatorLayout coParent;
+//    private ViewPager viewPager;
+//    private TabLayout tabLayout;
+//    private BottomSheetBehavior mBottomSheetBehavior;
+    private LinearLayout lnPaidParent;
+    private FrameLayout coParent;
     private RelativeLayout rlHeader;
+    private RecyclerView rvCheckin;
 
-
-    private CustomerViewpagerAdapter viewpagerAdapter;
-    private Customer currentCustomer;
+    protected Customer currentCustomer;
     private List<Checkin> listCheckins = new ArrayList<>();
-    private List<Bill> listBills = new ArrayList<>();
+    protected List<Bill> listBills = new ArrayList<>();
     private List<RecyclerView.Adapter> listAdapter;
     private Status currentStatus;
-    private int currentState = BottomSheetBehavior.STATE_COLLAPSED;
+//    private int currentState = BottomSheetBehavior.STATE_COLLAPSED;
     private String firstName = "";
-    private float bottomSheetHeight;
+//    private float bottomSheetHeight;
     private FusedLocationProviderClient mFusedLocationClient;
 
     @Override
@@ -124,12 +128,12 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
     @Override
     public int setIdContainer() {
-        return 0;
+        return R.id.customer_parent;
     }
 
     @Override
     public void findViewById() {
-        coParent = (CoordinatorLayout) findViewById(R.id.customer_parent);
+        coParent = (FrameLayout) findViewById(R.id.customer_parent);
         rlHeader = (RelativeLayout) findViewById(R.id.customer_header);
         btnSubmit = (Button) findViewById(R.id.add_customer_submit);
         btnEditLocation = (CTextIcon) findViewById(R.id.add_customer_editlocation);
@@ -152,14 +156,16 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         rdNotInterested = (RadioButton) findViewById(R.id.customer_radio_status_nointerested);
         rdOrdered = (RadioButton) findViewById(R.id.customer_radio_status_ordered);
         scParent = (ScrollView) findViewById(R.id.customer_scrollview);
-        viewPager = (ViewPager) findViewById(R.id.customer_viewpager);
-        tabLayout = (TabLayout) findViewById(R.id.customer_tabs);
-        lnBottomSheet = (LinearLayout) findViewById(R.id.customer_bottom_sheet);
+//        viewPager = (ViewPager) findViewById(R.id.customer_viewpager);
+//        tabLayout = (TabLayout) findViewById(R.id.customer_tabs);
+//        lnBottomSheet = (LinearLayout) findViewById(R.id.customer_bottom_sheet);
         lnPaidParent = (LinearLayout) findViewById(R.id.customer_paid_parent);
         tvTotal = (TextView) findViewById(R.id.customer_paid_total);
         tvDebt = (TextView) findViewById(R.id.customer_paid_debt);
-        tvPaid = (TextView) findViewById(R.id.customer_paid_paid);
+//        tvPaid = (TextView) findViewById(R.id.customer_paid_paid);
         tvDropdown = findViewById(R.id.add_customer_dropdown);
+        rvCheckin = findViewById(R.id.add_customer_rvcheckin);
+        tvBillDetail = findViewById(R.id.customer_bill_more);
 
         //fix MapView in ScrollView
         mapFragment = (WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.add_customer_map);
@@ -175,7 +181,6 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     @Override
     public void initialData() {
         setupMap();
-        tabLayout.setupWithViewPager(viewPager);
         currentStatus = Status.getStatusList().get(0);
 
         String bundle = getIntent().getExtras().getString(Constants.CUSTOMER);
@@ -234,7 +239,8 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                     }
                 }
 
-                setupViewPager(listCheckins, listBills);
+                createRVCheckin(listCheckins);
+//                setupViewPager(listCheckins, listBills);
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -267,11 +273,10 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             edPhone.setSelection();
         }
 
-
         edShopType.setDropdown(true, new CInputForm.ClickListener() {
             @Override
             public void onClick(View view) {
-                CustomBottomDialog.choiceList("CHỌN NHÓM SẢN PHẨM",Util.arrayToList(Constants.shopName) , new CustomBottomDialog.StringListener() {
+                CustomBottomDialog.choiceList("CHỌN NHÓM CỬA HÀNG",Util.arrayToList(Constants.shopName) , new CustomBottomDialog.StringListener() {
                     @Override
                     public void onResponse(String content) {
                         edShopType.setText(content);
@@ -292,6 +297,9 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             }
         });
 
+        showMoneyOverview(Util.getTotal(listBills));
+
+
     }
 
     private void setupMap() {
@@ -310,133 +318,143 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         coParent.getViewTreeObserver().addOnGlobalLayoutListener(this);
         tvDropdown.setOnClickListener(this);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        tvBillDetail.setOnClickListener(this);
     }
 
-    private void setupBottomSheet() {
-        if (listBills.size() > 0) {
-            lnPaidParent.setVisibility(View.VISIBLE);
-            bottomSheetHeight = Util.convertDp2Px(88);
+//    private void setupBottomSheet() {
+//        if (listBills.size() > 0) {
+//            lnPaidParent.setVisibility(View.VISIBLE);
+//            bottomSheetHeight = Util.convertDp2Px(88);
+//
+//        } else {
+//            lnPaidParent.setVisibility(View.GONE);
+//            bottomSheetHeight = Util.convertDp2Px(58);
+//
+//        }
+//
+//        mBottomSheetBehavior = BottomSheetBehavior.from(lnBottomSheet);
+//        mBottomSheetBehavior.setPeekHeight((int) bottomSheetHeight);
+//        mBottomSheetBehavior.setState(currentState);
+//
+//        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+//            int lastState = BottomSheetBehavior.STATE_COLLAPSED;
+//
+//            @Override
+//            public void onStateChanged(View bottomSheet, int newState) {
+//                currentState = newState;
+//
+//                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+//                    if (tvTrash.getVisibility() == View.VISIBLE) {
+//                        tvTrash.setVisibility(View.GONE);
+//                    }
+//                } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+//                    if (currentCustomer.getInt("id") != 0) {
+//                        tvTrash.setVisibility(User.getRole().equals("MANAGER") ? View.VISIBLE : View.GONE);
+//                    } else {
+//                        tvTrash.setVisibility(View.GONE);
+//                    }
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onSlide(View bottomSheet, float slideOffset) {
+//
+//            }
+//        });
+//    }
 
-        } else {
-            lnPaidParent.setVisibility(View.GONE);
-            bottomSheetHeight = Util.convertDp2Px(58);
-
-        }
-
-        mBottomSheetBehavior = BottomSheetBehavior.from(lnBottomSheet);
-        mBottomSheetBehavior.setPeekHeight((int) bottomSheetHeight);
-        mBottomSheetBehavior.setState(currentState);
-
-        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            int lastState = BottomSheetBehavior.STATE_COLLAPSED;
-
-            @Override
-            public void onStateChanged(View bottomSheet, int newState) {
-                currentState = newState;
-
-                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
-                    if (tvTrash.getVisibility() == View.VISIBLE) {
-                        tvTrash.setVisibility(View.GONE);
-                    }
-                } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                    if (currentCustomer.getInt("id") != 0) {
-                        tvTrash.setVisibility(User.getRole().equals("MANAGER") ? View.VISIBLE : View.GONE);
-                    } else {
-                        tvTrash.setVisibility(View.GONE);
-                    }
-                }
-
-            }
-
-            @Override
-            public void onSlide(View bottomSheet, float slideOffset) {
-
-            }
-        });
-    }
-
-    private void setupViewPager(List<Checkin> listcheckin, List<Bill> listbills) {
-        final List<Bill> listbill = new ArrayList<>();
-        try {
-            for (int i = 0; i < listbills.size(); i++) {
-                if (listbills.get(i).getJsonObject("distributor").getString("id").equals(Distributor.getDistributorId())) {
-                    listbill.add(listbills.get(i));
-                }
-            }
-
-            showMoneyOverview(listbill);
-            setupBottomSheet();
-
-            int currentPosition = listbill.size();
-
-            final List<String> listTitle = new ArrayList<>();
-            listTitle.add(0, "CHECK_IN");
-            listTitle.add(1, "HÓA ĐƠN");
-
-            final List<RecyclerView.Adapter> listadapter = new ArrayList<>();
-
-            listadapter.add(0, new CustomerCheckinsAdapter(listcheckin));
-            listadapter.add(1, new CustomerBillsAdapter(listbill, new CallbackDeleteAdapter() {
-                @Override
-                public void onDelete(String data, int position) {
-                    listbill.remove(position);
-                    showMoneyOverview(listbill);
-                    reloadBillCount(listbill.size());
-                    setupBottomSheet();
-
-                }
-            }, new CallbackUpdateBill() {
-                @Override
-                public void onUpdate(final Bill bill, int position) {
-                    showMoneyOverview(listbill);
-                    Util.showToast("Thanh toán thành công");
-
-                }
-            }));
-
-            viewpagerAdapter = new CustomerViewpagerAdapter(listadapter, listTitle);
-            viewPager.setAdapter(viewpagerAdapter);
-            viewPager.setCurrentItem(currentPosition);
-            viewPager.setOffscreenPageLimit(2);
-
-            createTabLayout(listTitle, listadapter);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    private void createRVCheckin(List<Checkin> list){
+        CustomerCheckinsAdapter adapter = new CustomerCheckinsAdapter(list);
+        adapter.notifyDataSetChanged();
+        rvCheckin.setAdapter(adapter);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        rvCheckin.setLayoutManager(layoutManager);
 
     }
 
-    private void createTabLayout(List<String> listTitle, List<RecyclerView.Adapter> listadapter) {
-        for (int i = 0; i < listTitle.size(); i++) {
-            TabLayout.Tab tab = tabLayout.getTabAt(i);
-            View customView = LayoutInflater.from(this).inflate(R.layout.view_tab_customer, null);
-            TextView tabTextTitle = (TextView) customView.findViewById(R.id.tabNotify);
-            TextView textTitle = (TextView) customView.findViewById(R.id.tabTitle);
-            textTitle.setText(listTitle.get(i));
-
-            if (listadapter.get(i).getItemCount() <= 0) {
-                tabTextTitle.setVisibility(View.GONE);
-            } else {
-                tabTextTitle.setVisibility(View.VISIBLE);
-                tabTextTitle.setText(String.valueOf(listadapter.get(i).getItemCount()));
-            }
-
-            tab.setCustomView(customView);
-        }
-    }
-
-    private void reloadBillCount(int count) {
-        TabLayout.Tab tab = tabLayout.getTabAt(1);
-        TextView tabTextTitle = (TextView) tab.getCustomView().findViewById(R.id.tabNotify);
-
-        if (count <= 0) {
-            tabTextTitle.setVisibility(View.GONE);
-        } else {
-            tabTextTitle.setVisibility(View.VISIBLE);
-            tabTextTitle.setText(String.valueOf(count));
-        }
-
-    }
+//    private void setupViewPager(List<Checkin> listcheckin, List<Bill> listbills) {
+//        final List<Bill> listbill = new ArrayList<>();
+//        try {
+//            for (int i = 0; i < listbills.size(); i++) {
+//                if (listbills.get(i).getJsonObject("distributor").getString("id").equals(Distributor.getDistributorId())) {
+//                    listbill.add(listbills.get(i));
+//                }
+//            }
+//
+//            showMoneyOverview(listbill);
+//            setupBottomSheet();
+//
+//            int currentPosition = listbill.size();
+//
+//            final List<String> listTitle = new ArrayList<>();
+//            listTitle.add(0, "CHECK_IN");
+//            listTitle.add(1, "HÓA ĐƠN");
+//
+//            final List<RecyclerView.Adapter> listadapter = new ArrayList<>();
+//
+//            listadapter.add(0, new CustomerCheckinsAdapter(listcheckin));
+//            listadapter.add(1, new CustomerBillsAdapter(listbill, new CallbackDeleteAdapter() {
+//                @Override
+//                public void onDelete(String data, int position) {
+//                    listbill.remove(position);
+//                    showMoneyOverview(listbill);
+//                    reloadBillCount(listbill.size());
+//                    setupBottomSheet();
+//
+//                }
+//            }, new CallbackUpdateBill() {
+//                @Override
+//                public void onUpdate(final Bill bill, int position) {
+//                    showMoneyOverview(listbill);
+//                    Util.showToast("Thanh toán thành công");
+//
+//                }
+//            }));
+//
+//            viewpagerAdapter = new CustomerViewpagerAdapter(listadapter, listTitle);
+//            viewPager.setAdapter(viewpagerAdapter);
+//            viewPager.setCurrentItem(currentPosition);
+//            viewPager.setOffscreenPageLimit(2);
+//
+//            createTabLayout(listTitle, listadapter);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
+//
+//    private void createTabLayout(List<String> listTitle, List<RecyclerView.Adapter> listadapter) {
+//        for (int i = 0; i < listTitle.size(); i++) {
+//            TabLayout.Tab tab = tabLayout.getTabAt(i);
+//            View customView = LayoutInflater.from(this).inflate(R.layout.view_tab_customer, null);
+//            TextView tabTextTitle = (TextView) customView.findViewById(R.id.tabNotify);
+//            TextView textTitle = (TextView) customView.findViewById(R.id.tabTitle);
+//            textTitle.setText(listTitle.get(i));
+//
+//            if (listadapter.get(i).getItemCount() <= 0) {
+//                tabTextTitle.setVisibility(View.GONE);
+//            } else {
+//                tabTextTitle.setVisibility(View.VISIBLE);
+//                tabTextTitle.setText(String.valueOf(listadapter.get(i).getItemCount()));
+//            }
+//
+//            tab.setCustomView(customView);
+//        }
+//    }
+//
+//    private void reloadBillCount(int count) {
+//        TabLayout.Tab tab = tabLayout.getTabAt(1);
+//        TextView tabTextTitle = (TextView) tab.getCustomView().findViewById(R.id.tabNotify);
+//
+//        if (count <= 0) {
+//            tabTextTitle.setVisibility(View.GONE);
+//        } else {
+//            tabTextTitle.setVisibility(View.VISIBLE);
+//            tabTextTitle.setText(String.valueOf(count));
+//        }
+//
+//    }
 
     @Override
     public void onClick(View v) {
@@ -503,6 +521,11 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                         edNote.setText(s);
                     }
                 });
+                break;
+
+            case R.id.customer_bill_more:
+                changeFragment(new BillDetailFragment() , true);
+
                 break;
         }
     }
@@ -694,11 +717,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     private void backEvent(){
-        if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED){
-            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        }else {
-            returnPreviousScreen(null);
-        }
+        returnPreviousScreen(null);
     }
 
     @Override
@@ -718,7 +737,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                         listBills.add(new Bill(array.getJSONObject(i)));
                     }
 
-                    setupViewPager(listCheckins, listBills);
+//                    setupViewPager(listCheckins, listBills);
                 }
 
 
@@ -817,14 +836,14 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
     @Override
     public void onGlobalLayout() {
-        coParent.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-        int height = coParent.getHeight() - rlHeader.getHeight();
-
-        ViewGroup.LayoutParams params = lnBottomSheet.getLayoutParams();
-        params.height = height;
-        lnBottomSheet.requestLayout();
-
-        setupBottomSheet();
+//        coParent.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//        int height = coParent.getHeight() - rlHeader.getHeight();
+//
+//        ViewGroup.LayoutParams params = lnBottomSheet.getLayoutParams();
+//        params.height = height;
+//        lnBottomSheet.requestLayout();
+//
+//        setupBottomSheet();
 
     }
 
@@ -847,10 +866,16 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
     }
 
-    private void showMoneyOverview(List<Bill> list){
-        tvTotal.setText("Tổng: " + Util.FormatMoney(Util.getTotalMoney(list)));
-        tvPaid.setText("Trả: " + Util.FormatMoney(Util.getTotalPaid(list)));
-        tvDebt.setText("Nợ: " + Util.FormatMoney(Util.getTotalDebt(list)));
+    protected void showMoneyOverview(JSONObject object){
+        try {
+            lnPaidParent.setVisibility(object.getInt("size") > 0 ?View.VISIBLE :View.GONE);
+            tvTotal.setText(String.format("Tổng: %s" ,Util.FormatMoney(object.getDouble("total"))));
+            tvDebt.setText(String.format("Nợ: %s" ,Util.FormatMoney(object.getDouble("debt"))));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
 }
