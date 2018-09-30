@@ -37,7 +37,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.OnBackPressListener;
 import com.orhanobut.dialogplus.OnCancelListener;
@@ -90,7 +89,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     private CoordinatorLayout coParent;
     private SmoothProgressBar progressLoading;
-    private MaterialSearchView mSearchView;
+    //private MaterialSearchView mSearchView;
 
     private Handler mHandlerMoveMap = new Handler();
     private Handler mHandlerSearch = new Handler();
@@ -125,7 +124,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         rdOrdered = findViewById(R.id.map_filter_ordered);
         coParent = (CoordinatorLayout) findViewById(R.id.map_parent);
         progressLoading = findViewById(R.id.map_loading);
-        mSearchView = findViewById(R.id.map_searchview);
+        //mSearchView = findViewById(R.id.map_searchview);
 
         btnLocation.setColorNormalResId(R.color.white_text_color);
         btnLocation.setColorPressedResId(R.color.colorGrey);
@@ -153,45 +152,45 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         rdFilter.setOnCheckedChangeListener(this);
         btnPhoneNumber.setOnClickListener(this);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        onSearchViewEvent();
+//        onSearchViewEvent();
     }
 
-    private void onSearchViewEvent() {
-        mSearchView.onClickEvent(new MaterialSearchView.CallbackClick() {
-            @Override
-            public void onBack() {
-                onBackPressed();
-            }
-
-            @Override
-            public void onClear() {
-
-            }
-
-            @Override
-            public void onLocation() {
-                showListDistrict();
-            }
-        });
-
-        mSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                if (!newText.isEmpty() && newText.length()>1){
-                    mSearchText = newText;
-                    mHandlerSearch.removeCallbacks(delayForSerch);
-                    mHandlerSearch.postDelayed(delayForSerch, 500);
-
-                }
-                return true;
-            }
-        });
-    }
+//    private void onSearchViewEvent() {
+//        mSearchView.onClickEvent(new MaterialSearchView.CallbackClick() {
+//            @Override
+//            public void onBack() {
+//                onBackPressed();
+//            }
+//
+//            @Override
+//            public void onClear() {
+//
+//            }
+//
+//            @Override
+//            public void onLocation() {
+//                showListDistrict();
+//            }
+//        });
+//
+//        mSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                if (!newText.isEmpty() && newText.length()>1){
+//                    mSearchText = newText;
+//                    mHandlerSearch.removeCallbacks(delayForSerch);
+//                    mHandlerSearch.postDelayed(delayForSerch, 500);
+//
+//                }
+//                return true;
+//            }
+//        });
+//    }
 
     private Runnable delayForSerch = new Runnable() {
         @Override
@@ -200,7 +199,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             CustomerConnect.ListCustomerSearch(param, new CallbackJSONArray() {
                 @Override
                 public void onResponse(JSONArray result) {
-                    mSearchView.setSuggestions(result);
+//                    mSearchView.setSuggestions(result);
+
                 }
 
                 @Override
@@ -316,7 +316,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         CustomBottomDialog.choiceList("Chọn quận / huyện", District.getDistrictList(), new CustomBottomDialog.StringListener() {
             @Override
             public void onResponse(String content) {
-                mSearchView.setText(content);
+                //mSearchView.setText(content);
                 mMap.setOnCameraMoveListener(null);
                 loadCustomersByDistrict(content, getCheckedFilter());
             }
@@ -711,7 +711,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     @Override
     public void onCameraMove() {
-        Util.hideKeyboard(mSearchView);
+        //Util.hideKeyboard(mSearchView);
         mHandlerMoveMap.removeCallbacks(mFilterTask);
         mHandlerMoveMap.postDelayed(mFilterTask, 1000);
 

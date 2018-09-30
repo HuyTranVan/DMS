@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/colorGrey"
+    android:background="@color/black_text_color_hint"
     android:clickable="true"
     android:id="@+id/print_bill_parent">
 
@@ -16,15 +16,19 @@
         android:padding="@dimen/_8sdp"
         android:background="?selectableItemBackground"/>
 
+
     <ScrollView
-        android:layout_width="200dp"
-        android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
-        android:background="@color/colorWhite">
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:layout_centerInParent="true"
+        android:paddingBottom="@dimen/_20sdp">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:id="@+id/print_bill_mainlayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <ImageView
@@ -62,6 +66,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Website "
+                android:gravity="center"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="--------------------------"
                 android:gravity="center"
                 android:textStyle="bold"/>
 
@@ -135,15 +146,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:background="@color/black_text_color_hint"
-                android:layout_margin="@dimen/_10sdp"/>
+                android:layout_margin="@dimen/_5sdp"/>
 
             <TextView
                 android:id="@+id/print_bill_total"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Tong "
-                android:textAllCaps="true"
-                android:layout_marginLeft="@dimen/_10sdp"/>
+                android:textSize="@dimen/_14sdp"
+                android:textColor="@color/black_text_color"
+                android:gravity="right|center_vertical"
+                android:layout_marginRight="@dimen/_5sdp"/>
 
             <TextView
                 android:id="@+id/print_bill_paid"
@@ -193,8 +206,48 @@
         </LinearLayout>
     </ScrollView>
 
+    <RadioGroup
+        android:checkedButton="@+id/printer_57"
+        android:id="@+id/printer_all"
+        android:layout_width="@dimen/_80sdp"
+        android:layout_height="@dimen/_25sdp"
+        android:background="@drawable/pink_out_line"
+        android:orientation="horizontal"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/_5sdp">
 
+        <RadioButton
+            android:id="@+id/printer_57"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp"
+            android:layout_marginLeft="1dp"
+            android:background="@drawable/toggle_widget_background_left"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:button="@null"
+            android:gravity="center"
+            android:text="57mm"
+            android:textColor="@drawable/text_white_selected"
+            android:textSize="@dimen/_10sdp"
+            />
 
+        <RadioButton
+            android:id="@+id/printer_80"
+            android:layout_marginRight="1dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/toggle_widget_background_right"
+            android:button="@null"
+            android:gravity="center"
+            android:text="80mm"
+            android:textColor="@drawable/text_white_selected"
+            android:textSize="@dimen/_10sdp"/>
+
+    </RadioGroup>
 
 
 </RelativeLayout>

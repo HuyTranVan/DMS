@@ -11,6 +11,7 @@ import wolve.dms.activities.CustomerActivity;
 import wolve.dms.activities.HomeActivity;
 import wolve.dms.activities.LoginActivity;
 import wolve.dms.activities.MapsActivity;
+import wolve.dms.activities.PrintBillActivity;
 import wolve.dms.activities.ProductActivity;
 import wolve.dms.activities.ProductGroupActivity;
 import wolve.dms.activities.ShopCartActivity;
@@ -98,6 +99,15 @@ public class Transaction {
         Intent intent = new Intent(context, ShopCartActivity.class);
         intent.putExtra(Constants.CUSTOMER, customer);
         context.startActivityForResult(intent, Constants.RESULT_SHOPCART_ACTIVITY);
+        context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
+
+    public static void gotoPrintBillActivity(String customer, String bill) {
+        Activity context = Util.getInstance().getCurrentActivity();
+        Intent intent = new Intent(context, PrintBillActivity.class);
+        intent.putExtra(Constants.CUSTOMER, customer);
+        intent.putExtra(Constants.BILLS, bill);
+        context.startActivityForResult(intent, Constants.RESULT_PRINTBILL_ACTIVITY);
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 

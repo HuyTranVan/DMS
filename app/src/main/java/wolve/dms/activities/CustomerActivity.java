@@ -101,8 +101,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 //    private TabLayout tabLayout;
 //    private BottomSheetBehavior mBottomSheetBehavior;
     private LinearLayout lnPaidParent;
-    private FrameLayout coParent;
-    private RelativeLayout rlHeader;
+    private RelativeLayout coParent,rlHeader;
     private RecyclerView rvCheckin;
 
     protected Customer currentCustomer;
@@ -133,7 +132,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
     @Override
     public void findViewById() {
-        coParent = (FrameLayout) findViewById(R.id.customer_parent);
+        coParent = (RelativeLayout) findViewById(R.id.customer_parent);
         rlHeader = (RelativeLayout) findViewById(R.id.customer_header);
         btnSubmit = (Button) findViewById(R.id.add_customer_submit);
         btnEditLocation = (CTextIcon) findViewById(R.id.add_customer_editlocation);
@@ -299,6 +298,8 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
         showMoneyOverview(Util.getTotal(listBills));
 
+        Util.getSoftButtonsBarSizePort(this);
+
 
     }
 
@@ -321,48 +322,6 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         tvBillDetail.setOnClickListener(this);
     }
 
-//    private void setupBottomSheet() {
-//        if (listBills.size() > 0) {
-//            lnPaidParent.setVisibility(View.VISIBLE);
-//            bottomSheetHeight = Util.convertDp2Px(88);
-//
-//        } else {
-//            lnPaidParent.setVisibility(View.GONE);
-//            bottomSheetHeight = Util.convertDp2Px(58);
-//
-//        }
-//
-//        mBottomSheetBehavior = BottomSheetBehavior.from(lnBottomSheet);
-//        mBottomSheetBehavior.setPeekHeight((int) bottomSheetHeight);
-//        mBottomSheetBehavior.setState(currentState);
-//
-//        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-//            int lastState = BottomSheetBehavior.STATE_COLLAPSED;
-//
-//            @Override
-//            public void onStateChanged(View bottomSheet, int newState) {
-//                currentState = newState;
-//
-//                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
-//                    if (tvTrash.getVisibility() == View.VISIBLE) {
-//                        tvTrash.setVisibility(View.GONE);
-//                    }
-//                } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-//                    if (currentCustomer.getInt("id") != 0) {
-//                        tvTrash.setVisibility(User.getRole().equals("MANAGER") ? View.VISIBLE : View.GONE);
-//                    } else {
-//                        tvTrash.setVisibility(View.GONE);
-//                    }
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onSlide(View bottomSheet, float slideOffset) {
-//
-//            }
-//        });
-//    }
 
     private void createRVCheckin(List<Checkin> list){
         CustomerCheckinsAdapter adapter = new CustomerCheckinsAdapter(list);
@@ -373,88 +332,6 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
     }
 
-//    private void setupViewPager(List<Checkin> listcheckin, List<Bill> listbills) {
-//        final List<Bill> listbill = new ArrayList<>();
-//        try {
-//            for (int i = 0; i < listbills.size(); i++) {
-//                if (listbills.get(i).getJsonObject("distributor").getString("id").equals(Distributor.getDistributorId())) {
-//                    listbill.add(listbills.get(i));
-//                }
-//            }
-//
-//            showMoneyOverview(listbill);
-//            setupBottomSheet();
-//
-//            int currentPosition = listbill.size();
-//
-//            final List<String> listTitle = new ArrayList<>();
-//            listTitle.add(0, "CHECK_IN");
-//            listTitle.add(1, "HÓA ĐƠN");
-//
-//            final List<RecyclerView.Adapter> listadapter = new ArrayList<>();
-//
-//            listadapter.add(0, new CustomerCheckinsAdapter(listcheckin));
-//            listadapter.add(1, new CustomerBillsAdapter(listbill, new CallbackDeleteAdapter() {
-//                @Override
-//                public void onDelete(String data, int position) {
-//                    listbill.remove(position);
-//                    showMoneyOverview(listbill);
-//                    reloadBillCount(listbill.size());
-//                    setupBottomSheet();
-//
-//                }
-//            }, new CallbackUpdateBill() {
-//                @Override
-//                public void onUpdate(final Bill bill, int position) {
-//                    showMoneyOverview(listbill);
-//                    Util.showToast("Thanh toán thành công");
-//
-//                }
-//            }));
-//
-//            viewpagerAdapter = new CustomerViewpagerAdapter(listadapter, listTitle);
-//            viewPager.setAdapter(viewpagerAdapter);
-//            viewPager.setCurrentItem(currentPosition);
-//            viewPager.setOffscreenPageLimit(2);
-//
-//            createTabLayout(listTitle, listadapter);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//
-//    }
-//
-//    private void createTabLayout(List<String> listTitle, List<RecyclerView.Adapter> listadapter) {
-//        for (int i = 0; i < listTitle.size(); i++) {
-//            TabLayout.Tab tab = tabLayout.getTabAt(i);
-//            View customView = LayoutInflater.from(this).inflate(R.layout.view_tab_customer, null);
-//            TextView tabTextTitle = (TextView) customView.findViewById(R.id.tabNotify);
-//            TextView textTitle = (TextView) customView.findViewById(R.id.tabTitle);
-//            textTitle.setText(listTitle.get(i));
-//
-//            if (listadapter.get(i).getItemCount() <= 0) {
-//                tabTextTitle.setVisibility(View.GONE);
-//            } else {
-//                tabTextTitle.setVisibility(View.VISIBLE);
-//                tabTextTitle.setText(String.valueOf(listadapter.get(i).getItemCount()));
-//            }
-//
-//            tab.setCustomView(customView);
-//        }
-//    }
-//
-//    private void reloadBillCount(int count) {
-//        TabLayout.Tab tab = tabLayout.getTabAt(1);
-//        TextView tabTextTitle = (TextView) tab.getCustomView().findViewById(R.id.tabNotify);
-//
-//        if (count <= 0) {
-//            tabTextTitle.setVisibility(View.GONE);
-//        } else {
-//            tabTextTitle.setVisibility(View.VISIBLE);
-//            tabTextTitle.setText(String.valueOf(count));
-//        }
-//
-//    }
 
     @Override
     public void onClick(View v) {

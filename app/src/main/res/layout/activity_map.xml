@@ -36,13 +36,12 @@
             android:visibility="gone"
             android:layout_marginLeft="@dimen/_10sdp"
             android:layout_marginRight="@dimen/_10sdp"
-            android:layout_marginTop="-4dp"
-            android:layout_below="@+id/map_searchview"/>
+            android:layout_marginTop="-4dp"/>
 
-        <com.miguelcatalan.materialsearchview.MaterialSearchView
-            android:id="@+id/map_searchview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        <!--<com.miguelcatalan.materialsearchview.MaterialSearchView-->
+            <!--android:id="@+id/map_searchview"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content" />-->
 
     </RelativeLayout>
 

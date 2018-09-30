@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.models.Distributor;
@@ -39,4 +40,33 @@ public class DataUtil {
         return params.toString();
 
     }
+
+    public static JSONArray convertListObject2Array(List<JSONObject> list){
+        JSONArray array = new JSONArray();
+        for (int i=0; i< list.size(); i++){
+            array.put(list.get(i));
+
+        }
+
+        return array;
+
+    }
+
+    public static List<JSONObject> array2ListObject(String array){
+        List<JSONObject> list = new ArrayList<>();
+        try {
+            JSONArray jsonArray = new JSONArray(array);
+            for (int i=0; i<jsonArray.length(); i++){
+                JSONObject object = jsonArray.getJSONObject(i);
+                list.add(object);
+            }
+
+
+        } catch (JSONException e) {
+            return list;
+        }
+
+        return list;
+    }
+
 }

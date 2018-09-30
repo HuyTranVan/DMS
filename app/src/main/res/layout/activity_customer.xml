@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/customer_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorWhite">
+    android:background="@color/colorWhite"
+    android:fitsSystemWindows="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -453,56 +454,20 @@
 
     </RelativeLayout>
 
-    <!--<LinearLayout-->
-        <!--android:id="@+id/customer_bottom_sheet"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="88dp"-->
-        <!--android:orientation="vertical"-->
-        <!--android:background="#f4f4f4"-->
-        <!--app:layout_behavior="android.support.design.widget.BottomSheetBehavior">-->
-
-        <!--<View-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="2dp"-->
-            <!--android:background="#75b9b3b3"/>-->
-
-        <!--<android.support.design.widget.TabLayout-->
-            <!--android:id="@+id/customer_tabs"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="56dp"-->
-            <!--android:paddingLeft="5dp"-->
-            <!--android:paddingRight="5dp"-->
-            <!--android:layout_marginLeft="@dimen/_20sdp"-->
-            <!--app:tabIndicatorColor="@color/colorGreen"-->
-            <!--app:tabIndicatorHeight="2dp"-->
-            <!--app:tabMode="fixed"-->
-            <!--app:tabSelectedTextColor="@color/colorGreen"-->
-            <!--app:tabTextAppearance="@style/NavigationTabTextAppeareance"-->
-            <!--app:tabTextColor="@color/black_text_color_hint" />-->
-
-
-
-        <!--<android.support.v4.view.ViewPager-->
-            <!--android:id="@+id/customer_viewpager"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:background="@color/colorWhite"-->
-            <!--/>-->
-
-    <!--</LinearLayout>-->
-
     <com.github.clans.fab.FloatingActionButton
         android:id="@+id/add_customer_shopcart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_shopping_cart_white_18dp"
         android:layout_margin="@dimen/_10sdp"
-        android:layout_gravity="bottom|right"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        app:layout_anchorGravity="right"
         app:fab_size="normal"
         app:fab_colorNormal="@color/colorBlue"
         app:fab_colorPressed="@color/colorBlueDark"/>
 
-</FrameLayout>
+</RelativeLayout>
 
 
 

@@ -1,5 +1,6 @@
 package wolve.dms.models;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -13,6 +14,13 @@ public class Customer extends BaseModel{
 
     public Customer(JSONObject objOrder) {
         jsonObject = objOrder;
+    }
+    public Customer(String customer){
+        try {
+            jsonObject = new JSONObject(customer);
+        } catch (JSONException e) {
+            jsonObject = new JSONObject();
+        }
     }
 
     public String CustomertoString(){

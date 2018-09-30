@@ -203,7 +203,8 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 break;
 
             case R.id.cart_submit:
-                choicePayMethod();
+//                choicePayMethod();
+                Transaction.gotoPrintBillActivity(currentCustomer.CustomertoString(), DataUtil.convertListObject2Array(adapterProducts.getAllData()).toString());
 
                 break;
 

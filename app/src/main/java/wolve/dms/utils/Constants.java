@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import wolve.dms.R;
+import wolve.dms.models.User;
 
 public class Constants {
     public final static String DMS_NAME = "DMS_NAME";
@@ -14,6 +15,7 @@ public class Constants {
     public final static String PRODUCT = "product";
     public final static String STATUS = "status";
     public final static String CUSTOMER = "customer";
+    public final static String BILLS = "bills";
     public final static String CUSTOMER_CART = "customer";
     public final static String USER = "user";
     public final static String DISTRIBUTOR = "distributor";
@@ -45,6 +47,7 @@ public class Constants {
     public final static int REQUEST_PERMISSION_LOCATION = 1006;
     public final static int REQUEST_CAMERA_PERMISSION = 1007;
     public final static int REQUEST_PHONE_PERMISSION = 1008;
+    public final static int RESULT_PRINTBILL_ACTIVITY = 1009;
     public final static String RESULT_ERROR_TITLE = "Có lỗi xảy ra";
     public final static String RESULT = "result";
     public final static boolean RESULT_FALSE = false;
@@ -68,6 +71,13 @@ public class Constants {
     public static final String CONNECTED_PRINTER_ERROR = "Không thể kết nối tới máy in";
 
     public static final String ON_MAP_SCREEN = "on_map";
+
+    public final static String COMPANY_NAME = "CTY TNHH XNK TRAN VU ANH";
+    public final static String COMPANY_ADDRESS = "1 duong 57,P.Binh Trung Dong,Q 2";
+    public final static String COMPANY_HOTLINE = "ĐT:0931.07.22.23";
+    public final static String COMPANY_WEBSITE = "www.wolver.vn";
+    public final static String COMPANY_ORDERPHONE = String.format("Đặt hàng: %s", Util.PhoneFormat(User.getPhone()));
+    public final static String COMPANY_THANKS = "Tran trong cam on quy khach hang";
 
 
     //Home constant
