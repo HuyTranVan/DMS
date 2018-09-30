@@ -281,6 +281,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                         edShopType.setText(content);
                     }
                 });
+
             }
         });
 //        edShopType.setDropdownList(Util.arrayToList(Constants.shopName));
