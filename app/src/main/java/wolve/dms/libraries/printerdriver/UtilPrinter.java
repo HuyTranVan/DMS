@@ -318,7 +318,7 @@ public class UtilPrinter {
             Bitmap bmp = BitmapFactory.decodeFile(path);
             if(bmp!=null){
                 byte[] command = UtilPrinter.decodeBitmap(bmp);
-                outputStream.write(PrinterCommands.ESC_ALIGN_CENTER);
+                outputStream.write(PrinterCommands.ESC_ALIGN_CENTER123);
                 outputStream.write(command);
 
 

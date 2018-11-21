@@ -98,28 +98,32 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
     private void setupDistrictChart(List<Bill> list) {
         //repair data for Chart
         ArrayList<JSONObject> listData = new ArrayList<>();
+        List<String> listDistrict = District.getDistrictList();
         try {
-            for (int i = 0; i< District.getDistrictList().size(); i++){
+            for (int i = 0; i< listDistrict.size(); i++){
                 Double total =0.0;
                 for (int j=0; j<list.size(); j++){
                     JSONObject objectCustomer = new JSONObject(list.get(j).getString("customer"));
-                    if (objectCustomer.getString("district").equals(District.getDistrictList().get(i))){
+                    if (objectCustomer.getString("district").equals(listDistrict.get(i))){
                         total +=list.get(j).getDouble("total");
                     }
 
                 }
 
+
                 JSONObject district = new JSONObject();
-                district.put("name",District.getDistrictList().get(i) );
+                district.put("name",listDistrict.get(i) );
                 district.put("total", total);
                 listData.add(district);
+
+
             }
 
             PieChartData data;
 
             List<SliceValue> values = new ArrayList<SliceValue>();
             for (int i=0; i<listData.size(); i++){
-                if (listData.get(i).getDouble("total") > 0){
+                if (listData.get(i).getDouble("total") > 0.0){
                     SliceValue sliceValue = new SliceValue((float) listData.get(i).getDouble("total"), ChartUtils.nextColor());
                     sliceValue.setLabel(listData.get(i).getString("name") + " - " + Util.FormatMoney(listData.get(i).getDouble("total")));
                     values.add(sliceValue);

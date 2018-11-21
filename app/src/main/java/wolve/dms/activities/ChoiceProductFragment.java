@@ -162,6 +162,7 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
                 @Override
                 public void onChoosen(int position, int count) {
                     reloadBillCount(position, count);
+                    showSubmitEvent();
                 }
             });
 
@@ -206,21 +207,6 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
 
     }
 
-//    private void createRVProduct(List<Product> list, ProductGroup group){
-//        btnSubmit.setVisibility(View.GONE);
-//        adapter = new CartProductDialogAdapter(list, group, new CallbackBoolean() {
-//            @Override
-//            public void onRespone(Boolean result) {
-//                btnSubmit.setVisibility(result? View.VISIBLE : View.GONE);
-//
-//            }
-//        });
-//        rvProduct.setAdapter(adapter);
-//        rvProduct.setHasFixedSize(true);
-//        rvProduct.setNestedScrollingEnabled(false);
-//        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(), LinearLayoutManager.VERTICAL, false);
-//        rvProduct.setLayoutManager(layoutManager);
-//    }
 
     protected void  submitProduct(){
         List<Product> listChecked = new ArrayList<Product>();
@@ -258,6 +244,15 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
         tab.setCustomView(null);
         tab.setCustomView(customView);
 
+    }
+
+    private void showSubmitEvent(){
+        int count = 0;
+        for (int i=0; i<listadapter.size(); i++){
+            count += listadapter.get(i).getCount();
+        }
+
+        btnSubmit.setVisibility(count == 0?View.GONE: View.VISIBLE);
     }
 
 

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.callback.CallbackString;
 import wolve.dms.models.Status;
 import wolve.dms.utils.Util;
 
@@ -25,7 +26,7 @@ public class CartCheckinReasonAdapter extends RecyclerView.Adapter<CartCheckinRe
     private List<String> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
-    private CallbackStatus callbackStatus;
+    private CallbackString mListener;
 
     public interface CallbackStatus {
         void Status(Status status);
@@ -33,19 +34,21 @@ public class CartCheckinReasonAdapter extends RecyclerView.Adapter<CartCheckinRe
     }
 
 
-    public CartCheckinReasonAdapter(List<Status> list, CallbackStatus callbackStatus) {
+    public CartCheckinReasonAdapter(List<String> list, CallbackString callbackStatus) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
-        this.callbackStatus = callbackStatus ;
+        this.mListener = callbackStatus ;
+        this.mData = list;
+
         //this.mStatus = list;
 
-        for (int i=0; i<list.size(); i++){
-            if (!list.get(i).getBoolean("defaultStatus")){
-                this.mData.add(list.get(i).getString("name"));
-                this.mStatus.add(list.get(i));
-            }
-        }
-        mData.add("Chỉ lưu thông tin cập nhật");
+//        for (int i=0; i<list.size(); i++){
+//            if (!list.get(i).getBoolean("defaultStatus")){
+//                this.mData.add(list.get(i).getString("name"));
+//                this.mStatus.add(list.get(i));
+//            }
+//        }
+//        mData.add("Chỉ lưu thông tin cập nhật");
 
     }
 
@@ -64,11 +67,12 @@ public class CartCheckinReasonAdapter extends RecyclerView.Adapter<CartCheckinRe
         holder.lnParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (position == mData.size()-1){
-                    callbackStatus.UpdateOnly();
-                }else {
-                    callbackStatus.Status(mStatus.get(position));
-                }
+                mListener.Result(mData.get(position));
+//                if (position == mData.size()-1){
+//                    callbackStatus.UpdateOnly();
+//                }else {
+//                    callbackStatus.Status(mStatus.get(position));
+//                }
 
             }
         });

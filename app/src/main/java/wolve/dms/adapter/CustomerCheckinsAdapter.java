@@ -54,25 +54,19 @@ public class CustomerCheckinsAdapter extends RecyclerView.Adapter<CustomerChecki
     @Override
     public void onBindViewHolder(final CheckinsAdapterViewHolder holder, final int position) {
         try {
-            JSONObject object = new JSONObject(mData.get(position).getString("status"));
-            holder.tvName.setText(object.getString("name"));
-            holder.tvNote.setText(mData.get(position).getString("note").equals("")? "--":mData.get(position).getString("note"));
-            holder.tvDate.setText(Util.DateMonthString(mData.get(position).getLong("updateAt")));
-            holder.tvYear.setText(Util.YearString(mData.get(position).getLong("updateAt")));
-            holder.tvHour.setText(Util.HourString(mData.get(position).getLong("updateAt")));
+            JSONObject user = new JSONObject(mData.get(position).getString("user"));
+            holder.tvNumber.setText(String.valueOf(mData.size()-position));
+            holder.tvContent.setText(mData.get(position).getString("note"));
+            holder.tvDate.setText(Util.DateHourString(mData.get(position).getLong("createAt")));
+            holder.tvEmployee.setText(String.format("Nhân viên: %s", user.getString("displayName")));
+
+//            holder.tvName.setText(object.getString("name"));
+//            holder.tvNote.setText(mData.get(position).getString("note").equals("")? "--":mData.get(position).getString("note"));
+//            holder.tvDate.setText(Util.DateMonthString(mData.get(position).getLong("updateAt")));
+//            holder.tvYear.setText(Util.YearString(mData.get(position).getLong("updateAt")));
+//            holder.tvHour.setText(Util.HourString(mData.get(position).getLong("updateAt")));
 
 
-            holder.lnParent.setBackground(( position % 2 ) == 0 ?  mContext.getResources().getDrawable(R.drawable.colorgrey_corner):
-                    mContext.getResources().getDrawable(R.drawable.colorwhite_bordergrey_corner));
-
-            if (mData.size()==1){
-                holder.vUpper.setVisibility(View.GONE);
-                holder.vUnder.setVisibility(View.GONE);
-            }else if(position ==0){
-                holder.vUpper.setVisibility(View.GONE);
-            }else if (position==mData.size()-1){
-                holder.vUnder.setVisibility(View.GONE);
-            }
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -87,20 +81,18 @@ public class CustomerCheckinsAdapter extends RecyclerView.Adapter<CustomerChecki
     }
 
     public class CheckinsAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvName, tvNote, tvDate, tvYear, tvHour;
+        private TextView tvNumber, tvEmployee, tvContent, tvDate, tvTime;
         private LinearLayout lnParent;
-        private View vUpper, vUnder;
 
         public CheckinsAdapterViewHolder(View itemView) {
             super(itemView);
             lnParent = (LinearLayout) itemView.findViewById(R.id.checkins_item_content_parent);
-            tvName = (TextView) itemView.findViewById(R.id.checkins_item_name);
-            tvNote = (TextView) itemView.findViewById(R.id.checkins_item_note);
             tvDate = (TextView) itemView.findViewById(R.id.checkins_item_date);
-            tvHour = (TextView) itemView.findViewById(R.id.checkins_item_hour);
-            tvYear = (TextView) itemView.findViewById(R.id.checkins_item_year);
-            vUpper = (View) itemView.findViewById(R.id.checkins_item_upper);
-            vUnder = (View) itemView.findViewById(R.id.checkins_item_under);
+            tvNumber = (TextView) itemView.findViewById(R.id.checkins_item_number);
+            tvEmployee = (TextView) itemView.findViewById(R.id.checkins_item_employee);
+            tvContent = (TextView) itemView.findViewById(R.id.checkins_item_content);
+//            tvTime = (TextView) itemView.findViewById(R.id.checkins_item_time);
+
         }
 
     }

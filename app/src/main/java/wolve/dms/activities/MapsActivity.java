@@ -13,21 +13,23 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.PermissionChecker;
-import android.view.Gravity;
-import android.view.KeyEvent;
+import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -37,10 +39,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.orhanobut.dialogplus.DialogPlus;
-import com.orhanobut.dialogplus.OnBackPressListener;
-import com.orhanobut.dialogplus.OnCancelListener;
-import com.orhanobut.dialogplus.ViewHolder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,21 +51,30 @@ import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.CustomWindowAdapter;
+import wolve.dms.adapter.CustomerSearchAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.apiconnect.LocationConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.callback.CallbackJSONObject;
+import wolve.dms.callback.CallbackLong;
+import wolve.dms.callback.CallbackObject;
+import wolve.dms.callback.CallbackString;
+import wolve.dms.callback.LatlngListener;
+import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.Customer;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.District;
+import wolve.dms.models.Status;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
+import wolve.dms.utils.CustomInputDialog;
 import wolve.dms.utils.MapUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
+import static wolve.dms.apiconnect.CustomerConnect.createParamCustomer;
 import static wolve.dms.utils.Constants.REQUEST_PERMISSION_LOCATION;
 import static wolve.dms.utils.MapUtil.removeMarker;
 
@@ -82,14 +89,17 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         GoogleMap.OnMarkerClickListener {
     public GoogleMap mMap;
     private FloatingActionMenu btnNewCustomer;
-    private FloatingActionButton btnLocation, btnRepair, btnWash, btnAccesary, btnMaintain, btnPhoneNumber;
+    private FloatingActionButton btnLocation, btnRepair, btnWash, btnAccesary, btnMaintain, btnPhoneNumber, btnFastCustomner;
     public SupportMapFragment mapFragment;
     private RadioGroup rdFilter;
     private RadioButton rdAll, rdIntersted, rdOrdered;
-
+    private ImageView btnBack , btnClose;
+    private CTextIcon tvLocation;
+    private EditText edSearch;
     private CoordinatorLayout coParent;
     private SmoothProgressBar progressLoading;
-    //private MaterialSearchView mSearchView;
+    private RelativeLayout rlSearchLayout;
+    private RecyclerView rvSearch;
 
     private Handler mHandlerMoveMap = new Handler();
     private Handler mHandlerSearch = new Handler();
@@ -97,6 +107,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     private FusedLocationProviderClient mFusedLocationClient;
     private Boolean recheckGPS = false;
     private String mSearchText = "";
+    private CustomerSearchAdapter mSearchAdapter;
+    private Boolean loadCustomer = false;
+    private String regexStr = "^[0-9]*$";
+    private CustomWindowAdapter adapterInfoMarker;
+
 
     @Override
     public int getResourceLayout() {
@@ -116,6 +131,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         btnRepair = (FloatingActionButton) findViewById(R.id.map_new_repair);
         btnWash = (FloatingActionButton) findViewById(R.id.map_new_wash);
         btnAccesary = (FloatingActionButton) findViewById(R.id.map_new_accessary);
+        btnFastCustomner = (FloatingActionButton) findViewById(R.id.map_new_fast);
         btnMaintain = (FloatingActionButton) findViewById(R.id.map_new_maintain);
         btnPhoneNumber = (FloatingActionButton) findViewById(R.id.map_new_addphone);
         rdFilter = (RadioGroup) findViewById(R.id.map_filter);
@@ -124,20 +140,27 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         rdOrdered = findViewById(R.id.map_filter_ordered);
         coParent = (CoordinatorLayout) findViewById(R.id.map_parent);
         progressLoading = findViewById(R.id.map_loading);
-        //mSearchView = findViewById(R.id.map_searchview);
-
+        btnBack = findViewById(R.id.icon_back);
+        btnClose = findViewById(R.id.icon_close);
+        tvLocation = findViewById(R.id.custom_search_location);
+        edSearch = findViewById(R.id.maintext);
+        rlSearchLayout = findViewById(R.id.map_search_bạckground);
         btnLocation.setColorNormalResId(R.color.white_text_color);
         btnLocation.setColorPressedResId(R.color.colorGrey);
         btnNewCustomer.setMenuButtonColorNormalResId(R.color.colorBlue);
         btnNewCustomer.setMenuButtonColorPressedResId(R.color.colorBlueDark);
+        rvSearch = findViewById(R.id.map_rvsearch);
 
     }
 
     @Override
     public void initialData() {
+        Util.hideKeyboard(edSearch);
         Util.mapsActivity = this;
         MapUtil.customers = new ArrayList<>();
         MapUtil.markers = new ArrayList<>();
+        edSearch.setFocusable(false);
+
 
     }
 
@@ -149,67 +172,18 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         btnWash.setOnClickListener(this);
         btnAccesary.setOnClickListener(this);
         btnMaintain.setOnClickListener(this);
+        btnFastCustomner.setOnClickListener(this);
         rdFilter.setOnCheckedChangeListener(this);
         btnPhoneNumber.setOnClickListener(this);
+        btnBack.setOnClickListener(this);
+        tvLocation.setOnClickListener(this);
+        edSearch.setOnClickListener(this);
+        btnClose.setOnClickListener(this);
+        searchEvent();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-//        onSearchViewEvent();
+
+
     }
-
-//    private void onSearchViewEvent() {
-//        mSearchView.onClickEvent(new MaterialSearchView.CallbackClick() {
-//            @Override
-//            public void onBack() {
-//                onBackPressed();
-//            }
-//
-//            @Override
-//            public void onClear() {
-//
-//            }
-//
-//            @Override
-//            public void onLocation() {
-//                showListDistrict();
-//            }
-//        });
-//
-//        mSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                if (!newText.isEmpty() && newText.length()>1){
-//                    mSearchText = newText;
-//                    mHandlerSearch.removeCallbacks(delayForSerch);
-//                    mHandlerSearch.postDelayed(delayForSerch, 500);
-//
-//                }
-//                return true;
-//            }
-//        });
-//    }
-
-    private Runnable delayForSerch = new Runnable() {
-        @Override
-        public void run() {
-            String param = "name=" + Util.encodeString(mSearchText);
-            CustomerConnect.ListCustomerSearch(param, new CallbackJSONArray() {
-                @Override
-                public void onResponse(JSONArray result) {
-//                    mSearchView.setSuggestions(result);
-
-                }
-
-                @Override
-                public void onError(String error) {
-
-                }
-            }, true);
-        }
-    };
 
     @Override
     protected void onResume() {
@@ -224,40 +198,78 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             case R.id.map_current_location:
                 mMap.setOnCameraMoveListener(MapsActivity.this);
 //                MapUtil.resetMarker();
-                if (mMap.getMyLocation() != null){
-                    LatLng latLng = new LatLng(mMap.getMyLocation().getLatitude(), mMap.getMyLocation().getLongitude());
-                    triggerCurrentLocation(latLng, 16);
-                }
+                getCurrentLocation(new LocationListener() {
+                    @Override
+                    public void onLocationChanged(Location location) {
+                        triggerCurrentLocation(new LatLng(location.getLatitude(), location.getLongitude()), 16, true);
+                    }
+                });
+
+//                if (mMap.getMyLocation() != null){
+//                    LatLng latLng = new LatLng(mMap.getMyLocation().getLatitude(), mMap.getMyLocation().getLongitude());
+//                    triggerCurrentLocation(latLng, 16, true);
+//                }
 
                 break;
 
             case R.id.map_new_repair:
+                btnNewCustomer.close(true);
                 inputShopName(Constants.shopType[0]);
 
                 break;
 
             case R.id.map_new_wash:
+                btnNewCustomer.close(true);
                 inputShopName(Constants.shopType[1]);
                 break;
 
             case R.id.map_new_accessary:
+                btnNewCustomer.close(true);
                 inputShopName(Constants.shopType[2]);
                 break;
 
             case R.id.map_new_maintain:
+                btnNewCustomer.close(true);
                 inputShopName(Constants.shopType[3]);
 
                 break;
 
             case R.id.map_new_addphone:
+                btnNewCustomer.close(true);
                 inputPhoneNumber();
                 break;
 
-            case R.id.map_new_customer:
+            case R.id.map_new_fast:
+                btnNewCustomer.close(true);
+                mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(final Location location) {
+                        if (location != null) {
+                            createCustomerFast(location.getLatitude(), location.getLongitude());
+                        }
+                    }
+                });
 
                 break;
 
+            case R.id.icon_back:
+                backPress();
+                break;
 
+            case R.id.custom_search_location:
+                showListDistrict();
+                break;
+
+            case R.id.maintext:
+                //changeFragment(new SearchFragment(), true);
+                openSearch();
+
+                break;
+
+            case R.id.icon_close:
+                edSearch.setText("");
+
+                break;
         }
 
     }
@@ -266,7 +278,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style_map));
-        mMap.setInfoWindowAdapter(new CustomWindowAdapter());
         mMap.setOnCameraMoveListener(this);
         mMap.setOnCameraIdleListener(this);
         mMap.setOnInfoWindowClickListener(this);
@@ -281,8 +292,15 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             }
         });
 
-        checkGPS();
+        adapterInfoMarker = new CustomWindowAdapter(new LatlngListener() {
+            @Override
+            public void onLatlngChange(LatLng latlng) {
+                triggerCurrentLocation(latlng, 15, false);
+            }
+        });
+        mMap.setInfoWindowAdapter(adapterInfoMarker);
 
+        checkGPS();
 
     }
 
@@ -323,8 +341,9 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         });
     }
 
-    public void triggerCurrentLocation(LatLng latLng, int zomm) {
+    public void triggerCurrentLocation(LatLng latLng, int zomm, Boolean loadAround) {
         if (latLng != null) {
+            loadCustomer = loadAround;
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zomm), 800, null);
 
         }
@@ -332,164 +351,97 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     }
 
     private void inputShopName(final String shop_type) {
-        btnNewCustomer.close(true);
-        dialog = DialogPlus.newDialog(this)
-                .setContentHolder(new ViewHolder(R.layout.view_input_shopname))
-                .setGravity(Gravity.CENTER)
-                .setBackgroundColorResId(R.drawable.colorwhite_corner)
-                .setMargin(10, 10, 10, 10)
-                .setPadding(20, 30, 20, 20)
-                .setInAnimation(R.anim.slide_up)
-                .setOnBackPressListener(new OnBackPressListener() {
-                    @Override
-                    public void onBackPressed(DialogPlus dialogPlus) {
-                        dialogPlus.dismiss();
-                    }
-                })
-                .create();
-//        LinearLayout lnParent = (LinearLayout) dialog.findViewById(R.id.input_shopnname_parent);
-        TextView tvShopType = (TextView) dialog.findViewById(R.id.input_shopnname_type);
-        final EditText edName = (EditText) dialog.findViewById(R.id.input_shopnname_name);
-        ImageView btnSubmit = (ImageView) dialog.findViewById(R.id.input_shopnname_submit);
-
-        tvShopType.setText(Constants.getShopInfo(shop_type, null));
-
-        edName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        CustomInputDialog.inputShopName(null, shop_type, new CallbackString() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean handled = false;
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    openCustomerScreen(shop_type, edName.getText().toString().trim(), null);
-                    handled = true;
-                }
-                return handled;
+            public void Result(String s) {
+                openCustomerScreen(shop_type, s, null);
             }
         });
 
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Util.hideKeyboard(v);
-                if (!edName.getText().toString().trim().equals("")) {
-                    openCustomerScreen(shop_type, edName.getText().toString().trim(), null);
-                }
-            }
-        });
 
-        dialog.show();
-        edName.requestFocus();
-        Util.showKeyboard(edName);
     }
 
     private void inputPhoneNumber() {
-        btnNewCustomer.close(true);
-        dialog = DialogPlus.newDialog(this)
-                .setContentHolder(new ViewHolder(R.layout.view_input_phonenumber))
-                .setGravity(Gravity.CENTER)
-                .setBackgroundColorResId(R.drawable.colorwhite_corner)
-                .setMargin(10, 10, 10, 10)
-                .setPadding(20, 30, 20, 20)
-                .setInAnimation(R.anim.slide_up)
-                .setOnBackPressListener(new OnBackPressListener() {
-                    @Override
-                    public void onBackPressed(DialogPlus dialogPlus) {
-                        dialogPlus.dismiss();
-                    }
-                })
-                .setOnCancelListener(new OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogPlus dialog) {
-                        Util.hideKeyboard(btnNewCustomer);
-                    }
-                })
-                .create();
-        LinearLayout lnParent = (LinearLayout) dialog.findViewById(R.id.input_phonenumber_parent);
-        final EditText edPhone = (EditText) dialog.findViewById(R.id.input_phonenumber_phone);
-        ImageView btnSubmit = (ImageView) dialog.findViewById(R.id.input_phonenumber_submit);
-
-        edPhone.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        CustomInputDialog.inputPhoneNumber(new CallbackString() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean handled = false;
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    openCustomerScreen(null, null, edPhone.getText().toString().trim());
-                    handled = true;
-                }
-                return handled;
+            public void Result(String s) {
+                openCustomerScreen(null, null, s);
             }
         });
 
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Util.hideKeyboard(v);
-                if (!edPhone.getText().toString().trim().equals("")) {
-                    openCustomerScreen(null, null, edPhone.getText().toString().trim());
-                }
-            }
-        });
-
-        dialog.show();
-        edPhone.requestFocus();
-        Util.showKeyboard(edPhone);
     }
 
     private void openCustomerScreen(final String shopType, final String shopName, final String phone) {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
+
+        getCurrentLocation(new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                createCustomerFromLocation(location.getLatitude(), location.getLongitude(), shopType, shopName, phone);
+
+//                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+//                    triggerCurrentLocation(latLng, 15, true);
+            }
+        });
+
+
+    }
+
+    private void getCurrentLocation(final LocationListener mListener){
         mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(final Location location) {
                 if (location != null) {
-                    LocationConnect.getAddressFromLocation(location.getLatitude(), location.getLongitude(), new CallbackJSONObject() {
-                        @Override
-                        public void onResponse(JSONObject result) {
-                            Customer customer = new Customer(new JSONObject());
-                            JSONObject objectAdress = MapUtil.getAddressFromMapResult(result);
-                            try {
-                                if (phone == null && shopType != null && shopName != null) {
-                                    customer.put("shopType", shopType);
-                                    customer.put("signBoard", shopName);
-                                    customer.put("name", "Anh " + shopName.substring(shopName.lastIndexOf(" ") + 1));
-                                    customer.put("phone", "");
-                                } else if (shopType == null && shopName == null && phone != null) {
-                                    customer.put("shopType", Constants.shopType[0]);
-                                    customer.put("signBoard", "");
-                                    customer.put("name", "");
-                                    customer.put("phone", phone);
-                                }
+                    mListener.onLocationChanged(location);
 
-                                customer.put("id", 0);
-                                customer.put("lat", location.getLatitude());
-                                customer.put("lng", location.getLongitude());
-                                customer.put("province", objectAdress.getString("province"));
-                                customer.put("district", objectAdress.getString("district"));
-                                customer.put("street", objectAdress.getString("street"));
-                                customer.put("address", objectAdress.getString("address"));
-                                customer.put("note", "");
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-                            Transaction.gotoCustomerActivity(customer.CustomertoString());
-                            dialog.dismiss();
-                        }
-
-                        @Override
-                        public void onError(String error) {
-
-                        }
-                    }, true);
-
-
-                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                    triggerCurrentLocation(latLng, 15);
                 }
             }
         });
+    }
 
+    private void createCustomerFromLocation(final double lat, final double lng , final String shopType, final String shopName, final String phone){
+        LocationConnect.getAddressFromLocation(lat, lng, new CallbackJSONObject() {
+            @Override
+            public void onResponse(JSONObject result) {
+                Customer customer = new Customer(new JSONObject());
+                JSONObject objectAdress = MapUtil.getAddressFromMapResult(result);
+                try {
+                    if (phone == null && shopType != null && shopName != null) {
+                        customer.put("shopType", shopType);
+                        customer.put("signBoard", shopName);
+                        customer.put("name", "Anh " + shopName.substring(shopName.lastIndexOf(" ") + 1));
+                        customer.put("phone", "");
+                    } else if (shopType == null && shopName == null && phone != null) {
+                        customer.put("shopType", Constants.shopType[0]);
+                        customer.put("signBoard", "");
+                        customer.put("name", "");
+                        customer.put("phone", phone);
+                    }
+
+                    customer.put("id", 0);
+                    customer.put("lat", lat);
+                    customer.put("lng", lng);
+                    customer.put("province", objectAdress.getString("province"));
+                    customer.put("district", objectAdress.getString("district"));
+                    customer.put("street", objectAdress.getString("street"));
+                    customer.put("address", objectAdress.getString("address"));
+                    customer.put("note", "");
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                Transaction.gotoCustomerActivity(customer.CustomertoString(), true);
+                CustomInputDialog.dismissDialog();
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        }, true);
     }
 
     private void loadCustomersByDistrict(String district, final String isAll) {
@@ -501,7 +453,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                     List<Customer> tempCustomers = new ArrayList<>();
                     for (int i = 0; i < result.length(); i++) {
                         JSONObject object = result.getJSONObject(i);
-                        if (object.getJSONObject("distributor").getString("id").equals(Distributor.getDistributorId()) || Distributor.getLocation().contains(object.getString("district"))) {
+                        if (object.getJSONObject("distributor").getString("id").equals(Distributor.getDistributorId())) {
                             tempCustomers.add(setCustomerMarker(new Customer(object)));
 
                         }
@@ -534,7 +486,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                     List<Customer> tempCustomers = new ArrayList<>();
                     for (int i = 0; i < result.length(); i++) {
                         JSONObject object = result.getJSONObject(i);
-                        if (object.getJSONObject("distributor").getString("id").equals(Distributor.getDistributorId()) || Distributor.getLocation().contains(object.getString("district"))) {
+                        if (object.getJSONObject("distributor").getString("id").equals(Distributor.getDistributorId())) {
                             tempCustomers.add(setCustomerMarker(new Customer(object)));
 
                         }
@@ -556,18 +508,26 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     private Customer setCustomerMarker(Customer customer) {
         Customer currentCustomer = customer;
+        JSONArray arrayCheckIns = currentCustomer.getJSONArray("checkIns");
         try {
             int customerStatus = new JSONObject(currentCustomer.getString("status")).getInt("id");
-//            currentCustomer.put("checkincount", new JSONArray(currentCustomer.getString("checkIns")).length());
-            currentCustomer.put("checkincount", currentCustomer.getInt("checkinCount"));
             currentCustomer.put("status", customerStatus);
 
-            if (customerStatus == 1) {
+            if (arrayCheckIns.length() ==0 && customerStatus == 1){
+                currentCustomer.put("icon", R.drawable.ico_pin_pink);
+                currentCustomer.put("checkincount","N");
+
+            }else if (customerStatus == 1) {
                 currentCustomer.put("icon", R.drawable.ico_pin_red);
+                currentCustomer.put("checkincount", arrayCheckIns.length());
+
             } else if (customerStatus == 2) {
                 currentCustomer.put("icon", R.drawable.ico_pin_grey);
+                currentCustomer.put("checkincount", arrayCheckIns.length());
+
             } else {
                 currentCustomer.put("icon", R.drawable.ico_pin_blue);
+                currentCustomer.put("checkincount", arrayCheckIns.length());
 
             }
 
@@ -583,35 +543,68 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     public void onInfoWindowClick(final Marker marker) {
         mMap.setOnCameraMoveListener(null);
         final Customer customer = new Customer((JSONObject) marker.getTag());
-        String param = customer.getString("id");
-        CustomerConnect.GetCustomerDetail(param, new CallbackJSONObject() {
+
+        getDistanceFromCurrent(customer.getDouble("lat"), customer.getDouble("lng"), new CallbackLong() {
             @Override
-            public void onResponse(JSONObject result) {
-                Transaction.gotoCustomerActivity(result.toString());
+            public void onResponse(final Long value) {
 
+                String param = customer.getString("id");
+
+                CustomerConnect.GetCustomerDetail(param, new CallbackJSONObject() {
+                    @Override
+                    public void onResponse(final JSONObject result) {
+                        if (value < Constants.CHECKIN_DISTANCE){
+                            CustomCenterDialog.alertWithButton("Check In", "Vị trí hiện tại của bạn rất gần cửa hàng. Bắt đầu check in", "Tiếp tục", new CallbackBoolean() {
+                                @Override
+                                public void onRespone(Boolean re) {
+                                    Transaction.gotoCustomerActivity(result.toString(), true);
+                                }
+                            });
+                        }else {
+                            Transaction.gotoCustomerActivity(result.toString(), false);
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onError(String error) {
+
+                    }
+                }, true);
             }
-
-            @Override
-            public void onError(String error) {
-
-            }
-        }, true);
+        });
 
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 //        mMap.setOnCameraMoveListener(MapsActivity.this);
         if (data.getStringExtra(Constants.CUSTOMER) != null && requestCode == Constants.RESULT_CUSTOMER_ACTIVITY) {
-            String responseString = data.getStringExtra(Constants.CUSTOMER);
+            final String responseString = data.getStringExtra(Constants.CUSTOMER);
 
             if (responseString.startsWith("delete")) {
                 removeMarker(responseString.split("-")[1]);
             } else {
                 try {
                     Customer customer = new Customer(new JSONObject(responseString));
-                    MapUtil.showUpdatedMarker(mMap, setCustomerMarker(customer));
+                    String param = customer.getString("id");
+
+                    CustomerConnect.GetCustomerDetail(param, new CallbackJSONObject() {
+                        @Override
+                        public void onResponse(final JSONObject result) {
+                            MapUtil.showUpdatedMarker(mMap, setCustomerMarker(new Customer(result)));
+
+                        }
+
+                        @Override
+                        public void onError(String error) {
+
+                        }
+                    }, true);
+
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -625,38 +618,40 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     @Override
     public void onMapLongClick(final LatLng latLng) {
-        LocationConnect.getAddressFromLocation(latLng.latitude, latLng.longitude, new CallbackJSONObject() {
-            @Override
-            public void onResponse(JSONObject result) {
-                Customer customer = new Customer(new JSONObject());
-                try {
-                    customer.put("id", 0);
-                    customer.put("shopType", Constants.shopType[0]);
-                    customer.put("signBoard", "");
-                    customer.put("name", "");
-                    customer.put("lat", latLng.latitude);
-                    customer.put("lng", latLng.longitude);
+        createCustomerFast(latLng.latitude, latLng.longitude);
 
-                    JSONObject objectAdress = MapUtil.getAddressFromMapResult(result);
-                    customer.put("province", objectAdress.getString("province"));
-                    customer.put("district", objectAdress.getString("district"));
-                    customer.put("street", objectAdress.getString("street"));
-                    customer.put("address", objectAdress.getString("address"));
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                Transaction.gotoCustomerActivity(customer.CustomertoString());
-                //currentLatlng = latLng;
-
-            }
-
-            @Override
-            public void onError(String error) {
-
-            }
-        }, true);
+//        LocationConnect.getAddressFromLocation(latLng.latitude, latLng.longitude, new CallbackJSONObject() {
+//            @Override
+//            public void onResponse(JSONObject result) {
+//                Customer customer = new Customer(new JSONObject());
+//                try {
+//                    customer.put("id", 0);
+//                    customer.put("shopType", Constants.shopType[0]);
+//                    customer.put("signBoard", "");
+//                    customer.put("name", "");
+//                    customer.put("lat", latLng.latitude);
+//                    customer.put("lng", latLng.longitude);
+//
+//                    JSONObject objectAdress = MapUtil.getAddressFromMapResult(result);
+//                    customer.put("province", objectAdress.getString("province"));
+//                    customer.put("district", objectAdress.getString("district"));
+//                    customer.put("street", objectAdress.getString("street"));
+//                    customer.put("address", objectAdress.getString("address"));
+//
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                Transaction.gotoCustomerActivity(customer.CustomertoString());
+//                //currentLatlng = latLng;
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        }, true);
     }
 
     @Override
@@ -720,8 +715,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     private Runnable mFilterTask = new Runnable() {
         @Override
         public void run() {
-            LatLng curLocation = mMap.getCameraPosition().target;
-            loadCustomersByLocation(false, curLocation.latitude, curLocation.longitude);
+            if (loadCustomer){
+                LatLng curLocation = mMap.getCameraPosition().target;
+                loadCustomersByLocation(false, curLocation.latitude, curLocation.longitude);
+            }
+
         }
     };
 
@@ -738,14 +736,27 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     }
 
     @Override
-    public boolean onMarkerClick(Marker marker) {
+    public boolean onMarkerClick(final Marker marker) {
 //        mMap.setOnCameraMoveListener(null);
+
         if (marker.getTag() != null) {
-            marker.showInfoWindow();
+            final Customer customer = new Customer((JSONObject) marker.getTag());
+            getDistanceFromCurrent(customer.getDouble("lat"), customer.getDouble("lng"), new CallbackLong() {
+                @Override
+                public void onResponse(Long value) {
+                    TextView textView = adapterInfoMarker.getCurrentView().findViewById(R.id.map_infowindow_distance);
+                    textView.setText(String.format("Khoảng cách: %d m", value));
+
+                    marker.showInfoWindow();
+                }
+            });
+
+
         }
 
         return true;
     }
+
 
     private void openCallScreen(String phone) {
         if (PermissionChecker.checkSelfPermission(MapsActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
@@ -756,6 +767,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         callIntent.setData(Uri.parse("tel:" + Uri.encode(phone)));
         callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(callIntent);
+
     }
 
     public void checkGPS() {
@@ -787,13 +799,240 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                         public void onSuccess(Location location) {
                             if (location != null) {
                                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                                triggerCurrentLocation(latLng, 15);
+                                triggerCurrentLocation(latLng, 15, true);
                             }
                         }
                     });
 
             }
-        }
+    }
 
+    private void backPress(){
+//        if (dialog != null && dialog.isShowing()){
+//            dialog.dismiss();
+//
+//        }else
+        if (rlSearchLayout.getVisibility() == View.VISIBLE){
+            closeSearch();
+
+        } else {
+            Transaction.gotoHomeActivityRight(true);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        backPress();
+    }
+
+    private void searchEvent(){
+        edSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!TextUtils.isEmpty(s.toString())){
+                    btnClose.setVisibility(View.VISIBLE);
+
+                    if (!s.toString().isEmpty() && s.toString().length()>1){
+                        mSearchText = s.toString();
+                        mHandlerSearch.removeCallbacks(delayForSerch);
+                        mHandlerSearch.postDelayed(delayForSerch, 500);
+
+                }
+
+                }else {
+                    btnClose.setVisibility(View.GONE);
+                }
+            }
+        });
+    }
+
+    private void openSearch(){
+        rlSearchLayout.setVisibility(View.VISIBLE);
+        edSearch.setFocusable(true);
+        edSearch.setFocusableInTouchMode(true);
+        edSearch.setSelection(0);
+        Util.showKeyboard(edSearch);
+        tvLocation.setVisibility(View.GONE);
+    }
+
+    private void closeSearch(){
+        edSearch.setText("");
+        rlSearchLayout.setVisibility(View.GONE);
+        Util.hideKeyboard(edSearch);
+        edSearch.setFocusable(false);
+        tvLocation.setVisibility(View.VISIBLE);
+    }
+
+    private void createRVList(List<JSONObject> list){
+        mSearchAdapter = new CustomerSearchAdapter(list, new CustomerSearchAdapter.CallbackObject() {
+            @Override
+            public void onResponse(JSONObject customer) {
+                    Customer cust = new Customer(customer);
+                    LatLng newLatLng = new LatLng(cust.getDouble("lat") , cust.getDouble("lng"));
+                    triggerCurrentLocation(newLatLng , 15, false);
+
+                    Marker mMarker = MapUtil.addMarkerToMap(mMap, setCustomerMarker(cust), Constants.MARKER_ALL);
+                    if (mMarker.getTag() != null) {
+                        mMarker.showInfoWindow();
+                    }
+
+                    closeSearch();
+
+
+            }
+        });
+        Util.createLinearRV(rvSearch, mSearchAdapter);
+    }
+
+    private Runnable delayForSerch = new Runnable() {
+        @Override
+        public void run() {
+            String param = "";
+            if(mSearchText.matches(regexStr)) {
+                param = "phone=" + Util.encodeString(mSearchText);
+            }
+            else{
+                param = "shopName=" + Util.encodeString(mSearchText);
+            }
+
+            CustomerConnect.ListCustomerSearch(param, new CallbackJSONArray() {
+                @Override
+                public void onResponse(JSONArray result) {
+                    List<JSONObject> listResult = new ArrayList<>();
+                    if (result.length() >0){
+                        for (int i=0; i<result.length(); i++){
+                            try {
+                                listResult.add(result.getJSONObject(i));
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    createRVList(listResult);
+
+                }
+
+                @Override
+                public void onError(String error) {
+
+                }
+            }, true);
+        }
+    };
+
+    private void createCustomerFast(final Double lat, final Double lng){
+        //Get shopName
+        CustomInputDialog.inputShopName("Tạo nhanh cửa hàng", Constants.shopType[0], new CallbackString() {
+            @Override
+            public void Result(final String s) {
+                //getAddress
+                getAddressFromLatlng(lat, lng, new CallbackObject() {
+                    @Override
+                    public void onResponse(JSONObject result) {
+                        //createCustomer to Server
+                        postCustomerFast(s, lat, lng, result, new CallbackJSONObject() {
+                            @Override
+                            public void onResponse(JSONObject result1) {
+                                Customer customer = new Customer(result1);
+                                MapUtil.showUpdatedMarker(mMap, setCustomerMarker(customer));
+
+                                CustomInputDialog.dismissDialog();
+                                Util.showToast("Tạo cửa hàng thành công");
+
+                            }
+
+                            @Override
+                            public void onError(String error) {
+
+                            }
+                        }, true);
+
+
+                    }
+
+                }, false);
+
+
+
+            }
+        });
+    }
+
+    private void getAddressFromLatlng(Double lat, Double lng, final CallbackObject mListener, Boolean stopLoading){
+        LocationConnect.getAddressFromLocation(lat, lng, new CallbackJSONObject() {
+            @Override
+            public void onResponse(JSONObject result) {
+                mListener.onResponse(MapUtil.getAddressFromMapResult(result));
+
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        }, stopLoading);
+    }
+
+    private void postCustomerFast(String shopName , Double lat, Double lng, JSONObject objectAdress, final CallbackJSONObject mListener, Boolean stopLoading){
+        Customer customer = new Customer();
+        try {
+            customer.put("id","0");
+            customer.put("name","Anh " + shopName.substring(shopName.lastIndexOf(" ") + 1));
+            customer.put("signBoard",shopName);
+            customer.put("phone","");
+            customer.put("note","");
+            customer.put("lat",lat);
+            customer.put("lng",lng);
+            customer.put("volumeEstimate","10");
+            customer.put("shopType",Constants.shopType[0]);
+            customer.put("status.id",Status.getStatusList().get(0).getInt("id"));
+            customer.put("address",objectAdress.getString("address"));
+            customer.put("street",objectAdress.getString("street"));
+            customer.put("district",objectAdress.getString("district"));
+            customer.put("province",objectAdress.getString("province"));
+
+            CustomerConnect.CreateCustomer(createParamCustomer(customer), new CallbackJSONObject() {
+                @Override
+                public void onResponse(JSONObject result) {
+                    mListener.onResponse(result);
+
+                }
+
+                @Override
+                public void onError(String error) {
+                    mListener.onError(error);
+                }
+            }, stopLoading);
+
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getDistanceFromCurrent(final Double lat, final Double lng, final CallbackLong mListener) {
+        getCurrentLocation(new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                Double distance = MapUtil.distance(location.getLatitude(), location.getLongitude(), lat, lng);
+
+                mListener.onResponse(Math.round(distance));
+            }
+        });
+
+    }
 }
 

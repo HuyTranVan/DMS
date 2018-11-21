@@ -9,7 +9,7 @@ import org.json.JSONObject;
 
 public class Customer extends BaseModel{
     public Customer() {
-        jsonObject = null;
+        jsonObject = new JSONObject();
     }
 
     public Customer(JSONObject objOrder) {

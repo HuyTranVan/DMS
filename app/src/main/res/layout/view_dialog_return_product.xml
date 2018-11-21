@@ -34,15 +34,14 @@
             android:id="@+id/dialog_return_product_note"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="@dimen/_50sdp"
+            android:minHeight="@dimen/_35sdp"
             android:background="@drawable/bg_white_corner"
             android:layout_margin="@dimen/_5sdp"
-            android:hint="Ghi chú"
+            android:hint="Nhập số tiền trả lại khách"
             android:paddingLeft="@dimen/_10sdp"
-            android:paddingTop="@dimen/_5sdp"
             android:textSize="@dimen/_12sdp"
-            android:inputType="textCapSentences|textMultiLine"
-            android:gravity="left"
+            android:inputType="number"
+            android:gravity="left|center_vertical"
             android:singleLine="false"/>
 
 

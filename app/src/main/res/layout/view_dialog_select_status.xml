@@ -1,61 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/product_parent"
+    android:id="@+id/dialog_choice_status_parent"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/colorWhite">
-
-    <TextView
-        android:id="@+id/dialog_choice_status_title"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_30sdp"
-        android:background="@drawable/bg_header_top"
-        android:text="CHỌN SẢN PHẨM"
-        android:textSize="@dimen/_12sdp"
-        android:textColor="@color/black_text_color"
-        android:gravity="center"/>
-
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/dialog_choice_status_rvStatus"
-        android:layout_below="@+id/dialog_choice_status_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorWhite"
-        android:clipToPadding="false"/>
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_below="@+id/dialog_choice_status_rvStatus">
+        android:background="@color/colorWhite"
+        android:layout_gravity="center">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorGrey"/>
-
-        <Button
-            android:id="@+id/btn_cancel"
+        <TextView
+            android:id="@+id/dialog_choice_status_title"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_30sdp"
-            android:layout_weight="0.5"
-            android:background="?selectableItemBackground"
-            android:textColor="@color/black_text_color_hint"
-            android:text="Hủy"
+            android:background="@drawable/bg_header_top"
+            android:text="CHỌN SẢN PHẨM"
             android:textSize="@dimen/_12sdp"
-            android:textAllCaps="true"
-            android:layout_gravity="center"/>
+            android:textColor="@color/black_text_color"
+            android:gravity="center"/>
 
+
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Thời gian ghé cửa hàng"
+            android:padding="@dimen/_10sdp"
+            />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_white_corner"
+            android:layout_margin="@dimen/_5sdp"
+            android:minHeight="@dimen/_80sdp">
+
+            <EditText
+                android:id="@+id/dialog_choice_status_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:contextClickable="false"
+                android:gravity="top"
+                android:imeOptions="actionNext"
+                android:paddingRight="@dimen/_5sdp"
+                android:textColor="#3d3d3d"
+                android:textSize="14dp"
+                android:hint="Nhập nội dung"
+                android:layout_margin="@dimen/_5sdp"
+                android:inputType="textCapSentences|textMultiLine"/>
+
+            <wolve.dms.customviews.CTextIcon
+                android:id="@+id/dialog_choice_status_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?selectableItemBackgroundBorderless"
+                android:text="@string/icon_down"
+                android:textSize="@dimen/_24sdp"
+                android:textColor="@color/black_text_color_hint"
+                android:paddingTop="@dimen/_5sdp"
+                android:paddingLeft="@dimen/_5sdp"
+                android:paddingRight="@dimen/_5sdp"
+                android:layout_gravity="bottom|right"
+                android:rotation="315"
+                />
+
+
+        </FrameLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/dialog_choice_status_rvStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorWhite"
+            android:clipToPadding="false"/>
+
+        <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="vertical"-->
+        <!--android:layout_below="@+id/dialog_choice_status_rvStatus">-->
+
+        <!--<View-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1dp"-->
+        <!--android:background="@color/colorGrey"/>-->
+
+        <!--<Button-->
+        <!--android:id="@+id/btn_cancel"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="@dimen/_30sdp"-->
+        <!--android:layout_weight="0.5"-->
+        <!--android:background="?selectableItemBackground"-->
+        <!--android:textColor="@color/black_text_color_hint"-->
+        <!--android:text="Hủy"-->
+        <!--android:textSize="@dimen/_12sdp"-->
+        <!--android:textAllCaps="true"-->
+        <!--android:layout_gravity="center"/>-->
+
+        <!--</LinearLayout>-->
+
+
+
+        <include android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_below="@+id/dialog_choice_status_rvStatus"
+            layout="@layout/view_bottom_dialog_button"/>
     </LinearLayout>
 
 
 
-    <!--<include android:layout_height="wrap_content"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_below="@+id/dialog_choice_status_rvStatus"-->
-        <!--layout="@layout/view_bottom_dialog_button"/>-->
 
-
-</RelativeLayout>
+</FrameLayout>

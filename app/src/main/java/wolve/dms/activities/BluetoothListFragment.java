@@ -23,7 +23,6 @@ import java.util.Set;
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.BluetoothListAdapter;
-import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackProcess;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
@@ -41,7 +40,17 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
     private List<BluetoothDevice> listDevice = new ArrayList<>();
     private BluetoothListAdapter adapter;
     private BaseActivity baseActivity;
-    private ShopCartActivity mActivity;
+    private OnDataPass mListener;
+
+    public interface OnDataPass{
+        void dataReturnFromFragment(String data1, String data2);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mListener = (OnDataPass) context;
+    }
 
     @Nullable
     @Override
@@ -57,7 +66,6 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
 
     private void initializeView() {
         baseActivity = (BaseActivity) getActivity();
-        mActivity = (ShopCartActivity) getActivity();
         btnCancel = view.findViewById(R.id.btn_cancel);
         rvBluetooth = view.findViewById(R.id.dialog_bluetooth_list_rv);
 
@@ -90,18 +98,17 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
                     @Override
                     public void onStart() {
                         Util.getInstance().showLoading("Đang kết nối máy in");
-                        mActivity.tvPrinterStatus.setText(Constants.CONNECTING_PRINTER);
-                        mActivity.tvPrinterStatus.setOnClickListener(null);
+                        mListener.dataReturnFromFragment(Constants.ONSTART, null);
 
                     }
 
                     @Override
                     public void onError() {
                         Util.getInstance().stopLoading(true);
-                        mActivity.tvPrinterStatus.setText("Chưa kết nối được máy in");
                         Util.showToast(Constants.CONNECTED_PRINTER_ERROR);
                         finish();
-                        mActivity.tvPrinterStatus.setOnClickListener(mActivity);
+                        mListener.dataReturnFromFragment(Constants.ONFAIL, null);
+
                     }
 
                     @Override
@@ -109,8 +116,7 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
                         Util.getInstance().stopLoading(true);
                         Util.showToast(String.format(Constants.CONNECTED_PRINTER, device.getName()));
                         finish();
-                        mActivity.tvPrinterStatus.setText(String.format(Constants.CONNECTED_PRINTER, device.getName()));
-                        mActivity.tvPrinterStatus.setOnClickListener(mActivity);
+                        mListener.dataReturnFromFragment(Constants.ONSUCCESS, device.getAddress());
 
                     }
                 });

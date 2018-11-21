@@ -107,7 +107,7 @@ public class StatisticalBillsFragment extends Fragment implements View.OnClickLi
                 CustomerConnect.GetCustomerDetail(s, new CallbackJSONObject() {
                     @Override
                     public void onResponse(JSONObject result) {
-                        Transaction.gotoCustomerActivity(result.toString());
+                        Transaction.gotoCustomerActivity(result.toString(), false);
 
                     }
 

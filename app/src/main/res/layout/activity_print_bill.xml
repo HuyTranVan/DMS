@@ -17,26 +17,26 @@
         android:background="?selectableItemBackground"/>
 
 
-    <ScrollView
-
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/colorWhite"
         android:layout_centerInParent="true"
-        android:paddingBottom="@dimen/_20sdp">
+        android:layout_above="@+id/print_bill_bottom"
+        android:paddingBottom="@dimen/_10sdp">
 
         <LinearLayout
             android:id="@+id/print_bill_mainlayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/_10sdp">
 
             <ImageView
                 android:id="@+id/print_bill_logo"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:src="@drawable/ic_logo_print"
-                android:maxHeight="@dimen/_10sdp"/>
+                android:layout_height="wrap_content"
+                android:src="@drawable/logo_empty"/>
 
             <TextView
                 android:id="@+id/print_bill_company"
@@ -133,7 +133,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:background="@color/black_text_color_hint"
-                android:layout_margin="@dimen/_10sdp"/>
+                android:layout_margin="@dimen/_5sdp"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/print_bill_bills"
@@ -149,6 +149,28 @@
                 android:layout_margin="@dimen/_5sdp"/>
 
             <TextView
+                android:id="@+id/print_bill_sum"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tong "
+                android:textSize="@dimen/_14sdp"
+                android:textColor="@color/black_text_color"
+                android:gravity="right|center_vertical"
+                android:textStyle="bold"
+                android:layout_marginRight="@dimen/_10sdp"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/print_bill_rvdebt"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/black_text_color_hint"
+                android:layout_margin="@dimen/_5sdp"/>
+
+            <TextView
                 android:id="@+id/print_bill_total"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -156,29 +178,31 @@
                 android:textSize="@dimen/_14sdp"
                 android:textColor="@color/black_text_color"
                 android:gravity="right|center_vertical"
-                android:layout_marginRight="@dimen/_5sdp"/>
+                android:layout_marginRight="@dimen/_10sdp"/>
 
-            <TextView
-                android:id="@+id/print_bill_paid"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Tra "
-                android:textAllCaps="true"
-                android:layout_marginLeft="@dimen/_10sdp"/>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/black_text_color_hint"
-                android:layout_margin="@dimen/_10sdp"/>
 
-            <TextView
-                android:id="@+id/print_bill_remain"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="con lai "
-                android:textAllCaps="true"
-                android:layout_marginLeft="@dimen/_10sdp"/>
+            <!--<TextView-->
+                <!--android:id="@+id/print_bill_paid"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Tra "-->
+                <!--android:textAllCaps="true"-->
+                <!--android:layout_marginLeft="@dimen/_10sdp"/>-->
+
+            <!--<View-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="1dp"-->
+                <!--android:background="@color/black_text_color_hint"-->
+                <!--android:layout_margin="@dimen/_10sdp"/>-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/print_bill_remain"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="con lai "-->
+                <!--android:textAllCaps="true"-->
+                <!--android:layout_marginLeft="@dimen/_10sdp"/>-->
 
             <View
                 android:layout_width="match_parent"
@@ -204,50 +228,86 @@
                 android:layout_marginLeft="@dimen/_10sdp"/>
 
         </LinearLayout>
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
-    <RadioGroup
-        android:checkedButton="@+id/printer_57"
-        android:id="@+id/printer_all"
-        android:layout_width="@dimen/_80sdp"
-        android:layout_height="@dimen/_25sdp"
-        android:background="@drawable/pink_out_line"
+    <LinearLayout
+        android:id="@+id/print_bill_bottom"
+        android:layout_width="match_parent"
         android:orientation="horizontal"
-        android:layout_alignParentRight="true"
-        android:layout_margin="@dimen/_5sdp">
+        android:layout_height="@dimen/_35sdp"
+        android:background="@color/black_text_color_hint"
+        android:layout_alignParentBottom="true">
 
-        <RadioButton
-            android:id="@+id/printer_57"
-            android:layout_marginTop="1dp"
-            android:layout_marginBottom="1dp"
-            android:layout_marginLeft="1dp"
-            android:background="@drawable/toggle_widget_background_left"
+        <LinearLayout
+            android:id="@+id/print_bill_submit"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:button="@null"
+            android:orientation="vertical"
+            android:layout_weight="0.7"
+            android:background="?selectableItemBackground">
+
+            <TextView
+                android:id="@+id/print_bill_bottom_maintext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="IN HÓA ĐƠN"
+                android:textAllCaps="true"
+                android:textColor="@color/white_text_color"
+                android:layout_centerHorizontal="true"
+                android:textSize="@dimen/_14sdp"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:layout_gravity="center_horizontal"/>
+
+            <TextView
+                android:id="@+id/print_bill_bottom_secondtext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/print_bill_bottom_maintext"
+                android:text="Chưa kết nối máy in!!"
+                android:textColor="@color/white_text_color_hint"
+                android:layout_centerHorizontal="true"
+                android:textSize="@dimen/_10sdp"
+                android:layout_gravity="center_horizontal"/>
+
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/white_text_color_hint"
+            android:layout_margin="@dimen/_2sdp"/>
+
+        <wolve.dms.customviews.CTextIcon
+            android:id="@+id/print_bill_bottom_printerselect"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"
+            android:background="?selectableItemBackground"
+            android:text="@string/icon_down"
+            android:textColor="@color/white_text_color"
+            android:textSize="@dimen/_16sdp"
             android:gravity="center"
+            android:rotation="180"/>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/white_text_color_hint"
+            android:layout_margin="@dimen/_2sdp"/>
+
+        <TextView
+            android:id="@+id/print_bill_bottom_printersize"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.2"
+            android:background="?selectableItemBackground"
             android:text="57mm"
-            android:textColor="@drawable/text_white_selected"
-            android:textSize="@dimen/_10sdp"
-            />
-
-        <RadioButton
-            android:id="@+id/printer_80"
-            android:layout_marginRight="1dp"
-            android:layout_marginTop="1dp"
-            android:layout_marginBottom="1dp"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/toggle_widget_background_right"
-            android:button="@null"
             android:gravity="center"
-            android:text="80mm"
-            android:textColor="@drawable/text_white_selected"
-            android:textSize="@dimen/_10sdp"/>
-
-    </RadioGroup>
+            android:textColor="@color/white_text_color"
+            android:textSize="@dimen/_14sdp"
+            />
+    </LinearLayout>
 
 
 </RelativeLayout>

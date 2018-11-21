@@ -13,6 +13,18 @@ import java.io.Serializable;
 public class BaseModel implements Serializable {
     JSONObject jsonObject;
 
+    public BaseModel() {
+        jsonObject = null;
+    }
+
+    public BaseModel(JSONObject objOrder) {
+        jsonObject = objOrder;
+    }
+
+    public String BaseModelstoString(){
+        return jsonObject.toString();
+    }
+
     public JSONObject BaseModelJSONObject(){
         return jsonObject;
     }

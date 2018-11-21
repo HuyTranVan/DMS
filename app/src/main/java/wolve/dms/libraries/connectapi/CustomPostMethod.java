@@ -61,6 +61,8 @@ public class CustomPostMethod extends AsyncTask<String, Void, String> {
         con.setRequestProperty("x-wolver-accessid", User.getUserId());
         con.setRequestProperty("x-wolver-debtid", Distributor.getDistributorId());
 
+        String token = User.getToken() + User.getUserId();
+
         String urlParameters = mParams;
 
         // Send post request

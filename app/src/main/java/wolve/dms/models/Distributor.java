@@ -51,12 +51,13 @@ public class Distributor extends BaseModel{
 
     }
 
-    public static String getLocation(){
-        String location = "";
+    public static int getLocationId(){
+        int location = 0;
         Distributor currentDistributor = CustomSQL.getObject(Constants.DISTRIBUTOR, Distributor.class);
 
         if (currentDistributor != null) {
-            location = currentDistributor.getString("location");
+//            location = currentDistributor.getInt("location");
+            location = 79;
         }
         return location;
 

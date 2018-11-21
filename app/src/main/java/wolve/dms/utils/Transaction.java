@@ -86,10 +86,15 @@ public class Transaction {
         ((AppCompatActivity) context).finish();
     }
 
-    public static void gotoCustomerActivity(String customer) {
+    public static void gotoCustomerActivity(String customer, Boolean isCheckin) {
         Activity context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(context, CustomerActivity.class);
-        intent.putExtra(Constants.CUSTOMER, customer);
+        CustomSQL.setString(Constants.CUSTOMER, customer);
+        CustomSQL.setBoolean(Constants.CHECKIN_FLAG, isCheckin);
+        CustomSQL.setLong(Constants.CHECKIN_TIME, Util.CurrentTimeStamp() );
+
+
+//        intent.putExtra(Constants.CUSTOMER, customer);
         context.startActivityForResult(intent, Constants.RESULT_CUSTOMER_ACTIVITY);
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
@@ -118,12 +123,6 @@ public class Transaction {
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
-//    public static void gotoTestActivity() {
-//        Activity context = Util.getInstance().getCurrentActivity();
-//        Intent intent = new Intent(context, TestActivity.class);
-//        context.startActivity(intent);
-//        context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-//    }
 
     public static void gotoImageChooser() {
         // Kiểm tra permission với android sdk >= 23

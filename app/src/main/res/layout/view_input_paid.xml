@@ -38,7 +38,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.6"
-                android:text="Tổng tiền hóa đơn"
+                android:text="Hóa đơn hiện tại"
                 android:textSize="@dimen/_12sdp"
                 android:paddingLeft="@dimen/_10sdp"
                 android:gravity="center_vertical"/>
@@ -61,6 +61,13 @@
             android:layout_height="2px"
             android:background="#0d000000"/>
 
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/dialog_input_paid_rvdebt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:padding="@dimen/_5sdp"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -71,7 +78,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.6"
-                android:text="Khách trả"
+                android:text="Số tiền khách trả"
                 android:textSize="@dimen/_12sdp"
                 android:paddingLeft="@dimen/_10sdp"
                 android:gravity="center_vertical"/>
@@ -83,11 +90,13 @@
                 android:layout_weight="0.4"
                 android:background="@drawable/colorwhite_borderred_corner"
                 android:hint="0"
-                android:textSize="@dimen/_12sdp"
+                android:textSize="@dimen/_18sdp"
                 android:inputType="number"
                 android:gravity="right|center_vertical"
                 android:maxLength="12"
                 android:paddingRight="@dimen/_10sdp"
+                android:paddingTop="@dimen/_5sdp"
+                android:paddingBottom="@dimen/_5sdp"
                 android:layout_margin="@dimen/_4sdp"/>
 
         </LinearLayout>

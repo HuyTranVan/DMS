@@ -369,6 +369,9 @@ android {
             buildConfigField "boolean", "DEBUG_FLAG", 'true'
             buildConfigField "String", "SERVER_URL", '"http://lubsolution.com:9990/"'
             buildConfigField "String", "UPLOAD_URL", '"http://lubsolution.com:9990/"'
+//            buildConfigField "String", "SERVER_URL", '"http://139.59.241.163:9990/"'
+//            buildConfigField "String", "UPLOAD_URL", '"http://139.59.241.163:9990/"'
+
 
             android.applicationVariants.all {
                 variant -> variant.outputs.all {
@@ -384,6 +387,9 @@ android {
             buildConfigField "Boolean", "FLAG",'false'
             buildConfigField "String", "SERVER_URL", '"http://lubsolution.com:9000/"'
             buildConfigField "String", "UPLOAD_URL", '"http://lubsolution.com:9000/"'
+//            buildConfigField "String", "SERVER_URL", '"http://139.59.241.163:9000/"'
+//            buildConfigField "String", "UPLOAD_URL", '"http://139.59.241.163:9000/"'
+
             android.applicationVariants.all {
                 variant -> variant.outputs.all {
                     outputFileName = "${variant.name}-${variant.versionName}-TEST.apk"
@@ -445,7 +451,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-gcm:15.0.1'
     implementation 'com.google.android.gms:play-services-identity:15.0.1'
     //Drive
-    implementation 'com.google.android.gms:play-services-auth:16.0.0'
+    implementation 'com.google.android.gms:play-services-auth:15.0.1'
     implementation 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
     implementation 'pub.devrel:easypermissions:0.3.0'
     implementation('com.google.api-client:google-api-client-android:1.23.0') {

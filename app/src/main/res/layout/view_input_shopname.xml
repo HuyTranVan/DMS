@@ -4,6 +4,20 @@
         android:id="@+id/input_shopnname_parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/input_shopname_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tao nhanh cua hang"
+        android:padding="@dimen/_5sdp"
+        android:textAllCaps="true"
+        android:textStyle="bold"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -64,6 +78,9 @@
             android:textColor="@color/white"
             android:textSize="@dimen/_14sdp"
             android:layout_gravity="center_vertical"/>
+    </LinearLayout>
+
+
 
     </LinearLayout>
 

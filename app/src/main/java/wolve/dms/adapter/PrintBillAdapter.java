@@ -50,7 +50,7 @@ public class PrintBillAdapter extends RecyclerView.Adapter<PrintBillAdapter.Prin
 
     @Override
     public PrintBillViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mLayoutInflater.inflate(printSize == 57? R.layout.adapter_printbill_57_item : R.layout.adapter_printbill_80_item, parent, false);
+        View itemView = mLayoutInflater.inflate(printSize == 57? R.layout.adapter_printbill_57_item : R.layout.adapter_printbill_57_item, parent, false);
         return new PrintBillViewHolder(itemView);
     }
 
@@ -86,6 +86,18 @@ public class PrintBillAdapter extends RecyclerView.Adapter<PrintBillAdapter.Prin
         for (int i=0; i<mData.size(); i++){
             try {
                 total += (mData.get(i).getDouble("unitPrice") - mData.get(i).getDouble("discount")) * mData.get(i).getDouble("quantity");
+            } catch (JSONException e) {
+                total =0.0;
+            }
+        }
+        return total;
+    }
+
+    public static Double getTotalMoney(List<JSONObject> list){
+        Double total =0.0;
+        for (int i=0; i<list.size(); i++){
+            try {
+                total += (list.get(i).getDouble("unitPrice") - list.get(i).getDouble("discount")) * list.get(i).getDouble("quantity");
             } catch (JSONException e) {
                 total =0.0;
             }

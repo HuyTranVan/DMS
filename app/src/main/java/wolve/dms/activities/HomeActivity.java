@@ -83,11 +83,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     private void createListItem() {
         HomeAdapter adapter = new HomeAdapter(HomeActivity.this);
-        adapter.notifyDataSetChanged();
-        rvItems.setAdapter(adapter);
-        LinearLayoutManager linearLayoutManager = new GridLayoutManager(this, 3);
-        rvItems.setLayoutManager(linearLayoutManager);
-        rvItems.addItemDecoration(new ItemDecorationGridSpace((int) Util.convertDp2Px(1),3));
+        Util.createGridRV(rvItems, adapter, 3);
+//        adapter.notifyDataSetChanged();
+//        rvItems.setAdapter(adapter);
+//        LinearLayoutManager linearLayoutManager = new GridLayoutManager(this, 3);
+//        rvItems.setLayoutManager(linearLayoutManager);
+//        rvItems.addItemDecoration(new ItemDecorationGridSpace((int) Util.convertDp2Px(1),3));
 
     }
 

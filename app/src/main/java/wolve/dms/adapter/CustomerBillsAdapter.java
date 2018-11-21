@@ -43,8 +43,6 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
     private List<Bill> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
-//    private CallbackDeleteAdapter mDelete;
-//    private CallbackUpdateBill mUpdate;
     private CallbackListObject mListenerList;
     private CustomBottomDialog.FourMethodListener mListerner;
 
@@ -58,8 +56,6 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mListenerList = listener;
         this.mListerner = listener4;
-//        this.mDelete = mDelete;
-//        this.mUpdate = mUpdate;
         Collections.sort(mData, new Comparator<Bill>(){
             public int compare(Bill obj1, Bill obj2) {
                 return obj1.getString("createAt").compareToIgnoreCase(obj2.getString("createAt"));
@@ -78,9 +74,6 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
     @Override
     public void onBindViewHolder(final CustomerBillsAdapterViewHolder holder, final int position) {
         try {
-//            holder.lnParent.setBackground(( position % 2 ) == 0 ?  mContext.getResources().getDrawable(R.drawable.colorgrey_corner):
-//                    mContext.getResources().getDrawable(R.drawable.colorwhite_bordergrey_corner));
-
             holder.tvDate.setText(Util.DateString(mData.get(position).getLong("createAt")));
             holder.tvHour.setText(Util.HourString(mData.get(position).getLong("createAt")));
             holder.tvTotal.setText("Tổng: "+ Util.FormatMoney(mData.get(position).getDouble("total")));
@@ -99,11 +92,20 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
                 BillDetail billDetail = new BillDetail(arrayBillDetail.getJSONObject(i));
                 listBillDetail.add(billDetail);
             }
+
             CustomerBillsDetailAdapter adapter = new CustomerBillsDetailAdapter(listBillDetail);
-            adapter.notifyDataSetChanged();
-            holder.rvBillDetail.setAdapter(adapter);
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
-            holder.rvBillDetail.setLayoutManager(linearLayoutManager);
+            Util.createLinearRV(holder.rvBillDetail, adapter);
+
+//            JSONArray arrayBillPayment = new JSONArray(mData.get(position).getString("payments"));
+            final List<JSONObject> listPayment = new ArrayList<>();
+//            for (int j=0; j<arrayBillPayment.length(); j++){
+//                JSONObject object = arrayBillPayment.getJSONObject(j);
+//                listPayment.add(object);
+//            }
+
+            PaymentAdapter paymentAdapter = new PaymentAdapter(listPayment);
+            Util.createLinearRV(holder.rvPayment, paymentAdapter);
+
 
             if (mData.size()==1){
                 holder.vLineUpper.setVisibility(View.GONE);
@@ -159,7 +161,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
 
     public class CustomerBillsAdapterViewHolder extends RecyclerView.ViewHolder {
         private TextView tvDate, tvHour, tvPay, tvDebt, tvTotal, tvNote;
-        private RecyclerView rvBillDetail;
+        private RecyclerView rvBillDetail, rvPayment;
         private TextView tvIcon;
         private View vLineUpper, vLineUnder;
         private LinearLayout lnParent;
@@ -173,6 +175,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
             tvDebt = (TextView) itemView.findViewById(R.id.bills_item_debt);
             tvTotal = (TextView) itemView.findViewById(R.id.bills_item_total);
             rvBillDetail = (RecyclerView) itemView.findViewById(R.id.bills_item_rvproduct);
+            rvPayment = (RecyclerView) itemView.findViewById(R.id.bills_item_rvpayment);
             vLineUnder = (View) itemView.findViewById(R.id.bills_item_under);
             vLineUpper = (View) itemView.findViewById(R.id.bills_item_upper);
             lnParent = (LinearLayout) itemView.findViewById(R.id.bills_item_content_parent);
@@ -237,7 +240,6 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
                         }else {
                             params.put("note", mData.get(currentPosition).getString("note") + String.format("\n%s tra %s", Util.CurrentMonthYearHour() , Util.FormatMoney(pay)));
                         }
-
 
                         params.put("billDetails", null);
                         CustomerConnect.PostBill(params.toString(), new CallbackJSONObject() {

@@ -39,7 +39,6 @@ import static wolve.dms.utils.Constants.REQUEST_ENABLE_BT;
 
 public abstract class BaseActivity extends AppCompatActivity {
     protected LocationManager mLocationManager;
-    public DialogPlus dialog;
     private boolean doubleBackToExitPressedOnce = false;
     public static BluetoothAdapter mBluetoothAdapter = null;
     public static BluetoothSocket btsocket;
@@ -186,15 +185,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         switch (Util.getInstance().getCurrentActivity().getLocalClassName()){
-            case "activities.MapsActivity":
-                if (dialog != null && dialog.isShowing()){
-                    dialog.dismiss();
-                }else {
-                    Transaction.gotoHomeActivityRight(true);
-                }
-
-                break;
-
             case "activities.HomeActivity":
                 if (doubleBackToExitPressedOnce) {
                     finish();

@@ -61,10 +61,7 @@ public class StatisticalProductGroupAdapter extends RecyclerView.Adapter<Statist
             holder.tvGroupSum.setText(sumProductQuantity(mProduct));
 
             StatisticalProductAdapter adapter = new StatisticalProductAdapter(mProduct);
-            adapter.notifyDataSetChanged();
-            holder.rvGroup.setAdapter(adapter);
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
-            holder.rvGroup.setLayoutManager(linearLayoutManager);
+            Util.createLinearRV(holder.rvGroup, adapter);
 
     }
 

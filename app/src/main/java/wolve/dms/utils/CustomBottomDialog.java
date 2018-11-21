@@ -325,7 +325,13 @@ public class CustomBottomDialog {
         RecyclerView rvList = (RecyclerView) dialog.findViewById(R.id.view_list_method_rv);
         TextView tvTitle = (TextView) dialog.findViewById(R.id.view_listmethod_title);
 
-        tvTitle.setText(title);
+        if (title == null){
+            tvTitle.setVisibility(View.GONE);
+        }else {
+            tvTitle.setVisibility(View.VISIBLE);
+            tvTitle.setText(title);
+        }
+
         StringAdapter adapter = new StringAdapter(list, new StringListener() {
             @Override
             public void onResponse(String content) {

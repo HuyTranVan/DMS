@@ -6,21 +6,18 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.PermissionChecker;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
-import android.widget.FrameLayout;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -49,21 +46,16 @@ import java.util.List;
 
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
-import wolve.dms.adapter.CartCheckinReasonAdapter;
-import wolve.dms.adapter.CustomerBillsAdapter;
 import wolve.dms.adapter.CustomerCheckinsAdapter;
-import wolve.dms.adapter.CustomerViewpagerAdapter;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
+import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
-import wolve.dms.callback.CallbackUpdateBill;
 import wolve.dms.customviews.CInputForm;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.customviews.WorkaroundMapFragment;
-import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
 import wolve.dms.models.Checkin;
 import wolve.dms.models.Customer;
@@ -73,11 +65,12 @@ import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
-import wolve.dms.utils.CustomDropdow;
 import wolve.dms.libraries.FitScrollWithFullscreen;
+import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
+import static wolve.dms.apiconnect.CustomerConnect.createParamCustomer;
 import static wolve.dms.utils.Constants.REQUEST_PERMISSION_LOCATION;
 
 /**
@@ -88,37 +81,57 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     public GoogleMap mMap;
     public SupportMapFragment mapFragment;
     private ImageView btnBack;
-    private CTextIcon tvTrash, btnEditLocation, tvDropdown;
-    private Button btnSubmit;
-    private FloatingActionButton btnShopCart, btnCurrentLocation;
-    private TextView  tvTotal, tvDebt , tvBillDetail;
+    private CTextIcon tvTrash, btnEditLocation, tvBottomUp, tvBottomDown;
+    private Button btnSubmit, btnShopCart;
+    private FloatingActionButton btnCurrentLocation;
+    private TextView  tvTotal, tvDebt , tvBillDetail, tvCheckInStatus, tvTime, tvCheckinTitle;
     protected TextView tvTitle;
-    private CInputForm edName, edPhone, edAdress, edStreet, edDistrict, edCity, edNote, edShopType, edShopName;
+    private EditText  edNote;
+    private CInputForm edName, edPhone, edAdress, edStreet, edDistrict, edCity, edShopType, edShopName;
     private RadioGroup rgStatus;
     private RadioButton rdInterested, rdNotInterested, rdOrdered;
-    private ScrollView scParent;
-//    private ViewPager viewPager;
-//    private TabLayout tabLayout;
-//    private BottomSheetBehavior mBottomSheetBehavior;
-    private LinearLayout lnPaidParent;
-    private RelativeLayout coParent,rlHeader;
+    private ScrollView scContent;
+    private LinearLayout lnPaidParent, lnBottomSheet;
+    private RelativeLayout rlHeader, rlStatusGroup;
+    private CoordinatorLayout coParent;
     private RecyclerView rvCheckin;
 
+    private BottomSheetBehavior mBottomSheetBehavior;
     protected Customer currentCustomer;
     private List<Checkin> listCheckins = new ArrayList<>();
     protected List<Bill> listBills = new ArrayList<>();
-    private List<RecyclerView.Adapter> listAdapter;
     private Status currentStatus;
-//    private int currentState = BottomSheetBehavior.STATE_COLLAPSED;
     private String firstName = "";
-//    private float bottomSheetHeight;
     private FusedLocationProviderClient mFusedLocationClient;
+    private long countTime;
+    private int currentStateBottom = BottomSheetBehavior.STATE_COLLAPSED;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FitScrollWithFullscreen.assistActivity(this, 1);
     }
+
+    Thread threadShowTime = new Thread() {
+        @Override
+        public void run() {
+            try { while (!threadShowTime.isInterrupted()) {
+                    Thread.sleep(1000);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            tvTime.setText(Util.HourString(countTime));
+                            countTime += 1000;
+                            // update TextView here!
+                        }
+                    });
+                }
+            } catch (InterruptedException e) {
+            }
+        }
+    };
 
     @Override
     public int getResourceLayout() {
@@ -132,13 +145,13 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
     @Override
     public void findViewById() {
-        coParent = (RelativeLayout) findViewById(R.id.customer_parent);
+        coParent = (CoordinatorLayout) findViewById(R.id.customer_parent);
         rlHeader = (RelativeLayout) findViewById(R.id.customer_header);
         btnSubmit = (Button) findViewById(R.id.add_customer_submit);
         btnEditLocation = (CTextIcon) findViewById(R.id.add_customer_editlocation);
         btnCurrentLocation = (FloatingActionButton) findViewById(R.id.add_customer_currentlocation);
         btnBack = (ImageView) findViewById(R.id.icon_back);
-        btnShopCart = (FloatingActionButton) findViewById(R.id.add_customer_shopcart);
+        btnShopCart = (Button) findViewById(R.id.add_customer_shopcart);
         tvTrash = (CTextIcon) findViewById(R.id.icon_more);
         tvTitle = (TextView) findViewById(R.id.add_customer_title);
         edName = (CInputForm) findViewById(R.id.add_customer_name);
@@ -147,31 +160,35 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         edStreet = (CInputForm) findViewById(R.id.add_customer_street);
         edDistrict = (CInputForm) findViewById(R.id.add_customer_district);
         edCity = (CInputForm) findViewById(R.id.add_customer_city);
-        edNote = (CInputForm) findViewById(R.id.add_customer_note);
+        edNote = (EditText) findViewById(R.id.add_customer_note);
         edShopType = (CInputForm) findViewById(R.id.add_customer_shoptype);
         edShopName = (CInputForm) findViewById(R.id.add_customer_shopname);
         rgStatus = (RadioGroup) findViewById(R.id.customer_radiogroup_status);
         rdInterested = (RadioButton) findViewById(R.id.customer_radio_status_interested);
         rdNotInterested = (RadioButton) findViewById(R.id.customer_radio_status_nointerested);
         rdOrdered = (RadioButton) findViewById(R.id.customer_radio_status_ordered);
-        scParent = (ScrollView) findViewById(R.id.customer_scrollview);
-//        viewPager = (ViewPager) findViewById(R.id.customer_viewpager);
-//        tabLayout = (TabLayout) findViewById(R.id.customer_tabs);
-//        lnBottomSheet = (LinearLayout) findViewById(R.id.customer_bottom_sheet);
+        scContent = (ScrollView) findViewById(R.id.customer_scrollview);
+        lnBottomSheet = (LinearLayout) findViewById(R.id.customer_bottom_sheet);
         lnPaidParent = (LinearLayout) findViewById(R.id.customer_paid_parent);
         tvTotal = (TextView) findViewById(R.id.customer_paid_total);
         tvDebt = (TextView) findViewById(R.id.customer_paid_debt);
 //        tvPaid = (TextView) findViewById(R.id.customer_paid_paid);
-        tvDropdown = findViewById(R.id.add_customer_dropdown);
+//        tvDropdown = findViewById(R.id.add_customer_dropdown);
         rvCheckin = findViewById(R.id.add_customer_rvcheckin);
         tvBillDetail = findViewById(R.id.customer_bill_more);
+        tvCheckInStatus = findViewById(R.id.customer_checkin_status);
+        tvTime = findViewById(R.id.customer_checkin_time);
+        rlStatusGroup = findViewById(R.id.customer_checkin_status_group);
+        tvBottomUp = findViewById(R.id.customer_bottom_up);
+        tvBottomDown = findViewById(R.id.customer_bottom_down);
+        tvCheckinTitle = findViewById(R.id.customer_checkin_title);
 
         //fix MapView in ScrollView
         mapFragment = (WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.add_customer_map);
         ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.add_customer_map)).setListener(new WorkaroundMapFragment.OnTouchListener() {
             @Override
             public void onTouch() {
-                scParent.requestDisallowInterceptTouchEvent(true);
+                scContent.requestDisallowInterceptTouchEvent(true);
             }
         });
 
@@ -181,71 +198,65 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     public void initialData() {
         setupMap();
         currentStatus = Status.getStatusList().get(0);
-
-        String bundle = getIntent().getExtras().getString(Constants.CUSTOMER);
-        if (bundle != null) {
-            try {
-                currentCustomer = new Customer(new JSONObject(bundle));
-                firstName = currentCustomer.getString("name");
-
-                edName.setText(currentCustomer.getString("name") == null ? "" : currentCustomer.getString("name"));
-                edPhone.setText(currentCustomer.getString("phone") == null ? "" : currentCustomer.getString("phone"));
-                edAdress.setText((currentCustomer.getString("address") == null ? "" : currentCustomer.getString("address")));
-                edStreet.setText(currentCustomer.getString("street") == null ? "" : currentCustomer.getString("street"));
-                edNote.setText(currentCustomer.getString("note"));
-                edDistrict.setText(currentCustomer.getString("district"));
-                edCity.setText(currentCustomer.getString("province"));
-                edShopName.setText(currentCustomer.getString("signBoard"));
-                edShopType.setText(Constants.getShopInfo(currentCustomer.getString("shopType"), null));
-                tvTitle.setText(edShopType.getText().toString() + " - " + currentCustomer.getString("signBoard"));
-
-                if (currentCustomer.getString("status") != null) {
-                    currentStatus = new Status(currentCustomer.getJsonObject("status"));
-                }
-
-                switch (currentStatus.getInt("id")) {
-                    case 1:
-                        rdInterested.setChecked(true);
-                        break;
-                    case 2:
-                        rdNotInterested.setChecked(true);
-                        break;
-                    case 3:
-                        rdOrdered.setChecked(true);
-                        break;
-                }
-
-                if (currentCustomer.getString("checkIns") != null) {
-                    JSONArray array = new JSONArray(currentCustomer.getString("checkIns"));
-                    for (int i = 0; i < array.length(); i++) {
-                        listCheckins.add(new Checkin(array.getJSONObject(i)));
-                    }
-                }
-
-                if (currentCustomer.getString("bills") != null) {
-                    JSONArray array = new JSONArray(currentCustomer.getString("bills"));
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject objectBill = array.getJSONObject(i);
-                        JSONObject objectUser = objectBill.getJSONObject("user");
-                        if (User.getRole().equals(Constants.ROLE_ADMIN)){
-                            listBills.add(new Bill(objectBill));
-                        }else {
-                            if (User.getId() == objectUser.getInt("id")){
-                                listBills.add(new Bill(objectBill));
-                            }
-                        }
-
-                    }
-                }
-
-                createRVCheckin(listCheckins);
-//                setupViewPager(listCheckins, listBills);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
+        currentCustomer = new Customer(CustomSQL.getString(Constants.CUSTOMER));
+        setCheckinGroup();
         try {
+
+            firstName = currentCustomer.getString("name");
+            edName.setText(currentCustomer.getString("name") == null ? "" : currentCustomer.getString("name"));
+            edPhone.setText(currentCustomer.getString("phone") == null ? "" : currentCustomer.getString("phone"));
+            edAdress.setText((currentCustomer.getString("address") == null ? "" : currentCustomer.getString("address")));
+            edStreet.setText(currentCustomer.getString("street") == null ? "" : currentCustomer.getString("street"));
+            edNote.setText(currentCustomer.getString("note"));
+            edDistrict.setText(currentCustomer.getString("district"));
+            edCity.setText(currentCustomer.getString("province"));
+            edShopName.setText(currentCustomer.getString("signBoard"));
+            edShopType.setText(Constants.getShopInfo(currentCustomer.getString("shopType"), null));
+            tvTitle.setText(edShopType.getText().toString() + " - " + currentCustomer.getString("signBoard"));
+
+            if (currentCustomer.getString("status") != null) {
+                currentStatus = new Status(currentCustomer.getJsonObject("status"));
+            }
+
+            switch (currentStatus.getInt("id")) {
+                case 1:
+                    rdInterested.setChecked(true);
+                    break;
+                case 2:
+                    rdNotInterested.setChecked(true);
+                    break;
+                case 3:
+                    rdOrdered.setChecked(true);
+                    break;
+            }
+
+            if (currentCustomer.getString("checkIns") != null) {
+                JSONArray array = new JSONArray(currentCustomer.getString("checkIns"));
+                for (int i = 0; i < array.length(); i++) {
+                    listCheckins.add(new Checkin(array.getJSONObject(i)));
+                }
+            }
+            createRVCheckin(listCheckins);
+            lnBottomSheet.setVisibility(listCheckins.size() >0?View.VISIBLE: View.GONE);
+
+
+            if (currentCustomer.getString("bills") != null) {
+                JSONArray array = new JSONArray(currentCustomer.getString("bills"));
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject objectBill = array.getJSONObject(i);
+                    JSONObject objectUser = objectBill.getJSONObject("user");
+                    if (User.getRole().equals(Constants.ROLE_ADMIN)){
+                        listBills.add(new Bill(objectBill));
+                    }else {
+                        if (User.getId() == objectUser.getInt("id")){
+                            listBills.add(new Bill(objectBill));
+                        }
+                    }
+
+                }
+            }
+
+
 
             if (currentCustomer.getInt("id") != 0) {
                 tvTrash.setVisibility(User.getRole().equals("MANAGER") ? View.VISIBLE : View.GONE);
@@ -255,13 +266,12 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 } else {
                     tvTrash.setVisibility(View.GONE);
                 }
-                btnSubmit.setText("CHECK_IN & CẬP NHẬT");
 
             } else {
-
                 tvTrash.setVisibility(View.GONE);
-                btnSubmit.setText("CẬP NHẬT");
+
             }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -272,34 +282,9 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             edPhone.setSelection();
         }
 
-        edShopType.setDropdown(true, new CInputForm.ClickListener() {
-            @Override
-            public void onClick(View view) {
-                CustomBottomDialog.choiceList("CHỌN NHÓM CỬA HÀNG",Util.arrayToList(Constants.shopName) , new CustomBottomDialog.StringListener() {
-                    @Override
-                    public void onResponse(String content) {
-                        edShopType.setText(content);
-                    }
-                });
-
-            }
-        });
-//        edShopType.setDropdownList(Util.arrayToList(Constants.shopName));
-
-        edShopName.addTextChangeListenter(new CInputForm.OnQueryTextListener() {
-            @Override
-            public boolean textChanged(String query) {
-                if (!firstName.contains("Anh ")) {
-                    edName.setText("Anh " + query.substring(query.trim().lastIndexOf(" ") + 1));
-                }
-                tvTitle.setText(edShopType.getText().toString() + " - " + query);
-                return true;
-            }
-        });
-
         showMoneyOverview(Util.getTotal(listBills));
 
-        Util.getSoftButtonsBarSizePort(this);
+
 
 
     }
@@ -318,11 +303,32 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         btnCurrentLocation.setOnClickListener(this);
         btnShopCart.setOnClickListener(this);
         coParent.getViewTreeObserver().addOnGlobalLayoutListener(this);
-        tvDropdown.setOnClickListener(this);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         tvBillDetail.setOnClickListener(this);
+        tvCheckinTitle.setOnClickListener(this);
+        shopTypeEvent();
+        shopNameEvent();
     }
 
+    private void setCheckinGroup(){
+        if (CustomSQL.getBoolean(Constants.CHECKIN_FLAG)){
+            countTime = Util.CurrentTimeStamp() - CustomSQL.getLong(Constants.CHECKIN_TIME);
+            rlStatusGroup.setBackground(getResources().getDrawable(R.color.colorBlueTransparent));
+            tvCheckInStatus.setText("Đang check in ....");
+            tvCheckInStatus.setTextColor(getResources().getColor(R.color.black_text_color_hint));
+            tvTime.setVisibility(View.VISIBLE);
+            threadShowTime.start();
+            btnSubmit.setText("CHECK_IN & CẬP NHẬT");
+
+        }else {
+            tvTime.setVisibility(View.GONE);
+            rlStatusGroup.setBackground(getResources().getDrawable(R.color.colorRedTransparent));
+            tvCheckInStatus.setText("Đang bên ngoài khu vực cửa hàng ....");
+            tvCheckInStatus.setTextColor(getResources().getColor(R.color.white_text_color));
+            btnSubmit.setText("CẬP NHẬT");
+
+        }
+    }
 
     private void createRVCheckin(List<Checkin> list){
         CustomerCheckinsAdapter adapter = new CustomerCheckinsAdapter(list);
@@ -332,7 +338,6 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         rvCheckin.setLayoutManager(layoutManager);
 
     }
-
 
     @Override
     public void onClick(View v) {
@@ -344,23 +349,14 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 break;
 
             case R.id.add_customer_submit:
-                if (currentCustomer.getInt("id") == 0) {
-                    if (currentStatus.getInt("id") == 1) {
-                        loadReasonList();
-                    } else {
-                        submitCustomerCheckin(currentStatus, true);
-                    }
-
-                } else {
-                    loadReasonList();
-
-                }
+                submitEvent();
 
                 break;
 
             case R.id.icon_more:
                 if (listBills.size() > 0) {
                     Util.showToast("Không thể xóa khách hàng có phát sinh hóa đơn");
+
                 } else {
                     deleteCustomer();
                 }
@@ -392,19 +388,19 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
                 break;
 
-            case R.id.add_customer_dropdown:
-                CustomDropdow.createDropdownStatus(tvDropdown, Status.getStatusList(), new CallbackString() {
-                    @Override
-                    public void Result(String s) {
-                        edNote.setText(s);
-                    }
-                });
-                break;
 
             case R.id.customer_bill_more:
                 changeFragment(new BillDetailFragment() , true);
 
                 break;
+
+            case R.id.customer_checkin_title:
+                mBottomSheetBehavior.setState(mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED ?
+                BottomSheetBehavior.STATE_EXPANDED:BottomSheetBehavior.STATE_COLLAPSED);
+
+
+                break;
+
         }
     }
 
@@ -426,7 +422,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                     try {
                         currentCustomer.put("id", responseCustomer.getInt("id"));
 
-                        responseCustomer.put("bills", "[]");
+                        responseCustomer.put("bills", new JSONArray());
                         Transaction.gotoShopCartActivity(responseCustomer.CustomertoString());
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -441,65 +437,55 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             }, true);
 
         }else {
-            try {
-                JSONArray array = new JSONArray(currentCustomer.getString("bills"));
-                customer.put("bills", array.toString());
-                Transaction.gotoShopCartActivity(customer.CustomertoString());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            Transaction.gotoShopCartActivity(customer.CustomertoString());
 
         }
 
     }
 
     private Boolean checkInputField(){
-        Boolean check = false;
         if (edName.getText().toString().trim().equals("")
                 || edDistrict.getText().toString().trim().equals("")
                 || edCity.getText().toString().trim().equals("")
                 || edShopName.getText().toString().trim().equals("")
                 || edShopType.getText().toString().trim().equals("")){
-            CustomCenterDialog.alertWithCancelButton(null, "Vui lòng nhập đủ thông tin", "đồng ý", null, new CallbackBoolean() {
+            CustomCenterDialog.alertWithButton("", "Vui lòng nhập đủ thông tin", "đồng ý", new CallbackBoolean() {
                 @Override public void onRespone(Boolean result) {
 
                 }
             });
 
-            check = false;
+            return false;
 
         }else {
-            check = true;
+            return true;
         }
-        return check;
     }
 
-    private void submitCustomer(){
+    private void submitCustomer(final CallbackObject mListener, Boolean loading){
         if (checkInputField()){
             CustomerConnect.CreateCustomer(createParamCustomer(getCurrentCustomer()), new CallbackJSONObject() {
                 @Override
                 public void onResponse(JSONObject result) {
-                    final Customer responseCustomer = new Customer(result);
-                    returnPreviousScreen(responseCustomer.CustomertoString());
-
+                    mListener.onResponse(result);
                 }
 
                 @Override
                 public void onError(String error) {
 
                 }
-            }, true);
+            }, loading);
         }
 
     }
 
-    private void submitCustomerCheckin(final Status status, final Boolean backtoMap){
+    private void submitCustomerAndCheckin(final String statusNote){
         if (checkInputField()){
             CustomerConnect.CreateCustomer(createParamCustomer(getCurrentCustomer()), new CallbackJSONObject() {
                 @Override
                 public void onResponse(JSONObject result) {
                     final Customer responseCustomer = new Customer(result);
-                    submitCheckin(responseCustomer, status, backtoMap);
+                    submitCheckin(responseCustomer, statusNote);
 
                 }
 
@@ -512,27 +498,19 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
     }
 
-    private void submitCheckin(final Customer customer, Status status, final Boolean backtoMap){
-            String params = String.format(Api_link.SCHECKIN_CREATE_PARAM, customer.getInt("id"),
-                    status.getInt("id"),
-                    Util.encodeString(edNote.getText().toString().trim()),
-                    User.getUserId()
-            );
+    private void submitCheckin(final Customer customer, String checkinNote){
+        CustomerConnect.PostCheckin(createParamCheckin(customer, checkinNote), new CallbackJSONObject() {
+            @Override
+            public void onResponse(JSONObject result) {
+                returnPreviousScreen(customer.CustomertoString());
 
-            CustomerConnect.PostCheckin(params, new CallbackJSONObject() {
-                @Override
-                public void onResponse(JSONObject result) {
-                    if (backtoMap){
-                        returnPreviousScreen(customer.CustomertoString());
-                    }
+            }
 
-                }
+            @Override
+            public void onError(String error) {
 
-                @Override
-                public void onError(String error) {
-
-                }
-            }, true);
+            }
+        }, true);
 
     }
 
@@ -545,7 +523,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         }
         mMap = googleMap;
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style_map));
-        //mMap.setMyLocationEnabled(true);
+        mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
         mMap.getUiSettings().setRotateGesturesEnabled(false);
         mMap.getUiSettings().setScrollGesturesEnabled(false);
@@ -608,24 +586,23 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                     JSONArray array = new JSONArray(customer.getString("bills"));
                     if (array.length() >0){
                         rdOrdered.setChecked(true);
-                        submitCustomerCheckin(currentStatus, false);
+//                        submitCustomerAndCheckin(currentStatus, false);
                     }
                     listBills = new ArrayList<>();
                     for (int i=0; i<array.length(); i++){
                         listBills.add(new Bill(array.getJSONObject(i)));
                     }
 
-//                    setupViewPager(listCheckins, listBills);
+                    showMoneyOverview(Util.getTotal(listBills));
+
                 }
-
-
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }else {
-//            Util.showToast("Error");
             onResume();
+
         }
 
     }
@@ -651,16 +628,11 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         }
     }
 
-    private void loadReasonList() {
-        CustomCenterDialog.showCheckinReason("CHỌN TRẠNG THÁI CẬP NHẬT", Status.getStatusList(), new CartCheckinReasonAdapter.CallbackStatus() {
+    private void showCheckinStatus() {
+        CustomCenterDialog.showCheckinReason("NỘI DUNG GHÉ THĂM CỬA HÀNG", Status.getStatusList(), new CallbackString() {
             @Override
-            public void Status(Status status) {
-                submitCustomerCheckin(status, true );
-
-            }
-            @Override
-            public void UpdateOnly() {
-                submitCustomer();
+            public void Result(String s) {
+                submitCustomerAndCheckin(s );
             }
         });
 
@@ -684,45 +656,55 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             customer.put("shopType", Constants.getShopInfo(null,edShopType.getText().toString()));
             customer.put("status.id", currentStatus.getInt("id"));
 
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return customer;
     }
 
-    private String createParamCustomer(Customer customer){
-        String param = String.format(Api_link.CUSTOMER_CREATE_PARAM, customer.getInt("id") == 0? "" : String.format("id=%s&",customer.getString("id") ),
-                Util.encodeString(customer.getString("name")),//name
-                Util.encodeString(customer.getString("signBoard")),//signBoard
-                Util.encodeString(customer.getString("address")), //address
-                Util.encodeString(customer.getString("phone")), //phone
-                Util.encodeString(customer.getString("street")), //street
-                Util.encodeString(customer.getString("note")), //note
-                Util.encodeString(customer.getString("district")), //district
-                Util.encodeString(customer.getString("province")), //province
-                customer.getDouble("lat"), //lat
-                customer.getDouble("lng"), //lng
-                customer.getInt("volumeEstimate"), //province
-                Util.encodeString(customer.getString("shopType")), //shopType
-                customer.getInt("status.id"), //currentStatusId
-                Distributor.getDistributorId() //DistributorId
-        );
-
-        return param;
-    }
-
     @Override
     public void onGlobalLayout() {
-//        coParent.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-//        int height = coParent.getHeight() - rlHeader.getHeight();
-//
-//        ViewGroup.LayoutParams params = lnBottomSheet.getLayoutParams();
-//        params.height = height;
-//        lnBottomSheet.requestLayout();
-//
-//        setupBottomSheet();
+        coParent.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        int height = coParent.getHeight() - rlHeader.getHeight();
+        ViewGroup.LayoutParams params = lnBottomSheet.getLayoutParams();
+        params.height = (int) (coParent.getHeight()*0.7);
+        lnBottomSheet.requestLayout();
 
+        setupBottomSheet();
+
+    }
+
+    private void setupBottomSheet() {
+        mBottomSheetBehavior = BottomSheetBehavior.from(lnBottomSheet);
+        mBottomSheetBehavior.setPeekHeight(Util.convertDp2PxInt(60-8));
+        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+//                Util.hideKeyboard(lnBottomSheet);
+                switch (newState){
+                    case BottomSheetBehavior.STATE_DRAGGING:
+                        tvBottomDown.setVisibility(View.INVISIBLE);
+                        break;
+
+                    case BottomSheetBehavior.STATE_COLLAPSED:
+//                        tvBottomDown.setVisibility(View.INVISIBLE);
+//                        tvBottomUp.setVisibility(View.VISIBLE);
+                        break;
+
+                    case BottomSheetBehavior.STATE_EXPANDED:
+                        Util.hideKeyboard(lnBottomSheet);
+                        tvBottomDown.setVisibility(View.VISIBLE);
+//                        tvBottomUp.setVisibility(View.INVISIBLE);
+                        break;
+
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                tvBottomUp.setAlpha(1-slideOffset);
+            }
+        });
     }
 
     private void btnLocationEvent(){
@@ -749,11 +731,66 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             lnPaidParent.setVisibility(object.getInt("size") > 0 ?View.VISIBLE :View.GONE);
             tvTotal.setText(String.format("Tổng: %s" ,Util.FormatMoney(object.getDouble("total"))));
             tvDebt.setText(String.format("Nợ: %s" ,Util.FormatMoney(object.getDouble("debt"))));
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
+    }
+
+    private void shopTypeEvent(){
+        edShopType.setDropdown(true, new CInputForm.ClickListener() {
+            @Override
+            public void onClick(View view) {
+                CustomBottomDialog.choiceList("CHỌN NHÓM CỬA HÀNG",Util.arrayToList(Constants.shopName) , new CustomBottomDialog.StringListener() {
+                    @Override
+                    public void onResponse(String content) {
+                        edShopType.setText(content);
+                    }
+                });
+
+            }
+        });
 
     }
+
+    private void shopNameEvent(){
+        edShopName.addTextChangeListenter(new CInputForm.OnQueryTextListener() {
+            @Override
+            public boolean textChanged(String query) {
+                if (!firstName.contains("Anh ")) {
+                    edName.setText("Anh " + query.substring(query.trim().lastIndexOf(" ") + 1));
+                }
+                tvTitle.setText(edShopType.getText().toString() + " - " + query);
+                return true;
+            }
+        });
+    }
+
+    private void submitEvent(){
+        if (CustomSQL.getBoolean(Constants.CHECKIN_FLAG)){
+            showCheckinStatus();
+
+        }else {
+            submitCustomer(new CallbackObject() {
+                @Override
+                public void onResponse(JSONObject object) {
+                    returnPreviousScreen(object.toString());
+                }
+            }, true);
+
+        }
+    }
+
+    private String createParamCheckin(Customer customer, String note){
+        String params = String.format(Api_link.SCHECKIN_CREATE_PARAM, customer.getInt("id"),
+                currentStatus.getInt("id"),
+                Util.encodeString(String.format("[%s] %s", Util.HourStringNatural(countTime), note)),
+                User.getUserId()
+        );
+        return params;
+    }
+
+
 
 }

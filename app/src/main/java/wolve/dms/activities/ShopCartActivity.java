@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.github.clans.fab.FloatingActionButton;
+import com.google.gson.Gson;
 import com.soundcloud.android.crop.Crop;
 
 import org.json.JSONArray;
@@ -83,7 +84,7 @@ import static wolve.dms.utils.Transaction.gotoImageChooser;
  * Created by macos on 9/16/17.
  */
 
-public class ShopCartActivity extends BaseActivity implements  View.OnClickListener {
+public class ShopCartActivity extends BaseActivity implements  View.OnClickListener, BluetoothListFragment.OnDataPass, View.OnLongClickListener {
     private ImageView btnBack;
     private Button btnSubmit;
     protected TextView tvPrinterStatus;
@@ -91,7 +92,6 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     private CInputForm tvNote;
     private RecyclerView rvProducts;
     private RelativeLayout rlCover;
-    private ImageView imgLogo;
     private LinearLayout lnSubmitGroup;
     private FloatingActionButton btnAddProduct;
 
@@ -102,7 +102,6 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     private Uri imageChangeUri ;
     protected List<Product> listProducts = new ArrayList<>();
     protected List<ProductGroup> listProductGroups = new ArrayList<>();
-    private String currentEmulatorDevice ="Google Android SDK built for x86";
 
 
     @Override
@@ -126,7 +125,6 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         lnSubmitGroup = findViewById(R.id.cart_submit_group);
         rvProducts =  findViewById(R.id.cart_rvproduct);
         rlCover =  findViewById(R.id.cart_cover);
-        imgLogo = findViewById(R.id.cart_logo);
         btnAddProduct = findViewById(R.id.add_product);
 
     }
@@ -152,17 +150,17 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
             }
         }
 
-        if (!CustomSQL.getString("logo").equals("")){
-            Glide.with(this).load(CustomSQL.getString("logo")).centerCrop().into(imgLogo);
-
-        }else {
-            new DownloadImage(this, imgLogo, Api_link.LOGO_BILL).execute();
-        }
+//        if (!CustomSQL.getString("logo").equals("")){
+//            Glide.with(this).load(CustomSQL.getString("logo")).centerCrop().into(imgLogo);
+//
+//        }else {
+//            new DownloadImage(this, imgLogo, Api_link.LOGO_BILL).execute();
+//        }
         loadListProduct();
         loadListProductGroup();
         createRVProduct(listInitialProduct);
 
-        if (!Util.getDeviceName().equals(currentEmulatorDevice)){
+        if (!Util.getDeviceName().equals(Constants.currentEmulatorDevice)){
             registerBluetooth();
         }
 
@@ -172,7 +170,8 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     public void addEvent() {
         btnBack.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
-        imgLogo.setOnClickListener(this);
+        btnSubmit.setOnLongClickListener(this);
+//        imgLogo.setOnClickListener(this);
         tvPrinterStatus.setOnClickListener(this);
         btnAddProduct.setOnClickListener(this);
     }
@@ -203,15 +202,14 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 break;
 
             case R.id.cart_submit:
-//                choicePayMethod();
-                Transaction.gotoPrintBillActivity(currentCustomer.CustomertoString(), DataUtil.convertListObject2Array(adapterProducts.getAllData()).toString());
+                choicePayMethod();
 
                 break;
 
-            case R.id.cart_logo:
-                imageChangeUri = Uri.fromFile(Util.getOutputMediaFile());
-                gotoImageChooser();
-                break;
+//            case R.id.cart_logo:
+//                imageChangeUri = Uri.fromFile(Util.getOutputMediaFile());
+//                gotoImageChooser();
+//                break;
 
             case R.id.cart_printer_status:
                 BluetoothListFragment fragment = new BluetoothListFragment();
@@ -268,11 +266,8 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 rlCover.setVisibility(adapterProducts.getAllDataProduct().size()>0 ? View.GONE : View.VISIBLE);
             }
         }) ;
-        rvProducts.setAdapter(adapterProducts);
-        rvProducts.setHasFixedSize(true);
-        rvProducts.setNestedScrollingEnabled(false);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(), LinearLayoutManager.VERTICAL, false);
-        rvProducts.setLayoutManager(layoutManager);
+        Util.createLinearRV(rvProducts, adapterProducts);
+
     }
 
     protected void updatelistProduct(List<Product> list_product){
@@ -314,19 +309,29 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                         @Override
                         public void onRespone(Boolean result) {
                             Util.getInstance().stopLoading(true);
-                            CustomCenterDialog.alertWithCancelButton2("TIẾP TỤC", "In thêm hoặc tiếp tục thanh toán", "TIẾP TỤC", "IN LẠI", new CustomCenterDialog.ButtonCallback() {
-                                @Override
-                                public void Submit(Boolean boolSubmit) {
-                                    postBills(params.toString());
+                            if (result){
+                                CustomCenterDialog.alertWithCancelButton2("TIẾP TỤC", "In thêm hoặc tiếp tục thanh toán", "TIẾP TỤC", "IN LẠI", new CustomCenterDialog.ButtonCallback() {
+                                    @Override
+                                    public void Submit(Boolean boolSubmit) {
+                                        postBills(params.toString());
 
-                                }
+                                    }
 
-                                @Override
-                                public void Cancel(Boolean boolCancel) {
-                                    submitBill(total,paid);
-                                }
+                                    @Override
+                                    public void Cancel(Boolean boolCancel) {
+                                        submitBill(total,paid);
+                                    }
 
-                            });
+                                });
+                            }else {
+                                CustomCenterDialog.alertWithButton("LỖI", "Kết nối máy in thất bại. Vui lòng thực hiện kết nối lại", "ĐỒNG Ý", new CallbackBoolean() {
+                                    @Override
+                                    public void onRespone(Boolean result) {
+                                        tvPrinterStatus.setText("Chưa kết nối được máy in");
+                                    }
+                                });
+                            }
+
                         }
                     });
 
@@ -412,23 +417,28 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
             }
 
-        } else if (reqCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
-            Glide.with(this).load(imageChangeUri).fitCenter().into(imgLogo);
+        }
+//        else if (reqCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
+//            Glide.with(this).load(imageChangeUri).fitCenter().into(imgLogo);
+//
+//        } else if (reqCode == Crop.REQUEST_CROP) {
+//            if (resultCode == RESULT_OK) {
+//                Glide.with(this).load(imageChangeUri).fitCenter().into(imgLogo);
+//                CustomSQL.setString("logo", Util.getRealPathFromURI(imageChangeUri));
+//
+//            } else if (resultCode == Crop.RESULT_ERROR) {
+//                Util.showToast(Crop.getError(intent).getMessage());
+//
+//            }
+//        }
 
-        } else if (reqCode == Crop.REQUEST_CROP) {
-            if (resultCode == RESULT_OK) {
-                Glide.with(this).load(imageChangeUri).fitCenter().into(imgLogo);
-                CustomSQL.setString("logo", Util.getRealPathFromURI(imageChangeUri));
-
-            } else if (resultCode == Crop.RESULT_ERROR) {
-                Util.showToast(Crop.getError(intent).getMessage());
-
-            }
-        } else if (reqCode == REQUEST_ENABLE_BT && resultCode == RESULT_OK) {
+        else if (reqCode == REQUEST_ENABLE_BT && resultCode == RESULT_OK) {
             try {
                 Set<BluetoothDevice> btDeviceList = mBluetoothAdapter.getBondedDevices();
                 if (btDeviceList.size() > 0) {
                     for (final BluetoothDevice device : btDeviceList) {
+                        Log.e("printer", device.getAddress() +"\n" + device.getName() + "\n" +device.getBluetoothClass() +"\n" + device.getBondState() +"\n" + device.getType() +"\n" + device.getUuids());
+
                         if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))){
                             connectBluetoothDevice(device, new CallbackProcess() {
                                 @Override
@@ -462,4 +472,31 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         }
     }
 
+    @Override
+    public void dataReturnFromFragment(String data1, String data2) {
+        switch (data1){
+            case Constants.ONSTART:
+                tvPrinterStatus.setText(Constants.CONNECTING_PRINTER);
+                tvPrinterStatus.setOnClickListener(null);
+                break;
+
+            case Constants.ONFAIL:
+                tvPrinterStatus.setText("Chưa kết nối được máy in");
+                tvPrinterStatus.setOnClickListener(this);
+                break;
+
+            case Constants.ONSUCCESS:
+                tvPrinterStatus.setText(String.format(Constants.CONNECTED_PRINTER, data2));
+                tvPrinterStatus.setOnClickListener(this);
+                break;
+        }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        String s = currentCustomer.CustomertoString();
+        Transaction.gotoPrintBillActivity(currentCustomer.CustomertoString(), DataUtil.convertListObject2Array(adapterProducts.getAllData()).toString());
+
+        return true;
+    }
 }

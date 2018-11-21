@@ -25,6 +25,11 @@ public class Constants {
     public final static String APP_DIRECTORY = "Lubsolution_DMS";
     public final static String ROLE_ADMIN = "MANAGER";
     public final static String ROLE_SALE = "SALE";
+    public final static String PRINTER_SIZE = "printer_size";
+    public static final String CHECKIN_FLAG = "check_in";
+    public static final long CHECKIN_DISTANCE = 200;
+    public static final String CHECKIN_TIME = "check_in_time";
+
 
     public final static String IS_PROMOTION = "BÁN VÀ KHUYẾN MÃI";
     public final static String NO_PROMOTION = "CHỈ BÁN";
@@ -78,6 +83,15 @@ public class Constants {
     public final static String COMPANY_WEBSITE = "www.wolver.vn";
     public final static String COMPANY_ORDERPHONE = String.format("Đặt hàng: %s", Util.PhoneFormat(User.getPhone()));
     public final static String COMPANY_THANKS = "Tran trong cam on quy khach hang";
+
+    public final static String PRINTER_57 = "57mm";
+    public final static String PRINTER_80 = "80mm";
+    public final static String currentEmulatorDevice = "Google Android SDK built for x86";
+
+    public final static String ONSTART = "on_start";
+    public final static String ONFAIL = "on_fail";
+    public final static String ONSUCCESS = "on_success";
+
 
 
     //Home constant

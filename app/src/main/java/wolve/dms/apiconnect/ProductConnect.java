@@ -199,7 +199,7 @@ public class ProductConnect {
 //        new CustomPostMethodMulti(url,params, new Callback() {
 //            @Override
 //            public void onResponse(JSONObject result) {
-//                Util.getInstance().stopLoading(stopLoading);
+//                Util.getInstance().dismissDialog(dismissDialog);
 //                try {
 //                    if (result.getInt("status") == 200) {
 //                        listener.onResponse(result.getJSONObject("data"));
@@ -216,19 +216,19 @@ public class ProductConnect {
 //            @Override
 //            public void onError(String error) {
 //                listener.onError(error);
-//                Util.getInstance().stopLoading(stopLoading);
+//                Util.getInstance().dismissDialog(dismissDialog);
 //            }
 //        }).execute();
     }
 
-//    public static void CreateProductMultipart(JSONObject params, final CallbackJSONObject listener, final Boolean stopLoading){
+//    public static void CreateProductMultipart(JSONObject params, final CallbackJSONObject listener, final Boolean dismissDialog){
 //        Util.getInstance().showLoading();
 //        String url = Api_link.PRODUCT_NEW ;
 //
 //        new CustomPostMultiPart(url,params, new Callback() {
 //            @Override
 //            public void onResponse(JSONObject result) {
-//                Util.getInstance().stopLoading(stopLoading);
+//                Util.getInstance().dismissDialog(dismissDialog);
 //                try {
 //                    if (result.getInt("status") == 200) {
 //                        listener.onResponse(result.getJSONObject("data"));
@@ -245,7 +245,7 @@ public class ProductConnect {
 //            @Override
 //            public void onError(String error) {
 //                listener.onError(error);
-//                Util.getInstance().stopLoading(stopLoading);
+//                Util.getInstance().dismissDialog(dismissDialog);
 //            }
 //        }).execute();
 //    }

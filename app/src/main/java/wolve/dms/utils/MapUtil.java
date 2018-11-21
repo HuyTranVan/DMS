@@ -129,6 +129,10 @@ public class MapUtil{
         return distance(lat1, lon1, lat2, lon2, 0,0);
     }
 
+    public static double distance(double lat1, double lon1, double lat2, double lon2) {
+        return distance(lat1, lon1, lat2, lon2, 0,0);
+    }
+
     public static double distance(double lat1, double lon1, double lat2, double lon2, double el1, double el2) {
 
         final int R = 6371; // Radius of the earth
@@ -156,6 +160,7 @@ public class MapUtil{
             for (int i=0; i<array.length(); i++){
                 JSONObject objectChild = array.getJSONObject(i);
 
+
                 if (objectChild.getString("types").contains("route")){
                     objectResult.put("street",objectChild.getString("long_name") );
 
@@ -165,16 +170,21 @@ public class MapUtil{
                 }else if (objectChild.getString("types").contains("administrative_area_level_1")){
                     objectResult.put("province",objectChild.getString("long_name") );
 
-                }else if (objectChild.getString("types").contains("street_number")){
+                }
+
+                if (objectChild.getString("types").contains("street_number")){
                     objectResult.put("address",objectChild.getString("long_name") );
 
+                }else {
+                    objectResult.put("address", "");
                 }
             }
 
 
 
         } catch (JSONException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
+            return objectResult;
         }
 
         return objectResult;

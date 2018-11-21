@@ -30,6 +30,11 @@ public class CustomSQL {
         prefs.edit().putBoolean(title, boole).commit();
     }
 
+    public static void setLong(String title, long lon){
+        prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
+        prefs.edit().putLong(title, lon).commit();
+    }
+
     public static void setObject (String title, Object value){
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
         prefs.edit().putString(title, new Gson().toJson(value)).commit();
@@ -64,6 +69,13 @@ public class CustomSQL {
         if(prefs != null)
             return prefs.getBoolean(title, false);
         return false;
+    }
+
+    public static long getLong(String title){
+        prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
+        if(prefs != null)
+            return prefs.getLong(title, 0);
+        return 0;
     }
 
 

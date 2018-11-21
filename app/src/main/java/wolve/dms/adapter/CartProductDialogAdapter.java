@@ -154,6 +154,10 @@ public class CartProductDialogAdapter extends RecyclerView.Adapter<CartProductDi
         return  check;
     }
 
+    public int getCount(){
+        return count;
+    }
+
 
 
 }

@@ -22,7 +22,7 @@ import wolve.dms.models.Status;
 
 public class CustomDropdow {
 
-    public static void createDropdownStatus(View view , List<Status> list, final CallbackString mListener){
+    public static void createDropdown(View view , List<String> list, final CallbackString mListener){
         final PopupWindow popup = new PopupWindow(Util.getInstance().getCurrentActivity());
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(Util.getInstance().getCurrentActivity(), android.R.layout.select_dialog_item){
             @Override
@@ -39,9 +39,8 @@ public class CustomDropdow {
         };
 
         for (int i=0; i<list.size(); i++){
-            if (!list.get(i).getBoolean("defaultStatus")){
-                adapter.add(list.get(i).getString("name"));
-            }
+            adapter.add(list.get(i));
+
         }
 
         ListView listViewDogs = new ListView(Util.getInstance().getCurrentActivity());
@@ -58,7 +57,7 @@ public class CustomDropdow {
 
         popup.setBackgroundDrawable(Util.getInstance().getCurrentActivity().getResources().getDrawable(R.color.pin_deactivated));
         popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
-        popup.setWidth(500);
+        popup.setWidth(view.getWidth());
         popup.setContentView(listViewDogs);
         popup.showAsDropDown(view , 0, 0);
     }

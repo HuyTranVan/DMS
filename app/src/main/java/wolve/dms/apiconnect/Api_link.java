@@ -65,6 +65,8 @@ public class Api_link {
     public final static String BILL_NEW = BASE_URL + "token/bill/create_or_update";
     public final static String BILL_DELETE = BASE_URL + "token/bill/";
     public final static String BILL_PARAM ="?page=%d&size=%d";
+    public final static String PAY_NEW = BASE_URL + "token/payment";
+    public final static String PAY_PARAM ="customerId=%s&paid=%s&billId=%d%s";
 
 
 }

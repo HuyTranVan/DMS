@@ -53,12 +53,12 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
     private RecyclerView rvBill ;
 
     private CustomerActivity mActivity;
-    private List<Product> listProducts = new ArrayList<>();
-    private CartProductDialogAdapter adapter;
-    private ProductGroup productGroup;
-    private ShopcartViewpagerAdapter viewpagerAdapter;
-    private int currentPosition =0;
-    private List<CartProductDialogAdapter> listadapter;
+//    private List<Product> listProducts = new ArrayList<>();
+//    private CartProductDialogAdapter adapter;
+//    private ProductGroup productGroup;
+//    private ShopcartViewpagerAdapter viewpagerAdapter;
+//    private int currentPosition =0;
+//    private List<CartProductDialogAdapter> listadapter;
 
 
     @Nullable
@@ -137,11 +137,8 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
                 reloadCustomer();
             }
         });
+        Util.createLinearRV(rvBill, adapter);
 
-        rvBill.setAdapter(adapter);
-        rvBill.setNestedScrollingEnabled(false);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(), LinearLayoutManager.VERTICAL, false);
-        rvBill.setLayoutManager(layoutManager);
     }
 
     private void showDialogReturnProduct(List<BaseModel> listProductReturn){
@@ -185,9 +182,8 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
                 }
 
                 createRVProduct(listBills);
-                mActivity.showMoneyOverview((Util.getTotal(listBills)));
+                mActivity.showMoneyOverview(Util.getTotal(listBills));
                 showOverViewDetail(Util.getTotal(listBills));
-
 
             }
 

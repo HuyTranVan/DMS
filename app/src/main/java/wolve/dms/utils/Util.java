@@ -9,8 +9,12 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
@@ -19,6 +23,9 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.ArrayMap;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -75,6 +82,7 @@ import wolve.dms.activities.StatisticalBillsFragment;
 import wolve.dms.activities.StatisticalDashboardFragment;
 import wolve.dms.activities.StatisticalProductFragment;
 import wolve.dms.callback.CallbackString;
+import wolve.dms.libraries.ItemDecorationGridSpace;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
 import wolve.dms.models.Product;
@@ -287,6 +295,11 @@ public class Util {
     public static float convertDp2Px(int dp) {
         Resources r = getInstance().getCurrentActivity().getResources();
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
+    }
+
+    public static int convertDp2PxInt(int dp) {
+        Resources r = getInstance().getCurrentActivity().getResources();
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
     }
 
     public void setWindowSize(DisplayMetrics windowSize) {
@@ -669,6 +682,18 @@ public class Util {
 
     }
 
+    public static String DateMonthYearString(long timestamp) {
+        String date = "";
+
+        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+        //cal.setTimeInMillis(timestamp*1000);
+        cal.setTimeInMillis(timestamp);
+        date = DateFormat.format("dd/MM/yy", cal).toString();
+
+        return date;
+
+    }
+
     public static String YearString(long timestamp) {
         String date = "";
 
@@ -687,9 +712,30 @@ public class Util {
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         //cal.setTimeInMillis(timestamp*1000);
         cal.setTimeInMillis(timestamp);
-        date = DateFormat.format("HH:mm", cal).toString();
+        date = DateFormat.format("mm:ss", new Date(timestamp)).toString();
 
         return date;
+
+    }
+
+    public static String countDay(long timestamp){
+        long time = CurrentTimeStamp() - timestamp;
+
+        return String.valueOf(time/(1000*24*60*60) );
+    }
+    public static String HourStringNatural(long timestamp) {
+        String date = "";
+
+        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+        //cal.setTimeInMillis(timestamp*1000);
+        cal.setTimeInMillis(timestamp);
+//        String hour = Integer.parseInt(DateFormat.format("HH", new Date(timestamp)).toString()) ==0 ?
+//                "" : String.format("%dh", Integer.parseInt(DateFormat.format("HH", new Date(timestamp)).toString()));
+        String minute = Integer.parseInt(DateFormat.format("mm", new Date(timestamp)).toString()) ==0 ?
+                "" : String.format("%dp", Integer.parseInt(DateFormat.format("mm", new Date(timestamp)).toString()));
+        String second =  String.format("%ds", Integer.parseInt(DateFormat.format("ss", new Date(timestamp)).toString()));
+
+        return String.format("%s%s",  minute, second);
 
     }
 
@@ -1033,6 +1079,13 @@ public class Util {
         return true;
     }
 
+    public static boolean isEmpty(String value) {
+        if (value.trim().length() > 0)
+            return false;
+
+        return true;
+    }
+
     public static Double moneyValue(EditText editText) {
         if (isEmptyValue(editText))
             return 0.0;
@@ -1168,6 +1221,31 @@ public class Util {
                 return 0;
         }
         return 0;
+    }
+
+    public static void createLinearRV(RecyclerView recyclerView, RecyclerView.Adapter adapter){
+        recyclerView.setAdapter(adapter);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setNestedScrollingEnabled(false);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(), LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+    }
+
+    public static void createGridRV(RecyclerView recyclerView, RecyclerView.Adapter adapter, int gridCount){
+        adapter.notifyDataSetChanged();
+        recyclerView.setAdapter(adapter);
+        LinearLayoutManager linearLayoutManager = new GridLayoutManager(Util.getInstance().getCurrentActivity(), gridCount);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.addItemDecoration(new ItemDecorationGridSpace((int) Util.convertDp2Px(1),gridCount));
+    }
+
+    public static Bitmap tintImage(Bitmap bitmap, int color) {
+        Paint paint = new Paint();
+        paint.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN));
+        Bitmap bitmapResult = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmapResult);
+        canvas.drawBitmap(bitmap, 0, 0, paint);
+        return bitmapResult;
     }
 
 
