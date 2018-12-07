@@ -420,51 +420,23 @@
 
                         </LinearLayout>
 
-                        <RelativeLayout
+                        <EditText
+                            android:id="@+id/add_customer_note"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:minHeight="@dimen/_50sdp"
                             android:background="@drawable/bg_white_corner"
+                            android:contextClickable="false"
+                            android:gravity="top"
+                            android:imeOptions="actionNext"
+                            android:padding="@dimen/_5sdp"
+                            android:textColor="#3d3d3d"
+                            android:textSize="@dimen/_12sdp"
+                            android:hint="Nhập ghi chú cửa hàng"
                             android:layout_marginTop="@dimen/_5sdp"
-                            android:minHeight="@dimen/_50sdp">
+                            android:inputType="textCapSentences|textMultiLine"/>
 
-                            <EditText
-                                android:id="@+id/add_customer_note"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:background="@color/colorWhite"
-                                android:contextClickable="false"
-                                android:gravity="top"
-                                android:imeOptions="actionNext"
-                                android:paddingRight="@dimen/_5sdp"
-                                android:textColor="#3d3d3d"
-                                android:textSize="14dp"
-                                android:hint="Nhập ghi chú cửa hàng"
-                                android:layout_margin="@dimen/_5sdp"
-                                android:inputType="textCapSentences|textMultiLine"/>
 
-                            <!--<wolve.dms.customviews.CInputForm-->
-                                <!--android:id="@+id/add_customer_note"-->
-                                <!--android:layout_width="match_parent"-->
-                                <!--android:layout_height="wrap_content"-->
-                                <!--android:layout_weight="0.5"-->
-                                <!--android:inputType="textCapSentences"-->
-                                <!--android:layout_toLeftOf="@+id/add_customer_dropdown"-->
-                                <!--app:textHint="Ghi chú"-->
-                                <!--app:iconText="@string/icon_comment"-->
-                                <!--app:iconColor="@color/colorBlueTransparent"-->
-                                <!--app:textColor="@color/colorBlue"-->
-                                <!--app:textColorHint="@color/colorBlueTransparent"/>-->
-
-                            <!--<wolve.dms.customviews.CTextIcon-->
-                                <!--android:id="@+id/add_customer_dropdown"-->
-                                <!--android:layout_width="wrap_content"-->
-                                <!--android:layout_height="wrap_content"-->
-                                <!--android:background="?selectableItemBackground"-->
-                                <!--android:text="@string/icon_down"-->
-                                <!--android:padding="@dimen/_10sdp"-->
-                                <!--android:layout_alignParentRight="true"-->
-                                <!--android:layout_centerVertical="true"/>-->
-                        </RelativeLayout>
 
                     </LinearLayout>
 
@@ -514,6 +486,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:clickable="true"
+        android:visibility="gone"
         app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
         <wolve.dms.customviews.CTextIcon

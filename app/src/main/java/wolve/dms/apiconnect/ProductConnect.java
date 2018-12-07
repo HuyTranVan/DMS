@@ -32,7 +32,7 @@ public class ProductConnect {
         if (loading)
             Util.getInstance().showLoading();
 
-        String url = Api_link.PRODUCT_GROUPS+ String.format(Api_link.PRODUCTGROUPS_PARAM, 1,10);
+        String url = Api_link.PRODUCT_GROUPS+ String.format(Api_link.DEFAULT_RANGE, 1,10);
 
         new CustomGetMethod(url, new Callback() {
             @Override
@@ -122,7 +122,7 @@ public class ProductConnect {
     public static void ListProduct(final CallbackJSONArray listener, final Boolean stopLoading){
         Util.getInstance().showLoading();
 
-        String url = Api_link.PRODUCTS+ String.format(Api_link.PRODUCTS_PARAM, 1,100);
+        String url = Api_link.PRODUCTS+ String.format(Api_link.DEFAULT_RANGE, 1,500);
 
         new CustomGetMethod(url, new Callback() {
             @Override

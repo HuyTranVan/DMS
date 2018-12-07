@@ -13,9 +13,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.55"
-        android:text="San pham"
         android:textSize="@dimen/_10sdp"
-        android:singleLine="true"
         android:paddingLeft="5dp"
         android:paddingTop="@dimen/_2sdp"
         android:paddingBottom="@dimen/_2sdp"/>

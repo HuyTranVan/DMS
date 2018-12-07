@@ -35,7 +35,7 @@
         <lecho.lib.hellocharts.view.PieChartView
             android:id="@+id/statistical_dashboard_district"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_170sdp"
+            android:layout_height="@dimen/_200sdp"
             android:padding="@dimen/_10sdp"/>
     </android.support.v7.widget.CardView>
 

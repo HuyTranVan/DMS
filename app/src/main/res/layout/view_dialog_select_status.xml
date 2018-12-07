@@ -43,6 +43,7 @@
                 android:id="@+id/dialog_choice_status_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="@dimen/_80sdp"
                 android:background="@color/colorWhite"
                 android:contextClickable="false"
                 android:gravity="top"

@@ -57,13 +57,14 @@ public class CustomWindowAdapter implements GoogleMap.InfoWindowAdapter {
         //String add = customer.getString("address") + " " + customer.getString("street") ;
 
         try {
-            JSONObject objectLastCheckin = arrayCheckIns.getJSONObject(arrayCheckIns.length() -1);
-
-            tvCount.setText(String.format("Checkin %s ngày trước", Util.countDay(objectLastCheckin.getLong("createAt"))));
+            JSONObject objectLastCheckin = arrayCheckIns.length()>0? arrayCheckIns.getJSONObject( arrayCheckIns.length()-1) : new JSONObject();
+            int day = objectLastCheckin.isNull("createAt")?0:(int)  Util.countDay(objectLastCheckin.getLong("createAt"));
 
             if (arrayCheckIns.length() >0){
+                tvCount.setVisibility(View.GONE);
+                tvCount.setText(day ==0? "Đã checkin hôm nay": String.format("Checkin %d ngày trước", day));
 
-                if (Util.isEmpty(objectLastCheckin.getString("note"))){
+                if (objectLastCheckin.isNull("note")){
                     lnNoteGroup.setVisibility(View.GONE);
                 }else {
                     lnNoteGroup.setVisibility(View.VISIBLE);
@@ -73,6 +74,7 @@ public class CustomWindowAdapter implements GoogleMap.InfoWindowAdapter {
                 }
 
             }else {
+                tvCount.setVisibility(View.GONE);
                 lnNoteGroup.setVisibility(View.GONE);
             }
         } catch (JSONException e) {

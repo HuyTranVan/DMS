@@ -84,10 +84,10 @@ import static wolve.dms.utils.Transaction.gotoImageChooser;
  * Created by macos on 9/16/17.
  */
 
-public class ShopCartActivity extends BaseActivity implements  View.OnClickListener, BluetoothListFragment.OnDataPass, View.OnLongClickListener {
+public class ShopCartActivity extends BaseActivity implements  View.OnClickListener,  View.OnLongClickListener {
     private ImageView btnBack;
     private Button btnSubmit;
-    protected TextView tvPrinterStatus;
+//    protected TextView tvPrinterStatus;
     private TextView tvTitle, tvTotal;
     private CInputForm tvNote;
     private RecyclerView rvProducts;
@@ -120,7 +120,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         btnBack =  findViewById(R.id.icon_back);
         tvTitle =  findViewById(R.id.cart_title);
         tvTotal =  findViewById(R.id.cart_total);
-        tvPrinterStatus =  findViewById(R.id.cart_printer_status);
+//        tvPrinterStatus =  findViewById(R.id.cart_printer_status);
         tvNote =  findViewById(R.id.cart_note);
         lnSubmitGroup = findViewById(R.id.cart_submit_group);
         rvProducts =  findViewById(R.id.cart_rvproduct);
@@ -132,7 +132,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     @Override
     public void initialData() {
         Util.shopCartActivity = this;
-        String bundle = getIntent().getExtras().getString(Constants.CUSTOMER_CART);
+        String bundle = getIntent().getExtras().getString(Constants.CUSTOMER);
         lnSubmitGroup.setVisibility(View.GONE);
         rlCover.setVisibility(View.VISIBLE);
         if (bundle != null){
@@ -161,7 +161,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         createRVProduct(listInitialProduct);
 
         if (!Util.getDeviceName().equals(Constants.currentEmulatorDevice)){
-            registerBluetooth();
+//            registerBluetooth();
         }
 
     }
@@ -171,8 +171,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         btnBack.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
         btnSubmit.setOnLongClickListener(this);
-//        imgLogo.setOnClickListener(this);
-        tvPrinterStatus.setOnClickListener(this);
+//        tvPrinterStatus.setOnClickListener(this);
         btnAddProduct.setOnClickListener(this);
     }
 
@@ -187,7 +186,8 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
             fragment.submitProduct();
 
         }else {
-            returnCustomerActivity(currentCustomer);
+            Transaction.returnCustomerActivity(Constants.SHOP_CART_ACTIVITY, "", Constants.RESULT_SHOPCART_ACTIVITY);
+
         }
 
     }
@@ -197,12 +197,14 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         Util.hideKeyboard(v);
         switch (v.getId()){
             case R.id.icon_back:
-                returnCustomerActivity(currentCustomer);
+                onBackPressed();
+//                Transaction.returnCustomerActivity(currentCustomer);
 
                 break;
 
             case R.id.cart_submit:
-                choicePayMethod();
+//                choicePayMethod();
+                Transaction.gotoPrintBillActivity(currentCustomer.CustomertoString(), DataUtil.convertListObject2Array(adapterProducts.getAllData()).toString(), false);
 
                 break;
 
@@ -211,26 +213,17 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 //                gotoImageChooser();
 //                break;
 
-            case R.id.cart_printer_status:
-                BluetoothListFragment fragment = new BluetoothListFragment();
-                showFragmentDialog(fragment );
-
-                break;
+//            case R.id.cart_printer_status:
+//                BluetoothListFragment fragment = new BluetoothListFragment();
+//                showFragmentDialog(fragment );
+//
+//                break;
 
             case R.id.add_product:
                 changeFragment(new ChoiceProductFragment() , true);
 
                 break;
         }
-    }
-
-    private void returnCustomerActivity(Customer customer){
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra(Constants.CUSTOMER_CART, customer.CustomertoString());
-        setResult(Constants.RESULT_SHOPCART_ACTIVITY,returnIntent);
-        Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-        Util.getInstance().getCurrentActivity().finish();
-
     }
 
     private void loadListProduct(){
@@ -327,7 +320,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                                 CustomCenterDialog.alertWithButton("LỖI", "Kết nối máy in thất bại. Vui lòng thực hiện kết nối lại", "ĐỒNG Ý", new CallbackBoolean() {
                                     @Override
                                     public void onRespone(Boolean result) {
-                                        tvPrinterStatus.setText("Chưa kết nối được máy in");
+//                                        tvPrinterStatus.setText("Chưa kết nối được máy in");
                                     }
                                 });
                             }
@@ -357,27 +350,29 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         CustomerConnect.PostBill(params, new CallbackJSONObject() {
             @Override
             public void onResponse(JSONObject result) {
+                Transaction.returnCustomerActivity(Constants.SHOP_CART_ACTIVITY, "", Constants.RESULT_SHOPCART_ACTIVITY);
+
                 //get customer detail from serer
-                String param = currentCustomer.getString("id");
-                CustomerConnect.GetCustomerDetail(param, new CallbackJSONObject() {
-                    @Override
-                    public void onResponse(JSONObject result) {
-                        returnCustomerActivity(new Customer(result));
-
-                    }
-
-                    @Override
-                    public void onError(String error) {
-
-                    }
-                }, true);
+//                String param = currentCustomer.getString("id");
+//                CustomerConnect.GetCustomerDetail(param, new CallbackJSONObject() {
+//                    @Override
+//                    public void onResponse(JSONObject result) {
+//                        Transaction.returnCustomerActivity(new Customer(result));
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(String error) {
+//
+//                    }
+//                }, true);
             }
 
             @Override
             public void onError(String error) {
 
             }
-        }, false);
+        }, true);
     }
 
     private void choicePayMethod(){
@@ -411,13 +406,61 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     @Override
     public void onActivityResult(int reqCode, int resultCode, Intent intent) {
         super.onActivityResult(reqCode, resultCode, intent);
-        if (reqCode == REQUEST_CHOOSE_IMAGE) {
-            if (intent != null) {
-                Crop.of(Uri.parse(intent.getData().toString()), imageChangeUri).withAspect(35, 15).withMaxSize(350, 150).start(this);
-
-            }
+        Util.getInstance().setCurrentActivity(this);
+        if (reqCode == Constants.RESULT_PRINTBILL_ACTIVITY){
+            Transaction.returnCustomerActivity(Constants.SHOP_CART_ACTIVITY, intent.getStringExtra(Constants.PRINT_BILL_ACTIVITY), Constants.RESULT_SHOPCART_ACTIVITY);
 
         }
+//        else {
+//            if (reqCode == REQUEST_ENABLE_BT && resultCode == RESULT_OK){
+//                try {
+//                    Set<BluetoothDevice> btDeviceList = mBluetoothAdapter.getBondedDevices();
+//                    if (btDeviceList.size() > 0) {
+//                        for (final BluetoothDevice device : btDeviceList) {
+//                            Log.e("printer", device.getAddress() +"\n" + device.getName() + "\n" +device.getBluetoothClass() +"\n" + device.getBondState() +"\n" + device.getType() +"\n" + device.getUuids());
+//
+//                            if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))){
+//                                connectBluetoothDevice(device, new CallbackProcess() {
+//                                    @Override
+//                                    public void onStart() {
+//                                        tvPrinterStatus.setText(Constants.CONNECTING_PRINTER);
+//                                        tvPrinterStatus.setOnClickListener(null);
+//
+//                                    }
+//
+//                                    @Override
+//                                    public void onError() {
+//                                        tvPrinterStatus.setText("Chưa kết nối được máy in");
+//                                        Util.showToast(Constants.CONNECTED_PRINTER_ERROR);
+//                                        tvPrinterStatus.setOnClickListener(ShopCartActivity.this);
+//                                    }
+//
+//                                    @Override
+//                                    public void onSuccess(String name) {
+//                                        tvPrinterStatus.setText(String.format(Constants.CONNECTED_PRINTER, device.getName()));
+//                                        tvPrinterStatus.setOnClickListener(ShopCartActivity.this);
+//                                    }
+//                                });
+//                            }
+//
+//                        }
+//                    }
+//                } catch (Exception ex) {
+//
+//                }
+//                mBluetoothAdapter.startDiscovery();
+//            }
+//
+//
+//        }
+
+//        if (reqCode == REQUEST_CHOOSE_IMAGE) {
+//            if (intent != null) {
+//                Crop.of(Uri.parse(intent.getData().toString()), imageChangeUri).withAspect(35, 15).withMaxSize(350, 150).start(this);
+//
+//            }
+//
+//        }
 //        else if (reqCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
 //            Glide.with(this).load(imageChangeUri).fitCenter().into(imgLogo);
 //
@@ -432,70 +475,32 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 //            }
 //        }
 
-        else if (reqCode == REQUEST_ENABLE_BT && resultCode == RESULT_OK) {
-            try {
-                Set<BluetoothDevice> btDeviceList = mBluetoothAdapter.getBondedDevices();
-                if (btDeviceList.size() > 0) {
-                    for (final BluetoothDevice device : btDeviceList) {
-                        Log.e("printer", device.getAddress() +"\n" + device.getName() + "\n" +device.getBluetoothClass() +"\n" + device.getBondState() +"\n" + device.getType() +"\n" + device.getUuids());
 
-                        if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))){
-                            connectBluetoothDevice(device, new CallbackProcess() {
-                                @Override
-                                public void onStart() {
-                                    tvPrinterStatus.setText(Constants.CONNECTING_PRINTER);
-                                    tvPrinterStatus.setOnClickListener(null);
-
-                                }
-
-                                @Override
-                                public void onError() {
-                                    tvPrinterStatus.setText("Chưa kết nối được máy in");
-                                    Util.showToast(Constants.CONNECTED_PRINTER_ERROR);
-                                    tvPrinterStatus.setOnClickListener(ShopCartActivity.this);
-                                }
-
-                                @Override
-                                public void onSuccess(String name) {
-                                    tvPrinterStatus.setText(String.format(Constants.CONNECTED_PRINTER, device.getName()));
-                                    tvPrinterStatus.setOnClickListener(ShopCartActivity.this);
-                                }
-                            });
-                        }
-
-                    }
-                }
-            } catch (Exception ex) {
-            }
-            mBluetoothAdapter.startDiscovery();
-
-        }
     }
 
-    @Override
-    public void dataReturnFromFragment(String data1, String data2) {
-        switch (data1){
-            case Constants.ONSTART:
-                tvPrinterStatus.setText(Constants.CONNECTING_PRINTER);
-                tvPrinterStatus.setOnClickListener(null);
-                break;
-
-            case Constants.ONFAIL:
-                tvPrinterStatus.setText("Chưa kết nối được máy in");
-                tvPrinterStatus.setOnClickListener(this);
-                break;
-
-            case Constants.ONSUCCESS:
-                tvPrinterStatus.setText(String.format(Constants.CONNECTED_PRINTER, data2));
-                tvPrinterStatus.setOnClickListener(this);
-                break;
-        }
-    }
+//    @Override
+//    public void dataReturnFromFragment(String data1, String data2) {
+//        switch (data1){
+//            case Constants.ONSTART:
+//                tvPrinterStatus.setText(Constants.CONNECTING_PRINTER);
+//                tvPrinterStatus.setOnClickListener(null);
+//                break;
+//
+//            case Constants.ONFAIL:
+//                tvPrinterStatus.setText("Chưa kết nối được máy in");
+//                tvPrinterStatus.setOnClickListener(this);
+//                break;
+//
+//            case Constants.ONSUCCESS:
+//                tvPrinterStatus.setText(String.format(Constants.CONNECTED_PRINTER, data2));
+//                tvPrinterStatus.setOnClickListener(this);
+//                break;
+//        }
+//    }
 
     @Override
     public boolean onLongClick(View v) {
-        String s = currentCustomer.CustomertoString();
-        Transaction.gotoPrintBillActivity(currentCustomer.CustomertoString(), DataUtil.convertListObject2Array(adapterProducts.getAllData()).toString());
+        Transaction.gotoPrintBillActivity(currentCustomer.CustomertoString(), DataUtil.convertListObject2Array(adapterProducts.getAllData()).toString(), false);
 
         return true;
     }

@@ -41,6 +41,7 @@ import wolve.dms.R;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CInputForm;
@@ -128,8 +129,23 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
                 product = new Product(new JSONObject(bundle));
 
                 edName.setText(product.getString("name"));
-                edUnitPrice.setText(product.getString("unitPrice"));
-                edPurchasePrice.setText(product.getString("purchasePrice"));
+                edUnitPrice.setText(Util.FormatMoney(product.getDouble("unitPrice")));
+                edUnitPrice.textMoneyEvent(new CallbackDouble() {
+                    @Override
+                    public void Result(Double d) {
+
+                    }
+                });
+
+                edPurchasePrice.setText(Util.FormatMoney(product.getDouble("purchasePrice")));
+                edPurchasePrice.textMoneyEvent(new CallbackDouble() {
+                    @Override
+                    public void Result(Double d) {
+
+                    }
+                });
+
+
                 edGroup.setText(new JSONObject(product.getString("productGroup")).getString("name"));
                 edVolume.setText(product.getString("volume"));
                 edIsPromotion.setText(product.getBoolean("promotion")? Constants.IS_PROMOTION :Constants.NO_PROMOTION);
@@ -146,6 +162,7 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
                 product = new Product(new JSONObject());
                 product.put("id",0);
             }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -306,8 +323,8 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
                 product.getInt("id") == 0? "" : "id="+ product.getString("id") +"&",
                 Util.encodeString(edName.getText().toString().trim()),
                 edIsPromotion.getText().toString().trim().equals(Constants.IS_PROMOTION) ? true: false,
-                edUnitPrice.getText().toString().trim().replace(",",""),
-                edPurchasePrice.getText().toString().trim().replace(",",""),
+                Util.valueMoney(edUnitPrice.getText().toString()),
+                Util.valueMoney(edPurchasePrice.getText().toString()),
                 edVolume.getText().toString().trim().replace(",",""),
                 defineGroupId(edGroup.getText().toString().trim()),
                 urlImage);

@@ -123,11 +123,7 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
 
             }
         });
-        rvBluetooth.setAdapter(adapter);
-        rvBluetooth.setHasFixedSize(true);
-        rvBluetooth.setNestedScrollingEnabled(false);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(), LinearLayoutManager.VERTICAL, false);
-        rvBluetooth.setLayoutManager(layoutManager);
+        Util.createLinearRV(rvBluetooth, adapter);
     }
 
 

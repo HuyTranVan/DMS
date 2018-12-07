@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import wolve.dms.apiconnect.Api_link;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.Product;
 import wolve.dms.models.User;
@@ -39,6 +40,28 @@ public class DataUtil {
 
         return params.toString();
 
+    }
+
+    public static List<String> createListPaymentParam(int customerId,List<JSONObject> list){
+        List<String> results = new ArrayList<>();
+        try {
+            for (int i=0; i<list.size(); i++){
+                String s = String.format(Api_link.PAY_PARAM,
+                        customerId,
+                        String.valueOf(Math.round(list.get(i).getDouble("paid"))),
+                        list.get(i).getInt("billId"),
+                        User.getId(),
+                        "");
+//                        note.equals("")?"" :"&note="+note )
+
+                results.add(s);
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return results;
     }
 
     public static JSONArray convertListObject2Array(List<JSONObject> list){

@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,15 +65,17 @@ public class StatisticalBillsAdapter extends RecyclerView.Adapter<StatisticalBil
 
             final Customer customer = new Customer(mData.get(position).getJsonObject("customer"));
 
-            holder.tvDate.setText(Util.DateString(mData.get(position).getLong("createAt")));
-            holder.tvHour.setText(Util.HourString(mData.get(position).getLong("createAt")));
+//            holder.tvDate.setText(Util.DateString(mData.get(position).getLong("createAt")));
+//            holder.tvHour.setText(Util.HourString(mData.get(position).getLong("createAt")));
             holder.tvTotal.setText("Tổng: "+ Util.FormatMoney(mData.get(position).getDouble("total")));
             holder.tvPay.setText("Trả: "+ Util.FormatMoney(mData.get(position).getDouble("paid")));
             holder.tvDebt.setText("Nợ: "+ Util.FormatMoney(mData.get(position).getDouble("debt")));
             holder.tvNumber.setText(String.valueOf(position +1));
             holder.tvsignBoard.setText(Constants.getShopInfo(customer.getString("shopType") , null) + " " + customer.getString("signBoard"));
             holder.tvDistrict.setText(customer.getString("street") + " - " + customer.getString("district"));
-            holder.tvUser.setText(String.format("Nhân viên: %s",mData.get(position).getJsonObject("user").getString("displayName")));
+            String user = String.format("Nhân viên: %s",mData.get(position).getJsonObject("user").getString("displayName"));
+            String hour = Util.DateHourString(mData.get(position).getLong("createAt"));
+            holder.tvUser.setText(String.format("%s         %s", user, hour));
 
             JSONArray arrayBillDetail = new JSONArray(mData.get(position).getString("billDetails"));
             List<BillDetail> listBillDetail = new ArrayList<>();
@@ -81,10 +84,19 @@ public class StatisticalBillsAdapter extends RecyclerView.Adapter<StatisticalBil
                 listBillDetail.add(billDetail);
             }
             CustomerBillsDetailAdapter adapter = new CustomerBillsDetailAdapter(listBillDetail);
-            adapter.notifyDataSetChanged();
-            holder.rvBillDetail.setAdapter(adapter);
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
-            holder.rvBillDetail.setLayoutManager(linearLayoutManager);
+            Util.createLinearRV(holder.rvBillDetail, adapter);
+
+            if (mData.get(position).getString("payments")!= null){
+                JSONArray arrayBillPayment = new JSONArray(mData.get(position).getString("payments"));
+                final List<JSONObject> listPayment = new ArrayList<>();
+                for (int j=0; j<arrayBillPayment.length(); j++){
+                    JSONObject object = arrayBillPayment.getJSONObject(j);
+                    listPayment.add(object);
+                }
+
+                PaymentAdapter paymentAdapter = new PaymentAdapter(listPayment);
+                Util.createLinearRV(holder.rvPayment, paymentAdapter);
+            }
 
             if (mData.size()==1){
                 holder.vLineUpper.setVisibility(View.GONE);
@@ -115,15 +127,15 @@ public class StatisticalBillsAdapter extends RecyclerView.Adapter<StatisticalBil
 
     public class StatisticalBillsViewHolder extends RecyclerView.ViewHolder {
         private TextView tvDate, tvHour, tvPay, tvDebt, tvTotal, tvNumber, tvsignBoard, tvDistrict, tvUser;
-        private RecyclerView rvBillDetail;
+        private RecyclerView rvBillDetail, rvPayment;
         private View vLineUpper, vLineUnder;
         private LinearLayout lnParent;
 
         public StatisticalBillsViewHolder(View itemView) {
             super(itemView);
 
-            tvDate = (TextView) itemView.findViewById(R.id.statistical_bills_item_date);
-            tvHour = (TextView) itemView.findViewById(R.id.statistical_bills_item_hour);
+//            tvDate = (TextView) itemView.findViewById(R.id.statistical_bills_item_date);
+//            tvHour = (TextView) itemView.findViewById(R.id.statistical_bills_item_hour);
             tvPay = (TextView) itemView.findViewById(R.id.statistical_bills_item_pay);
             tvDebt = (TextView) itemView.findViewById(R.id.statistical_bills_item_debt);
             tvTotal = (TextView) itemView.findViewById(R.id.statistical_bills_item_total);
@@ -135,6 +147,7 @@ public class StatisticalBillsAdapter extends RecyclerView.Adapter<StatisticalBil
             tvsignBoard = (TextView) itemView.findViewById(R.id.statistical_bills_item_signboard);
             tvDistrict = (TextView) itemView.findViewById(R.id.statistical_bills_item_district);
             tvUser = itemView.findViewById(R.id.statistical_bills_item_user);
+            rvPayment = itemView.findViewById(R.id.statistical_bills_item_payment);
         }
 
     }
@@ -143,12 +156,6 @@ public class StatisticalBillsAdapter extends RecyclerView.Adapter<StatisticalBil
         return mData;
     }
 
-//    public Double getTotalMoney(){
-//        Double money =0.0;
-//        for (int i=0; i<mData.size(); i++){
-//            money += mData.get(i).getDouble("total");
-//        }
-//        return money;
-//    }
+
 
 }

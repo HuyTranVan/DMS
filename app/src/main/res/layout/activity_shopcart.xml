@@ -58,23 +58,23 @@
 
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/cart_printer_status"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/black_text_color_hint"
-        android:text="Chưa kết nối máy in."
-        android:textColor="@color/white_text_color"
-        android:gravity="center"
-        android:textSize="@dimen/_8sdp"
-        android:padding="@dimen/_2sdp"
-        android:layout_below="@+id/cart_header"/>
+    <!--<TextView-->
+        <!--android:id="@+id/cart_printer_status"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="@color/black_text_color_hint"-->
+        <!--android:text="Chưa kết nối máy in."-->
+        <!--android:textColor="@color/white_text_color"-->
+        <!--android:gravity="center"-->
+        <!--android:textSize="@dimen/_8sdp"-->
+        <!--android:padding="@dimen/_2sdp"-->
+        <!--android:layout_below="@+id/cart_header"/>-->
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_below="@+id/cart_printer_status">
+        android:layout_below="@+id/cart_header">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -196,7 +196,7 @@
         android:layout_height="match_parent"
         android:background="@color/colorWhite"
         android:gravity="center"
-        android:layout_below="@+id/cart_printer_status"
+        android:layout_below="@+id/cart_header"
         android:clickable="true"
         android:visibility="visible">
 

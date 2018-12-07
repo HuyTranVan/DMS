@@ -72,7 +72,7 @@ import static wolve.dms.utils.Constants.REQUEST_IMAGE_CAPTURE;
 
 public class ChoiceProductFragment extends Fragment implements View.OnClickListener {
     private View view;
-    private ImageView btnBack;
+//    private ImageView btnBack;
     private TextView tvTitle;
 //    private RecyclerView rvProduct;
     private Button btnSubmit ;
@@ -123,7 +123,7 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
     }
 
     private void addEvent() {
-        btnBack.setOnClickListener(this);
+//        btnBack.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
 
     }
@@ -133,7 +133,7 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
         tvTitle = view.findViewById(R.id.cart_choice_header_title);
 //        rvProduct = view.findViewById(R.id.cart_choice_rvproduct);
         btnSubmit = (Button) view.findViewById(R.id.cart_choice_submit);
-        btnBack = (ImageView) view.findViewById(R.id.icon_back);
+//        btnBack = (ImageView) view.findViewById(R.id.icon_back);
         viewPager = view.findViewById(R.id.cart_choice_viewpager);
         tabLayout = view.findViewById(R.id.cart_choice_tabs);
 

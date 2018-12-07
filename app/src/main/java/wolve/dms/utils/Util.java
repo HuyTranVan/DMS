@@ -79,8 +79,11 @@ import java.util.regex.Pattern;
 import wolve.dms.activities.MapsActivity;
 import wolve.dms.activities.ShopCartActivity;
 import wolve.dms.activities.StatisticalBillsFragment;
+import wolve.dms.activities.StatisticalCashFragment;
+import wolve.dms.activities.StatisticalCheckinFragment;
 import wolve.dms.activities.StatisticalDashboardFragment;
 import wolve.dms.activities.StatisticalProductFragment;
+import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.libraries.ItemDecorationGridSpace;
 import wolve.dms.models.BaseModel;
@@ -101,6 +104,8 @@ public class Util {
     public static StatisticalDashboardFragment dashboardFragment;
     public static StatisticalBillsFragment billsFragment;
     public static StatisticalProductFragment productFragment;
+    public static StatisticalCheckinFragment checkinFragment;
+    public static StatisticalCashFragment cashFragment;
 
     public static ArrayList<Province> mListProvinces;
     private DisplayMetrics windowSize;
@@ -117,6 +122,7 @@ public class Util {
     }
 
     public static final Pattern DETECT_PHONE = Pattern.compile("(\\+84|0)\\d{9,10}");
+    public static final String DETECT_NUMBER = "^[0-9]*$";
 
     public static synchronized Util getInstance() {
         if (util == null)
@@ -712,16 +718,28 @@ public class Util {
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         //cal.setTimeInMillis(timestamp*1000);
         cal.setTimeInMillis(timestamp);
+        date = DateFormat.format("HH:mm", new Date(timestamp)).toString();
+
+        return date;
+
+    }
+
+    public static String MinuteString(long timestamp) {
+        String date = "";
+
+        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+        //cal.setTimeInMillis(timestamp*1000);
+        cal.setTimeInMillis(timestamp);
         date = DateFormat.format("mm:ss", new Date(timestamp)).toString();
 
         return date;
 
     }
 
-    public static String countDay(long timestamp){
+    public static long countDay(long timestamp){
         long time = CurrentTimeStamp() - timestamp;
 
-        return String.valueOf(time/(1000*24*60*60) );
+        return time/(1000*24*60*60) ;
     }
     public static String HourStringNatural(long timestamp) {
         String date = "";
@@ -789,22 +807,6 @@ public class Util {
 
         moneyFormated = NumberFormat.getNumberInstance(Locale.US).format(money).replace(",", ".");
 
-//        if(money != null){
-//            String mo = money.replace(",","");
-//            if (money.equals("") | money.equals("null") | money.equals("0")){
-//                moneyFormated = "0";
-//            }else if(money.contains(".")) {
-//
-//                int i = Math.round(Float.parseFloat(mo));
-//                moneyFormated = NumberFormat.getNumberInstance(Locale.US).format(i).replace(",",".");
-//
-//            }else {
-//                moneyFormated = NumberFormat.getNumberInstance(Locale.US).format(Integer.parseInt(Quantity.Show(mo))).replace(",",".");
-//            }
-//        }else {
-//            moneyFormated = "0";
-//        }
-
         return moneyFormated;
     }
 
@@ -816,18 +818,6 @@ public class Util {
 
         return list;
     }
-
-//    public static void setStatusList(JSONArray result){
-//        mListStatus = new ArrayList<>();
-//        try {
-//            for (int i=0; i<result.length(); i++){
-//                Status status = new Status(result.getJSONObject(i));
-//                mListStatus.add(status);
-//            }
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     public static void setProvincesList(JSONArray result) {
         mListProvinces = new ArrayList<>();
@@ -841,67 +831,8 @@ public class Util {
         }
     }
 
-//    public static void setDistrictList(JSONArray result){
-//        mListDistricts = new ArrayList<>();
-//        try {
-//            for (int i=0; i<result.length(); i++){
-//                JSONObject object = result.getJSONObject(i);
-//                if (!object.getString("name").contains(" ")){
-//                    mListDistricts.add(object.getString("type") + " " + object.getString("name"));
-//                }else {
-//                    mListDistricts.add(object.getString("name"));
-//                }
-//            }
-//
-//            Collections.sort(mListDistricts, String.CASE_INSENSITIVE_ORDER);
-//            mListDistricts.add(0, "Chọn quận");
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-//    public static void setProductGroupList(JSONArray result){
-//        mListProductGroup = new ArrayList<>();
-//        try {
-//            for (int i=0; i<result.length(); i++){
-//                ProductGroup productGroup = new ProductGroup(result.getJSONObject(i));
-//                mListProductGroup.add(productGroup);
-//            }
-//
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-//    public static void setProductList(JSONArray result){
-//        mListProduct = new ArrayList<>();
-//        try {
-//            for (int i=0; i<result.length(); i++){
-//                Product product = new Product(result.getJSONObject(i));
-////                product.put("totalMoney", product.getDouble("unitPrice"));
-////                product.put("quantity", 1);
-////                product.put("discount", 0);
-////                product.put("checked", false);
-//                mListProduct.add(product);
-//            }
-//            setPromotionList(mListProduct);
-//
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-//    public static void setPromotionList(ArrayList<Product> listProducts){
-//        mListPromotion = new ArrayList<>();
-//        for (int i=0; i<listProducts.size(); i++){
-//            if (listProducts.get(i).getBoolean("promotion")){
-//                mListPromotion.add(listProducts.get(i));
-//            }
-//        }
-//    }
-
     public static Double valueMoney(String money) {
-        return Double.parseDouble(money.replace(".", ""));
+        return Double.parseDouble(money.replaceAll(",|\\s|\\.", ""));
     }
 
     public static Double valueMoney(EditText edText) {
@@ -910,15 +841,35 @@ public class Util {
         return Double.parseDouble(edText.getText().toString().trim().replaceAll(",|\\s|\\.", ""));
     }
 
-    public static Double valueMoney(TextView edText) {
+    public static String valueMoneyString(EditText edText) {
+        if (edText.getText().toString().equals("0") || edText.getText().toString().equals(""))
+            return "0";
+        return edText.getText().toString().trim().replaceAll(",|\\s|\\.", "");
+    }
 
-        return Double.parseDouble(edText.getText().toString().trim().replace(".", ""));
+    public static Double valueMoney(TextView edText) {
+        if (edText.getText().toString().equals("0") || edText.getText().toString().equals(""))
+            return 0.0;
+        return Double.parseDouble(edText.getText().toString().trim().replaceAll(",|\\s|\\.", ""));
     }
 
     public static Double getTotalMoney(List<Bill> list) {
         Double money = 0.0;
         for (int i = 0; i < list.size(); i++) {
             money += list.get(i).getDouble("total");
+        }
+        return money;
+    }
+
+    public static Double getTotalMoney1(List<JSONObject> list) {
+        Double money = 0.0;
+        try {
+            for (int i = 0; i < list.size(); i++) {
+                money += list.get(i).getDouble("total");
+
+            }
+        } catch (JSONException e) {
+            return money;
         }
         return money;
     }
@@ -955,6 +906,30 @@ public class Util {
             object.put("paid", paid);
             object.put("debt", debt);
             object.put("size", list.size());
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return object;
+    }
+
+    public static JSONObject getTotal(JSONArray array) {
+        JSONObject object = new JSONObject();
+        Double total = 0.0;
+        Double paid = 0.0;
+        Double debt =0.0;
+        try {
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject ob = array.getJSONObject(i);
+                total += ob.getDouble("total");
+                paid += ob.getDouble("paid");
+                debt += ob.getDouble("debt");
+            }
+
+            object.put("total", total);
+            object.put("paid", paid);
+            object.put("debt", debt);
+            object.put("size", array.length());
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -1110,7 +1085,7 @@ public class Util {
         return pattern.matcher(temp).replaceAll("").replaceAll("Đ", "D").replace("đ", "");
     }
 
-    public static void textMoneyEvent(final EditText edText, final CallbackString mlistener) {
+    public static void textMoneyEvent(final EditText edText, final Double limitMoney, final CallbackDouble mlistener) {
         edText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -1124,30 +1099,55 @@ public class Util {
 
             @Override
             public void afterTextChanged(Editable s) {
-//                String text = s.toString();
-
+                edText.removeTextChangedListener(this);
                 try {
-                    edText.removeTextChangedListener(this);
-                    //Store current selection and string length
-                    int currentSelection = edText.getSelectionStart();
-                    int prevStringLength = edText.getText().length();
+                    if (limitMoney == null){
+                        edText.setText(Util.FormatMoney(Util.valueMoney(edText)));
+                        edText.setSelection(edText.getText().toString().length());
 
-                    String valueInString = edText.getText().toString();
-                    if (!TextUtils.isEmpty(valueInString)) {
-                        String str = edText.getText().toString().trim().replaceAll(",|\\s|\\.", "");
-                        String newString = Util.CurrencyUtil.convertDecimalToString(new BigDecimal(str));
-                        edText.setText(newString);
-                        //Set new selection
-                        int selection = currentSelection + (newString.length() - prevStringLength);
-                        edText.setSelection(selection);
+                        mlistener.Result(Util.valueMoney(edText));
+                        edText.addTextChangedListener(this);
 
+//                        edText.setText(Util.FormatMoney());
+//
+////                        int currentSelection = edText.getSelectionStart();
+////                        int prevStringLength = edText.getText().length();
+//
+////                        String valueInString = edText.getText().toString();
+//                        if (!TextUtils.isEmpty(valueInString)) {
+//                            String str = Util.valueMoneyString(edText);
+//                            String newString = Util.CurrencyUtil.convertDecimalToString(new BigDecimal(str));
+//                            edText.setText(newString);
+//                            //Set new selection
+//                            int selection = currentSelection + (newString.length() - prevStringLength);
+//                            edText.setSelection(selection);
+
+//                        }
+
+                    }else {
+                        if (Util.valueMoney(edText) > limitMoney){
+                            Util.showToast("Số tiền lớn hơn giới hạn");
+                            String text = Util.valueMoneyString(edText).replaceFirst(".$","");
+
+                            edText.setText(Util.FormatMoney(Double.valueOf(text)));
+                            edText.setSelection(edText.getText().toString().length());
+
+                            mlistener.Result(Util.valueMoney(edText));
+                            edText.addTextChangedListener(this);
+
+                        }else {
+                            edText.setText(Util.FormatMoney(Util.valueMoney(edText)));
+                            edText.setSelection(edText.getText().toString().length());
+
+                            mlistener.Result(Util.valueMoney(edText));
+                            edText.addTextChangedListener(this);
+
+                        }
 
                     }
-//                    edText.setSelection(selection);
-                    mlistener.Result(edText.getText().toString().trim().replaceAll(",|\\s|\\.", ""));
-                    edText.addTextChangedListener(this);
 
-                    return;
+
+
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     edText.addTextChangedListener(this);
@@ -1246,6 +1246,16 @@ public class Util {
         Canvas canvas = new Canvas(bitmapResult);
         canvas.drawBitmap(bitmap, 0, 0, paint);
         return bitmapResult;
+    }
+
+    public static String combine2String(String text1, String text2, int width){
+        String space ="";
+        int length = width - (text1.length() + text2.length());
+        for (int i=0; i<length; i++){
+            space+=" ";
+        }
+
+        return text1+ space + text2;
     }
 
 

@@ -17,6 +17,7 @@ import wolve.dms.activities.ProductGroupActivity;
 import wolve.dms.activities.ShopCartActivity;
 import wolve.dms.activities.StatisticalActivity;
 import wolve.dms.activities.StatusActivity;
+import wolve.dms.models.Customer;
 
 import static wolve.dms.utils.Constants.REQUEST_CHOOSE_IMAGE;
 
@@ -93,10 +94,18 @@ public class Transaction {
         CustomSQL.setBoolean(Constants.CHECKIN_FLAG, isCheckin);
         CustomSQL.setLong(Constants.CHECKIN_TIME, Util.CurrentTimeStamp() );
 
-
-//        intent.putExtra(Constants.CUSTOMER, customer);
         context.startActivityForResult(intent, Constants.RESULT_CUSTOMER_ACTIVITY);
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
+
+    public static void returnCustomerActivity(String fromActivity, String data, int result){
+        Intent returnIntent = Util.getInstance().getCurrentActivity().getIntent();
+        returnIntent.putExtra(fromActivity, data);
+        Util.getInstance().getCurrentActivity().setResult(result,returnIntent);
+
+        Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        Util.getInstance().getCurrentActivity().finish();
+
     }
 
     public static void gotoShopCartActivity(String customer) {
@@ -107,9 +116,20 @@ public class Transaction {
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
-    public static void gotoPrintBillActivity(String customer, String bill) {
+    public static void returnShopCartActivity(String fromActivity, String data, int result){
+        Intent returnIntent = Util.getInstance().getCurrentActivity().getIntent();
+        returnIntent.putExtra(fromActivity, data);
+        Util.getInstance().getCurrentActivity().setResult(result,returnIntent);
+
+        Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        Util.getInstance().getCurrentActivity().finish();
+
+    }
+
+    public static void gotoPrintBillActivity(String customer, String bill, Boolean rePrint) {
         Activity context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(context, PrintBillActivity.class);
+        intent.putExtra(Constants.RE_PRINT, rePrint);
         intent.putExtra(Constants.CUSTOMER, customer);
         intent.putExtra(Constants.BILLS, bill);
         context.startActivityForResult(intent, Constants.RESULT_PRINTBILL_ACTIVITY);

@@ -21,6 +21,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import wolve.dms.R;
+import wolve.dms.callback.CallbackDouble;
 import wolve.dms.utils.Util;
 
 /**
@@ -177,6 +178,44 @@ public class CInputForm extends FrameLayout {
             }
         });
     }
+
+    public void textMoneyEvent(final CallbackDouble mlistener) {
+        edInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                edInput.removeTextChangedListener(this);
+                try {
+                    edInput.setText(Util.FormatMoney(Util.valueMoney(edInput)));
+                    edInput.setSelection(edInput.getText().toString().length());
+
+                    mlistener.Result(Util.valueMoney(edInput));
+                    edInput.addTextChangedListener(this);
+
+
+
+
+
+                } catch (Exception ex) {
+//                    ex.printStackTrace();
+                    edInput.addTextChangedListener(this);
+                }
+
+            }
+        });
+
+
+    }
+
 
     public void setColorHint(int color) {
         edInput.setHintTextColor(color);

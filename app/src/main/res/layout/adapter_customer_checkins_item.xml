@@ -88,7 +88,9 @@
         android:id="@+id/checkins_item_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#e5e5e5"
-        android:layout_alignParentBottom="true"/>
+        android:background="@color/colorLightGrey"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="@dimen/_10sdp"
+        android:layout_marginRight="@dimen/_10sdp"/>
 
 </RelativeLayout>

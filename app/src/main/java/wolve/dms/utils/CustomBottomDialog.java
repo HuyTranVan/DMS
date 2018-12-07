@@ -70,8 +70,8 @@ public class CustomBottomDialog {
         TextView tvText1 = (TextView) dialog.findViewById(R.id.choice_2method_text1);
         TextView tvText2 = (TextView) dialog.findViewById(R.id.choice_2method_text2);
 
-        tvIcon1.setText(icon1);
-        tvIcon2.setText(icon2);
+        tvIcon1.setText(icon1!= null? icon1:"");
+        tvIcon2.setText(icon2!= null? icon2:"");
         tvText1.setText(text1);
         tvText2.setText(text2);
 

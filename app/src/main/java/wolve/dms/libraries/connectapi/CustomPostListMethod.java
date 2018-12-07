@@ -26,46 +26,46 @@ import wolve.dms.utils.Util;
 /**
  * Created by tranhuy on 7/22/16.
  */
-public class CustomPostListMethod extends AsyncTask<List<String>, Void, List<String>> {
+public class CustomPostListMethod extends AsyncTask<String, Void, List<String>> {
     private CallbackList mListener = null;
     private String baseUrl;
     private List<String> mParams;
 
     private Boolean isJsonType= false;
 
-    public CustomPostListMethod(String url, List<String> params, Boolean isJsonType, CallbackList listener) {
+    public CustomPostListMethod(String url, List<String> listParams, Boolean isJsonType, CallbackList listener) {
         mListener = listener;
         this.baseUrl = url;
-        this.mParams = params;
+        this.mParams = listParams;
         this.isJsonType = isJsonType;
 
     }
 
     @Override
-    protected List<String> doInBackground(List<String>... lists) {
+    protected List<String> doInBackground(String... s) {
         Log.d("url: ", baseUrl);
         Log.d("params: ", mParams.toString());
 
-        URL obj = null;
-        StringBuffer response = null;
         List<String> listResult = new ArrayList<>();
-        try {
-            obj = new URL(baseUrl);
-            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-            con.setReadTimeout(5000);
-            con.setConnectTimeout(5000);
-            con.setRequestMethod("POST");
-            con.setRequestProperty("User-Agent", "Mozilla/5.0");
-            con.setRequestProperty("Content-Type",isJsonType? "application/json":"application/x-www-form-urlencoded");
-            con.setRequestProperty("x-wolver-accesstoken", User.getToken());
-            con.setRequestProperty("x-wolver-accessid", User.getUserId());
-            con.setRequestProperty("x-wolver-debtid", Distributor.getDistributorId());
+        for (int i=0; i<mParams.size(); i++) {
 
-            DataOutputStream wr = null;
-            BufferedReader in = null;
+            try {
+                URL obj = new URL(baseUrl);
+                HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+                con.setReadTimeout(5000);
+                con.setConnectTimeout(5000);
+                con.setRequestMethod("POST");
+                con.setRequestProperty("User-Agent", "Mozilla/5.0");
+                con.setRequestProperty("Content-Type", isJsonType ? "application/json" : "application/x-www-form-urlencoded");
+                con.setRequestProperty("x-wolver-accesstoken", User.getToken());
+                con.setRequestProperty("x-wolver-accessid", User.getUserId());
+                con.setRequestProperty("x-wolver-debtid", Distributor.getDistributorId());
 
-            for (int i=0; i<mParams.size(); i++){
+                DataOutputStream wr = null;
+                BufferedReader in = null;
                 con.setDoOutput(true);
+
+
                 wr = new DataOutputStream(con.getOutputStream());
                 wr.writeBytes(mParams.get(i));
                 wr.flush();
@@ -73,56 +73,58 @@ public class CustomPostListMethod extends AsyncTask<List<String>, Void, List<Str
                 int responseCode = con.getResponseCode();
                 in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
-                response = new StringBuffer();
+                StringBuffer response = new StringBuffer();
 
                 while ((inputLine = in.readLine()) != null) {
                     response.append(inputLine);
                 }
                 listResult.add(String.valueOf(response));
+
+
+                in.close();
+                wr.close();
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                //return "errorCode: 01";
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+                //return "errorCode: 02";
+            } catch (IOException e) {
+                e.printStackTrace();
+                //return "errorCode: 03";
             }
-
-            in.close();
-            wr.close();
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            //return "errorCode: 01";
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-            //return "errorCode: 02";
-        } catch (IOException e) {
-            e.printStackTrace();
-            //return "errorCode: 03";
         }
-        System.out.println("output: "+String.valueOf(response));
+        //System.out.println("output: "+String.valueOf(response));
 
 
         return listResult;
     }
 
-    @Override protected void onPostExecute(List<String> response) {
-        if (response.contains("errorCode")){
-            //mListener.onError(response);
-            if (response.contains("errorCode: 01")){
-                Util.getInstance().showSnackbar("Lỗi kết nối server ", null, null);
-            }else if (response.contains("errorCode: 02")){
-                Util.getInstance().showSnackbar("Lỗi đường truyền ", null, null);
-            }else if (response.contains("errorCode: 03")){
-                Util.getInstance().showSnackbar("Lỗi kết nối server ", null, null);
-            }
-        }else {
-            List<JSONObject> listResult = new ArrayList<>();
-            try {
-                for (int i=0; i<response.size(); i++){
-                    JSONObject object = new JSONObject(response.get(i));
-                    listResult.add(object);
-                }
-                mListener.onResponse(listResult);
+    @Override protected void onPostExecute(List<String> responses) {
+        List<String> listResult = new ArrayList<>();
+        if (responses == null){
+            mListener.onError("Lỗi kết nối server ");
+            Util.getInstance().showSnackbar("Lỗi kết nối server ", null, null);
 
-            } catch (JSONException e) {
-                mListener.onError("Data error");
-                Util.getInstance().showSnackbar("Lỗi dữ liệu", null, null);
+        }else {
+            for (int i=0; i<responses.size(); i++) {
+                try {
+                    JSONObject object = new JSONObject(responses.get(i));
+                    if (object.getInt("status") == 200) {
+                        listResult.add(object.getString("data"));
+
+                    } else {
+                        Util.getInstance().showSnackbar("Lỗi dữ liệu", null, null);
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
             }
+            mListener.onResponse(listResult);
         }
 
     }

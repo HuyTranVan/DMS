@@ -7,3 +7,5 @@ package wolve.dms.callback;
 public interface CallbackString {
     void Result(String s);
 }
+
+

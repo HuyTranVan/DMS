@@ -1,7 +1,6 @@
 package wolve.dms.adapter;
 
 import android.content.Context;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,18 +20,15 @@ import java.util.List;
 import wolve.dms.R;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
-import wolve.dms.callback.CallbackPayBill;
-import wolve.dms.callback.CallbackUpdateBill;
-import wolve.dms.customviews.CTextIcon;
+import wolve.dms.callback.CallbackList;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
 import wolve.dms.models.BillDetail;
-import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 /**
@@ -47,7 +43,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
     private CustomBottomDialog.FourMethodListener mListerner;
 
     public interface CallbackListObject{
-        void onResponse(List<BaseModel> listResult);
+        void onResponse(List<BaseModel> listResult, Double total, int id);
     }
 
     public CustomerBillsAdapter(List<Bill> data, CallbackListObject  listener, CustomBottomDialog.FourMethodListener listener4) {
@@ -79,7 +75,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
             holder.tvTotal.setText("Tổng: "+ Util.FormatMoney(mData.get(position).getDouble("total")));
             holder.tvPay.setText("Trả: "+ Util.FormatMoney(mData.get(position).getDouble("paid")));
             holder.tvDebt.setText("Nợ: "+ Util.FormatMoney(mData.get(position).getDouble("debt")));
-            if (mData.get(position).getString("note").equals("")){
+            if (mData.get(position).getString("note").equals("") || mData.get(position).getString("note").matches(Util.DETECT_NUMBER) ){
                 holder.tvNote.setVisibility(View.GONE);
             }else {
                 holder.tvNote.setVisibility(View.VISIBLE);
@@ -96,15 +92,17 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
             CustomerBillsDetailAdapter adapter = new CustomerBillsDetailAdapter(listBillDetail);
             Util.createLinearRV(holder.rvBillDetail, adapter);
 
-//            JSONArray arrayBillPayment = new JSONArray(mData.get(position).getString("payments"));
-            final List<JSONObject> listPayment = new ArrayList<>();
-//            for (int j=0; j<arrayBillPayment.length(); j++){
-//                JSONObject object = arrayBillPayment.getJSONObject(j);
-//                listPayment.add(object);
-//            }
+            if (mData.get(position).getString("payments")!= null){
+                JSONArray arrayBillPayment = new JSONArray(mData.get(position).getString("payments"));
+                final List<JSONObject> listPayment = new ArrayList<>();
+                for (int j=0; j<arrayBillPayment.length(); j++){
+                    JSONObject object = arrayBillPayment.getJSONObject(j);
+                    listPayment.add(object);
+                }
 
-            PaymentAdapter paymentAdapter = new PaymentAdapter(listPayment);
-            Util.createLinearRV(holder.rvPayment, paymentAdapter);
+                PaymentAdapter paymentAdapter = new PaymentAdapter(listPayment);
+                Util.createLinearRV(holder.rvPayment, paymentAdapter);
+            }
 
 
             if (mData.size()==1){
@@ -137,7 +135,8 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
 
                                 @Override
                                 public void Method3(Boolean three) {
-                                    mListenerList.onResponse(returnProduct(listBillDetail));
+                                    mListenerList.onResponse(returnProduct(listBillDetail),mData.get(position).getDouble("total"), mData.get(position).getInt("id"));
+
                                 }
 
                                 @Override
@@ -220,62 +219,43 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
 
     private void payBill(final int currentPosition){
         if (mData.get(currentPosition).getDouble("debt") != 0){
-            CustomCenterDialog.showDialogInputPaid("Nhập số tiền khách trả", "Nợ còn lại", mData.get(currentPosition).getDouble("debt"), new CallbackPayBill() {
-                @Override
-                public void OnRespone(Double total, Double pay) {
-                    try {
-                        JSONObject params = new JSONObject();
-//                                    params.put("createAt",mData.get(position).getLong("createAt"));
-//                                    params.put("updateAt",mData.get(position).getLong("updateAt"));
-                        params.put("debt", mData.get(currentPosition).getDouble("total") - mData.get(currentPosition).getDouble("paid") - pay);
-                        params.put("total", mData.get(currentPosition).getDouble("total"));
-                        params.put("paid", mData.get(currentPosition).getDouble("paid") + pay);
-                        params.put("id", mData.get(currentPosition).getInt("id"));
-                        params.put("customerId", new JSONObject(mData.get(currentPosition).getString("customer")).getString("id"));
-                        params.put("distributorId", Distributor.getDistributorId());
-                        params.put("userId", User.getUserId());
-//                            params.put("note", "test .hoa");
-                        if (mData.get(currentPosition).getString("note").equals("")){
-                            params.put("note",String.format("%s tra %s", Util.CurrentMonthYearHour() , Util.FormatMoney(pay)));
-                        }else {
-                            params.put("note", mData.get(currentPosition).getString("note") + String.format("\n%s tra %s", Util.CurrentMonthYearHour() , Util.FormatMoney(pay)));
+
+            CustomCenterDialog.showDialogPayment(String.format("THANH TOÁN HÓA ĐƠN %s", Util.DateString(mData.get(currentPosition).getLong("createAt"))),
+                    mData.get(currentPosition).getDouble("debt"),
+                    mData.get(currentPosition).getInt("id"),
+                    null,
+                    new CallbackList() {
+                        @Override
+                        public void onResponse(List result) {
+                            try {
+                                CustomerConnect.PostListPay(DataUtil.createListPaymentParam(new JSONObject(mData.get(currentPosition).getString("customer")).getInt("id"),
+                                        result), new CallbackList() {
+                                    @Override
+                                    public void onResponse(List result) {
+                                        mListerner.Method1(true);
+
+                                    }
+
+                                    @Override
+                                    public void onError(String error) {
+
+                                    }
+                                }, true);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+
                         }
 
-                        params.put("billDetails", null);
-                        CustomerConnect.PostBill(params.toString(), new CallbackJSONObject() {
-                            @Override
-                            public void onResponse(JSONObject result) {
-                                mListerner.Method1(true);
-
-                                //get customer detail from serer
-//                                try {
-//                                    mData.get(currentPosition).put("debt", result.getDouble("debt"));
-//                                    mData.get(currentPosition).put("total", result.getDouble("total"));
-//                                    mData.get(currentPosition).put("paid", result.getDouble("paid"));
-//                                    mData.get(currentPosition).put("note", result.getString("note"));
-//                                    notifyItemChanged(currentPosition);
-//
-////                                    mUpdate.onUpdate(mData.get(currentPosition), currentPosition);
-//
-//                                } catch (JSONException e) {
-//                                    e.printStackTrace();
-//                                }
+                        @Override
+                        public void onError(String error) {
+                            mListerner.Method1(false);
+                        }
+                    });
 
 
-                            }
-
-                            @Override
-                            public void onError(String error) {
-                                mListerner.Method1(false);
-                            }
-                        }, true);
-
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
         }else {
             Util.showToast("Hóa đơn này đã thanh toán");
         }

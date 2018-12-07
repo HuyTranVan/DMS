@@ -84,11 +84,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     private void createListItem() {
         HomeAdapter adapter = new HomeAdapter(HomeActivity.this);
         Util.createGridRV(rvItems, adapter, 3);
-//        adapter.notifyDataSetChanged();
-//        rvItems.setAdapter(adapter);
-//        LinearLayoutManager linearLayoutManager = new GridLayoutManager(this, 3);
-//        rvItems.setLayoutManager(linearLayoutManager);
-//        rvItems.addItemDecoration(new ItemDecorationGridSpace((int) Util.convertDp2Px(1),3));
 
     }
 
@@ -150,8 +145,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
             case 2:
                 Util.showToast("Chưa hỗ trợ");
-//                SheetConnect.getALlValue();
-//                SheetConnect.postValue();
+                CustomCenterDialog.showDialogSignature();
 
 
                 break;
@@ -161,11 +155,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 break;
 
             case 4:
-                if (Distributor.getDistributorId().equals("1")){
-                    choiceSetupItem();
-                }else {
-                    Util.showToast("Chưa hỗ trợ");
-                }
+                choiceSetupItem();
+
                 break;
 
             case 5:
@@ -207,22 +198,31 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                     @Override
                     public void Method1(Boolean one) {
                         Util.showToast("Chưa hỗ trợ");
-//                        Transaction.gotoTestActivity();
+
                     }
 
                     @Override
                     public void Method2(Boolean two) {
-                        Transaction.gotoProductGroupActivity();
+                        if (User.getRole().equals(Constants.ROLE_ADMIN)){
+                            Transaction.gotoProductGroupActivity();
+                        }
+
                     }
 
                     @Override
                     public void Method3(Boolean three) {
-                        Transaction.gotoProductActivity();
+                        if (User.getRole().equals(Constants.ROLE_ADMIN)){
+                            Transaction.gotoProductActivity();
+                        }
+
                     }
 
                     @Override
                     public void Method4(Boolean four) {
-                        Transaction.gotoStatusActivity();
+                        if (User.getRole().equals(Constants.ROLE_ADMIN)){
+                            Transaction.gotoStatusActivity();
+                        }
+
                     }
                 });
     }

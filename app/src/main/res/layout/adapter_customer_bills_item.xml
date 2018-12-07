@@ -116,51 +116,47 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="@color/colorLightGrey">
+            android:background="@drawable/bg_lightgrey_bottom_2corner">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingBottom="@dimen/_2sdp"
-                android:paddingTop="@dimen/_2sdp"
-                android:weightSum="3">
+                android:paddingTop="@dimen/_2sdp">
 
                 <TextView
                     android:id="@+id/bills_item_debt"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/_5sdp"
-                    android:layout_marginTop="@dimen/_2sdp"
-                    android:layout_weight="1"
-                    android:gravity="right"
+                    android:layout_weight="0.4"
+                    android:gravity="right|center_vertical"
                     android:text="Default"
                     android:textColor="@color/colorRed"
-                    android:textSize="@dimen/_8sdp" />
+                    android:textSize="@dimen/_8sdp"
+                    android:paddingRight="@dimen/_5sdp"/>
 
                 <TextView
                     android:id="@+id/bills_item_pay"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/_5sdp"
-                    android:layout_marginTop="@dimen/_2sdp"
-                    android:layout_weight="1"
-                    android:gravity="right"
+                    android:layout_weight="0.3"
+                    android:gravity="right|center_vertical"
                     android:text="Default"
                     android:textColor="@color/black_text_color_hint"
-                    android:textSize="@dimen/_8sdp" />
+                    android:textSize="@dimen/_8sdp"
+                    android:paddingRight="@dimen/_5sdp"/>
 
                 <TextView
                     android:id="@+id/bills_item_total"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/_5sdp"
-                    android:layout_marginTop="@dimen/_2sdp"
-                    android:layout_weight="1"
-                    android:gravity="right"
+                    android:layout_weight="0.3"
+                    android:gravity="right|center_vertical"
                     android:text="Default"
                     android:textColor="@color/colorBlue"
-                    android:textSize="@dimen/_8sdp" />
+                    android:textSize="@dimen/_8sdp"
+                    android:paddingRight="@dimen/_5sdp"/>
 
             </LinearLayout>
 
@@ -173,9 +169,10 @@
                 android:id="@+id/bills_item_rvpayment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/bg_white_corner"
                 android:layout_marginLeft="@dimen/_2sdp"
                 android:layout_marginRight="@dimen/_2sdp"
-                android:clipToPadding="true" />
+                android:layout_marginBottom="@dimen/_2sdp"/>
 
 
         </LinearLayout>

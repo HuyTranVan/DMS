@@ -118,10 +118,7 @@ public class StatisticalBillsFragment extends Fragment implements View.OnClickLi
                 }, true);
             }
         });
-        rvBill.setAdapter(adapter);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(mActivity, LinearLayoutManager.VERTICAL, false);
-        rvBill.setLayoutManager(layoutManager);
-        rvBill.setNestedScrollingEnabled(true);
+        Util.createLinearRV(rvBill, adapter);
     }
 
 

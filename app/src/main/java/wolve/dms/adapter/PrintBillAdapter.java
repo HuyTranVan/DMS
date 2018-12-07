@@ -58,15 +58,21 @@ public class PrintBillAdapter extends RecyclerView.Adapter<PrintBillAdapter.Prin
     @Override
     public void onBindViewHolder(final PrintBillViewHolder holder, final int position) {
         try {
-            holder.tvName.setText(String.format("%d. %s", position+1 , mData.get(position).getString("name")));
-            holder.tvQuantity.setText(String.format("x%s", mData.get(position).getString("quantity")));
+            String name = mData.get(position).isNull("name")? mData.get(position).getString("productName"): mData.get(position).getString("name");
+            holder.tvName.setText(String.format("%d. %s", position+1 , name));
+
             Double discount = mData.get(position).getDouble("discount");
-            holder.tvPrice.setText(discount ==0.0 ? Util.FormatMoney(mData.get(position).getDouble("unitPrice")) : String.format("(%s - %s)", Util.FormatMoney(mData.get(position).getDouble("unitPrice")) , Util.FormatMoney(discount)));
+            holder.tvPrice.setText(String.format("%sx(%s%s)",
+                    mData.get(position).getString("quantity"),
+                    Util.FormatMoney(mData.get(position).getDouble("unitPrice")),
+                    discount ==0.0 ?"" : " - "+ Util.FormatMoney(discount)));
             Double total = (mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount")) * mData.get(position).getDouble("quantity");
             holder.tvTotal.setText(Util.FormatMoney(total));
 
+            if (!mData.get(position).isNull("name")){
+                holder.vLine.setVisibility(position == mData.size()-1 ? View.GONE : View.VISIBLE);
+            }
 
-            holder.vLine.setVisibility(position == mData.size()-1 ? View.GONE : View.VISIBLE);
 
 
         } catch (JSONException e) {
@@ -93,7 +99,7 @@ public class PrintBillAdapter extends RecyclerView.Adapter<PrintBillAdapter.Prin
         return total;
     }
 
-    public static Double getTotalMoney(List<JSONObject> list){
+    public  Double getTotalMoney(List<JSONObject> list){
         Double total =0.0;
         for (int i=0; i<list.size(); i++){
             try {
@@ -112,7 +118,7 @@ public class PrintBillAdapter extends RecyclerView.Adapter<PrintBillAdapter.Prin
         public PrintBillViewHolder(View itemView) {
             super(itemView);
             tvName = (TextView) itemView.findViewById(R.id.printbill_item_name);
-            tvQuantity = (TextView) itemView.findViewById(R.id.printbill_item_quantity);
+//            tvQuantity = (TextView) itemView.findViewById(R.id.printbill_item_quantity);
             tvPrice = (TextView) itemView.findViewById(R.id.printbill_item_price);
             tvTotal = (TextView) itemView.findViewById(R.id.printbill_item_total);
             vLine= itemView.findViewById(R.id.item_seperateline);

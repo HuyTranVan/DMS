@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -12,6 +13,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minWidth="@dimen/_120sdp"
         android:orientation="horizontal">
 
         <TextView
@@ -42,8 +44,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/_10sdp"
-        android:textColor="@color/black_text_disable"
-        android:layout_marginLeft="@dimen/_5sdp"/>
+        android:textColor="@color/black_text_disable"/>
 
     <TextView
         android:id="@+id/map_infowindow_checkin_count"
@@ -51,8 +52,7 @@
         android:layout_height="wrap_content"
         android:textSize="@dimen/_10sdp"
         android:textColor="@color/black_text_color_hint"
-        android:layout_marginTop="@dimen/_2sdp"
-        android:layout_marginLeft="@dimen/_5sdp"/>
+        android:layout_marginTop="@dimen/_2sdp"/>
 
     <LinearLayout
         android:id="@+id/map_infowindow_note_group"
@@ -73,10 +73,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/_12sdp"
-            android:text="Ban"
             android:textColor="@color/black_text_color"
             android:layout_marginTop="@dimen/_2sdp"
-            android:layout_marginLeft="@dimen/_5sdp"
             android:layout_gravity="center_vertical"/>
     </LinearLayout>
 

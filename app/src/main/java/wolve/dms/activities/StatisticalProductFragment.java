@@ -85,10 +85,8 @@ public class StatisticalProductFragment extends Fragment implements View.OnClick
 
     private void createRVProductGroup(List<BillDetail> list) {
         adapter = new StatisticalProductGroupAdapter(list);
-        adapter.notifyDataSetChanged();
-        rvProductGroup.setAdapter(adapter);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        rvProductGroup.setLayoutManager(linearLayoutManager);
+        Util.createLinearRV(rvProductGroup, adapter);
+
     }
 
 }

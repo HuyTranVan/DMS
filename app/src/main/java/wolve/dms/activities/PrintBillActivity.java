@@ -1,5 +1,6 @@
 package wolve.dms.activities;
 
+import android.app.Dialog;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.net.Uri;
@@ -25,11 +26,11 @@ import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.DebtAdapter;
 import wolve.dms.adapter.PrintBillAdapter;
-import wolve.dms.apiconnect.Api_link;
+import wolve.dms.adapter.PrintOldBillAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackJSONObject;
-import wolve.dms.callback.CallbackPayBill;
+import wolve.dms.callback.CallbackList;
 import wolve.dms.callback.CallbackProcess;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.Customer;
@@ -39,6 +40,7 @@ import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
+import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
 import static wolve.dms.utils.Constants.REQUEST_ENABLE_BT;
@@ -56,13 +58,17 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     private CTextIcon tvListPrinter;
     private RecyclerView rvBills, rvDebts;
     private LinearLayout lnMain, lnBottom, lnSubmit;
+    private View line1, line2, line3;
 
     private Customer currentCustomer;
     private PrintBillAdapter adapterBill;
+    private PrintOldBillAdapter adapterOldBill;
     private DebtAdapter adapterDebt;
     private List<JSONObject> listBills = new ArrayList<>();
     private List<JSONObject> listDebts = new ArrayList<>();
     private Uri imageChangeUri ;
+    private Dialog dialogPayment;
+    private Boolean rePrint;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,22 +114,53 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         lnBottom = findViewById(R.id.print_bill_bottom);
         rvDebts = findViewById(R.id.print_bill_rvdebt);
         lnSubmit = findViewById(R.id.print_bill_submit);
+        line1 = findViewById(R.id.print_bill_line1);
+        line2 = findViewById(R.id.print_bill_line2);
+        line3 = findViewById(R.id.print_bill_line3);
 
     }
 
     @Override
     public void initialData() {
         currentCustomer = new Customer( getIntent().getExtras().getString(Constants.CUSTOMER));
+        rePrint = getIntent().getExtras().getBoolean(Constants.RE_PRINT);
         listBills = DataUtil.array2ListObject(getIntent().getExtras().getString(Constants.BILLS));
         listDebts = getListDebt(currentCustomer.getJSONArray("bills"));
+
+        if (rePrint){
+            tvTitle.setText("HOA DON (In lai)");
+            line1.setVisibility(View.GONE);
+            line3.setVisibility(View.GONE);
+            tvSum.setVisibility(View.GONE);
+            tvPrinterMainText.setText("IN LẠI HÓA ĐƠN");
+            createOldRVBill(listBills);
+
+            String debtMoney = "Tong no:    " +"<b>" + Util.FormatMoney(adapterOldBill.getDebtMoney() ) + "</b> ";
+            tvTotal.setText(Html.fromHtml(debtMoney));
+
+        }else {
+            tvTitle.setText("HOA DON BAN HANG");
+            line1.setVisibility(View.VISIBLE);
+            line3.setVisibility(View.VISIBLE);
+            tvSum.setVisibility(View.VISIBLE);
+            tvPrinterMainText.setText("IN HÓA ĐƠN & LƯU");
+            createCurrentRVBill(listBills);
+            createRVDebt(listDebts);
+
+            tvSum.setText(Util.FormatMoney(adapterBill.getTotalMoney()));
+            String totalMoney = "TONG:    " +"<b>" + Util.FormatMoney(adapterBill.getTotalMoney() + adapterDebt.getTotalMoney()) + "</b> ";
+            tvTotal.setText(Html.fromHtml(totalMoney));
+
+
+        }
+
 
         tvCompany.setText(Constants.COMPANY_NAME);
         tvAdress.setText(Constants.COMPANY_ADDRESS);
         tvHotline.setText(Constants.COMPANY_HOTLINE);
         tvWebsite.setText(Constants.COMPANY_WEBSITE);
         tvOrderPhone.setText(Constants.COMPANY_ORDERPHONE);
-        tvThanks.setText(Constants.COMPANY_THANKS);
-
+//        tvThanks.setText(Constants.COMPANY_THANKS);
         tvShopName.setText       ("CH    : " + Constants.getShopInfo(currentCustomer.getString("shopType")  , null));
         tvCustomerName.setText   ("KH    : " + currentCustomer.getString("name"));
         String phone = currentCustomer.getString("phone").equals("")? "--" : Util.PhoneFormat(currentCustomer.getString("phone"));
@@ -131,14 +168,6 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         tvCustomerAddress.setText("D.CHI : " + String.format("%s, %s", currentCustomer.getString("street"), currentCustomer.getString("district")));
         tvDate.setText           ("NGAY  : " + Util.CurrentMonthYearHour());
         tvEmployee.setText       ("N.VIEN: " + User.getFullName());
-
-        createRVBill(listBills);
-        createRVDebt(listDebts);
-
-        tvSum.setText(Util.FormatMoney(adapterBill.getTotalMoney()));
-        String totalMoney = "TONG:    " +"<b>" + Util.FormatMoney(adapterBill.getTotalMoney() + adapterDebt.getTotalMoney()) + "</b> ";
-        tvTotal.setText(Html.fromHtml(totalMoney));
-
 
         if (!Util.getDeviceName().equals(Constants.currentEmulatorDevice)){
             registerBluetooth();
@@ -171,7 +200,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.icon_back:
-                finish();
+                onBackPressed();
                 break;
 
             case R.id.print_bill_bottom:
@@ -190,23 +219,13 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
                 break;
 
             case R.id.print_bill_submit:
-                CustomCenterDialog.showDialogPayment(listBills, listDebts, new CallbackPayBill() {
-                    @Override
-                    public void OnRespone(Double total, Double pay) {
-                        if (isPrinterConnected()){
-                            doPrint();
-                        }else {
-                            CustomCenterDialog.alertWithCancelButton(null, "Chưa kết nối máy in. Bạn muốn tiếp tục thanh toán không xuất hóa đơn", "Tiếp tục","hủy", new CallbackBoolean() {
-                                @Override
-                                public void onRespone(Boolean result) {
-                                postBilltoServer(adapterBill.getTotalMoney());
+                if (rePrint){
+                    doPrintOldBill(listBills);
 
-                                }
-                            });
-                        }
-                    }
-                });
-//                doPrint();
+                }else {
+                    showDialogPayment();
+                }
+
                 break;
 
             case R.id.print_bill_logo:
@@ -236,9 +255,41 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
                 });
     }
 
+    private void showDialogPayment(){
+        dialogPayment = CustomCenterDialog.showDialogPayment("NHẬP SỐ TIỀN KHÁCH TRẢ", adapterBill.getTotalMoney(listBills),0, listDebts, new CallbackList() {
+            @Override
+            public void onResponse(final List result) {
+                dialogPayment.dismiss();
+
+                if (isPrinterConnected()){
+                    doPrintCurrentBill(result);
+                }else {
+                    CustomCenterDialog.alertWithCancelButton(null, "Chưa kết nối máy in. Bạn muốn tiếp tục thanh toán không xuất hóa đơn", "Tiếp tục","hủy", new CallbackBoolean() {
+                        @Override
+                        public void onRespone(Boolean bool) {
+                            postBilltoServer(result);
+
+                        }
+                    });
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+
+
+        });
+    }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        Transaction.returnShopCartActivity(Constants.PRINT_BILL_ACTIVITY, "", Constants.RESULT_PRINTBILL_ACTIVITY);
+
+
     }
 
     private void setWidthDefault(String width){
@@ -249,15 +300,21 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         lnMain.setLayoutParams(param1);
     }
 
-    private void createRVBill(final List<JSONObject> list){
+    private void createCurrentRVBill(final List<JSONObject> list){
         adapterBill = new PrintBillAdapter(tvPrintSize.getText().toString().equals(Constants.PRINTER_80)? 80:57 , list) ;
         Util.createLinearRV(rvBills, adapterBill);
 
     }
 
     private void createRVDebt(final List<JSONObject> list){
-        adapterDebt = new DebtAdapter( list) ;
+        adapterDebt = new DebtAdapter( list, false) ;
         Util.createLinearRV(rvDebts, adapterDebt);
+
+    }
+
+    private void createOldRVBill(final List<JSONObject> list){
+        adapterOldBill = new PrintOldBillAdapter(tvPrintSize.getText().toString().equals(Constants.PRINTER_80)? 80:57 , list) ;
+        Util.createLinearRV(rvBills, adapterOldBill);
 
     }
 
@@ -346,30 +403,42 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
     }
 
-    private void doPrint(){
+    private void doPrintCurrentBill(final List<JSONObject> listPayments){
             Util.getInstance().showLoading("Đang in...");
             final Double total  = adapterBill.getTotalMoney() + adapterDebt.getTotalMoney();
 
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                CustomerConnect.printBillCustom(outputStream, currentCustomer,listBills, listDebts, total, total, new CallbackBoolean() {
+                CustomerConnect.printBillCustom(tvPrintSize.getText().toString(), outputStream, currentCustomer,listBills, listDebts, total, getPaid(listPayments), new CallbackBoolean() {
                     @Override
                     public void onRespone(Boolean result) {
                         Util.getInstance().stopLoading(true);
-                        CustomCenterDialog.alertWithCancelButton2("TIẾP TỤC", "In thêm hoặc tiếp tục thanh toán", "TIẾP TỤC", "IN LẠI", new CustomCenterDialog.ButtonCallback() {
-                            @Override
-                            public void Submit(Boolean boolSubmit) {
-//                                    postBills(params.toString());
+                        if (result){
+                            CustomCenterDialog.alertWithCancelButton2("TIẾP TỤC", "In thêm hoặc tiếp tục thanh toán", "TIẾP TỤC", "IN LẠI", new CustomCenterDialog.ButtonCallback() {
+                                @Override
+                                public void Submit(Boolean boolSubmit) {
+                                    postBilltoServer(listPayments);
 
-                            }
+                                }
 
-                            @Override
-                            public void Cancel(Boolean boolCancel) {
-                                doPrint();
-                            }
+                                @Override
+                                public void Cancel(Boolean boolCancel) {
+                                    doPrintCurrentBill(listPayments);
+                                }
 
-                        });
+                            });
+                        }else {
+                            CustomCenterDialog.alertWithButton("LỖI", "Kết nối máy in thất bại. Vui lòng thực hiện kết nối lại", "ĐỒNG Ý", new CallbackBoolean() {
+                                @Override
+                                public void onRespone(Boolean result) {
+                                    tvPrinterName.setText("Chưa kết nối được máy in");
+                                    lnBottom.setBackgroundColor(getResources().getColor(R.color.black_text_color_hint));
+                                }
+                            });
+                        }
+
+
                     }
                 });
 
@@ -378,14 +447,80 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
     }
 
-    private void postBilltoServer(final Double total) {
-        final String params = DataUtil.createPostBillParam(currentCustomer.getInt("id"),total, 0.0, listBills, "");
+    private void doPrintOldBill(final List<JSONObject> listBill){
+        if (isPrinterConnected()){
+            Util.getInstance().showLoading("Đang in...");
+            //final Double total  = adapterBill.getTotalMoney() + adapterDebt.getTotalMoney();
+
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    CustomerConnect.printOldBillCustom(tvPrintSize.getText().toString(), outputStream, currentCustomer,listBill, adapterOldBill.getDebtMoney(), new CallbackBoolean() {
+                        @Override
+                        public void onRespone(Boolean result) {
+                            Util.getInstance().stopLoading(true);
+                            if (result){
+                                CustomCenterDialog.alertWithCancelButton2("TIẾP TỤC", "In thêm hoặc quay trở lại ", "TRỞ VỀ", "IN LẠI", new CustomCenterDialog.ButtonCallback() {
+                                    @Override
+                                    public void Submit(Boolean boolSubmit) {
+                                        Transaction.returnCustomerActivity(Constants.PRINT_BILL_ACTIVITY,"", Constants.RESULT_PRINTBILL_ACTIVITY);
+                                    }
+
+                                    @Override
+                                    public void Cancel(Boolean boolCancel) {
+                                        doPrintOldBill(listBill);
+                                    }
+
+                                });
+                            }else {
+                                CustomCenterDialog.alertWithButton("LỖI", "Kết nối máy in thất bại. Vui lòng thực hiện kết nối lại", "ĐỒNG Ý", new CallbackBoolean() {
+                                    @Override
+                                    public void onRespone(Boolean result) {
+                                        tvPrinterName.setText("Chưa kết nối được máy in");
+                                        lnBottom.setBackgroundColor(getResources().getColor(R.color.black_text_color_hint));
+                                    }
+                                });
+                            }
+
+
+                        }
+                    });
+
+                }
+            }); thread.start();
+
+        }else {
+            CustomCenterDialog.alertWithCancelButton(null, "Chưa kết nối máy in. Vui lòng thực hiện kết nối lại với máy in", "Đồng ý","hủy", new CallbackBoolean() {
+                @Override
+                public void onRespone(Boolean bool) {
+
+
+                }
+            });
+        }
+
+
+
+
+    }
+
+    private void postBilltoServer(final List<JSONObject> listPayments) {
+        final String params = DataUtil.createPostBillParam(currentCustomer.getInt("id"), adapterBill.getTotalMoney(), 0.0, listBills, "");
 
         CustomerConnect.PostBill(params, new CallbackJSONObject() {
             @Override
             public void onResponse(JSONObject result) {
                 try {
-                    postPayToServer(createPayParam(total, result.getInt("id") , ""));
+                    if (listPayments.size()>0 ){
+                        if (listPayments.get(0).getInt("billId") == 0)
+                            listPayments.get(0).put("billId", result.getInt("id"));
+
+                        postPayToServer(DataUtil.createListPaymentParam(currentCustomer.getInt("id"),listPayments), true);
+
+                    }else {
+                        Transaction.returnShopCartActivity(Constants.PRINT_BILL_ACTIVITY, Constants.RELOAD_DATA, Constants.RESULT_PRINTBILL_ACTIVITY);
+
+                    }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -395,17 +530,17 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
             @Override
             public void onError(String error) {
-
+                Util.getInstance().stopLoading(true);
             }
         }, false);
 
     }
 
-    private void postPayToServer(String param){
-        CustomerConnect.PostPay(param, new CallbackJSONObject() {
+    private void postPayToServer(List<String> listParam, Boolean stopLoading){
+        CustomerConnect.PostListPay(listParam, new CallbackList() {
             @Override
-            public void onResponse(JSONObject result) {
-                String s = result.toString();
+            public void onResponse(List result) {
+                Transaction.returnShopCartActivity(Constants.PRINT_BILL_ACTIVITY, Constants.RELOAD_DATA, Constants.RESULT_PRINTBILL_ACTIVITY);
 
             }
 
@@ -413,12 +548,23 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
             public void onError(String error) {
 
             }//
-        }, true);
+        }, stopLoading);
     }
 
-    private String createPayParam(Double paid, int billId, String note){
-        String customerId = currentCustomer.getString("id");
-        return String.format(Api_link.PAY_PARAM, customerId, String.valueOf(Math.round(paid)), billId, note.equals("")?"" :"&note="+note );
+    private Double getPaid(List<JSONObject> listPayments){
+        Double paid = 0.0;
+
+        try {
+            for (int i=0;i<listPayments.size();i++){
+                paid+= listPayments.get(i).getDouble("paid");
+
+            }
+        } catch (JSONException e) {
+            return paid;
+        }
+        return paid;
     }
+
+
 
 }

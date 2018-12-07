@@ -142,6 +142,7 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
 
 
             chartDistrict.setPieChartData(data);
+            chartDistrict.setCircleFillRatio(0.7f);
 
 
         }catch (JSONException e) {

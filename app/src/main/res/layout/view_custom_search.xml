@@ -74,7 +74,8 @@
                     android:background="?selectableItemBackground"
                     android:text="@string/icon_district"
                     android:gravity="center"
-                    android:textSize="@dimen/_18sdp"/>
+                    android:textSize="@dimen/_18sdp"
+                    android:textColor="@color/black_text_color_hint"/>
 
             </LinearLayout>
 

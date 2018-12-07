@@ -42,97 +42,110 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="@dimen/_45sdp"
-        android:layout_height="match_parent">
+    <View
+        android:id="@+id/statistical_bills_item_line"
+        android:layout_width="@dimen/_10sdp"
+        android:layout_height="1dp"
+        android:layout_centerVertical="true"
+        android:background="#e5e5e5"
+        android:layout_gravity="center_vertical"/>
 
-        <TextView
-            android:id="@+id/statistical_bills_item_date"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/statistical_bills_item_line"
-            android:paddingLeft="@dimen/_2sdp"
-            android:text="Default"
-            android:textColor="@color/black_text_color_hint"
-            android:textSize="@dimen/_7sdp" />
+    <!--<RelativeLayout-->
+        <!--android:layout_width="@dimen/_15sdp"-->
+        <!--android:layout_height="match_parent">-->
 
-        <View
-            android:id="@+id/statistical_bills_item_line"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_centerVertical="true"
-            android:background="#e5e5e5" />
+        <!--<TextView-->
+            <!--android:id="@+id/statistical_bills_item_date"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_above="@+id/statistical_bills_item_line"-->
+            <!--android:paddingLeft="@dimen/_2sdp"-->
+            <!--android:text="Default"-->
+            <!--android:textColor="@color/black_text_color_hint"-->
+            <!--android:textSize="@dimen/_7sdp" />-->
 
-        <TextView
-            android:id="@+id/statistical_bills_item_hour"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/statistical_bills_item_line"
-            android:gravity="right"
-            android:paddingRight="@dimen/_2sdp"
-            android:text="Default"
-            android:textColor="@color/black_text_color_hint"
-            android:textSize="@dimen/_7sdp" />
+        <!---->
 
-    </RelativeLayout>
+        <!--<TextView-->
+            <!--android:id="@+id/statistical_bills_item_hour"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_below="@+id/statistical_bills_item_line"-->
+            <!--android:gravity="right"-->
+            <!--android:paddingRight="@dimen/_2sdp"-->
+            <!--android:text="Default"-->
+            <!--android:textColor="@color/black_text_color_hint"-->
+            <!--android:textSize="@dimen/_7sdp" />-->
+
+    <!--</RelativeLayout>-->
 
 
     <LinearLayout
         android:id="@+id/statistical_bills_item_content_parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/colorwhite_bordergrey_corner"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@color/colorLightGrey">
+            android:background="@drawable/bg_lightgrey_top_2corner"
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/statistical_bills_item_signboard"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:layout_centerVertical="true"
-                android:padding="@dimen/_2sdp"
-                android:singleLine="true"
-                android:text="a"
-                android:textColor="@color/black"/>
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/statistical_bills_item_signboard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_weight="0.5"
+                    android:padding="@dimen/_2sdp"
+                    android:singleLine="true"
+                    android:text="a"
+                    android:textColor="@color/black"
+                    android:layout_marginLeft="@dimen/_5sdp"/>
+
+                <TextView
+                    android:id="@+id/statistical_bills_item_district"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:gravity="right"
+                    android:padding="@dimen/_2sdp"
+                    android:singleLine="true"
+                    android:text="a"
+                    android:textColor="@color/black"
+                    android:layout_marginRight="@dimen/_5sdp"/>
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/statistical_bills_item_district"
+                android:id="@+id/statistical_bills_item_user"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:gravity="right"
-                android:padding="@dimen/_2sdp"
-                android:singleLine="true"
-                android:text="a"
-                android:textColor="@color/black" />
+                android:gravity="center_vertical|right"
+                android:paddingRight="@dimen/_5sdp"
+                android:text="nhan vien"
+                android:textColor="@color/black_text_color_hint"
+                android:textSize="@dimen/_7sdp"
+                android:textStyle="italic" />
+
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_centerVertical="true"
-            android:background="#e5e5e5" />
 
-        <TextView
-            android:id="@+id/statistical_bills_item_user"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorGrey"
-            android:text="nhan vien"
-            android:gravity="center_vertical|right"
-            android:textSize="@dimen/_7sdp"
-            android:textStyle="italic"
-            android:textColor="@color/black_text_color_hint"
-            android:paddingRight="@dimen/_5sdp"/>
+        <!--<View-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1dp"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:background="#e5e5e5" />-->
+
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/statistical_bills_item_rvproduct"
@@ -153,16 +166,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingBottom="@dimen/_2sdp"
             android:paddingTop="@dimen/_2sdp"
+            android:paddingBottom="@dimen/_2sdp"
             android:weightSum="3">
 
             <TextView
                 android:id="@+id/statistical_bills_item_debt"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/_5sdp"
                 android:layout_marginTop="@dimen/_2sdp"
+                android:layout_marginRight="@dimen/_5sdp"
                 android:layout_weight="1"
                 android:gravity="right"
                 android:text="Default"
@@ -173,8 +186,8 @@
                 android:id="@+id/statistical_bills_item_pay"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/_5sdp"
                 android:layout_marginTop="@dimen/_2sdp"
+                android:layout_marginRight="@dimen/_5sdp"
                 android:layout_weight="1"
                 android:gravity="right"
                 android:text="Default"
@@ -185,8 +198,8 @@
                 android:id="@+id/statistical_bills_item_total"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/_5sdp"
                 android:layout_marginTop="@dimen/_2sdp"
+                android:layout_marginRight="@dimen/_5sdp"
                 android:layout_weight="1"
                 android:gravity="right"
                 android:text="Default"
@@ -194,6 +207,15 @@
                 android:textSize="@dimen/_8sdp" />
 
         </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/statistical_bills_item_payment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_grey_corner"
+            android:layout_marginLeft="@dimen/_2sdp"
+            android:layout_marginRight="@dimen/_2sdp"
+            android:layout_marginBottom="@dimen/_2sdp"/>
 
 
     </LinearLayout>

@@ -54,7 +54,7 @@
                 android:layout_height="@dimen/_30sdp"
                 android:background="#f4f4f4"
                 android:layout_gravity="center"
-                app:tabGravity="fill"
+                app:tabGravity="center"
                 app:tabPaddingStart="@dimen/_10sdp"
                 app:tabPaddingEnd="@dimen/_10sdp"
                 app:tabIndicatorColor="@color/colorBlue"

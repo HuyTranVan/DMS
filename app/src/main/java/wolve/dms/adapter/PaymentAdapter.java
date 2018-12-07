@@ -43,9 +43,10 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.PrintBil
     @Override
     public void onBindViewHolder(final PrintBillViewHolder holder, final int position) {
         try {
-            holder.tvDate.setText(String.format("%s trả",Util.DateHourString(mData.get(position).getLong("createAt"))));
-            holder.tvTotal.setText(Util.FormatMoney(mData.get(position).getDouble("paid")));
+            holder.tvDate.setText(String.format("%s",Util.DateHourString(mData.get(position).getLong("createAt"))));
+            holder.tvTotal.setText(String.format("Trả: %s",Util.FormatMoney(mData.get(position).getDouble("paid"))));
 
+            holder.vLine.setVisibility(position == mData.size() -1?View.GONE:View.VISIBLE);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -73,11 +74,13 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.PrintBil
 
     public class PrintBillViewHolder extends RecyclerView.ViewHolder {
         private TextView tvDate, tvTotal ;
+        private View vLine;
 
         public PrintBillViewHolder(View itemView) {
             super(itemView);
             tvDate = (TextView) itemView.findViewById(R.id.payment_item_date);
             tvTotal = (TextView) itemView.findViewById(R.id.payment_item_total);
+            vLine = itemView.findViewById(R.id.item_seperateline);
         }
 
     }

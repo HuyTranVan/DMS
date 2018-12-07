@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/statistical_cash_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_5sdp"
+        android:textColor="@color/colorMain"
+        android:textStyle="bold"
+        android:textSize="@dimen/_12sdp"
+        android:gravity="center_vertical|right"
+        android:layout_marginRight="@dimen/_5sdp"/>
+
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal">-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/statistical_cash_count"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="0.2"-->
+            <!--android:text="Số lần ghé cửa hàng"-->
+            <!--android:padding="@dimen/_5sdp"-->
+            <!--android:textSize="@dimen/_10sdp"/>-->
+
+
+    <!--</LinearLayout>-->
+
+    <!--<View-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1dp"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:background="#e5e5e5" />-->
+
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/statistical_cash_rvbill"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/_50sdp"/>
+
+</LinearLayout>

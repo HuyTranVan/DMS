@@ -16,7 +16,8 @@ public class Constants {
     public final static String STATUS = "status";
     public final static String CUSTOMER = "customer";
     public final static String BILLS = "bills";
-    public final static String CUSTOMER_CART = "customer";
+    public final static String SHOP_CART_ACTIVITY = "shopcart";
+    public final static String PRINT_BILL_ACTIVITY = "printbill";
     public final static String USER = "user";
     public final static String DISTRIBUTOR = "distributor";
     public final static String USER_USERNAME = "username";
@@ -29,6 +30,8 @@ public class Constants {
     public static final String CHECKIN_FLAG = "check_in";
     public static final long CHECKIN_DISTANCE = 200;
     public static final String CHECKIN_TIME = "check_in_time";
+    public static final String RELOAD_DATA = "reload_data";
+    public static final String RE_PRINT = "reprint";
 
 
     public final static String IS_PROMOTION = "BÁN VÀ KHUYẾN MÃI";
@@ -45,14 +48,14 @@ public class Constants {
 
     public final static int RESULT_CUSTOMER_ACTIVITY = 1000;
     public final static int RESULT_SHOPCART_ACTIVITY = 1001;
-    public final static int REQUEST_CHOOSE_IMAGE = 1002;
-    public final static int REQUEST_IMAGE_CAPTURE = 1003;
-    public final static int REQUEST_READ_PERMISSION = 1004;
-    public final static int RESULT_BLUETOOTH_ACTIVITY = 1005;
-    public final static int REQUEST_PERMISSION_LOCATION = 1006;
-    public final static int REQUEST_CAMERA_PERMISSION = 1007;
-    public final static int REQUEST_PHONE_PERMISSION = 1008;
-    public final static int RESULT_PRINTBILL_ACTIVITY = 1009;
+    public final static int RESULT_PRINTBILL_ACTIVITY = 1002;
+    public final static int REQUEST_CHOOSE_IMAGE = 1003;
+    public final static int REQUEST_IMAGE_CAPTURE = 1004;
+    public final static int REQUEST_READ_PERMISSION = 1005;
+    public final static int RESULT_BLUETOOTH_ACTIVITY = 1006;
+    public final static int REQUEST_PERMISSION_LOCATION = 1007;
+    public final static int REQUEST_CAMERA_PERMISSION = 1008;
+    public final static int REQUEST_PHONE_PERMISSION = 1009;
     public final static String RESULT_ERROR_TITLE = "Có lỗi xảy ra";
     public final static String RESULT = "result";
     public final static boolean RESULT_FALSE = false;

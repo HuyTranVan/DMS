@@ -16,6 +16,11 @@ public class User extends BaseModel {
 //    String displayName;
 //    static User currentUser;
 
+    //Role = 1 : Manager
+    //Role = 2 : WAREHOUSE
+    //Role = 3 : DELIVER
+    //Role = 4 : Sale
+
     public User() {
         jsonObject = null;
     }

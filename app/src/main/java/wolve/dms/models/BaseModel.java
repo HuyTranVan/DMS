@@ -14,11 +14,19 @@ public class BaseModel implements Serializable {
     JSONObject jsonObject;
 
     public BaseModel() {
-        jsonObject = null;
+        jsonObject = new JSONObject();
     }
 
     public BaseModel(JSONObject objOrder) {
         jsonObject = objOrder;
+    }
+
+    public BaseModel(String objOrder) {
+        try {
+            jsonObject = new JSONObject(objOrder);
+        } catch (JSONException e) {
+            jsonObject = new JSONObject();
+        }
     }
 
     public String BaseModelstoString(){

@@ -60,6 +60,8 @@ public class StatisticalProductGroupAdapter extends RecyclerView.Adapter<Statist
 
             holder.tvGroupSum.setText(sumProductQuantity(mProduct));
 
+            holder.lnParent.setVisibility(mProduct.size()>0? View.VISIBLE :View.GONE);
+
             StatisticalProductAdapter adapter = new StatisticalProductAdapter(mProduct);
             Util.createLinearRV(holder.rvGroup, adapter);
 

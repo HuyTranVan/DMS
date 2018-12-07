@@ -5,30 +5,33 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/colorWhite"
-    android:clickable="true">
+    android:clickable="true"
+    android:layout_marginTop="@dimen/_36sdp">
 
     <RelativeLayout
         android:id="@+id/cart_choice_header"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_35sdp"
-        android:background="@drawable/bg_header_top">
+        android:layout_height="@dimen/_20sdp"
+        android:background="#f4f4f4"
+        >
 
-        <ImageView
-            android:id="@+id/icon_back"
-            android:layout_width="@dimen/_35sdp"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_arrow_back_black_18dp"
-            android:padding="@dimen/_8sdp"
-            android:background="?selectableItemBackground"/>
+        <!--<ImageView-->
+            <!--android:id="@+id/icon_back"-->
+            <!--android:layout_width="@dimen/_35sdp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:src="@drawable/ic_arrow_back_black_18dp"-->
+            <!--android:padding="@dimen/_8sdp"-->
+            <!--android:background="?selectableItemBackground"/>-->
 
         <TextView
             android:id="@+id/cart_choice_header_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="CHỌN SẢN PHẨM"
-            android:textSize="@dimen/_14sdp"
-            android:textColor="@color/black_text_color"/>
+            android:text="Chọn sản phẩm"
+            android:textStyle="italic"
+            android:textSize="@dimen/_12sdp"
+            android:textColor="@color/black_text_color_hint"/>
 
     </RelativeLayout>
 
@@ -38,10 +41,10 @@
         android:orientation="vertical"
         android:layout_below="@+id/cart_choice_header">
 
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="1dp"
-            android:background="#75b9b3b3"/>
+        <!--<View-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="1dp"-->
+            <!--android:background="#75b9b3b3"/>-->
 
         <android.support.design.widget.TabLayout
             android:id="@+id/cart_choice_tabs"

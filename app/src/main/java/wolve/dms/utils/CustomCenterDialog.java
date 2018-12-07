@@ -2,33 +2,25 @@ package wolve.dms.utils;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.bluetooth.BluetoothDevice;
-import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
 import android.text.InputFilter;
-import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.mukesh.DrawingView;
 import com.savvi.rangedatepicker.CalendarPickerView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -41,25 +33,23 @@ import java.util.Locale;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import wolve.dms.R;
-import wolve.dms.adapter.BluetoothListAdapter;
 import wolve.dms.adapter.CartCheckinReasonAdapter;
 import wolve.dms.adapter.DebtAdapter;
-import wolve.dms.adapter.PrintBillAdapter;
 import wolve.dms.adapter.ProductReturnAdapter;
+import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickProduct;
+import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackJSONObject;
-import wolve.dms.callback.CallbackListProduct;
+import wolve.dms.callback.CallbackList;
 import wolve.dms.callback.CallbackPayBill;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.libraries.DoubleTextWatcher;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.BillDetail;
 import wolve.dms.models.Customer;
 import wolve.dms.models.Product;
-import wolve.dms.models.ProductGroup;
 import wolve.dms.models.Status;
 import wolve.dms.models.User;
 
@@ -257,17 +247,17 @@ public class CustomCenterDialog {
         edQuantity.setSelection(edQuantity.getText().toString().length());
         Util.showKeyboard(edQuantity);
 
-        Util.textMoneyEvent(edDiscount, new CallbackString() {
+        Util.textMoneyEvent(edDiscount, null,new CallbackDouble() {
             @Override
-            public void Result(String text) {
+            public void Result(Double text) {
                 if (!text.equals("")){
-                    if (Util.valueMoney(text) > product.getDouble("unitPrice")){
+                    if (text > product.getDouble("unitPrice")){
                         Util.showToast("Vui lòng nhập giá tiền nhỏ hơn giá niêm yết");
 
                     }else {
-                        if (text.length() >0){
-                            edNetPrice.setText(Util.FormatMoney(product.getDouble("unitPrice") - Util.valueMoney(text)));
-                            tvTotal.setText(Util.FormatMoney(Double.parseDouble(edQuantity.getText().toString()) * (product.getDouble("unitPrice") - Double.parseDouble(text))));
+                        if (text >0){
+                            edNetPrice.setText(Util.FormatMoney(product.getDouble("unitPrice") - text));
+                            tvTotal.setText(Util.FormatMoney(Double.parseDouble(edQuantity.getText().toString()) * (product.getDouble("unitPrice") - text)));
                         }
                     }
                 }else {
@@ -401,33 +391,29 @@ public class CustomCenterDialog {
 
     }
 
-    public static void showDialogReturnProduct(final int customerId, List<BaseModel> listBill, final CallbackBoolean mListener){
+    public static void showDialogReturnProduct(final int billId, Double total , final int customerId, List<BaseModel> listBill, final CallbackBoolean mListener){
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_return_product);
 
         final Button btnCancel = dialogResult.findViewById(R.id.btn_cancel);
         final Button btnSubmit = dialogResult.findViewById(R.id.btn_submit);
         TextView tvTitle = dialogResult.findViewById(R.id.dialog_return_product_title);
         RecyclerView rvProduct = dialogResult.findViewById(R.id.dialog_return_product_rv);
-        final EditText edNote = dialogResult.findViewById(R.id.dialog_return_product_note);
+        final EditText edPay = dialogResult.findViewById(R.id.dialog_return_product_note);
 
         btnCancel.setText("HỦY");
         btnSubmit.setText("LƯU");
         tvTitle.setText("DANH SÁCH SẢN PHẨM TRẢ");
 
-        Util.textMoneyEvent(edNote, new CallbackString() {
+        final ProductReturnAdapter adapter = new ProductReturnAdapter(listBill);
+        Util.createLinearRV(rvProduct, adapter);
+
+        Util.textMoneyEvent(edPay, total, new CallbackDouble() {
             @Override
-            public void Result(String s) {
+            public void Result(Double d) {
 
             }
         });
 
-        final ProductReturnAdapter adapter = new ProductReturnAdapter(listBill);
-        Util.createLinearRV(rvProduct, adapter);
-//        rvProduct.setAdapter(adapter);
-//        rvProduct.setHasFixedSize(true);
-//        rvProduct.setNestedScrollingEnabled(false);
-//        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(), LinearLayoutManager.VERTICAL, false);
-//        rvProduct.setLayoutManager(layoutManager);
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -451,15 +437,49 @@ public class CustomCenterDialog {
                         e.printStackTrace();
                     }
 
-                    Double textPaid = Util.moneyValue(edNote) *-1;
+//                    Double textPaid = Util.moneyValue(edPay);
 
-                    final String params = DataUtil.createPostBillParam(customerId,total, textPaid, adapter.getListSelected(), "");
+                    final String params = DataUtil.createPostBillParam(customerId,total, 0.0, adapter.getListSelected(), String.valueOf(billId));
 
                     CustomerConnect.PostBill(params, new CallbackJSONObject() {
                         @Override
                         public void onResponse(JSONObject result) {
-                            mListener.onRespone(true);
-                            dialogResult.dismiss();
+
+                            if (Util.moneyValue(edPay) ==0){
+                                mListener.onRespone(true);
+                                dialogResult.dismiss();
+                            }else {
+                                try {
+                                    String param = String.format(Api_link.PAY_PARAM,
+                                            customerId,
+                                            String.valueOf(Math.round(Util.moneyValue(edPay) *-1)),
+                                            result.getInt("id"),
+                                            User.getId(),
+                                            "");
+
+                                    CustomerConnect.PostPay(param, new CallbackJSONObject() {
+                                        @Override
+                                        public void onResponse(JSONObject result) {
+                                            mListener.onRespone(true);
+                                            dialogResult.dismiss();
+                                        }
+
+                                        @Override
+                                        public void onError(String error) {
+                                            mListener.onRespone(false);
+                                            dialogResult.dismiss();
+                                        }//
+                                    }, true);
+
+
+
+                                } catch (JSONException e) {
+                                    mListener.onRespone(false);
+                                    dialogResult.dismiss();
+                                }
+                            }
+
+
                         }
 
                         @Override
@@ -556,7 +576,7 @@ public class CustomCenterDialog {
         TextView tvTitle = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_title);
         final TextView tvTotal = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_total);
         final TextView tvTotalTitle = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_total_title);
-        final EditText edPaid = (EditText) dialogResult.findViewById(R.id.dialog_input_paid_paid);
+        final EditText edPaid = (EditText) dialogResult.findViewById(R.id.dialog_input_paid_money);
         final TextView tvRemain = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_remain);
         final RecyclerView rvDebt = dialogResult.findViewById(R.id.dialog_input_paid_rvdebt);
         Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
@@ -567,11 +587,11 @@ public class CustomCenterDialog {
         tvRemain.setText(Util.FormatMoney(total));
         Util.showKeyboard(edPaid);
 
-        Util.textMoneyEvent(edPaid, new CallbackString() {
+        Util.textMoneyEvent(edPaid, null,new CallbackDouble() {
             @Override
-            public void Result(String s) {
+            public void Result(Double s) {
                 if (!s.equals("")){
-                    tvRemain.setText(Util.FormatMoney(Util.valueMoney(tvTotal) - Util.valueMoney(s)));
+                    tvRemain.setText(Util.FormatMoney(Util.valueMoney(tvTotal) - s));
                 }else {
                     tvRemain.setText(tvTotal.getText().toString());
                 }
@@ -605,34 +625,84 @@ public class CustomCenterDialog {
         });
     }
 
-    public static void showDialogPayment(List<JSONObject> listBills, List<JSONObject> listDebts , final CallbackPayBill mListener){
+    public static Dialog showDialogPayment(String title, final Double currentDebt, final int currentBillId,final List<JSONObject> listDebts , final CallbackList mListener){
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_input_paid);
         TextView tvTitle = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_title);
         final TextView tvTotal = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_total);
         final TextView tvTotalTitle = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_total_title);
-        final EditText edPaid = (EditText) dialogResult.findViewById(R.id.dialog_input_paid_paid);
+        final EditText edPaid = (EditText) dialogResult.findViewById(R.id.dialog_input_paid_money);
         final TextView tvRemain = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_remain);
         final RecyclerView rvDebt = dialogResult.findViewById(R.id.dialog_input_paid_rvdebt);
-        Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
-        Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
+        final Switch swFastPay = dialogResult.findViewById(R.id.dialog_input_paid_switch);
+        final TextView tvCurrentBillPaid = dialogResult.findViewById(R.id.dialog_input_paid_paid);
+        final Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
+        final Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
 
-        DebtAdapter debtAdapter = new DebtAdapter(listDebts);
+        final DebtAdapter debtAdapter = new DebtAdapter(listDebts == null? new ArrayList<JSONObject>() : listDebts, true);
         Util.createLinearRV(rvDebt, debtAdapter);
 
-        tvTotal.setText(Util.FormatMoney(PrintBillAdapter.getTotalMoney(listBills)));
-        edPaid.setText("");
-        final Double total = PrintBillAdapter.getTotalMoney(listBills) + debtAdapter.getTotalMoney();
-        tvRemain.setText(Util.FormatMoney(total));
-        Util.showKeyboard(edPaid);
+        final Double lastDebt = debtAdapter.getTotalMoney();
+        final Double totalDebt =  currentDebt + lastDebt ;
 
-        Util.textMoneyEvent(edPaid, new CallbackString() {
+        tvTitle.setText(title);
+        tvRemain.setText(Util.FormatMoney(totalDebt));
+        tvTotal.setText(Util.FormatMoney(currentDebt));
+        edPaid.setText("");
+        swFastPay.setVisibility(listDebts == null?View.GONE: View.VISIBLE);
+
+        Util.textMoneyEvent(edPaid,totalDebt, new CallbackDouble() {
             @Override
-            public void Result(String s) {
-                if (!s.equals("")){
-                    tvRemain.setText(Util.FormatMoney(total - Util.valueMoney(s)));
+            public void Result(Double s) {
+                if (swFastPay.isChecked()){
+                    if (s< currentDebt){
+                        tvCurrentBillPaid.setText(Util.FormatMoney(s));
+                        debtAdapter.inputPaid(null);
+                    }else {
+                        tvCurrentBillPaid.setText(Util.FormatMoney(currentDebt));
+                        debtAdapter.inputPaid(s-currentDebt);
+                    }
+
                 }else {
-                    tvRemain.setText(Util.FormatMoney(total));
+                    if (s < lastDebt){
+                        tvCurrentBillPaid.setText("");
+                        debtAdapter.inputPaid(s);
+
+                    }else {
+                        tvCurrentBillPaid.setText(Util.FormatMoney(s - lastDebt));
+                        debtAdapter.inputPaid(lastDebt);
+                    }
                 }
+                tvTotal.setText(Util.FormatMoney(currentDebt - Util.valueMoney(tvCurrentBillPaid)));
+                tvRemain.setText(Util.FormatMoney(totalDebt - s));
+
+            }
+        });
+
+        swFastPay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Double s =Util.valueMoney(edPaid);
+                if (isChecked){
+                    if (s< currentDebt){
+                        tvCurrentBillPaid.setText(Util.FormatMoney(s));
+                        debtAdapter.inputPaid(null);
+                    }else {
+                        tvCurrentBillPaid.setText(Util.FormatMoney(currentDebt));
+                        debtAdapter.inputPaid(s-currentDebt);
+                    }
+
+                }else {
+                    if (s < lastDebt){
+                        tvCurrentBillPaid.setText("");
+                        debtAdapter.inputPaid(s);
+
+                    }else {
+                        tvCurrentBillPaid.setText(Util.FormatMoney(s - lastDebt));
+                        debtAdapter.inputPaid(lastDebt);
+                    }
+                }
+                tvTotal.setText(Util.FormatMoney(currentDebt - Util.valueMoney(tvCurrentBillPaid)));
+                tvRemain.setText(Util.FormatMoney(totalDebt - s));
             }
         });
 
@@ -642,26 +712,32 @@ public class CustomCenterDialog {
                 dialogResult.dismiss();
             }
         });
+
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Util.hideKeyboard(v);
-                if (edPaid.getText().toString().equals("") || edPaid.getText().toString().equals("0") ){
-                    //dialogResult.dismiss();
-                    Util.showToast("Số tiền nhập lớn hơn 0");
+                List<JSONObject> listPayment = debtAdapter.getListBillPayment();
+                try {
+                    JSONObject object = new JSONObject();
+                    object.put("billId", currentBillId);
+                    object.put("paid", Util.valueMoney(tvCurrentBillPaid));
 
-                }else if (!edPaid.getText().toString().equals("") && !edPaid.getText().toString().equals("0") ){
-                    if (Util.valueMoney(edPaid) > total){
-                        Util.showToast("Số tiền nhập nhỏ hơn số tiền nợ!");
-
-                    }else {
-                        dialogResult.dismiss();
-                        mListener.OnRespone(Util.valueMoney(tvTotal) , Util.valueMoney(edPaid));
+                    if (Util.valueMoney(tvCurrentBillPaid) !=0){
+                        listPayment.add(0,object);
                     }
+
+                    mListener.onResponse(listPayment);
+
+                } catch (JSONException e) {
+                    Util.showToast("Lỗi ");
                 }
+                dialogResult.dismiss();
 
             }
         });
+
+        return dialogResult;
     }
 
     public static void showDialogBillImage(Customer customer,String total,  List<Product> listProduct, final CallbackPayBill mListener){
@@ -758,5 +834,33 @@ public class CustomCenterDialog {
 
     }
 
+    public static Dialog showDialogSignature(){
+        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_signature);
+        final Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
+        final Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
+        final DrawingView drawingView = (DrawingView) dialogResult.findViewById(R.id.scratch_pad);
+        drawingView.setPenSize(10);
+
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialogResult.dismiss();
+            }
+        });
+
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.hideKeyboard(v);
+
+                dialogResult.dismiss();
+
+            }
+        });
+
+        return dialogResult;
+    }
 
 }

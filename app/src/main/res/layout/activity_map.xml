@@ -196,6 +196,18 @@
             android:layout_marginRight="@dimen/_10sdp"
             android:layout_marginTop="-4dp"/>
 
+        <wolve.dms.customviews.CTextIcon
+            android:id="@+id/map_reload"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:background="@drawable/bg_white_round_border_pressed"
+            android:text="@string/icon_reload"
+            android:textSize="@dimen/_14sdp"
+            android:layout_below="@+id/map_loading"
+            android:gravity="center"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/_5sdp"/>
+
     </RelativeLayout>
 
 

@@ -62,7 +62,8 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
 
     @Override
     public void onBindViewHolder(final CartProductsViewHolder holder, final int position) {
-            holder.tvName.setText(mData.get(position).getString("productName"));
+            Double price = mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount");
+            holder.tvName.setText(String.format("%s (%s)",mData.get(position).getString("productName"), Util.FormatMoney(price)));
             holder.tvQuantity.setText(mData.get(position).getString("quantityReturn"));
             holder.btnSub.setVisibility(View.GONE);
 
@@ -125,23 +126,15 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
 
     }
 
-//    public List<BillDetail> getListSelected(){
-//        List<BillDetail> listResult = new ArrayList<>();
-//        for (int i=0; i<mData.size(); i++){
-//            if (mData.get(i).getInt("quantityReturn") >0){
-//                listResult.add(mData.get(i));
-//            }
-//        }
-//
-//        return listResult;
-//    }
-
     public List<JSONObject> getListSelected(){
+
+
         List<JSONObject> listResult = new ArrayList<>();
         for (int i=0; i<mData.size(); i++){
             try {
                 if (mData.get(i).getInt("quantityReturn") >0){
                     mData.get(i).put("quantity", mData.get(i).getInt("quantityReturn")*-1);
+                    mData.get(i).put("discount", getDiscountFromOldBill(mData.get(i)));
                     mData.get(i).put("id",mData.get(i).getInt("productId"));
                     listResult.add(mData.get(i).BaseModelJSONObject());
                 }
@@ -151,6 +144,22 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
         }
 
         return listResult;
+    }
+
+    private Double getDiscountFromOldBill(BaseModel objectCurrent){
+        List<Product> listProduct = Product.getProductList();
+        Double discount =0.0;
+        for (int i=0; i<listProduct.size(); i++){
+            if (listProduct.get(i).getInt("id") == objectCurrent.getInt("id")){
+                Double netPrice = objectCurrent.getDouble("unitPrice") - objectCurrent.getDouble("discount");
+                discount =listProduct.get(i).getDouble("unitPrice") - netPrice;
+                break;
+            }
+        }
+
+        return discount;
+
+
     }
 
 

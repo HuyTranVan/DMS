@@ -25,12 +25,14 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.PrintBillViewH
     private List<JSONObject> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
+    private Boolean showPaid;
 
-    public DebtAdapter(List<JSONObject> list) {
+    public DebtAdapter(List<JSONObject> list, Boolean showpaid) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mData = list;
-
+        this.showPaid = showpaid;
+        inputPaid(0.0);
     }
 
     @Override
@@ -43,9 +45,16 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.PrintBillViewH
     @Override
     public void onBindViewHolder(final PrintBillViewHolder holder, final int position) {
         try {
-            holder.tvDate.setText(String.format("HD: %s",Util.DateMonthYearString(mData.get(position).getLong("createAt"))));
-            holder.tvTotal.setText(Util.FormatMoney(mData.get(position).getDouble("debt")));
+            holder.tvDate.setText(String.format("Nợ HD %s",Util.DateMonthYearString(mData.get(position).getLong("createAt"))));
 
+            Double total =  !mData.get(position).isNull("tempPaid")? mData.get(position).getDouble("debt")-mData.get(position).getDouble("tempPaid"):
+                    mData.get(position).getDouble("debt");
+            holder.tvDate.setTextColor(total ==0.0? mContext.getResources().getColor(R.color.black_text_color_hint) : mContext.getResources().getColor(R.color.black_text_color));
+            holder.tvTotal.setText(String.format("%s",Util.FormatMoney(total)));
+            holder.tvPaid.setVisibility(showPaid?View.VISIBLE:View.GONE);
+            if (!mData.get(position).isNull("tempPaid")){
+                holder.tvPaid.setText(Util.FormatMoney(mData.get(position).getDouble("tempPaid")));
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -72,14 +81,65 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.PrintBillViewH
     }
 
     public class PrintBillViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvDate, tvTotal ;
+        private TextView tvDate, tvTotal, tvPaid;
 
         public PrintBillViewHolder(View itemView) {
             super(itemView);
             tvDate = (TextView) itemView.findViewById(R.id.debt_item_date);
             tvTotal = (TextView) itemView.findViewById(R.id.debt_item_total);
+            tvPaid = (TextView) itemView.findViewById(R.id.debt_item_paid);
+
         }
 
+    }
+
+    public void inputPaid(Double paid){
+        Double money = paid;
+        try {
+            for (int i=0; i<mData.size(); i++){
+                if (money ==null){
+                    mData.get(i).put("tempPaid", 0);
+                    notifyItemChanged(i);
+
+                }else if (money < mData.get(i).getDouble("debt")){
+                    mData.get(i).put("tempPaid", money);
+                    notifyItemChanged(i);
+                    money = 0.0;
+//                    break;
+
+                }else {
+                    mData.get(i).put("tempPaid", mData.get(i).getDouble("debt"));
+                    notifyItemChanged(i);
+                    money = money - mData.get(i).getDouble("debt");
+                }
+
+            }
+
+
+        } catch (JSONException e) {
+//            e.printStackTrace();
+            notifyDataSetChanged();
+        }
+    }
+
+    public List<JSONObject> getListBillPayment(){
+        List<JSONObject> listResult = new ArrayList<>();
+        try {
+            for (int i=0; i<mData.size(); i++){
+                JSONObject object = new JSONObject();
+                if (!mData.get(i).isNull("tempPaid") && mData.get(i).getDouble("tempPaid")>0){
+                    object.put("billId", mData.get(i).getInt("id"));
+                    object.put("paid", mData.get(i).getDouble("tempPaid"));
+                    listResult.add(object);
+                }
+
+            }
+        } catch (JSONException e) {
+//            e.printStackTrace();
+            return listResult;
+        }
+
+        return listResult;
     }
 
 }

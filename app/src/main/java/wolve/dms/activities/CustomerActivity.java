@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -105,6 +106,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     private FusedLocationProviderClient mFusedLocationClient;
     private long countTime;
     private int currentStateBottom = BottomSheetBehavior.STATE_COLLAPSED;
+    private Fragment mFragment;
 
 
 
@@ -122,7 +124,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            tvTime.setText(Util.HourString(countTime));
+                            tvTime.setText(Util.MinuteString(countTime));
                             countTime += 1000;
                             // update TextView here!
                         }
@@ -183,6 +185,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         tvBottomDown = findViewById(R.id.customer_bottom_down);
         tvCheckinTitle = findViewById(R.id.customer_checkin_title);
 
+
         //fix MapView in ScrollView
         mapFragment = (WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.add_customer_map);
         ((WorkaroundMapFragment) getSupportFragmentManager().findFragmentById(R.id.add_customer_map)).setListener(new WorkaroundMapFragment.OnTouchListener() {
@@ -238,7 +241,6 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             }
             createRVCheckin(listCheckins);
             lnBottomSheet.setVisibility(listCheckins.size() >0?View.VISIBLE: View.GONE);
-
 
             if (currentCustomer.getString("bills") != null) {
                 JSONArray array = new JSONArray(currentCustomer.getString("bills"));
@@ -357,7 +359,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 if (listBills.size() > 0) {
                     Util.showToast("Không thể xóa khách hàng có phát sinh hóa đơn");
 
-                } else {
+                } else if (User.getRole().equals(Constants.ROLE_ADMIN)){
                     deleteCustomer();
                 }
 
@@ -413,7 +415,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
     }
 
-    private void openShopCartScreen(Customer customer){
+    protected void openShopCartScreen(Customer customer){
         if (customer.getInt("id") == 0){
             CustomerConnect.CreateCustomer(createParamCustomer(getCurrentCustomer()), new CallbackJSONObject() {
                 @Override
@@ -573,33 +575,40 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     private void backEvent(){
-        returnPreviousScreen(null);
+        mFragment = getSupportFragmentManager().findFragmentById(R.id.customer_parent);
+        if (Util.getInstance().isLoading()){
+            Util.getInstance().stopLoading(true);
+
+        }else if(mFragment != null && mFragment instanceof BillDetailFragment) {
+            getSupportFragmentManager().popBackStack();
+
+        }else {
+            returnPreviousScreen(null);
+        }
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (data.getStringExtra(Constants.CUSTOMER_CART) != null && requestCode == Constants.RESULT_SHOPCART_ACTIVITY){
-            try {
-                Customer customer =new Customer(new JSONObject(data.getStringExtra(Constants.CUSTOMER_CART)));
-                if (customer.getString("bills") != null ){
-                    JSONArray array = new JSONArray(customer.getString("bills"));
-                    if (array.length() >0){
-                        rdOrdered.setChecked(true);
-//                        submitCustomerAndCheckin(currentStatus, false);
+        Util.getInstance().setCurrentActivity(this);
+
+        if (requestCode == Constants.RESULT_SHOPCART_ACTIVITY){
+            if (data.getStringExtra(Constants.SHOP_CART_ACTIVITY).equals(Constants.RELOAD_DATA)){
+                reloadBills(new CallbackBoolean() {
+                    @Override
+                    public void onRespone(Boolean result){
+                        CustomCenterDialog.alertWithCancelButton("Done!", "Bạn vừa hoàn tất hóa đơn. Bạn có muốn trở lại màn hình bản đồ", "Đồng ý", "Không", new CallbackBoolean() {
+                            @Override
+                            public void onRespone(Boolean result) {
+
+                                submitCustomerAndCheckin("Đã mua hàng" );
+                            }
+                        });
                     }
-                    listBills = new ArrayList<>();
-                    for (int i=0; i<array.length(); i++){
-                        listBills.add(new Bill(array.getJSONObject(i)));
-                    }
-
-                    showMoneyOverview(Util.getTotal(listBills));
-
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
+                });
             }
+
         }else {
             onResume();
 
@@ -629,16 +638,21 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     private void showCheckinStatus() {
-        CustomCenterDialog.showCheckinReason("NỘI DUNG GHÉ THĂM CỬA HÀNG", Status.getStatusList(), new CallbackString() {
-            @Override
-            public void Result(String s) {
-                submitCustomerAndCheckin(s );
-            }
-        });
+        if (rdNotInterested.isChecked()){
+            submitCustomerAndCheckin("Không quan tâm" );
+
+        }else {
+            CustomCenterDialog.showCheckinReason("NỘI DUNG GHÉ THĂM CỬA HÀNG", Status.getStatusList(), new CallbackString() {
+                @Override
+                public void Result(String s) {
+                    submitCustomerAndCheckin(s );
+                }
+            });
+        }
 
     }
 
-    private Customer getCurrentCustomer(){
+    protected Customer getCurrentCustomer(){
         Customer customer = new Customer();
         try {
             customer = currentCustomer;
@@ -736,6 +750,51 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             e.printStackTrace();
         }
 
+    }
+
+    protected void reloadBills(final CallbackBoolean mListener){
+        String param = currentCustomer.getString("id");
+        CustomerConnect.GetCustomerDetail(param, new CallbackJSONObject() {
+            @Override
+            public void onResponse(JSONObject result) {
+                Customer customer = new Customer(result);
+                listBills = new ArrayList<>();
+                try{
+                    if (customer.getString("bills") != null) {
+                        JSONArray array = new JSONArray(customer.getString("bills"));
+
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject objectBill = array.getJSONObject(i);
+                            JSONObject objectUser = objectBill.getJSONObject("user");
+                            if (User.getRole().equals(Constants.ROLE_ADMIN)){
+                                listBills.add(new Bill(objectBill));
+                            }else {
+                                if (User.getId() == objectUser.getInt("id")){
+                                    listBills.add(new Bill(objectBill));
+                                }
+                            }
+
+                        }
+
+                        currentCustomer.put("bills", array);
+                        showMoneyOverview(Util.getTotal(listBills));
+                        mListener.onRespone(true);
+
+                        if (listBills.size()>0){
+                            rdOrdered.setChecked(true);
+                        }
+                    }
+                } catch (JSONException e) {
+                    mListener.onRespone(false);
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                mListener.onRespone(false);
+            }
+        }, true);
     }
 
     private void shopTypeEvent(){
