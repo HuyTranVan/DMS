@@ -33,6 +33,10 @@ public class Constants {
     public static final String RELOAD_DATA = "reload_data";
     public static final String RE_PRINT = "reprint";
 
+    public static final int PRINTER_57_WIDTH = 384;
+    public static final int PRINTER_80_WIDTH = 576;
+
+
 
     public final static String IS_PROMOTION = "BÁN VÀ KHUYẾN MÃI";
     public final static String NO_PROMOTION = "CHỈ BÁN";
@@ -80,12 +84,12 @@ public class Constants {
 
     public static final String ON_MAP_SCREEN = "on_map";
 
-    public final static String COMPANY_NAME = "CTY TNHH XNK TRAN VU ANH";
-    public final static String COMPANY_ADDRESS = "1 duong 57,P.Binh Trung Dong,Q 2";
+    public final static String COMPANY_NAME = "CTY TNHH MTV TM DV XNK TRẦN VŨ ANH";
+    public final static String COMPANY_ADDRESS = "MST: 3702405542";
     public final static String COMPANY_HOTLINE = "ĐT:0931.07.22.23";
-    public final static String COMPANY_WEBSITE = "www.wolver.vn";
+    public final static String COMPANY_WEBSITE = "Website: www.wolver.vn";
     public final static String COMPANY_ORDERPHONE = String.format("Đặt hàng: %s", Util.PhoneFormat(User.getPhone()));
-    public final static String COMPANY_THANKS = "Tran trong cam on quy khach hang";
+    public final static String COMPANY_THANKS = "Trân trọng cảm ơn quý khách hàng";
 
     public final static String PRINTER_57 = "57mm";
     public final static String PRINTER_80 = "80mm";

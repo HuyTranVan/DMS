@@ -10,14 +10,21 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.StatisticalCashAdapter;
 import wolve.dms.adapter.StatisticalCheckinsAdapter;
+import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.callback.CallbackJSONObject;
+import wolve.dms.callback.CallbackString;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
+import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
 /**
@@ -74,7 +81,30 @@ public class StatisticalCashFragment extends Fragment implements View.OnClickLis
     }
 
     private void createRVCash(List<BaseModel> list) {
-        adapter = new StatisticalCashAdapter(list);
+        Collections.sort(list, new Comparator<BaseModel>() {
+            @Override
+            public int compare(BaseModel lhs, BaseModel rhs) {
+                return lhs.getLong("createAt").compareTo(rhs.getLong("createAt"));
+            }
+        });
+
+        adapter = new StatisticalCashAdapter(list, new CallbackString() {
+            @Override
+            public void Result(String s) {
+                CustomerConnect.GetCustomerDetail(s, new CallbackJSONObject() {
+                    @Override
+                    public void onResponse(JSONObject result) {
+                        Transaction.gotoCustomerActivity(result.toString(), false);
+
+                    }
+
+                    @Override
+                    public void onError(String error) {
+
+                    }
+                }, true);
+            }
+        });
         Util.createLinearRV(rvCash, adapter);
 
         tvCount.setText(String.format("Tổng tiền thu:    %s",Util.FormatMoney(getTotalPaid(list))));

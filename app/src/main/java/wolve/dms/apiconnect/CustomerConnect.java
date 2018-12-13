@@ -350,9 +350,9 @@ public class CustomerConnect {
     }
 
     public static void ListBill(String param, final CallbackJSONArray listener, final Boolean stopLoading){
-        if (stopLoading){
+//        if (stopLoading){
             Util.getInstance().showLoading();
-        }
+//        }
 
         String url = Api_link.BILLS+ String.format(Api_link.DEFAULT_RANGE, 1,1500) + param;
 
@@ -369,6 +369,7 @@ public class CustomerConnect {
                     }
                 } catch (JSONException e) {
                     listener.onError(e.toString());
+                    Util.getInstance().stopLoading(true);
                 }
             }
 
@@ -376,7 +377,40 @@ public class CustomerConnect {
             @Override
             public void onError(String error) {
                 listener.onError(error);
+                Util.getInstance().stopLoading(true);
+            }
+        }).execute();
+    }
+
+    public static void ListBillNotYetPaid(String param, final CallbackJSONArray listener, final Boolean stopLoading){
+//        if (stopLoading){
+        Util.getInstance().showLoading();
+//        }
+
+        String url = Api_link.BILLS_NOT_YET_PAID+ String.format(Api_link.DEFAULT_RANGE, 1,1500) + param;
+
+        new CustomGetMethod(url, new Callback() {
+            @Override
+            public void onResponse(JSONObject result) {
                 Util.getInstance().stopLoading(stopLoading);
+                try {
+                    if (result.getInt("status") == 200) {
+                        listener.onResponse(result.getJSONArray("data"));
+
+                    } else {
+                        listener.onError("Unknow error");
+                    }
+                } catch (JSONException e) {
+                    listener.onError(e.toString());
+                    Util.getInstance().stopLoading(true);
+                }
+            }
+
+
+            @Override
+            public void onError(String error) {
+                listener.onError(error);
+                Util.getInstance().stopLoading(true);
             }
         }).execute();
     }
@@ -403,7 +437,6 @@ public class CustomerConnect {
                     listener.onError(e.toString());
                 }
             }
-
 
             @Override
             public void onError(String error) {

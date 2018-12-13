@@ -139,7 +139,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 break;
 
             case 1:
-                Transaction.gotoStatisticalActivity();
+                choiceStatisticalItem();
 
                 break;
 
@@ -188,6 +188,25 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             }
         }, true);
 
+    }
+
+    private void choiceStatisticalItem(){
+        CustomBottomDialog.choiceTwoOption(getString(R.string.icon_dashboard), "Thống kê hóa đơn",
+                getString(R.string.icon_group), "Thống kê khách hàng"
+                , new CustomBottomDialog.TwoMethodListener() {
+                    @Override
+                    public void Method1(Boolean one) {
+                        Transaction.gotoStatisticalActivity();
+
+                    }
+
+                    @Override
+                    public void Method2(Boolean two) {
+                        Transaction.gotoStatisticalCustomerActivity();
+
+                    }
+
+                });
     }
 
     private void choiceSetupItem(){

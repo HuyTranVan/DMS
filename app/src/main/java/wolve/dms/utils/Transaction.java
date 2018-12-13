@@ -16,6 +16,7 @@ import wolve.dms.activities.ProductActivity;
 import wolve.dms.activities.ProductGroupActivity;
 import wolve.dms.activities.ShopCartActivity;
 import wolve.dms.activities.StatisticalActivity;
+import wolve.dms.activities.StatisticalCustomerActivity;
 import wolve.dms.activities.StatusActivity;
 import wolve.dms.models.Customer;
 
@@ -139,6 +140,13 @@ public class Transaction {
     public static void gotoStatisticalActivity() {
         Activity context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(context, StatisticalActivity.class);
+        context.startActivity(intent);
+        context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
+
+    public static void gotoStatisticalCustomerActivity() {
+        Activity context = Util.getInstance().getCurrentActivity();
+        Intent intent = new Intent(context, StatisticalCustomerActivity.class);
         context.startActivity(intent);
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }

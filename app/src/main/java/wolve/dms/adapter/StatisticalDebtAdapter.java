@@ -24,13 +24,13 @@ import wolve.dms.utils.Util;
  * Created by tranhuy on 5/24/17.
  */
 
-public class StatisticalCashAdapter extends RecyclerView.Adapter<StatisticalCashAdapter.StatisticalBillsViewHolder> {
+public class StatisticalDebtAdapter extends RecyclerView.Adapter<StatisticalDebtAdapter.StatisticalBillsViewHolder> {
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackString mListener;
 
-    public StatisticalCashAdapter(List<BaseModel> data, CallbackString listener) {
+    public StatisticalDebtAdapter(List<BaseModel> data, CallbackString listener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mData = data;
         this.mContext = Util.getInstance().getCurrentActivity();
@@ -41,7 +41,7 @@ public class StatisticalCashAdapter extends RecyclerView.Adapter<StatisticalCash
 
     @Override
     public StatisticalBillsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(mContext).inflate(R.layout.adapter_statistical_cash_item, parent, false);
+        View itemView = LayoutInflater.from(mContext).inflate(R.layout.adapter_statistical_debt_item, parent, false);
         return new StatisticalBillsViewHolder(itemView);
     }
 
@@ -60,7 +60,7 @@ public class StatisticalCashAdapter extends RecyclerView.Adapter<StatisticalCash
             String time = Util.DateHourString(mData.get(position).getLong("createAt"));
             holder.tvTime.setText(time);
 
-            holder.tvPaid.setText(Util.FormatMoney(mData.get(position).getDouble("paid")));
+            //holder.tvPaid.setText(Util.FormatMoney(mData.get(position).getDouble("paid")));
 
             holder.vLine.setVisibility(position == mData.size()-1? View.GONE:View.VISIBLE);
 
@@ -82,20 +82,20 @@ public class StatisticalCashAdapter extends RecyclerView.Adapter<StatisticalCash
     }
 
     public class StatisticalBillsViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvNumber, tvsignBoard, tvDistrict, tvUser, tvTime, tvPaid;
+        private TextView tvNumber, tvsignBoard, tvDistrict, tvUser, tvTime, tvDebt;
         private View vLine;
 //        private View vLineUpper, vLineUnder;
         private LinearLayout lnParent;
 
         public StatisticalBillsViewHolder(View itemView) {
             super(itemView);
-            tvNumber = itemView.findViewById(R.id.statistical_cash_item_number);
-            tvsignBoard = itemView.findViewById(R.id.statistical_cash_item_signboard);
-            tvDistrict = itemView.findViewById(R.id.statistical_cash_item_district);
-            tvUser = itemView.findViewById(R.id.statistical_cash_item_user);
-            tvTime = itemView.findViewById(R.id.statistical_cash_item_time);
-            tvPaid = itemView.findViewById(R.id.statistical_cash_item_paid);
-            vLine =itemView.findViewById(R.id.statistical_cash_item_line);
+            tvNumber = itemView.findViewById(R.id.statistical_debt_item_number);
+            tvsignBoard = itemView.findViewById(R.id.statistical_debt_item_signboard);
+            tvDistrict = itemView.findViewById(R.id.statistical_debt_item_district);
+            tvUser = itemView.findViewById(R.id.statistical_debt_item_user);
+            tvTime = itemView.findViewById(R.id.statistical_debt_item_time);
+            tvDebt = itemView.findViewById(R.id.statistical_debt_item_debt);
+            vLine =itemView.findViewById(R.id.statistical_debt_item_line);
 //            vLineUnder = itemView.findViewById(R.id.statistical_cash_item_under);
 //            vLineUpper = itemView.findViewById(R.id.statistical_cash_item_upper);
 

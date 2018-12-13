@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.utils.Constants;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
@@ -39,7 +38,7 @@ public class PrintOldBillAdapter extends RecyclerView.Adapter<PrintOldBillAdapte
 
     @Override
     public PrintBillViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mLayoutInflater.inflate(printSize == 57? R.layout.adapter_print_oldbill_57_item : R.layout.adapter_print_oldbill_57_item, parent, false);
+        View itemView = mLayoutInflater.inflate(printSize == 57? R.layout.adapter_print_oldbill_item : R.layout.adapter_print_oldbill_item, parent, false);
         return new PrintBillViewHolder(itemView);
     }
 

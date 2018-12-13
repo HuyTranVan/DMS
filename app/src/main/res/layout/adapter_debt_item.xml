@@ -39,13 +39,12 @@
             android:id="@+id/debt_item_total"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.3"
+            android:layout_weight="0.4"
             android:text="0"
             android:textColor="@color/black_text_color"
-            android:textSize="@dimen/_14sdp"
+            android:textSize="@dimen/_16sdp"
             android:textStyle="bold"
-            android:gravity="center_vertical|right"
-            android:paddingRight="@dimen/_5sdp"/>
+            android:gravity="center_vertical|right"/>
 
 
 

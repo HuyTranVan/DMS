@@ -90,18 +90,18 @@
             android:layout_below="@+id/cart_choice_header"/>
     </LinearLayout>
 
-    <com.github.clans.fab.FloatingActionButton
-        android:id="@+id/bill_detail_print"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_printer"
-        android:layout_margin="@dimen/_10sdp"
-        app:layout_anchorGravity="right"
-        app:fab_size="normal"
-        app:fab_colorNormal="@color/colorBlue"
-        app:fab_colorPressed="@color/colorBlueDark"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"/>
+    <!--<com.github.clans.fab.FloatingActionButton-->
+        <!--android:id="@+id/bill_detail_print"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:src="@drawable/ic_printer"-->
+        <!--android:layout_margin="@dimen/_10sdp"-->
+        <!--app:layout_anchorGravity="right"-->
+        <!--app:fab_size="normal"-->
+        <!--app:fab_colorNormal="@color/colorBlue"-->
+        <!--app:fab_colorPressed="@color/colorBlueDark"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_alignParentRight="true"/>-->
 
 
 </RelativeLayout>

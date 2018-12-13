@@ -22,7 +22,8 @@
         android:text="Dashboard"
         android:textSize="@dimen/_10sdp"
         android:textColor="@drawable/text_blue_selected"
-        android:layout_marginLeft="5dp"/>
+        android:singleLine="true"
+        android:layout_gravity="center_horizontal"/>
 
 
 

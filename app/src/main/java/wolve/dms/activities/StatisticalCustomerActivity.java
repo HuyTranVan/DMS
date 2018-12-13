@@ -19,7 +19,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Objects;
 
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
@@ -28,8 +27,6 @@ import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.apiconnect.SheetConnect;
 import wolve.dms.callback.CallbackJSONArray;
-
-import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.customviews.CustomTabLayout;
 import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialog;
@@ -38,10 +35,8 @@ import wolve.dms.libraries.connectapi.GoogleSheetGet;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
 import wolve.dms.models.Customer;
-import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
 
@@ -49,7 +44,7 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class StatisticalActivity extends BaseActivity implements  View.OnClickListener {
+public class StatisticalCustomerActivity extends BaseActivity implements  View.OnClickListener {
     private ImageView btnBack;
     private TextView tvTitle, tvEmployeeName;
     private ViewPager viewPager;
@@ -74,6 +69,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
             R.string.icon_district};
     private final String MONTH_DEFAULT ="Chọn tháng";
     private final String DATE_DEFAULT ="Chọn ngày";
+    private boolean loadBillNotYetPaid = true;
 //    private String currentDate;
     private int mDate = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
     private int mMonth = Calendar.getInstance().get(Calendar.MONTH);
@@ -82,7 +78,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
     @Override
     public int getResourceLayout() {
-        return R.layout.activity_statistical;
+        return R.layout.activity_statistical_customer;
     }
 
     @Override
@@ -93,16 +89,16 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     @Override
     public void findViewById() {
         btnBack = (ImageView) findViewById(R.id.icon_back);
-        tvTitle = (TextView) findViewById(R.id.statistical_title);
-        viewPager = (ViewPager) findViewById(R.id.statistical_viewpager);
-        tabLayout = (CustomTabLayout) findViewById(R.id.statistical_tabs);
-        rdGroup = findViewById(R.id.statistical_filter);
-        rdMonth = findViewById(R.id.statistical_filter_month);
-        rdDate = findViewById(R.id.statistical_filter_date);
-        btnEmployeeFilter = findViewById(R.id.statistical_filter_by_employee);
-        btnExport = findViewById(R.id.statistical_export);
-        rlBottom = findViewById(R.id.statistical_bottom_group);
-        tvEmployeeName = findViewById(R.id.statistical_filter_by_employee_name);
+        tvTitle = (TextView) findViewById(R.id.statistical_customer_title);
+        viewPager = (ViewPager) findViewById(R.id.statistical_customer_viewpager);
+        tabLayout = (CustomTabLayout) findViewById(R.id.statistical_customer_tabs);
+        rdGroup = findViewById(R.id.statistical_customer_filter);
+        rdMonth = findViewById(R.id.statistical_customer_filter_month);
+        rdDate = findViewById(R.id.statistical_customer_filter_date);
+        btnEmployeeFilter = findViewById(R.id.statistical_customer_filter_by_employee);
+        btnExport = findViewById(R.id.statistical_customer_export);
+        rlBottom = findViewById(R.id.statistical_customer_bottom_group);
+        tvEmployeeName = findViewById(R.id.statistical_customer_filter_by_employee_name);
 
     }
 
@@ -113,7 +109,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         rlBottom.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN) ? View.VISIBLE :View.GONE);
         tvEmployeeName.setText(User.getRole().equals(Constants.ROLE_ADMIN)? ALL_FILTER : User.getFullName());
 
-        loadInitialBills(getStartDay(), getEndDay());
+        loadListCheckin(getStartDay(), getEndDay());
 
         setupViewPager(viewPager);
         setupTabLayout(tabLayout);
@@ -132,12 +128,11 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
     public void setupViewPager(ViewPager viewPager) {
         pageAdapter = new StatisticalViewpagerAdapter(getSupportFragmentManager());
-        pageAdapter.addFragment(Fragment.instantiate(this, StatisticalDashboardFragment.class.getName()),  getResources().getString(icons[0]), "Dashboard");
-        pageAdapter.addFragment(Fragment.instantiate(this, StatisticalBillsFragment.class.getName()),  getResources().getString(icons[1]),"Hóa đơn");
-        pageAdapter.addFragment(Fragment.instantiate(this, StatisticalProductFragment.class.getName()),  getResources().getString(icons[2]), "Sản Phẩm");
-        pageAdapter.addFragment(Fragment.instantiate(this, StatisticalCashFragment.class.getName()),  getResources().getString(icons[3]), "Tiền mặt");
+        pageAdapter.addFragment(Fragment.instantiate(this, StatisticalCheckinFragment.class.getName()),  getResources().getString(icons[4]), "Checkin");
+        pageAdapter.addFragment(Fragment.instantiate(this, StatisticalDebtFragment.class.getName()),  getResources().getString(icons[4]), "Khách còn nợ");
+
         viewPager.setAdapter(pageAdapter);
-        viewPager.setOffscreenPageLimit(4);
+        viewPager.setOffscreenPageLimit(1);
 
     }
 
@@ -160,7 +155,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
                 break;
 
-            case R.id.statistical_filter_month:
+            case R.id.statistical_customer_filter_month:
                 rdMonth.setText(rdMonth.getText().toString().equals(MONTH_DEFAULT) ? Util.CurrentMonthYear(): rdMonth.getText().toString()) ;
                 rdDate.setText(DATE_DEFAULT);
 //                currentDate = rdMonth.getText().toString();
@@ -169,7 +164,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
                 break;
 
-            case R.id.statistical_filter_date:
+            case R.id.statistical_customer_filter_date:
                 rdMonth.setText(MONTH_DEFAULT);
                 rdDate.setText(rdDate.getText().toString().equals(DATE_DEFAULT) ? Util.CurrentDayMonthYear(): rdDate.getText().toString()) ;
 //                currentDate = rdDate.getText().toString();
@@ -177,7 +172,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
                 break;
 
-            case R.id.statistical_filter_by_employee:
+            case R.id.statistical_customer_filter_by_employee:
                 if (listUser.size()>1){
                     List<String> users = new ArrayList<>();
                     users.add(0,ALL_FILTER);
@@ -185,22 +180,26 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                         users.add(listUser.get(i).getString("displayName"));
                     }
 
-                    CustomBottomDialog.choiceList("Chọn nhân viên", users, new CustomBottomDialog.StringListener() {
-                        @Override
-                        public void onResponse(String content) {
-                            tvEmployeeName.setText(content);
-                            loadBill(listInitialBill, content);
-
-                            Util.cashFragment.reloadData(convertToListPayment(tvEmployeeName.getText().toString().trim(),InitialBillHavePayment , getStartDay() , getEndDay()));
-
-                        }
-                    });
+//                    CustomBottomDialog.choiceList("Chọn nhân viên", users, new CustomBottomDialog.StringListener() {
+//                        @Override
+//                        public void onResponse(String content) {
+//                            tvEmployeeName.setText(content);
+//                            loadBill(listInitialBill, content);
+//
+//                            Util.cashFragment.reloadData(convertToListPayment(tvEmployeeName.getText().toString().trim(),InitialBillHavePayment , getStartDay() , getEndDay()));
+//                            Util.checkinFragment.reloadData(convertToListCheckin(tvEmployeeName.getText().toString().trim(),
+//                                    InitialCheckin,
+//                                    getStartDay(),
+//                                    getEndDay()) );
+//
+//                        }
+//                    });
                 }
 
                 break;
 
             case R.id.statistical_export:
-                postListbill();
+//                postListbill();
 
 
                 break;
@@ -213,7 +212,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
             @Override
             public void onSelected(long start, long end) {
 //                currentDate =rdDate.getText().toString();
-                loadInitialBills(start, end);
+                loadListCheckin(start, end);
             }
 
         });
@@ -232,7 +231,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                 rdMonth.setText(monthOfYear+1 +"-" + year);
 //                currentDate = rdMonth.getText().toString();
 
-                loadInitialBills(getStartDay(), getEndDay());
+                loadListCheckin(getStartDay(), getEndDay());
 
             }
         });
@@ -258,36 +257,23 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         }, false);
     }
 
-    private void loadInitialBills(final long starDay, final long lastDay){
-        String param = String.format(Api_link.BILL_RANGE_PARAM, starDay, lastDay);
+    private void loadListCheckin(final long starDay, final long lastDay){
+        String param = String.format(Api_link.CUSTOMER_CHECKIN_RANGE_PARAM, starDay, lastDay);
 
-        CustomerConnect.ListBill(param, new CallbackJSONArray() {
+        CustomerConnect.ListCustomer(param, new CallbackJSONArray() {
             @Override
             public void onResponse(JSONArray result) {
-                loadListPayment(starDay, lastDay);
-
-                try {
-                    listInitialBill = new ArrayList<Bill>();
-
-                    for (int i=0; i<result.length(); i++){
-                        Bill bill = new Bill(result.getJSONObject(i));
-                        BaseModel user = new BaseModel(bill.getString("user"));
-
-                        if (bill.getJsonObject("distributor").getInt("id") == Distributor.getId()){
-
-                            if (!checkDuplicate(listUser, "id" ,user))
-                                listUser.add(user);
-
-                            listInitialBill.add(bill);
-
-                        }
-                    }
-
-                    loadBill(listInitialBill, tvEmployeeName.getText().toString().trim());
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                if (loadBillNotYetPaid){
+                    loadBillNotYetPaid(starDay, lastDay);
                 }
+                loadBillNotYetPaid = false;
+
+                InitialCheckin =result;
+                Util.checkinFragment.reloadData(convertToListCheckin(tvEmployeeName.getText().toString().trim(),
+                        InitialCheckin,
+                        starDay,
+                        lastDay) );
+
             }
 
             @Override
@@ -296,63 +282,21 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         }, false);
     }
 
-    private void loadListPayment(final long starDay, final long lastDay){
-        String param = String.format(Api_link.BILL_HAVE_PAYMENT_RANGE_PARAM, starDay, lastDay);
+    private void loadBillNotYetPaid(final long starDay, final long lastDay){
+//        String param = String.format(Api_link.BILL_NOT_YET_PAID_RANGE_PARAM, starDay, lastDay);
+        String param = "";
 
-        CustomerConnect.ListBillHavePayment(param, new CallbackJSONArray() {
+        CustomerConnect.ListBillNotYetPaid(param, new CallbackJSONArray() {
             @Override
             public void onResponse(JSONArray result) {
-                InitialBillHavePayment =result;
-//                loadListCheckin(starDay, lastDay);
-                Util.cashFragment.reloadData(convertToListPayment(tvEmployeeName.getText().toString().trim(),InitialBillHavePayment , starDay, lastDay));
-
+                Util.debtFragment.reloadData(convertToListDebt(tvEmployeeName.getText().toString(),result));
             }
 
             @Override
             public void onError(String error) {
-//                loadListCheckin(starDay, lastDay);
+
             }
         }, true);
-    }
-
-//    private void loadListCheckin(final long starDay, final long lastDay){
-//        String param = String.format(Api_link.CUSTOMER_CHECKIN_RANGE_PARAM, starDay, lastDay);
-//
-//        CustomerConnect.ListCustomer(param, new CallbackJSONArray() {
-//            @Override
-//            public void onResponse(JSONArray result) {
-//                InitialCheckin =result;
-//                Util.checkinFragment.reloadData(convertToListCheckin(tvEmployeeName.getText().toString().trim(),
-//                        InitialCheckin,
-//                        starDay,
-//                        lastDay) );
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//            }
-//        }, true);
-//    }
-
-    private void loadBill(List<Bill> initialBills, String userName){
-        listBill = new ArrayList<>();
-        if (userName.equals(ALL_FILTER)){
-            listBill = initialBills;
-
-        }else {
-            for (int i=0; i<initialBills.size(); i++){
-                User user = new User(initialBills.get(i).getJsonObject("user"));
-                if (userName.equals(user.getString("displayName"))){
-                    listBill.add(initialBills.get(i));
-                }
-            }
-        }
-
-        Util.dashboardFragment.reloadData(listBill);
-        Util.billsFragment.reloadData(listBill);
-        Util.productFragment.reloadData(listBill);
-
     }
 
     private long getStartDay(){
@@ -555,52 +499,52 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         return listCheckins;
     }
 
-    private List<BaseModel> convertToListPayment(String userName, JSONArray arrayResult, long start, long end){
-        List<BaseModel> listPayments = new ArrayList<>();
+    private List<BaseModel> convertToListDebt(String userName, JSONArray arrayResult){
+        List<BaseModel> listDebts = new ArrayList<>();
         try {
             for (int i=0; i<arrayResult.length(); i++){
                 JSONObject objectBill = arrayResult.getJSONObject(i);
                 JSONArray arrayPayment = objectBill.getJSONArray("payments");
 
-                if (arrayPayment.length() >0){
-                    for (int a=0; a<arrayPayment.length(); a++){
-                        BaseModel objectPayment = new BaseModel(arrayPayment.getJSONObject(a));
-
-                        if (objectPayment.getLong("createAt") - start >= 0 &&
-                                objectPayment.getLong("createAt") - end <= 0){
-
-                            if (!checkDuplicate(listPayments,"id", objectPayment)){
-                                BaseModel newCash = new BaseModel();
-                                newCash.put("id", objectPayment.getInt("id"));
-                                newCash.put("createAt", objectPayment.getLong("createAt"));
-                                newCash.put("updateAt", objectPayment.getLong("updateAt"));
-                                newCash.put("note", objectPayment.getString("note"));
-                                newCash.put("paid", objectPayment.getDouble("paid"));
-                                newCash.put("user", objectBill.getJSONObject("user"));
-                                newCash.put("customer", objectBill.getJSONObject("customer"));
-
-                                BaseModel user = new BaseModel(objectBill.getJSONObject("user"));
-                                if (!checkDuplicate(listUser, "id" ,user)){
-                                    listUser.add(user);
-                                }
-
-                                if (userName.equals(ALL_FILTER)){
-                                    listPayments.add(newCash);
-
-                                }else {
-                                    if (user.getString("displayName").equals(userName)){
-                                        listPayments.add(newCash);
-                                    }
-
-                                }
-
-
-                            }
-
-                        }
-                    }
-
-                }
+//                if (arrayPayment.length() >0){
+//                    for (int a=0; a<arrayPayment.length(); a++){
+//                        BaseModel objectPayment = new BaseModel(arrayPayment.getJSONObject(a));
+//
+//                        if (objectPayment.getLong("createAt") - start >= 0 &&
+//                                objectPayment.getLong("createAt") - end <= 0){
+//
+//                            if (!checkDuplicate(listPayments,"id", objectPayment)){
+//                                BaseModel newCash = new BaseModel();
+//                                newCash.put("id", objectPayment.getInt("id"));
+//                                newCash.put("createAt", objectPayment.getLong("createAt"));
+//                                newCash.put("updateAt", objectPayment.getLong("updateAt"));
+//                                newCash.put("note", objectPayment.getString("note"));
+//                                newCash.put("paid", objectPayment.getDouble("paid"));
+//                                newCash.put("user", objectBill.getJSONObject("user"));
+//                                newCash.put("customer", objectBill.getJSONObject("customer"));
+//
+//                                BaseModel user = new BaseModel(objectBill.getJSONObject("user"));
+//                                if (!checkDuplicate(listUser, "id" ,user)){
+//                                    listUser.add(user);
+//                                }
+//
+//                                if (userName.equals(ALL_FILTER)){
+//                                    listPayments.add(newCash);
+//
+//                                }else {
+//                                    if (user.getString("displayName").equals(userName)){
+//                                        listPayments.add(newCash);
+//                                    }
+//
+//                                }
+//
+//
+//                            }
+//
+//                        }
+//                    }
+//
+//                }
 
 
 
@@ -611,6 +555,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
 
 
-        return listPayments;
+        return listDebts;
     }
+
 }

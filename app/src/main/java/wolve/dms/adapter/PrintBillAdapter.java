@@ -5,10 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,17 +13,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.R;
-import wolve.dms.apiconnect.ProductConnect;
-import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackClickAdapter;
-import wolve.dms.callback.CallbackDeleteAdapter;
-import wolve.dms.callback.CallbackJSONObject;
-import wolve.dms.customviews.CTextIcon;
-import wolve.dms.models.Product;
-import wolve.dms.models.ProductGroup;
-import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
 
 
@@ -50,7 +37,7 @@ public class PrintBillAdapter extends RecyclerView.Adapter<PrintBillAdapter.Prin
 
     @Override
     public PrintBillViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mLayoutInflater.inflate(printSize == 57? R.layout.adapter_printbill_57_item : R.layout.adapter_printbill_57_item, parent, false);
+        View itemView = mLayoutInflater.inflate(R.layout.adapter_printbill_item, parent, false);
         return new PrintBillViewHolder(itemView);
     }
 
@@ -59,13 +46,19 @@ public class PrintBillAdapter extends RecyclerView.Adapter<PrintBillAdapter.Prin
     public void onBindViewHolder(final PrintBillViewHolder holder, final int position) {
         try {
             String name = mData.get(position).isNull("name")? mData.get(position).getString("productName"): mData.get(position).getString("name");
-            holder.tvName.setText(String.format("%d. %s", position+1 , name));
+            holder.tvName.setText(name);
 
-            Double discount = mData.get(position).getDouble("discount");
-            holder.tvPrice.setText(String.format("%sx(%s%s)",
-                    mData.get(position).getString("quantity"),
-                    Util.FormatMoney(mData.get(position).getDouble("unitPrice")),
-                    discount ==0.0 ?"" : " - "+ Util.FormatMoney(discount)));
+            holder.tvQuantity.setText(mData.get(position).getString("quantity"));
+
+            holder.tvPrice.setText(Util.FormatMoney(mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount")));
+
+//            Double discount = mData.get(position).getDouble("discount");
+//            holder.tvPrice.setText(String.format("%sx(%s%s)",
+//                    mData.get(position).getString("quantity"),
+//                    Util.FormatMoney(mData.get(position).getDouble("unitPrice")),
+//                    discount ==0.0 ?"" : " - "+ Util.FormatMoney(discount)));
+//
+
             Double total = (mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount")) * mData.get(position).getDouble("quantity");
             holder.tvTotal.setText(Util.FormatMoney(total));
 
@@ -118,7 +111,7 @@ public class PrintBillAdapter extends RecyclerView.Adapter<PrintBillAdapter.Prin
         public PrintBillViewHolder(View itemView) {
             super(itemView);
             tvName = (TextView) itemView.findViewById(R.id.printbill_item_name);
-//            tvQuantity = (TextView) itemView.findViewById(R.id.printbill_item_quantity);
+            tvQuantity = (TextView) itemView.findViewById(R.id.printbill_item_quantity);
             tvPrice = (TextView) itemView.findViewById(R.id.printbill_item_price);
             tvTotal = (TextView) itemView.findViewById(R.id.printbill_item_total);
             vLine= itemView.findViewById(R.id.item_seperateline);

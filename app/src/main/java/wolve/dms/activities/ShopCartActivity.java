@@ -138,7 +138,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         if (bundle != null){
             try {
                 currentCustomer = new Customer(new JSONObject(bundle));
-                tvTitle.setText(Constants.getShopInfo(currentCustomer.getString("shopType") , null) +" - " + currentCustomer.getString("signBoard") );
+                tvTitle.setText(String.format("%s %s",Constants.getShopInfo(currentCustomer.getString("shopType") , null), currentCustomer.getString("signBoard").toUpperCase() ));
 
                 JSONArray array = new JSONArray(currentCustomer.getString("bills"));
                 for (int i=0; i<array.length(); i++){
@@ -159,6 +159,11 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         loadListProduct();
         loadListProductGroup();
         createRVProduct(listInitialProduct);
+
+        if(listInitialProduct.size() ==0){
+
+            changeFragment(new ChoiceProductFragment() , true);
+        }
 
         if (!Util.getDeviceName().equals(Constants.currentEmulatorDevice)){
 //            registerBluetooth();
@@ -408,7 +413,11 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         super.onActivityResult(reqCode, resultCode, intent);
         Util.getInstance().setCurrentActivity(this);
         if (reqCode == Constants.RESULT_PRINTBILL_ACTIVITY){
-            Transaction.returnCustomerActivity(Constants.SHOP_CART_ACTIVITY, intent.getStringExtra(Constants.PRINT_BILL_ACTIVITY), Constants.RESULT_SHOPCART_ACTIVITY);
+            String data = intent.getStringExtra(Constants.PRINT_BILL_ACTIVITY);
+            if (!data.equals("")){
+                Transaction.returnCustomerActivity(Constants.SHOP_CART_ACTIVITY,data , Constants.RESULT_SHOPCART_ACTIVITY);
+
+            }
 
         }
 //        else {

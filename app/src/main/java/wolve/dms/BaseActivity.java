@@ -209,6 +209,12 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                 break;
 
+            case "activities.StatisticalCustomerActivity":
+                finish();
+                Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+
+                break;
+
             case "activities.ProductGroupActivity":
                 Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.product_parent);
                 if(mFragment != null && mFragment instanceof AddProdGroupFragment
@@ -382,6 +388,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         }
 
+        int a =device.getType();
+        int b =device.describeContents();
+
         Thread connectThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -419,6 +428,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                                     CustomSQL.setString(Constants.BLUETOOTH_DEVICE, btsocket.getRemoteDevice().getAddress());
                                     outputStream = btsocket.getOutputStream();
                                     mBluetoothAdapter.cancelDiscovery();
+
 
                                     mListener.onSuccess(device.getName());
                                 }else {

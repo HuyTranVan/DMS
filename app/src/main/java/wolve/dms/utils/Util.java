@@ -1,10 +1,8 @@
 package wolve.dms.utils;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -20,15 +18,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.ArrayMap;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.telephony.TelephonyManager;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
@@ -81,12 +76,12 @@ import wolve.dms.activities.ShopCartActivity;
 import wolve.dms.activities.StatisticalBillsFragment;
 import wolve.dms.activities.StatisticalCashFragment;
 import wolve.dms.activities.StatisticalCheckinFragment;
+import wolve.dms.activities.StatisticalDebtFragment;
 import wolve.dms.activities.StatisticalDashboardFragment;
 import wolve.dms.activities.StatisticalProductFragment;
 import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.libraries.ItemDecorationGridSpace;
-import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
 import wolve.dms.models.Product;
 import wolve.dms.models.Province;
@@ -106,6 +101,7 @@ public class Util {
     public static StatisticalProductFragment productFragment;
     public static StatisticalCheckinFragment checkinFragment;
     public static StatisticalCashFragment cashFragment;
+    public static StatisticalDebtFragment debtFragment;
 
     public static ArrayList<Province> mListProvinces;
     private DisplayMetrics windowSize;
@@ -301,6 +297,10 @@ public class Util {
     public static float convertDp2Px(int dp) {
         Resources r = getInstance().getCurrentActivity().getResources();
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
+    }
+
+    public static int convertPx2Dp(int px) {
+        return (int) (px / Resources.getSystem().getDisplayMetrics().density);
     }
 
     public static int convertDp2PxInt(int dp) {
@@ -528,7 +528,6 @@ public class Util {
         return listOfAllImages;
     }
 
-
     public static File createCustomFolder(String name) {
         File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), Constants.APP_DIRECTORY);
 
@@ -556,7 +555,7 @@ public class Util {
         }
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
-        return new File(imageFile.getPath() + File.separator + String.format("IMG_%s_%s.jpeg", name, timeStamp));
+        return new File(imageFile.getPath() + File.separator + String.format("IMG_%s_%s.png", name, timeStamp));
     }
 
     //using parse for local category

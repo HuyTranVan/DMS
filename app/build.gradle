@@ -149,6 +149,8 @@ dependencies {
     implementation 'com.turki-alkhateeb:materialcolorpicker:1.0.7'
     implementation group:'com.cloudinary', name:'cloudinary-android', version: '1.20.0'
     implementation 'com.github.mukeshsolanki:DrawingView-Android:1.0.9'
+    implementation 'androidmads.library.qrgenearator:QRGenearator:1.0.3'
+
 
     //chart
     implementation 'com.github.lecho:hellocharts-library:1.5.8@aar'

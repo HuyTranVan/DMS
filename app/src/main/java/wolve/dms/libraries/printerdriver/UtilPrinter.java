@@ -7,6 +7,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -30,20 +31,18 @@ public class UtilPrinter {
             0x23, 0x23, 0x23,0x23, 0x23, 0x23,0x23, 0x23, 0x23,0x23, 0x23, 0x23,
             0x23, 0x23, 0x23};
 
-    public static final int SMALLTEXT = 0;
-    public static final int MEDIUMTEXT = 1;
-    public static final int BIGTEXT = 2;
-    public static final int LARGETEXT = 3;
-    public static final int BOLTSMALLTEXT = 4;
-    public static final int BOLTMEDIUMTEXT = 5;
-    public static final int BOLTBIGTEXT = 6;
+//    public static final int SMALLTEXT = 0;
+//    public static final int MEDIUMTEXT = 1;
+//    public static final int BIGTEXT = 2;
+//    public static final int LARGETEXT = 3;
+//    public static final int BOLTSMALLTEXT = 4;
+//    public static final int BOLTMEDIUMTEXT = 5;
+//    public static final int BOLTBIGTEXT = 6;
 //    public static final int BOLTLARGETEXT = 7;
 
-    public static final byte[] alignLeft = PrinterCommands.ESC_ALIGN_LEFT;
-    public static final byte[] alignCenter = PrinterCommands.ESC_ALIGN_CENTER;
-    public static final byte[] alignRight = PrinterCommands.ESC_ALIGN_RIGHT;
-
-
+//    public static final byte[] alignLeft = PrinterCommands.ESC_ALIGN_LEFT;
+//    public static final byte[] alignCenter = PrinterCommands.ESC_ALIGN_CENTER;
+//    public static final byte[] alignRight = PrinterCommands.ESC_ALIGN_RIGHT;
 
     private static String hexStr = "0123456789ABCDEF";
     private static String[] binaryArray = { "0000", "0001", "0010", "0011",
@@ -51,6 +50,7 @@ public class UtilPrinter {
             "1100", "1101", "1110", "1111" };
 
     public static byte[] decodeBitmap(Bitmap bmp){
+
         int bmpWidth = bmp.getWidth();
         int bmpHeight = bmp.getHeight();
 
@@ -246,45 +246,6 @@ public class UtilPrinter {
 
     }
 
-    public static void printBytes(OutputStream outputStream, String msg, int size, int align) {
-//        //Print config "mode"
-//        byte[] cc = new byte[]{0x1B,0x21,0x05};  // 0- normal size text
-//        //byte[] cc1 = new byte[]{0x1B,0x21,0x00};  // 0- normal size text
-//        byte[] bb = new byte[]{0x1B,0x21,0x00};  // 1- only bold text
-//        byte[] bb2 = new byte[]{0x1B,0x21,0x20}; // 2- bold with medium text
-////        byte[] bb3 = new byte[]{0x1a,0x21,0x32}; // 3- bold with large text
-//        byte[] bb3 = new byte[]{29,33,33};
-//        byte[] bb4 = new byte[]{0x1B,0x21,0x23};
-        try {
-//            switch (size){
-//                case 0:
-//                    outputStream.write(cc);
-//                    break;
-//                case 1:
-//                    outputStream.write(bb);
-//                    break;
-//                case 2:
-//                    outputStream.write(bb2);
-//                    break;
-//                case 3:
-//                    outputStream.write(bb3);
-//                    break;
-//                case 4:
-//                    outputStream.write(bb4);
-//                    break;
-//            }
-
-            outputStream.write(getAlign(align));
-            outputStream.write(toQrCode(msg));
-//            outputStream.write(msg.getBytes());
-            outputStream.write(PrinterCommands.FEED_LINE);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
     public static void printCustom2Text(OutputStream outputStream,String printerSize, String msg1,String msg2, int size, int align) {
         //Print config "mode"
         byte[] cc = new byte[]{0x1B,0x21,0x10};  // 0- normal size text
@@ -391,7 +352,6 @@ public class UtilPrinter {
 
     }
 
-
     public static void printDrawablePhoto(OutputStream outputStream,Drawable img) {
         try {
 //            Bitmap bmp = BitmapFactory.decodeResource(Util.getInstance().getCurrentActivity().getResources(), img);
@@ -400,6 +360,8 @@ public class UtilPrinter {
                 byte[] command = UtilPrinter.decodeBitmap(bmp);
                 outputStream.write(PrinterCommands.ESC_ALIGN_CENTER);
                 outputStream.write(command);
+                outputStream.write(PrinterCommands.FEED_LINE);
+                outputStream.write(PrinterCommands.FEED_LINE);
 
 
             }else{
@@ -417,8 +379,10 @@ public class UtilPrinter {
             Bitmap bmp = BitmapFactory.decodeFile(path);
             if(bmp!=null){
                 byte[] command = UtilPrinter.decodeBitmap(bmp);
-                outputStream.write(PrinterCommands.ESC_ALIGN_CENTER123);
+                outputStream.write(PrinterCommands.ESC_ALIGN_CENTER);
                 outputStream.write(command);
+                outputStream.write(PrinterCommands.FEED_LINE);
+                outputStream.write(PrinterCommands.FEED_LINE);
 
 
             }else{
@@ -432,8 +396,26 @@ public class UtilPrinter {
         }
     }
 
-    //outputStream.write(0x1C); outputStream.write(0x2E); // Cancels Chinese  character mode (FS .)
-    //outputStream.write(0x1B); outputStream.write(0x74); outputStream.write(0x10); // Select character code table (ESC t n) - n = 16(0x10) for WPC1252
+    public static void printPhoto(OutputStream outputStream,Bitmap bmp) {
+        try {
+            //Bitmap bmp = BitmapFactory.decodeResource(getResources(), img);
+//            Bitmap bmp = BitmapFactory.decodeFile(path);
+            if(bmp!=null){
+                byte[] command = decodeBitmap(bmp);
+                outputStream.write(PrinterCommands.ESC_ALIGN_CENTER);
+                outputStream.write(command);
+
+
+            }else{
+                Log.e("file", "The file isn't exists");
+                //Util.showToast("The file isn't exists");
+            }
+        } catch (Exception e) {
+            //e.printStackTrace();
+            Log.e("file", "The file isn't exists");
+            //Util.showToast("The file isn't exists");
+        }
+    }
 
     public static byte[] convertExtendedAscii(String input) {
         int length = input.length();
@@ -457,20 +439,24 @@ public class UtilPrinter {
     }
 
     public static Bitmap drawableToBitmap (Drawable drawable) {
+        Bitmap bitmap = null;
+
         if (drawable instanceof BitmapDrawable) {
-            return ((BitmapDrawable)drawable).getBitmap();
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+            if(bitmapDrawable.getBitmap() != null) {
+                return bitmapDrawable.getBitmap();
+            }
         }
 
-        int width = drawable.getIntrinsicWidth();
-        width = width > 0 ? width : 1;
-        int height = drawable.getIntrinsicHeight();
-        height = height > 0 ? height : 1;
+        if(drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
+        } else {
+            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        }
 
-        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
         drawable.draw(canvas);
-
         return bitmap;
     }
 
@@ -528,28 +514,6 @@ public class UtilPrinter {
         }
         return alignReturn;
     }
-
-    //*******************************//
-
-//    public static void main(String args[]) {
-//        String content = "Test Content";
-//        String printerIp = "192.168.1.123";
-//        int printerPort = 9100;
-//
-//        try (
-//                Socket socket = new Socket(printerIp, printerPort);
-//                DataInputStream in = new DataInputStream(new ByteArrayInputStream(toQrCode(content)));
-//                DataOutputStream out = new DataOutputStream(socket.getOutputStream())
-//        ) {
-//            while (in.available() != 0) {
-//                out.write(in.readByte());
-//            }
-//            out.writeByte(0x00);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-
 
     public static byte[] toQrCode(String content) {
         return QrCodeBuilder.create()
@@ -666,5 +630,8 @@ public class UtilPrinter {
             return result;
         }
     }
+
+
+
 
 }

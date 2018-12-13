@@ -152,6 +152,13 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
 
         <activity
+            android:name=".activities.StatisticalCustomerActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/FullScreen"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+
+        <activity
             android:name=".activities.PrintBillActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"

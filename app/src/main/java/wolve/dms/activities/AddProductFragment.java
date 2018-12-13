@@ -161,6 +161,18 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
             }else {
                 product = new Product(new JSONObject());
                 product.put("id",0);
+                edUnitPrice.textMoneyEvent(new CallbackDouble() {
+                    @Override
+                    public void Result(Double d) {
+
+                    }
+                });
+                edPurchasePrice.textMoneyEvent(new CallbackDouble() {
+                    @Override
+                    public void Result(Double d) {
+
+                    }
+                });
             }
 
         } catch (JSONException e) {

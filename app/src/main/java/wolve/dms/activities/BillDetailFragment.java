@@ -56,7 +56,7 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
 //    private ImageView btnBack;
     private TextView tvTitle, tvDebt, tvPaid, tvTotal;
     private RecyclerView rvBill ;
-    private FloatingActionButton tvPrint;
+    //private FloatingActionButton tvPrint;
 
     private CustomerActivity mActivity;
 
@@ -82,7 +82,7 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
 
     private void addEvent() {
 //        btnBack.setOnClickListener(this);
-        tvPrint.setOnClickListener(this);
+//        tvPrint.setOnClickListener(this);
 //        btnNew.setOnClickListener(this);
 
     }
@@ -95,26 +95,26 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
         tvDebt = view.findViewById(R.id.bill_detail_debt);
         tvPaid = view.findViewById(R.id.bill_detail_paid);
         tvTotal = view.findViewById(R.id.bill_detail_total);
-        tvPrint = view.findViewById(R.id.bill_detail_print);
+//        tvPrint = view.findViewById(R.id.bill_detail_print);
 
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.bill_detail_print:
-                CustomBottomDialog.choiceTwoOption(null, "In những hóa đơn còn nợ", null, "In tất cả hóa đơn", new CustomBottomDialog.TwoMethodListener() {
-                    @Override
-                    public void Method1(Boolean one) {
-                        printDebtBills(true);
-                    }
-
-                    @Override
-                    public void Method2(Boolean two) {
-                        printDebtBills(false);
-                    }
-                });
-                break;
+//            case R.id.bill_detail_print:
+//                CustomBottomDialog.choiceTwoOption(null, "In những hóa đơn còn nợ", null, "In tất cả hóa đơn", new CustomBottomDialog.TwoMethodListener() {
+//                    @Override
+//                    public void Method1(Boolean one) {
+//                        printDebtBills(true);
+//                    }
+//
+//                    @Override
+//                    public void Method2(Boolean two) {
+//                        printDebtBills(false);
+//                    }
+//                });
+//                break;
 
 //            case R.id.bill_detail_new:
 //                //getActivity().getSupportFragmentManager().popBackStack();
@@ -142,7 +142,23 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
 
             @Override
             public void Method2(Boolean two) {
-                reloadCustomer();
+                printDebtBills(true);
+
+//                CustomBottomDialog.choiceTwoOption(null, "In những hóa đơn còn nợ", null, "In tất cả hóa đơn", new CustomBottomDialog.TwoMethodListener() {
+//                    @Override
+//                    public void Method1(Boolean one) {
+//                        printDebtBills(true);
+//                    }
+//
+//                    @Override
+//                    public void Method2(Boolean two) {
+//                        printDebtBills(false);
+//                    }
+//                });
+
+
+
+//                reloadCustomer();
             }
 
             @Override
@@ -232,32 +248,41 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
 
     private void printDebtBills(Boolean printOnlyDebt){
         List<JSONObject> list = new ArrayList<>();
-        int billReturnId = checkBillReturn(mActivity.listBills);
+        String billReturnId = checkBillReturn(mActivity.listBills).toString();
 
         for (int i=0; i<mActivity.listBills.size(); i++){
             if (printOnlyDebt){
-                if (mActivity.listBills.get(i).getDouble("debt") >0 && mActivity.listBills.get(i).getInt("id") != billReturnId){
+                if (mActivity.listBills.get(i).getDouble("debt") >0 && !billReturnId.contains(mActivity.listBills.get(i).getString("id"))){
                     list.add(mActivity.listBills.get(i).convertJsonObject());
                 }
 
             }else {
-                list.add(mActivity.listBills.get(i).convertJsonObject());
+                if (mActivity.listBills.get(i).getDouble("debt") >=0 && !billReturnId.contains(mActivity.listBills.get(i).getString("id"))){
+                    list.add(mActivity.listBills.get(i).convertJsonObject());
+                }
             }
         }
 
-        Transaction.gotoPrintBillActivity(mActivity.currentCustomer.CustomertoString(),
-                DataUtil.convertListObject2Array(list).toString(), true);
+        if (list.size() >0){
+            Transaction.gotoPrintBillActivity(mActivity.currentCustomer.CustomertoString(),
+                    DataUtil.convertListObject2Array(list).toString(), true);
+        }else {
+            Util.showToast("Không có hóa đơn nợ phù hợp");
+        }
+
     }
 
-    private int checkBillReturn(List<Bill> list){
-        int id =0;
+    private List<String> checkBillReturn(List<Bill> list){
+        List<String> listResult = new ArrayList<>();
         for (int i=0; i<list.size(); i++){
             if (!list.get(i).getString("note").equals("") && list.get(i).getString("note").matches(Util.DETECT_NUMBER)){
-                id = list.get(i).getInt("note");
-                break;
+                listResult.add(list.get(i).getString("id"));
+                listResult.add(list.get(i).getString("note"));
+
+//                break;
             }
         }
-        return id;
+        return listResult;
 
     }
 

@@ -62,12 +62,14 @@ public class Api_link {
 
     public final static String BILLS = BASE_URL + "token/bills";
     public final static String BILLS_HAVE_PAYMENT = BASE_URL + "token/bills/have_payment";
+    public final static String BILLS_NOT_YET_PAID = BASE_URL + "token/bills_not_yet_paid";
     public final static String BILL_NEW = BASE_URL + "token/bill/create_or_update";
     public final static String BILL_DELETE = BASE_URL + "token/bill/";
     public final static String BILL_RANGE_PARAM ="&billingFrom=%s&billingTo=%s";
     public final static String BILL_HAVE_PAYMENT_RANGE_PARAM ="&paymentFrom=%s&paymentTo=%s";
+    public final static String BILL_NOT_YET_PAID_RANGE_PARAM ="&fromTime=%s&toTime=%s";
     public final static String PAY_NEW = BASE_URL + "token/payment";
-    public final static String PAY_PARAM ="customerId=%d&paid=%s&billId=%d&userId=%d%s";
+    public final static String PAY_PARAM ="customerId=%d&paid=%s&billId=%d&userId=%d";
 
 
 }

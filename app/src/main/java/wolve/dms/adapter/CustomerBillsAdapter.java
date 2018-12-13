@@ -120,7 +120,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
                 @Override
                 public void onClick(View v) {
                     CustomBottomDialog.choiceFourOption(mContext.getString(R.string.icon_money), "Thanh toán hóa đơn",
-                            mContext.getString(R.string.icon_print), "In lại hóa đơn",
+                            mContext.getString(R.string.icon_print), "In lại những hóa đơn nợ",
                             mContext.getString(R.string.icon_return), "Thu lại hàng",
                             mContext.getString(R.string.icon_delete), "Xóa hóa đơn", new CustomBottomDialog.FourMethodListener() {
                                 @Override
@@ -224,6 +224,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
                     mData.get(currentPosition).getDouble("debt"),
                     mData.get(currentPosition).getInt("id"),
                     null,
+                    0.0,
                     new CallbackList() {
                         @Override
                         public void onResponse(List result) {

@@ -64,6 +64,10 @@ public class CustomCenterDialog {
         void Cancel(Boolean boolCancel);
     }
 
+    public interface CallbackRangeTime{
+        void onSelected(long start, long end);
+    }
+
     public static Dialog showCustomDialog(int resId) {
         AlertDialog.Builder adb = new AlertDialog.Builder(Util.getInstance().getCurrentActivity());
         final Dialog d = adb.setView(new View(Util.getInstance().getCurrentActivity())).create();
@@ -625,7 +629,7 @@ public class CustomCenterDialog {
         });
     }
 
-    public static Dialog showDialogPayment(String title, final Double currentDebt, final int currentBillId,final List<JSONObject> listDebts , final CallbackList mListener){
+    public static Dialog showDialogPayment(String title, final Double currentDebt, final int currentBillId, final List<JSONObject> listDebts ,Double paid ,final CallbackList mListener){
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_input_paid);
         TextView tvTitle = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_title);
         final TextView tvTotal = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_total);
@@ -647,7 +651,7 @@ public class CustomCenterDialog {
         tvTitle.setText(title);
         tvRemain.setText(Util.FormatMoney(totalDebt));
         tvTotal.setText(Util.FormatMoney(currentDebt));
-        edPaid.setText("");
+        //edPaid.setText("");
         swFastPay.setVisibility(listDebts == null?View.GONE: View.VISIBLE);
 
         Util.textMoneyEvent(edPaid,totalDebt, new CallbackDouble() {
@@ -677,6 +681,10 @@ public class CustomCenterDialog {
 
             }
         });
+
+        if (paid !=0){
+            edPaid.setText(Util.FormatMoney(paid));
+        }
 
         swFastPay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -764,7 +772,7 @@ public class CustomCenterDialog {
 
     }
 
-    public static void showDialogDatePicker(final RadioButton rdButton, final CallbackString mListener){
+    public static void showDialogDatePicker(final RadioButton rdButton, final CallbackRangeTime mListener){
         final String result ="&billingFrom=%d&billingTo=%d";
 
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_select_datepicker);
@@ -788,24 +796,24 @@ public class CustomCenterDialog {
         list.add(1);
 
 //        calendarView.deactivateDates(list);
-        ArrayList<Date> arrayList = new ArrayList<>();
-        try {
-            SimpleDateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy");
-            String strdate = "22-2-2018";
-            String strdate2 = "26-2-2018";
-            Date newdate = dateformat.parse(strdate);
-            Date newdate2 = dateformat.parse(strdate2);
-            arrayList.add(newdate);
-            arrayList.add(newdate2);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+//        ArrayList<Date> arrayList = new ArrayList<>();
+//        try {
+//            SimpleDateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy");
+//            String strdate = "22-2-2018";
+//            String strdate2 = "26-2-2018";
+//            Date newdate = dateformat.parse(strdate);
+//            Date newdate2 = dateformat.parse(strdate2);
+//            arrayList.add(newdate);
+//            arrayList.add(newdate2);
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
 
         calendarView.init(lastYear.getTime(), nextYear.getTime(),new SimpleDateFormat("MMMM, YYYY", Locale.getDefault()))
                 .inMode(CalendarPickerView.SelectionMode.RANGE)
-                .withSelectedDate(new Date())
+                .withSelectedDate(new Date());
 //                .withDeactivateDates(list)
-                .withHighlightedDates(arrayList);
+//                .withHighlightedDates(arrayList);
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -822,11 +830,13 @@ public class CustomCenterDialog {
 
                 if (calendarView.getSelectedDates().size() ==1){
                     rdButton.setText(Util.DateString(startDate));
+                    mListener.onSelected(startDate, startDate+86400000);
                 }else {
                     rdButton.setText(String.format("%s\n%s", Util.DateString(startDate) ,Util.DateString(lastDate)));
+                    mListener.onSelected(startDate,lastDate +86400000);
                 }
 
-                mListener.Result(String.format(result, startDate, lastDate+ 86400000));
+//                mListener.Result(String.format(result, startDate, lastDate+ 86400000));
                 dialogResult.dismiss();
 
             }
