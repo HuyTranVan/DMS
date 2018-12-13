@@ -1,1 +1,1 @@
-include ':app', ':dialog',':customsearch', ':mpchart'
+include ':app', ':dialog', ':mpchart'

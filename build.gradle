@@ -2,11 +2,13 @@
 
 buildscript {
     repositories {
-        jcenter()
         google()
+        jcenter()
+
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.2'
+//        classpath 'com.android.tools.build:gradle:3.1.4'
+        classpath 'com.android.tools.build:gradle:3.2.0'
         classpath "io.realm:realm-gradle-plugin:0.89.1"
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -16,10 +18,11 @@ buildscript {
 
 allprojects {
     repositories {
+        google()
         jcenter()
         maven { url "https://jitpack.io" }
         mavenCentral()
-        google()
+
     }
 }
 

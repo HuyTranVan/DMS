@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/DMS.iml" filepath="$PROJECT_DIR$/DMS.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/customsearch/customsearch.iml" filepath="$PROJECT_DIR$/customsearch/customsearch.iml" />
       <module fileurl="file://$PROJECT_DIR$/dialog/dialog.iml" filepath="$PROJECT_DIR$/dialog/dialog.iml" />
       <module fileurl="file://$PROJECT_DIR$/mpchart/mpchart.iml" filepath="$PROJECT_DIR$/mpchart/mpchart.iml" />
     </modules>
