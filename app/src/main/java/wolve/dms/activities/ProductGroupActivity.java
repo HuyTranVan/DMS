@@ -1,18 +1,10 @@
 package wolve.dms.activities;
 
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionButton;
 
@@ -20,22 +12,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
-import wolve.dms.adapter.ProductAdapter;
 import wolve.dms.adapter.ProductGroupAdapter;
-import wolve.dms.adapter.ProductViewpagerAdapter;
 import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONArray;
-import wolve.dms.libraries.MySwipeRefreshLayout;
-import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.Transaction;
 
 /**
  * Created by macos on 9/16/17.

@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@drawable/colorwhite_pressed">
+    android:background="@drawable/bg_white_corner"
+    android:padding="@dimen/_2sdp"
+    android:layout_marginBottom="@dimen/_5sdp">
 
     <!--<View-->
         <!--android:layout_width="match_parent"-->
@@ -98,11 +100,11 @@
 
     </LinearLayout>
 
-    <View
-        android:id="@+id/item_seperateline"
-        android:layout_width="match_parent"
-        android:layout_height="1dip"
-        android:background="#0d000000"
-        android:layout_alignParentBottom="true"/>
+    <!--<View-->
+        <!--android:id="@+id/item_seperateline"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1dip"-->
+        <!--android:background="#0d000000"-->
+        <!--android:layout_alignParentBottom="true"/>-->
 
 </LinearLayout>

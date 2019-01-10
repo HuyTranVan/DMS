@@ -9,10 +9,15 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Util;
@@ -22,14 +27,23 @@ import wolve.dms.utils.Util;
  */
 
 public class StatisticalProductAdapter extends RecyclerView.Adapter<StatisticalProductAdapter.StatisticalProductGroupViewHolder> {
-    private List<Product> mData = new ArrayList<>();
+    private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
 
-    public StatisticalProductAdapter(List<Product> data) {
+    public StatisticalProductAdapter(JSONArray data) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
-        this.mData = data;
+//        this.mData = data;
         this.mContext = Util.getInstance().getCurrentActivity();
+
+        try {
+            for (int i=0; i<data.length(); i++){
+                Product product = new Product(data.getJSONObject(i));
+                mData.add(product);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
     }
 

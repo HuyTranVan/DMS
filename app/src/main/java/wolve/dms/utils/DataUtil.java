@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.apiconnect.Api_link;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.Product;
 import wolve.dms.models.User;
@@ -90,6 +91,50 @@ public class DataUtil {
         }
 
         return list;
+    }
+
+    public static List<BaseModel> groupDebtByCustomer(final List<BaseModel> list){
+        final List<BaseModel> listResult = new ArrayList<>();
+        try {
+            for (int i=0; i<list.size(); i++){
+                BaseModel customer1 = new BaseModel(list.get(i).getJsonObject("customer"));
+
+                double total = list.get(i).getDouble("debt");
+                for (int j=0; j<listResult.size(); j++){
+                    BaseModel customer2 = new BaseModel(listResult.get(j).getJsonObject("customer"));
+                    if (customer1.getString("id").equals(customer2.getString("id"))){
+//                        double debt = listResult.get(j).getDouble("debt") + list.get(i).getDouble("debt");
+                        total += listResult.get(j).getDouble("debt");
+                        listResult.get(j).put("debt", total );
+//                        total += listResult.get(j).getDouble("debt");
+//                        checkDup = true;
+//                        break;
+                    }
+                }
+
+                if (total == list.get(i).getDouble("debt")){
+                    BaseModel objectDetail = new BaseModel();
+                    objectDetail.put("id",list.get(i).getString("id") );
+                    objectDetail.put("createAt",list.get(i).getLong("createAt") );
+                    objectDetail.put("updateAt",list.get(i).getLong("updateAt") );
+                    objectDetail.put("user",list.get(i).getJsonObject("user") );
+                    objectDetail.put("customer",list.get(i).getJsonObject("customer") );
+                    objectDetail.put("distributor",list.get(i).getJsonObject("distributor") );
+                    objectDetail.put("payments",list.get(i).getString("payments") );
+                    objectDetail.put("total",list.get(i).getDouble("total") );
+                    objectDetail.put("debt",list.get(i).getDouble("debt") );
+                    objectDetail.put("paid",list.get(i).getDouble("paid") );
+                    objectDetail.put("note",list.get(i).getString("note") );
+
+                    listResult.add(objectDetail);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        return listResult;
     }
 
 }

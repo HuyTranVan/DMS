@@ -130,20 +130,20 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
 
                 edName.setText(product.getString("name"));
                 edUnitPrice.setText(Util.FormatMoney(product.getDouble("unitPrice")));
-                edUnitPrice.textMoneyEvent(new CallbackDouble() {
-                    @Override
-                    public void Result(Double d) {
-
-                    }
-                });
+//                edUnitPrice.textMoneyEvent(new CallbackDouble() {
+//                    @Override
+//                    public void Result(Double d) {
+//
+//                    }
+//                });
 
                 edPurchasePrice.setText(Util.FormatMoney(product.getDouble("purchasePrice")));
-                edPurchasePrice.textMoneyEvent(new CallbackDouble() {
-                    @Override
-                    public void Result(Double d) {
-
-                    }
-                });
+//                edPurchasePrice.textMoneyEvent(new CallbackDouble() {
+//                    @Override
+//                    public void Result(Double d) {
+//
+//                    }
+//                });
 
 
                 edGroup.setText(new JSONObject(product.getString("productGroup")).getString("name"));
@@ -161,19 +161,21 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
             }else {
                 product = new Product(new JSONObject());
                 product.put("id",0);
-                edUnitPrice.textMoneyEvent(new CallbackDouble() {
-                    @Override
-                    public void Result(Double d) {
 
-                    }
-                });
-                edPurchasePrice.textMoneyEvent(new CallbackDouble() {
-                    @Override
-                    public void Result(Double d) {
-
-                    }
-                });
             }
+
+            edUnitPrice.textMoneyEvent(new CallbackDouble() {
+                @Override
+                public void Result(Double d) {
+
+                }
+            });
+            edPurchasePrice.textMoneyEvent(new CallbackDouble() {
+                @Override
+                public void Result(Double d) {
+
+                }
+            });
 
         } catch (JSONException e) {
             e.printStackTrace();

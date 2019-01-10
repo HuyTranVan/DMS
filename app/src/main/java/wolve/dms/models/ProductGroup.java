@@ -20,7 +20,7 @@ public class ProductGroup extends BaseModel{
     static List<ProductGroup> mListProductGroups = null;
 
     public ProductGroup() {
-        jsonObject = null;
+        jsonObject = new JSONObject();
     }
 
     public ProductGroup(JSONObject objOrder) {

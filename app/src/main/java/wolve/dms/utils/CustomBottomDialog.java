@@ -48,7 +48,7 @@ public class CustomBottomDialog {
         void onResponse(String content);
     }
 
-    public static void choiceTwoOption(String icon1, String text1, String icon2, String text2, final TwoMethodListener mListener){
+    public static DialogPlus choiceTwoOption(String icon1, String text1, String icon2, String text2, final TwoMethodListener mListener){
         final DialogPlus dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
                 .setContentHolder(new ViewHolder(R.layout.view_choice_2method))
                 .setGravity(Gravity.BOTTOM)
@@ -109,6 +109,8 @@ public class CustomBottomDialog {
         });
 
         dialog.show();
+
+        return dialog;
     }
 
     public static void choiceThreeOption(String icon1, String text1, String icon2, String text2,String icon3, String text3, final ThreeMethodListener mListener){

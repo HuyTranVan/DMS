@@ -239,7 +239,7 @@ public class StatisticalCustomerActivity extends BaseActivity implements  View.O
     }
 
     private void postListbill(){
-        SheetConnect.getALlValue(new GoogleSheetGet.CallbackListList() {
+        SheetConnect.getALlValue(Api_link.STATISTICAL_SHEET_KEY, String.format(Api_link.STATISTICAL_SHEET_TAB1,3),  new GoogleSheetGet.CallbackListList() {
             @Override
             public void onRespone(List<List<Object>> results) {
                 listSheetID = new ArrayList<>();
@@ -249,9 +249,14 @@ public class StatisticalCustomerActivity extends BaseActivity implements  View.O
                     }
                 }
 
-                String range = String.format(Api_link.GOOGLESHEET_CUSTOM_TAB, listSheetID.size()+3);
+                String range = String.format(Api_link.STATISTICAL_SHEET_TAB1, listSheetID.size()+3);
 
-                SheetConnect.postValue(range, getListValueExportToSheet(listBill), true);
+                SheetConnect.postValue(Api_link.STATISTICAL_SHEET_KEY, range, getListValueExportToSheet(listBill), new GoogleSheetGet.CallbackListList() {
+                    @Override
+                    public void onRespone(List<List<Object>> results) {
+
+                    }
+                },true);
 
             }
         }, false);

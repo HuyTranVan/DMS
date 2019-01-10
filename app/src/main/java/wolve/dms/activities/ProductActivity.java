@@ -3,12 +3,9 @@ package wolve.dms.activities;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -26,7 +23,7 @@ import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.ProductAdapter;
 import wolve.dms.adapter.ProductGroupAdapter;
-import wolve.dms.adapter.ProductViewpagerAdapter;
+import wolve.dms.adapter.ViewpagerProductAdapter;
 import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackDeleteAdapter;
@@ -35,7 +32,6 @@ import wolve.dms.libraries.MySwipeRefreshLayout;
 import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.Transaction;
 
 /**
  * Created by macos on 9/16/17.
@@ -52,7 +48,7 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
     private ProductAdapter productAdapter;
     public ArrayList<ProductGroup> listProductGroup ;
     private ArrayList<Product> listProduct ;
-    private ProductViewpagerAdapter viewpagerAdapter;
+    private ViewpagerProductAdapter viewpagerAdapter;
     public int currentPosition =0;
 
     @Override
@@ -184,7 +180,7 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
             listadapter.add(productAdapters);
         }
 
-        viewpagerAdapter = new ProductViewpagerAdapter(listadapter, listproductgroup);
+        viewpagerAdapter = new ViewpagerProductAdapter(listadapter, listproductgroup);
         viewPager.setAdapter(viewpagerAdapter);
         viewPager.setCurrentItem(currentPosition);
         viewPager.setOffscreenPageLimit(4);

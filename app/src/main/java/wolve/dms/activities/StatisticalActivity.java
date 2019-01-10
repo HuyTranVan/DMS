@@ -19,7 +19,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Objects;
 
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
@@ -29,7 +28,6 @@ import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.apiconnect.SheetConnect;
 import wolve.dms.callback.CallbackJSONArray;
 
-import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.customviews.CustomTabLayout;
 import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialog;
@@ -51,7 +49,7 @@ import wolve.dms.utils.Util;
 
 public class StatisticalActivity extends BaseActivity implements  View.OnClickListener {
     private ImageView btnBack;
-    private TextView tvTitle, tvEmployeeName;
+    protected TextView tvTitle, tvEmployeeName;
     private ViewPager viewPager;
     private CustomTabLayout tabLayout;
     private RadioGroup rdGroup;
@@ -74,11 +72,10 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
             R.string.icon_district};
     private final String MONTH_DEFAULT ="Chọn tháng";
     private final String DATE_DEFAULT ="Chọn ngày";
-//    private String currentDate;
     private int mDate = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
     private int mMonth = Calendar.getInstance().get(Calendar.MONTH);
     private int mYear = Calendar.getInstance().get(Calendar.YEAR);
-    private final String ALL_FILTER ="TẤT CẢ";
+
 
     @Override
     public int getResourceLayout() {
@@ -111,7 +108,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         rdMonth.setText(Util.CurrentMonthYear());
         rdDate.setText(DATE_DEFAULT);
         rlBottom.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN) ? View.VISIBLE :View.GONE);
-        tvEmployeeName.setText(User.getRole().equals(Constants.ROLE_ADMIN)? ALL_FILTER : User.getFullName());
+        tvEmployeeName.setText(User.getRole().equals(Constants.ROLE_ADMIN)? Constants.ALL_FILTER : User.getFullName());
 
         loadInitialBills(getStartDay(), getEndDay());
 
@@ -133,9 +130,10 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     public void setupViewPager(ViewPager viewPager) {
         pageAdapter = new StatisticalViewpagerAdapter(getSupportFragmentManager());
         pageAdapter.addFragment(Fragment.instantiate(this, StatisticalDashboardFragment.class.getName()),  getResources().getString(icons[0]), "Dashboard");
+        pageAdapter.addFragment(Fragment.instantiate(this, StatisticalCashFragment.class.getName()),  getResources().getString(icons[3]), "Tiền thu");
         pageAdapter.addFragment(Fragment.instantiate(this, StatisticalBillsFragment.class.getName()),  getResources().getString(icons[1]),"Hóa đơn");
         pageAdapter.addFragment(Fragment.instantiate(this, StatisticalProductFragment.class.getName()),  getResources().getString(icons[2]), "Sản Phẩm");
-        pageAdapter.addFragment(Fragment.instantiate(this, StatisticalCashFragment.class.getName()),  getResources().getString(icons[3]), "Tiền mặt");
+
         viewPager.setAdapter(pageAdapter);
         viewPager.setOffscreenPageLimit(4);
 
@@ -180,7 +178,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
             case R.id.statistical_filter_by_employee:
                 if (listUser.size()>1){
                     List<String> users = new ArrayList<>();
-                    users.add(0,ALL_FILTER);
+                    users.add(0, Constants.ALL_FILTER);
                     for (int i=0; i< listUser.size(); i++){
                         users.add(listUser.get(i).getString("displayName"));
                     }
@@ -240,7 +238,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     }
 
     private void postListbill(){
-        SheetConnect.getALlValue(new GoogleSheetGet.CallbackListList() {
+        SheetConnect.getALlValue(Api_link.STATISTICAL_SHEET_KEY, String.format(Api_link.STATISTICAL_SHEET_TAB1,3), new GoogleSheetGet.CallbackListList() {
             @Override
             public void onRespone(List<List<Object>> results) {
                 listSheetID = new ArrayList<>();
@@ -250,9 +248,14 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                     }
                 }
 
-                String range = String.format(Api_link.GOOGLESHEET_CUSTOM_TAB, listSheetID.size()+3);
+                String range = String.format(Api_link.STATISTICAL_SHEET_TAB1, listSheetID.size()+3);
 
-                SheetConnect.postValue(range, getListValueExportToSheet(listBill), true);
+                SheetConnect.postValue(Api_link.STATISTICAL_SHEET_KEY, range, getListValueExportToSheet(listBill), new GoogleSheetGet.CallbackListList() {
+                    @Override
+                    public void onRespone(List<List<Object>> results) {
+
+                    }
+                },true);
 
             }
         }, false);
@@ -275,9 +278,9 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
                         if (bill.getJsonObject("distributor").getInt("id") == Distributor.getId()){
 
-                            if (!checkDuplicate(listUser, "id" ,user))
+                            if (!checkDuplicate(listUser, "id" ,user)){
                                 listUser.add(user);
-
+                            }
                             listInitialBill.add(bill);
 
                         }
@@ -337,7 +340,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
     private void loadBill(List<Bill> initialBills, String userName){
         listBill = new ArrayList<>();
-        if (userName.equals(ALL_FILTER)){
+        if (userName.equals(Constants.ALL_FILTER)){
             listBill = initialBills;
 
         }else {
@@ -530,7 +533,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                                     listUser.add(user);
                                 }
 
-                                if (userName.equals(ALL_FILTER)){
+                                if (userName.equals(Constants.ALL_FILTER)){
                                     listCheckins.add(checkin);
 
                                 }else {
@@ -584,7 +587,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                                     listUser.add(user);
                                 }
 
-                                if (userName.equals(ALL_FILTER)){
+                                if (userName.equals(Constants.ALL_FILTER)){
                                     listPayments.add(newCash);
 
                                 }else {

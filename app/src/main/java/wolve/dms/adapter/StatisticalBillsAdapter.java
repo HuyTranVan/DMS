@@ -70,7 +70,7 @@ public class StatisticalBillsAdapter extends RecyclerView.Adapter<StatisticalBil
             holder.tvTotal.setText("Tổng: "+ Util.FormatMoney(mData.get(position).getDouble("total")));
             holder.tvPay.setText("Trả: "+ Util.FormatMoney(mData.get(position).getDouble("paid")));
             holder.tvDebt.setText("Nợ: "+ Util.FormatMoney(mData.get(position).getDouble("debt")));
-            holder.tvNumber.setText(String.valueOf(position +1));
+            holder.tvNumber.setText(String.valueOf(mData.size() -position));
             holder.tvsignBoard.setText(Constants.getShopInfo(customer.getString("shopType") , null) + " " + customer.getString("signBoard"));
             holder.tvDistrict.setText(customer.getString("street") + " - " + customer.getString("district"));
             String user = String.format("Nhân viên: %s",mData.get(position).getJsonObject("user").getString("displayName"));

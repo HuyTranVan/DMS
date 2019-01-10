@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -20,11 +23,16 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.StatisticalBillsAdapter;
+import wolve.dms.adapter.StatisticalDebtAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackString;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
+import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -41,6 +49,8 @@ public class StatisticalBillsFragment extends Fragment implements View.OnClickLi
     private StatisticalBillsAdapter adapter;
 
     private StatisticalActivity mActivity;
+    private List<BaseModel> listDebt = new ArrayList<>();
+//    private Double totalDebt = 0.0;
 
 
     @Nullable
@@ -63,6 +73,7 @@ public class StatisticalBillsFragment extends Fragment implements View.OnClickLi
 
     private void addEvent() {
         rdGroup.setOnCheckedChangeListener(this);
+        tvCount.setOnClickListener(this);
     }
 
     private void initializeView() {
@@ -77,7 +88,13 @@ public class StatisticalBillsFragment extends Fragment implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.statistical_bills_count:
+                showAllDebt(mActivity.tvEmployeeName.getText().toString());
+                break;
 
+
+        }
     }
 
     public void reloadData(List<Bill> list){
@@ -97,7 +114,7 @@ public class StatisticalBillsFragment extends Fragment implements View.OnClickLi
                 listDebt.add(list.get(i));
             }
         }
-        tvCount.setText(String.format("HĐ: %s",rdTotal.isChecked()? list.size() : listDebt.size()));
+//        tvCount.setText(String.format("HĐ: %s",rdTotal.isChecked()? list.size() : listDebt.size()));
         rdTotal.setText(String.format("Tổng: %s", Util.FormatMoney(total)));
         rdDebt.setText(String.format("Nợ: %s", Util.FormatMoney(debt)));
 
@@ -133,5 +150,42 @@ public class StatisticalBillsFragment extends Fragment implements View.OnClickLi
                 CreateRVBill(mActivity.listBill);
                 break;
         }
+    }
+
+    private void showAllDebt(final String userName){
+        if (listDebt.size()==0){
+            CustomerConnect.ListBill("", new CallbackJSONArray() {
+                @Override
+                public void onResponse(JSONArray result) {
+                    for (int i=0; i<result.length(); i++){
+                        try {
+                            JSONObject object = result.getJSONObject(i);
+                            if (object.getDouble("debt") > 0 ){
+                                listDebt.add(new BaseModel(object));
+
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                    CustomCenterDialog.showDialogAllDebt(userName, listDebt);
+
+                }
+
+                @Override
+                public void onError(String error) {
+                }
+            }, true);
+
+        }else {
+            CustomCenterDialog.showDialogAllDebt(userName, listDebt);
+        }
+
+
+
+
+
     }
 }

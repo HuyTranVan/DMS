@@ -56,8 +56,8 @@ public class Distributor extends BaseModel{
         Distributor currentDistributor = CustomSQL.getObject(Constants.DISTRIBUTOR, Distributor.class);
 
         if (currentDistributor != null) {
-//            location = currentDistributor.getInt("location");
-            location = 79;
+            location = currentDistributor.getInt("location");
+//            location = 79;
         }
         return location;
 

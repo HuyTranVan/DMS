@@ -3,7 +3,6 @@ package wolve.dms.activities;
 import android.app.Dialog;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.NestedScrollView;
@@ -11,10 +10,8 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.zxing.WriterException;
@@ -41,7 +38,6 @@ import wolve.dms.callback.CallbackList;
 import wolve.dms.callback.CallbackProcess;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.libraries.printerdriver.BluetoothPrintBitmap;
-import wolve.dms.models.Bill;
 import wolve.dms.models.Customer;
 import wolve.dms.models.User;
 import wolve.dms.utils.BitmapView;
@@ -63,11 +59,12 @@ import static wolve.dms.utils.Transaction.gotoImageChooser;
 public class PrintBillActivity extends BaseActivity implements View.OnClickListener, BluetoothListFragment.OnDataPass  {
     private ImageView imgLogo, btnBack, imgOrderPhone;
     private TextView tvCompany, tvAdress, tvHotline, tvWebsite, tvTitle, tvShopName, tvCustomerName, tvCustomerAddress, tvDate, tvEmployee,
-            tvSum, tvOrderPhone, tvThanks, tvPrintSize, tvPrinterMainText, tvPrinterName, tvTotal, tvPaid, tvRemain;
+            tvSumCurrentBill, tvOrderPhone, tvThanks, tvPrintSize, tvPrinterMainText, tvPrinterName, tvTotal, tvPaid, tvRemain, tvTotalTitle,
+            tvEmployeeSign;
     private CTextIcon tvListPrinter;
     private RecyclerView rvBills, rvDebts;
-    private LinearLayout lnMain, lnBottom, lnSubmit;
-    private View line1, line2, line3;
+    private LinearLayout lnMain, lnBottom, lnSubmit, lnTotalGroup, lnPaidGroup, lnRemainGroup, lnSignature;
+    private View line1, line2, line3, line4;
     private NestedScrollView scContentParent;
 
     private Customer currentCustomer;
@@ -111,7 +108,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         tvCustomerAddress = findViewById(R.id.print_bill_customeraddress);
         tvDate = findViewById(R.id.print_bill_date);
         tvEmployee = findViewById(R.id.print_bill_employee);
-        tvSum = findViewById(R.id.print_bill_sum);
+        tvSumCurrentBill = findViewById(R.id.print_bill_sum);
         tvTotal = findViewById(R.id.print_bill_total);
         tvPaid = findViewById(R.id.print_bill_paid);
         tvRemain = findViewById(R.id.print_bill_remain);
@@ -123,13 +120,21 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         tvPrinterName = findViewById(R.id.print_bill_bottom_secondtext);
         tvPrintSize = findViewById(R.id.print_bill_bottom_printersize);
         tvListPrinter = findViewById(R.id.print_bill_bottom_printerselect);
+        tvEmployeeSign = findViewById(R.id.print_bill_employee_sign);
         lnBottom = findViewById(R.id.print_bill_bottom);
         rvDebts = findViewById(R.id.print_bill_rvdebt);
         lnSubmit = findViewById(R.id.print_bill_submit);
         line1 = findViewById(R.id.print_bill_line1);
         line2 = findViewById(R.id.print_bill_line2);
         line3 = findViewById(R.id.print_bill_line3);
+        line4 = findViewById(R.id.print_bill_line4);
         scContentParent = findViewById(R.id.print_bill_content_parent);
+        tvTotalTitle = findViewById(R.id.print_bill_total_title);
+        lnTotalGroup = findViewById(R.id.print_bill_total_group);
+        lnPaidGroup = findViewById(R.id.print_bill_paid_group);
+        lnRemainGroup = findViewById(R.id.print_bill_remain_group);
+        lnSignature = findViewById(R.id.print_bill_signature_group);
+
 
     }
 
@@ -143,26 +148,34 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         if (rePrint){
             tvTitle.setText("HÓA ĐƠN (in lại)");
             line1.setVisibility(View.GONE);
+            line2.setVisibility(View.GONE);
             line3.setVisibility(View.GONE);
-            tvSum.setVisibility(View.GONE);
+            tvSumCurrentBill.setVisibility(View.GONE);
             tvPrinterMainText.setText("IN LẠI HÓA ĐƠN");
             createOldRVBill(listBills);
+            tvTotalTitle.setText("Tổng nợ:");
+            tvTotal.setText(Util.FormatMoney(adapterOldBill.getDebtMoney()));
+            lnPaidGroup.setVisibility(View.GONE);
+            lnRemainGroup.setVisibility(View.GONE);
 
-            String debtMoney = "Tong no:    " +"<b>" + Util.FormatMoney(adapterOldBill.getDebtMoney() ) + "</b> ";
-            tvTotal.setText(Html.fromHtml(debtMoney));
 
         }else {
             tvTitle.setText("HÓA ĐƠN");
             line1.setVisibility(View.VISIBLE);
+            line2.setVisibility(View.VISIBLE);
             line3.setVisibility(View.VISIBLE);
-            tvSum.setVisibility(View.VISIBLE);
+            tvSumCurrentBill.setVisibility(View.VISIBLE);
             tvPrinterMainText.setText("IN HÓA ĐƠN & LƯU");
             createCurrentRVBill(listBills);
             createRVDebt(listDebts);
 
-            tvSum.setText(Util.FormatMoney(adapterBill.getTotalMoney()));
+
+            tvSumCurrentBill.setText(Util.FormatMoney(adapterBill.getTotalMoney()));
             String totalMoney = Util.FormatMoney(adapterBill.getTotalMoney() + adapterDebt.getTotalMoney());
+            tvTotalTitle.setText("Tổng:");
             tvTotal.setText(totalMoney);
+            lnPaidGroup.setVisibility(View.VISIBLE);
+            lnRemainGroup.setVisibility(View.VISIBLE);
             tvPaid.setText("0");
             tvRemain.setText(totalMoney);
 
@@ -173,7 +186,8 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         tvAdress.setText(Constants.COMPANY_ADDRESS);
         tvHotline.setText(Constants.COMPANY_HOTLINE);
         tvWebsite.setText(Constants.COMPANY_WEBSITE);
-        tvOrderPhone.setText(Constants.COMPANY_ORDERPHONE);
+
+        tvOrderPhone.setText(String.format("Đặt hàng: %s", Util.PhoneFormat(User.getPhone())));
         tvThanks.setText(Constants.COMPANY_THANKS);
         tvShopName.setText(String.format(": %s %s",Constants.getShopInfo(currentCustomer.getString("shopType"), null).toUpperCase() , currentCustomer.getString("signBoard").toUpperCase()));
 
@@ -443,10 +457,20 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         Util.getInstance().showLoading("Đang in...");
         final Double total  = adapterBill.getTotalMoney() + adapterDebt.getTotalMoney();
         Double paid = getPaid(listPayments);
+        Double remain = total -paid;
         int printSize = tvPrintSize.getText().toString().equals(Constants.PRINTER_80)? Constants.PRINTER_80_WIDTH: Constants.PRINTER_57_WIDTH;
 
         tvPaid.setText(Util.FormatMoney(paid));
-        tvRemain.setText(Util.FormatMoney(total -paid));
+        tvRemain.setText(Util.FormatMoney(remain));
+
+        if (remain >0){
+            line4.setVisibility(View.GONE);
+            lnSignature.setVisibility(View.VISIBLE);
+            tvEmployeeSign.setText(String.format("NV: %s", User.getFullName()));
+        }else {
+            line4.setVisibility(View.VISIBLE);
+            lnSignature.setVisibility(View.GONE);
+        }
 
         new BluetoothPrintBitmap(outputStream,
                 BitmapView.ResizeBitMapDependWidth(BitmapView.getBitmapFromView(scContentParent), printSize),
@@ -525,7 +549,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void doPrintOldBill(){
-        if (isPrinterConnected()){
+//        if (isPrinterConnected()){
             Util.getInstance().showLoading("Đang in...");
             //final Double total  = adapterBill.getTotalMoney() + adapterDebt.getTotalMoney();
 
@@ -604,15 +628,15 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 //                }
 //            }); thread.start();
 
-        }else {
-            CustomCenterDialog.alertWithCancelButton(null, "Chưa kết nối máy in. Vui lòng thực hiện kết nối lại với máy in", "Đồng ý","hủy", new CallbackBoolean() {
-                @Override
-                public void onRespone(Boolean bool) {
-
-
-                }
-            });
-        }
+//        }else {
+//            CustomCenterDialog.alertWithCancelButton(null, "Chưa kết nối máy in. Vui lòng thực hiện kết nối lại với máy in", "Đồng ý","hủy", new CallbackBoolean() {
+//                @Override
+//                public void onRespone(Boolean bool) {
+//
+//
+//                }
+//            });
+//        }
 
 
 
@@ -684,6 +708,8 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         return paid;
     }
 
-
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 }

@@ -310,7 +310,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             }
         });
         mMap.setInfoWindowAdapter(adapterInfoMarker);
-
+//        LocationC
 
         checkGPS();
 

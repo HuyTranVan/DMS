@@ -31,6 +31,7 @@ import wolve.dms.models.Distributor;
 import wolve.dms.models.District;
 import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
+import wolve.dms.models.Province;
 import wolve.dms.models.Status;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
@@ -139,7 +140,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 break;
 
             case 1:
-                choiceStatisticalItem();
+                Transaction.gotoStatisticalActivity();
 
                 break;
 
@@ -151,7 +152,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 break;
 
             case 3:
-                Util.showToast("Chưa hỗ trợ");
+                if (User.getRole().equals(Constants.ROLE_ADMIN)){
+                    Transaction.gotoScannerActivity();
+                }else {
+                    Util.showToast("Chưa hỗ trợ");
+                }
+
                 break;
 
             case 4:
@@ -174,6 +180,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                     District.saveDistrictList(new JSONArray(result.get(1).toString()));
                     ProductGroup.saveProductGroupList(new JSONArray(result.get(2).toString()));
                     Product.saveProductList(new JSONArray(result.get(3).toString()));
+                    Province.saveProvinceList(new JSONArray(result.get(4).toString()));
 
                 } catch (JSONException e) {
                     e.printStackTrace();

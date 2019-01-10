@@ -2,12 +2,11 @@ package wolve.dms.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -15,17 +14,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.models.Bill;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.BillDetail;
-import wolve.dms.models.Customer;
 import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
-import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
 
 /**
@@ -33,16 +28,25 @@ import wolve.dms.utils.Util;
  */
 
 public class StatisticalProductGroupAdapter extends RecyclerView.Adapter<StatisticalProductGroupAdapter.StatisticalProductGroupViewHolder> {
-    List<BillDetail> mListDetail = new ArrayList<>();
+    //List<BillDetail> mListDetail = new ArrayList<>();
     private List<ProductGroup> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
 
-    public StatisticalProductGroupAdapter(List<BillDetail> data) {
+    public StatisticalProductGroupAdapter(List<BaseModel> data) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
-        this.mData = ProductGroup.getProductGroupList();
-        this.mListDetail = data;
+        //this.mListDetail = data;
         this.mContext = Util.getInstance().getCurrentActivity();
+
+        List<ProductGroup> listGroup = ProductGroup.getProductGroupList();
+
+        for (int i=0; i<listGroup.size(); i++){
+            ProductGroup group = createGroupFromBill(listGroup.get(i), data);
+            if (group.getInt("count") >0){
+                mData.add(group);
+            }
+        }
+
 
     }
 
@@ -54,16 +58,15 @@ public class StatisticalProductGroupAdapter extends RecyclerView.Adapter<Statist
 
     @Override
     public void onBindViewHolder(final StatisticalProductGroupViewHolder holder, final int position) {
-            List<Product> mProduct = new ArrayList<>();
-            holder.tvGroupName.setText(mData.get(position).getString("name"));
-            mProduct = sumProductByGroup(mData.get(position).getInt("id"));
 
-            holder.tvGroupSum.setText(sumProductQuantity(mProduct));
+        holder.tvGroupName.setText(mData.get(position).getString("name"));
+            //mProduct = filterProductByGroup(mData.get(position).getInt("id"));
 
-            holder.lnParent.setVisibility(mProduct.size()>0? View.VISIBLE :View.GONE);
+        holder.tvGroupSum.setText(mData.get(position).getString("count"));
 
-            StatisticalProductAdapter adapter = new StatisticalProductAdapter(mProduct);
-            Util.createLinearRV(holder.rvGroup, adapter);
+        List<Product> mProduct = new ArrayList<>();
+        StatisticalProductAdapter adapter = new StatisticalProductAdapter(mData.get(position).getJSONArray("products"));
+        Util.createLinearRV(holder.rvGroup, adapter);
 
     }
 
@@ -88,45 +91,57 @@ public class StatisticalProductGroupAdapter extends RecyclerView.Adapter<Statist
 
     }
 
-    private List<Product> sumProductByGroup(int groupId){
-        List<Product> productList = new ArrayList<>();
+    private ProductGroup createGroupFromBill(ProductGroup group, List<BaseModel> detailList){
+        List<Product> products = Product.getProductList();
+        ProductGroup groupResult = group;
 
-        for(int i=0; i< Product.getProductList().size(); i++){
-            try {
-                int groupid = new JSONObject(Product.getProductList().get(i).getString("productGroup")).getInt("id");
+        JSONArray productLists = new JSONArray();
+
+        try {
+            for(int i=0; i< products.size(); i++){
+                int groupid = new JSONObject(products.get(i).getString("productGroup")).getInt("id");
+
                 int sumQuantity =0;
-                if (groupId == groupid){
-                    for (int j=0; j<mListDetail.size(); j++){
-                        if (mListDetail.get(j).getInt("productId") == Product.getProductList().get(i).getInt("id")){
-                            sumQuantity += mListDetail.get(j).getInt("quantity");
+                if (group.getInt("id") == groupid){
+                    for (int j=0; j<detailList.size(); j++){
+                        if (detailList.get(j).getString("productId").equals(products.get(i).getString("id"))){
+                            sumQuantity += detailList.get(j).getInt("quantity");
                         }
                     }
 
                 }
 
-                if (sumQuantity !=0){
-                    Product product = new Product(new JSONObject());
-                    product.put("name", Product.getProductList().get(i).getString("name"));
+                if (sumQuantity >0){
+                    Product product = new Product();
+                    product.put("name", products.get(i).getString("name"));
                     product.put("sumquantity", sumQuantity);
 
-                    productList.add(product);
+                    productLists.put(product.ProductJSONObject());
                 }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
+
+            groupResult.put("count",sumProductQuantity(productLists) );
+            groupResult.put("products", productLists);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
-        return productList;
+        return groupResult;
     }
 
-    private String sumProductQuantity(List<Product> list){
+    private int sumProductQuantity(JSONArray array){
         int sum = 0;
-        if (list.size()>0)
-            for (int i=0; i<list.size(); i++){
-                sum+= list.get(i).getInt("sumquantity");
+        try{
+            for (int i=0; i<array.length(); i++){
+                JSONObject object = array.getJSONObject(i);
+                sum+= object.getInt("sumquantity");
             }
-        return String.valueOf(sum);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return sum;
     }
 
 

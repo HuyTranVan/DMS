@@ -18,6 +18,7 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.StatisticalProductGroupAdapter;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
 import wolve.dms.models.BillDetail;
 import wolve.dms.utils.Util;
@@ -30,7 +31,6 @@ public class StatisticalProductFragment extends Fragment implements View.OnClick
     private View view;
     private RecyclerView rvProductGroup;
     private StatisticalProductGroupAdapter adapter;
-
 
     @Nullable
     @Override
@@ -68,7 +68,7 @@ public class StatisticalProductFragment extends Fragment implements View.OnClick
     }
 
     public void reloadData(List<Bill> list){
-        List<BillDetail> detailList = new ArrayList<>();
+        List<BaseModel> detailList = new ArrayList<>();
         try {
             for (int i=0; i<list.size(); i++){
                 JSONArray array = list.get(i).getJSONArray("billDetails");
@@ -83,7 +83,7 @@ public class StatisticalProductFragment extends Fragment implements View.OnClick
         createRVProductGroup(detailList);
     }
 
-    private void createRVProductGroup(List<BillDetail> list) {
+    private void createRVProductGroup(List<BaseModel> list) {
         adapter = new StatisticalProductGroupAdapter(list);
         Util.createLinearRV(rvProductGroup, adapter);
 

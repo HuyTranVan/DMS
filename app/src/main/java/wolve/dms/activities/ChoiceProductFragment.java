@@ -1,70 +1,27 @@
 package wolve.dms.activities;
 
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.FileProvider;
-import android.support.v4.content.PermissionChecker;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
-import com.cloudinary.android.MediaManager;
-import com.cloudinary.android.callback.ErrorInfo;
-import com.cloudinary.android.callback.UploadCallback;
-import com.soundcloud.android.crop.Crop;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-import wolve.dms.BuildConfig;
 import wolve.dms.R;
 import wolve.dms.adapter.CartProductDialogAdapter;
-import wolve.dms.adapter.ProductAdapter;
-import wolve.dms.adapter.ProductViewpagerAdapter;
-import wolve.dms.adapter.ShopcartViewpagerAdapter;
-import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.ProductConnect;
-import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackClickAdapter;
-import wolve.dms.callback.CallbackDeleteAdapter;
-import wolve.dms.callback.CallbackJSONObject;
-import wolve.dms.callback.CallbackString;
-import wolve.dms.customviews.CInputForm;
+import wolve.dms.adapter.ViewpagerShopcartAdapter;
 import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
-import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomBottomDialog;
-import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
-
-import static android.app.Activity.RESULT_OK;
-import static wolve.dms.utils.Constants.REQUEST_CHOOSE_IMAGE;
-import static wolve.dms.utils.Constants.REQUEST_IMAGE_CAPTURE;
 
 /**
  * Created by macos on 9/16/17.
@@ -83,7 +40,7 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
     private List<Product> listProducts = new ArrayList<>();
     private CartProductDialogAdapter adapter;
     private ProductGroup productGroup;
-    private ShopcartViewpagerAdapter viewpagerAdapter;
+    private ViewpagerShopcartAdapter viewpagerAdapter;
     private int currentPosition =0;
     private List<CartProductDialogAdapter> listadapter;
 
@@ -170,7 +127,7 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
 
         }
 
-        viewpagerAdapter = new ShopcartViewpagerAdapter(listadapter, mActivity.listProductGroups);
+        viewpagerAdapter = new ViewpagerShopcartAdapter(listadapter, mActivity.listProductGroups);
         viewPager.setAdapter(viewpagerAdapter);
         viewPager.setCurrentItem(currentPosition);
         viewPager.setOffscreenPageLimit(3);

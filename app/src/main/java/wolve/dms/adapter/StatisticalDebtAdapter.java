@@ -12,6 +12,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import wolve.dms.R;
@@ -30,13 +31,25 @@ public class StatisticalDebtAdapter extends RecyclerView.Adapter<StatisticalDebt
     private Context mContext;
     private CallbackString mListener;
 
-    public StatisticalDebtAdapter(List<BaseModel> data, CallbackString listener) {
+    public StatisticalDebtAdapter(List<BaseModel> data,  CallbackString listener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mData = data;
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mListener = listener;
+//        Collections.reverse(mData);
+
+        Collections.sort(mData, new Comparator<BaseModel>(){
+            public int compare(BaseModel obj1, BaseModel obj2) {
+                return obj1.getDouble("debt").compareTo(obj2.getDouble("debt"));
+            }
+        });
         Collections.reverse(mData);
 
+    }
+
+    public void sortUp(){
+        Collections.reverse(mData);
+        notifyDataSetChanged();
     }
 
     @Override
@@ -57,19 +70,26 @@ public class StatisticalDebtAdapter extends RecyclerView.Adapter<StatisticalDebt
             String user = String.format("Nhân viên: %s",mData.get(position).getJsonObject("user").getString("displayName"));
             holder.tvUser.setText(user);
 
-            String time = Util.DateHourString(mData.get(position).getLong("createAt"));
-            holder.tvTime.setText(time);
+//            String time = Util.DateHourString(mData.get(position).getLong("createAt"));
+//            holder.tvTime.setText(time);
 
-            //holder.tvPaid.setText(Util.FormatMoney(mData.get(position).getDouble("paid")));
+            holder.tvDebt.setText(Util.FormatMoney(mData.get(position).getDouble("debt")));
 
             holder.vLine.setVisibility(position == mData.size()-1? View.GONE:View.VISIBLE);
 
             holder.tvNumber.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
+                public void onClick(View v) {
                     mListener.Result(customer.getString("id"));
                 }
             });
+
+//            holder.tvNumber.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    mListener.Result(customer.getString("id"));
+//                }
+//            });
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -93,7 +113,7 @@ public class StatisticalDebtAdapter extends RecyclerView.Adapter<StatisticalDebt
             tvsignBoard = itemView.findViewById(R.id.statistical_debt_item_signboard);
             tvDistrict = itemView.findViewById(R.id.statistical_debt_item_district);
             tvUser = itemView.findViewById(R.id.statistical_debt_item_user);
-            tvTime = itemView.findViewById(R.id.statistical_debt_item_time);
+//            tvTime = itemView.findViewById(R.id.statistical_debt_item_time);
             tvDebt = itemView.findViewById(R.id.statistical_debt_item_debt);
             vLine =itemView.findViewById(R.id.statistical_debt_item_line);
 //            vLineUnder = itemView.findViewById(R.id.statistical_cash_item_under);

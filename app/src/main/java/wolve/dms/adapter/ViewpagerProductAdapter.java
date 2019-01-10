@@ -22,14 +22,14 @@ import wolve.dms.utils.Util;
  * Created by tranhuy on 5/24/17.
  */
 
-public class ShopcartViewpagerAdapter extends PagerAdapter {
+public class ViewpagerProductAdapter extends PagerAdapter {
     private Context mContext;
     private LayoutInflater inflater;
-    private List<CartProductDialogAdapter> listAdapter = new ArrayList<>();
+    private List<RecyclerView.Adapter> listAdapter = new ArrayList<>();
     private  List<String> listTitle = new ArrayList<>();
     private View view;
 
-    public ShopcartViewpagerAdapter(List<CartProductDialogAdapter> listAdapter, List<ProductGroup> productGroups){
+    public ViewpagerProductAdapter(List<RecyclerView.Adapter> listAdapter, List<ProductGroup> productGroups){
         this.mContext = Util.getInstance().getCurrentActivity();
         this.listAdapter = listAdapter;
 

@@ -32,7 +32,7 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_statistical_debt,container,false);
+        view = inflater.inflate(R.layout.view_dialog_all_debt,container,false);
         Util.debtFragment = this;
         initializeView();
 

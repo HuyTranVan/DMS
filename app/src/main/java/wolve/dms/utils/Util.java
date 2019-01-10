@@ -82,6 +82,7 @@ import wolve.dms.activities.StatisticalProductFragment;
 import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.libraries.ItemDecorationGridSpace;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
 import wolve.dms.models.Product;
 import wolve.dms.models.Province;
@@ -889,7 +890,7 @@ public class Util {
         return money;
     }
 
-    public static JSONObject getTotal(List<Bill> list) {
+    public static JSONObject getTotal(List<BaseModel> list) {
         JSONObject object = new JSONObject();
         Double total = 0.0;
         Double paid = 0.0;

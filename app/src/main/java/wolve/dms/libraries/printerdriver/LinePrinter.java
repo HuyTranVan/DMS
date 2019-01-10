@@ -12,7 +12,7 @@ public class LinePrinter {
     private Paint paint = null;
     private Bitmap bm = null;
     private int width;
-    private float length = 0.0F;
+    private double length = 0.0;
     private byte[] bitbuf = null;
 
     public LinePrinter() {

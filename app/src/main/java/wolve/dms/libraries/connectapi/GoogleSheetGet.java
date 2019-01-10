@@ -51,9 +51,9 @@ public class GoogleSheetGet extends AsyncTask<Void, Void, List<List<Object>>> {
         void onRespone(List<List<Object>> results);
     }
 
-    public GoogleSheetGet(CallbackListList callbackListList) {
-        this.spreadsheetId = Api_link.GOOGLESHEET_KEY;
-        this.range = Api_link.GOOGLESHEET_TAB;
+    public GoogleSheetGet(String sheetId,String sheetTab,  CallbackListList callbackListList) {
+        this.spreadsheetId = sheetId;
+        this.range = sheetTab;
         this.HTTP_TRANSPORT = new NetHttpTransport();
         this.mListener = callbackListList;
         this.JSON_FACTORY = JacksonFactory.getDefaultInstance();

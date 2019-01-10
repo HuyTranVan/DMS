@@ -50,7 +50,7 @@ public class PrintBillAdapter extends RecyclerView.Adapter<PrintBillAdapter.Prin
 
             holder.tvQuantity.setText(mData.get(position).getString("quantity"));
 
-            holder.tvPrice.setText(Util.FormatMoney(mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount")));
+            holder.tvPrice.setText(Util.FormatMoney((mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount"))/1000));
 
 //            Double discount = mData.get(position).getDouble("discount");
 //            holder.tvPrice.setText(String.format("%sx(%s%s)",

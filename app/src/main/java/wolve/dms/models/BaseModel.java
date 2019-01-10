@@ -126,4 +126,8 @@ public class BaseModel implements Serializable {
     public String getOrginalJson() {
         return jsonObject.toString();
     }
+
+    public JSONObject convertJsonObject(){
+        return jsonObject;
+    }
 }

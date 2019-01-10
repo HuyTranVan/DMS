@@ -31,6 +31,7 @@ import wolve.dms.models.Bill;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.District;
 import wolve.dms.models.User;
+import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
 
 /**
@@ -157,7 +158,7 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         float debt =Util.getTotalDebt(list).floatValue();
         float income = Util.getTotalMoney(list).floatValue() - debt;
         float profit = 0.0f;
-        if (Distributor.getDistributorId().equals("1")){
+        if (User.getRole().equals(Constants.ROLE_ADMIN)){
             profit =Util.getTotalProfit(list).floatValue();
         }
 

@@ -13,11 +13,15 @@ public class Api_link {
     public final static String BASE_PHOTO_URL = BuildConfig.UPLOAD_URL;
     public final static String MAP_API = "https://maps.googleapis.com/maps/api/";
 
-    public final static String GOOGLESHEET_KEY ="1uooLXWdA6huFaBmRJl6Zs_1H9jOf4-2MVlord2busEU";
-    public final static String GOOGLESHEET_TAB ="Sheet1!A3:z";
-    public final static String GOOGLESHEET_CUSTOM_TAB ="Sheet1!A%d:z";
     public final static String GOOGLESHEET_CREDENTIALS_FILE_PATH = "/credentials.json";
     public final static String GOOGLESHEET_TOKENS_PATH = "tokens";
+    public final static String STATISTICAL_SHEET_KEY ="1uooLXWdA6huFaBmRJl6Zs_1H9jOf4-2MVlord2busEU";
+    public final static String STATISTICAL_SHEET_TAB1 ="Sheet1!A%d:z";
+    public final static String SCANNER_SHEET_KEY ="1sWcFlXG-7UZlrcBDFocIBlk3SxxRxplPsvELP0WWxzQ";
+    public final static String SCANNER_DISTRIBUTOR_TAB ="DISTRIBUTOR!A1:z";
+    public final static String SCANNER_CODE_TAB ="CODE!A%d:z";
+
+
 
     public final static String LOGO_BILL = "http://res.cloudinary.com/lubsolution/image/upload/v1514902531/wolver_logo.jpg";
 

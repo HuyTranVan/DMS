@@ -50,17 +50,21 @@ import wolve.dms.R;
 import wolve.dms.adapter.CustomerCheckinsAdapter;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.apiconnect.SystemConnect;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CInputForm;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.customviews.WorkaroundMapFragment;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
 import wolve.dms.models.Checkin;
 import wolve.dms.models.Customer;
 import wolve.dms.models.Distributor;
+import wolve.dms.models.Province;
 import wolve.dms.models.Status;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
@@ -100,7 +104,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     private BottomSheetBehavior mBottomSheetBehavior;
     protected Customer currentCustomer;
     private List<Checkin> listCheckins = new ArrayList<>();
-    protected List<Bill> listBills = new ArrayList<>();
+    protected List<BaseModel> listBills = new ArrayList<>();
     private Status currentStatus;
     private String firstName = "";
     private FusedLocationProviderClient mFusedLocationClient;
@@ -310,6 +314,9 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         tvCheckinTitle.setOnClickListener(this);
         shopTypeEvent();
         shopNameEvent();
+        setProvinceEvent();
+        setDistrictEvent();
+
     }
 
     private void setCheckinGroup(){
@@ -824,6 +831,78 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 return true;
             }
         });
+    }
+
+    private void setProvinceEvent(){
+        edCity.setDropdown(true, new CInputForm.ClickListener() {
+            @Override
+            public void onClick(View view) {
+                final String curentProvince = edCity.getText().toString();
+
+                CustomBottomDialog.choiceList("CHỌN TỈNH", Province.getListProvince(), new CustomBottomDialog.StringListener() {
+                    @Override
+                    public void onResponse(String content) {
+                        edCity.setText(content);
+                        if (!edCity.getText().toString().equals(curentProvince)){
+                            edDistrict.setText("");
+                        }
+                    }
+                });
+
+            }
+        });
+
+    }
+
+    private void setDistrictEvent(){
+
+        edDistrict.setDropdown(true, new CInputForm.ClickListener() {
+            @Override
+            public void onClick(View view) {
+                SystemConnect.getDistrict(Province.getDistrictId(edCity.getText().toString()), new CallbackJSONArray() {
+                    @Override
+                    public void onResponse(JSONArray result) {
+                        List<String> list = new ArrayList<>();
+                        try {
+                            for (int i=0; i<result.length(); i++){
+                                JSONObject object = result.getJSONObject(i);
+                                if (object.getString("name").matches(Util.DETECT_NUMBER)){
+                                    list.add(String.format("%s %s",object.getString("type"),object.getString("name")));
+                                }else {
+                                    list.add(object.getString("name"));
+                                }
+
+                            }
+                        } catch (JSONException e) {
+                            //e.printStackTrace();
+                        }
+
+                        CustomBottomDialog.choiceList("CHỌN QUẬN/HUYỆN",list , new CustomBottomDialog.StringListener() {
+                            @Override
+                            public void onResponse(String content) {
+                                edDistrict.setText(content);
+                            }
+                        });
+
+
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        Util.showToast("Không thể lấy danh sách quận/ huyện");
+                    }
+                });
+
+
+
+
+
+
+
+
+            }
+        });
+
     }
 
     private void submitEvent(){

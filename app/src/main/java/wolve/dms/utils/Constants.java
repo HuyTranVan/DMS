@@ -16,6 +16,8 @@ public class Constants {
     public final static String STATUS = "status";
     public final static String CUSTOMER = "customer";
     public final static String BILLS = "bills";
+    public final static String BILL = "bill";
+    public final static String PAYMENT = "payment";
     public final static String SHOP_CART_ACTIVITY = "shopcart";
     public final static String PRINT_BILL_ACTIVITY = "printbill";
     public final static String USER = "user";
@@ -32,6 +34,7 @@ public class Constants {
     public static final String CHECKIN_TIME = "check_in_time";
     public static final String RELOAD_DATA = "reload_data";
     public static final String RE_PRINT = "reprint";
+    public static final String BARCODE = "code";
 
     public static final int PRINTER_57_WIDTH = 384;
     public static final int PRINTER_80_WIDTH = 576;
@@ -77,6 +80,7 @@ public class Constants {
     public static final String DISTRICT_LIST = "district_list";
     public static final String PRODUCTGROUP_LIST = "productgroup_list";
     public static final String PRODUCT_LIST = "product_list";
+    public static final String PROVINCE_LIST = "province_list";
 
     public static final String CONNECTING_PRINTER = "Đang kết nối máy in ....";
     public static final String CONNECTED_PRINTER = "Đã kết nối máy in: %s";
@@ -99,6 +103,8 @@ public class Constants {
     public final static String ONFAIL = "on_fail";
     public final static String ONSUCCESS = "on_success";
 
+    public final static String ALL_FILTER ="TẤT CẢ";
+
 
 
     //Home constant
@@ -107,14 +113,14 @@ public class Constants {
                 Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_edit_map),
                 Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_chart),
                 Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_import),
-                Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_notify),
+                Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_barcode),
                 Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_setting),
                 Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_username)};
         String[] texts = new String[]{
                 "Bán hàng",
                 "Thống kê",
                 "Xuất nhập tồn",
-                "Thông báo",
+                "Quét mã",
                 "Cài đặt",
                 "Tài khoản"};
         String[] colors = new String[]{

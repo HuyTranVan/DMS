@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.mukesh.DrawingView;
 import com.savvi.rangedatepicker.CalendarPickerView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,6 +30,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.DoubleUnaryOperator;
 
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -36,11 +38,14 @@ import wolve.dms.R;
 import wolve.dms.adapter.CartCheckinReasonAdapter;
 import wolve.dms.adapter.DebtAdapter;
 import wolve.dms.adapter.ProductReturnAdapter;
+import wolve.dms.adapter.StatisticalCheckinsAdapter;
+import wolve.dms.adapter.StatisticalDebtAdapter;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickProduct;
 import wolve.dms.callback.CallbackDouble;
+import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackList;
 import wolve.dms.callback.CallbackPayBill;
@@ -48,7 +53,9 @@ import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.libraries.DoubleTextWatcher;
 import wolve.dms.models.BaseModel;
+import wolve.dms.models.Bill;
 import wolve.dms.models.Customer;
+import wolve.dms.models.Distributor;
 import wolve.dms.models.Product;
 import wolve.dms.models.Status;
 import wolve.dms.models.User;
@@ -871,6 +878,76 @@ public class CustomCenterDialog {
         });
 
         return dialogResult;
+    }
+
+    public static void showDialogAllDebt(final String userName, List<BaseModel> list){
+        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_all_debt);
+        final Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
+        final RecyclerView rvDebts = (RecyclerView) dialogResult.findViewById(R.id.statistical_debt_rvbill);
+        final TextView tvCount = dialogResult.findViewById(R.id.statistical_debt_count);
+        TextView tvTitle = dialogResult.findViewById(R.id.dialog_all_debt_title);
+        final CTextIcon tvSort = dialogResult.findViewById(R.id.statistical_debt_sort);
+
+        tvTitle.setText(String.format("CÔNG NỢ %s", userName));
+
+        List<BaseModel> listDebt = new ArrayList<>();
+
+        Double debt  = 0.0;
+        for (int i=0; i<list.size(); i++){
+            User user = new User(list.get(i).getJsonObject("user"));
+
+            if (userName.equals(Constants.ALL_FILTER)){
+                listDebt.add(list.get(i));
+                debt += list.get(i).getDouble("debt");
+
+            }else if (userName.equals(user.getString("displayName"))){
+                listDebt.add(list.get(i));
+                debt += list.get(i).getDouble("debt");
+            }
+        }
+        tvCount.setText(String.format("Tổng nợ: %s", Util.FormatMoney(debt)));
+
+        final StatisticalDebtAdapter adapter = new StatisticalDebtAdapter(DataUtil.groupDebtByCustomer(listDebt), new CallbackString() {
+            @Override
+            public void Result(String s) {
+
+                CustomerConnect.GetCustomerDetail(s, new CallbackJSONObject() {
+                    @Override
+                    public void onResponse(JSONObject result) {
+                        Transaction.gotoCustomerActivity(result.toString(), false);
+
+                    }
+
+                    @Override
+                    public void onError(String error) {
+
+                    }
+                }, true);
+            }
+        });
+        Util.createLinearRV(rvDebts, adapter);
+
+        tvSort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (tvSort.getRotation() == 180){
+                    tvSort.setRotation(0);
+
+                }else {
+                    tvSort.setRotation(180);
+                }
+                adapter.sortUp();
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                listDebt = new ArrayList<>();
+                dialogResult.dismiss();
+            }
+        });
+
     }
 
 }

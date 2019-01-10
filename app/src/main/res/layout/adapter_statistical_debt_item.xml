@@ -60,35 +60,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/statistical_debt_item_user"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/statistical_debt_item_user"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:paddingRight="@dimen/_5sdp"
-                    android:text="nhan vien"
-                    android:textColor="@color/black_text_color_hint"
-                    android:textSize="@dimen/_7sdp"
-                    android:textStyle="italic"
-                    android:layout_gravity="center_vertical"/>
-
-                <TextView
-                    android:id="@+id/statistical_debt_item_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/_8sdp"
-                    android:textColor="@color/black_text_color_hint"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentBottom="true"
-                    android:textStyle="italic"
-                    android:layout_marginRight="@dimen/_10sdp"/>
-
-            </LinearLayout>
+                android:gravity="center_vertical"
+                android:paddingRight="@dimen/_5sdp"
+                android:text="nhan vien"
+                android:textColor="@color/black_text_color_hint"
+                android:textSize="@dimen/_7sdp"
+                android:textStyle="italic"
+                android:layout_gravity="center_vertical"
+                android:layout_centerVertical="true"/>
 
 
             <TextView
@@ -100,6 +83,28 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="@dimen/_10sdp"/>
+
+            <!--<LinearLayout-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="vertical">-->
+
+                <!---->
+
+                <!--<TextView-->
+                    <!--android:id="@+id/statistical_debt_item_time"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:textSize="@dimen/_8sdp"-->
+                    <!--android:textColor="@color/black_text_color_hint"-->
+                    <!--android:layout_alignParentRight="true"-->
+                    <!--android:layout_alignParentBottom="true"-->
+                    <!--android:textStyle="italic"-->
+                    <!--android:layout_marginRight="@dimen/_10sdp"/>-->
+
+            <!--</LinearLayout>-->
+
+
 
 
 

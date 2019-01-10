@@ -43,8 +43,8 @@ public class GoogleSheetPost extends AsyncTask<Void, Void, List<List<Object>>> {
         void onRespone(List<List<Object>> results);
     }
 
-    public GoogleSheetPost(String range, List<List<Object>> param, CallbackListList callbackListList) {
-        this.spreadsheetId = Api_link.GOOGLESHEET_KEY;
+    public GoogleSheetPost(String sheetId, String range, List<List<Object>> param, CallbackListList callbackListList) {
+        this.spreadsheetId = sheetId;
         this.range = range;
         this.mParams = param;
         this.HTTP_TRANSPORT = new NetHttpTransport();
@@ -76,7 +76,7 @@ public class GoogleSheetPost extends AsyncTask<Void, Void, List<List<Object>>> {
 
     @Override
     protected List<List<Object>> doInBackground(Void... params) {
-//        String spreadsheetId = Api_link.GOOGLESHEET_KEY;
+//        String spreadsheetId = Api_link.STATISTICAL_SHEET_KEY;
 //        String range = Api_link.GOOGLESHEET_TAB;
         ValueRange valueRange = new ValueRange();
 

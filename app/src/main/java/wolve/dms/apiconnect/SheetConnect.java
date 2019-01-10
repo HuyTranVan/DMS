@@ -8,9 +8,9 @@ import wolve.dms.utils.Util;
 
 public class SheetConnect {
 
-    public static void getALlValue(final GoogleSheetGet.CallbackListList callback, final Boolean stoploading){
+    public static void getALlValue(String sheetId,String sheetTab, final GoogleSheetGet.CallbackListList callback, final Boolean stoploading){
         Util.getInstance().showLoading();
-        new GoogleSheetGet(new GoogleSheetGet.CallbackListList() {
+        new GoogleSheetGet(sheetId,sheetTab, new GoogleSheetGet.CallbackListList() {
             @Override
             public void onRespone(List<List<Object>> results) {
                 callback.onRespone(results);
@@ -19,11 +19,12 @@ public class SheetConnect {
         }).execute();
     }
 
-    public static void postValue(String range, List<List<Object>> params, final Boolean stopLoadung){
+    public static void postValue(String sheetId, String range, List<List<Object>> params, final GoogleSheetGet.CallbackListList callback, final Boolean stopLoadung){
         Util.getInstance().showLoading();
-        new GoogleSheetPost(range, params, new GoogleSheetPost.CallbackListList() {
+        new GoogleSheetPost(sheetId, range, params, new GoogleSheetPost.CallbackListList() {
             @Override
             public void onRespone(List<List<Object>> results) {
+                callback.onRespone(results);
                 Util.getInstance().stopLoading(stopLoadung);
 
             }

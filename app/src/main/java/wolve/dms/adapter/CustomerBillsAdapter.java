@@ -36,7 +36,7 @@ import wolve.dms.utils.Util;
  */
 
 public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdapter.CustomerBillsAdapterViewHolder> {
-    private List<Bill> mData = new ArrayList<>();
+    private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackListObject mListenerList;
@@ -46,14 +46,14 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
         void onResponse(List<BaseModel> listResult, Double total, int id);
     }
 
-    public CustomerBillsAdapter(List<Bill> data, CallbackListObject  listener, CustomBottomDialog.FourMethodListener listener4) {
+    public CustomerBillsAdapter(List<BaseModel> data, CallbackListObject  listener, CustomBottomDialog.FourMethodListener listener4) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mData = data;
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mListenerList = listener;
         this.mListerner = listener4;
-        Collections.sort(mData, new Comparator<Bill>(){
-            public int compare(Bill obj1, Bill obj2) {
+        Collections.sort(mData, new Comparator<BaseModel>(){
+            public int compare(BaseModel obj1, BaseModel obj2) {
                 return obj1.getString("createAt").compareToIgnoreCase(obj2.getString("createAt"));
             }
         });
@@ -185,7 +185,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
 
     }
 
-    public List<Bill> getAllBill(){
+    public List<BaseModel> getAllBill(){
         return mData;
     }
 

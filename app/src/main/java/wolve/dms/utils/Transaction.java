@@ -14,6 +14,7 @@ import wolve.dms.activities.MapsActivity;
 import wolve.dms.activities.PrintBillActivity;
 import wolve.dms.activities.ProductActivity;
 import wolve.dms.activities.ProductGroupActivity;
+import wolve.dms.activities.ScannerActivity;
 import wolve.dms.activities.ShopCartActivity;
 import wolve.dms.activities.StatisticalActivity;
 import wolve.dms.activities.StatisticalCustomerActivity;
@@ -140,6 +141,13 @@ public class Transaction {
     public static void gotoStatisticalActivity() {
         Activity context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(context, StatisticalActivity.class);
+        context.startActivity(intent);
+        context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
+
+    public static void gotoScannerActivity() {
+        Activity context = Util.getInstance().getCurrentActivity();
+        Intent intent = new Intent(context, ScannerActivity.class);
         context.startActivity(intent);
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }

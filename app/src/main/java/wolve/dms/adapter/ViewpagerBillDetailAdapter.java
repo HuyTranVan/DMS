@@ -22,20 +22,18 @@ import wolve.dms.utils.Util;
  * Created by tranhuy on 5/24/17.
  */
 
-public class ProductViewpagerAdapter extends PagerAdapter {
+public class ViewpagerBillDetailAdapter extends PagerAdapter {
     private Context mContext;
     private LayoutInflater inflater;
     private List<RecyclerView.Adapter> listAdapter = new ArrayList<>();
-    private  List<String> listTitle = new ArrayList<>();
+    private List<String> listTitle = new ArrayList<>();
     private View view;
 
-    public ProductViewpagerAdapter( List<RecyclerView.Adapter> listAdapter, List<ProductGroup> productGroups){
+    public ViewpagerBillDetailAdapter(List<RecyclerView.Adapter> listAdapter, List<String> listtitle){
         this.mContext = Util.getInstance().getCurrentActivity();
         this.listAdapter = listAdapter;
+        this.listTitle = listtitle;
 
-        for (int i=0; i<productGroups.size(); i++){
-            listTitle.add(productGroups.get(i).getString("name"));
-        }
     }
 
     @Override
@@ -53,15 +51,15 @@ public class ProductViewpagerAdapter extends PagerAdapter {
         inflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         view = inflater.inflate(R.layout.adapter_customer_viewpager_item,container,false);
         RecyclerView rvList = (RecyclerView) view.findViewById(R.id.customer_viewpager_item_rv);
+        Util.createLinearRV(rvList, listAdapter.get(position));
 
-
-        //setup List
-        listAdapter.get(position).notifyDataSetChanged();
-        rvList.setAdapter(listAdapter.get(position));
-        LinearLayoutManager layoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
-        rvList.setLayoutManager(layoutManager);
-        rvList.addOnItemTouchListener(mScrollTouchListener);
-        //rvList.setNestedScrollingEnabled(true);
+//        setup List
+//        listAdapter.get(position).notifyDataSetChanged();
+//        rvList.setAdapter(listAdapter.get(position));
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
+//        rvList.setLayoutManager(layoutManager);
+//        rvList.addOnItemTouchListener(mScrollTouchListener);
+//        rvList.setNestedScrollingEnabled(true);
 
         container.addView(view);
 
@@ -100,39 +98,5 @@ public class ProductViewpagerAdapter extends PagerAdapter {
 
         }
     };
-
-
-//    public View getTabView(int position) {
-//        View tab = LayoutInflater.from(mContext).inflate(R.layout.view_tabbar, null);
-//        CTextView tabTextTitle = (CTextView) tab.findViewById(R.id.tabTextIcon);
-//        CTextView tabText = (CTextView) tab.findViewById(R.id.tabText);
-//        CTextViewDefault tabNotify = (CTextViewDefault) tab.findViewById(R.id.tabNotify);
-//        //ImageView tabImage = (ImageView) tab.findViewById(R.id.tabImage);
-//        tabTextTitle.setText(mFragmentIcons.get(position));
-//        tabText.setText(mFragmentText.get(position));
-//        tabNotify.setVisibility(View.GONE);
-//
-//        //tabImage.setBackgroundResource(mFragmentIcons.get(position));
-//        if (position == 0) {
-//            tab.setSelected(true);
-//        }
-//        return tab;
-//    }
-//
-//    public View getNotifyBaged(int count){
-//        View tab = LayoutInflater.from(mContext).inflate(R.layout.view_tabbar, null);
-//        CTextView tabTextTitle = (CTextView) tab.findViewById(R.id.tabTextIcon);
-//        CTextView tabText = (CTextView) tab.findViewById(R.id.tabText);
-//        CTextViewDefault tabNotify = (CTextViewDefault) tab.findViewById(R.id.tabNotify);
-//        tabTextTitle.setText(mFragmentIcons.get(2));
-//        tabText.setText(mFragmentText.get(2));
-//        tabNotify.setVisibility(count ==0?View.GONE: View.VISIBLE);
-//        tabNotify.setText(count +"");
-//
-//
-//        return tab;
-//
-//    }
-
 
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
@@ -8,38 +8,58 @@
     android:background="@color/colorLightGrey"
     tools:context=".activities.StatisticalActivity">
 
-
-    <android.support.v7.widget.CardView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_5sdp"
-        android:layout_marginLeft="@dimen/_5sdp"
-        android:layout_marginRight="@dimen/_5sdp">
+        android:orientation="vertical">
 
-        <lecho.lib.hellocharts.view.ColumnChartView
-            android:id="@+id/statistical_dashboard_income"
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_170sdp"
-            android:padding="@dimen/_10sdp"/>
-    </android.support.v7.widget.CardView>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginLeft="@dimen/_5sdp"
+            android:layout_marginRight="@dimen/_5sdp">
+
+            <lecho.lib.hellocharts.view.ColumnChartView
+                android:id="@+id/statistical_dashboard_income"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_170sdp"
+                android:padding="@dimen/_10sdp"/>
+        </android.support.v7.widget.CardView>
 
 
 
-    <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_5sdp"
-        android:layout_marginLeft="@dimen/_5sdp"
-        android:layout_marginRight="@dimen/_5sdp">
-
-        <lecho.lib.hellocharts.view.PieChartView
-            android:id="@+id/statistical_dashboard_district"
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_200sdp"
-            android:padding="@dimen/_10sdp"/>
-    </android.support.v7.widget.CardView>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginLeft="@dimen/_5sdp"
+            android:layout_marginRight="@dimen/_5sdp">
+
+            <lecho.lib.hellocharts.view.PieChartView
+                android:id="@+id/statistical_dashboard_district"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_200sdp"
+                android:padding="@dimen/_10sdp"/>
+        </android.support.v7.widget.CardView>
+
+
+        <!--<android.support.v7.widget.CardView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginTop="@dimen/_5sdp"-->
+            <!--android:layout_marginLeft="@dimen/_5sdp"-->
+            <!--android:layout_marginRight="@dimen/_5sdp">-->
+
+            <!--<lecho.lib.hellocharts.view.ColumnChartView-->
+                <!--android:id="@+id/statistical_dashboard_district1"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="@dimen/_200sdp"-->
+                <!--android:padding="@dimen/_10sdp"/>-->
+        <!--</android.support.v7.widget.CardView>-->
+    </LinearLayout>
 
 
 
 
-</LinearLayout>
+</ScrollView>

@@ -12,17 +12,19 @@
             android:id="@+id/statistical_bills_count"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.2"
-            android:text="tong cong"
+            android:background="?selectableItemBackgroundBorderless"
+            android:layout_weight="0.25"
+            android:text="Tất cả nợ!"
             android:padding="@dimen/_5sdp"
             android:textSize="@dimen/_10sdp"
-            android:textColor="@color/orange_dark"/>
+            android:textColor="@color/colorRedDark"
+            android:textStyle="italic"/>
 
         <RadioGroup
             android:id="@+id/statistical_bills_totalgroup"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.8"
+            android:layout_weight="0.77"
             android:orientation="horizontal">
 
 
@@ -32,12 +34,11 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:text="tong cong"
-                android:padding="@dimen/_5sdp"
+                android:paddingLeft="@dimen/_2sdp"
                 android:textSize="@dimen/_10sdp"
                 android:textColor="@color/colorRed"
                 android:backgroundTint="@color/colorRed"
-                android:buttonTint="@color/colorRed"
-                />
+                android:buttonTint="@color/colorRed"/>
 
             <RadioButton
                 android:id="@+id/statistical_bills_total"
@@ -45,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:text="tong cong"
-                android:padding="@dimen/_5sdp"
+                android:paddingLeft="@dimen/_2sdp"
                 android:textSize="@dimen/_10sdp"
                 android:textColor="@color/colorBlue"
                 android:checked="true"
