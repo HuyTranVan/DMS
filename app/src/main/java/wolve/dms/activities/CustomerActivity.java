@@ -72,6 +72,7 @@ import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.libraries.FitScrollWithFullscreen;
 import wolve.dms.utils.CustomSQL;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -111,7 +112,6 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     private long countTime;
     private int currentStateBottom = BottomSheetBehavior.STATE_COLLAPSED;
     private Fragment mFragment;
-
 
 
     @Override
@@ -248,18 +248,21 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
             if (currentCustomer.getString("bills") != null) {
                 JSONArray array = new JSONArray(currentCustomer.getString("bills"));
+                List<BaseModel> mLists = new ArrayList<>();
                 for (int i = 0; i < array.length(); i++) {
                     JSONObject objectBill = array.getJSONObject(i);
                     JSONObject objectUser = objectBill.getJSONObject("user");
                     if (User.getRole().equals(Constants.ROLE_ADMIN)){
-                        listBills.add(new Bill(objectBill));
+                        mLists.add(new Bill(objectBill));
                     }else {
                         if (User.getId() == objectUser.getInt("id")){
-                            listBills.add(new Bill(objectBill));
+                            mLists.add(new Bill(objectBill));
                         }
                     }
-
                 }
+
+                showMoneyOverview(mLists);
+
             }
 
 
@@ -288,12 +291,11 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             edPhone.setSelection();
         }
 
-        showMoneyOverview(Util.getTotal(listBills));
-
-
 
 
     }
+
+
 
     private void setupMap() {
         mapFragment.getMapAsync(this);
@@ -747,15 +749,13 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
     }
 
-    protected void showMoneyOverview(JSONObject object){
-        try {
-            lnPaidParent.setVisibility(object.getInt("size") > 0 ?View.VISIBLE :View.GONE);
-            tvTotal.setText(String.format("Tổng: %s" ,Util.FormatMoney(object.getDouble("total"))));
-            tvDebt.setText(String.format("Nợ: %s" ,Util.FormatMoney(object.getDouble("debt"))));
+    protected void showMoneyOverview(List<BaseModel> listbill ){
+        listBills = DataUtil.mergeWithReturnBill(listbill);
+        BaseModel object = Util.getTotal(listBills);
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        lnPaidParent.setVisibility(object.getInt("size") > 0 ?View.VISIBLE :View.GONE);
+        tvTotal.setText(String.format("Tổng: %s" ,Util.FormatMoney(object.getDouble("total"))));
+        tvDebt.setText(String.format("Nợ: %s" ,Util.FormatMoney(object.getDouble("debt"))));
 
     }
 
@@ -765,7 +765,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             @Override
             public void onResponse(JSONObject result) {
                 Customer customer = new Customer(result);
-                listBills = new ArrayList<>();
+                List<BaseModel> mList = new ArrayList<>();
                 try{
                     if (customer.getString("bills") != null) {
                         JSONArray array = new JSONArray(customer.getString("bills"));
@@ -774,20 +774,20 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                             JSONObject objectBill = array.getJSONObject(i);
                             JSONObject objectUser = objectBill.getJSONObject("user");
                             if (User.getRole().equals(Constants.ROLE_ADMIN)){
-                                listBills.add(new Bill(objectBill));
+                                mList.add(new Bill(objectBill));
                             }else {
                                 if (User.getId() == objectUser.getInt("id")){
-                                    listBills.add(new Bill(objectBill));
+                                    mList.add(new Bill(objectBill));
                                 }
                             }
 
                         }
 
                         currentCustomer.put("bills", array);
-                        showMoneyOverview(Util.getTotal(listBills));
+                        showMoneyOverview(mList);
                         mListener.onRespone(true);
 
-                        if (listBills.size()>0){
+                        if (mList.size()>0){
                             rdOrdered.setChecked(true);
                         }
                     }
@@ -892,13 +892,6 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                         Util.showToast("Không thể lấy danh sách quận/ huyện");
                     }
                 });
-
-
-
-
-
-
-
 
             }
         });

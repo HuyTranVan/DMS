@@ -160,7 +160,7 @@ public class StatisticalBillsFragment extends Fragment implements View.OnClickLi
                     for (int i=0; i<result.length(); i++){
                         try {
                             JSONObject object = result.getJSONObject(i);
-                            if (object.getDouble("debt") > 0 ){
+                            if (object.getDouble("debt") != 0 ){
                                 listDebt.add(new BaseModel(object));
 
                             }

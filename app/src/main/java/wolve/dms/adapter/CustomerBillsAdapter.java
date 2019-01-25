@@ -52,13 +52,14 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mListenerList = listener;
         this.mListerner = listener4;
-        Collections.sort(mData, new Comparator<BaseModel>(){
-            public int compare(BaseModel obj1, BaseModel obj2) {
-                return obj1.getString("createAt").compareToIgnoreCase(obj2.getString("createAt"));
-            }
-        });
-        Collections.reverse(mData);
 
+        DataUtil.sortbyKey("createAt", mData, true);
+//        Collections.sort(mData, new Comparator<BaseModel>(){
+//            public int compare(BaseModel obj1, BaseModel obj2) {
+//                return obj1.getString("createAt").compareToIgnoreCase(obj2.getString("createAt"));
+//            }
+//        });
+//        Collections.reverse(mData);
     }
 
     @Override
@@ -83,9 +84,9 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
             }
 
             JSONArray arrayBillDetail = new JSONArray(mData.get(position).getString("billDetails"));
-            final List<BillDetail> listBillDetail = new ArrayList<>();
+            final List<BaseModel> listBillDetail = new ArrayList<>();
             for (int i=0; i<arrayBillDetail.length(); i++){
-                BillDetail billDetail = new BillDetail(arrayBillDetail.getJSONObject(i));
+                BaseModel billDetail = new BaseModel(arrayBillDetail.getJSONObject(i));
                 listBillDetail.add(billDetail);
             }
 
@@ -195,15 +196,22 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
                     "ĐỒNG Ý","HỦY", new CallbackBoolean() {
                 @Override
                 public void onRespone(Boolean result) {
-                    String param = String.valueOf(mData.get(currentPosition).getInt("id"));
-                    CustomerConnect.DeleteBill(param, new CallbackJSONObject() {
+                    String currentId = String.valueOf(mData.get(currentPosition).getInt("id"));
+
+                    List<String> listParams = new ArrayList<>();
+                    listParams = Util.arrayToList(mData.get(currentPosition).getString("idbill").split("-"));
+//                    listParams.add(currentId);
+//                    for (int i=0; i<mData.size(); i++){
+//                        if (Util.isBillReturn(mData.get(i))){
+//                            listParams.add(mData.get(i).getString("note"));
+//                        }
+//                    }
+
+                    CustomerConnect.DeleteListBill(listParams, new CallbackList() {
                         @Override
-                        public void onResponse(JSONObject result) {
-                            //mDelete.onDelete(mData.get(currentPosition).BillstoString(), currentPosition);
+                        public void onResponse(List result) {
                             Util.showToast("Xóa thành công");
                             mListerner.Method4(true);
-//                            notifyDataSetChanged();
-
                         }
 
                         @Override
@@ -211,9 +219,27 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
                             mListerner.Method4(false);
                         }
                     }, true);
+
+//                    CustomerConnect.DeleteListBill(listParams, new CallbackJSONObject() {
+//                        @Override
+//                        public void onResponse(JSONObject result) {
+//                            //mDelete.onDelete(mData.get(currentPosition).BillstoString(), currentPosition);
+//                            Util.showToast("Xóa thành công");
+//                            mListerner.Method4(true);
+////                            notifyDataSetChanged();
+//
+//                        }
+//
+//                        @Override
+//                        public void onError(String error) {
+//                            mListerner.Method4(false);
+//                        }
+//                    }, true);
                 }
             });
 
+        }else {
+            Util.showToast("Liên hệ Admin để xóa hóa đơn này");
         }
     }
 
@@ -262,13 +288,43 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
         }
     }
 
-    private List<BaseModel> returnProduct(List<BillDetail> list){
+    private List<BaseModel> returnProduct(List<BaseModel> list){
         List<BaseModel> listResult = new ArrayList<>();
-        for (int i=0; i<list.size(); i++){
-            listResult.add(list.get(i));
+        try {
+            for (int i=0; i<list.size(); i++){
+                list.get(i).put("quantity", mergeQuantity(list, list.get(i)));
+                if (list.get(i).getInt("quantity") > 0){
+                    listResult.add(list.get(i));
+                }
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
         return listResult;
 
+    }
+
+
+    private int mergeQuantity(List<BaseModel> list, BaseModel billdetail){
+        int count = billdetail.getInt("quantity");
+
+        for (int i=0; i<list.size(); i++){
+            if (!list.get(i).getString("id").equals(billdetail.getString("id"))){
+                Double netPrice1 = billdetail.getDouble("unitPrice") - billdetail.getDouble("discount");
+                Double netPrice2 = list.get(i).getDouble("unitPrice") - list.get(i).getDouble("discount");
+
+                if (billdetail.getInt("productId") == list.get(i).getInt("productId")
+                        && list.get(i).getInt("quantity")<0
+                        && netPrice1.equals( netPrice2)){
+                    count = count + list.get(i).getInt("quantity");
+
+                }
+
+            }
+        }
+
+        return count;
     }
 
 }

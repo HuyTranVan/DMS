@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
 import wolve.dms.models.BillDetail;
 import wolve.dms.utils.Util;
@@ -25,10 +26,10 @@ import wolve.dms.utils.Util;
  */
 
 public class CustomerBillsDetailAdapter extends RecyclerView.Adapter<CustomerBillsDetailAdapter.CustomerBillsDetailAdapterViewHolder> {
-    private List<BillDetail> mData = new ArrayList<>();
+    private List<BaseModel> mData = new ArrayList<>();
     private Context mContext;
 
-    public CustomerBillsDetailAdapter(List<BillDetail> data) {
+    public CustomerBillsDetailAdapter(List<BaseModel> data) {
         this.mData = data;
         this.mContext = Util.getInstance().getCurrentActivity();
 

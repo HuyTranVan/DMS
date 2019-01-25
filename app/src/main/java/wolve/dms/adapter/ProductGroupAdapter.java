@@ -11,6 +11,8 @@ import android.widget.TextView;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import wolve.dms.R;
 import wolve.dms.apiconnect.ProductConnect;
@@ -18,8 +20,10 @@ import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
+import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.CustomCenterDialog;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 
@@ -40,6 +44,8 @@ public class ProductGroupAdapter extends RecyclerView.Adapter<ProductGroupAdapte
         this.mData = list;
         mListener = callbackClickAdapter;
         this.mDeleteListener = callbackDeleteAdapter;
+
+        DataUtil.sortProductGroup(mData, false);
     }
 
     @Override

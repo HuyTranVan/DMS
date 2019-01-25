@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
@@ -13,6 +14,7 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackList;
+import wolve.dms.libraries.connectapi.CustomDeleteListMethod;
 import wolve.dms.libraries.connectapi.CustomDeleteMethod;
 import wolve.dms.libraries.connectapi.CustomGetMethod;
 import wolve.dms.libraries.connectapi.CustomPostListMethod;
@@ -340,6 +342,29 @@ public class CustomerConnect {
                 }
             }
 
+
+            @Override
+            public void onError(String error) {
+                listener.onError(error);
+                Util.getInstance().stopLoading(stopLoading);
+            }
+        }).execute();
+    }
+
+    public static void DeleteListBill(List<String> listParams, final CallbackList listener, final Boolean stopLoading) {
+        Util.getInstance().showLoading();
+
+        List<String> urls = new ArrayList<>();
+        for (int i=0; i<listParams.size(); i++){
+            urls.add(Api_link.BILL_DELETE + listParams.get(i));
+        }
+
+        new CustomDeleteListMethod(urls, new CallbackList() {
+            @Override
+            public void onResponse(List result) {
+                Util.getInstance().stopLoading(stopLoading);
+                listener.onResponse(result);
+            }
 
             @Override
             public void onError(String error) {

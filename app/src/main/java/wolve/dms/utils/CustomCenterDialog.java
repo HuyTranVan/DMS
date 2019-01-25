@@ -425,7 +425,6 @@ public class CustomCenterDialog {
             }
         });
 
-
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -441,30 +440,28 @@ public class CustomCenterDialog {
                     Double total =0.0;
                     try {
                         for (int i=0; i<listProductSelected.size(); i++){
-                            total += (listProductSelected.get(i).getDouble("unitPrice") - listProductSelected.get(i).getDouble("discount")) *listProductSelected.get(i).getDouble("quantity") ;
+                            total += listProductSelected.get(i).getDouble("total") ;
 
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
-//                    Double textPaid = Util.moneyValue(edPay);
-
-                    final String params = DataUtil.createPostBillParam(customerId,total, 0.0, adapter.getListSelected(), String.valueOf(billId));
+                    final String params = DataUtil.createPostBillParam(customerId,total, 0.0, listProductSelected, String.valueOf(billId));
 
                     CustomerConnect.PostBill(params, new CallbackJSONObject() {
                         @Override
                         public void onResponse(JSONObject result) {
-
                             if (Util.moneyValue(edPay) ==0){
                                 mListener.onRespone(true);
                                 dialogResult.dismiss();
                             }else {
-                                try {
+//                                try {
                                     String param = String.format(Api_link.PAY_PARAM,
                                             customerId,
                                             String.valueOf(Math.round(Util.moneyValue(edPay) *-1)),
-                                            result.getInt("id"),
+//                                            result.getInt("id"),
+                                            billId,
                                             User.getId(),
                                             "");
 
@@ -484,10 +481,10 @@ public class CustomCenterDialog {
 
 
 
-                                } catch (JSONException e) {
-                                    mListener.onRespone(false);
-                                    dialogResult.dismiss();
-                                }
+//                                } catch (JSONException e) {
+//                                    mListener.onRespone(false);
+//                                    dialogResult.dismiss();
+//                                }
                             }
 
 
@@ -639,6 +636,7 @@ public class CustomCenterDialog {
     public static Dialog showDialogPayment(String title, final Double currentDebt, final int currentBillId, final List<JSONObject> listDebts ,Double paid ,final CallbackList mListener){
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_input_paid);
         TextView tvTitle = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_title);
+        TextView tvText = dialogResult.findViewById(R.id.dialog_input_paid_text);
         final TextView tvTotal = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_total);
         final TextView tvTotalTitle = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_total_title);
         final EditText edPaid = (EditText) dialogResult.findViewById(R.id.dialog_input_paid_money);
@@ -658,6 +656,7 @@ public class CustomCenterDialog {
         tvTitle.setText(title);
         tvRemain.setText(Util.FormatMoney(totalDebt));
         tvTotal.setText(Util.FormatMoney(currentDebt));
+        tvText.setText(currentDebt > 0 ? "Số tiền khách trả": "Số tiền trả lại khách");
         //edPaid.setText("");
         swFastPay.setVisibility(listDebts == null?View.GONE: View.VISIBLE);
 
@@ -688,6 +687,7 @@ public class CustomCenterDialog {
 
             }
         });
+
 
         if (paid !=0){
             edPaid.setText(Util.FormatMoney(paid));
@@ -736,10 +736,11 @@ public class CustomCenterDialog {
                 try {
                     JSONObject object = new JSONObject();
                     object.put("billId", currentBillId);
-                    object.put("paid", Util.valueMoney(tvCurrentBillPaid));
+                    object.put("paid", currentDebt > 0? Util.valueMoney(tvCurrentBillPaid) : Util.valueMoney(edPaid)*-1);
 
-                    if (Util.valueMoney(tvCurrentBillPaid) !=0){
+                    if (Util.valueMoney(tvCurrentBillPaid) !=0 || Util.valueMoney(edPaid) >0){
                         listPayment.add(0,object);
+
                     }
 
                     mListener.onResponse(listPayment);

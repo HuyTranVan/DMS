@@ -152,11 +152,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 break;
 
             case 3:
-                if (User.getRole().equals(Constants.ROLE_ADMIN)){
+//                if (User.getRole().equals(Constants.ROLE_ADMIN)){
                     Transaction.gotoScannerActivity();
-                }else {
-                    Util.showToast("Chưa hỗ trợ");
-                }
+//                }else {
+//                    Util.showToast("Chưa hỗ trợ");
+//                }
 
                 break;
 

@@ -239,11 +239,12 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 product.put("checked", false);
 
                 listProducts.add(product);
-
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        DataUtil.sortProduct(listProducts, false);
     }
 
     private void loadListProductGroup(){

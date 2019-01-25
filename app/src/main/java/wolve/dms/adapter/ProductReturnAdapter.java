@@ -62,13 +62,14 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
 
     @Override
     public void onBindViewHolder(final CartProductsViewHolder holder, final int position) {
-            Double price = mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount");
-            holder.tvName.setText(String.format("%s (%s)",mData.get(position).getString("productName"), Util.FormatMoney(price)));
-            holder.tvQuantity.setText(mData.get(position).getString("quantityReturn"));
-            holder.btnSub.setVisibility(View.GONE);
+        Double price = mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount");
+        holder.tvName.setText(String.format("%s (%s)",mData.get(position).getString("productName"), Util.FormatMoney(price)));
+        holder.tvQuantity.setText(mData.get(position).getString("quantityReturn"));
+        holder.btnSub.setVisibility(View.GONE);
+        holder.tvTotalQuantity.setText(String.valueOf(mData.get(position).getInt("quantity") - mData.get(position).getInt("quantityReturn")));
 
-            holder.btnSub.setVisibility(mData.get(position).getInt("quantityReturn") >0 ? View.VISIBLE :View.GONE);
-            holder.btnPlus.setVisibility(mData.get(position).getInt("quantityReturn") >= mData.get(position).getInt("quantity") ?View.INVISIBLE :View.VISIBLE);
+        holder.btnSub.setVisibility(mData.get(position).getInt("quantityReturn") >0 ? View.VISIBLE :View.GONE);
+        holder.btnPlus.setVisibility(mData.get(position).getInt("quantityReturn") >= mData.get(position).getInt("quantity") ?View.INVISIBLE :View.VISIBLE);
 
         holder.btnSub.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,7 +111,7 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
     }
 
     public class CartProductsViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvName, tvQuantity ;
+        private TextView tvName, tvQuantity , tvTotalQuantity;
         private RelativeLayout lnParent;
         private CTextIcon btnSub, btnPlus;
 
@@ -121,6 +122,7 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
             tvQuantity = (TextView) itemView.findViewById(R.id.product_return_item_quantity);
             btnSub = (CTextIcon) itemView.findViewById(R.id.product_return_item_sub);
             btnPlus = (CTextIcon) itemView.findViewById(R.id.product_return_item_plus);
+            tvTotalQuantity = itemView.findViewById(R.id.product_return_item_totalquantity);
 
         }
 
@@ -128,14 +130,18 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
 
     public List<JSONObject> getListSelected(){
 
-
         List<JSONObject> listResult = new ArrayList<>();
         for (int i=0; i<mData.size(); i++){
             try {
                 if (mData.get(i).getInt("quantityReturn") >0){
                     mData.get(i).put("quantity", mData.get(i).getInt("quantityReturn")*-1);
-                    mData.get(i).put("discount", getDiscountFromOldBill(mData.get(i)));
+                    Double total = (mData.get(i).getDouble("unitPrice") - mData.get(i).getDouble("discount")) *mData.get(i).getDouble("quantity") ;
+                    mData.get(i).put("total", total);
+                    Double discount = getDiscountFromOldBill(mData.get(i));
+                    mData.get(i).put("discount", discount);
                     mData.get(i).put("id",mData.get(i).getInt("productId"));
+
+
                     listResult.add(mData.get(i).BaseModelJSONObject());
                 }
             } catch (JSONException e) {
@@ -150,7 +156,7 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
         List<Product> listProduct = Product.getProductList();
         Double discount =0.0;
         for (int i=0; i<listProduct.size(); i++){
-            if (listProduct.get(i).getInt("id") == objectCurrent.getInt("id")){
+            if (listProduct.get(i).getInt("id") == objectCurrent.getInt("productId")){
                 Double netPrice = objectCurrent.getDouble("unitPrice") - objectCurrent.getDouble("discount");
                 discount =listProduct.get(i).getDouble("unitPrice") - netPrice;
                 break;

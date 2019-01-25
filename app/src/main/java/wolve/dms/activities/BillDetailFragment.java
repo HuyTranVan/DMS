@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -20,12 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.adapter.CartProductDialogAdapter;
 import wolve.dms.adapter.CustomerBillsAdapter;
 import wolve.dms.adapter.CustomerPaymentAdapter;
 import wolve.dms.adapter.StatisticalProductGroupAdapter;
 import wolve.dms.adapter.ViewpagerBillDetailAdapter;
-import wolve.dms.adapter.ViewpagerShopcartAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackJSONObject;
@@ -58,6 +55,7 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
     private CustomerActivity mActivity;
     private ViewpagerBillDetailAdapter viewpagerAdapter;
     private List<RecyclerView.Adapter> listadapter;
+    private List<BaseModel> mBills = new ArrayList<>();
     private int currentPosition =0;
 
     @Nullable
@@ -73,35 +71,23 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
     }
 
     private void intitialData() {
-//        tvTitle.setText(String.format("HÓA ĐƠN: %s",mActivity.tvTitle.getText().toString()));
-//        createRVBill(mActivity.listBills);
-//        rdBill.setChecked(true);
-        showOverViewDetail(Util.getTotal(mActivity.listBills));
+        mBills = mActivity.listBills;
+        showOverViewDetail(Util.getTotal(mBills));
         tabLayout.setupWithViewPager(viewPager);
-        setupViewPager(mActivity.listBills);
+        setupViewPager(mBills);
 
     }
 
     private void addEvent() {
-//        rgFilter.setOnCheckedChangeListener(this);
-//        btnBack.setOnClickListener(this);
-//        tvPrint.setOnClickListener(this);
-//        btnNew.setOnClickListener(this);
+
 
     }
 
     private void initializeView() {
         mActivity = (CustomerActivity) getActivity();
-//        tvTitle = view.findViewById(R.id.header_title);
-//        btnBack = (ImageView) view.findViewById(R.id.icon_back);
-//        rvBill = view.findViewById(R.id.bill_detail_rvbill);
         tvDebt = view.findViewById(R.id.bill_detail_debt);
         tvPaid = view.findViewById(R.id.bill_detail_paid);
         tvTotal = view.findViewById(R.id.bill_detail_total);
-//        rgFilter = view.findViewById(R.id.bill_detail_rgfilter);
-//        rdBill = view.findViewById(R.id.bill_detail_rdbill);
-//        rdPayment = view.findViewById(R.id.bill_detail_rdpayment);
-//        rdProduct = view.findViewById(R.id.bill_detail_rdproduct);
         viewPager = view.findViewById(R.id.bill_detail_viewpager);
         tabLayout = view.findViewById(R.id.bill_detail_tabs);
 
@@ -111,25 +97,8 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-//            case R.id.bill_detail_print:
-//                CustomBottomDialog.choiceTwoOption(null, "In những hóa đơn còn nợ", null, "In tất cả hóa đơn", new CustomBottomDialog.TwoMethodListener() {
-//                    @Override
-//                    public void Method1(Boolean one) {
-//                        printDebtBills(true);
-//                    }
-//
-//                    @Override
-//                    public void Method2(Boolean two) {
-//                        printDebtBills(false);
-//                    }
-//                });
-//                break;
 
-//            case R.id.bill_detail_new:
-//                //getActivity().getSupportFragmentManager().popBackStack();
-//                Util.hideKeyboard(v);
-//                mActivity.openShopCartScreen(mActivity.getCurrentCustomer());
-//                break;
+
 
 
         }
@@ -140,7 +109,13 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
         CustomerBillsAdapter adapter = new CustomerBillsAdapter(listbill, new CustomerBillsAdapter.CallbackListObject() {
             @Override
             public void onResponse(List<BaseModel> listResult, Double total, int id) {
-                showDialogReturnProduct(total, listResult, id);
+                if (listResult.size() >0){
+                    showDialogReturnProduct(total, listResult, id);
+
+                }else {
+                    Util.showToast("Đã thu lại hết sản phẩm");
+                }
+
             }
 
         }, new CustomBottomDialog.FourMethodListener() {
@@ -204,35 +179,33 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
         CustomerConnect.GetCustomerDetail(param, new CallbackJSONObject() {
             @Override
             public void onResponse(JSONObject result) {
-                Customer customer = new Customer(result);
-                mActivity.listBills = new ArrayList<>();
+                List<BaseModel> mList = new ArrayList<>();
                 try{
-                    if (customer.getString("bills") != null) {
-                        JSONArray array = new JSONArray(customer.getString("bills"));
+                    if (result.getString("bills") != null) {
+                        JSONArray array = new JSONArray(result.getString("bills"));
 
                         for (int i = 0; i < array.length(); i++) {
                             JSONObject objectBill = array.getJSONObject(i);
-                            JSONObject objectUser = objectBill.getJSONObject("user");
+                            int userID = objectBill.getJSONObject("user").getInt("id");
+
                             if (User.getRole().equals(Constants.ROLE_ADMIN)){
-                                mActivity.listBills.add(new Bill(objectBill));
+                                mList.add(new Bill(objectBill));
                             }else {
-                                if (User.getId() == objectUser.getInt("id")){
-                                    mActivity.listBills.add(new Bill(objectBill));
+                                if (User.getId() == userID){
+                                    mList.add(new Bill(objectBill));
                                 }
                             }
 
                         }
 
                         mActivity.currentCustomer.put("bills", array);
-                        mActivity.showMoneyOverview(Util.getTotal(mActivity.listBills));
-                        setupViewPager(mActivity.listBills);
+                        mActivity.showMoneyOverview(mList);
+
+                        intitialData();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-//                createRVBill(mActivity.listBills);
-                showOverViewDetail(Util.getTotal(mActivity.listBills));
 
             }
 
@@ -244,31 +217,24 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
 
     }
 
-    private void showOverViewDetail(JSONObject object){
-        try {
-            tvTotal.setText(String.format("Tổng: %s" ,Util.FormatMoney(object.getDouble("total"))));
-            tvDebt.setText(String.format("Nợ: %s" ,Util.FormatMoney(object.getDouble("debt"))));
-            tvPaid.setText(String.format("Trả: %s" ,Util.FormatMoney(object.getDouble("paid"))));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    private void showOverViewDetail(BaseModel object){
+        tvTotal.setText(String.format("Tổng: %s" ,Util.FormatMoney(object.getDouble("total"))));
+        tvDebt.setText(String.format("Nợ: %s" ,Util.FormatMoney(object.getDouble("debt"))));
+        tvPaid.setText(String.format("Trả: %s" ,Util.FormatMoney(object.getDouble("paid"))));
 
     }
 
     private void printDebtBills(Boolean printOnlyDebt){
         List<JSONObject> list = new ArrayList<>();
-        String billReturnId = checkBillReturn(mActivity.listBills).toString();
-
-        for (int i=0; i<mActivity.listBills.size(); i++){
+        for (int i=0; i<mBills.size(); i++){
             if (printOnlyDebt){
-                if (mActivity.listBills.get(i).getDouble("debt") >0 && !billReturnId.contains(mActivity.listBills.get(i).getString("id"))){
-                    list.add(mActivity.listBills.get(i).convertJsonObject());
+                if (mBills.get(i).getDouble("debt") >0 ){
+                    list.add(mBills.get(i).convertJsonObject());
                 }
 
             }else {
-                if (mActivity.listBills.get(i).getDouble("debt") >=0 && !billReturnId.contains(mActivity.listBills.get(i).getString("id"))){
-                    list.add(mActivity.listBills.get(i).convertJsonObject());
-                }
+                list.add(mBills.get(i).convertJsonObject());
+
             }
         }
 
@@ -278,20 +244,6 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
         }else {
             Util.showToast("Không có hóa đơn nợ phù hợp");
         }
-
-    }
-
-    private List<String> checkBillReturn(List<BaseModel> list){
-        List<String> listResult = new ArrayList<>();
-        for (int i=0; i<list.size(); i++){
-            if (!list.get(i).getString("note").equals("") && list.get(i).getString("note").matches(Util.DETECT_NUMBER)){
-                listResult.add(list.get(i).getString("id"));
-                listResult.add(list.get(i).getString("note"));
-
-//                break;
-            }
-        }
-        return listResult;
 
     }
 
@@ -359,6 +311,7 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
     }
 
     private void setupViewPager( final List<BaseModel> listbill){
+
         List<String> titles = new ArrayList<>();
         titles.add(0,"Hóa đơn");
         titles.add(1,"Sản phẩm");

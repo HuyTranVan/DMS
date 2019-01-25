@@ -890,15 +890,17 @@ public class Util {
         return money;
     }
 
-    public static JSONObject getTotal(List<BaseModel> list) {
-        JSONObject object = new JSONObject();
+    public static BaseModel getTotal(List<BaseModel> list) {
+        BaseModel object = new BaseModel();
         Double total = 0.0;
         Double paid = 0.0;
         Double debt =0.0;
         for (int i = 0; i < list.size(); i++) {
-            total += list.get(i).getDouble("total");
-            paid += list.get(i).getDouble("paid");
-            debt += list.get(i).getDouble("debt");
+            if (!Util.isBillReturn(list.get(i))){
+                total += list.get(i).getDouble("total");
+                paid += list.get(i).getDouble("paid");
+                debt += list.get(i).getDouble("debt");
+            }
         }
 
         try {
@@ -954,6 +956,15 @@ public class Util {
             return profit;
         }
         return profit;
+    }
+
+    public static boolean isBillReturn(BaseModel bill){
+        boolean id = false;
+        if (!bill.getString("note").equals("") && bill.getString("note").matches(Util.DETECT_NUMBER)){
+            id = true;
+        }
+
+        return id;
     }
 
     public static Double getTotalMoneyProduct(List<Product> list) {
@@ -1124,7 +1135,7 @@ public class Util {
 
 //                        }
 
-                    }else {
+                    }else if (limitMoney >0){
                         if (Util.valueMoney(edText) > limitMoney){
                             Util.showToast("Số tiền lớn hơn giới hạn");
                             String text = Util.valueMoneyString(edText).replaceFirst(".$","");
@@ -1144,6 +1155,25 @@ public class Util {
 
                         }
 
+                    }else if (limitMoney <0){
+                        if (Util.valueMoney(edText) > limitMoney*-1){
+                            Util.showToast("Số tiền nhỏ hơn giới hạn");
+                            String text = Util.valueMoneyString(edText).replaceFirst(".$","");
+
+                            edText.setText(Util.FormatMoney(Double.valueOf(text)));
+                            edText.setSelection(edText.getText().toString().length());
+
+                            mlistener.Result(Util.valueMoney(edText)*-1);
+                            edText.addTextChangedListener(this);
+
+                        }else {
+                            edText.setText(Util.FormatMoney(Util.valueMoney(edText)));
+                            edText.setSelection(edText.getText().toString().length());
+
+                            mlistener.Result(Util.valueMoney(edText)*-1);
+                            edText.addTextChangedListener(this);
+
+                        }
                     }
 
 
@@ -1158,6 +1188,7 @@ public class Util {
 
 
     }
+
 
     public static void textEvent(final EditText edText, final CallbackString mlistener) {
         edText.addTextChangedListener(new TextWatcher() {

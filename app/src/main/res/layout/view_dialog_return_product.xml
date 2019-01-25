@@ -16,7 +16,12 @@
         android:textColor="@color/black_text_color"
         android:gravity="center"/>
 
-    <LinearLayout
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dialog_return_product_title">
+
+        <LinearLayout
         android:id="@+id/dialog_return_product_body"
         android:layout_below="@+id/dialog_return_product_title"
         android:layout_width="match_parent"
@@ -25,10 +30,10 @@
         android:orientation="vertical"
         android:layout_marginBottom="@dimen/_5sdp">
 
-       <android.support.v7.widget.RecyclerView
-           android:id="@+id/dialog_return_product_rv"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/dialog_return_product_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -75,5 +80,8 @@
             layout="@layout/view_bottom_dialog_button"/>
 
     </LinearLayout>
+    </ScrollView>
+
+
 
 </RelativeLayout>

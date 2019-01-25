@@ -20,6 +20,7 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.callback.CallbackString;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
 import wolve.dms.models.BillDetail;
 import wolve.dms.models.Customer;
@@ -78,25 +79,25 @@ public class StatisticalBillsAdapter extends RecyclerView.Adapter<StatisticalBil
             holder.tvUser.setText(String.format("%s         %s", user, hour));
 
             JSONArray arrayBillDetail = new JSONArray(mData.get(position).getString("billDetails"));
-            List<BillDetail> listBillDetail = new ArrayList<>();
+            List<BaseModel> listBillDetail = new ArrayList<>();
             for (int i=0; i<arrayBillDetail.length(); i++){
-                BillDetail billDetail = new BillDetail(arrayBillDetail.getJSONObject(i));
+                BaseModel billDetail = new BaseModel(arrayBillDetail.getJSONObject(i));
                 listBillDetail.add(billDetail);
             }
             CustomerBillsDetailAdapter adapter = new CustomerBillsDetailAdapter(listBillDetail);
             Util.createLinearRV(holder.rvBillDetail, adapter);
 
-            if (mData.get(position).getString("payments")!= null){
-                JSONArray arrayBillPayment = new JSONArray(mData.get(position).getString("payments"));
-                final List<JSONObject> listPayment = new ArrayList<>();
-                for (int j=0; j<arrayBillPayment.length(); j++){
-                    JSONObject object = arrayBillPayment.getJSONObject(j);
-                    listPayment.add(object);
-                }
-
-                PaymentAdapter paymentAdapter = new PaymentAdapter(listPayment);
-                Util.createLinearRV(holder.rvPayment, paymentAdapter);
-            }
+//            if (mData.get(position).getString("payments")!= null){
+//                JSONArray arrayBillPayment = new JSONArray(mData.get(position).getString("payments"));
+//                final List<JSONObject> listPayment = new ArrayList<>();
+//                for (int j=0; j<arrayBillPayment.length(); j++){
+//                    JSONObject object = arrayBillPayment.getJSONObject(j);
+//                    listPayment.add(object);
+//                }
+//
+//                PaymentAdapter paymentAdapter = new PaymentAdapter(listPayment);
+//                Util.createLinearRV(holder.rvPayment, paymentAdapter);
+//            }
 
             if (mData.size()==1){
                 holder.vLineUpper.setVisibility(View.GONE);

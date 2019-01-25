@@ -17,6 +17,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import wolve.dms.BaseActivity;
@@ -32,6 +34,7 @@ import wolve.dms.libraries.MySwipeRefreshLayout;
 import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.DataUtil;
 
 /**
  * Created by macos on 9/16/17.
@@ -114,6 +117,8 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
                     }
 
                 }
+                DataUtil.sortProductGroup(listProductGroup, false);
+
                 loadProduct();
 
             }
@@ -139,8 +144,8 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
                     }
 
                 }
+                DataUtil.sortProduct(listProduct, false);
                 setupViewPager(listProductGroup , listProduct);
-//                createRVProduct(result);
 
             }
 
