@@ -75,7 +75,7 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
 //        }
 //        createRVProduct(listProducts, productGroup);
         tabLayout.setupWithViewPager(viewPager);
-        setupViewPager(mActivity.listProducts);
+        setupViewPager();
 
     }
 
@@ -111,11 +111,11 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
         }
     }
 
-    private void setupViewPager( final List<Product> listproduct){
+    private void setupViewPager( ){
         listadapter  = new ArrayList<>();
 
         for (int  i=0; i<mActivity.listProductGroups.size(); i++){
-            CartProductDialogAdapter productAdapters = new CartProductDialogAdapter(listproduct, i,mActivity.listProductGroups.get(i), new CartProductDialogAdapter.CallbackViewPager() {
+            CartProductDialogAdapter productAdapters = new CartProductDialogAdapter(mActivity.listInitialProduct, mActivity.listProducts, i,mActivity.listProductGroups.get(i), new CartProductDialogAdapter.CallbackViewPager() {
                 @Override
                 public void onChoosen(int position, int count) {
                     reloadBillCount(position, count);

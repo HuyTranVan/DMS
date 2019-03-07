@@ -8,13 +8,16 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.BaseActivity;
@@ -22,11 +25,15 @@ import wolve.dms.R;
 import wolve.dms.adapter.HomeAdapter;
 import wolve.dms.apiconnect.SheetConnect;
 import wolve.dms.apiconnect.SystemConnect;
+import wolve.dms.callback.Callback;
+import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackList;
+import wolve.dms.callback.CallbackObject;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.libraries.ItemDecorationGridSpace;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.District;
 import wolve.dms.models.Product;
@@ -45,10 +52,11 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/15/17.
  */
 
-public class HomeActivity extends BaseActivity implements View.OnClickListener, CallbackClickAdapter {
+public class HomeActivity extends BaseActivity implements View.OnClickListener, CallbackClickAdapter, View.OnLongClickListener {
     private RecyclerView rvItems;
     private CTextIcon btnLogout;
     private TextView tvFullname;
+    private LinearLayout lnUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,15 +78,18 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         rvItems= (RecyclerView) findViewById(R.id.home_rvitems);
         btnLogout = findViewById(R.id.home_logout);
         tvFullname = findViewById(R.id.home_fullname);
+        lnUser = findViewById(R.id.home_user);
     }
 
     @Override
     public void initialData() {
         loadCurrentData();
-        if (CustomSQL.getBoolean(Constants.ON_MAP_SCREEN))
+        if (CustomSQL.getBoolean(Constants.ON_MAP_SCREEN)){
             Transaction.gotoMapsActivity();
+
+        }
         createListItem();
-        tvFullname.setText(String.format("%s (%s)",User.getFullName(), User.getRole()));
+        tvFullname.setText(String.format("%s _ %s (%s)",User.getFullName(), User.getRole(), Distributor.getName()));
 
     }
 
@@ -90,17 +101,108 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void addEvent() {
-        btnLogout.setOnClickListener(this);
-        tvFullname.setOnClickListener(this);
+//        btnLogout.setOnClickListener(this);
+        lnUser.setOnLongClickListener(this);
+        lnUser.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.home_logout:
-                doLogout();
+//                doLogout();
+                break;
+
+            case R.id.home_user:
+                CustomBottomDialog.choiceTwoOption(getString(R.string.icon_password),
+                        "Đổi mật khẩu",
+                        getString(R.string.icon_logout),
+                        "Đăng xuất", new CustomBottomDialog.TwoMethodListener() {
+                            @Override
+                            public void Method1(Boolean one) {
+                                changePassword();
+                            }
+
+                            @Override
+                            public void Method2(Boolean two) {
+                                doLogout();
+                            }
+                        });
+
                 break;
         }
+    }
+
+    private void changePassword() {
+        CustomCenterDialog.showDialogChangePass("Đổi mật khẩu", new CallbackBoolean() {
+            @Override
+            public void onRespone(Boolean result) {
+                if (result){
+                    CustomCenterDialog.alertWithButtonCanceled("", "Đổi mật khẩu thành công , vui lòng đăng nhập lại", "ĐỒNG Ý",false, new CallbackBoolean() {
+                        @Override
+                        public void onRespone(Boolean result) {
+                            if (result){
+                                List<BaseModel> listUser = CustomSQL.getListObject(Constants.USER_LIST);
+                                CustomSQL.clear();
+                                CustomSQL.setListBaseModel(Constants.USER_LIST, listUser);
+
+                                Transaction.gotoLoginActivityRight();
+                            }
+
+                        }
+                    });
+
+                }
+            }
+        });
+
+    }
+
+    private void changeUser(){
+        List<BaseModel> listTemp = CustomSQL.getListObject(Constants.USER_LIST);
+        List<BaseModel> listUser = new ArrayList<>();
+
+        try {
+            for (int i=0; i<listTemp.size(); i++){
+                if (listTemp.get(i).getInt("id") !=  User.getId()){
+                    listTemp.get(i).put("showName", String.format("%s (%s)",listTemp.get(i).getString("displayName") ,
+                            listTemp.get(i).getJsonObject("distributor").getString("name")) );
+
+                    listUser.add(listTemp.get(i));
+
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if (listUser.size()>0){
+            CustomBottomDialog.choiceListObject("ĐỔI SANG TÀI KHOẢN", "showName", listUser, new CallbackBaseModel() {
+                @Override
+                public void onResponse(BaseModel object) {
+                    showReloginDialog(object);
+
+                }
+
+            });
+        }
+    }
+
+    private void showReloginDialog(BaseModel user){
+
+        CustomCenterDialog.showDialogRelogin(String.format("Đăng nhập vào tài khoản %s", user.getString("displayName")), user, new Callback() {
+            @Override
+            public void onResponse(JSONObject result) {
+                loadCurrentData();
+                tvFullname.setText(String.format("%s _ %s (%s)",User.getFullName(), User.getRole(), Distributor.getName()));
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.showToast("Đăng nhập thất bại!");
+            }
+        });
     }
 
     private void doLogout() {
@@ -109,8 +211,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             public void onRespone(Boolean result) {
 //                CustomSQL.setString(Constants.USER_USERNAME,"");
 //                CustomSQL.setString(Constants.USER_PASSWORD,"");
-                CustomSQL.clear();
-                Transaction.gotoLoginActivityRight();
+                if (result){
+                    List<BaseModel> listUser = CustomSQL.getListObject(Constants.USER_LIST);
+                    CustomSQL.clear();
+                    CustomSQL.setListBaseModel(Constants.USER_LIST, listUser);
+
+                    Transaction.gotoLoginActivityRight();
+                }
 
             }
         });
@@ -152,8 +259,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 break;
 
             case 3:
+                Transaction.gotoScannerActivity();
+
 //                if (User.getRole().equals(Constants.ROLE_ADMIN)){
-                    Transaction.gotoScannerActivity();
+
 //                }else {
 //                    Util.showToast("Chưa hỗ trợ");
 //                }
@@ -269,5 +378,17 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        switch (v.getId()){
+            case R.id.home_user:
+                changeUser();
+
+                break;
+        }
+
+        return true;
     }
 }

@@ -17,6 +17,7 @@ public class Api_link {
     public final static String GOOGLESHEET_TOKENS_PATH = "tokens";
     public final static String STATISTICAL_SHEET_KEY ="1uooLXWdA6huFaBmRJl6Zs_1H9jOf4-2MVlord2busEU";
     public final static String STATISTICAL_SHEET_TAB1 ="Sheet1!A%d:z";
+    public final static String STATISTICAL_SHEET_TAB2 ="Sheet2!A%d:z";
     public final static String SCANNER_SHEET_KEY ="1sWcFlXG-7UZlrcBDFocIBlk3SxxRxplPsvELP0WWxzQ";
     public final static String SCANNER_DISTRIBUTOR_TAB ="DISTRIBUTOR!A1:z";
     public final static String SCANNER_CODE_TAB ="CODE!A%d:z";
@@ -36,6 +37,9 @@ public class Api_link {
     public final static String LOGIN_PARAM ="phone=%s&password=%s";
     public final static String LOGOUT= BASE_URL + "auth/logout";
     public final static String LOGOUT_PARAM ="x-wolver-accesstoken=%s&x-wolver-accessid=%s";
+
+    public final static String USER = BASE_URL + "token/user/";
+    public final static String USER_PARAM = "password=%s&distributor.id=%d";
 
     public final static String PRODUCT_GROUPS = BASE_URL + "token/productGroups";
     public final static String PRODUCT_GROUP_NEW = BASE_URL + "token/productGroup/create_or_update";

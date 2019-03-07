@@ -54,12 +54,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
         this.mListerner = listener4;
 
         DataUtil.sortbyKey("createAt", mData, true);
-//        Collections.sort(mData, new Comparator<BaseModel>(){
-//            public int compare(BaseModel obj1, BaseModel obj2) {
-//                return obj1.getString("createAt").compareToIgnoreCase(obj2.getString("createAt"));
-//            }
-//        });
-//        Collections.reverse(mData);
+
     }
 
     @Override
@@ -245,12 +240,11 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
 
     private void payBill(final int currentPosition){
         if (mData.get(currentPosition).getDouble("debt") != 0){
+            List currentDebt = new ArrayList();
+            currentDebt.add(mData.get(currentPosition));
 
             CustomCenterDialog.showDialogPayment(String.format("THANH TOÁN HÓA ĐƠN %s", Util.DateString(mData.get(currentPosition).getLong("createAt"))),
-                    mData.get(currentPosition).getDouble("debt"),
-                    mData.get(currentPosition).getInt("id"),
-                    null,
-                    0.0,
+                    currentDebt,
                     new CallbackList() {
                         @Override
                         public void onResponse(List result) {

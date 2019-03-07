@@ -208,14 +208,14 @@ public class StatisticalCustomerActivity extends BaseActivity implements  View.O
     }
 
     private void datePicker() {
-        CustomCenterDialog.showDialogDatePicker(rdDate,new CustomCenterDialog.CallbackRangeTime() {
-            @Override
-            public void onSelected(long start, long end) {
-//                currentDate =rdDate.getText().toString();
-                loadListCheckin(start, end);
-            }
-
-        });
+//        CustomCenterDialog.showDialogDatePicker(rdDate,new CustomCenterDialog.CallbackRangeTime() {
+//            @Override
+//            public void onSelected(long start, long end) {
+////                currentDate =rdDate.getText().toString();
+//                loadListCheckin(start, end);
+//            }
+//
+//        });
 
     }
 

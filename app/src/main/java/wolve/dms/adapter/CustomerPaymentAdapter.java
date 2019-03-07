@@ -68,34 +68,27 @@ public class CustomerPaymentAdapter extends RecyclerView.Adapter<CustomerPayment
 
     @Override
     public void onBindViewHolder(final CustomerPaymentViewHolder holder, final int position) {
-        holder.tvTime.setText(Util.DateString(mData.get(position).getLong("createAt")));
+        holder.tvTime.setText(Util.DateHourString(mData.get(position).getLong("createAt")));
         switch (mData.get(position).getString("type")){
             case Constants.BILL:
-                holder.tvIcon.setBackground(mContext.getResources().getDrawable(R.drawable.bg_dark_rounded_button));
-                holder.tvPaid.setVisibility(View.INVISIBLE);
-                holder.tvTotal.setVisibility(View.VISIBLE);
+                holder.tvText.setText("Mua hàng ");
+                holder.tvTotal.setTextColor(mContext.getResources().getColor(R.color.black_text_color));
                 holder.tvTotal.setText(Util.FormatMoney(mData.get(position).getDouble("total")));
 
                 break;
 
             case Constants.PAYMENT:
-                holder.tvIcon.setBackground(mContext.getResources().getDrawable(R.drawable.bg_blue_rounded_button));
-                holder.tvTotal.setVisibility(View.INVISIBLE);
-                holder.tvPaid.setVisibility(View.VISIBLE);
-                holder.tvPaid.setText(Util.FormatMoney(mData.get(position).getDouble("total")));
+                holder.tvText.setText("Khách hàng thanh toán ");
+                holder.tvTotal.setTextColor(mContext.getResources().getColor(R.color.colorBlue));
+                holder.tvTotal.setText("+ " + Util.FormatMoney(mData.get(position).getDouble("total")));
+//                holder.tvTotal.setVisibility(View.INVISIBLE);
+//                holder.tvPaid.setVisibility(View.VISIBLE);
+//                holder.tvPaid.setText(Util.FormatMoney(mData.get(position).getDouble("total")));
 
                 break;
 
         }
 
-        if (mData.size()==1){
-            holder.vLineUpper.setVisibility(View.GONE);
-            holder.vLineUnder.setVisibility(View.GONE);
-        }else if(position ==0){
-            holder.vLineUpper.setVisibility(View.GONE);
-        }else if (position==mData.size()-1){
-            holder.vLineUnder.setVisibility(View.GONE);
-        }
 
     }
 
@@ -105,20 +98,15 @@ public class CustomerPaymentAdapter extends RecyclerView.Adapter<CustomerPayment
     }
 
     public class CustomerPaymentViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvTime, tvPaid, tvTotal;
-        private TextView tvIcon;
-        private View vLineUpper, vLineUnder;
-        private LinearLayout lnParent;
+        private TextView tvTime, tvText, tvTotal;
+
 
         public CustomerPaymentViewHolder(View itemView) {
             super(itemView);
             tvTime = itemView.findViewById(R.id.customer_payment_item_time);
             tvTotal = (TextView) itemView.findViewById(R.id.customer_payment_item_total);
-            tvPaid = (TextView) itemView.findViewById(R.id.customer_payment_item_paid);
-            vLineUnder = (View) itemView.findViewById(R.id.line_under);
-            vLineUpper = (View) itemView.findViewById(R.id.line_upper);
-//            lnParent = (LinearLayout) itemView.findViewById(R.id.customer_payment_item_group);
-            tvIcon =  (TextView) itemView.findViewById(R.id.customer_payment_item_count);
+            tvText = (TextView) itemView.findViewById(R.id.customer_payment_item_content);
+
 
         }
 

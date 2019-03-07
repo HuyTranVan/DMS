@@ -20,6 +20,7 @@ import wolve.dms.activities.StatisticalActivity;
 import wolve.dms.activities.StatisticalCustomerActivity;
 import wolve.dms.activities.StatusActivity;
 import wolve.dms.models.Customer;
+import wolve.dms.models.User;
 
 import static wolve.dms.utils.Constants.REQUEST_CHOOSE_IMAGE;
 
@@ -90,14 +91,17 @@ public class Transaction {
     }
 
     public static void gotoCustomerActivity(String customer, Boolean isCheckin) {
-        Activity context = Util.getInstance().getCurrentActivity();
-        Intent intent = new Intent(context, CustomerActivity.class);
-        CustomSQL.setString(Constants.CUSTOMER, customer);
-        CustomSQL.setBoolean(Constants.CHECKIN_FLAG, isCheckin);
-        CustomSQL.setLong(Constants.CHECKIN_TIME, Util.CurrentTimeStamp() );
+        if (!User.getRole().equals(Constants.ROLE_WAREHOUSE)){
+            Activity context = Util.getInstance().getCurrentActivity();
+            Intent intent = new Intent(context, CustomerActivity.class);
+            CustomSQL.setString(Constants.CUSTOMER, customer);
+            CustomSQL.setBoolean(Constants.CHECKIN_FLAG, isCheckin);
+            CustomSQL.setLong(Constants.CHECKIN_TIME, Util.CurrentTimeStamp() );
 
-        context.startActivityForResult(intent, Constants.RESULT_CUSTOMER_ACTIVITY);
-        context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            context.startActivityForResult(intent, Constants.RESULT_CUSTOMER_ACTIVITY);
+            context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        }
+
     }
 
     public static void returnCustomerActivity(String fromActivity, String data, int result){

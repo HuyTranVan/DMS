@@ -23,7 +23,7 @@
             android:id="@+id/statistical_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="THỐNG KÊ"
+            android:text=""
             android:textSize="@dimen/_14sdp"
             android:textColor="@color/black_text_color"
             android:layout_centerVertical="true"
@@ -34,7 +34,7 @@
         <RadioGroup
             android:checkedButton="@+id/statistical_filter_month"
             android:id="@+id/statistical_filter"
-            android:layout_width="@dimen/_140sdp"
+            android:layout_width="@dimen/_210sdp"
             android:layout_height="@dimen/_25sdp"
             android:background="@drawable/pink_out_line"
             android:orientation="horizontal"
@@ -43,11 +43,25 @@
             android:layout_alignParentRight="true">
 
             <RadioButton
-                android:id="@+id/statistical_filter_month"
+                android:id="@+id/statistical_filter_date"
                 android:layout_marginTop="1dp"
                 android:layout_marginBottom="1dp"
                 android:layout_marginLeft="1dp"
                 android:background="@drawable/toggle_widget_background_left"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:button="@null"
+                android:gravity="center"
+                android:text="Chọn ngày"
+                android:textColor="@drawable/text_white_selected"
+                android:textSize="@dimen/_10sdp"
+                />
+
+            <RadioButton
+                android:id="@+id/statistical_filter_month"
+                android:layout_margin="1dp"
+                android:background="@drawable/toggle_widget_background_center"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -59,7 +73,7 @@
                 />
 
             <RadioButton
-                android:id="@+id/statistical_filter_date"
+                android:id="@+id/statistical_filter_year"
                 android:layout_marginRight="1dp"
                 android:layout_marginTop="1dp"
                 android:layout_marginBottom="1dp"
@@ -69,7 +83,7 @@
                 android:background="@drawable/toggle_widget_background_right"
                 android:button="@null"
                 android:gravity="center"
-                android:text="Chọn ngày"
+                android:text="Chọn năm"
                 android:textColor="@drawable/text_white_selected"
                 android:textSize="@dimen/_10sdp"/>
 

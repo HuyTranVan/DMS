@@ -20,6 +20,7 @@ public class SimpleDatePickerDialogFragment extends DialogFragment {
     private static final String ARG_MAX_DATE = "max_date";
 
     private SimpleDatePickerDialog.OnDateSetListener mOnDateSetListener;
+    private SimpleDatePickerDialog.OnDismissListener mOnDismissListener;
 
     public SimpleDatePickerDialogFragment() {
         // Do nothing
@@ -34,6 +35,10 @@ public class SimpleDatePickerDialogFragment extends DialogFragment {
      */
     public static SimpleDatePickerDialogFragment getInstance(int year, int month) {
         return getInstance(year, month, NULL_INT, NULL_INT);
+    }
+
+    public static SimpleDatePickerDialogFragment getInstance(int year) {
+        return getInstance(year, NULL_INT, NULL_INT);
     }
 
     /**
@@ -58,6 +63,18 @@ public class SimpleDatePickerDialogFragment extends DialogFragment {
         return datePickerDialogFragment;
     }
 
+    public static SimpleDatePickerDialogFragment getInstance(int year, long minDate,
+                                                             long maxDate) {
+        SimpleDatePickerDialogFragment datePickerDialogFragment = new
+                SimpleDatePickerDialogFragment();
+        Bundle bundle = new Bundle();
+        //bundle.putInt(ARG_MONTH, month);
+        bundle.putInt(ARG_YEAR, year);
+        bundle.putLong(ARG_MIN_DATE, minDate);
+        bundle.putLong(ARG_MAX_DATE, maxDate);
+        datePickerDialogFragment.setArguments(bundle);
+        return datePickerDialogFragment;
+    }
     /**
      * Get callback of the year and month selected.
      *
@@ -65,6 +82,10 @@ public class SimpleDatePickerDialogFragment extends DialogFragment {
      */
     public void setOnDateSetListener(SimpleDatePickerDialog.OnDateSetListener onDateSetListener) {
         mOnDateSetListener = onDateSetListener;
+    }
+
+    public void setOnDismissListener(SimpleDatePickerDialog.OnDismissListener listener) {
+        mOnDismissListener = listener;
     }
 
     @NonNull
@@ -78,7 +99,7 @@ public class SimpleDatePickerDialogFragment extends DialogFragment {
         checkForValidMinDate(year, month, minDate);
         checkForValidMaxDate(year, month, maxDate);
         SimpleDatePickerDialog simpleDatePickerDialog = new SimpleDatePickerDialog(
-                getActivity(), mOnDateSetListener, year, month);
+                getActivity(), mOnDateSetListener, mOnDismissListener,year, month);
         if (minDate != NULL_INT) {
             simpleDatePickerDialog.setMinDate(minDate);
         }

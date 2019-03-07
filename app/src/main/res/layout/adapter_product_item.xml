@@ -61,8 +61,7 @@
             android:textColor="@color/colorRed"
             android:layout_gravity="center_vertical"
             android:textSize="@dimen/_14sdp"
-            android:gravity="right"
-            android:paddingRight="@dimen/_10sdp"/>
+            android:gravity="right"/>
 
     </LinearLayout>
 

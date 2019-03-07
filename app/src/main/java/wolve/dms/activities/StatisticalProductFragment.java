@@ -67,20 +67,20 @@ public class StatisticalProductFragment extends Fragment implements View.OnClick
         }
     }
 
-    public void reloadData(List<Bill> list){
-        List<BaseModel> detailList = new ArrayList<>();
-        try {
-            for (int i=0; i<list.size(); i++){
-                JSONArray array = list.get(i).getJSONArray("billDetails");
-                for (int j=0; j<array.length(); j++){
-                    JSONObject object= array.getJSONObject(j);
-                    detailList.add(new BillDetail(object));
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        createRVProductGroup(detailList);
+    public void reloadData(List<BaseModel> listDetail){
+//        List<BaseModel> detailList = new ArrayList<>();
+//        try {
+//            for (int i=0; i<list.size(); i++){
+//                JSONArray array = list.get(i).getJSONArray("billDetails");
+//                for (int j=0; j<array.length(); j++){
+//                    JSONObject object= array.getJSONObject(j);
+//                    detailList.add(new BaseModel(object));
+//                }
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+        createRVProductGroup(listDetail);
     }
 
     private void createRVProductGroup(List<BaseModel> list) {

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Util;
 
 
@@ -22,17 +23,17 @@ import wolve.dms.utils.Util;
  */
 
 public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.PrintBillViewHolder> {
-    private List<JSONObject> mData = new ArrayList<>();
+    private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private Boolean showPaid;
 
-    public DebtAdapter(List<JSONObject> list, Boolean showpaid) {
+    public DebtAdapter(List<BaseModel> list, boolean isNewFirst, Boolean showpaid) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mData = list;
         this.showPaid = showpaid;
-        inputPaid(0.0);
+        inputPaid(0.0, isNewFirst);
     }
 
     @Override
@@ -44,21 +45,36 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.PrintBillViewH
 
     @Override
     public void onBindViewHolder(final PrintBillViewHolder holder, final int position) {
-        try {
-            holder.tvDate.setText(String.format("Nợ HD %s",Util.DateMonthYearString(mData.get(position).getLong("createAt"))));
+//        try {
+        if (mData.get(position).getInt("id") == 0){
+            holder.tvDate.setText("HĐ hiện tại");
+//            holder.tvDate.setAllCaps(true);
+            holder.tvDate.setTextColor(mContext.getResources().getColor(R.color.colorBlue));
+            holder.tvPaid.setTextColor(mContext.getResources().getColor(R.color.colorBlueTransparent));
+            holder.tvTotal.setTextColor(mContext.getResources().getColor(R.color.colorBlue));
 
-            Double total =  !mData.get(position).isNull("tempPaid")? mData.get(position).getDouble("debt")-mData.get(position).getDouble("tempPaid"):
-                    mData.get(position).getDouble("debt");
-            holder.tvDate.setTextColor(total ==0.0? mContext.getResources().getColor(R.color.black_text_color_hint) : mContext.getResources().getColor(R.color.black_text_color));
-            holder.tvTotal.setText(String.format("%s",Util.FormatMoney(total)));
-            holder.tvPaid.setVisibility(showPaid?View.VISIBLE:View.GONE);
-            if (!mData.get(position).isNull("tempPaid")){
-                holder.tvPaid.setText(Util.FormatMoney(mData.get(position).getDouble("tempPaid")));
-            }
 
-        } catch (JSONException e) {
-            e.printStackTrace();
+
+        }else {
+//            holder.tvDate.setAllCaps(false);
+            holder.tvDate.setText(String.format("HĐ %s", Util.DateMonthYearString(mData.get(position).getLong("createAt"))));
+            holder.tvDate.setTextColor(mContext.getResources().getColor(R.color.black_text_color));
+            holder.tvPaid.setTextColor(mContext.getResources().getColor(R.color.black_text_color_hint));
+            holder.tvTotal.setTextColor(mContext.getResources().getColor(R.color.black_text_color));
         }
+
+        Double total =  !mData.get(position).isNull("tempPaid")? mData.get(position).getDouble("debt")-mData.get(position).getDouble("tempPaid"):
+                mData.get(position).getDouble("debt");
+//        holder.tvDate.setTextColor(total ==0.0? mContext.getResources().getColor(R.color.black_text_color_hint) : mContext.getResources().getColor(R.color.black_text_color));
+        holder.tvTotal.setText(String.format("%s",Util.FormatMoney(total)));
+        holder.tvPaid.setVisibility(showPaid? View.VISIBLE : View.GONE);
+        if (!mData.get(position).isNull("tempPaid")){
+            holder.tvPaid.setText(Util.FormatMoney(mData.get(position).getDouble("tempPaid")));
+        }
+
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
 
 
     }
@@ -71,11 +87,11 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.PrintBillViewH
     public Double getTotalMoney(){
         Double total =0.0;
         for (int i=0; i<mData.size(); i++){
-            try {
+//            try {
                 total += (mData.get(i).getDouble("debt") );
-            } catch (JSONException e) {
-                total =0.0;
-            }
+//            } catch (JSONException e) {
+//                total =0.0;
+//            }
         }
         return total;
     }
@@ -93,27 +109,59 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.PrintBillViewH
 
     }
 
-    public void inputPaid(Double paid){
+    public void inputPaid(Double paid, boolean payNew){
         Double money = paid;
         try {
-            for (int i=0; i<mData.size(); i++){
-                if (money ==null){
-                    mData.get(i).put("tempPaid", 0);
-                    notifyItemChanged(i);
-
-                }else if (money < mData.get(i).getDouble("debt")){
-                    mData.get(i).put("tempPaid", money);
-                    notifyItemChanged(i);
-                    money = 0.0;
-//                    break;
-
+            if (mData.size() ==1 && mData.get(0).getDouble("debt") <0){
+                if (money.equals(0.0)){
+                    mData.get(0).put("tempPaid", 0);
+                    notifyItemChanged(0);
                 }else {
-                    mData.get(i).put("tempPaid", mData.get(i).getDouble("debt"));
-                    notifyItemChanged(i);
-                    money = money - mData.get(i).getDouble("debt");
+                    mData.get(0).put("tempPaid", money );
+                    notifyItemChanged(0);
+                    money = 0.0;
                 }
 
+            }else if (payNew){
+                for (int i=0; i<mData.size(); i++){
+                    if (money ==null){
+                        mData.get(i).put("tempPaid", 0);
+                        notifyItemChanged(i);
+
+                    }else if (money < mData.get(i).getDouble("debt")){
+                        mData.get(i).put("tempPaid", money);
+                        notifyItemChanged(i);
+                        money = 0.0;
+//                    break;
+
+                    }else {
+                        mData.get(i).put("tempPaid", mData.get(i).getDouble("debt"));
+                        notifyItemChanged(i);
+                        money = money - mData.get(i).getDouble("debt");
+                    }
+
+                }
+            }else if (!payNew){
+                for (int i=mData.size()-1; i>= 0; i--){
+                    if (money ==null){
+                        mData.get(i).put("tempPaid", 0);
+                        notifyItemChanged(i);
+
+                    }else if (money < mData.get(i).getDouble("debt")){
+                        mData.get(i).put("tempPaid", money);
+                        notifyItemChanged(i);
+                        money = 0.0;
+//                    break;
+
+                    }else {
+                        mData.get(i).put("tempPaid", mData.get(i).getDouble("debt"));
+                        notifyItemChanged(i);
+                        money = money - mData.get(i).getDouble("debt");
+                    }
+
+                }
             }
+
 
 
         } catch (JSONException e) {
@@ -127,7 +175,7 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.PrintBillViewH
         try {
             for (int i=0; i<mData.size(); i++){
                 JSONObject object = new JSONObject();
-                if (!mData.get(i).isNull("tempPaid") && mData.get(i).getDouble("tempPaid")>0){
+                if (!mData.get(i).isNull("tempPaid") && mData.get(i).getDouble("tempPaid") !=0){
                     object.put("billId", mData.get(i).getInt("id"));
                     object.put("paid", mData.get(i).getDouble("tempPaid"));
                     listResult.add(object);

@@ -2,6 +2,7 @@ package wolve.dms.utils;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputFilter;
@@ -42,6 +43,8 @@ import wolve.dms.adapter.StatisticalCheckinsAdapter;
 import wolve.dms.adapter.StatisticalDebtAdapter;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.apiconnect.UserConnect;
+import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickProduct;
 import wolve.dms.callback.CallbackDouble;
@@ -171,6 +174,27 @@ public class CustomCenterDialog {
         });
     }
 
+    public static void alertWithButtonCanceled(final String title, final String message, final String confirm, final boolean cancel, final CallbackBoolean callback) {
+        Util.getInstance().getCurrentActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                SweetAlertDialog dialog = new SweetAlertDialog(Util.getInstance().getCurrentActivity(), SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText(title)
+                        .setContentText(message)
+                        .setConfirmText(confirm)
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+                                sDialog.dismissWithAnimation();
+                                callback.onRespone(true);
+                            }
+                        });
+                dialog.setCanceledOnTouchOutside(cancel);
+                dialog.setCancelable(cancel);
+                dialog.show();
+            }
+        });
+    }
+
     public static void alertWithCancelButton(final String title, final String message, final String confirm, final String cancel, final CallbackBoolean callback) {
         Util.getInstance().getCurrentActivity().runOnUiThread(new Runnable() {
             public void run() {
@@ -183,13 +207,14 @@ public class CustomCenterDialog {
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                 sweetAlertDialog.dismissWithAnimation();
+                                callback.onRespone(false);
                             }
                         })
                         .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
                             public void onClick(SweetAlertDialog sDialog) {
                                 sDialog.dismissWithAnimation();
-                                callback.onRespone(null);
+                                callback.onRespone(true);
                             }
                         });
                 dialog.setCanceledOnTouchOutside(false);
@@ -576,148 +601,180 @@ public class CustomCenterDialog {
             }
         });
 
-
     }
 
-    public static void showDialogInputPaid(String title, String totalTitle, Double total, final CallbackPayBill mListener){
-        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_input_paid);
-        TextView tvTitle = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_title);
-        final TextView tvTotal = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_total);
-        final TextView tvTotalTitle = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_total_title);
-        final EditText edPaid = (EditText) dialogResult.findViewById(R.id.dialog_input_paid_money);
-        final TextView tvRemain = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_remain);
-        final RecyclerView rvDebt = dialogResult.findViewById(R.id.dialog_input_paid_rvdebt);
-        Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
-        Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
+//    public static void showDialogInputPaid(String title, String totalTitle, Double total, final CallbackPayBill mListener){
+//        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_input_paid);
+//        TextView tvTitle = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_title);
+//        final TextView tvTotal = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_total);
+//        final TextView tvTotalTitle = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_total_title);
+//        final EditText edPaid = (EditText) dialogResult.findViewById(R.id.dialog_input_paid_money);
+//        final TextView tvRemain = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_remain);
+//        final RecyclerView rvDebt = dialogResult.findViewById(R.id.dialog_input_paid_rvdebt);
+//        Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
+//        Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
+//
+//        tvTotal.setText(Util.FormatMoney(total));
+//        edPaid.setText("");
+//        tvRemain.setText(Util.FormatMoney(total));
+//        Util.showKeyboard(edPaid);
+//
+//        Util.textMoneyEvent(edPaid, null,new CallbackDouble() {
+//            @Override
+//            public void Result(Double s) {
+//                if (!s.equals("")){
+//                    tvRemain.setText(Util.FormatMoney(Util.valueMoney(tvTotal) - s));
+//                }else {
+//                    tvRemain.setText(tvTotal.getText().toString());
+//                }
+//            }
+//        });
+//
+//        btnCancel.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                dialogResult.dismiss();
+//            }
+//        });
+//        btnSubmit.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Util.hideKeyboard(v);
+//                if (edPaid.getText().toString().equals("") || edPaid.getText().toString().equals("0") ){
+//                    dialogResult.dismiss();
+//                    mListener.OnRespone(Util.valueMoney(tvTotal) , 0.0);
+//
+//                }else if (!edPaid.getText().toString().equals("") && !edPaid.getText().toString().equals("0") ){
+//                    if (Util.valueMoney(edPaid) > Util.valueMoney(tvTotal)){
+//                        Util.showToast("Số tiền nhập nhỏ hơn số tiền nợ!");
+//                    }else {
+//                        dialogResult.dismiss();
+//                        mListener.OnRespone(Util.valueMoney(tvTotal) , Util.valueMoney(edPaid));
+//                    }
+//                }
+//
+//            }
+//        });
+//    }
 
-        tvTotal.setText(Util.FormatMoney(total));
-        edPaid.setText("");
-        tvRemain.setText(Util.FormatMoney(total));
-        Util.showKeyboard(edPaid);
-
-        Util.textMoneyEvent(edPaid, null,new CallbackDouble() {
-            @Override
-            public void Result(Double s) {
-                if (!s.equals("")){
-                    tvRemain.setText(Util.FormatMoney(Util.valueMoney(tvTotal) - s));
-                }else {
-                    tvRemain.setText(tvTotal.getText().toString());
-                }
-            }
-        });
-
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogResult.dismiss();
-            }
-        });
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Util.hideKeyboard(v);
-                if (edPaid.getText().toString().equals("") || edPaid.getText().toString().equals("0") ){
-                    dialogResult.dismiss();
-                    mListener.OnRespone(Util.valueMoney(tvTotal) , 0.0);
-
-                }else if (!edPaid.getText().toString().equals("") && !edPaid.getText().toString().equals("0") ){
-                    if (Util.valueMoney(edPaid) > Util.valueMoney(tvTotal)){
-                        Util.showToast("Số tiền nhập nhỏ hơn số tiền nợ!");
-                    }else {
-                        dialogResult.dismiss();
-                        mListener.OnRespone(Util.valueMoney(tvTotal) , Util.valueMoney(edPaid));
-                    }
-                }
-
-            }
-        });
-    }
-
-    public static Dialog showDialogPayment(String title, final Double currentDebt, final int currentBillId, final List<JSONObject> listDebts ,Double paid ,final CallbackList mListener){
+    public static Dialog showDialogPayment(String title,  final List<BaseModel> listDebts , final CallbackList mListener){
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_input_paid);
         TextView tvTitle = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_title);
         TextView tvText = dialogResult.findViewById(R.id.dialog_input_paid_text);
-        final TextView tvTotal = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_total);
-        final TextView tvTotalTitle = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_total_title);
+        //final TextView tvTotal = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_total);
+//        final TextView tvTotalTitle = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_total_title);
         final EditText edPaid = (EditText) dialogResult.findViewById(R.id.dialog_input_paid_money);
         final TextView tvRemain = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_remain);
         final RecyclerView rvDebt = dialogResult.findViewById(R.id.dialog_input_paid_rvdebt);
         final Switch swFastPay = dialogResult.findViewById(R.id.dialog_input_paid_switch);
-        final TextView tvCurrentBillPaid = dialogResult.findViewById(R.id.dialog_input_paid_paid);
+//        final TextView tvCurrentBillPaid = dialogResult.findViewById(R.id.dialog_input_paid_paid);
         final Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
         final Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
 
-        final DebtAdapter debtAdapter = new DebtAdapter(listDebts == null? new ArrayList<JSONObject>() : listDebts, true);
+        final DebtAdapter debtAdapter = new DebtAdapter(listDebts == null? new ArrayList<BaseModel>() : listDebts, swFastPay.isChecked(), true);
         Util.createLinearRV(rvDebt, debtAdapter);
 
-        final Double lastDebt = debtAdapter.getTotalMoney();
-        final Double totalDebt =  currentDebt + lastDebt ;
+//        final Double lastDebt = debtAdapter.getTotalMoney();
+//        final Double totalDebt =  currentDebt + lastDebt;
+        final Double totalDebt = debtAdapter.getTotalMoney();
+
 
         tvTitle.setText(title);
         tvRemain.setText(Util.FormatMoney(totalDebt));
-        tvTotal.setText(Util.FormatMoney(currentDebt));
-        tvText.setText(currentDebt > 0 ? "Số tiền khách trả": "Số tiền trả lại khách");
-        //edPaid.setText("");
-        swFastPay.setVisibility(listDebts == null?View.GONE: View.VISIBLE);
+//        tvTotal.setText(Util.FormatMoney(totalDebt));
+        tvText.setText(totalDebt >= 0 ? "Số tiền khách trả": "Số tiền trả lại khách");
+
+//        tvTotal.setText(Util.FormatMoney(currentDebt));
+//        tvText.setText(currentDebt >= 0 ? "Số tiền khách trả": "Số tiền trả lại khách");
+
+        swFastPay.setVisibility(listDebts.size() ==1 ?View.GONE: View.VISIBLE);
+//        if (paid !=0){
+//            edPaid.setText(Util.FormatMoney(paid));
+//        }
 
         Util.textMoneyEvent(edPaid,totalDebt, new CallbackDouble() {
             @Override
             public void Result(Double s) {
-                if (swFastPay.isChecked()){
-                    if (s< currentDebt){
-                        tvCurrentBillPaid.setText(Util.FormatMoney(s));
-                        debtAdapter.inputPaid(null);
-                    }else {
-                        tvCurrentBillPaid.setText(Util.FormatMoney(currentDebt));
-                        debtAdapter.inputPaid(s-currentDebt);
-                    }
-
-                }else {
-                    if (s < lastDebt){
-                        tvCurrentBillPaid.setText("");
-                        debtAdapter.inputPaid(s);
-
-                    }else {
-                        tvCurrentBillPaid.setText(Util.FormatMoney(s - lastDebt));
-                        debtAdapter.inputPaid(lastDebt);
-                    }
-                }
-                tvTotal.setText(Util.FormatMoney(currentDebt - Util.valueMoney(tvCurrentBillPaid)));
+                debtAdapter.inputPaid(s, swFastPay.isChecked());
                 tvRemain.setText(Util.FormatMoney(totalDebt - s));
+
+                //                if (swFastPay.isChecked()){
+//                    if (s< currentDebt){
+//                        tvCurrentBillPaid.setText(Util.FormatMoney(s));
+//                        debtAdapter.inputPaid(null);
+//                    }else {
+//                        tvCurrentBillPaid.setText(Util.FormatMoney(currentDebt));
+//                        debtAdapter.inputPaid(s-currentDebt);
+//                    }
+//
+//                }else {
+//                    if (s < lastDebt){
+//                        tvCurrentBillPaid.setText("");
+//                        debtAdapter.inputPaid(s);
+//
+//                    }else {
+//                        tvCurrentBillPaid.setText(Util.FormatMoney(s - lastDebt));
+//                        debtAdapter.inputPaid(lastDebt);
+//                    }
+//                }
+//                tvTotal.setText(Util.FormatMoney(currentDebt - Util.valueMoney(tvCurrentBillPaid)));
+//                tvRemain.setText(Util.FormatMoney(totalDebt - s));
+//                debtAdapter.inputPaid(s, swFastPay.isChecked());
+//                if (swFastPay.isChecked()){
+//                    debtAdapter.inputPaid(s, swFastPay.isChecked());
+
+
+//                    if (s< currentDebt){
+//                        tvCurrentBillPaid.setText(Util.FormatMoney(s));
+//                        debtAdapter.inputPaid(null);
+//                    }else {
+//                        tvCurrentBillPaid.setText(Util.FormatMoney(currentDebt));
+//                        debtAdapter.inputPaid(s-currentDebt);
+//                    }
+
+//                }else {
+//                    if (s < lastDebt){
+//                        tvCurrentBillPaid.setText("");
+//                        debtAdapter.inputPaid(s);
+//
+//                    }else {
+//                        tvCurrentBillPaid.setText(Util.FormatMoney(s - lastDebt));
+//                        debtAdapter.inputPaid(lastDebt);
+//                    }
+//                }
+//                tvTotal.setText(Util.FormatMoney(currentDebt - Util.valueMoney(tvCurrentBillPaid)));
+//                tvRemain.setText(Util.FormatMoney(totalDebt - s));
 
             }
         });
 
-
-        if (paid !=0){
-            edPaid.setText(Util.FormatMoney(paid));
-        }
-
         swFastPay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Double s =Util.valueMoney(edPaid);
-                if (isChecked){
-                    if (s< currentDebt){
-                        tvCurrentBillPaid.setText(Util.FormatMoney(s));
-                        debtAdapter.inputPaid(null);
-                    }else {
-                        tvCurrentBillPaid.setText(Util.FormatMoney(currentDebt));
-                        debtAdapter.inputPaid(s-currentDebt);
-                    }
+                debtAdapter.inputPaid(Util.valueMoney(edPaid), swFastPay.isChecked());
 
-                }else {
-                    if (s < lastDebt){
-                        tvCurrentBillPaid.setText("");
-                        debtAdapter.inputPaid(s);
-
-                    }else {
-                        tvCurrentBillPaid.setText(Util.FormatMoney(s - lastDebt));
-                        debtAdapter.inputPaid(lastDebt);
-                    }
-                }
-                tvTotal.setText(Util.FormatMoney(currentDebt - Util.valueMoney(tvCurrentBillPaid)));
-                tvRemain.setText(Util.FormatMoney(totalDebt - s));
+//                Double s =Util.valueMoney(edPaid);
+//                if (isChecked){
+//                    if (s< currentDebt){
+//                        tvCurrentBillPaid.setText(Util.FormatMoney(s));
+//                        debtAdapter.inputPaid(null);
+//                    }else {
+//                        tvCurrentBillPaid.setText(Util.FormatMoney(currentDebt));
+//                        debtAdapter.inputPaid(s-currentDebt);
+//                    }
+//
+//                }else {
+//                    if (s < lastDebt){
+//                        tvCurrentBillPaid.setText("");
+//                        debtAdapter.inputPaid(s);
+//
+//                    }else {
+//                        tvCurrentBillPaid.setText(Util.FormatMoney(s - lastDebt));
+//                        debtAdapter.inputPaid(lastDebt);
+//                    }
+//                }
+//                tvTotal.setText(Util.FormatMoney(currentDebt - Util.valueMoney(tvCurrentBillPaid)));
+//                tvRemain.setText(Util.FormatMoney(totalDebt - s));
             }
         });
 
@@ -733,21 +790,25 @@ public class CustomCenterDialog {
             public void onClick(View v) {
                 Util.hideKeyboard(v);
                 List<JSONObject> listPayment = debtAdapter.getListBillPayment();
-                try {
-                    JSONObject object = new JSONObject();
-                    object.put("billId", currentBillId);
-                    object.put("paid", currentDebt > 0? Util.valueMoney(tvCurrentBillPaid) : Util.valueMoney(edPaid)*-1);
-
-                    if (Util.valueMoney(tvCurrentBillPaid) !=0 || Util.valueMoney(edPaid) >0){
-                        listPayment.add(0,object);
-
-                    }
-
-                    mListener.onResponse(listPayment);
-
-                } catch (JSONException e) {
-                    Util.showToast("Lỗi ");
-                }
+                mListener.onResponse(listPayment);
+//                try {
+//                    JSONObject object = new JSONObject();
+//                    object.put("billId", currentBillId);
+//                    object.put("paid", currentDebt >= 0? Util.valueMoney(tvCurrentBillPaid) : Util.valueMoney(edPaid)*-1);
+//
+//
+//                    if (Util.valueMoney(tvCurrentBillPaid) > 0 ){
+//                        listPayment.add(0,object);
+//
+//                    }else if (currentDebt <0 && Util.valueMoney(edPaid) >0){
+//                        listPayment.add(0,object);
+//                    }
+//
+//                    mListener.onResponse(listPayment);
+//
+//                } catch (JSONException e) {
+//                    Util.showToast("Lỗi ");
+//                }
                 dialogResult.dismiss();
 
             }
@@ -777,78 +838,6 @@ public class CustomCenterDialog {
         tvSalesman.setText(User.getFullName());
         tvTotal.setText(total);
 
-
-    }
-
-    public static void showDialogDatePicker(final RadioButton rdButton, final CallbackRangeTime mListener){
-        final String result ="&billingFrom=%d&billingTo=%d";
-
-        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_select_datepicker);
-        dialogResult.setCancelable(true);
-        TextView tvTitle = (TextView) dialogResult.findViewById(R.id.title);
-        Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
-        Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
-        final CalendarPickerView calendarView = dialogResult.findViewById(R.id.calendar_view);
-
-        tvTitle.setText("Chọn thời gian");
-        btnSubmit.setText("Chọn");
-        btnCancel.setText("Hủy");
-
-        final Calendar nextYear = Calendar.getInstance();
-        nextYear.add(Calendar.YEAR, 10);
-
-        final Calendar lastYear = Calendar.getInstance();
-        lastYear.add(Calendar.YEAR, -10);
-
-        ArrayList<Integer> list = new ArrayList<>();
-        list.add(1);
-
-//        calendarView.deactivateDates(list);
-//        ArrayList<Date> arrayList = new ArrayList<>();
-//        try {
-//            SimpleDateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy");
-//            String strdate = "22-2-2018";
-//            String strdate2 = "26-2-2018";
-//            Date newdate = dateformat.parse(strdate);
-//            Date newdate2 = dateformat.parse(strdate2);
-//            arrayList.add(newdate);
-//            arrayList.add(newdate2);
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-
-        calendarView.init(lastYear.getTime(), nextYear.getTime(),new SimpleDateFormat("MMMM, YYYY", Locale.getDefault()))
-                .inMode(CalendarPickerView.SelectionMode.RANGE)
-                .withSelectedDate(new Date());
-//                .withDeactivateDates(list)
-//                .withHighlightedDates(arrayList);
-
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogResult.dismiss();
-            }
-        });
-
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                long startDate = new Timestamp(calendarView.getSelectedDates().get(0).getTime()).getTime();
-                long lastDate = new Timestamp(calendarView.getSelectedDates().get(calendarView.getSelectedDates().size()-1).getTime()).getTime() ;
-
-                if (calendarView.getSelectedDates().size() ==1){
-                    rdButton.setText(Util.DateString(startDate));
-                    mListener.onSelected(startDate, startDate+86400000);
-                }else {
-                    rdButton.setText(String.format("%s\n%s", Util.DateString(startDate) ,Util.DateString(lastDate)));
-                    mListener.onSelected(startDate,lastDate +86400000);
-                }
-
-//                mListener.Result(String.format(result, startDate, lastDate+ 86400000));
-                dialogResult.dismiss();
-
-            }
-        });
 
     }
 
@@ -950,5 +939,119 @@ public class CustomCenterDialog {
         });
 
     }
+
+    public static void showDialogRelogin(String title, final BaseModel user , final Callback mlistener){
+        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_relogin);
+
+        final Button btnCancel = dialogResult.findViewById(R.id.btn_cancel);
+        final Button btnSubmit = dialogResult.findViewById(R.id.btn_submit);
+        TextView tvTitle = dialogResult.findViewById(R.id.dialog_relogin_title);
+        final EditText edPhone =  dialogResult.findViewById(R.id.dialog_relogin_phone);
+        final EditText edPass =  dialogResult.findViewById(R.id.dialog_relogin_password);
+
+        btnCancel.setText("HỦY");
+        btnSubmit.setText("ĐĂNG NHẬP");
+        tvTitle.setText(title);
+
+        edPhone.setText(user.getString("phone"));
+
+        Util.showKeyboard(edPass);
+
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogResult.dismiss();
+            }
+        });
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                Util.hideKeyboard(edPass);
+                if (!edPhone.getText().toString().equals("") && !edPass.getText().toString().equals("")){
+                    UserConnect.doLogin(edPhone.getText().toString().trim(),
+                            edPass.getText().toString().trim(),
+                            new CallbackBoolean() {
+                                @Override
+                                public void onRespone(Boolean result) {
+                                    if (result){
+                                        Util.showToast("Đăng nhập thành công");
+                                        mlistener.onResponse(user.BaseModelJSONObject());
+                                        //Transaction.gotoHomeActivity(true);
+                                    }else {
+                                        mlistener.onError("");
+                                    }
+                                }
+                            });
+                }
+
+                dialogResult.dismiss();
+
+
+            }
+        });
+
+
+    }
+
+    public static void showDialogChangePass(String title, final CallbackBoolean mListener){
+        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_change_password);
+
+        final Button btnCancel = dialogResult.findViewById(R.id.btn_cancel);
+        final Button btnSubmit = dialogResult.findViewById(R.id.btn_submit);
+        TextView tvTitle = dialogResult.findViewById(R.id.dialog_changepass_title);
+        final EditText edOldPass =  dialogResult.findViewById(R.id.dialog_changepass_old);
+        final EditText edNewPass1 =  dialogResult.findViewById(R.id.dialog_changepass_new1);
+        final EditText edNewPass2 =  dialogResult.findViewById(R.id.dialog_changepass_new2);
+
+        btnCancel.setText("HỦY");
+        btnSubmit.setText("TIẾP TỤC");
+        tvTitle.setText(title);
+
+        Util.showKeyboard(edOldPass);
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogResult.dismiss();
+            }
+        });
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                Util.hideKeyboard(edOldPass);
+
+                if (!Util.isEmpty(edOldPass) && !Util.isEmpty(edNewPass1) && !Util.isEmpty(edNewPass2)){
+
+                    if (edOldPass.getText().toString().trim().equals(CustomSQL.getString(Constants.USER_PASSWORD))){
+
+                        if (edNewPass1.getText().toString().trim().equals(edNewPass2.getText().toString().trim())) {
+                            dialogResult.dismiss();
+                            UserConnect.doChangePass(edNewPass1.getText().toString().trim(), new CallbackBoolean() {
+                                @Override
+                                public void onRespone(Boolean result) {
+                                    mListener.onRespone(result);
+                                }
+                            });
+
+                        }else {
+                            Util.showToast("Mật khẩu mới không khớp");
+
+                        }
+                    }else {
+                        Util.showToast("Nhập sai mật khẩu cũ");
+                    }
+
+                }else {
+                    Util.showToast("Nhập chưa đủ nội dung");
+                }
+
+
+
+
+            }
+        });
+
+
+    }
+
 
 }

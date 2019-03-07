@@ -9,6 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -23,9 +25,14 @@ import wolve.dms.adapter.CustomerBillsAdapter;
 import wolve.dms.adapter.CustomerPaymentAdapter;
 import wolve.dms.adapter.StatisticalProductGroupAdapter;
 import wolve.dms.adapter.ViewpagerBillDetailAdapter;
+import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.apiconnect.SheetConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackJSONObject;
+import wolve.dms.callback.CallbackList;
+import wolve.dms.customviews.CTextIcon;
+import wolve.dms.libraries.connectapi.GoogleSheetGet;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
 import wolve.dms.models.BillDetail;
@@ -44,7 +51,9 @@ import wolve.dms.utils.Util;
 
 public class BillDetailFragment extends Fragment implements View.OnClickListener {
     private View view;
-    private TextView tvTitle, tvDebt, tvPaid, tvTotal;
+    private TextView tvTitle, tvDebt, tvPaid, tvTotal, tvBDF;
+    private CTextIcon tvExport;
+    private RadioGroup rdYears;
 //    private RecyclerView rvBill ;
 //    private RadioGroup rgFilter;
 //    private RadioButton rdBill, rdPayment, rdProduct;
@@ -57,6 +66,7 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
     private List<RecyclerView.Adapter> listadapter;
     private List<BaseModel> mBills = new ArrayList<>();
     private int currentPosition =0;
+    private double currentDebt =0.0;
 
     @Nullable
     @Override
@@ -72,14 +82,17 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
 
     private void intitialData() {
         mBills = mActivity.listBills;
-        showOverViewDetail(Util.getTotal(mBills));
         tabLayout.setupWithViewPager(viewPager);
-        setupViewPager(mBills);
+        setupViewPager(filterByYear(mBills));
+        addYearCheck(mActivity.mYears);
+        tvExport.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN)? View.VISIBLE : View.GONE);
+
 
     }
 
     private void addEvent() {
-
+        tvDebt.setOnClickListener(this);
+        tvExport.setOnClickListener(this);
 
     }
 
@@ -90,20 +103,75 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
         tvTotal = view.findViewById(R.id.bill_detail_total);
         viewPager = view.findViewById(R.id.bill_detail_viewpager);
         tabLayout = view.findViewById(R.id.bill_detail_tabs);
-
+        tvBDF = view.findViewById(R.id.bill_detail_bdf);
+        tvExport = view.findViewById(R.id.bill_detail_export);
+        rdYears = view.findViewById(R.id.bill_detail_yeargroup);
 
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
+            case R.id.bill_detail_debt:
+                if (currentDebt >0){
+                    showDialogPayment();
+                }
+                break;
 
+            case R.id.bill_detail_export:
+                exportBillToSheet();
+                break;
 
 
 
         }
     }
 
+    private void exportBillToSheet(){
+        String range = String.format(Api_link.STATISTICAL_SHEET_TAB2, 2);
+
+        SheetConnect.postValue(Api_link.STATISTICAL_SHEET_KEY, range, getListValueExportToSheet(mBills), new GoogleSheetGet.CallbackListList() {
+            @Override
+            public void onRespone(List<List<Object>> results) {
+
+            }
+        },true);
+    }
+
+    private void showDialogPayment(){
+        CustomCenterDialog.showDialogPayment("THANH TOÁN CÁC HÓA ĐƠN NỢ",
+                getAllBillHaveDebt(),
+                new CallbackList() {
+                    @Override
+                    public void onResponse(List result) {
+                        postPayToServer(DataUtil.createListPaymentParam(mActivity.currentCustomer.getInt("id"),  result) );
+                    }
+
+                    @Override
+                    public void onError(String error) {
+
+                    }
+                });
+
+    }
+
+    private void postPayToServer(List<String> listParam){
+        CustomerConnect.PostListPay(listParam, new CallbackList() {
+            @Override
+            public void onResponse(List result) {
+                Util.showToast("Thanh toán thành công");
+                reloadCustomer();
+                //Transaction.returnShopCartActivity(Constants.PRINT_BILL_ACTIVITY, Constants.RELOAD_DATA, Constants.RESULT_PRINTBILL_ACTIVITY);
+
+
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }//
+        }, true);
+    }
 
     private RecyclerView.Adapter createRVBill(List<BaseModel> listbill){
         CustomerBillsAdapter adapter = new CustomerBillsAdapter(listbill, new CustomerBillsAdapter.CallbackListObject() {
@@ -219,7 +287,8 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
 
     private void showOverViewDetail(BaseModel object){
         tvTotal.setText(String.format("Tổng: %s" ,Util.FormatMoney(object.getDouble("total"))));
-        tvDebt.setText(String.format("Nợ: %s" ,Util.FormatMoney(object.getDouble("debt"))));
+        currentDebt = object.getDouble("debt");
+        tvDebt.setText(String.format("Nợ: %s" ,Util.FormatMoney(currentDebt)));
         tvPaid.setText(String.format("Trả: %s" ,Util.FormatMoney(object.getDouble("paid"))));
 
     }
@@ -247,6 +316,18 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
 
     }
 
+    private List<BaseModel> getAllBillHaveDebt(){
+        List<BaseModel> list = new ArrayList<>();
+        for (int i=0; i<mBills.size(); i++) {
+            if (mBills.get(i).getDouble("debt") > 0) {
+                list.add(mBills.get(i));
+
+            }
+        }
+        DataUtil.sortbyKey("createAt", list, true);
+        return list;
+    }
+
     private List<BaseModel> convert2ListPayment(List<BaseModel> listBill){
         List<BaseModel> listResult = new ArrayList<>();
 
@@ -257,7 +338,10 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
                 objectbill.put("type", Constants.BILL);
                 objectbill.put("total", listBill.get(i).getDouble("total"));
 
-                listResult.add(objectbill);
+                if (listBill.get(i).getDouble("total") !=0.0){
+                    listResult.add(objectbill);
+                }
+
 
                 JSONArray arrayPayment = listBill.get(i).getJSONArray("payments");
                 if (arrayPayment.length() ==0){
@@ -276,8 +360,10 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
                         boolean check = false;
 
                         for (int ii =0; ii<listResult.size(); ii++){
+//                            if (listResult.get(ii).getString("type").equals(Constants.PAYMENT) &&
+//                                    listResult.get(ii).getLong("createAt") == object.getLong("createAt") ){
                             if (listResult.get(ii).getString("type").equals(Constants.PAYMENT) &&
-                                    listResult.get(ii).getLong("createAt") == object.getLong("createAt") ){
+                                    Util.DateString(listResult.get(ii).getLong("createAt")).equals(Util.DateString(object.getLong("createAt")))  ){
                                 check = true;
                                 listResult.get(ii).put("total", listResult.get(ii).getDouble("total") + object.getLong("paid"));
 
@@ -310,13 +396,39 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
         return listResult;
     }
 
+    private List<BaseModel> filterByYear(List<BaseModel> listbill){
+        String year  =  Constants.ALL_FILTER;
+        int selectedRadioButtonID = rdYears.getCheckedRadioButtonId();
+        if(selectedRadioButtonID!=-1){
+            RadioButton selectedRadioButton = (RadioButton) rdYears.findViewById(selectedRadioButtonID);
+            year = selectedRadioButton.getText().toString();
+
+        }
+
+        List<BaseModel> Lists = new ArrayList<>();
+
+        for (int i =0; i< listbill.size(); i++){
+            if (!year.equals(Constants.ALL_FILTER)){
+                if (Util.YearString(listbill.get(i).getLong("createAt")).equals(year)){
+                    Lists.add(listbill.get(i));
+                }
+
+            }else {
+                Lists.add(listbill.get(i));
+            }
+        }
+        return Lists;
+    }
+
     private void setupViewPager( final List<BaseModel> listbill){
+
+        showOverViewDetail(Util.getTotal(listbill));
+        tvBDF.setText(String.format("BDF:%s ",DataUtil.defineBDFPercent(getAllBillDetail(listbill))) +"%");
 
         List<String> titles = new ArrayList<>();
         titles.add(0,"Hóa đơn");
         titles.add(1,"Sản phẩm");
         titles.add(2,"Thanh toán");
-
 
         listadapter = new ArrayList<>();
         listadapter.add(0,createRVBill(listbill));
@@ -378,5 +490,78 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
         return listBillDetail;
 
     }
+
+    private List<List<Object>> getListValueExportToSheet(List<BaseModel> listbill){
+        DataUtil.sortbyKey("createAt", listbill, false);
+        List<List<Object>> values = new ArrayList<>();
+        try {
+            for (int i=0; i<listbill.size(); i++){
+                BaseModel bill = listbill.get(i);
+                List<Object> data = new ArrayList<>();
+
+                final Customer customer = new Customer(bill.getJsonObject("customer"));
+//                data.add(i+1);
+                data.add(Util.DateString(bill.getLong("createAt")));
+                data.add(Constants.getShopInfo(customer.getString("shopType") , null) + " " + customer.getString("signBoard"));
+                data.add(customer.getString("phone"));
+
+                JSONArray arrayDetail = bill.getJSONArray("billDetails");
+                String detail = "";
+                for (int a =0; a<arrayDetail.length(); a++){
+                    JSONObject object = arrayDetail.getJSONObject(a);
+                    if (a ==0){
+                        detail += String.format("%s (%s x %s)", object.getString("productName") ,
+                                object.getString("quantity"),
+                                Util.FormatMoney(object.getDouble("unitPrice") - object.getDouble("discount")));
+                    }else {
+                        detail += "\n" + String.format("%s (%s x %s)", object.getString("productName") ,
+                                object.getString("quantity"),
+                                Util.FormatMoney(object.getDouble("unitPrice") - object.getDouble("discount"))) ;
+                    }
+
+
+                }
+                data.add(detail);
+                data.add(bill.getDouble("total"));
+                data.add(bill.getDouble("paid"));
+                data.add(bill.getDouble("debt"));
+                data.add(bill.getString("note"));
+
+                values.add(data);
+
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return values;
+    }
+
+    private void addYearCheck(List years){
+        for (int i = 0; i < years.size(); i++) {
+            RadioButton button = new RadioButton(mActivity);
+            button.setId(i);
+            button.setText(years.get(i).toString());
+            button.setPadding(10,0,10,0);
+            if (i ==0){
+                button.setChecked(true);
+            }
+//            button.setChecked(i == currentHours); // Only select button with same index as currently selected number of hours
+//            button.setBackgroundResource(R.drawable.item_selector); // This is a custom button drawable, defined in XML
+            rdYears.addView(button);
+        }
+
+        rdYears.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                setupViewPager(filterByYear(mBills));
+            }
+        });
+
+
+
+    }
+
 
 }

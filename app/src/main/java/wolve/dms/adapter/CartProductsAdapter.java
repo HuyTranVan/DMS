@@ -1,6 +1,7 @@
 package wolve.dms.adapter;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -142,23 +143,30 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
             }
         });
 
-        holder.lnParent.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                CustomCenterDialog.alertWithCancelButton(null, "Xóa " + mData.get(position).getString("name") +" khỏi danh sách" , "ĐỒNG Ý","HỦY", new CallbackBoolean() {
-                    @Override
-                    public void onRespone(Boolean result) {
-                        mData.remove(position);
-                        mChangePrice.NewPrice(updatePrice(mData));
-                        notifyItemRemoved(position);
-                        notifyItemRangeChanged(position, getItemCount());
-
-                    }
-                });
-
-                return true;
-            }
-        });
+//        holder.lnParent.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View v) {
+//                CustomCenterDialog.alertWithCancelButton(null, "Xóa " + mData.get(position).getString("name") +" khỏi danh sách" , "ĐỒNG Ý","HỦY", new CallbackBoolean() {
+//                    @Override
+//                    public void onRespone(Boolean result) {
+//                        try {
+//                            mData.get(position).put("isvisible", true);
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//
+//                        mData.remove(position);
+//                        mChangePrice.NewPrice(updatePrice(mData));
+//                        notifyItemRemoved(position);
+//                        notifyItemRangeChanged(position, getItemCount());
+//
+//
+//                    }
+//                });
+//
+//                return true;
+//            }
+//        });
 
     }
 
@@ -191,6 +199,13 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
 
     }
 
+    public void addItemProduct(int pos,Product product){
+        mData.add(pos, product);
+        notifyDataSetChanged();
+//        notifyItemInserted(mData.size());
+        mChangePrice.NewPrice(updatePrice(mData));
+    }
+
     public void addItemProduct(Product product){
         mData.add(product);
 //        notifyDataSetChanged();
@@ -202,10 +217,51 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
         return mData;
     }
 
+    public void removeItem(final int pos){
+        CustomCenterDialog.alertWithCancelButton(null, "Xóa " + mData.get(pos).getString("name") +" khỏi danh sách" , "ĐỒNG Ý","HỦY", new CallbackBoolean() {
+            @Override
+            public void onRespone(Boolean result) {
+                if (result){
+//                    try {
+//                        mData.get(pos).put("isvisible", true);
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+
+                    mData.remove(pos);
+                    mChangePrice.NewPrice(updatePrice(mData));
+                    notifyItemRemoved(pos);
+                    notifyItemChanged(pos);
+//                    notifyItemRangeChanged(pos, getItemCount());
+                }else {
+                    notifyItemChanged(pos);
+                    //notifyDataSetChanged();
+                }
+
+
+
+            }
+        });
+    }
+
+
+    @Override
+    public void unregisterAdapterDataObserver(@NonNull RecyclerView.AdapterDataObserver observer) {
+        super.unregisterAdapterDataObserver(observer);
+    }
+
     public List<JSONObject> getAllData(){
         List<JSONObject> list = new ArrayList<>();
         for (int i=0; i<mData.size(); i++){
             list.add(mData.get(i).ProductJSONObject());
+        }
+        return list;
+    }
+
+    public List<BaseModel> getAllDataBase(){
+        List<BaseModel> list = new ArrayList<>();
+        for (int i=0; i<mData.size(); i++){
+            list.add(mData.get(i));
         }
         return list;
     }

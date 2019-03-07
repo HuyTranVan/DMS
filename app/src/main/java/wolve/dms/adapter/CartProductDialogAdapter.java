@@ -46,7 +46,7 @@ public class CartProductDialogAdapter extends RecyclerView.Adapter<CartProductDi
         void onChoosen(int position, int count);
     }
 
-    public CartProductDialogAdapter(List<Product> list, int groupPosition, ProductGroup group, CallbackViewPager listener) {
+    public CartProductDialogAdapter(List<Product> listChoosen, List<Product> list, int groupPosition, ProductGroup group, CallbackViewPager listener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mListener = listener;
@@ -58,7 +58,8 @@ public class CartProductDialogAdapter extends RecyclerView.Adapter<CartProductDi
         for (int i=0 ; i<list.size(); i++){
             try {
                 int groupid = new JSONObject(list.get(i).getString("productGroup")).getInt("id");
-                if (groupId == groupid){
+                if (groupId == groupid && !checkHasChoosen(listChoosen, list.get(i))){
+                    list.get(i).put("checked", false);
                     this.mData.add(list.get(i));
                 }
 
@@ -143,10 +144,10 @@ public class CartProductDialogAdapter extends RecyclerView.Adapter<CartProductDi
         return mData;
     }
 
-    private Boolean checkHasChoosen(){
+    private Boolean checkHasChoosen(List<Product> listChoosen, Product product){
         Boolean check = false;
-        for (int i=0; i<mData.size(); i++){
-            if (mData.get(i).getBoolean("checked")){
+        for (int i=0; i<listChoosen.size(); i++){
+            if (listChoosen.get(i).getString("id").equals(product.getString("id"))){
                 check = true;
                 break;
             }

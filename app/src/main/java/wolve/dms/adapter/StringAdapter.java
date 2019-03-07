@@ -21,13 +21,13 @@ public class StringAdapter extends RecyclerView.Adapter<StringAdapter.ChoiceMeth
     private List<String> mData;
     private Context mContext;
     private LayoutInflater mLayoutInflater;
-    private CustomBottomDialog.StringListener mListener;
+    private CustomBottomDialog.PositionListener mListener;
 
     public interface CountListener{
         void onRespone(int count);
     }
 
-    public StringAdapter(List<String> data, CustomBottomDialog.StringListener mListener) {
+    public StringAdapter(List<String> data, CustomBottomDialog.PositionListener mListener) {
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mLayoutInflater = LayoutInflater.from(mContext);
         this.mListener = mListener;
@@ -57,7 +57,7 @@ public class StringAdapter extends RecyclerView.Adapter<StringAdapter.ChoiceMeth
                 @Override
                 public void onClick(View v) {
 
-                  mListener.onResponse(mData.get(getAdapterPosition()));
+                  mListener.onResponse(getAdapterPosition());
 
                 }
             });

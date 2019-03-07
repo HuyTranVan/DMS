@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -309,6 +310,79 @@ public class DataUtil {
             }
         }
         return listResult;
+    }
+
+    public static String defineBDFPercent(List<BaseModel> listDetails){
+//        List<BaseModel> listDetails = getAllBillDetail(listbill);
+
+        double total = 0.0;
+        double bdf =0.0;
+
+        for (int i=0; i<listDetails.size(); i++){
+            if (listDetails.get(i).getBoolean("promotion")
+                    && listDetails.get(i).getDouble("unitPrice").equals(listDetails.get(i).getDouble("discount"))){
+                bdf += listDetails.get(i).getInt("quantity") * listDetails.get(i).getDouble("purchasePrice");
+            }else {
+                total += listDetails.get(i).getInt("quantity") * listDetails.get(i).getDouble("purchasePrice");
+
+            }
+        }
+
+        double percent = bdf *100 /total;
+
+        return new DecimalFormat("#.##").format(percent);
+
+        //tvBDF.setText(String.format("BDF: %s ",new DecimalFormat("#.##").format(percent)) +"%");
+
+    }
+
+    public static double defineBDFPercentValue(List<BaseModel> listDetails){
+//        List<BaseModel> listDetails = getAllBillDetail(listbill);
+
+        double total = 0.0;
+        double bdf =0.0;
+
+        for (int i=0; i<listDetails.size(); i++){
+            if (listDetails.get(i).getBoolean("promotion")
+                    && listDetails.get(i).getDouble("unitPrice").equals(listDetails.get(i).getDouble("discount"))){
+                bdf += listDetails.get(i).getInt("quantity") * listDetails.get(i).getDouble("purchasePrice");
+            }else {
+                total += listDetails.get(i).getInt("quantity") * listDetails.get(i).getDouble("purchasePrice");
+
+            }
+        }
+
+        double percent = bdf *100 /total;
+
+        return percent;
+
+        //tvBDF.setText(String.format("BDF: %s ",new DecimalFormat("#.##").format(percent)) +"%");
+
+    }
+
+    public static double defineBDFValue(List<BaseModel> listDetails){
+//        List<BaseModel> listDetails = getAllBillDetail(listbill);
+
+//        double total = 0.0;
+        double bdf =0.0;
+
+        for (int i=0; i<listDetails.size(); i++){
+            if (listDetails.get(i).getBoolean("promotion")
+                    && listDetails.get(i).getDouble("unitPrice").equals(listDetails.get(i).getDouble("discount"))){
+                bdf += listDetails.get(i).getInt("quantity") * listDetails.get(i).getDouble("purchasePrice");
+            }
+//            else {
+//                total += listDetails.get(i).getInt("quantity") * listDetails.get(i).getDouble("purchasePrice");
+//
+//            }
+        }
+
+//        double percent = bdf *100 /total;
+
+        return bdf;
+
+        //tvBDF.setText(String.format("BDF: %s ",new DecimalFormat("#.##").format(percent)) +"%");
+
     }
 
 }

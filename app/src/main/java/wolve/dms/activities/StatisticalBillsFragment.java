@@ -110,7 +110,7 @@ public class StatisticalBillsFragment extends Fragment implements View.OnClickLi
             total +=list.get(i).getDouble("total");
             debt += list.get(i).getDouble("debt");
 
-            if (list.get(i).getDouble("debt") != 0){
+            if (list.get(i).getDouble("debt") > 0){
                 listDebt.add(list.get(i));
             }
         }

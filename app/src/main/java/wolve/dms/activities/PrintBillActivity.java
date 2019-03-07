@@ -38,6 +38,7 @@ import wolve.dms.callback.CallbackList;
 import wolve.dms.callback.CallbackProcess;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.libraries.printerdriver.BluetoothPrintBitmap;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Customer;
 import wolve.dms.models.User;
 import wolve.dms.utils.BitmapView;
@@ -72,7 +73,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     private PrintOldBillAdapter adapterOldBill;
     private DebtAdapter adapterDebt;
     private List<JSONObject> listBills = new ArrayList<>();
-    private List<JSONObject> listDebts = new ArrayList<>();
+    private List<BaseModel> listDebts = new ArrayList<>();
     private Uri imageChangeUri ;
     private Dialog dialogPayment;
     private Boolean rePrint;
@@ -292,8 +293,28 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
                 });
     }
 
+    private List<BaseModel> getAllDebt(){
+        List<BaseModel> list = new ArrayList<>();
+        BaseModel currentBill = new BaseModel();
+        try {
+            currentBill.put("id", 0);
+            currentBill.put("debt", adapterBill.getTotalMoney(listBills));
+
+            list.add(0, currentBill);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        DataUtil.sortbyKey("createAt", listDebts, true);
+        for (int i=0; i< listDebts.size(); i++){
+            list.add(listDebts.get(i));
+        }
+
+        return list;
+    }
+
     private void showDialogPayment(){
-        dialogPayment = CustomCenterDialog.showDialogPayment("NHẬP SỐ TIỀN KHÁCH TRẢ", adapterBill.getTotalMoney(listBills),0, listDebts,Util.valueMoney(tvPaid), new CallbackList() {
+        dialogPayment = CustomCenterDialog.showDialogPayment("NHẬP SỐ TIỀN KHÁCH TRẢ", getAllDebt(), new CallbackList() {
             @Override
             public void onResponse(final List result) {
                 dialogPayment.dismiss();
@@ -305,7 +326,10 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
                     CustomCenterDialog.alertWithCancelButton(null, "Chưa kết nối máy in. Bạn muốn tiếp tục thanh toán không xuất hóa đơn", "Tiếp tục","hủy", new CallbackBoolean() {
                         @Override
                         public void onRespone(Boolean bool) {
-                            postBilltoServer(result);
+                            if (bool){
+                                postBilltoServer(result);
+                            }
+
 
                         }
                     });
@@ -336,8 +360,9 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
     }
 
-    private void createRVDebt(final List<JSONObject> list){
-        adapterDebt = new DebtAdapter( list, false) ;
+    private void createRVDebt(final List<BaseModel> list){
+        DataUtil.sortbyKey("createAt", list, true);
+        adapterDebt = new DebtAdapter( list, true, false);
         Util.createLinearRV(rvDebts, adapterDebt);
 
     }
@@ -409,20 +434,42 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
-    private List<JSONObject> getListDebt(JSONArray array){
-        List<JSONObject> listResult = new ArrayList<>();
-        String billHaveReturn = checkBillReturn(array).toString();
-        for (int i=0; i<array.length(); i++){
-            try {
-                JSONObject object = array.getJSONObject(i);
-                if (object.getDouble("debt") > 0 && !billHaveReturn.contains(object.getString("id"))){
-                    listResult.add(object);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+    private List<BaseModel> getListDebt(JSONArray array){
 
+//        String billHaveReturn = checkBillReturn(array).toString();
+//        for (int i=0; i<array.length(); i++){
+//            try {
+//                JSONObject object = array.getJSONObject(i);
+//                if (object.getDouble("debt") > 0 && !billHaveReturn.contains(object.getString("id"))){
+//                    listResult.add(object);
+//                }
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//
+//        }
+        List<BaseModel> listResult = new ArrayList<>();
+        List<BaseModel> listBill = new ArrayList<>();
+        List<BaseModel> mList = new ArrayList<>();
+        try {
+            for (int i=0; i<array.length(); i++){
+                mList.add(new BaseModel(array.getJSONObject(i)));
+            }
+            listBill = DataUtil.mergeWithReturnBill(mList);
+
+            for (int j=0; j<listBill.size(); j++){
+//                JSONObject object = array.getJSONObject(j);
+                if (listBill.get(j).getDouble("debt") > 0){
+
+
+
+                    listResult.add(listBill.get(j));
+                }
+            }
+        }catch (JSONException e) {
+            e.printStackTrace();
         }
+
         return listResult;
     }
 
@@ -682,7 +729,6 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onResponse(List result) {
                 Transaction.returnShopCartActivity(Constants.PRINT_BILL_ACTIVITY, Constants.RELOAD_DATA, Constants.RESULT_PRINTBILL_ACTIVITY);
-
 
 
             }

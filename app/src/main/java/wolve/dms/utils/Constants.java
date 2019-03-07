@@ -27,7 +27,9 @@ public class Constants {
     public final static String IMAGES_DIRECTORY = "Lubsolution_DMS";
     public final static String APP_DIRECTORY = "Lubsolution_DMS";
     public final static String ROLE_ADMIN = "MANAGER";
+    public final static String ROLE_WAREHOUSE = "WAREHOUSE";
     public final static String ROLE_SALE = "SALE";
+    public final static String IS_ADMIN = "is_admin";
     public final static String PRINTER_SIZE = "printer_size";
     public static final String CHECKIN_FLAG = "check_in";
     public static final long CHECKIN_DISTANCE = 200;
@@ -39,7 +41,9 @@ public class Constants {
     public static final int PRINTER_57_WIDTH = 384;
     public static final int PRINTER_80_WIDTH = 576;
 
-
+    public static final String DATE_DEFAULT = "Chọn ngày";
+    public static final String MONTH_DEFAULT = "Chọn tháng";
+    public static final String YEAR_DEFAULT = "Chọn năm";
 
     public final static String IS_PROMOTION = "BÁN VÀ KHUYẾN MÃI";
     public final static String NO_PROMOTION = "CHỈ BÁN";
@@ -104,7 +108,7 @@ public class Constants {
     public final static String ONSUCCESS = "on_success";
 
     public final static String ALL_FILTER ="TẤT CẢ";
-
+    public static final String USER_LIST = "user_list";
 
 
     //Home constant

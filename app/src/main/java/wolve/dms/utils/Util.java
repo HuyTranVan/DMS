@@ -712,6 +712,20 @@ public class Util {
 
     }
 
+    public static int YearInt(String year) {
+        SimpleDateFormat dfm = new SimpleDateFormat("yyyy");
+
+        long unixtime = 0;
+        try {
+            unixtime = dfm.parse(year).getTime();
+            unixtime = unixtime;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return (int) unixtime;
+
+    }
+
     public static String HourString(long timestamp) {
         String date = "";
 

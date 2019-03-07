@@ -10,11 +10,14 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 import wolve.dms.BaseActivity;
 import wolve.dms.BuildConfig;
 import wolve.dms.R;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.UserConnect;
+import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.Distributor;
@@ -68,9 +71,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         edPassword.setText(CustomSQL.getString(Constants.USER_PASSWORD));
 
         if (BuildConfig.DEBUG_FLAG ){
-            if (!edUsername.getText().toString().trim().equals("") && !edPassword.getText().toString().trim().equals("")){
-                doLogin();
-            }
+//            if (!edUsername.getText().toString().trim().equals("") && !edPassword.getText().toString().trim().equals("")){
+//                doLogin();
+//            }
 
         }
     }
@@ -88,7 +91,17 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                 if (Util.isEmpty(edUsername) || Util.isEmpty(edPassword)){
                     Util.showToast("Vui lòng nhập đủ thông tin");
                 }else {
-                    doLogin();
+                    UserConnect.doLogin(edUsername.getText().toString().trim(),
+                            edPassword.getText().toString().trim(),
+                            new CallbackBoolean() {
+                                @Override
+                                public void onRespone(Boolean result) {
+                                    if (result){
+                                        Util.showToast("Đăng nhập thành công");
+                                        Transaction.gotoHomeActivity(true);
+                                    }
+                                }
+                            });
                 }
 
                 break;
@@ -107,34 +120,65 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
     }
 
-    private void doLogin(){
-        String params = String.format(Api_link.LOGIN_PARAM,edUsername.getText().toString(), edPassword.getText().toString());
-
-        UserConnect.Login(params, new CallbackJSONObject() {
-            @Override
-            public void onResponse(JSONObject result) {
-                try {
-                    User user = new User(result);
-                    Distributor distributor = new Distributor(result.getJSONObject("distributor"));
-
-                    CustomSQL.setObject(Constants.USER, user);
-                    CustomSQL.setObject(Constants.DISTRIBUTOR, distributor);
-                    CustomSQL.setString(Constants.USER_USERNAME, edUsername.getText().toString().trim());
-                    CustomSQL.setString(Constants.USER_PASSWORD, edPassword.getText().toString().trim());
-
-                    Util.showToast("Đăng nhập thành công");
-                    Transaction.gotoHomeActivity(true);
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onError(String error) {
-
-            }
-        }, true,true);
-    }
+//    private void doLogin(){
+//        String params = String.format(Api_link.LOGIN_PARAM,edUsername.getText().toString(), edPassword.getText().toString());
+//
+//        UserConnect.Login(params, new CallbackJSONObject() {
+//            @Override
+//            public void onResponse(JSONObject result) {
+//                try {
+//                    User user = new User(result);
+//                    Distributor distributor = new Distributor(result.getJSONObject("distributor"));
+//
+//                    CustomSQL.setObject(Constants.USER, user);
+//                    CustomSQL.setObject(Constants.DISTRIBUTOR, distributor);
+//                    CustomSQL.setString(Constants.USER_USERNAME, edUsername.getText().toString().trim());
+//                    CustomSQL.setString(Constants.USER_PASSWORD, edPassword.getText().toString().trim());
+//
+//                    if (User.getRole().equals(Constants.ROLE_ADMIN)){
+//                        CustomSQL.setBoolean(Constants.IS_ADMIN , true);
+//                    }else {
+//                        CustomSQL.setBoolean(Constants.IS_ADMIN , false);
+//                    }
+//
+//                    saveUser(result);
+//
+//                    Util.showToast("Đăng nhập thành công");
+//                    Transaction.gotoHomeActivity(true);
+//
+//
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        }, true,true);
+//    }
+//
+//    private void saveUser(JSONObject user){
+//        List<JSONObject> listUser = CustomSQL.getListObject(Constants.USER_LIST);
+//
+//        boolean check = false;
+//        try{
+//            for (int i=0; i< listUser.size(); i++){
+//                if (listUser.get(i).getInt("id") == user.getInt("id")){
+//                    check = true;
+//                    break;
+//                }
+//            }
+//
+//            if (!check){
+//                listUser.add(user);
+//            }
+//
+//            CustomSQL.setListJSONObject(Constants.USER_LIST, listUser);
+//
+//        } catch (JSONException e) {
+//            //e.printStackTrace();
+//        }
+//    }
 }

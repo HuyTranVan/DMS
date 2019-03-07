@@ -70,125 +70,140 @@
         <!--android:padding="@dimen/_2sdp"-->
         <!--android:layout_below="@+id/cart_header"/>-->
 
-    <LinearLayout
+    <!--<TextView-->
+    <!--android:id="@+id/bill_detail_bdf"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="@dimen/_20sdp"-->
+    <!--android:background="@color/colorBlue"-->
+    <!--android:textColor="@color/colorWhite"-->
+    <!--android:text="BDF"-->
+    <!--android:gravity="center"/>-->
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_height="match_parent"
         android:layout_below="@+id/cart_header">
 
-        <ScrollView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/cart_bdf"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_20sdp"
+                    android:background="@color/colorBlue"
+                    android:textColor="@color/colorWhite"
+                    android:text="BDF"
+                    android:gravity="center"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/cart_rvproduct"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:layout_below="@+id/cart_bdf"/>
+
+                <!--<android.support.v7.widget.RecyclerView-->
+                    <!--android:id="@+id/cart_rvpromotion"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_below="@+id/cart_rvproduct"/>-->
+            </RelativeLayout>
 
             <LinearLayout
+                android:id="@+id/cart_submit_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!--<View-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="1dp"-->
-                    <!--android:background="@color/colorGrey"-->
-                    <!--android:layout_alignParentBottom="true"/>-->
-
-
+                <wolve.dms.customviews.CInputForm
+                    android:id="@+id/cart_note"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.3"
+                    app:textHint="Ghi chú"
+                    app:iconText="@string/icon_comment" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/_5sdp"
+                    android:background="@color/colorLightGrey">
 
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/cart_rvproduct"
+                    <Button
+                        android:id="@+id/cart_submit"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clipToPadding="false"/>
+                        android:layout_height="@dimen/_30sdp"
+                        android:background="@drawable/btn_confirm_blue"
+                        android:text="IN và THANH TOÁN"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_12sdp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginLeft="@dimen/_10sdp"
+                        android:layout_marginRight="@dimen/_20sdp"
+                        android:layout_toLeftOf="@+id/cart_total"/>
 
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/cart_rvpromotion"
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:id="@+id/cart_total"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/cart_rvproduct"/>
+                        android:text="0"
+                        android:textColor="@color/black_text_color"
+                        android:textSize="@dimen/_14sdp"
+                        android:layout_toLeftOf="@+id/cart_d"
+                        android:layout_marginRight="@dimen/_5sdp"
+                        android:layout_centerVertical="true"/>
+
+                    <TextView
+                        android:id="@+id/cart_d"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="đ"
+                        android:textColor="@color/black_text_color"
+                        android:textSize="@dimen/_12sdp"
+                        android:textStyle="italic"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"/>
+
+
+
                 </RelativeLayout>
 
-                <LinearLayout
-                    android:id="@+id/cart_submit_group"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <wolve.dms.customviews.CInputForm
-                        android:id="@+id/cart_note"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.3"
-                        app:textHint="Ghi chú"
-                        app:iconText="@string/icon_comment" />
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="@dimen/_5sdp"
-                        android:background="@color/colorLightGrey">
-
-                        <Button
-                            android:id="@+id/cart_submit"
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/_30sdp"
-                            android:background="@drawable/btn_confirm_blue"
-                            android:text="IN và THANH TOÁN"
-                            android:textAllCaps="true"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/_12sdp"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginLeft="@dimen/_10sdp"
-                            android:layout_marginRight="@dimen/_20sdp"
-                            android:layout_toLeftOf="@+id/cart_total"/>
-
-                        <TextView
-                            android:id="@+id/cart_total"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="0"
-                            android:textColor="@color/black_text_color"
-                            android:textSize="@dimen/_14sdp"
-                            android:layout_toLeftOf="@+id/cart_d"
-                            android:layout_marginRight="@dimen/_5sdp"
-                            android:layout_centerVertical="true"/>
-
-                        <TextView
-                            android:id="@+id/cart_d"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="đ"
-                            android:textColor="@color/black_text_color"
-                            android:textSize="@dimen/_12sdp"
-                            android:textStyle="italic"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"/>
 
 
 
-                    </RelativeLayout>
-
-
-
-
-                    <!--<View-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="1dp"-->
-                        <!--android:background="@color/colorGrey"-->
-                        <!--android:layout_alignParentBottom="true"/>-->
-                </LinearLayout>
-
-                <View
-                    android:layout_height="@dimen/_60sdp"
-                    android:layout_width="match_parent"/>
-
-
+                <!--<View-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="1dp"-->
+                <!--android:background="@color/colorGrey"-->
+                <!--android:layout_alignParentBottom="true"/>-->
             </LinearLayout>
-        </ScrollView>
 
-    </LinearLayout>
+            <View
+                android:layout_height="@dimen/_60sdp"
+                android:layout_width="match_parent"/>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="vertical"-->
+        <!--android:layout_below="@+id/cart_header">-->
+
+        <!---->
+
+    <!--</LinearLayout>-->
 
     <RelativeLayout
         android:id="@+id/cart_cover"

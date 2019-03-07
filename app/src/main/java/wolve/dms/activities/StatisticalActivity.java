@@ -26,15 +26,19 @@ import wolve.dms.adapter.StatisticalViewpagerAdapter;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.apiconnect.SheetConnect;
+import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackJSONArray;
 
+import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.customviews.CustomTabLayout;
 import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialog;
 import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialogFragment;
+import wolve.dms.libraries.calendarpicker.YearPicker;
 import wolve.dms.libraries.connectapi.GoogleSheetGet;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
+import wolve.dms.models.BillDetail;
 import wolve.dms.models.Customer;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
@@ -42,6 +46,9 @@ import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.utils.Constants.DATE_DEFAULT;
+import static wolve.dms.utils.Constants.YEAR_DEFAULT;
 
 /**
  * Created by macos on 9/16/17.
@@ -53,7 +60,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     private ViewPager viewPager;
     private CustomTabLayout tabLayout;
     private RadioGroup rdGroup;
-    private RadioButton rdMonth, rdDate;
+    private RadioButton rdYear, rdMonth, rdDate;
     private CTextIcon  btnExport;
     private LinearLayout btnEmployeeFilter;
     private RelativeLayout rlBottom;
@@ -63,6 +70,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     protected JSONArray InitialBillHavePayment = new JSONArray();
     protected JSONArray InitialCheckin = new JSONArray();
     protected List<Bill> listBill = new ArrayList<>();
+    protected List<BaseModel> listBillDetail = new ArrayList<>();
     protected List<BaseModel> listUser = new ArrayList<>();
     private List<Object> listSheetID = new ArrayList<>();
     private int[] icons = new int[]{R.string.icon_chart,
@@ -70,11 +78,10 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
             R.string.icon_product_group,
             R.string.icon_money,
             R.string.icon_district};
-    private final String MONTH_DEFAULT ="Chọn tháng";
-    private final String DATE_DEFAULT ="Chọn ngày";
     private int mDate = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
     private int mMonth = Calendar.getInstance().get(Calendar.MONTH);
     private int mYear = Calendar.getInstance().get(Calendar.YEAR);
+    private int currentChecked;
 
 
     @Override
@@ -95,6 +102,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         tabLayout = (CustomTabLayout) findViewById(R.id.statistical_tabs);
         rdGroup = findViewById(R.id.statistical_filter);
         rdMonth = findViewById(R.id.statistical_filter_month);
+        rdYear = findViewById(R.id.statistical_filter_year);
         rdDate = findViewById(R.id.statistical_filter_date);
         btnEmployeeFilter = findViewById(R.id.statistical_filter_by_employee);
         btnExport = findViewById(R.id.statistical_export);
@@ -106,14 +114,17 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     @Override
     public void initialData() {
         rdMonth.setText(Util.CurrentMonthYear());
-        rdDate.setText(DATE_DEFAULT);
-        rlBottom.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN) ? View.VISIBLE :View.GONE);
+        rdDate.setText(Constants.DATE_DEFAULT);
+        rdYear.setText(YEAR_DEFAULT);
+        rlBottom.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN)|| User.getRole().equals(Constants.ROLE_WAREHOUSE)? View.VISIBLE :View.GONE);
         tvEmployeeName.setText(User.getRole().equals(Constants.ROLE_ADMIN)? Constants.ALL_FILTER : User.getFullName());
 
         loadInitialBills(getStartDay(), getEndDay());
 
         setupViewPager(viewPager);
         setupTabLayout(tabLayout);
+
+        currentChecked = rdGroup.getCheckedRadioButtonId();
 
     }
 
@@ -122,6 +133,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         btnBack.setOnClickListener(this);
         rdMonth.setOnClickListener(this);
         rdDate.setOnClickListener(this);
+        rdYear.setOnClickListener(this);
         btnEmployeeFilter.setOnClickListener(this);
         btnExport.setOnClickListener(this);
 
@@ -158,27 +170,42 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
                 break;
 
+            case R.id.statistical_filter_date:
+                //currentChecked = rdGroup.getCheckedRadioButtonId();
+
+                //rdMonth.setText(Constants.MONTH_DEFAULT);
+                //rdDate.setText(rdDate.getText().toString().equals(DATE_DEFAULT) ? Util.CurrentDayMonthYear(): rdDate.getText().toString()) ;
+//                currentDate = rdDate.getText().toString();
+                datePicker();
+
+                break;
+
             case R.id.statistical_filter_month:
-                rdMonth.setText(rdMonth.getText().toString().equals(MONTH_DEFAULT) ? Util.CurrentMonthYear(): rdMonth.getText().toString()) ;
-                rdDate.setText(DATE_DEFAULT);
+                //currentChecked = rdGroup.getCheckedRadioButtonId();
+
+                //rdMonth.setText(rdMonth.getText().toString().equals(Constants.MONTH_DEFAULT) ? Util.CurrentMonthYear(): rdMonth.getText().toString()) ;
+                //rdDate.setText(DATE_DEFAULT);
 //                currentDate = rdMonth.getText().toString();
                 monthPicker();
 
 
                 break;
 
-            case R.id.statistical_filter_date:
-                rdMonth.setText(MONTH_DEFAULT);
-                rdDate.setText(rdDate.getText().toString().equals(DATE_DEFAULT) ? Util.CurrentDayMonthYear(): rdDate.getText().toString()) ;
+            case R.id.statistical_filter_year:
+
+                //rdMonth.setText(Constants.MONTH_DEFAULT);
+                //rdDate.setText(rdDate.getText().toString().equals(DATE_DEFAULT) ? Util.CurrentDayMonthYear(): rdDate.getText().toString()) ;
 //                currentDate = rdDate.getText().toString();
-                datePicker();
+                yearPicker();
 
                 break;
 
             case R.id.statistical_filter_by_employee:
                 if (listUser.size()>1){
                     List<String> users = new ArrayList<>();
-                    users.add(0, Constants.ALL_FILTER);
+                    if (User.getRole().equals(Constants.ROLE_ADMIN)){
+                        users.add(0, Constants.ALL_FILTER);
+                    }
                     for (int i=0; i< listUser.size(); i++){
                         users.add(listUser.get(i).getString("displayName"));
                     }
@@ -207,13 +234,26 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     }
 
     private void datePicker() {
-        CustomCenterDialog.showDialogDatePicker(rdDate,new CustomCenterDialog.CallbackRangeTime() {
+        YearPicker.showDialogDatePicker(rdDate, new CustomCenterDialog.CallbackRangeTime() {
             @Override
             public void onSelected(long start, long end) {
-//                currentDate =rdDate.getText().toString();
+                rdMonth.setText(Constants.MONTH_DEFAULT);
+                rdYear.setText(Constants.YEAR_DEFAULT);
+                currentChecked = rdGroup.getCheckedRadioButtonId();
                 loadInitialBills(start, end);
             }
 
+        }, new CallbackBoolean() {
+            @Override
+            public void onRespone(Boolean result) {
+                if (!result){
+                    rdGroup.check(currentChecked);
+                    if (currentChecked != rdDate.getId()){
+                        rdDate.setText(Constants.DATE_DEFAULT);
+                    }
+
+                }
+            }
         });
 
     }
@@ -226,15 +266,59 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
             public void onDateSet(int year, int monthOfYear) {
                 mMonth = monthOfYear;
                 mYear =year;
-
                 rdMonth.setText(monthOfYear+1 +"-" + year);
+
+                rdDate.setText(Constants.DATE_DEFAULT);
+                rdYear.setText(Constants.YEAR_DEFAULT);
+                currentChecked = rdGroup.getCheckedRadioButtonId();
+
 //                currentDate = rdMonth.getText().toString();
 
                 loadInitialBills(getStartDay(), getEndDay());
 
             }
         });
+        datePickerDialogFragment.setOnDismissListener(new SimpleDatePickerDialog.OnDismissListener() {
+            @Override
+            public void onDismiss(boolean result) {
+                if (!result){
+                    rdGroup.check(currentChecked);
+                    if (currentChecked != rdMonth.getId()){
+                        rdMonth.setText(Constants.MONTH_DEFAULT);
+                    }
+
+                }
+            }
+        });
+
         datePickerDialogFragment.show(getSupportFragmentManager(), null);
+    }
+
+    private void yearPicker() {
+        YearPicker.showDialogYearPicker(null, new CallbackString() {
+            @Override
+            public void Result(String s) {
+                rdYear.setText(s);
+                rdMonth.setText(Constants.MONTH_DEFAULT);
+                rdDate.setText(Constants.DATE_DEFAULT);
+                currentChecked = rdGroup.getCheckedRadioButtonId();
+
+                loadInitialBills(getStartDay(), getEndDay());
+
+            }
+        }, new CallbackBoolean() {
+            @Override
+            public void onRespone(Boolean result) {
+                if (!result){
+                    rdGroup.check(currentChecked);
+                    if (currentChecked != rdYear.getId()){
+                        rdYear.setText(Constants.YEAR_DEFAULT);
+                    }
+
+
+                }
+            }
+        });
     }
 
     private void postListbill(){
@@ -279,7 +363,13 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                         if (bill.getJsonObject("distributor").getInt("id") == Distributor.getId()){
 
                             if (!checkDuplicate(listUser, "id" ,user)){
-                                listUser.add(user);
+                                if (User.getRole().equals(Constants.ROLE_WAREHOUSE)){
+                                    if (!user.getString("role").equals(Constants.ROLE_ADMIN)){
+                                        listUser.add(user);
+                                    }
+                                }else {
+                                    listUser.add(user);
+                                }
                             }
                             listInitialBill.add(bill);
 
@@ -340,6 +430,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
     private void loadBill(List<Bill> initialBills, String userName){
         listBill = new ArrayList<>();
+        listBillDetail = new ArrayList<>();
         if (userName.equals(Constants.ALL_FILTER)){
             listBill = initialBills;
 
@@ -351,10 +442,21 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                 }
             }
         }
+        try {
+            for (int a=0; a<listBill.size(); a++){
+                JSONArray array = listBill.get(a).getJSONArray("billDetails");
+                for (int j=0; j<array.length(); j++){
+                    JSONObject object= array.getJSONObject(j);
+                    listBillDetail.add(new BillDetail(object));
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-        Util.dashboardFragment.reloadData(listBill);
+        Util.dashboardFragment.reloadData(listBill, listBillDetail);
         Util.billsFragment.reloadData(listBill);
-        Util.productFragment.reloadData(listBill);
+        Util.productFragment.reloadData(listBillDetail);
 
     }
 
@@ -387,13 +489,16 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
             }
 
-        }else {
+        }else if (rdDate.isChecked()){
             String currentdate1 = rdDate.getText().toString();
             if (currentdate1.contains("\n")){
                 date = Util.TimeStamp1(currentdate1.split("\n")[0]);
             }else {
                 date = Util.TimeStamp1(currentdate1);
             }
+
+        }else if (rdYear.isChecked()){
+            date = Util.TimeStamp1(String.format("01-01-%s", rdYear.getText().toString()));
         }
 
 
@@ -430,13 +535,18 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
             }
 
-        }else {
+        }else if (rdDate.isChecked()){
             String currentdate1 = rdDate.getText().toString();
             if (currentdate1.contains("\n")){
                 date = Util.TimeStamp1(currentdate1.split("\n")[1]) + 86400000 ;
             }else {
                 date = Util.TimeStamp1(currentdate1)+ 86400000 ;
             }
+
+        }else if (rdYear.isChecked()){
+
+            date = Util.TimeStamp1(String.format("01-01-%d", Integer.parseInt(rdYear.getText().toString()) +1));
+
         }
 
 
@@ -530,7 +640,13 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
                                 BaseModel user = new BaseModel(objectDetail.getJsonObject("user"));
                                 if (!checkDuplicate(listUser, "id" ,user)){
-                                    listUser.add(user);
+                                    if (User.getRole().equals(Constants.ROLE_WAREHOUSE)){
+                                        if (!user.getString("role").equals(Constants.ROLE_ADMIN)){
+                                            listUser.add(user);
+                                        }
+                                    }else {
+                                        listUser.add(user);
+                                    }
                                 }
 
                                 if (userName.equals(Constants.ALL_FILTER)){
@@ -584,7 +700,14 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
                                 BaseModel user = new BaseModel(objectBill.getJSONObject("user"));
                                 if (!checkDuplicate(listUser, "id" ,user)){
-                                    listUser.add(user);
+                                    if (User.getRole().equals(Constants.ROLE_WAREHOUSE)){
+                                        if (!user.getString("role").equals(Constants.ROLE_ADMIN)){
+                                            listUser.add(user);
+                                        }
+                                    }else {
+                                        listUser.add(user);
+                                    }
+
                                 }
 
                                 if (userName.equals(Constants.ALL_FILTER)){

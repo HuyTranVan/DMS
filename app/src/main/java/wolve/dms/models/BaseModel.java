@@ -130,4 +130,8 @@ public class BaseModel implements Serializable {
     public JSONObject convertJsonObject(){
         return jsonObject;
     }
+
+    public boolean isNull(String key){
+        return jsonObject.isNull(key);
+    }
 }

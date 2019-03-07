@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 
 import wolve.dms.R;
 
@@ -15,20 +16,21 @@ import wolve.dms.R;
  */
 
 public class SimpleDatePickerDialog extends AlertDialog implements DialogInterface
-        .OnClickListener, SimpleDatePickerDelegate.OnDateChangedListener {
+        .OnClickListener, SimpleDatePickerDelegate.OnDateChangedListener, View.OnClickListener {
 
     private static final String YEAR = "year";
     private static final String MONTH = "month";
 
     private SimpleDatePickerDelegate mSimpleDatePickerDelegate;
     private OnDateSetListener mDateSetListener;
+    private OnDismissListener mDismissListener;
 
     /**
      * @param context The context the dialog is to run in.
      */
-    public SimpleDatePickerDialog(Context context, OnDateSetListener listener, int year,
+    public SimpleDatePickerDialog(Context context, OnDateSetListener listener,OnDismissListener listener1, int year,
                                   int monthOfYear) {
-        this(context, 0, listener, year, monthOfYear);
+        this(context, 0, listener,listener1, year, monthOfYear);
     }
 
     /**
@@ -36,18 +38,26 @@ public class SimpleDatePickerDialog extends AlertDialog implements DialogInterfa
      * @param theme   the theme to apply to this dialog
      */
     @SuppressLint("InflateParams")
-    public SimpleDatePickerDialog(Context context, int theme, OnDateSetListener listener, int year,
+    public SimpleDatePickerDialog(Context context, int theme, OnDateSetListener listener, OnDismissListener listener1, int year,
                                   int monthOfYear) {
         super(context, theme);
 
         mDateSetListener = listener;
+        mDismissListener = listener1;
 
         Context themeContext = getContext();
         LayoutInflater inflater = LayoutInflater.from(themeContext);
         View view = inflater.inflate(R.layout.view_dialog_select_monthpicker, null);
         setView(view);
-        setButton(BUTTON_POSITIVE, themeContext.getString(android.R.string.ok), this);
-        setButton(BUTTON_NEGATIVE, themeContext.getString(android.R.string.cancel), this);
+
+        Button ok = view.findViewById(R.id.btn_submit);
+        Button cancel = view.findViewById(R.id.btn_cancel);
+
+        ok.setOnClickListener(this);
+        cancel.setOnClickListener(this);
+
+//        setButton(BUTTON_POSITIVE, themeContext.getString(android.R.string.ok), this);
+//        setButton(BUTTON_NEGATIVE, themeContext.getString(android.R.string.cancel), this);
 
         mSimpleDatePickerDelegate = new SimpleDatePickerDelegate(view);
         mSimpleDatePickerDelegate.init(year, monthOfYear, this);
@@ -67,6 +77,7 @@ public class SimpleDatePickerDialog extends AlertDialog implements DialogInterfa
                             mSimpleDatePickerDelegate.getYear(),
                             mSimpleDatePickerDelegate.getMonth());
                 }
+
                 break;
             case BUTTON_NEGATIVE:
                 cancel();
@@ -98,6 +109,29 @@ public class SimpleDatePickerDialog extends AlertDialog implements DialogInterfa
         mSimpleDatePickerDelegate.setMaxDate(maxDate);
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_submit:
+                if (mDateSetListener != null) {
+                    mDateSetListener.onDateSet(
+                            mSimpleDatePickerDelegate.getYear(),
+                            mSimpleDatePickerDelegate.getMonth());
+                }
+                dismiss();
+                mDismissListener.onDismiss(true);
+
+                break;
+
+            case R.id.btn_cancel:
+                mDismissListener.onDismiss(false);
+                cancel();
+
+                break;
+        }
+
+    }
+
     /**
      * The callback used to indicate the user is done filling in the date.
      */
@@ -109,5 +143,9 @@ public class SimpleDatePickerDialog extends AlertDialog implements DialogInterfa
          *                    java.util.Calendar}.
          */
         void onDateSet(int year, int monthOfYear);
+    }
+
+    public interface OnDismissListener{
+        void onDismiss(boolean result);
     }
 }

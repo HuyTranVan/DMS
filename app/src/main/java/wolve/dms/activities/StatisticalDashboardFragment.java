@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,11 +28,12 @@ import lecho.lib.hellocharts.util.ChartUtils;
 import lecho.lib.hellocharts.view.ColumnChartView;
 import lecho.lib.hellocharts.view.PieChartView;
 import wolve.dms.R;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
-import wolve.dms.models.Distributor;
 import wolve.dms.models.District;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 /**
@@ -41,7 +43,7 @@ import wolve.dms.utils.Util;
 public class StatisticalDashboardFragment extends Fragment implements View.OnClickListener {
     private View view;
     private ColumnChartView chartIncome;
-    private PieChartView chartDistrict;
+    private PieChartView chartDistrict, chartBDF;
 
     private StatisticalActivity mActivity;
 
@@ -81,6 +83,7 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         mActivity = (StatisticalActivity) getActivity();
         chartIncome = (ColumnChartView) view.findViewById(R.id.statistical_dashboard_income);
         chartDistrict = (PieChartView) view.findViewById(R.id.statistical_dashboard_district);
+        chartBDF = view.findViewById(R.id.statistical_dashboard_bdf);
 
     }
 
@@ -91,9 +94,35 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         }
     }
 
-    public void reloadData(List<Bill> list){
-        setupIncomeChart(list);
+    public void reloadData(List<Bill> list, List<BaseModel> listDetail){
+        setupIncomeChart(list, listDetail);
         setupDistrictChart(list);
+
+    }
+
+    private void setupBDFChart(float total, float bdf) {
+        PieChartData data;
+        double percent =0.0;
+
+        percent = bdf *100 /total;
+
+        List<SliceValue> values = new ArrayList<SliceValue>();
+
+        SliceValue sliceValue1 = new SliceValue((float) total, ChartUtils.nextColor());
+        sliceValue1.setLabel("Tổng");
+        values.add(sliceValue1);
+
+        SliceValue sliceValue2 = new SliceValue((float) bdf, ChartUtils.nextColor());
+        sliceValue2.setLabel("BDF" + " - " + new DecimalFormat("#.##").format(percent) + "%");
+        values.add(sliceValue2);
+
+        data = new PieChartData(values);
+        data.setHasLabels(true);
+        data.setHasLabelsOutside(true);
+
+        chartBDF.setPieChartData(data);
+//        chartBDF.setCircleFillRatio(0.7f);
+
     }
 
     private void setupDistrictChart(List<Bill> list) {
@@ -153,16 +182,22 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
 
     }
 
-    private void setupIncomeChart(List<Bill> list){
+    private void setupIncomeChart(List<Bill> list, List<BaseModel> listDetail){
         float total = Util.getTotalMoney(list).floatValue();
         float debt =Util.getTotalDebt(list).floatValue();
         float income = Util.getTotalMoney(list).floatValue() - debt;
-        float profit = 0.0f;
-        if (User.getRole().equals(Constants.ROLE_ADMIN)){
-            profit =Util.getTotalProfit(list).floatValue();
-        }
+        float bdf = 0.0f;
+        bdf = (float) DataUtil.defineBDFValue(listDetail);
 
-        float[] inputData = new float[]{total, income , debt , profit};
+        setupBDFChart(total, bdf);
+
+//        float profit = 0.0f;
+//        if (User.getRole().equals(Constants.ROLE_ADMIN)){
+//            profit =Util.getTotalProfit(list).floatValue();
+//        }
+//        float[] inputData = new float[]{total, income , debt , profit};
+
+        float[] inputData = new float[]{total, income , debt , bdf};
 
         List<Column> columns = new ArrayList<Column>();
 
@@ -185,7 +220,7 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         axisValues.add(new AxisValue(0, "Tổng doanh thu".toCharArray()));
         axisValues.add(new AxisValue(1, "Tiền đã thu".toCharArray()));
         axisValues.add(new AxisValue(2, "Công nợ".toCharArray()));
-        axisValues.add(new AxisValue(3, "Lợi nhuận".toCharArray()));
+        axisValues.add(new AxisValue(3, "BDF".toCharArray()));
         Axis axisX = new Axis(axisValues);
 
         data.setAxisXBottom(axisX);

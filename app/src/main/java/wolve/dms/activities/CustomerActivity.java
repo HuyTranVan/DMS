@@ -112,6 +112,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     private long countTime;
     private int currentStateBottom = BottomSheetBehavior.STATE_COLLAPSED;
     private Fragment mFragment;
+    protected List<String> mYears = new ArrayList<>();
 
 
     @Override
@@ -259,6 +260,8 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                             mLists.add(new Bill(objectBill));
                         }
                     }
+                    addYearToList(Util.YearString(objectBill.getLong("createAt")));
+
                 }
 
                 showMoneyOverview(mLists);
@@ -295,6 +298,14 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
     }
 
+    private void addYearToList(String year){
+        if (mYears.size() ==0){
+            mYears.add(0, Constants.ALL_FILTER);
+        }
+        if (!mYears.get(mYears.size()-1).equals(year)){
+            mYears.add(year);
+        }
+    }
 
 
     private void setupMap() {
@@ -607,11 +618,17 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 reloadBills(new CallbackBoolean() {
                     @Override
                     public void onRespone(Boolean result){
-                        CustomCenterDialog.alertWithCancelButton("Done!", "Bạn vừa hoàn tất hóa đơn. Bạn có muốn trở lại màn hình bản đồ", "Đồng ý", "Không", new CallbackBoolean() {
+                        CustomCenterDialog.alertWithCancelButton(
+                                "Done!",
+                                "Bạn vừa hoàn tất hóa đơn. Bạn có muốn trở lại màn hình bản đồ",
+                                "Đồng ý",
+                                "Không", new CallbackBoolean() {
                             @Override
                             public void onRespone(Boolean result) {
+                                if (result){
+                                    submitCustomerAndCheckin("Đã mua hàng" );
+                                }
 
-                                submitCustomerAndCheckin("Đã mua hàng" );
                             }
                         });
                     }
@@ -780,12 +797,14 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                                     mList.add(new Bill(objectBill));
                                 }
                             }
+                            addYearToList(Util.YearString(objectBill.getLong("createAt")));
 
                         }
 
                         currentCustomer.put("bills", array);
                         showMoneyOverview(mList);
                         mListener.onRespone(true);
+
 
                         if (mList.size()>0){
                             rdOrdered.setChecked(true);

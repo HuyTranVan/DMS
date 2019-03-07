@@ -65,7 +65,7 @@
                 android:background="@color/colorWhite"
                 android:orientation="horizontal"
                 android:layout_below="@+id/customer_header"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <TextView
                     android:id="@+id/customer_paid_debt"
@@ -137,9 +137,6 @@
                     android:layout_centerVertical="true"/>
 
             </RelativeLayout>
-
-
-
 
 
             <View

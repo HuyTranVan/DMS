@@ -22,6 +22,7 @@ import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.Util;
 
 /**
  * Created by macos on 9/16/17.
@@ -149,11 +150,12 @@ public class ProductGroupActivity extends BaseActivity implements View.OnClickLi
                 loadProductGroup();
             }
         });
-        rvProductGroup.setAdapter(productGroupAdapter);
-        rvProductGroup.setHasFixedSize(true);
-        rvProductGroup.setNestedScrollingEnabled(false);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        rvProductGroup.setLayoutManager(layoutManager);
+        Util.createLinearRV(rvProductGroup, productGroupAdapter);
+//        rvProductGroup.setAdapter(productGroupAdapter);
+//        rvProductGroup.setHasFixedSize(true);
+//        rvProductGroup.setNestedScrollingEnabled(false);
+//        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+//        rvProductGroup.setLayoutManager(layoutManager);
     }
 
     private void openFragmentNewProductGroup(String productgroup){

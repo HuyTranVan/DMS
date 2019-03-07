@@ -98,5 +98,14 @@ public class User extends BaseModel {
         return phone;
     }
 
+    public static JSONObject getCurrentUser(){
+        String phone = "";
+        User currentUser = CustomSQL.getObject(Constants.USER, User.class);
+
+//        if (currentUser != null) {
+//            phone = currentUser.getString("phone");
+//        }
+        return currentUser.BaseModelJSONObject();
+    }
 
 }
