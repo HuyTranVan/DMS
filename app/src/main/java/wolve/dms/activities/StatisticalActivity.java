@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -11,6 +12,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.google.api.services.sheets.v4.model.Sheet;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,7 +38,8 @@ import wolve.dms.customviews.CustomTabLayout;
 import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialog;
 import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialogFragment;
 import wolve.dms.libraries.calendarpicker.YearPicker;
-import wolve.dms.libraries.connectapi.GoogleSheetGet;
+import wolve.dms.libraries.connectapi.sheetapi.GoogleSheetGetAllTab;
+import wolve.dms.libraries.connectapi.sheetapi.GoogleSheetGetData;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
 import wolve.dms.models.BillDetail;
@@ -45,16 +49,16 @@ import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
+import wolve.dms.utils.DataFilter;
 import wolve.dms.utils.Util;
 
-import static wolve.dms.utils.Constants.DATE_DEFAULT;
 import static wolve.dms.utils.Constants.YEAR_DEFAULT;
 
 /**
  * Created by macos on 9/16/17.
  */
 
-public class StatisticalActivity extends BaseActivity implements  View.OnClickListener {
+public class StatisticalActivity extends BaseActivity implements  View.OnClickListener, View.OnLongClickListener {
     private ImageView btnBack;
     protected TextView tvTitle, tvEmployeeName;
     private ViewPager viewPager;
@@ -66,18 +70,21 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     private RelativeLayout rlBottom;
 
     private StatisticalViewpagerAdapter pageAdapter;
-    protected List<Bill> listInitialBill = new ArrayList<>();
+
     protected JSONArray InitialBillHavePayment = new JSONArray();
     protected JSONArray InitialCheckin = new JSONArray();
-    protected List<Bill> listBill = new ArrayList<>();
+    protected List<BaseModel> listBill = new ArrayList<>();
+    protected List<BaseModel> listInitialBill = new ArrayList<>();
     protected List<BaseModel> listBillDetail = new ArrayList<>();
     protected List<BaseModel> listUser = new ArrayList<>();
+    protected List<BaseModel> listPayment = new ArrayList<>();
     private List<Object> listSheetID = new ArrayList<>();
     private int[] icons = new int[]{R.string.icon_chart,
             R.string.icon_bill,
             R.string.icon_product_group,
             R.string.icon_money,
-            R.string.icon_district};
+            R.string.icon_district,
+            R.string.icon_bomb};
     private int mDate = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
     private int mMonth = Calendar.getInstance().get(Calendar.MONTH);
     private int mYear = Calendar.getInstance().get(Calendar.YEAR);
@@ -133,6 +140,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         btnBack.setOnClickListener(this);
         rdMonth.setOnClickListener(this);
         rdDate.setOnClickListener(this);
+        rdDate.setOnLongClickListener(this);
         rdYear.setOnClickListener(this);
         btnEmployeeFilter.setOnClickListener(this);
         btnExport.setOnClickListener(this);
@@ -145,6 +153,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         pageAdapter.addFragment(Fragment.instantiate(this, StatisticalCashFragment.class.getName()),  getResources().getString(icons[3]), "Tiền thu");
         pageAdapter.addFragment(Fragment.instantiate(this, StatisticalBillsFragment.class.getName()),  getResources().getString(icons[1]),"Hóa đơn");
         pageAdapter.addFragment(Fragment.instantiate(this, StatisticalProductFragment.class.getName()),  getResources().getString(icons[2]), "Sản Phẩm");
+        pageAdapter.addFragment(Fragment.instantiate(this, StatisticalDebtFragment.class.getName()),  getResources().getString(icons[5]), "Nợ");
 
         viewPager.setAdapter(pageAdapter);
         viewPager.setOffscreenPageLimit(4);
@@ -171,31 +180,23 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                 break;
 
             case R.id.statistical_filter_date:
-                //currentChecked = rdGroup.getCheckedRadioButtonId();
+                long startday = Util.TimeStamp2(String.format("%s 00:00:00",Util.CurrentDayMonthYear() ));
+                rdDate.setText(Util.CurrentDayMonthYear());
+                rdMonth.setText(Constants.MONTH_DEFAULT);
+                rdYear.setText(Constants.YEAR_DEFAULT);
+                currentChecked = rdGroup.getCheckedRadioButtonId();
 
-                //rdMonth.setText(Constants.MONTH_DEFAULT);
-                //rdDate.setText(rdDate.getText().toString().equals(DATE_DEFAULT) ? Util.CurrentDayMonthYear(): rdDate.getText().toString()) ;
-//                currentDate = rdDate.getText().toString();
-                datePicker();
+                loadInitialBills(startday, startday+86400000);
+                btnExport.setVisibility(View.GONE);
 
                 break;
 
             case R.id.statistical_filter_month:
-                //currentChecked = rdGroup.getCheckedRadioButtonId();
-
-                //rdMonth.setText(rdMonth.getText().toString().equals(Constants.MONTH_DEFAULT) ? Util.CurrentMonthYear(): rdMonth.getText().toString()) ;
-                //rdDate.setText(DATE_DEFAULT);
-//                currentDate = rdMonth.getText().toString();
                 monthPicker();
-
 
                 break;
 
             case R.id.statistical_filter_year:
-
-                //rdMonth.setText(Constants.MONTH_DEFAULT);
-                //rdDate.setText(rdDate.getText().toString().equals(DATE_DEFAULT) ? Util.CurrentDayMonthYear(): rdDate.getText().toString()) ;
-//                currentDate = rdDate.getText().toString();
                 yearPicker();
 
                 break;
@@ -225,9 +226,8 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                 break;
 
             case R.id.statistical_export:
-                postListbill();
-
-
+                //postListbill();
+                updateSheetTab();
                 break;
 
         }
@@ -237,10 +237,12 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         YearPicker.showDialogDatePicker(rdDate, new CustomCenterDialog.CallbackRangeTime() {
             @Override
             public void onSelected(long start, long end) {
+                rdDate.setChecked(true);
                 rdMonth.setText(Constants.MONTH_DEFAULT);
                 rdYear.setText(Constants.YEAR_DEFAULT);
                 currentChecked = rdGroup.getCheckedRadioButtonId();
                 loadInitialBills(start, end);
+                btnExport.setVisibility(View.GONE);
             }
 
         }, new CallbackBoolean() {
@@ -251,7 +253,6 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                     if (currentChecked != rdDate.getId()){
                         rdDate.setText(Constants.DATE_DEFAULT);
                     }
-
                 }
             }
         });
@@ -321,29 +322,29 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         });
     }
 
-    private void postListbill(){
-        SheetConnect.getALlValue(Api_link.STATISTICAL_SHEET_KEY, String.format(Api_link.STATISTICAL_SHEET_TAB1,3), new GoogleSheetGet.CallbackListList() {
-            @Override
-            public void onRespone(List<List<Object>> results) {
-                listSheetID = new ArrayList<>();
-                if (results != null){
-                    for (int i=0; i<results.size(); i++){
-                        listSheetID.add(results.get(i).get(0));
-                    }
-                }
-
-                String range = String.format(Api_link.STATISTICAL_SHEET_TAB1, listSheetID.size()+3);
-
-                SheetConnect.postValue(Api_link.STATISTICAL_SHEET_KEY, range, getListValueExportToSheet(listBill), new GoogleSheetGet.CallbackListList() {
-                    @Override
-                    public void onRespone(List<List<Object>> results) {
-
-                    }
-                },true);
-
-            }
-        }, false);
-    }
+//    private void postListbill(){
+//        SheetConnect.getALlValue(Api_link.STATISTICAL_SHEET_KEY, String.format(Api_link.STATISTICAL_SHEET_TAB1,3), new GoogleSheetGetData.CallbackListList() {
+//            @Override
+//            public void onRespone(List<List<Object>> results) {
+//                listSheetID = new ArrayList<>();
+//                if (results != null){
+//                    for (int i=0; i<results.size(); i++){
+//                        listSheetID.add(results.get(i).get(0));
+//                    }
+//                }
+//
+//                String range = String.format(Api_link.STATISTICAL_SHEET_TAB1, listSheetID.size()+3);
+//
+//                SheetConnect.postValue(Api_link.STATISTICAL_SHEET_KEY, range, getListValueExportToSheet(listBill), new GoogleSheetGetData.CallbackListList() {
+//                    @Override
+//                    public void onRespone(List<List<Object>> results) {
+//
+//                    }
+//                },true);
+//
+//            }
+//        }, false);
+//    }
 
     private void loadInitialBills(final long starDay, final long lastDay){
         String param = String.format(Api_link.BILL_RANGE_PARAM, starDay, lastDay);
@@ -354,7 +355,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                 loadListPayment(starDay, lastDay);
 
                 try {
-                    listInitialBill = new ArrayList<Bill>();
+                    listInitialBill = new ArrayList<>();
 
                     for (int i=0; i<result.length(); i++){
                         Bill bill = new Bill(result.getJSONObject(i));
@@ -397,6 +398,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
             public void onResponse(JSONArray result) {
                 InitialBillHavePayment =result;
 //                loadListCheckin(starDay, lastDay);
+                listPayment = convertToListPayment(Constants.ALL_FILTER,InitialBillHavePayment , starDay, lastDay);
                 Util.cashFragment.reloadData(convertToListPayment(tvEmployeeName.getText().toString().trim(),InitialBillHavePayment , starDay, lastDay));
 
             }
@@ -428,7 +430,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 //        }, true);
 //    }
 
-    private void loadBill(List<Bill> initialBills, String userName){
+    private void loadBill(List<BaseModel> initialBills, String userName){
         listBill = new ArrayList<>();
         listBillDetail = new ArrayList<>();
         if (userName.equals(Constants.ALL_FILTER)){
@@ -489,6 +491,8 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
             }
 
+            btnExport.setVisibility(View.VISIBLE);
+
         }else if (rdDate.isChecked()){
             String currentdate1 = rdDate.getText().toString();
             if (currentdate1.contains("\n")){
@@ -497,8 +501,12 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                 date = Util.TimeStamp1(currentdate1);
             }
 
+            btnExport.setVisibility(View.GONE);
+
         }else if (rdYear.isChecked()){
             date = Util.TimeStamp1(String.format("01-01-%s", rdYear.getText().toString()));
+
+            btnExport.setVisibility(View.GONE);
         }
 
 
@@ -565,7 +573,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                     data.add(bill.getString("id"));
                     data.add(Util.DateString(bill.getLong("createAt")));
                     data.add(bill.getJsonObject("user").getString("displayName"));
-                    data.add(Constants.getShopInfo(customer.getString("shopType") , null) + " " + customer.getString("signBoard"));
+                    data.add(Constants.getShopTitle(customer.getString("shopType") , null) + " " + customer.getString("signBoard"));
                     data.add(customer.getString("phone"));
                     data.add(bill.getDouble("total"));
                     data.add(bill.getDouble("paid"));
@@ -605,74 +613,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
     }
 
-    private List<BaseModel> convertToListCheckin(String userName, JSONArray arrayCheckin, long start, long end){
-        List<BaseModel> listCheckins = new ArrayList<>();
-        try {
-            for (int i=0; i< arrayCheckin.length(); i++){
-                BaseModel objectCustomer = new BaseModel(arrayCheckin.getJSONObject(i));
 
-
-                JSONArray arrayDetail = objectCustomer.getJSONArray("checkIns");
-
-                if (arrayDetail.length() >0){
-//                    int cunt = arrayDetail.length();
-                    for (int a=0; a<arrayDetail.length(); a++){
-                        BaseModel objectDetail = new BaseModel(arrayDetail.getJSONObject(a));
-
-                        if (objectDetail.getLong("createAt") - start >= 0 &&
-                                objectDetail.getLong("createAt") - end <= 0){
-
-                            if (!checkDuplicate(listCheckins,"id", objectDetail)){
-                                BaseModel checkin = new BaseModel();
-
-                                checkin.put("id", objectDetail.getInt("id"));
-                                checkin.put("createAt", objectDetail.getLong("createAt"));
-                                checkin.put("updateAt", objectDetail.getLong("updateAt"));
-                                checkin.put("note", objectDetail.getString("note"));
-                                checkin.put("user", objectDetail.getJsonObject("user"));
-
-                                checkin.put("customerId", objectCustomer.getInt("id"));
-                                checkin.put("signBoard", objectCustomer.getString("signBoard"));
-                                checkin.put("street", objectCustomer.getString("street"));
-                                checkin.put("district", objectCustomer.getString("district"));
-                                checkin.put("province", objectCustomer.getString("province"));
-                                checkin.put("shopType", objectCustomer.getString("shopType"));
-
-                                BaseModel user = new BaseModel(objectDetail.getJsonObject("user"));
-                                if (!checkDuplicate(listUser, "id" ,user)){
-                                    if (User.getRole().equals(Constants.ROLE_WAREHOUSE)){
-                                        if (!user.getString("role").equals(Constants.ROLE_ADMIN)){
-                                            listUser.add(user);
-                                        }
-                                    }else {
-                                        listUser.add(user);
-                                    }
-                                }
-
-                                if (userName.equals(Constants.ALL_FILTER)){
-                                    listCheckins.add(checkin);
-
-                                }else {
-                                    if (user.getString("displayName").equals(userName)){
-                                        listCheckins.add(checkin);
-                                    }
-
-                                }
-
-                            }
-
-                        }
-                    }
-
-                }
-
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return listCheckins;
-    }
 
     private List<BaseModel> convertToListPayment(String userName, JSONArray arrayResult, long start, long end){
         List<BaseModel> listPayments = new ArrayList<>();
@@ -739,4 +680,165 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
         return listPayments;
     }
+
+    @Override
+    public boolean onLongClick(View v) {
+        Util.hideKeyboard(v);
+        switch (v.getId()){
+            case R.id.statistical_filter_date:
+
+                datePicker();
+
+                break;
+
+        }
+        return true;
+    }
+
+    private void updateSheetTab(){
+
+        SheetConnect.getALlTab(Api_link.STATISTICAL_SHEET_KEY, new GoogleSheetGetAllTab.CallbackListSheet() {
+            @Override
+            public void onRespone(List<Sheet> results) {
+
+//                String currentTab = "";
+                boolean check = false;
+                for (Sheet sheet : results) {
+                    if (sheet.getProperties().getTitle().equals(rdMonth.getText().toString())){
+                        check = true;
+//                        currentTab = sheet.getProperties().getTitle();
+                        break;
+                    }
+
+                }
+
+                if (!check){
+//                    currentTab = rdMonth.getText().toString();
+
+                    SheetConnect.createNewTab(Api_link.STATISTICAL_SHEET_KEY, rdMonth.getText().toString(), new GoogleSheetGetData.CallbackListList() {
+                        @Override
+                        public void onRespone(List<List<Object>> results) {
+                            updateSheetIncomeData(rdMonth.getText().toString() ,
+                                            DataFilter.updateIncomeByUserToSheet(Util.DateString(getStartDay()),
+                                            Util.DateString(Util.CurrentTimeStamp()< getEndDay() ? Util.CurrentTimeStamp() : getEndDay()),
+                                            DataFilter.getCashByUser(listInitialBill, listPayment, listUser)));
+
+                        }
+                    },false);
+
+                }else {
+                    updateSheetIncomeData(rdMonth.getText().toString() ,
+                                    DataFilter.updateIncomeByUserToSheet(Util.DateString(getStartDay()),
+                                    Util.DateString(Util.CurrentTimeStamp()< getEndDay() ? Util.CurrentTimeStamp() : getEndDay()),
+                                    DataFilter.getCashByUser(listInitialBill, listPayment, listUser)));
+
+
+
+                }
+
+            }
+        }, false);
+    }
+
+    private void updateSheetIncomeData(final String tabtitle, final List<List<Object>> params){
+        SheetConnect.postValue(Api_link.STATISTICAL_SHEET_KEY,
+                String.format(Api_link.STATISTICAL_SHEET_TAB, tabtitle, 1),
+                params,
+                new GoogleSheetGetData.CallbackListList() {
+                    @Override
+                    public void onRespone(List<List<Object>> results) {
+
+                        
+
+                    }
+                },true);
+
+
+
+
+
+
+
+    }
+
 }
+
+//        SheetConnect.updateCurrentTab(Api_link.STATISTICAL_SHEET_KEY, new GoogleSheetGetData.CallbackListList() {
+//            @Override
+//            public void onRespone(List<List<Object>> results) {
+//
+//
+//
+//
+//
+//            }
+//        }, true);
+
+//    private List<BaseModel> convertToListCheckin(String userName, JSONArray arrayCheckin, long start, long end){
+//        List<BaseModel> listCheckins = new ArrayList<>();
+//        try {
+//            for (int i=0; i< arrayCheckin.length(); i++){
+//                BaseModel objectCustomer = new BaseModel(arrayCheckin.getJSONObject(i));
+//
+//
+//                JSONArray arrayDetail = objectCustomer.getJSONArray("checkIns");
+//
+//                if (arrayDetail.length() >0){
+////                    int cunt = arrayDetail.length();
+//                    for (int a=0; a<arrayDetail.length(); a++){
+//                        BaseModel objectDetail = new BaseModel(arrayDetail.getJSONObject(a));
+//
+//                        if (objectDetail.getLong("createAt") - start >= 0 &&
+//                                objectDetail.getLong("createAt") - end <= 0){
+//
+//                            if (!checkDuplicate(listCheckins,"id", objectDetail)){
+//                                BaseModel checkin = new BaseModel();
+//
+//                                checkin.put("id", objectDetail.getInt("id"));
+//                                checkin.put("createAt", objectDetail.getLong("createAt"));
+//                                checkin.put("updateAt", objectDetail.getLong("updateAt"));
+//                                checkin.put("note", objectDetail.getString("note"));
+//                                checkin.put("user", objectDetail.getJsonObject("user"));
+//
+//                                checkin.put("customerId", objectCustomer.getInt("id"));
+//                                checkin.put("signBoard", objectCustomer.getString("signBoard"));
+//                                checkin.put("street", objectCustomer.getString("street"));
+//                                checkin.put("district", objectCustomer.getString("district"));
+//                                checkin.put("province", objectCustomer.getString("province"));
+//                                checkin.put("shopType", objectCustomer.getString("shopType"));
+//
+//                                BaseModel user = new BaseModel(objectDetail.getJsonObject("user"));
+//                                if (!checkDuplicate(listUser, "id" ,user)){
+//                                    if (User.getRole().equals(Constants.ROLE_WAREHOUSE)){
+//                                        if (!user.getString("role").equals(Constants.ROLE_ADMIN)){
+//                                            listUser.add(user);
+//                                        }
+//                                    }else {
+//                                        listUser.add(user);
+//                                    }
+//                                }
+//
+//                                if (userName.equals(Constants.ALL_FILTER)){
+//                                    listCheckins.add(checkin);
+//
+//                                }else {
+//                                    if (user.getString("displayName").equals(userName)){
+//                                        listCheckins.add(checkin);
+//                                    }
+//
+//                                }
+//
+//                            }
+//
+//                        }
+//                    }
+//
+//                }
+//
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return listCheckins;
+//    }

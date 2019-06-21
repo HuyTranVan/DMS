@@ -32,7 +32,7 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackList;
 import wolve.dms.customviews.CTextIcon;
-import wolve.dms.libraries.connectapi.GoogleSheetGet;
+import wolve.dms.libraries.connectapi.sheetapi.GoogleSheetGetData;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
 import wolve.dms.models.BillDetail;
@@ -41,7 +41,7 @@ import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
-import wolve.dms.utils.DataUtil;
+import wolve.dms.utils.DataFilter;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -130,7 +130,7 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
     private void exportBillToSheet(){
         String range = String.format(Api_link.STATISTICAL_SHEET_TAB2, 2);
 
-        SheetConnect.postValue(Api_link.STATISTICAL_SHEET_KEY, range, getListValueExportToSheet(mBills), new GoogleSheetGet.CallbackListList() {
+        SheetConnect.postValue(Api_link.STATISTICAL_SHEET_KEY, range, getListValueExportToSheet(mBills), new GoogleSheetGetData.CallbackListList() {
             @Override
             public void onRespone(List<List<Object>> results) {
 
@@ -144,7 +144,7 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
                 new CallbackList() {
                     @Override
                     public void onResponse(List result) {
-                        postPayToServer(DataUtil.createListPaymentParam(mActivity.currentCustomer.getInt("id"),  result) );
+                        postPayToServer(DataFilter.createListPaymentParam(mActivity.currentCustomer.getInt("id"),  result) );
                     }
 
                     @Override
@@ -309,7 +309,7 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
 
         if (list.size() >0){
             Transaction.gotoPrintBillActivity(mActivity.currentCustomer.CustomertoString(),
-                    DataUtil.convertListObject2Array(list).toString(), true);
+                    DataFilter.convertListObject2Array(list).toString(), true);
         }else {
             Util.showToast("Không có hóa đơn nợ phù hợp");
         }
@@ -324,7 +324,7 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
 
             }
         }
-        DataUtil.sortbyKey("createAt", list, true);
+        DataFilter.sortbyKey("createAt", list, true);
         return list;
     }
 
@@ -423,7 +423,7 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
     private void setupViewPager( final List<BaseModel> listbill){
 
         showOverViewDetail(Util.getTotal(listbill));
-        tvBDF.setText(String.format("BDF:%s ",DataUtil.defineBDFPercent(getAllBillDetail(listbill))) +"%");
+        tvBDF.setText(String.format("BDF:%s ", DataFilter.defineBDFPercent(getAllBillDetail(listbill))) +"%");
 
         List<String> titles = new ArrayList<>();
         titles.add(0,"Hóa đơn");
@@ -492,7 +492,7 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
     }
 
     private List<List<Object>> getListValueExportToSheet(List<BaseModel> listbill){
-        DataUtil.sortbyKey("createAt", listbill, false);
+        DataFilter.sortbyKey("createAt", listbill, false);
         List<List<Object>> values = new ArrayList<>();
         try {
             for (int i=0; i<listbill.size(); i++){
@@ -502,7 +502,7 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
                 final Customer customer = new Customer(bill.getJsonObject("customer"));
 //                data.add(i+1);
                 data.add(Util.DateString(bill.getLong("createAt")));
-                data.add(Constants.getShopInfo(customer.getString("shopType") , null) + " " + customer.getString("signBoard"));
+                data.add(Constants.getShopTitle(customer.getString("shopType") , null) + " " + customer.getString("signBoard"));
                 data.add(customer.getString("phone"));
 
                 JSONArray arrayDetail = bill.getJSONArray("billDetails");

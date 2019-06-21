@@ -51,7 +51,7 @@ public class StatisticalCashAdapter extends RecyclerView.Adapter<StatisticalCash
             holder.tvNumber.setText(String.valueOf(mData.size() -position));
 
             final BaseModel customer = new BaseModel(mData.get(position).getJsonObject("customer"));
-            holder.tvsignBoard.setText(Constants.getShopInfo(customer.getString("shopType") , null) + " " + customer.getString("signBoard"));
+            holder.tvsignBoard.setText(Constants.getShopTitle(customer.getString("shopType") , null) + " " + customer.getString("signBoard"));
             holder.tvDistrict.setText(customer.getString("street") + " - " + customer.getString("district"));
 
             String user = String.format("Nhân viên: %s",mData.get(position).getJsonObject("user").getString("displayName"));

@@ -32,6 +32,17 @@
                 android:layout_marginLeft="@dimen/_10sdp"/>
 
             <TextView
+                android:id="@+id/statistical_productgroup_item_sumchecked"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ooooo"
+                android:textColor="@color/colorAccent"
+                android:paddingRight="@dimen/_5sdp"
+                android:layout_toLeftOf="@+id/statistical_productgroup_item_sum"
+                android:layout_centerInParent="true"
+                android:visibility="gone"/>
+
+            <TextView
                 android:id="@+id/statistical_productgroup_item_sum"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

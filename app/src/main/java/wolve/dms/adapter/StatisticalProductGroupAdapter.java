@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.callback.CallbackString;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.BillDetail;
 import wolve.dms.models.Product;
@@ -65,7 +66,19 @@ public class StatisticalProductGroupAdapter extends RecyclerView.Adapter<Statist
         holder.tvGroupSum.setText(mData.get(position).getString("count"));
 
         List<Product> mProduct = new ArrayList<>();
-        StatisticalProductAdapter adapter = new StatisticalProductAdapter(mData.get(position).getJSONArray("products"));
+        StatisticalProductAdapter adapter = new StatisticalProductAdapter(mData.get(position).getJSONArray("products"), new CallbackString() {
+            @Override
+            public void Result(String s) {
+                if (!s.equals("0")){
+                    holder.tvSumCheck.setVisibility(View.VISIBLE);
+                    holder.tvSumCheck.setText(String.format("(%s)",s));
+
+                }else {
+                    holder.tvSumCheck.setVisibility(View.GONE);
+//                    holder.tvSumCheck.setText(s);
+                }
+            }
+        });
         Util.createLinearRV(holder.rvGroup, adapter);
 
     }
@@ -76,7 +89,7 @@ public class StatisticalProductGroupAdapter extends RecyclerView.Adapter<Statist
     }
 
     public class StatisticalProductGroupViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvGroupName, tvGroupSum;
+        private TextView tvGroupName, tvGroupSum, tvSumCheck;
         private RecyclerView rvGroup;
         private CardView lnParent;
 
@@ -86,7 +99,7 @@ public class StatisticalProductGroupAdapter extends RecyclerView.Adapter<Statist
             tvGroupName = (TextView) itemView.findViewById(R.id.statistical_productgroup_item_group);
             rvGroup = (RecyclerView) itemView.findViewById(R.id.statistical_productgroup_item_rvproduct);
             lnParent = (CardView) itemView.findViewById(R.id.statistical_productgroup_item_content_parent);
-
+            tvSumCheck = itemView.findViewById(R.id.statistical_productgroup_item_sumchecked);
         }
 
     }

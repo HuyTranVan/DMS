@@ -6,7 +6,8 @@
     android:id="@+id/map_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:keepScreenOn="true">
+    android:keepScreenOn="true"
+    android:fitsSystemWindows="true">
 
     <fragment
         android:id="@+id/map"
@@ -14,25 +15,36 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
+    <!--<LinearLayout-->
+        <!--android:id="@+id/map_actionmenu_group"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="vertical"-->
+        <!--android:layout_gravity="bottom|right"-->
+        <!--&gt;-->
+
+        <!---->
+    <!--</LinearLayout>-->
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/map_new_customer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/_10sdp"
-        android:layout_marginBottom="@dimen/_95sdp"
-        android:layout_gravity="bottom|right"
         fab:menu_fab_size="normal"
         fab:menu_colorNormal="#1565C0"
         fab:menu_colorPressed="#2272CD"
-        fab:menu_colorRipple="#62B2FF">
+        fab:menu_colorRipple="#62B2FF"
+        android:layout_marginRight="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_90sdp"
+        app:layout_anchor="@id/map_current_location"
+        app:layout_anchorGravity="top|end">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/map_new_fast"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/baseline_flash_on_white_18"
-            app:fab_label="Tạo nhanh cửa hàng"
-            style="@style/MenuButtonsStyleBlue"
+            app:fab_label="Tạo nhanh"
+            style="@style/MenuButtonsStyle"
             />
 
         <com.github.clans.fab.FloatingActionButton
@@ -40,53 +52,56 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_local_phone_white_18dp"
-            app:fab_label="Nhập số điện thoại"
+            app:fab_label="Tạo bằng số điện thoại"
             style="@style/MenuButtonsStyleBlue"
             />
 
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/map_new_maintain"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_mode_edit_white_18dp"
-            app:fab_label="BẢO TRÌ"
-            style="@style/MenuButtonsStyle" />
+        <!--<com.github.clans.fab.FloatingActionButton-->
+            <!--android:id="@+id/map_new_maintain"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@drawable/ic_mode_edit_white_18dp"-->
+            <!--app:fab_label="BẢO TRÌ"-->
+            <!--style="@style/MenuButtonsStyle" />-->
 
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/map_new_accessary"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_mode_edit_white_18dp"
-            app:fab_label="PHỤ TÙNG"
-            style="@style/MenuButtonsStyle" />
+        <!--<com.github.clans.fab.FloatingActionButton-->
+            <!--android:id="@+id/map_new_accessary"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@drawable/ic_mode_edit_white_18dp"-->
+            <!--app:fab_label="PHỤ TÙNG"-->
+            <!--style="@style/MenuButtonsStyle" />-->
 
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/map_new_wash"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_mode_edit_white_18dp"
-            app:fab_label="RỬA XE"
-            style="@style/MenuButtonsStyle" />
+        <!--<com.github.clans.fab.FloatingActionButton-->
+            <!--android:id="@+id/map_new_wash"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:src="@drawable/ic_mode_edit_white_18dp"-->
+            <!--app:fab_label="RỬA XE"-->
+            <!--style="@style/MenuButtonsStyle" />-->
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/map_new_repair"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/ic_mode_edit_white_18dp"
-            app:fab_label="SỬA XE"
-            style="@style/MenuButtonsStyle" />
+            app:fab_label="Tạo cửa hàng"
+            style="@style/MenuButtonsStyleBlue" />
 
     </com.github.clans.fab.FloatingActionMenu>
 
-    <com.github.clans.fab.FloatingActionButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/map_current_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_my_location_black_18dp"
-        android:layout_marginRight="@dimen/_10sdp"
+        android:layout_marginRight="@dimen/_15sdp"
         android:layout_marginBottom="@dimen/_40sdp"
-        android:layout_gravity="bottom|right"
-        app:fab_size="normal"/>
+        app:srcCompat="@drawable/ic_my_location_black_18dp"
+        app:fab_size="normal"
+        app:layout_anchor="@id/map_bottom_sheet"
+        app:layout_anchorGravity="top|end"
+        app:backgroundTint="@color/colorWhite"/>
+
 
     <RadioGroup
         android:checkedButton="@+id/map_filter_all"
@@ -146,7 +161,6 @@
             android:textSize="@dimen/_10sdp"/>
 
     </RadioGroup>
-
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -210,5 +224,212 @@
 
     </RelativeLayout>
 
+    <LinearLayout
+        android:id="@+id/map_bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:clickable="true"
+        app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_100sdp"
+            android:layout_margin="@dimen/_4sdp"
+            app:cardCornerRadius="@dimen/_5sdp"
+            app:cardElevation="@dimen/_5sdp">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/_10sdp"
+                android:paddingRight="@dimen/_10sdp">
+
+                <View
+                    android:layout_width="@dimen/_25sdp"
+                    android:layout_height="@dimen/_3sdp"
+                    android:background="@drawable/bg_grey_corner"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="@dimen/_5sdp"/>
+
+                <LinearLayout
+                    android:id="@+id/map_bottom_sheet_body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:paddingBottom="@dimen/_5sdp"
+                    android:paddingTop="@dimen/_5sdp">
+
+                    <TextView
+                        android:id="@+id/map_detail_shopname"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="cua hang sua xe"
+                        android:textAllCaps="true"
+                        android:textColor="@color/black_text_color"
+                        android:textSize="@dimen/_14sdp"
+                        android:layout_centerInParent="true"/>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/map_detail_address"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="cua hang sua xe"
+                            android:textColor="@color/black_text_color_hint"
+                            android:textSize="@dimen/_10sdp"/>
+
+                        <wolve.dms.customviews.CTextIcon
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="@string/icon_car"
+                            android:gravity="center"
+                            android:paddingLeft="@dimen/_10sdp"
+                            android:textSize="@dimen/_12sdp"
+                            android:textColor="@color/black_text_color_hint"/>
+
+                        <TextView
+                            android:id="@+id/map_detail_distance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="cua hang sua xe"
+                            android:textColor="@color/black_text_color_hint"
+                            android:textSize="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_5sdp"/>
+
+                    </LinearLayout>
+                </LinearLayout>
+
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fillViewport="true">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <LinearLayout
+                            android:id="@+id/map_detail_checkin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/_30sdp"
+                            android:orientation="horizontal"
+                            android:background="@drawable/btn_round_blue"
+                            android:layout_marginRight="@dimen/_10sdp">
+
+                            <wolve.dms.customviews.CTextIcon
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:text="@string/icon_district"
+                                android:gravity="center"
+                                android:paddingLeft="@dimen/_10sdp"
+                                android:textSize="@dimen/_14sdp"
+                                android:textColor="@color/colorWhite"/>
+
+                            <TextView
+                                android:id="@+id/map_detail_checkin_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:text="Checkin"
+                                android:textColor="@color/colorWhite"
+                                android:gravity="center"
+                                android:textSize="@dimen/_14sdp"
+                                android:paddingLeft="@dimen/_5sdp"
+                                android:paddingRight="@dimen/_15sdp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/map_detail_call"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/_30sdp"
+                            android:orientation="horizontal"
+                            android:background="@drawable/btn_round_border_blue"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            android:layout_alignParentRight="true">
+
+                            <wolve.dms.customviews.CTextIcon
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:paddingLeft="@dimen/_10sdp"
+                                android:text="@string/icon_phone"
+                                android:textColor="@color/colorBlue"
+                                android:textSize="@dimen/_14sdp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="@dimen/_30sdp"
+                                android:text="Gọi"
+                                android:textColor="@color/black_text_color"
+                                android:gravity="center"
+                                android:textSize="@dimen/_12sdp"
+                                android:paddingLeft="@dimen/_5sdp"
+                                android:paddingRight="@dimen/_10sdp"
+                                android:layout_marginRight="@dimen/_10sdp"
+                                />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/map_detail_direction"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/_30sdp"
+                            android:orientation="horizontal"
+                            android:background="@drawable/btn_round_border_blue"
+                            android:layout_marginRight="@dimen/_10sdp">
+
+                            <wolve.dms.customviews.CTextIcon
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:paddingLeft="@dimen/_10sdp"
+                                android:text="@string/icon_direction"
+                                android:textColor="@color/colorBlue"
+                                android:textSize="@dimen/_14sdp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:text="Chỉ đường"
+                                android:textColor="@color/black_text_color"
+                                android:gravity="center"
+                                android:textSize="@dimen/_12sdp"
+                                android:paddingLeft="@dimen/_5sdp"
+                                android:paddingRight="@dimen/_10sdp"
+                                />
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+                </HorizontalScrollView>
+
+
+
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+
+
+
+
+
+    </LinearLayout>
+
 
 </android.support.design.widget.CoordinatorLayout>
+
+
+    <!--app:layout_behavior="wolve.dms.libraries.FloatingActionMenuBehavior"-->

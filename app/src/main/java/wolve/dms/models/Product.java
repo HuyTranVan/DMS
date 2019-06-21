@@ -5,13 +5,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
-import wolve.dms.utils.DataUtil;
+import wolve.dms.utils.DataFilter;
 
 /**
  * Created by macos on 9/16/17.
@@ -56,7 +54,7 @@ public class Product extends BaseModel{
             }
         }
 
-        DataUtil.sortProduct(mListProducts, false);
+        DataFilter.sortProduct(mListProducts, false);
 
         return mListProducts;
     }

@@ -17,6 +17,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.ArrayMap;
@@ -118,7 +119,8 @@ public class Util {
         return currentLocation;
     }
 
-    public static final Pattern DETECT_PHONE = Pattern.compile("(\\+84|0)\\d{9,10}");
+//    public static final Pattern DETECT_PHONE = Pattern.compile("(\\+84|0)\\d{9,10}");
+    public static final String DETECT_PHONE = "(\\+84|0)\\d{9,10}";
     public static final String DETECT_NUMBER = "^[0-9]*$";
 
     public static synchronized Util getInstance() {
@@ -380,6 +382,14 @@ public class Util {
         view.requestFocus();
         InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(view, 0);
+    }
+
+    public static void showKeyboardDelay(final View view){
+        new Handler().postDelayed (new Runnable() {
+            @Override
+            public void run() {
+                Util.showKeyboard(view);
+            }}, 500);
     }
 
     public static void hideKeyboard(View view) {
@@ -652,6 +662,21 @@ public class Util {
 
     }
 
+    public static long TimeStamp2(String ddMMyyyyHHmmss) {
+
+        SimpleDateFormat dfm = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+
+        long unixtime = 0;
+        try {
+            unixtime = dfm.parse(ddMMyyyyHHmmss).getTime();
+            unixtime = unixtime;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return unixtime;
+
+    }
+
     public static String DateString(long timestamp) {
         String date = "";
 
@@ -867,7 +892,7 @@ public class Util {
         return Double.parseDouble(edText.getText().toString().trim().replaceAll(",|\\s|\\.", ""));
     }
 
-    public static Double getTotalMoney(List<Bill> list) {
+    public static Double getTotalMoney(List<BaseModel> list) {
         Double money = 0.0;
         for (int i = 0; i < list.size(); i++) {
             money += list.get(i).getDouble("total");
@@ -896,7 +921,7 @@ public class Util {
         return money;
     }
 
-    public static Double getTotalDebt(List<Bill> list) {
+    public static Double getTotalDebt(List<BaseModel> list) {
         Double money = 0.0;
         for (int i = 0; i < list.size(); i++) {
             money += list.get(i).getDouble("debt");

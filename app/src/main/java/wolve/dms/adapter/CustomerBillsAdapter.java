@@ -13,22 +13,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackList;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Bill;
-import wolve.dms.models.BillDetail;
 import wolve.dms.models.User;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
-import wolve.dms.utils.DataUtil;
+import wolve.dms.utils.DataFilter;
 import wolve.dms.utils.Util;
 
 /**
@@ -53,7 +48,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
         this.mListenerList = listener;
         this.mListerner = listener4;
 
-        DataUtil.sortbyKey("createAt", mData, true);
+        DataFilter.sortbyKey("createAt", mData, true);
 
     }
 
@@ -191,10 +186,11 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
                     "ĐỒNG Ý","HỦY", new CallbackBoolean() {
                 @Override
                 public void onRespone(Boolean result) {
-                    String currentId = String.valueOf(mData.get(currentPosition).getInt("id"));
+                    if (result){
+//                        String currentId = String.valueOf(mData.get(currentPosition).getInt("id"));
 
-                    List<String> listParams = new ArrayList<>();
-                    listParams = Util.arrayToList(mData.get(currentPosition).getString("idbill").split("-"));
+                        List<String> listParams = new ArrayList<>();
+                        listParams = Util.arrayToList(mData.get(currentPosition).getString("idbill").split("-"));
 //                    listParams.add(currentId);
 //                    for (int i=0; i<mData.size(); i++){
 //                        if (Util.isBillReturn(mData.get(i))){
@@ -202,34 +198,20 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
 //                        }
 //                    }
 
-                    CustomerConnect.DeleteListBill(listParams, new CallbackList() {
-                        @Override
-                        public void onResponse(List result) {
-                            Util.showToast("Xóa thành công");
-                            mListerner.Method4(true);
-                        }
+                        CustomerConnect.DeleteListBill(listParams, new CallbackList() {
+                            @Override
+                            public void onResponse(List result) {
+                                Util.showToast("Xóa thành công");
+                                mListerner.Method4(true);
+                            }
 
-                        @Override
-                        public void onError(String error) {
-                            mListerner.Method4(false);
-                        }
-                    }, true);
+                            @Override
+                            public void onError(String error) {
+                                mListerner.Method4(false);
+                            }
+                        }, true);
+                    }
 
-//                    CustomerConnect.DeleteListBill(listParams, new CallbackJSONObject() {
-//                        @Override
-//                        public void onResponse(JSONObject result) {
-//                            //mDelete.onDelete(mData.get(currentPosition).BillstoString(), currentPosition);
-//                            Util.showToast("Xóa thành công");
-//                            mListerner.Method4(true);
-////                            notifyDataSetChanged();
-//
-//                        }
-//
-//                        @Override
-//                        public void onError(String error) {
-//                            mListerner.Method4(false);
-//                        }
-//                    }, true);
                 }
             });
 
@@ -249,7 +231,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
                         @Override
                         public void onResponse(List result) {
                             try {
-                                CustomerConnect.PostListPay(DataUtil.createListPaymentParam(new JSONObject(mData.get(currentPosition).getString("customer")).getInt("id"),
+                                CustomerConnect.PostListPay(DataFilter.createListPaymentParam(new JSONObject(mData.get(currentPosition).getString("customer")).getInt("id"),
                                         result), new CallbackList() {
                                     @Override
                                     public void onResponse(List result) {

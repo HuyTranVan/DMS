@@ -49,7 +49,16 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_alignParentRight="true"
-            android:background="?selectableItemBackground">
+            android:background="?selectableItemBackground"
+            android:padding="@dimen/_10sdp">
+
+            <wolve.dms.customviews.CTextIcon
+                android:id="@+id/home_logout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/icon_username"
+                android:textColor="@color/black_text_color_hint"
+                android:textSize="@dimen/_14sdp"/>
 
             <TextView
                 android:id="@+id/home_fullname"
@@ -58,17 +67,8 @@
                 android:text="Huy Tran"
                 android:textColor="@color/black_text_color_hint"
                 android:textSize="@dimen/_10sdp"
-                android:padding="@dimen/_10sdp"/>
+                android:layout_marginLeft="@dimen/_10sdp"/>
 
-            <wolve.dms.customviews.CTextIcon
-                android:id="@+id/home_logout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/icon_logout"
-                android:textColor="@color/black_text_color_hint"
-                android:textSize="@dimen/_14sdp"
-                android:padding="@dimen/_10sdp"
-                android:layout_alignParentRight="true"/>
         </LinearLayout>
 
 

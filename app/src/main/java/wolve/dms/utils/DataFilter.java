@@ -2,6 +2,8 @@ package wolve.dms.utils;
 
 import android.util.Log;
 
+import com.github.mikephil.charting.formatter.IFillFormatter;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,12 +16,14 @@ import java.util.List;
 
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.models.BaseModel;
+import wolve.dms.models.Bill;
+import wolve.dms.models.Customer;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.models.User;
 
-public class DataUtil {
+public class DataFilter {
     public static String createPostBillParam(int customerId, final Double total, final Double paid, List<JSONObject> listProduct, String note){
         final JSONObject params = new JSONObject();
         try {
@@ -383,6 +387,98 @@ public class DataUtil {
 
         //tvBDF.setText(String.format("BDF: %s ",new DecimalFormat("#.##").format(percent)) +"%");
 
+    }
+
+    public static List<BaseModel> getCashByUser(List<BaseModel> listbill, List<BaseModel> listpayment, List<BaseModel> users){
+        try {
+            for (BaseModel user: users){
+                double paid = 0.0;
+                user.put("paid", 0);
+
+                for (BaseModel bill: listpayment){
+                    BaseModel us = new BaseModel(bill.getString("user"));
+                    if (us.getString("name").equals(user.getString("name"))){
+                        paid += bill.getDouble("paid");
+                        user.put("paid", paid);
+                    }
+                }
+            }
+
+            for (BaseModel user: users){
+                double paid = 0.0;
+                user.put("total", 0);
+
+                for (BaseModel bill: listbill){
+                    BaseModel us = new BaseModel(bill.getString("user"));
+                    if (us.getString("name").equals(user.getString("name"))){
+                        paid += bill.getDouble("total");
+                        user.put("total", paid);
+                    }
+                }
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return users;
+
+    }
+
+//    public static List<BaseModel> getRevenueByUser(List<BaseModel> listbill, List<BaseModel> users){
+//        try {
+//            for (BaseModel user: users){
+//                double paid = 0.0;
+//                user.put("total", 0);
+//
+//                for (BaseModel bill: listbill){
+//                    BaseModel us = new BaseModel(bill.getString("user"));
+//                    if (us.getString("name").equals(user.getString("name"))){
+//                        paid += bill.getDouble("total");
+//                        user.put("total", paid);
+//                    }
+//                }
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return users;
+//
+//    }
+
+    public static List<List<Object>> updateIncomeByUserToSheet(String startDate, String endDate, List<BaseModel> users){
+        List<List<Object>> values = new ArrayList<>();
+
+        for (BaseModel user : users){
+
+            if (!user.getString("role").equals(Constants.ROLE_ADMIN)){
+                List<Object> data = new ArrayList<>();
+                data.add(user.getString("displayName"));
+                data.add(user.getString("role"));
+                //data.add(Util.FormatMoney(user.getDouble("paid")));
+                data.add(user.getDouble("paid"));
+                data.add(user.getDouble("total"));
+
+                values.add(data);
+            }
+
+        }
+
+        List<Object> row0 = new ArrayList<>();
+        row0.add(String.format("Từ ngày %s đến %s", startDate, endDate));
+
+        List<Object> row1 = new ArrayList<>();
+        row1.add("TÊN NHÂN VIÊN");
+        row1.add("CHỨC DANH");
+        row1.add("TIỀN MẶT THU VỀ");
+        row1.add("DOANH SỐ BÁN HÀNG TRONG THÁNG");
+        row1.add("CÔNG NỢ HIỆN TẠI");
+
+        values.add(0,row0);
+        values.add(1, row1);
+
+        return values;
     }
 
 }

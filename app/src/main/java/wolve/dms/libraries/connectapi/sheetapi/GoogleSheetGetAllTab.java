@@ -1,21 +1,20 @@
-package wolve.dms.libraries.connectapi;
+package wolve.dms.libraries.connectapi.sheetapi;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
+import com.google.api.services.sheets.v4.model.Sheet;
+import com.google.api.services.sheets.v4.model.Spreadsheet;
 import com.google.api.services.sheets.v4.model.ValueRange;
 
 import java.io.IOException;
@@ -30,23 +29,20 @@ import wolve.dms.apiconnect.SheetConnect;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
 
-public class GoogleSheetPost extends AsyncTask<Void, Void, List<List<Object>>> {
+
+public class GoogleSheetGetAllTab extends AsyncTask<Void, Void, List<Sheet> > {
     private String spreadsheetId;
-    private String range;
     private NetHttpTransport HTTP_TRANSPORT;
     private JsonFactory JSON_FACTORY;
-    private CallbackListList mListener;
+    private CallbackListSheet mListener;
     private List<String> SCOPES ;
-    private List<List<Object>> mParams;
 
-    public interface CallbackListList{
-        void onRespone(List<List<Object>> results);
+    public interface CallbackListSheet{
+        void onRespone(List<Sheet> results);
     }
 
-    public GoogleSheetPost(String sheetId, String range, List<List<Object>> param, CallbackListList callbackListList) {
+    public GoogleSheetGetAllTab(String sheetId, CallbackListSheet callbackListList) {
         this.spreadsheetId = sheetId;
-        this.range = range;
-        this.mParams = param;
         this.HTTP_TRANSPORT = new NetHttpTransport();
         this.mListener = callbackListList;
         this.JSON_FACTORY = JacksonFactory.getDefaultInstance();
@@ -75,60 +71,38 @@ public class GoogleSheetPost extends AsyncTask<Void, Void, List<List<Object>>> {
     }
 
     @Override
-    protected List<List<Object>> doInBackground(Void... params) {
-//        String spreadsheetId = Api_link.STATISTICAL_SHEET_KEY;
-//        String range = Api_link.GOOGLESHEET_TAB;
-        ValueRange valueRange = new ValueRange();
-
-        valueRange.setMajorDimension("ROWS");
-        valueRange.setRange(range);
-        valueRange.setValues(mParams);
-
-        //then gloriously execute this copy-pasted code ;)
+    protected List<Sheet> doInBackground(Void... params) {
+        List<Sheet> sheets = new ArrayList<>();
         Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials())
                 .setApplicationName(Constants.DMS_NAME)
                 .build();
         try {
-            service.spreadsheets().values()
-                    .update(spreadsheetId, range, valueRange)
-                    .setValueInputOption("RAW")
-                    .execute();
+            Spreadsheet response=   service.spreadsheets().get(spreadsheetId).execute();
+            sheets = response.getSheets();
+
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-//        List<List<Object>> values = new ArrayList<>();
-//        Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials())
-//                .setApplicationName(Constants.DMS_NAME)
-//                .build();
-//        ValueRange response = null;
-//        try {
-//            response = service.spreadsheets().values().get(spreadsheetId, range).execute();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        values = response.getValues();
-//        if (values == null || values.isEmpty()) {
-//            System.out.println("No data found.");
-//        } else {
-//            Log.e("name", values.toString());
-//            for (List row : values) {
-//                // Print columns A and E, which correspond to indices 0 and 4.
-////                System.out.printf("%s, %s\n", row.get(0), row.get(4));
-//            }
-//        }
 
-//        return values;
-        return mParams;
+        return sheets;
     }
 
     @Override
-    protected void onPostExecute(List<List<Object>> lists) {
-//        super.onPostExecute(lists);
+    protected void onPostExecute(List<Sheet> lists) {
         mListener.onRespone(lists);
     }
 }
+
+//Get all Tab
+//            Spreadsheet response1= service.spreadsheets().get(spreadsheetId).setIncludeGridData (false).execute ();
+//
+//            List<Sheet> workSheetList = response1.getSheets();
+//
+//            for (Sheet sheet : workSheetList) {
+//                System.out.println(sheet.getProperties().getTitle());
+//            }
 
 
 

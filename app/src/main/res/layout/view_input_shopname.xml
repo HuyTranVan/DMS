@@ -1,88 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/input_shopnname_parent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/input_shopname_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Tao nhanh cua hang"
-        android:padding="@dimen/_5sdp"
-        android:textAllCaps="true"
-        android:textStyle="bold"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="@dimen/_30sdp"
-            android:layout_weight="0.85"
-            android:orientation="horizontal"
-            android:background="@drawable/colorwhite_borderred_corner">
-
-            <TextView
-                android:id="@+id/input_shopnname_type"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="0.3"
-                android:text="SỬA XE"
-                android:textColor="@color/black_text_color"
-                android:gravity="center"
-                android:textSize="@dimen/_12sdp"/>
-
-
-            <View
-                android:layout_width="2px"
-                android:layout_height="match_parent"
-                android:background="@color/colorRedTransparent"
-                android:layout_margin="@dimen/_5sdp"/>
-
-
-            <EditText
-                android:id="@+id/input_shopnname_name"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="0.7"
-                android:background="@color/colorWhite"
-                android:textSize="@dimen/_12sdp"
-                android:textColor="@color/black_text_color"
-                android:inputType="textCapWords"
-                android:hint="Nhập tên cửa hàng"
-                android:textColorHint="@color/black_text_color_hint"
-                android:gravity="center_vertical"
-                android:layout_margin="@dimen/_1sdp"
-                android:paddingLeft="@dimen/_5sdp"
-                android:imeOptions="actionDone"
-                android:windowSoftInputMode="adjustPan"
-                android:isScrollContainer="true"/>
-
-        </LinearLayout>
-
-        <ImageView
-            android:id="@+id/input_shopnname_submit"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/_30sdp"
-            android:layout_weight="0.15"
-            android:background="@drawable/btn_confirm_blue"
-            android:src="@drawable/ic_arrow_forward_white_18dp"
-            android:layout_marginLeft="@dimen/_5sdp"
-            android:padding="@dimen/_4sdp"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_14sdp"
-            android:layout_gravity="center_vertical"/>
-    </LinearLayout>
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/input_shopnname_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@color/colorWhite">
 
 
 
-    </LinearLayout>
+    <Spinner
+        android:id="@+id/input_shopnname_shoptype"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/_5sdp"
+        android:background="@color/colorWhite" />
+
+    <!--<View-->
+        <!--android:layout_width="1px"-->
+        <!--android:layout_height="@dimen/_30sdp"-->
+        <!--android:background="@color/black_text_color_hint"-->
+        <!--android:layout_gravity="center_vertical"-->
+        <!--android:layout_marginTop="@dimen/_5sdp"-->
+        <!--android:layout_marginBottom="@dimen/_5sdp"/>-->
+
+    <EditText
+        android:id="@+id/input_shopnname_name"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.85"
+        android:background="@color/colorWhite"
+        android:textSize="@dimen/_12sdp"
+        android:textColor="@color/black_text_color"
+        android:inputType="textCapWords"
+        android:hint="Nhập tên cửa hàng"
+        android:textColorHint="@color/black_text_color_hint"
+        android:gravity="center_vertical"
+        android:imeOptions="actionDone"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginBottom="@dimen/_5sdp"/>
+
+    <!--<View-->
+        <!--android:layout_width="1px"-->
+        <!--android:layout_height="@dimen/_30sdp"-->
+        <!--android:background="@color/black_text_color_hint"-->
+        <!--android:layout_gravity="center_vertical"/>-->
+
+    <wolve.dms.customviews.CTextIcon
+        android:id="@+id/input_shopnname_submit"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.15"
+        android:background="?selectableItemBackgroundBorderless"
+        android:text="@string/icon_next"
+        android:textColor="@color/colorBlue"
+        android:textSize="@dimen/_20sdp"
+        android:gravity="center"/>
+
+
+</LinearLayout>
 
 
 

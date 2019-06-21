@@ -1,35 +1,35 @@
-package wolve.dms.libraries.connectapi;
+package wolve.dms.libraries.connectapi.sheetapi;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
-import com.google.api.services.sheets.v4.model.Sheet;
-import com.google.api.services.sheets.v4.model.Spreadsheet;
+import com.google.api.services.sheets.v4.model.AddSheetRequest;
+import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest;
+import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetResponse;
+import com.google.api.services.sheets.v4.model.FindReplaceResponse;
+import com.google.api.services.sheets.v4.model.Request;
+import com.google.api.services.sheets.v4.model.SheetProperties;
+import com.google.api.services.sheets.v4.model.SpreadsheetProperties;
+import com.google.api.services.sheets.v4.model.UpdateSpreadsheetPropertiesRequest;
 import com.google.api.services.sheets.v4.model.ValueRange;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -38,22 +38,23 @@ import wolve.dms.apiconnect.SheetConnect;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
 
-
-public class GoogleSheetGet extends AsyncTask<Void, Void, List<List<Object>>> {
+public class GoogleSheetPostData extends AsyncTask<Void, Void, List<List<Object>>> {
     private String spreadsheetId;
     private String range;
     private NetHttpTransport HTTP_TRANSPORT;
     private JsonFactory JSON_FACTORY;
     private CallbackListList mListener;
     private List<String> SCOPES ;
+    private List<List<Object>> mParams;
 
     public interface CallbackListList{
         void onRespone(List<List<Object>> results);
     }
 
-    public GoogleSheetGet(String sheetId,String sheetTab,  CallbackListList callbackListList) {
+    public GoogleSheetPostData(String sheetId, String range, List<List<Object>> param, CallbackListList callbackListList) {
         this.spreadsheetId = sheetId;
-        this.range = sheetTab;
+        this.range = range;
+        this.mParams = param;
         this.HTTP_TRANSPORT = new NetHttpTransport();
         this.mListener = callbackListList;
         this.JSON_FACTORY = JacksonFactory.getDefaultInstance();
@@ -83,44 +84,59 @@ public class GoogleSheetGet extends AsyncTask<Void, Void, List<List<Object>>> {
 
     @Override
     protected List<List<Object>> doInBackground(Void... params) {
-        List<List<Object>> values = new ArrayList<>();
+//        String spreadsheetId = Api_link.STATISTICAL_SHEET_KEY;
+//        String range = Api_link.GOOGLESHEET_TAB;
+        ValueRange valueRange = new ValueRange();
+
+        valueRange.setMajorDimension("ROWS");
+        valueRange.setRange(range);
+        valueRange.setValues(mParams);
+
         Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials())
                 .setApplicationName(Constants.DMS_NAME)
                 .build();
-        try {
-            ValueRange response = service.spreadsheets().values().get(spreadsheetId, range).execute();
-            values = response.getValues();
-            if (values == null || values.isEmpty()) {
-                System.out.println("No data found.");
-            } else {
-                Log.e("name", values.toString());
-                for (List row : values) {
 
-                }
-            }
+        try {
+            service.spreadsheets().values()
+                    .update(spreadsheetId, range, valueRange)
+                    .setValueInputOption("RAW")
+                    .execute();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+//        List<List<Object>> values = new ArrayList<>();
+//        Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials())
+//                .setApplicationName(Constants.DMS_NAME)
+//                .build();
+//        ValueRange response = null;
+//        try {
+//            response = service.spreadsheets().values().get(spreadsheetId, range).execute();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        values = response.getValues();
+//        if (values == null || values.isEmpty()) {
+//            System.out.println("No data found.");
+//        } else {
+//            Log.e("name", values.toString());
+//            for (List row : values) {
+//                // Print columns A and E, which correspond to indices 0 and 4.
+////                System.out.printf("%s, %s\n", row.get(0), row.get(4));
+//            }
+//        }
 
-        return values;
+//        return values;
+        return mParams;
     }
 
     @Override
     protected void onPostExecute(List<List<Object>> lists) {
+//        super.onPostExecute(lists);
         mListener.onRespone(lists);
     }
 }
-
-//Get all Tab
-//            Spreadsheet response1= service.spreadsheets().get(spreadsheetId).setIncludeGridData (false).execute ();
-//
-//            List<Sheet> workSheetList = response1.getSheets();
-//
-//            for (Sheet sheet : workSheetList) {
-//                System.out.println(sheet.getProperties().getTitle());
-//            }
 
 
 

@@ -173,7 +173,7 @@ public class Constants {
             "RỬA XE",
             "PHỤ TÙNG",
             "BẢO TRÌ"};
-    public static String getShopInfo(String type, String name){
+    public static String getShopTitle(String type, String name){
         String result ="";
         if (type == null && name != null){
             for (int i=0; i<shopName.length; i++){
@@ -190,6 +190,20 @@ public class Constants {
                 }
             }
         }
+
+        return result;
+    }
+
+    public static String getShopType( String name){
+        String result ="";
+        for (int i=0; i<shopName.length; i++){
+            if (shopName[i].equals(name)){
+                result = shopType[i];
+                break;
+            }
+        }
+
+
 
         return result;
     }

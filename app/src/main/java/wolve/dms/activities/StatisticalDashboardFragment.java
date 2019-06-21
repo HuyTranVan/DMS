@@ -31,9 +31,7 @@ import wolve.dms.R;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
 import wolve.dms.models.District;
-import wolve.dms.models.User;
-import wolve.dms.utils.Constants;
-import wolve.dms.utils.DataUtil;
+import wolve.dms.utils.DataFilter;
 import wolve.dms.utils.Util;
 
 /**
@@ -94,7 +92,7 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         }
     }
 
-    public void reloadData(List<Bill> list, List<BaseModel> listDetail){
+    public void reloadData(List<BaseModel> list, List<BaseModel> listDetail){
         setupIncomeChart(list, listDetail);
         setupDistrictChart(list);
 
@@ -121,11 +119,11 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         data.setHasLabelsOutside(true);
 
         chartBDF.setPieChartData(data);
-//        chartBDF.setCircleFillRatio(0.7f);
+        chartBDF.setCircleFillRatio(0.95f);
 
     }
 
-    private void setupDistrictChart(List<Bill> list) {
+    private void setupDistrictChart(List<BaseModel> list) {
         //repair data for Chart
         ArrayList<JSONObject> listData = new ArrayList<>();
         List<String> listDistrict = District.getDistrictList();
@@ -182,12 +180,12 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
 
     }
 
-    private void setupIncomeChart(List<Bill> list, List<BaseModel> listDetail){
+    private void setupIncomeChart(List<BaseModel> list, List<BaseModel> listDetail){
         float total = Util.getTotalMoney(list).floatValue();
         float debt =Util.getTotalDebt(list).floatValue();
         float income = Util.getTotalMoney(list).floatValue() - debt;
         float bdf = 0.0f;
-        bdf = (float) DataUtil.defineBDFValue(listDetail);
+        bdf = (float) DataFilter.defineBDFValue(listDetail);
 
         setupBDFChart(total, bdf);
 

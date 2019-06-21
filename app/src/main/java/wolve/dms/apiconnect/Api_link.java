@@ -16,6 +16,7 @@ public class Api_link {
     public final static String GOOGLESHEET_CREDENTIALS_FILE_PATH = "/credentials.json";
     public final static String GOOGLESHEET_TOKENS_PATH = "tokens";
     public final static String STATISTICAL_SHEET_KEY ="1uooLXWdA6huFaBmRJl6Zs_1H9jOf4-2MVlord2busEU";
+    public final static String STATISTICAL_SHEET_TAB ="%s!A%d:z";
     public final static String STATISTICAL_SHEET_TAB1 ="Sheet1!A%d:z";
     public final static String STATISTICAL_SHEET_TAB2 ="Sheet2!A%d:z";
     public final static String SCANNER_SHEET_KEY ="1sWcFlXG-7UZlrcBDFocIBlk3SxxRxplPsvELP0WWxzQ";

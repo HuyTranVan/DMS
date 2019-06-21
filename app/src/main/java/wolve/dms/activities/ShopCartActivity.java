@@ -33,7 +33,7 @@ import wolve.dms.models.Customer;
 import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.DataUtil;
+import wolve.dms.utils.DataFilter;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -96,7 +96,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         if (bundle != null){
             try {
                 currentCustomer = new Customer(new JSONObject(bundle));
-                tvTitle.setText(String.format("%s %s",Constants.getShopInfo(currentCustomer.getString("shopType") , null), currentCustomer.getString("signBoard").toUpperCase() ));
+                tvTitle.setText(String.format("%s %s",Constants.getShopTitle(currentCustomer.getString("shopType") , null), currentCustomer.getString("signBoard").toUpperCase() ));
 
 //                JSONArray array = new JSONArray(currentCustomer.getString("bills"));
 //                List<BaseModel> mList = new ArrayList<>();
@@ -104,7 +104,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 //                for (int i=0; i<array.length(); i++){
 //                    mList.add(new BaseModel(array.getJSONObject(i)));
 //                }
-//                listBills = DataUtil.mergeWithReturnBill(mList);
+//                listBills = DataFilter.mergeWithReturnBill(mList);
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -172,7 +172,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
             case R.id.cart_submit:
 //                choicePayMethod();
-                Transaction.gotoPrintBillActivity(currentCustomer.CustomertoString(), DataUtil.convertListObject2Array(adapterProducts.getAllData()).toString(), false);
+                Transaction.gotoPrintBillActivity(currentCustomer.CustomertoString(), DataFilter.convertListObject2Array(adapterProducts.getAllData()).toString(), false);
 
                 break;
 
@@ -211,7 +211,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
             e.printStackTrace();
         }
 
-        DataUtil.sortProduct(listProducts, false);
+        DataFilter.sortProduct(listProducts, false);
     }
 
     private void loadListProductGroup(){
@@ -275,7 +275,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     private void updateBDFValue(){
         if (adapterProducts.getAllDataProduct().size() >0 ){
             tvBDF.setVisibility(View.VISIBLE );
-            tvBDF.setText(String.format("BDF:%s ",DataUtil.defineBDFPercent(adapterProducts.getAllDataBase())) +"%");
+            tvBDF.setText(String.format("BDF:%s ", DataFilter.defineBDFPercent(adapterProducts.getAllDataBase())) +"%");
 
         }else {
             tvBDF.setVisibility(View.GONE);
@@ -283,7 +283,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     }
 
 //    private void submitBill(final Double total, final Double paid){
-//        final String params = DataUtil.createPostBillParam(currentCustomer.getInt("id"),total, paid, adapterProducts.getAllData(), tvNote.getText().toString().trim());
+//        final String params = DataFilter.createPostBillParam(currentCustomer.getInt("id"),total, paid, adapterProducts.getAllData(), tvNote.getText().toString().trim());
 //
 //        if (btsocket != null && btsocket.isConnected()){
 //            Util.getInstance().showLoading("Đang in...");
@@ -477,7 +477,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
     @Override
     public boolean onLongClick(View v) {
-        Transaction.gotoPrintBillActivity(currentCustomer.CustomertoString(), DataUtil.convertListObject2Array(adapterProducts.getAllData()).toString(), false);
+        Transaction.gotoPrintBillActivity(currentCustomer.CustomertoString(), DataFilter.convertListObject2Array(adapterProducts.getAllData()).toString(), false);
 
         return true;
     }
@@ -486,8 +486,6 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(this) {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-
-
                 final int position = viewHolder.getAdapterPosition();
 //                final Product item = adapterProducts.getAllDataProduct().get(position);
 

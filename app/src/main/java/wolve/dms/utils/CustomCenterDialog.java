@@ -2,7 +2,6 @@ package wolve.dms.utils;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputFilter;
@@ -12,26 +11,16 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.RadioButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import com.mukesh.DrawingView;
-import com.savvi.rangedatepicker.CalendarPickerView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.function.DoubleUnaryOperator;
 
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -39,7 +28,6 @@ import wolve.dms.R;
 import wolve.dms.adapter.CartCheckinReasonAdapter;
 import wolve.dms.adapter.DebtAdapter;
 import wolve.dms.adapter.ProductReturnAdapter;
-import wolve.dms.adapter.StatisticalCheckinsAdapter;
 import wolve.dms.adapter.StatisticalDebtAdapter;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
@@ -48,7 +36,6 @@ import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickProduct;
 import wolve.dms.callback.CallbackDouble;
-import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackList;
 import wolve.dms.callback.CallbackPayBill;
@@ -56,9 +43,7 @@ import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.libraries.DoubleTextWatcher;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Bill;
 import wolve.dms.models.Customer;
-import wolve.dms.models.Distributor;
 import wolve.dms.models.Product;
 import wolve.dms.models.Status;
 import wolve.dms.models.User;
@@ -472,7 +457,7 @@ public class CustomCenterDialog {
                         e.printStackTrace();
                     }
 
-                    final String params = DataUtil.createPostBillParam(customerId,total, 0.0, listProductSelected, String.valueOf(billId));
+                    final String params = DataFilter.createPostBillParam(customerId,total, 0.0, listProductSelected, String.valueOf(billId));
 
                     CustomerConnect.PostBill(params, new CallbackJSONObject() {
                         @Override
@@ -830,7 +815,7 @@ public class CustomCenterDialog {
         RecyclerView rvBill = (RecyclerView) dialogResult.findViewById(R.id.dialog_bill_rvbill);
 
 
-        tvShopName.setText(Constants.getShopInfo(customer.getString("shopType") , null) + " "+ customer.getString("signBoard"));
+        tvShopName.setText(Constants.getShopTitle(customer.getString("shopType") , null) + " "+ customer.getString("signBoard"));
         tvCustomerName.setText(customer.getString("name") == null? "" : customer.getString("name"));
         tvPhone.setText(customer.getString("phone") == null? "" : customer.getString("phone"));
         tvAddress.setText((customer.getString("address") == null? "" : customer.getString("address")) +" " +customer.getString("street") + " "+ customer.getString("district"));
@@ -897,7 +882,7 @@ public class CustomCenterDialog {
         }
         tvCount.setText(String.format("Tổng nợ: %s", Util.FormatMoney(debt)));
 
-        final StatisticalDebtAdapter adapter = new StatisticalDebtAdapter(DataUtil.groupDebtByCustomer(listDebt), new CallbackString() {
+        final StatisticalDebtAdapter adapter = new StatisticalDebtAdapter(DataFilter.groupDebtByCustomer(listDebt), new CallbackString() {
             @Override
             public void Result(String s) {
 
@@ -955,7 +940,7 @@ public class CustomCenterDialog {
 
         edPhone.setText(user.getString("phone"));
 
-        Util.showKeyboard(edPass);
+        Util.showKeyboardDelay(edPass);
 
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -996,18 +981,18 @@ public class CustomCenterDialog {
     public static void showDialogChangePass(String title, final CallbackBoolean mListener){
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_change_password);
 
-        final Button btnCancel = dialogResult.findViewById(R.id.btn_cancel);
-        final Button btnSubmit = dialogResult.findViewById(R.id.btn_submit);
-        TextView tvTitle = dialogResult.findViewById(R.id.dialog_changepass_title);
-        final EditText edOldPass =  dialogResult.findViewById(R.id.dialog_changepass_old);
-        final EditText edNewPass1 =  dialogResult.findViewById(R.id.dialog_changepass_new1);
-        final EditText edNewPass2 =  dialogResult.findViewById(R.id.dialog_changepass_new2);
+        final Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
+        final Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
+        TextView tvTitle = (TextView) dialogResult.findViewById(R.id.dialog_changepass_title);
+        final EditText edOldPass = (EditText) dialogResult.findViewById(R.id.dialog_changepass_old);
+        final EditText edNewPass1 = (EditText) dialogResult.findViewById(R.id.dialog_changepass_new1);
+        final EditText edNewPass2 = (EditText) dialogResult.findViewById(R.id.dialog_changepass_new2);
 
         btnCancel.setText("HỦY");
         btnSubmit.setText("TIẾP TỤC");
         tvTitle.setText(title);
 
-        Util.showKeyboard(edOldPass);
+        Util.showKeyboardDelay(edOldPass);
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override

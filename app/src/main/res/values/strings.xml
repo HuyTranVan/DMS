@@ -76,8 +76,10 @@
     <string name="icon_delete">&#xf1f8;</string>
     <string name="icon_reload">&#xf01e;</string>
     <string name="icon_barcode">&#xf02a;</string>
-
-
+    <string name="icon_direction">&#xf124;</string>
+    <string name="icon_car">&#xf1b9;</string>
+    <string name="icon_next">&#xf105;</string>
+    <string name="icon_bomb">&#xf1e2;</string>
 
 
 

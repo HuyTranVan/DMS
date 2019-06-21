@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -46,7 +45,7 @@ import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomSQL;
-import wolve.dms.utils.DataUtil;
+import wolve.dms.utils.DataFilter;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -143,7 +142,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     public void initialData() {
         currentCustomer = new Customer( getIntent().getExtras().getString(Constants.CUSTOMER));
         rePrint = getIntent().getExtras().getBoolean(Constants.RE_PRINT);
-        listBills = DataUtil.array2ListObject(getIntent().getExtras().getString(Constants.BILLS));
+        listBills = DataFilter.array2ListObject(getIntent().getExtras().getString(Constants.BILLS));
         listDebts = getListDebt(currentCustomer.getJSONArray("bills"));
 
         if (rePrint){
@@ -190,7 +189,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
         tvOrderPhone.setText(String.format("Đặt hàng: %s", Util.PhoneFormat(User.getPhone())));
         tvThanks.setText(Constants.COMPANY_THANKS);
-        tvShopName.setText(String.format(": %s %s",Constants.getShopInfo(currentCustomer.getString("shopType"), null).toUpperCase() , currentCustomer.getString("signBoard").toUpperCase()));
+        tvShopName.setText(String.format(": %s %s",Constants.getShopTitle(currentCustomer.getString("shopType"), null).toUpperCase() , currentCustomer.getString("signBoard").toUpperCase()));
 
         String phone = currentCustomer.getString("phone").equals("")? "--" : Util.PhoneFormat(currentCustomer.getString("phone"));
         tvCustomerName.setText(String.format(": %s - %s",currentCustomer.getString("name"), phone ));
@@ -305,7 +304,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
             e.printStackTrace();
         }
 
-        DataUtil.sortbyKey("createAt", listDebts, true);
+        DataFilter.sortbyKey("createAt", listDebts, true);
         for (int i=0; i< listDebts.size(); i++){
             list.add(listDebts.get(i));
         }
@@ -361,7 +360,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void createRVDebt(final List<BaseModel> list){
-        DataUtil.sortbyKey("createAt", list, true);
+        DataFilter.sortbyKey("createAt", list, true);
         adapterDebt = new DebtAdapter( list, true, false);
         Util.createLinearRV(rvDebts, adapterDebt);
 
@@ -455,7 +454,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
             for (int i=0; i<array.length(); i++){
                 mList.add(new BaseModel(array.getJSONObject(i)));
             }
-            listBill = DataUtil.mergeWithReturnBill(mList);
+            listBill = DataFilter.mergeWithReturnBill(mList);
 
             for (int j=0; j<listBill.size(); j++){
 //                JSONObject object = array.getJSONObject(j);
@@ -691,7 +690,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void postBilltoServer(final List<JSONObject> listPayments) {
-        final String params = DataUtil.createPostBillParam(currentCustomer.getInt("id"), adapterBill.getTotalMoney(), 0.0, listBills, "");
+        final String params = DataFilter.createPostBillParam(currentCustomer.getInt("id"), adapterBill.getTotalMoney(), 0.0, listBills, "");
 
         CustomerConnect.PostBill(params, new CallbackJSONObject() {
             @Override
@@ -703,7 +702,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
                             listPayments.get(0).put("billId", result.getInt("id"));
                         }
 
-                        postPayToServer(DataUtil.createListPaymentParam(currentCustomer.getInt("id"),listPayments), true);
+                        postPayToServer(DataFilter.createListPaymentParam(currentCustomer.getInt("id"),listPayments), true);
 
                     }else {
                         Transaction.returnShopCartActivity(Constants.PRINT_BILL_ACTIVITY, Constants.RELOAD_DATA, Constants.RESULT_PRINTBILL_ACTIVITY);

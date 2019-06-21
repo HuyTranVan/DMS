@@ -3,6 +3,7 @@ package wolve.dms.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.nispok.snackbar.Snackbar;
+import com.nispok.snackbar.listeners.ActionClickListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,6 +26,7 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackChangePrice;
 import wolve.dms.callback.CallbackClickProduct;
 import wolve.dms.customviews.CTextIcon;
+import wolve.dms.libraries.SwipeRevealLayout;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.utils.CustomCenterDialog;
@@ -143,6 +147,31 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
             }
         });
 
+//        holder.btnDelete.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                removeItem(position);
+//            }
+//        });
+//
+//        holder.swipeRevealLayout.setOnOpenListener(new CallbackBoolean() {
+//            @Override
+//            public void onRespone(Boolean result) {
+//                if (result){
+//                    for (int i= 0; i<mData.size(); i++){
+//                        if (i != position){
+//                            notifyItemChanged(i);
+//                        }
+//
+//
+//
+//                    }
+//                }
+//            }
+//        });
+
+
+
 //        holder.lnParent.setOnLongClickListener(new View.OnLongClickListener() {
 //            @Override
 //            public boolean onLongClick(View v) {
@@ -179,7 +208,8 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
         private TextView tvName, tvUnitPrice, tvQuantity ,tvQuantityDisplay, tvTotal, tvRibbon;
         private RelativeLayout lnParent;
         private CircleImageView imgProduct;
-        private CTextIcon btnSub, btnPlus;
+        private CTextIcon btnSub, btnPlus;// btnDelete;
+//        private SwipeRevealLayout swipeRevealLayout;
 
         public CartProductsViewHolder(View itemView) {
             super(itemView);
@@ -193,7 +223,8 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
             btnSub = (CTextIcon) itemView.findViewById(R.id.shopcart_products_item_sub);
             btnPlus = (CTextIcon) itemView.findViewById(R.id.shopcart_products_item_plus);
             tvTotal = (TextView) itemView.findViewById(R.id.shopcart_products_item_total);
-
+//            btnDelete = itemView.findViewById(R.id.shopcart_products_item_delete);
+//            swipeRevealLayout = itemView.findViewById(R.id.shopcart_products_item_parent_swipe);
 
         }
 
@@ -218,30 +249,53 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
     }
 
     public void removeItem(final int pos){
-        CustomCenterDialog.alertWithCancelButton(null, "Xóa " + mData.get(pos).getString("name") +" khỏi danh sách" , "ĐỒNG Ý","HỦY", new CallbackBoolean() {
-            @Override
-            public void onRespone(Boolean result) {
-                if (result){
-//                    try {
-//                        mData.get(pos).put("isvisible", true);
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-
-                    mData.remove(pos);
-                    mChangePrice.NewPrice(updatePrice(mData));
-                    notifyItemRemoved(pos);
-                    notifyItemChanged(pos);
-//                    notifyItemRangeChanged(pos, getItemCount());
-                }else {
-                    notifyItemChanged(pos);
-                    //notifyDataSetChanged();
-                }
 
 
+        final Product product = mData.get( pos);
+        Util.showSnackbar(String.format("Xóa sản phẩm %s", mData.get(pos).getString("name")),
+                "Hoàn tác",
+                new ActionClickListener() {
+                    @Override
+                    public void onActionClicked(Snackbar snackbar) {
+                        mData.add(pos, product);
+                        mChangePrice.NewPrice(updatePrice(mData));
+                        notifyDataSetChanged();
+//                        mData.remove(pos);
+//                        mChangePrice.NewPrice(updatePrice(mData));
+//                        notifyItemRemoved(pos);
+                    }
+                });
 
-            }
-        });
+
+        mData.remove(pos);
+        mChangePrice.NewPrice(updatePrice(mData));
+        notifyItemRemoved(pos);
+        notifyItemChanged(pos);
+
+//        CustomCenterDialog.alertWithCancelButton(null, "Xóa " + mData.get(pos).getString("name") +" khỏi danh sách" , "ĐỒNG Ý","HỦY", new CallbackBoolean() {
+//            @Override
+//            public void onRespone(Boolean result) {
+//                if (result){
+////                    try {
+////                        mData.get(pos).put("isvisible", true);
+////                    } catch (JSONException e) {
+////                        e.printStackTrace();
+////                    }
+//
+//                    mData.remove(pos);
+//                    mChangePrice.NewPrice(updatePrice(mData));
+//                    notifyItemRemoved(pos);
+//                    notifyItemChanged(pos);
+////                    notifyItemRangeChanged(pos, getItemCount());
+//                }else {
+//                    notifyItemChanged(pos);
+//                    //notifyDataSetChanged();
+//                }
+//
+//
+//
+//            }
+//        });
     }
 
 

@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Customer;
 
 /**
@@ -49,7 +50,7 @@ public class MapUtil{
     private int currentStep;
     //private GoogleMap currentMap;
     public static List<Marker> markers ;
-    public static List<Customer> customers ;
+    public static List<BaseModel> customers ;
     private static int interested =0;
     private static int ordered =0;
 
@@ -190,7 +191,7 @@ public class MapUtil{
         return objectResult;
     }
 
-    public static void addListMarkertoMap(Boolean clearMap, final GoogleMap mMap, final List<Customer> listCustomer, String filter, Boolean isBound) {
+    public static void addListMarkertoMap(Boolean clearMap, final GoogleMap mMap, final List<BaseModel> listCustomer, String filter, Boolean isBound) {
         if (clearMap){
             resetMarker();
             customers = listCustomer;
@@ -347,14 +348,14 @@ public class MapUtil{
     }
 
 
-    public static Marker addMarkerToMap(GoogleMap mMap, Customer customer ,String filter){
+    public static Marker addMarkerToMap(GoogleMap mMap, BaseModel customer ,String filter){
         Marker currentMarker = null;
 
         LatLng markerPosition = new LatLng(customer.getDouble("lat"), customer.getDouble("lng"));
         currentMarker = mMap.addMarker(new MarkerOptions().position(markerPosition));
         Bitmap bitmap = GetBitmapMarker(Util.getInstance().getCurrentActivity(), customer.getInt("icon"), customer.getString("checkincount"), R.color.pin_waiting);
         currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
-        currentMarker.setTag(customer.CustomerJSONObject());
+        currentMarker.setTag(customer.BaseModelJSONObject());
         currentMarker.setSnippet(customer.getString("id"));
 
         markers.add(currentMarker);
@@ -420,7 +421,7 @@ public class MapUtil{
         });
     }
 
-    public static void showUpdatedMarker(GoogleMap mMap, Customer customer){
+    public static void showUpdatedMarker(GoogleMap mMap, BaseModel customer){
         Boolean isNew = true;
         for (int i=0; i<markers.size(); i++){
             try {
@@ -449,6 +450,40 @@ public class MapUtil{
             isNew = false;
         }
     }
+
+    public static Marker getCurrentMarker(GoogleMap mMap, BaseModel customer) {
+        Boolean isNew = true;
+        Marker currentmarker = null;
+        for (int i = 0; i < markers.size(); i++) {
+            try {
+                if (markers.get(i).getTag() != null) {
+                    JSONObject object = new JSONObject(markers.get(i).getTag().toString());
+                    if (object.getString("id").equals(customer.getString("id"))) {
+                        markers.get(i).remove();
+
+                        currentmarker = addMarkerToMap(mMap, customer, Constants.MARKER_ALL);
+
+
+
+                        isNew = false;
+                        break;
+                    }
+                }
+
+            } catch (JSONException e) {
+//                e.printStackTrace();
+            }
+        }
+
+        if (isNew) {
+            currentmarker = addMarkerToMap(mMap, customer, Constants.MARKER_ALL);
+//            marker.showInfoWindow();
+//            isNew = false;
+        }
+
+        return currentmarker;
+    }
+
 
     public static void removeMarker(String id){
         for (int i=0; i<markers.size(); i++){

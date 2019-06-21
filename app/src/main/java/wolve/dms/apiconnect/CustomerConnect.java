@@ -8,7 +8,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import wolve.dms.R;
 import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackJSONArray;
@@ -28,7 +27,7 @@ import wolve.dms.models.Product;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
-import wolve.dms.utils.DataUtil;
+import wolve.dms.utils.DataFilter;
 import wolve.dms.utils.Util;
 
 /**
@@ -379,7 +378,7 @@ public class CustomerConnect {
             Util.getInstance().showLoading();
 //        }
 
-        String url = Api_link.BILLS+ String.format(Api_link.DEFAULT_RANGE, 1,1500) + param;
+        String url = Api_link.BILLS+ String.format(Api_link.DEFAULT_RANGE, 1,5000) + param;
 
         new CustomGetMethod(url, new Callback() {
             @Override
@@ -492,7 +491,7 @@ public class CustomerConnect {
             UtilPrinter.printCustomText(outputStream, "HÓA ĐƠN BÁN HÀNG",3,1);
             outputStream.write(PrinterCommands.FEED_LINE);
 
-            UtilPrinter.printCustomText(outputStream,"CH    : " + Constants.getShopInfo(currentCustomer.getString("shopType") , null) + " "+ currentCustomer.getString("signBoard") , 1,0);
+            UtilPrinter.printCustomText(outputStream,"CH    : " + Constants.getShopTitle(currentCustomer.getString("shopType") , null) + " "+ currentCustomer.getString("signBoard") , 1,0);
             UtilPrinter.printCustomText(outputStream,"KH    : " + currentCustomer.getString("name"), 1,0);
 
             String phone = currentCustomer.getString("phone").equals("")? "--" : Util.PhoneFormat(currentCustomer.getString("phone"));
@@ -594,7 +593,7 @@ public class CustomerConnect {
             UtilPrinter.printCustomTextNew(outputStream, "HÓA ĐƠN BÁN HÀNG",33,1);
             outputStream.write(PrinterCommands.FEED_LINE);
 
-            UtilPrinter.printCustomTextNew(outputStream,"CH     : " + Constants.getShopInfo(currentCustomer.getString("shopType") , null) + " "+ currentCustomer.getString("signBoard") , 2,0);
+            UtilPrinter.printCustomTextNew(outputStream,"CH     : " + Constants.getShopTitle(currentCustomer.getString("shopType") , null) + " "+ currentCustomer.getString("signBoard") , 2,0);
             UtilPrinter.printCustomTextNew(outputStream,"KH     : " + currentCustomer.getString("name"), 2,0);
 
             String phone = currentCustomer.getString("phone").equals("")? "--" : Util.PhoneFormat(currentCustomer.getString("phone"));
@@ -703,7 +702,7 @@ public class CustomerConnect {
             UtilPrinter.printCustomTextNew(outputStream, "HÓA ĐƠN (In lai)",33,1);
             outputStream.write(PrinterCommands.FEED_LINE);
 
-            UtilPrinter.printCustomTextNew(outputStream,"CH     : " + Constants.getShopInfo(currentCustomer.getString("shopType") , null) + " "+ currentCustomer.getString("signBoard") , 2,0);
+            UtilPrinter.printCustomTextNew(outputStream,"CH     : " + Constants.getShopTitle(currentCustomer.getString("shopType") , null) + " "+ currentCustomer.getString("signBoard") , 2,0);
             UtilPrinter.printCustomTextNew(outputStream,"KH     : " + currentCustomer.getString("name"), 2,0);
 
             String phone = currentCustomer.getString("phone").equals("")? "--" : Util.PhoneFormat(currentCustomer.getString("phone"));
@@ -721,7 +720,7 @@ public class CustomerConnect {
             for (int i=0; i<listBill.size(); i++){
                 UtilPrinter.printCustomTextNew(outputStream, "Hoa don "+Util.DateHourString(listBill.get(i).getLong("createAt")) , 2,0);
 
-                List<JSONObject> listDetail = DataUtil.array2ListObject(listBill.get(i).getString("billDetails"));
+                List<JSONObject> listDetail = DataFilter.array2ListObject(listBill.get(i).getString("billDetails"));
 
                 for (int a=0; a<listDetail.size(); a++){
                     UtilPrinter.printCustomTextNew(outputStream,

@@ -72,7 +72,7 @@ import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.libraries.FitScrollWithFullscreen;
 import wolve.dms.utils.CustomSQL;
-import wolve.dms.utils.DataUtil;
+import wolve.dms.utils.DataFilter;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -83,11 +83,16 @@ import static wolve.dms.utils.Constants.REQUEST_PERMISSION_LOCATION;
  * Created by macos on 9/16/17.
  */
 
-public class CustomerActivity extends BaseActivity implements OnMapReadyCallback, GoogleMap.OnCameraIdleListener, View.OnClickListener, RadioGroup.OnCheckedChangeListener, ViewTreeObserver.OnGlobalLayoutListener {
+public class CustomerActivity extends BaseActivity implements OnMapReadyCallback,
+        GoogleMap.OnCameraIdleListener,
+        View.OnClickListener,
+        RadioGroup.OnCheckedChangeListener,
+        ViewTreeObserver.OnGlobalLayoutListener {
     public GoogleMap mMap;
     public SupportMapFragment mapFragment;
     private ImageView btnBack;
-    private CTextIcon tvTrash, btnEditLocation, tvBottomUp, tvBottomDown;
+    private CTextIcon tvTrash, btnEditLocation;
+//    tvBottomUp, tvBottomDown;
     private Button btnSubmit, btnShopCart;
     private FloatingActionButton btnCurrentLocation;
     private TextView  tvTotal, tvDebt , tvBillDetail, tvCheckInStatus, tvTime, tvCheckinTitle;
@@ -119,6 +124,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FitScrollWithFullscreen.assistActivity(this, 1);
+
     }
 
     Thread threadShowTime = new Thread() {
@@ -186,8 +192,8 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         tvCheckInStatus = findViewById(R.id.customer_checkin_status);
         tvTime = findViewById(R.id.customer_checkin_time);
         rlStatusGroup = findViewById(R.id.customer_checkin_status_group);
-        tvBottomUp = findViewById(R.id.customer_bottom_up);
-        tvBottomDown = findViewById(R.id.customer_bottom_down);
+//        tvBottomUp = findViewById(R.id.customer_bottom_up);
+//        tvBottomDown = findViewById(R.id.customer_bottom_down);
         tvCheckinTitle = findViewById(R.id.customer_checkin_title);
 
 
@@ -215,16 +221,19 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             edPhone.setText(currentCustomer.getString("phone") == null ? "" : currentCustomer.getString("phone"));
             edAdress.setText((currentCustomer.getString("address") == null ? "" : currentCustomer.getString("address")));
             edStreet.setText(currentCustomer.getString("street") == null ? "" : currentCustomer.getString("street"));
-            edNote.setText(currentCustomer.getString("note"));
+            setNoteText(currentCustomer.getString("note"));
+//            edNote.setText(currentCustomer.getString("note"));
             edDistrict.setText(currentCustomer.getString("district"));
             edCity.setText(currentCustomer.getString("province"));
             edShopName.setText(currentCustomer.getString("signBoard"));
-            edShopType.setText(Constants.getShopInfo(currentCustomer.getString("shopType"), null));
+            edShopType.setText(Constants.getShopTitle(currentCustomer.getString("shopType"), null));
             tvTitle.setText(edShopType.getText().toString() + " - " + currentCustomer.getString("signBoard"));
 
             if (currentCustomer.getString("status") != null) {
                 currentStatus = new Status(currentCustomer.getJsonObject("status"));
             }
+
+
 
             switch (currentStatus.getInt("id")) {
                 case 1:
@@ -268,8 +277,6 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
             }
 
-
-
             if (currentCustomer.getInt("id") != 0) {
                 tvTrash.setVisibility(User.getRole().equals("MANAGER") ? View.VISIBLE : View.GONE);
 
@@ -295,7 +302,6 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         }
 
 
-
     }
 
     private void addYearToList(String year){
@@ -307,6 +313,18 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         }
     }
 
+    private void setNoteText(String note){
+        if (!note.isEmpty()){
+            try {
+                JSONObject object = new JSONObject(note);
+                edNote.setText(object.getString("note"));
+
+            } catch (JSONException e) {
+                edNote.setText(note);
+            }
+        }
+
+    }
 
     private void setupMap() {
         mapFragment.getMapAsync(this);
@@ -473,6 +491,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 || edShopType.getText().toString().trim().equals("")){
             CustomCenterDialog.alertWithButton("", "Vui lòng nhập đủ thông tin", "đồng ý", new CallbackBoolean() {
                 @Override public void onRespone(Boolean result) {
+
 
                 }
             });
@@ -687,13 +706,14 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             customer.put("address", edAdress.getText().toString().trim());
             customer.put("phone", edPhone.getText().toString().trim());
             customer.put("street", edStreet.getText().toString().trim());
-            customer.put("note", edNote.getText().toString().trim());
+//            customer.put("note", edNote.getText().toString().trim());
+            customer.put("note", getCustomerNote());
             customer.put("district", edDistrict.getText().toString().trim());
             customer.put("province", edCity.getText().toString().trim());
             customer.put("lat", currentCustomer.getDouble("lat"));
             customer.put("lng", currentCustomer.getDouble("lng"));
             customer.put("volumeEstimate", 10);
-            customer.put("shopType", Constants.getShopInfo(null,edShopType.getText().toString()));
+            customer.put("shopType", Constants.getShopTitle(null,edShopType.getText().toString()));
             customer.put("status.id", currentStatus.getInt("id"));
 
         } catch (JSONException e) {
@@ -702,12 +722,35 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         return customer;
     }
 
+    private String getCustomerNote(){
+        String note = "";
+        Double total = Util.getTotal(listBills).getDouble("debt");
+        if (total > 0.0){
+            try{
+                JSONObject object = new JSONObject();
+                object.put("debt", total);
+                object.put("note", edNote.getText().toString());
+                object.put("userId", listBills.get(0).getJsonObject("user").getInt("id"));
+                object.put("userName", listBills.get(0).getJsonObject("user").getString("displayName"));
+                note = object.toString();
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }else {
+            note = edNote.getText().toString();
+        }
+
+        return note;
+    }
+
     @Override
     public void onGlobalLayout() {
         coParent.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-        int height = coParent.getHeight() - rlHeader.getHeight();
+//        int height = coParent.getHeight() - rlHeader.getHeight();
         ViewGroup.LayoutParams params = lnBottomSheet.getLayoutParams();
-        params.height = (int) (coParent.getHeight()*0.7);
+        params.height = (int) (coParent.getHeight()*0.6);
         lnBottomSheet.requestLayout();
 
         setupBottomSheet();
@@ -716,14 +759,16 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
     private void setupBottomSheet() {
         mBottomSheetBehavior = BottomSheetBehavior.from(lnBottomSheet);
-        mBottomSheetBehavior.setPeekHeight(Util.convertDp2PxInt(60-8));
+        int height = getResources().getDimensionPixelSize(R.dimen._34sdp);
+//        mBottomSheetBehavior.setPeekHeight(Util.convertDp2PxInt(60-8));
+        mBottomSheetBehavior.setPeekHeight(height);
         mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
 //                Util.hideKeyboard(lnBottomSheet);
                 switch (newState){
                     case BottomSheetBehavior.STATE_DRAGGING:
-                        tvBottomDown.setVisibility(View.INVISIBLE);
+//                        tvBottomDown.setVisibility(View.INVISIBLE);
                         break;
 
                     case BottomSheetBehavior.STATE_COLLAPSED:
@@ -733,7 +778,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
                     case BottomSheetBehavior.STATE_EXPANDED:
                         Util.hideKeyboard(lnBottomSheet);
-                        tvBottomDown.setVisibility(View.VISIBLE);
+//                        tvBottomDown.setVisibility(View.VISIBLE);
 //                        tvBottomUp.setVisibility(View.INVISIBLE);
                         break;
 
@@ -742,7 +787,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                tvBottomUp.setAlpha(1-slideOffset);
+//                tvBottomUp.setAlpha(1-slideOffset);
             }
         });
     }
@@ -767,7 +812,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     protected void showMoneyOverview(List<BaseModel> listbill ){
-        listBills = DataUtil.mergeWithReturnBill(listbill);
+        listBills = DataFilter.mergeWithReturnBill(listbill);
         BaseModel object = Util.getTotal(listBills);
 
         lnPaidParent.setVisibility(object.getInt("size") > 0 ?View.VISIBLE :View.GONE);
@@ -900,15 +945,16 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                             @Override
                             public void onResponse(String content) {
                                 edDistrict.setText(content);
+
                             }
                         });
-
 
                     }
 
                     @Override
                     public void onError(String error) {
                         Util.showToast("Không thể lấy danh sách quận/ huyện");
+
                     }
                 });
 

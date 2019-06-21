@@ -169,7 +169,7 @@
                 android:id="@+id/bills_item_rvpayment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_white_corner"
+                android:background="@drawable/bg_white_corner_stroke_grey"
                 android:layout_marginLeft="@dimen/_2sdp"
                 android:layout_marginRight="@dimen/_2sdp"
                 android:layout_marginBottom="@dimen/_2sdp"/>

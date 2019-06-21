@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/transparent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/colorwhite_corner_large"
+        android:orientation="vertical"
+        android:layout_margin="@dimen/_4sdp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_10sdp"
+            android:text="cua hang sua xe"
+            android:textAllCaps="true"
+            android:textColor="@color/black_text_color"
+            android:textSize="@dimen/_14sdp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_30sdp"
+            android:orientation="horizontal"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_20sdp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/btn_round_blue"
+                android:text="Checkin"
+                android:textAllCaps="true"
+                android:textColor="@color/colorWhite"
+                android:gravity="center"
+                android:textSize="@dimen/_14sdp"
+                android:paddingLeft="@dimen/_15sdp"
+                android:paddingRight="@dimen/_15sdp"
+                android:layout_marginRight="@dimen/_10sdp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/btn_round_border_blue"
+                android:text="Gọi điện"
+                android:textColor="@color/black_text_color"
+                android:gravity="center"
+                android:textSize="@dimen/_14sdp"
+                android:paddingLeft="@dimen/_10sdp"
+                android:paddingRight="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/btn_round_border_blue"
+                android:text="Chỉ đường"
+                android:textColor="@color/black_text_color"
+                android:gravity="center"
+                android:textSize="@dimen/_14sdp"
+                android:paddingLeft="@dimen/_10sdp"
+                android:paddingRight="@dimen/_10sdp"
+                />
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</RelativeLayout>

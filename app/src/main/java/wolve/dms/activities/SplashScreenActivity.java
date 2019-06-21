@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -45,6 +46,7 @@ public class SplashScreenActivity extends BaseActivity {
 
     @Override
     public void initialData() {
+        openUri();
         new Handler().postDelayed(new Runnable() {
 
             /*
@@ -112,6 +114,17 @@ public class SplashScreenActivity extends BaseActivity {
         startActivity(intent);
         SplashScreenActivity.this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         finish();
+    }
+
+    private void openUri(){
+        Intent intent = new Intent("com.dms.wolve");
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
+        intent.addCategory(Intent.CATEGORY_BROWSABLE);
+        Bundle bundle = new Bundle();
+        bundle.putString("msg_from_browser", "Launched from Browser");
+        intent.putExtras(bundle);
+
+        Log.e("mobikul-->", intent.toUri(Intent.URI_INTENT_SCHEME));
     }
 
 }

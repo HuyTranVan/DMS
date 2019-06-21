@@ -97,15 +97,15 @@ public class StatisticalBillsFragment extends Fragment implements View.OnClickLi
         }
     }
 
-    public void reloadData(List<Bill> list){
+    public void reloadData(List<BaseModel> list){
         CreateRVBill(list);
     }
 
 
-    public void CreateRVBill(List<Bill> list){
+    public void CreateRVBill(List<BaseModel> list){
         Double total = 0.0;
         Double debt = 0.0;
-        List<Bill> listDebt = new ArrayList<>();
+        List<BaseModel> listDebt = new ArrayList<>();
         for (int i=0; i<list.size(); i++){
             total +=list.get(i).getDouble("total");
             debt += list.get(i).getDouble("debt");

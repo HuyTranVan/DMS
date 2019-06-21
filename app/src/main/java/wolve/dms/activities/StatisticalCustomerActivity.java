@@ -31,13 +31,12 @@ import wolve.dms.customviews.CTextIcon;
 import wolve.dms.customviews.CustomTabLayout;
 import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialog;
 import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialogFragment;
-import wolve.dms.libraries.connectapi.GoogleSheetGet;
+import wolve.dms.libraries.connectapi.sheetapi.GoogleSheetGetData;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
 import wolve.dms.models.Customer;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
 
 /**
@@ -239,7 +238,7 @@ public class StatisticalCustomerActivity extends BaseActivity implements  View.O
     }
 
     private void postListbill(){
-        SheetConnect.getALlValue(Api_link.STATISTICAL_SHEET_KEY, String.format(Api_link.STATISTICAL_SHEET_TAB1,3),  new GoogleSheetGet.CallbackListList() {
+        SheetConnect.getALlValue(Api_link.STATISTICAL_SHEET_KEY, String.format(Api_link.STATISTICAL_SHEET_TAB1,3),  new GoogleSheetGetData.CallbackListList() {
             @Override
             public void onRespone(List<List<Object>> results) {
                 listSheetID = new ArrayList<>();
@@ -251,7 +250,7 @@ public class StatisticalCustomerActivity extends BaseActivity implements  View.O
 
                 String range = String.format(Api_link.STATISTICAL_SHEET_TAB1, listSheetID.size()+3);
 
-                SheetConnect.postValue(Api_link.STATISTICAL_SHEET_KEY, range, getListValueExportToSheet(listBill), new GoogleSheetGet.CallbackListList() {
+                SheetConnect.postValue(Api_link.STATISTICAL_SHEET_KEY, range, getListValueExportToSheet(listBill), new GoogleSheetGetData.CallbackListList() {
                     @Override
                     public void onRespone(List<List<Object>> results) {
 
@@ -401,7 +400,7 @@ public class StatisticalCustomerActivity extends BaseActivity implements  View.O
                     data.add(bill.getString("id"));
                     data.add(Util.DateString(bill.getLong("createAt")));
                     data.add(bill.getJsonObject("user").getString("displayName"));
-                    data.add(Constants.getShopInfo(customer.getString("shopType") , null) + " " + customer.getString("signBoard"));
+                    data.add(Constants.getShopTitle(customer.getString("shopType") , null) + " " + customer.getString("signBoard"));
                     data.add(customer.getString("phone"));
                     data.add(bill.getDouble("total"));
                     data.add(bill.getDouble("paid"));

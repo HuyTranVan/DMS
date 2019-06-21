@@ -3,11 +3,13 @@ package wolve.dms.activities;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -155,6 +157,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 }
             }
         });
+
+
 
     }
 

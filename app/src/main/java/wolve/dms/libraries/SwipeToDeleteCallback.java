@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.View;
 
 import wolve.dms.R;
@@ -49,6 +50,7 @@ abstract public class SwipeToDeleteCallback extends ItemTouchHelper.Callback {
     @Override
     public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder viewHolder1) {
         return false;
+
     }
 
     @Override
@@ -67,6 +69,8 @@ abstract public class SwipeToDeleteCallback extends ItemTouchHelper.Callback {
         }
 
         mBackground.setColor(backgroundColor);
+        Log.e("right",itemView.getRight() + "aaa" );
+//        mBackground.setBounds((int) (0.8* itemView.getRight()), itemView.getTop(), itemView.getRight(), itemView.getBottom());
         mBackground.setBounds(itemView.getRight() + (int) dX, itemView.getTop(), itemView.getRight(), itemView.getBottom());
         mBackground.draw(c);
 
@@ -78,6 +82,7 @@ abstract public class SwipeToDeleteCallback extends ItemTouchHelper.Callback {
 
 
         deleteDrawable.setBounds(deleteIconLeft, deleteIconTop, deleteIconRight, deleteIconBottom);
+        Log.e("colom", deleteIconLeft + " " + deleteIconTop + " "+ deleteIconTop + " " +deleteIconBottom );
         deleteDrawable.draw(c);
 
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
@@ -92,6 +97,6 @@ abstract public class SwipeToDeleteCallback extends ItemTouchHelper.Callback {
 
     @Override
     public float getSwipeThreshold(@NonNull RecyclerView.ViewHolder viewHolder) {
-        return 0.7f;
+        return 0.25f;
     }
 }

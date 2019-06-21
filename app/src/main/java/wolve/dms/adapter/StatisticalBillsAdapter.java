@@ -32,20 +32,20 @@ import wolve.dms.utils.Util;
  */
 
 public class StatisticalBillsAdapter extends RecyclerView.Adapter<StatisticalBillsAdapter.StatisticalBillsViewHolder> {
-    private List<Bill> mData = new ArrayList<>();
+    private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackString mListener;
 
-    public StatisticalBillsAdapter(List<Bill> data , CallbackString callbackString) {
+    public StatisticalBillsAdapter(List<BaseModel> data , CallbackString callbackString) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mData = data;
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mListener = callbackString;
 
-        Collections.sort(mData, new Comparator<Bill>(){
+        Collections.sort(mData, new Comparator<BaseModel>(){
             @Override
-            public int compare(Bill lhs, Bill rhs) {
+            public int compare(BaseModel lhs, BaseModel rhs) {
                 return lhs.getDouble("createAt").compareTo(rhs.getDouble("createAt"));
             }
         });
@@ -72,7 +72,7 @@ public class StatisticalBillsAdapter extends RecyclerView.Adapter<StatisticalBil
             holder.tvPay.setText("Trả: "+ Util.FormatMoney(mData.get(position).getDouble("paid")));
             holder.tvDebt.setText("Nợ: "+ Util.FormatMoney(mData.get(position).getDouble("debt")));
             holder.tvNumber.setText(String.valueOf(mData.size() -position));
-            holder.tvsignBoard.setText(Constants.getShopInfo(customer.getString("shopType") , null) + " " + customer.getString("signBoard"));
+            holder.tvsignBoard.setText(Constants.getShopTitle(customer.getString("shopType") , null) + " " + customer.getString("signBoard"));
             holder.tvDistrict.setText(customer.getString("street") + " - " + customer.getString("district"));
             String user = String.format("Nhân viên: %s",mData.get(position).getJsonObject("user").getString("displayName"));
             String hour = Util.DateHourString(mData.get(position).getLong("createAt"));
@@ -153,7 +153,7 @@ public class StatisticalBillsAdapter extends RecyclerView.Adapter<StatisticalBil
 
     }
 
-    public List<Bill> getAllBill(){
+    public List<BaseModel> getAllBill(){
         return mData;
     }
 

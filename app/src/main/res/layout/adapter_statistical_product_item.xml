@@ -12,6 +12,14 @@
         android:orientation="horizontal"
         android:layout_margin="@dimen/_5sdp">
 
+        <CheckBox
+            android:id="@+id/statistical_product_item_check"
+            android:layout_width="@dimen/_18sdp"
+            android:layout_height="@dimen/_18sdp"
+            android:backgroundTint="@color/black_text_color_hint"
+            android:buttonTint="@color/black_text_color_hint"
+            android:checked="true"/>
+
         <TextView
             android:id="@+id/statistical_product_item_name"
             android:layout_width="0dp"

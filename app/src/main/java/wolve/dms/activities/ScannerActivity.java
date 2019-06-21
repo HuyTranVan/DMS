@@ -18,8 +18,6 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -30,9 +28,7 @@ import wolve.dms.adapter.ScannerCodeAdapter;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.SheetConnect;
 import wolve.dms.customviews.CInputForm;
-import wolve.dms.libraries.connectapi.GoogleSheetGet;
-import wolve.dms.models.Bill;
-import wolve.dms.models.Customer;
+import wolve.dms.libraries.connectapi.sheetapi.GoogleSheetGetData;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomSQL;
@@ -112,7 +108,7 @@ public class ScannerActivity extends BaseActivity implements View.OnClickListene
     }
 
     private void getAllDistributor(){
-        SheetConnect.getALlValue(Api_link.SCANNER_SHEET_KEY, Api_link.SCANNER_DISTRIBUTOR_TAB, new GoogleSheetGet.CallbackListList() {
+        SheetConnect.getALlValue(Api_link.SCANNER_SHEET_KEY, Api_link.SCANNER_DISTRIBUTOR_TAB, new GoogleSheetGetData.CallbackListList() {
             @Override
             public void onRespone(List<List<Object>> results) {
                 listDistributor = new ArrayList<>();
@@ -315,7 +311,7 @@ public class ScannerActivity extends BaseActivity implements View.OnClickListene
     }
 
     private void pushAllToServer(){
-        SheetConnect.getALlValue(Api_link.SCANNER_SHEET_KEY, String.format(Api_link.SCANNER_CODE_TAB,3), new GoogleSheetGet.CallbackListList() {
+        SheetConnect.getALlValue(Api_link.SCANNER_SHEET_KEY, String.format(Api_link.SCANNER_CODE_TAB,3), new GoogleSheetGetData.CallbackListList() {
             @Override
             public void onRespone(List<List<Object>> results) {
                 int pos = 2;
@@ -324,7 +320,7 @@ public class ScannerActivity extends BaseActivity implements View.OnClickListene
                 }
 
                 String range = String.format(Api_link.SCANNER_CODE_TAB, pos);
-                SheetConnect.postValue(Api_link.SCANNER_SHEET_KEY, range, getListValueExportToSheet(adapter.getAllItem()), new GoogleSheetGet.CallbackListList() {
+                SheetConnect.postValue(Api_link.SCANNER_SHEET_KEY, range, getListValueExportToSheet(adapter.getAllItem()), new GoogleSheetGetData.CallbackListList() {
                     @Override
                     public void onRespone(List<List<Object>> results) {
                         Util.showToast("Thành công");
