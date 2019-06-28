@@ -5,6 +5,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -25,18 +27,35 @@ import wolve.dms.utils.Util;
  * Created by tranhuy on 5/24/17.
  */
 
-public class StatisticalDebtAdapter extends RecyclerView.Adapter<StatisticalDebtAdapter.StatisticalBillsViewHolder> {
+public class StatisticalDebtAdapter extends RecyclerView.Adapter<StatisticalDebtAdapter.StatisticalBillsViewHolder> implements Filterable {
+    private List<BaseModel> baseData = new ArrayList<>();
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
+    private TextView tvSum;
     private CallbackString mListener;
 
-    public StatisticalDebtAdapter(List<BaseModel> data,  CallbackString listener) {
+    public StatisticalDebtAdapter(TextView tvEmployee, TextView tvsum, List<BaseModel> data,  CallbackString listener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
-        this.mData = data;
+        this.tvSum = tvsum;
+        this.baseData = data;
+
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mListener = listener;
 //        Collections.reverse(mData);
+        if (tvEmployee.getText().toString().equals(Constants.ALL_FILTER)){
+            this.mData = baseData;
+
+        }else {
+            mData = new ArrayList<>();
+            for (BaseModel row : baseData){
+                if (row.getString("userName").equals(tvEmployee.getText().toString())){
+                    mData.add(row);
+                }
+            }
+        }
+
+        updateSumDebt(mData);
 
         Collections.sort(mData, new Comparator<BaseModel>(){
             public int compare(BaseModel obj1, BaseModel obj2) {
@@ -60,40 +79,25 @@ public class StatisticalDebtAdapter extends RecyclerView.Adapter<StatisticalDebt
 
     @Override
     public void onBindViewHolder(final StatisticalBillsViewHolder holder, final int position) {
-        try {
-            holder.tvNumber.setText(String.valueOf(mData.size() -position));
+        holder.tvNumber.setText(mData.size() >0? String.valueOf(mData.size() -position) : "");
+        holder.tvsignBoard.setText(Constants.getShopTitle(mData.get(position).getString("shopType") , null) + " " + mData.get(position).getString("signBoard"));
+        holder.tvDistrict.setText(mData.get(position).getString("street") + " - " + mData.get(position).getString("district"));
+        String user = String.format("Nhân viên: %s",mData.get(position).getString("userName"));
+        holder.tvUser.setText(user);
 
-            final BaseModel customer = new BaseModel(mData.get(position).getJsonObject("customer"));
-            holder.tvsignBoard.setText(Constants.getShopTitle(customer.getString("shopType") , null) + " " + customer.getString("signBoard"));
-            holder.tvDistrict.setText(customer.getString("street") + " - " + customer.getString("district"));
+        holder.tvDebt.setText(Util.FormatMoney(mData.get(position).getDouble("debt")));
 
-            String user = String.format("Nhân viên: %s",mData.get(position).getJsonObject("user").getString("displayName"));
-            holder.tvUser.setText(user);
+        holder.vLine.setVisibility(position == mData.size()-1? View.GONE:View.VISIBLE);
 
-//            String time = Util.DateHourString(mData.get(position).getLong("createAt"));
-//            holder.tvTime.setText(time);
+        holder.tvNumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.Result(mData.get(position).getString("id"));
+            }
+        });
 
-            holder.tvDebt.setText(Util.FormatMoney(mData.get(position).getDouble("debt")));
 
-            holder.vLine.setVisibility(position == mData.size()-1? View.GONE:View.VISIBLE);
 
-            holder.tvNumber.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mListener.Result(customer.getString("id"));
-                }
-            });
-
-//            holder.tvNumber.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    mListener.Result(customer.getString("id"));
-//                }
-//            });
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -124,5 +128,45 @@ public class StatisticalDebtAdapter extends RecyclerView.Adapter<StatisticalDebt
 
     }
 
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                String charString = charSequence.toString();
+                if (charString.equals(Constants.ALL_FILTER)) {
+                    mData = baseData;
+                } else {
+                    List<BaseModel> listTemp = new ArrayList<>();
+                    for (BaseModel row : baseData) {
+                        if (row.getString("userName").equals(charString)){
+                            listTemp.add(row);
+                        }
 
+                    }
+
+                    mData = listTemp;
+                }
+                updateSumDebt(mData);
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = mData;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                mData = (ArrayList<BaseModel>) filterResults.values;
+                notifyDataSetChanged();
+            }
+        };
+    }
+
+    private void updateSumDebt(List<BaseModel> list){
+        double debt = 0.0;
+        for (BaseModel row : list){
+            debt += row.getDouble("debt");
+        }
+        tvSum.setText(String.format("Tổng công nợ: %s", Util.FormatMoney(debt)));
+    }
 }

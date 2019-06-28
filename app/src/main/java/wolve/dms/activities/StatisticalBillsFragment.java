@@ -170,7 +170,7 @@ public class StatisticalBillsFragment extends Fragment implements View.OnClickLi
                         }
 
                     }
-                    CustomCenterDialog.showDialogAllDebt(userName, listDebt);
+                    //CustomCenterDialog.showDialogAllDebt(userName, listDebt);
 
                 }
 
@@ -180,7 +180,7 @@ public class StatisticalBillsFragment extends Fragment implements View.OnClickLi
             }, true);
 
         }else {
-            CustomCenterDialog.showDialogAllDebt(userName, listDebt);
+            //CustomCenterDialog.showDialogAllDebt(userName, listDebt);
         }
 
 

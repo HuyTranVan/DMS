@@ -215,7 +215,7 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         ColumnChartData data = new ColumnChartData(columns);
 
         List<AxisValue> axisValues = new ArrayList<AxisValue>();
-        axisValues.add(new AxisValue(0, "Tổng doanh thu".toCharArray()));
+        axisValues.add(new AxisValue(0, "Tổng bán hàng".toCharArray()));
         axisValues.add(new AxisValue(1, "Tiền đã thu".toCharArray()));
         axisValues.add(new AxisValue(2, "Công nợ".toCharArray()));
         axisValues.add(new AxisValue(3, "BDF".toCharArray()));

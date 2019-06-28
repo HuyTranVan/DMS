@@ -9,11 +9,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.adapter.StatisticalCheckinsAdapter;
+import wolve.dms.adapter.StatisticalDebtAdapter;
+import wolve.dms.apiconnect.Api_link;
+import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.callback.CallbackJSONArray;
+import wolve.dms.callback.CallbackJSONObject;
+import wolve.dms.callback.CallbackString;
+import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
+import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
 /**
@@ -23,16 +35,18 @@ import wolve.dms.utils.Util;
 public class StatisticalDebtFragment extends Fragment implements View.OnClickListener {
     private View view;
     private RecyclerView rvDebts;
-    private TextView tvCount;
+    private TextView tvSum;
+    private CTextIcon tvSort ;
+    private StatisticalActivity mActivity;
 
-
-    private StatisticalCheckinsAdapter adapter;
+    protected StatisticalDebtAdapter adapter;
+    protected List<BaseModel> listDebt;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.view_dialog_all_debt,container,false);
+        view = inflater.inflate(R.layout.fragment_statistical_debt,container,false);
         Util.debtFragment = this;
         initializeView();
 
@@ -43,19 +57,29 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
     }
 
     private void intitialData() {
-
+        listDebt = new ArrayList<>();
     }
 
-
-
     private void addEvent() {
+        tvSort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (tvSort.getRotation() == 180){
+                    tvSort.setRotation(0);
 
+                }else {
+                    tvSort.setRotation(180);
+                }
+                adapter.sortUp();
+            }
+        });
     }
 
     private void initializeView() {
+        mActivity = (StatisticalActivity) getActivity();
         rvDebts = (RecyclerView) view.findViewById(R.id.statistical_debt_rvbill);
-        tvCount = view.findViewById(R.id.statistical_debt_count);
-
+        tvSum = view.findViewById(R.id.statistical_debt_count);
+        tvSort = view.findViewById(R.id.statistical_debt_sort);
     }
 
     @Override
@@ -65,28 +89,65 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
         }
     }
 
-    public void reloadData(List<BaseModel> list){
-        createRVCheckin(list);
+    public void reloadData(){
+        listDebt = new ArrayList<>();
+        String param = String.format(Api_link.CUSTOMER_DEBT_PARAM, 0);
+        CustomerConnect.ListCustomer(param, new CallbackJSONArray() {
+            @Override
+            public void onResponse(JSONArray result) {
+                try {
+                    for (int i=0; i<result.length(); i++){
+                        BaseModel object = new BaseModel(result.getJSONObject(i));
+                        object.put("debt", object.getDouble("currentDebt"));
+
+                        if (!object.getString("note").isEmpty()  && Util.isJSONValid(object.getString("note"))){
+                            JSONObject note = new JSONObject(object.getString("note"));
+
+                            object.put("userName", note.getString("userName"));
+
+                            listDebt.add(object);
+
+
+                        }
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                createRVCDebt(listDebt);
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        }, true);
 
     }
 
-    private void createRVCheckin(List<BaseModel> list) {
-        adapter = new StatisticalCheckinsAdapter(list);
+    private void createRVCDebt(List<BaseModel> list) {
+        adapter = new StatisticalDebtAdapter(mActivity.tvEmployeeName, tvSum, list, new CallbackString() {
+            @Override
+            public void Result(String s) {
+                CustomerConnect.GetCustomerDetail(s, new CallbackJSONObject() {
+                    @Override
+                    public void onResponse(JSONObject result) {
+                        Transaction.gotoCustomerActivity(result.toString(), false);
+
+                    }
+
+                    @Override
+                    public void onError(String error) {
+
+                    }
+                }, true);
+
+            }
+        });
         Util.createLinearRV(rvDebts, adapter);
 
-        tvCount.setText(String.format("Số lần ghé cửa hàng: %d", adapter.getItemCount()));
-
     }
 
-//    private boolean checkDuplicateCheckin(List<BaseModel> list, int id){
-//        boolean check = false;
-//        for (int i=0; i<list.size(); i++){
-//            if (list.get(i).getInt("id") == id){
-//                check = true;
-//                break;
-//            }
-//        }
-//        return check;
-//    }
 
 }

@@ -64,7 +64,8 @@ public class Api_link {
     public final static String CUSTOMER_GETDETAIL = BASE_URL + "token/customer/";
     public final static String CUSTOMER_NEAREST_PARAM ="&lat=%s&lng=%s";
     public final static String CUSTOMER_CHECKIN_RANGE_PARAM ="&checkinFrom=%s&checkinTo=%s";
-    public final static String CUSTOMER_CREATE_PARAM ="%sname=%s&signBoard=%s&address=%s&phone=%s&street=%s&note=%s&district=%s&province=%s&lat=%s&lng=%s&volumeEstimate=%s&shopType=%s&status.id=%d&distributor.id=%s";
+    public final static String CUSTOMER_DEBT_PARAM ="debt=%d";
+    public final static String CUSTOMER_CREATE_PARAM ="%sname=%s&signBoard=%s&address=%s&phone=%s&street=%s&note=%s&district=%s&province=%s&lat=%s&lng=%s&volumeEstimate=%s&shopType=%s&status.id=%d&distributor.id=%s&currentDebt=%s";
 
     public final static String CHECKIN_NEW = BASE_URL + "token/customer/checkin";
     public final static String SCHECKIN_CREATE_PARAM ="customer.id=%d&status.id=%d&note=%s&user.id=%s";

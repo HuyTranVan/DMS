@@ -34,18 +34,19 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
-    private CallbackListObject mListenerList;
+    private CallbackBill mListenerBill;
     private CustomBottomDialog.FourMethodListener mListerner;
 
-    public interface CallbackListObject{
-        void onResponse(List<BaseModel> listResult, Double total, int id);
+    public interface CallbackBill {
+//        void onResponse(List<BaseModel> bill, Double total, int i);
+        void onResponse(BaseModel bill);
     }
 
-    public CustomerBillsAdapter(List<BaseModel> data, CallbackListObject  listener, CustomBottomDialog.FourMethodListener listener4) {
+    public CustomerBillsAdapter(List<BaseModel> data, CallbackBill listener, CustomBottomDialog.FourMethodListener listener4) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mData = data;
         this.mContext = Util.getInstance().getCurrentActivity();
-        this.mListenerList = listener;
+        this.mListenerBill = listener;
         this.mListerner = listener4;
 
         DataFilter.sortbyKey("createAt", mData, true);
@@ -89,6 +90,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
                 for (int j=0; j<arrayBillPayment.length(); j++){
                     JSONObject object = arrayBillPayment.getJSONObject(j);
                     listPayment.add(object);
+
                 }
 
                 PaymentAdapter paymentAdapter = new PaymentAdapter(listPayment);
@@ -126,7 +128,9 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
 
                                 @Override
                                 public void Method3(Boolean three) {
-                                    mListenerList.onResponse(returnProduct(listBillDetail),mData.get(position).getDouble("total"), mData.get(position).getInt("id"));
+                                    mListenerBill.onResponse(mData.get(position));
+
+//                                    mListenerBill.onResponse(returnProduct(listBillDetail),mData.get(position).getDouble("total"), mData.get(position).getInt("id"));
 
                                 }
 

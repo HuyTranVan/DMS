@@ -98,6 +98,37 @@ public class CustomerConnect {
         }).execute();
     }
 
+    public static void getALlCustomer(final CallbackJSONArray listener, final Boolean stopLoading){
+        Util.getInstance().showLoading();
+
+        String url = Api_link.CUSTOMERS+ String.format(Api_link.DEFAULT_RANGE, 1,15000);
+
+        new CustomPostMethod(url,"", false, new Callback() {
+            @Override
+            public void onResponse(JSONObject result) {
+                Util.getInstance().stopLoading(stopLoading);
+                try {
+                    if (result.getInt("status") == 200) {
+                        listener.onResponse(result.getJSONArray("data"));
+
+                    } else {
+                        listener.onError("Unknow error");
+
+                    }
+                } catch (JSONException e) {
+                    listener.onError(e.toString());
+                }
+            }
+
+
+            @Override
+            public void onError(String error) {
+                listener.onError(error);
+                Util.getInstance().stopLoading(stopLoading);
+            }
+        }).execute();
+    }
+
     public static void ListCustomerLocation(String lat, String lng, final CallbackJSONArray listener, final Boolean stopLoading){
         //Util.getInstance().showLoading();
 
@@ -800,7 +831,8 @@ public class CustomerConnect {
                 customer.getInt("volumeEstimate"), //province
                 Util.encodeString(customer.getString("shopType")), //shopType
                 customer.getInt("status.id"), //currentStatusId
-                Distributor.getDistributorId() //DistributorId
+                Distributor.getDistributorId(),
+                customer.getDouble("debt")//DistributorId
         );
 
         return param;

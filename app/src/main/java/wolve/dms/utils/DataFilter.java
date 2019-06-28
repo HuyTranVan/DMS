@@ -116,7 +116,6 @@ public class DataFilter {
                 list.add(object);
             }
 
-
         } catch (JSONException e) {
             return list;
         }
@@ -479,6 +478,29 @@ public class DataFilter {
         values.add(1, row1);
 
         return values;
+    }
+
+    public static List<BaseModel> converArray2List(JSONArray array){
+        List<BaseModel> listResult = new ArrayList<>();
+        try {
+            for (int i=0; i<array.length(); i++){
+                BaseModel billDetail = new BaseModel(array.getJSONObject(i));
+
+                listResult.add(billDetail);
+            }
+        } catch (JSONException e) {
+            return listResult;
+        }
+        return listResult;
+    }
+
+    public static double sumMoneyFromList(List<BaseModel> list, String key){
+        double result = 0.0;
+        for (BaseModel item: list){
+            result += item.getDouble(key);
+        }
+
+        return result;
     }
 
 }

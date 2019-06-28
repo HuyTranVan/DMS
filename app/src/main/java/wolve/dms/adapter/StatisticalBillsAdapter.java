@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.api.services.sheets.v4.model.Color;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -72,6 +74,19 @@ public class StatisticalBillsAdapter extends RecyclerView.Adapter<StatisticalBil
             holder.tvPay.setText("Trả: "+ Util.FormatMoney(mData.get(position).getDouble("paid")));
             holder.tvDebt.setText("Nợ: "+ Util.FormatMoney(mData.get(position).getDouble("debt")));
             holder.tvNumber.setText(String.valueOf(mData.size() -position));
+
+
+            if (!customer.getString("note").isEmpty()  && Util.isJSONValid(customer.getString("note"))){
+                holder.tvNumber.setTextColor(mContext.getResources().getColor(R.color.color_red));
+
+            }else {
+                holder.tvNumber.setTextColor(mContext.getResources().getColor(R.color.white_text_color));
+
+            }
+
+
+
+
             holder.tvsignBoard.setText(Constants.getShopTitle(customer.getString("shopType") , null) + " " + customer.getString("signBoard"));
             holder.tvDistrict.setText(customer.getString("street") + " - " + customer.getString("district"));
             String user = String.format("Nhân viên: %s",mData.get(position).getJsonObject("user").getString("displayName"));

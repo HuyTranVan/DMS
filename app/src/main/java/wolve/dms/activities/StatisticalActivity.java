@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.google.api.services.sheets.v4.model.Sheet;
 
+import org.apache.http.client.UserTokenHandler;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -150,13 +151,14 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     public void setupViewPager(ViewPager viewPager) {
         pageAdapter = new StatisticalViewpagerAdapter(getSupportFragmentManager());
         pageAdapter.addFragment(Fragment.instantiate(this, StatisticalDashboardFragment.class.getName()),  getResources().getString(icons[0]), "Dashboard");
-        pageAdapter.addFragment(Fragment.instantiate(this, StatisticalCashFragment.class.getName()),  getResources().getString(icons[3]), "Tiền thu");
         pageAdapter.addFragment(Fragment.instantiate(this, StatisticalBillsFragment.class.getName()),  getResources().getString(icons[1]),"Hóa đơn");
         pageAdapter.addFragment(Fragment.instantiate(this, StatisticalProductFragment.class.getName()),  getResources().getString(icons[2]), "Sản Phẩm");
+        pageAdapter.addFragment(Fragment.instantiate(this, StatisticalCashFragment.class.getName()),  getResources().getString(icons[3]), "Tiền thu");
         pageAdapter.addFragment(Fragment.instantiate(this, StatisticalDebtFragment.class.getName()),  getResources().getString(icons[5]), "Nợ");
 
         viewPager.setAdapter(pageAdapter);
-        viewPager.setOffscreenPageLimit(4);
+        viewPager.setOffscreenPageLimit(5);
+        Util.debtFragment.reloadData();
 
     }
 
@@ -218,7 +220,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                             loadBill(listInitialBill, content);
 
                             Util.cashFragment.reloadData(convertToListPayment(tvEmployeeName.getText().toString().trim(),InitialBillHavePayment , getStartDay() , getEndDay()));
-
+                            Util.debtFragment.adapter.getFilter().filter(content);
                         }
                     });
                 }

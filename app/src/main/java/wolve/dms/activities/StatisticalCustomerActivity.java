@@ -293,7 +293,7 @@ public class StatisticalCustomerActivity extends BaseActivity implements  View.O
         CustomerConnect.ListBillNotYetPaid(param, new CallbackJSONArray() {
             @Override
             public void onResponse(JSONArray result) {
-                Util.debtFragment.reloadData(convertToListDebt(tvEmployeeName.getText().toString(),result));
+//                Util.debtFragment.reloadData(convertToListDebt(tvEmployeeName.getText().toString(),result));
             }
 
             @Override

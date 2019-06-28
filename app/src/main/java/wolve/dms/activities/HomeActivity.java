@@ -54,10 +54,10 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/15/17.
  */
 
-public class HomeActivity extends BaseActivity implements View.OnClickListener, CallbackClickAdapter, View.OnLongClickListener {
+public class HomeActivity extends BaseActivity implements View.OnClickListener, CallbackClickAdapter{
     private RecyclerView rvItems;
-    private CTextIcon btnLogout;
-    private TextView tvFullname;
+    private CTextIcon btnLogout, btnChangeUser;
+    private TextView tvFullname ;
     private LinearLayout lnUser;
 
     @Override
@@ -81,6 +81,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         btnLogout = findViewById(R.id.home_logout);
         tvFullname = findViewById(R.id.home_fullname);
         lnUser = findViewById(R.id.home_user);
+        btnChangeUser = findViewById(R.id.home_change_user);
     }
 
     @Override
@@ -103,16 +104,16 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void addEvent() {
-//        btnLogout.setOnClickListener(this);
-        lnUser.setOnLongClickListener(this);
+        btnChangeUser.setOnClickListener(this);
+        //lnUser.setOnLongClickListener(this);
         lnUser.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.home_logout:
-//                doLogout();
+            case R.id.home_change_user:
+                changeUser();
                 break;
 
             case R.id.home_user:
@@ -384,15 +385,4 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    @Override
-    public boolean onLongClick(View v) {
-        switch (v.getId()){
-            case R.id.home_user:
-                changeUser();
-
-                break;
-        }
-
-        return true;
-    }
 }

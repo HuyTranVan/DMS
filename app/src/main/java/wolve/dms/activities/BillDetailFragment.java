@@ -174,17 +174,22 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
     }
 
     private RecyclerView.Adapter createRVBill(List<BaseModel> listbill){
-        CustomerBillsAdapter adapter = new CustomerBillsAdapter(listbill, new CustomerBillsAdapter.CallbackListObject() {
+        CustomerBillsAdapter adapter = new CustomerBillsAdapter(listbill, new CustomerBillsAdapter.CallbackBill() {
             @Override
-            public void onResponse(List<BaseModel> listResult, Double total, int id) {
-                if (listResult.size() >0){
-                    showDialogReturnProduct(total, listResult, id);
-
-                }else {
-                    Util.showToast("Đã thu lại hết sản phẩm");
-                }
-
+            public void onResponse(BaseModel bill) {
+                showDialogReturnProduct(bill);
             }
+
+//            @Override
+//            public void onResponse(List<BaseModel> listResult, Double total, int id) {
+//                if (listResult.size() >0){
+//                    showDialogReturnProduct(total, listResult, id);
+//
+//                }else {
+//                    Util.showToast("Đã thu lại hết sản phẩm");
+//                }
+
+//            }
 
         }, new CustomBottomDialog.FourMethodListener() {
             @Override
@@ -226,20 +231,29 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
         return adapter;
     }
 
-    private void showDialogReturnProduct(Double total, List<BaseModel> listProductReturn, int billId){
-        CustomCenterDialog.showDialogReturnProduct(billId, total, mActivity.currentCustomer.getInt("id"), listProductReturn, new CallbackBoolean() {
+    private void showDialogReturnProduct(BaseModel currentBill){
+        CustomCenterDialog.showDialogReturnProduct(currentBill, new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
-                if (result){
-                    Util.showToast("Trả hàng thành công");
-                    reloadCustomer();
-                }else {
-                    Util.showToast("Không trả hàng thành công");
-                    reloadCustomer();
-                }
+
+                Util.showToast(result? "Trả hàng thành công" : "Không trả hàng thành công");
+                reloadCustomer();
+
             }
         });
     }
+
+//    private void showDialogReturnProduct(Double total, List<BaseModel> listProductReturn, int billId){
+//        CustomCenterDialog.showDialogReturnProduct(billId, total, mActivity.currentCustomer.getInt("id"), listProductReturn, new CallbackBoolean() {
+//            @Override
+//            public void onRespone(Boolean result) {
+//
+//                Util.showToast(result? "Trả hàng thành công" : "Không trả hàng thành công");
+//                reloadCustomer();
+//
+//            }
+//        });
+//    }
 
     private void reloadCustomer(){
         String param = mActivity.currentCustomer.getString("id");

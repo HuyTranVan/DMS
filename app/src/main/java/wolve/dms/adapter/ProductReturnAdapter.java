@@ -21,6 +21,7 @@ import wolve.dms.R;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackChangePrice;
 import wolve.dms.callback.CallbackClickProduct;
+import wolve.dms.callback.CallbackDouble;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.BillDetail;
@@ -37,10 +38,12 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
+    private CallbackDouble mListener;
 
-    public ProductReturnAdapter(List<BaseModel> list) {
+    public ProductReturnAdapter(List<BaseModel> list, CallbackDouble listener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
+        this.mListener = listener;
         this.mData = list;
 
         for (int i=0; i<mData.size(); i++){
@@ -65,10 +68,10 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
         Double price = mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount");
         holder.tvName.setText(String.format("%s (%s)",mData.get(position).getString("productName"), Util.FormatMoney(price)));
         holder.tvQuantity.setText(mData.get(position).getString("quantityReturn"));
-        holder.btnSub.setVisibility(View.GONE);
-        holder.tvTotalQuantity.setText(String.valueOf(mData.get(position).getInt("quantity") - mData.get(position).getInt("quantityReturn")));
+        holder.btnSub.setVisibility(View.INVISIBLE);
+        holder.tvTotalQuantity.setText(String.format("%s",String.valueOf(mData.get(position).getInt("quantity") - mData.get(position).getInt("quantityReturn"))));
 
-        holder.btnSub.setVisibility(mData.get(position).getInt("quantityReturn") >0 ? View.VISIBLE :View.GONE);
+        holder.btnSub.setVisibility(mData.get(position).getInt("quantityReturn") >0 ? View.VISIBLE :View.INVISIBLE);
         holder.btnPlus.setVisibility(mData.get(position).getInt("quantityReturn") >= mData.get(position).getInt("quantity") ?View.INVISIBLE :View.VISIBLE);
 
         holder.btnSub.setOnClickListener(new View.OnClickListener() {
@@ -79,6 +82,8 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
                     if ( currentQuantity > 0){
                         mData.get(position).put("quantityReturn", currentQuantity -1);
                         notifyItemChanged(position);
+
+                        mListener.Result(sumReturnBill());
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -94,6 +99,8 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
                     int currentQuantity = mData.get(position).getInt("quantityReturn");
                     mData.get(position).put("quantityReturn", currentQuantity +1);
                     notifyItemChanged(position);
+
+                    mListener.Result(sumReturnBill());
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -128,9 +135,9 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
 
     }
 
-    public List<JSONObject> getListSelected(){
+    public List<BaseModel> getListSelected(){
 
-        List<JSONObject> listResult = new ArrayList<>();
+        List<BaseModel> listResult = new ArrayList<>();
         for (int i=0; i<mData.size(); i++){
             try {
                 if (mData.get(i).getInt("quantityReturn") >0){
@@ -142,7 +149,7 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
                     mData.get(i).put("id",mData.get(i).getInt("productId"));
 
 
-                    listResult.add(mData.get(i).BaseModelJSONObject());
+                    listResult.add(mData.get(i));
                 }
             } catch (JSONException e) {
 //                    e.printStackTrace();
@@ -168,6 +175,14 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
 
     }
 
+    public double sumReturnBill(){
+        double sum = 0.0;
+        for (BaseModel item: mData){
+            Double newPrice = item.getDouble("unitPrice") - item.getDouble("discount");
+            sum += item.getInt("quantityReturn") * newPrice;
+        }
 
+        return sum;
+    }
 
 }

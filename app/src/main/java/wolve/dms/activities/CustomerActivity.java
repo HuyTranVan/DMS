@@ -715,6 +715,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             customer.put("volumeEstimate", 10);
             customer.put("shopType", Constants.getShopTitle(null,edShopType.getText().toString()));
             customer.put("status.id", currentStatus.getInt("id"));
+            customer.put("debt", Util.getTotal(listBills).getDouble("debt") );
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -730,8 +731,8 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                 JSONObject object = new JSONObject();
                 object.put("debt", total);
                 object.put("note", edNote.getText().toString());
-                object.put("userId", listBills.get(0).getJsonObject("user").getInt("id"));
-                object.put("userName", listBills.get(0).getJsonObject("user").getString("displayName"));
+                object.put("userId", listBills.get(listBills.size()-1).getJsonObject("user").getInt("id"));
+                object.put("userName", listBills.get(listBills.size()-1).getJsonObject("user").getString("displayName"));
                 note = object.toString();
 
             } catch (JSONException e) {
