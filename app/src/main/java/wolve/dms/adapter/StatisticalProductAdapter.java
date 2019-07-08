@@ -85,15 +85,15 @@ public class StatisticalProductAdapter extends RecyclerView.Adapter<StatisticalP
             @Override
             public void onClick(View v) {
                 boolean check = mData.get(pos).getBoolean("isChecked");
-                try {
+//                try {
 
                     mData.get(pos).put("isChecked", check? false : true);
                     mListener.Result(String.valueOf(getSumProduct()));
                     notifyDataSetChanged();
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
             }
         });
 

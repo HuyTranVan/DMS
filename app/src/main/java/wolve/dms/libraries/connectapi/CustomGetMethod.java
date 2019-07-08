@@ -16,6 +16,8 @@ import java.net.ProtocolException;
 import java.net.URL;
 
 import wolve.dms.callback.Callback;
+import wolve.dms.callback.CallbackCustom;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Util;
@@ -24,18 +26,13 @@ import wolve.dms.utils.Util;
  * Created by tranhuy on 7/22/16.
  */
 public class CustomGetMethod extends AsyncTask<String, Void, String> {
-    private Callback mListener = null;
+    private CallbackCustom mListener;
     private String baseUrl;
 
-    public CustomGetMethod(String url, Callback listener) {
-        mListener = listener;
+    public CustomGetMethod(String url, CallbackCustom listener) {
+        this.mListener = listener;
         this.baseUrl = url;
 
-//        User currentUser = User.getCurrentUser();
-//        if (currentUser != null && currentUser.getToken() != null) {
-//            token = currentUser.getToken();
-//            id_user = currentUser.getId_user();
-//        }
     }
 
     @Override
@@ -43,18 +40,13 @@ public class CustomGetMethod extends AsyncTask<String, Void, String> {
         Log.d("url: ", baseUrl);
 
         StringBuffer response = null;
-        URL obj = null;
         try {
-            obj = new URL(baseUrl);
-            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
+            HttpURLConnection con = (HttpURLConnection) new URL(baseUrl).openConnection();
             con.setRequestMethod("GET");
             con.setRequestProperty("User-Agent", "Mozilla/5.0");
             con.setRequestProperty("x-wolver-accesstoken", User.getToken());
             con.setRequestProperty("x-wolver-accessid", User.getUserId());
             con.setRequestProperty("x-wolver-debtid", Distributor.getDistributorId());
-
-            int responseCode = con.getResponseCode();
 
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String inputLine;
@@ -65,40 +57,25 @@ public class CustomGetMethod extends AsyncTask<String, Void, String> {
             }
             in.close();
 
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            return "errorCode: 01";
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-            return "errorCode: 02";
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "errorCode: 03";
-        }
-        Log.d("output: ", String.valueOf(response));
+            return String.valueOf(response);
 
-        return String.valueOf(response);
+        } catch (MalformedURLException e) {
+            return e.toString();
+        } catch (ProtocolException e) {
+            return e.toString();
+        } catch (IOException e) {
+            return e.toString();
         }
+    }
 
     @Override
     protected void onPostExecute(String response) {
-        if (response.contains("errorCode")){
-            mListener.onError(response);
-            if (response.contains("errorCode: 01")){
-                Util.getInstance().showSnackbar("Lỗi kết nối server ", null, null);
-            }else if (response.contains("errorCode: 02")){
-                Util.getInstance().showSnackbar("Lỗi đường truyền ", null, null);
-            }else if (response.contains("errorCode: 03")){
-                Util.getInstance().showSnackbar("Lỗi kết nối server", null, null);
-            }
-        }else {
-            try {
-                mListener.onResponse(new JSONObject(response));
+        if (Util.isJSONObject(response)){
+            mListener.onResponse(new BaseModel(response));
 
-            } catch (JSONException e) {
-                mListener.onError("Data error");
-                Util.getInstance().showSnackbar("Lỗi dữ liệu", null, null);
-            }
+        }else {
+            mListener.onError(response);
+
         }
 
     }

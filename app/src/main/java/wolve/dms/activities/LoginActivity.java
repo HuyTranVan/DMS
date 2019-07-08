@@ -14,6 +14,7 @@ import java.util.List;
 
 import wolve.dms.BaseActivity;
 import wolve.dms.BuildConfig;
+import wolve.dms.DMSApplication;
 import wolve.dms.R;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.UserConnect;
@@ -32,7 +33,7 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/13/17.
  */
 
-public class LoginActivity extends BaseActivity implements View.OnClickListener{
+public class LoginActivity extends BaseActivity implements View.OnClickListener {
     private EditText edUsername, edPassword;
     private Button btnSubmit;
     private CTextIcon btnKeyboard;
@@ -42,6 +43,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FitScrollWithFullscreen.assistActivity(this, 2);
+
     }
 
     @Override

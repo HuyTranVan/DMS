@@ -10,9 +10,10 @@ import java.util.List;
 
 import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackJSONArray;
+import wolve.dms.callback.CallbackCustom;
+import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackJSONObject;
-import wolve.dms.callback.CallbackList;
+import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.libraries.connectapi.CustomDeleteListMethod;
 import wolve.dms.libraries.connectapi.CustomDeleteMethod;
 import wolve.dms.libraries.connectapi.CustomGetMethod;
@@ -20,6 +21,7 @@ import wolve.dms.libraries.connectapi.CustomPostListMethod;
 import wolve.dms.libraries.connectapi.CustomPostMethod;
 import wolve.dms.libraries.printerdriver.PrinterCommands;
 import wolve.dms.libraries.printerdriver.UtilPrinter;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
 import wolve.dms.models.Customer;
 import wolve.dms.models.Distributor;
@@ -27,7 +29,7 @@ import wolve.dms.models.Product;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
-import wolve.dms.utils.DataFilter;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 /**
@@ -36,100 +38,65 @@ import wolve.dms.utils.Util;
 
 public class CustomerConnect {
 
-    public static void CreateCustomer(String params, final CallbackJSONObject listener, final Boolean stopLoading){
+    public static void CreateCustomer(String params, final CallbackCustom listener, final Boolean stopLoading){
         Util.getInstance().showLoading();
 
-        String url = Api_link.CUSTOMER_NEW ;
-
-        new CustomPostMethod(url,params, false,new Callback() {
+        new CustomPostMethod(DataUtil.createNewCustomerParam(params),new CallbackCustom() {
             @Override
-            public void onResponse(JSONObject result) {
+            public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(stopLoading);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
 
-                try {
-                    if (result.getInt("status") == 200) {
-                        listener.onResponse(result.getJSONObject("data"));
+                }else {
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
 
-                    } else {
-                        listener.onError("Unknow error");
-                    }
-                } catch (JSONException e) {
-                    listener.onError(e.toString());
                 }
-            }
 
+            }
 
             @Override
             public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
                 listener.onError(error);
-                Util.getInstance().stopLoading(stopLoading);
+
             }
+
         }).execute();
     }
 
-    public static void ListCustomer(String param, final CallbackJSONArray listener, final Boolean stopLoading){
+    public static void ListCustomer(String param,int numberItem, final CallbackCustomList listener, final Boolean stopLoading){
         Util.getInstance().showLoading();
 
-        String url = Api_link.CUSTOMERS+ String.format(Api_link.DEFAULT_RANGE, 1,500);
-
-        new CustomPostMethod(url,param, false, new Callback() {
+        new CustomPostMethod(DataUtil.getListCustomerParam(param, numberItem),  new CallbackCustom() {
             @Override
-            public void onResponse(JSONObject result) {
+            public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(stopLoading);
-                try {
-                    if (result.getInt("status") == 200) {
-                        listener.onResponse(result.getJSONArray("data"));
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeArraySuccess(result));
 
-                    } else {
-                        listener.onError("Unknow error");
+                }else {
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
 
-                    }
-                } catch (JSONException e) {
-                    listener.onError(e.toString());
                 }
-            }
 
+            }
 
             @Override
             public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
                 listener.onError(error);
-                Util.getInstance().stopLoading(stopLoading);
+
             }
+
         }).execute();
     }
 
-    public static void getALlCustomer(final CallbackJSONArray listener, final Boolean stopLoading){
-        Util.getInstance().showLoading();
-
-        String url = Api_link.CUSTOMERS+ String.format(Api_link.DEFAULT_RANGE, 1,15000);
-
-        new CustomPostMethod(url,"", false, new Callback() {
-            @Override
-            public void onResponse(JSONObject result) {
-                Util.getInstance().stopLoading(stopLoading);
-                try {
-                    if (result.getInt("status") == 200) {
-                        listener.onResponse(result.getJSONArray("data"));
-
-                    } else {
-                        listener.onError("Unknow error");
-
-                    }
-                } catch (JSONException e) {
-                    listener.onError(e.toString());
-                }
-            }
-
-
-            @Override
-            public void onError(String error) {
-                listener.onError(error);
-                Util.getInstance().stopLoading(stopLoading);
-            }
-        }).execute();
-    }
-
-    public static void ListCustomerLocation(String lat, String lng, final CallbackJSONArray listener, final Boolean stopLoading){
+    public static void ListCustomerLocation(String lat, String lng, final CallbackCustomList listener, final Boolean stopLoading){
         //Util.getInstance().showLoading();
 
         String url = Api_link.CUSTOMERS_NEAREST
@@ -137,58 +104,82 @@ public class CustomerConnect {
                 + String.format(Api_link.CUSTOMER_NEAREST_PARAM, lat, lng,1, 20);
 
 
-        new CustomGetMethod(url, new Callback() {
+        new CustomGetMethod(url, new CallbackCustom() {
             @Override
-            public void onResponse(JSONObject result) {
+            public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(stopLoading);
-                try {
-                    if (result.getInt("status") == 200) {
-                        listener.onResponse(result.getJSONArray("data"));
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeArraySuccess(result));
 
-                    } else {
-                        listener.onError("Unknow error");
-                    }
-                } catch (JSONException e) {
-                    listener.onError(e.toString());
+                }else {
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
                 }
-            }
 
+            }
 
             @Override
             public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
                 listener.onError(error);
-                Util.getInstance().stopLoading(stopLoading);
+
             }
+
         }).execute();
     }
 
-    public static void ListCustomerSearch(String param, final CallbackJSONArray listener, final Boolean stopLoading){
-        String url = Api_link.CUSTOMERS+ String.format(Api_link.DEFAULT_RANGE, 1,8);
-
-        new CustomPostMethod(url,param, false, new Callback() {
-            @Override
-            public void onResponse(JSONObject result) {
-                Util.getInstance().stopLoading(stopLoading);
-                try {
-                    if (result.getInt("status") == 200) {
-                        listener.onResponse(result.getJSONArray("data"));
-
-                    } else {
-                        listener.onError("Unknow error");
-                    }
-                } catch (JSONException e) {
-                    listener.onError(e.toString());
-                }
-            }
-
-
-            @Override
-            public void onError(String error) {
-                listener.onError(error);
-                Util.getInstance().stopLoading(stopLoading);
-            }
-        }).execute();
-    }
+//    public static void ListCustomerSearch(String param, final CallbackCustomList listener, final Boolean stopLoading){
+//        String url = Api_link.CUSTOMERS+ String.format(Api_link.DEFAULT_RANGE, 1,8);
+//
+//        new CustomPostMethod(url,param, false, new CallbackCustom() {
+//            @Override
+//            public void onResponse(BaseModel result) {
+//                Util.getInstance().stopLoading(stopLoading);
+//                if (Constants.responeIsSuccess(result)){
+//                    listener.onResponse(Constants.getResponeArraySuccess(result));
+//
+//                }else {
+//                    Constants.throwError(result.getString("message"));
+//                    listener.onError(result.getString("message"));
+//
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                Util.getInstance().stopLoading(true);
+//                Constants.throwError(error);
+//                listener.onError(error);
+//
+//            }
+//
+//
+////            @Override
+////            public void onResponse(JSONObject result) {
+////                Util.getInstance().stopLoading(stopLoading);
+////                try {
+////                    if (result.getInt("status") == 200) {
+////                        listener.onResponse(result.getJSONArray("data"));
+////
+////                    } else {
+////                        listener.onError("Unknow error");
+////                    }
+////                } catch (JSONException e) {
+////                    listener.onError(e.toString());
+////                }
+////            }
+////
+////
+////            @Override
+////            public void onError(String error) {
+////                listener.onError(error);
+////                Util.getInstance().stopLoading(stopLoading);
+////            }
+//        }).execute();
+//    }
 
     public static void DeleteCustomer(String params,final CallbackJSONObject listener, final Boolean stopLoading){
         Util.getInstance().showLoading();
@@ -215,108 +206,132 @@ public class CustomerConnect {
             @Override
             public void onError(String error) {
                 listener.onError(error);
-                Util.getInstance().stopLoading(stopLoading);
-            }
-        }).execute();
-    }
-
-    public static void GetCustomerDetail(String params,final CallbackJSONObject listener, final Boolean stopLoading){
-        Util.getInstance().showLoading();
-
-        String url = Api_link.CUSTOMER_GETDETAIL + params;
-
-        new CustomGetMethod(url, new Callback() {
-            @Override
-            public void onResponse(JSONObject result) {
-                Util.getInstance().stopLoading(stopLoading);
-                try {
-                    if (result.getInt("status") == 200) {
-                        listener.onResponse(result.getJSONObject("data"));
-
-                    } else {
-                        listener.onError("Unknow error");
-                    }
-                } catch (JSONException e) {
-                    listener.onError(e.toString());
-                }
-            }
-
-
-            @Override
-            public void onError(String error) {
-                listener.onError(error);
-                Util.getInstance().stopLoading(stopLoading);
-            }
-        }).execute();
-    }
-
-    public static void PostCheckin(String params, final CallbackJSONObject listener, final Boolean stopLoading){
-        Util.getInstance().showLoading();
-
-        String url = Api_link.CHECKIN_NEW ;
-
-        new CustomPostMethod(url,params, false,new Callback() {
-            @Override
-            public void onResponse(JSONObject result) {
-                Util.getInstance().stopLoading(stopLoading);
-                try {
-                    if (result.getInt("status") == 200) {
-                        listener.onResponse(result.getJSONObject("data"));
-
-                    } else {
-                        listener.onError("Unknow error");
-                    }
-                } catch (JSONException e) {
-                    listener.onError(e.toString());
-                }
-            }
-
-
-            @Override
-            public void onError(String error) {
-                listener.onError(error);
-                Util.getInstance().stopLoading(stopLoading);
-            }
-        }).execute();
-    }
-
-    public static void PostBill(String params, final CallbackJSONObject listener, final Boolean stopLoading) {
-        Util.getInstance().showLoading();
-
-        String url = Api_link.BILL_NEW;
-
-        new CustomPostMethod(url, params,true, new Callback() {
-            @Override
-            public void onResponse(JSONObject result) {
-                Util.getInstance().stopLoading(stopLoading);
-
-                try {
-                    if (result.getInt("status") == 200) {
-                        listener.onResponse(result.getJSONObject("data"));
-
-                    } else {
-                        listener.onError("Unknow error");
-                    }
-                } catch (JSONException e) {
-                    listener.onError(e.toString());
-                }
-            }
-
-
-            @Override
-            public void onError(String error) {
-                listener.onError(error);
                 Util.getInstance().stopLoading(true);
             }
         }).execute();
     }
 
-    public static void PostListPay(List<String> listParams, final CallbackList listener, final Boolean stopLoading) {
+    public static void GetCustomerDetail(String params,final CallbackCustom listener, final Boolean stopLoading){
+        Util.getInstance().showLoading();
+
+        String url = Api_link.CUSTOMER_GETDETAIL + params;
+
+        new CustomGetMethod(url, new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(stopLoading);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
+
+                }else {
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
+            }
+
+        }).execute();
+    }
+
+    public static void PostCheckin(String params, final CallbackCustom listener, final Boolean stopLoading){
+        Util.getInstance().showLoading();
+
+        String url = Api_link.CHECKIN_NEW ;
+
+        new CustomPostMethod(DataUtil.postCheckinParam(params), new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(stopLoading);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
+
+                }else {
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
+            }
+
+        }).execute();
+    }
+
+    public static void PostBill(String params, final CallbackCustom listener, final Boolean stopLoading) {
+        Util.getInstance().showLoading();
+
+        String url = Api_link.BILL_NEW;
+
+        new CustomPostMethod(DataUtil.postBillParam(params), new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(stopLoading);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
+
+                }else {
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
+            }
+
+//            @Override
+//            public void onResponse(JSONObject result) {
+//                Util.getInstance().stopLoading(stopLoading);
+//
+//                try {
+//                    if (result.getInt("status") == 200) {
+//                        listener.onResponse(result.getJSONObject("data"));
+//
+//                    } else {
+//                        listener.onError("Unknow error");
+//                    }
+//                } catch (JSONException e) {
+//                    listener.onError(e.toString());
+//                }
+//            }
+//
+//
+//            @Override
+//            public void onError(String error) {
+//                listener.onError(error);
+//                Util.getInstance().stopLoading(true);
+//            }
+        }).execute();
+    }
+
+    public static void PostListPay(List<String> listParams, final CallbackListCustom listener, final Boolean stopLoading) {
         Util.getInstance().showLoading();
 
         String url = Api_link.PAY_NEW;
 
-        new CustomPostListMethod(url, listParams, false, new CallbackList() {
+        new CustomPostListMethod(url, listParams, false, new CallbackListCustom() {
             @Override
             public void onResponse(List result) {
                 Util.getInstance().stopLoading(stopLoading);
@@ -326,28 +341,48 @@ public class CustomerConnect {
             @Override
             public void onError(String error) {
                 listener.onError(error);
-                Util.getInstance().stopLoading(stopLoading);
+                Util.getInstance().stopLoading(true);
             }
         }).execute();
     }
 
-    public static void PostPay(String param, final CallbackJSONObject listener, final Boolean stopLoading) {
+    public static void PostPay(String param, final CallbackCustom listener, final Boolean stopLoading) {
         Util.getInstance().showLoading();
 
-        String url = Api_link.PAY_NEW;
-
-        new CustomPostMethod(url, param, false, new Callback() {
+        new CustomPostMethod(DataUtil.postPayParam(param), new CallbackCustom() {
             @Override
-            public void onResponse(JSONObject result) {
+            public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(stopLoading);
-                listener.onResponse(result);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
+
+                }else {
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
             }
 
             @Override
             public void onError(String error) {
-                listener.onError(error);
                 Util.getInstance().stopLoading(stopLoading);
+                Constants.throwError(error);
+                listener.onError(error);
+
             }
+
+//            @Override
+//            public void onResponse(JSONObject result) {
+//                Util.getInstance().stopLoading(stopLoading);
+//                listener.onResponse(result);
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                listener.onError(error);
+//                Util.getInstance().stopLoading(stopLoading);
+//            }
         }).execute();
     }
 
@@ -381,7 +416,7 @@ public class CustomerConnect {
         }).execute();
     }
 
-    public static void DeleteListBill(List<String> listParams, final CallbackList listener, final Boolean stopLoading) {
+    public static void DeleteListBill(List<String> listParams, final CallbackListCustom listener, final Boolean stopLoading) {
         Util.getInstance().showLoading();
 
         List<String> urls = new ArrayList<>();
@@ -389,7 +424,7 @@ public class CustomerConnect {
             urls.add(Api_link.BILL_DELETE + listParams.get(i));
         }
 
-        new CustomDeleteListMethod(urls, new CallbackList() {
+        new CustomDeleteListMethod(urls, new CallbackListCustom() {
             @Override
             public void onResponse(List result) {
                 Util.getInstance().stopLoading(stopLoading);
@@ -399,105 +434,171 @@ public class CustomerConnect {
             @Override
             public void onError(String error) {
                 listener.onError(error);
-                Util.getInstance().stopLoading(stopLoading);
+                Util.getInstance().stopLoading(true);
             }
         }).execute();
     }
 
-    public static void ListBill(String param, final CallbackJSONArray listener, final Boolean stopLoading){
+    public static void ListBill(String param, final CallbackCustomList listener, final Boolean stopLoading){
 //        if (stopLoading){
             Util.getInstance().showLoading();
 //        }
 
         String url = Api_link.BILLS+ String.format(Api_link.DEFAULT_RANGE, 1,5000) + param;
 
-        new CustomGetMethod(url, new Callback() {
+        new CustomGetMethod(url, new CallbackCustom() {
             @Override
-            public void onResponse(JSONObject result) {
+            public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(stopLoading);
-                try {
-                    if (result.getInt("status") == 200) {
-                        listener.onResponse(result.getJSONArray("data"));
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeArraySuccess(result));
 
-                    } else {
-                        listener.onError("Unknow error");
-                    }
-                } catch (JSONException e) {
-                    listener.onError(e.toString());
-                    Util.getInstance().stopLoading(true);
+                }else {
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
                 }
-            }
 
+            }
 
             @Override
             public void onError(String error) {
-                listener.onError(error);
                 Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
             }
+
+//            @Override
+//            public void onResponse(JSONObject result) {
+//                Util.getInstance().stopLoading(stopLoading);
+//                try {
+//                    if (result.getInt("status") == 200) {
+//                        listener.onResponse(result.getJSONArray("data"));
+//
+//                    } else {
+//                        listener.onError("Unknow error");
+//                    }
+//                } catch (JSONException e) {
+//                    listener.onError(e.toString());
+//                    Util.getInstance().stopLoading(true);
+//                }
+//            }
+//
+//
+//            @Override
+//            public void onError(String error) {
+//                listener.onError(error);
+//                Util.getInstance().stopLoading(true);
+//            }
         }).execute();
     }
 
-    public static void ListBillNotYetPaid(String param, final CallbackJSONArray listener, final Boolean stopLoading){
+    public static void ListBillNotYetPaid(String param, final CallbackCustomList listener, final Boolean stopLoading){
 //        if (stopLoading){
         Util.getInstance().showLoading();
 //        }
 
         String url = Api_link.BILLS_NOT_YET_PAID+ String.format(Api_link.DEFAULT_RANGE, 1,1500) + param;
 
-        new CustomGetMethod(url, new Callback() {
+        new CustomGetMethod(url, new CallbackCustom() {
             @Override
-            public void onResponse(JSONObject result) {
+            public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(stopLoading);
-                try {
-                    if (result.getInt("status") == 200) {
-                        listener.onResponse(result.getJSONArray("data"));
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeArraySuccess(result));
 
-                    } else {
-                        listener.onError("Unknow error");
-                    }
-                } catch (JSONException e) {
-                    listener.onError(e.toString());
-                    Util.getInstance().stopLoading(true);
+                }else {
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
                 }
-            }
 
+            }
 
             @Override
             public void onError(String error) {
-                listener.onError(error);
                 Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
             }
+
+//            @Override
+//            public void onResponse(JSONObject result) {
+//                Util.getInstance().stopLoading(stopLoading);
+//                try {
+//                    if (result.getInt("status") == 200) {
+//                        listener.onResponse(result.getJSONArray("data"));
+//
+//                    } else {
+//                        listener.onError("Unknow error");
+//                    }
+//                } catch (JSONException e) {
+//                    listener.onError(e.toString());
+//                    Util.getInstance().stopLoading(true);
+//                }
+//            }
+//
+//
+//            @Override
+//            public void onError(String error) {
+//                listener.onError(error);
+//                Util.getInstance().stopLoading(true);
+//            }
         }).execute();
     }
 
-    public static void ListBillHavePayment(String param, final CallbackJSONArray listener, final Boolean stopLoading){
+    public static void ListBillHavePayment(String param, final CallbackCustomList listener, final Boolean stopLoading){
         if (stopLoading){
             Util.getInstance().showLoading();
         }
 
         String url = Api_link.BILLS_HAVE_PAYMENT+ String.format(Api_link.DEFAULT_RANGE, 1,1500) + param;
 
-        new CustomGetMethod(url, new Callback() {
+        new CustomGetMethod(url, new CallbackCustom() {
             @Override
-            public void onResponse(JSONObject result) {
+            public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(stopLoading);
-                try {
-                    if (result.getInt("status") == 200) {
-                        listener.onResponse(result.getJSONArray("data"));
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeArraySuccess(result));
 
-                    } else {
-                        listener.onError("Unknow error");
-                    }
-                } catch (JSONException e) {
-                    listener.onError(e.toString());
+                }else {
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
                 }
+
             }
 
             @Override
             public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
                 listener.onError(error);
-                Util.getInstance().stopLoading(stopLoading);
+
             }
+
+//            @Override
+//            public void onResponse(JSONObject result) {
+//                Util.getInstance().stopLoading(stopLoading);
+//                try {
+//                    if (result.getInt("status") == 200) {
+//                        listener.onResponse(result.getJSONArray("data"));
+//
+//                    } else {
+//                        listener.onError("Unknow error");
+//                    }
+//                } catch (JSONException e) {
+//                    listener.onError(e.toString());
+//                }
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                listener.onError(error);
+//                Util.getInstance().stopLoading(stopLoading);
+//            }
         }).execute();
     }
 
@@ -751,7 +852,7 @@ public class CustomerConnect {
             for (int i=0; i<listBill.size(); i++){
                 UtilPrinter.printCustomTextNew(outputStream, "Hoa don "+Util.DateHourString(listBill.get(i).getLong("createAt")) , 2,0);
 
-                List<JSONObject> listDetail = DataFilter.array2ListObject(listBill.get(i).getString("billDetails"));
+                List<JSONObject> listDetail = DataUtil.array2ListObject(listBill.get(i).getString("billDetails"));
 
                 for (int a=0; a<listDetail.size(); a++){
                     UtilPrinter.printCustomTextNew(outputStream,
@@ -816,7 +917,7 @@ public class CustomerConnect {
         }
     }
 
-    public static String createParamCustomer(Customer customer){
+    public static String createParamCustomer(BaseModel customer){
         String param = String.format(Api_link.CUSTOMER_CREATE_PARAM, customer.getInt("id") == 0? "" : String.format("id=%s&",customer.getString("id") ),
                 Util.encodeString(customer.getString("name")),//name
                 Util.encodeString(customer.getString("signBoard")),//signBoard
@@ -837,5 +938,6 @@ public class CustomerConnect {
 
         return param;
     }
+
 
 }

@@ -30,7 +30,7 @@ import wolve.dms.utils.Util;
 
 public class StatisticalProductGroupAdapter extends RecyclerView.Adapter<StatisticalProductGroupAdapter.StatisticalProductGroupViewHolder> {
     //List<BillDetail> mListDetail = new ArrayList<>();
-    private List<ProductGroup> mData = new ArrayList<>();
+    private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
 
@@ -39,10 +39,10 @@ public class StatisticalProductGroupAdapter extends RecyclerView.Adapter<Statist
         //this.mListDetail = data;
         this.mContext = Util.getInstance().getCurrentActivity();
 
-        List<ProductGroup> listGroup = ProductGroup.getProductGroupList();
+        List<BaseModel> listGroup = ProductGroup.getProductGroupList();
 
         for (int i=0; i<listGroup.size(); i++){
-            ProductGroup group = createGroupFromBill(listGroup.get(i), data);
+            BaseModel group = createGroupFromBill(listGroup.get(i), data);
             if (group.getInt("count") >0){
                 mData.add(group);
             }
@@ -104,9 +104,9 @@ public class StatisticalProductGroupAdapter extends RecyclerView.Adapter<Statist
 
     }
 
-    private ProductGroup createGroupFromBill(ProductGroup group, List<BaseModel> detailList){
-        List<Product> products = Product.getProductList();
-        ProductGroup groupResult = group;
+    private BaseModel createGroupFromBill(BaseModel group, List<BaseModel> detailList){
+        List<BaseModel> products = Product.getProductList();
+        BaseModel groupResult = group;
 
         JSONArray productLists = new JSONArray();
 

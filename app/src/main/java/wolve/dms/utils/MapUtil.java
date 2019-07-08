@@ -153,8 +153,8 @@ public class MapUtil{
         return Math.sqrt(distance);
     }
 
-    public static JSONObject getAddressFromMapResult(JSONObject object){
-        JSONObject objectResult = new JSONObject();
+    public static BaseModel getAddressFromMapResult(BaseModel object){
+        BaseModel objectResult = new BaseModel();
 
         try {
             JSONArray array = object.getJSONArray("address_components");

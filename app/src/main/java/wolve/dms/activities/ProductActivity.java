@@ -26,13 +26,15 @@ import wolve.dms.adapter.ProductGroupAdapter;
 import wolve.dms.adapter.ViewpagerProductAdapter;
 import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.callback.CallbackClickAdapter;
+import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.libraries.MySwipeRefreshLayout;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.DataFilter;
+import wolve.dms.utils.DataUtil;
 
 /**
  * Created by macos on 9/16/17.
@@ -47,8 +49,8 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
     private MySwipeRefreshLayout swipeRefreshLayout;
 
     private ProductAdapter productAdapter;
-    public ArrayList<ProductGroup> listProductGroup ;
-    private ArrayList<Product> listProduct ;
+    public List<BaseModel> listProductGroup ;
+    private List<BaseModel> listProduct ;
     private ViewpagerProductAdapter viewpagerAdapter;
     public int currentPosition =0;
 
@@ -102,23 +104,17 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
     protected void loadProductGroup(Boolean loading) {
         listProductGroup = new ArrayList<>();
 
-        ProductConnect.ListProductGroup(loading, new CallbackJSONArray() {
+        ProductConnect.ListProductGroup(loading, new CallbackCustomList() {
             @Override
-            public void onResponse(JSONArray result) {
-                //createRVProductGroup(result);
-                for (int i=0; i<result.length(); i++){
-                    try {
-                        ProductGroup productGroup = new ProductGroup(result.getJSONObject(i));
-                        listProductGroup.add(productGroup);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+            public void onResponse(List<BaseModel> results) {
+//createRVProductGroup(result);
+                for (int i=0; i<results.size(); i++){
+                    listProductGroup.add(results.get(i));
 
                 }
-                DataFilter.sortProductGroup(listProductGroup, false);
+                DataUtil.sortProductGroup(listProductGroup, false);
 
                 loadProduct();
-
             }
 
             @Override
@@ -130,21 +126,15 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
 
     public void loadProduct() {
         listProduct = new ArrayList<>();
-        ProductConnect.ListProduct(new CallbackJSONArray() {
+        ProductConnect.ListProduct(new CallbackCustomList() {
             @Override
-            public void onResponse(JSONArray result) {
-                for (int i=0; i<result.length(); i++){
-                    try {
-                        Product product = new Product(result.getJSONObject(i));
-                        listProduct.add(product);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+            public void onResponse(List<BaseModel> results) {
+                for (int i=0; i<results.size(); i++){
+                    listProduct.add(results.get(i));
 
                 }
-                DataFilter.sortProduct(listProduct, false);
+                DataUtil.sortProduct(listProduct, false);
                 setupViewPager(listProductGroup , listProduct);
-
             }
 
             @Override
@@ -162,7 +152,7 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
         changeFragment(groupFragment, bundle, true );
     }
 
-    private void setupViewPager(final List<ProductGroup> listproductgroup, final List<Product> listproduct){
+    private void setupViewPager(final List<BaseModel> listproductgroup, final List<BaseModel> listproduct){
 
         final List<RecyclerView.Adapter> listadapter = new ArrayList<>();
 

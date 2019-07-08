@@ -29,8 +29,9 @@ import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.apiconnect.SheetConnect;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackJSONObject;
-import wolve.dms.callback.CallbackList;
+import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.libraries.connectapi.sheetapi.GoogleSheetGetData;
 import wolve.dms.models.BaseModel;
@@ -41,7 +42,7 @@ import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
-import wolve.dms.utils.DataFilter;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -141,10 +142,10 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
     private void showDialogPayment(){
         CustomCenterDialog.showDialogPayment("THANH TOÁN CÁC HÓA ĐƠN NỢ",
                 getAllBillHaveDebt(),
-                new CallbackList() {
+                new CallbackListCustom() {
                     @Override
                     public void onResponse(List result) {
-                        postPayToServer(DataFilter.createListPaymentParam(mActivity.currentCustomer.getInt("id"),  result) );
+                        postPayToServer(DataUtil.createListPaymentParam(mActivity.currentCustomer.getInt("id"),  result) );
                     }
 
                     @Override
@@ -156,7 +157,7 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
     }
 
     private void postPayToServer(List<String> listParam){
-        CustomerConnect.PostListPay(listParam, new CallbackList() {
+        CustomerConnect.PostListPay(listParam, new CallbackListCustom() {
             @Override
             public void onResponse(List result) {
                 Util.showToast("Thanh toán thành công");
@@ -258,9 +259,9 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
     private void reloadCustomer(){
         String param = mActivity.currentCustomer.getString("id");
 
-        CustomerConnect.GetCustomerDetail(param, new CallbackJSONObject() {
+        CustomerConnect.GetCustomerDetail(param, new CallbackCustom() {
             @Override
-            public void onResponse(JSONObject result) {
+            public void onResponse(BaseModel result) {
                 List<BaseModel> mList = new ArrayList<>();
                 try{
                     if (result.getString("bills") != null) {
@@ -308,22 +309,22 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
     }
 
     private void printDebtBills(Boolean printOnlyDebt){
-        List<JSONObject> list = new ArrayList<>();
+        List<BaseModel> list = new ArrayList<>();
         for (int i=0; i<mBills.size(); i++){
             if (printOnlyDebt){
                 if (mBills.get(i).getDouble("debt") >0 ){
-                    list.add(mBills.get(i).convertJsonObject());
+                    list.add(mBills.get(i));
                 }
 
             }else {
-                list.add(mBills.get(i).convertJsonObject());
+                list.add(mBills.get(i));
 
             }
         }
 
         if (list.size() >0){
-            Transaction.gotoPrintBillActivity(mActivity.currentCustomer.CustomertoString(),
-                    DataFilter.convertListObject2Array(list).toString(), true);
+            Transaction.gotoPrintBillActivity(mActivity.currentCustomer.BaseModelstoString(),
+                    DataUtil.convertListObject2Array(list).toString(), true);
         }else {
             Util.showToast("Không có hóa đơn nợ phù hợp");
         }
@@ -338,7 +339,7 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
 
             }
         }
-        DataFilter.sortbyKey("createAt", list, true);
+        DataUtil.sortbyKey("createAt", list, true);
         return list;
     }
 
@@ -437,7 +438,7 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
     private void setupViewPager( final List<BaseModel> listbill){
 
         showOverViewDetail(Util.getTotal(listbill));
-        tvBDF.setText(String.format("BDF:%s ", DataFilter.defineBDFPercent(getAllBillDetail(listbill))) +"%");
+        tvBDF.setText(String.format("BDF:%s ", DataUtil.defineBDFPercent(getAllBillDetail(listbill))) +"%");
 
         List<String> titles = new ArrayList<>();
         titles.add(0,"Hóa đơn");
@@ -506,7 +507,7 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
     }
 
     private List<List<Object>> getListValueExportToSheet(List<BaseModel> listbill){
-        DataFilter.sortbyKey("createAt", listbill, false);
+        DataUtil.sortbyKey("createAt", listbill, false);
         List<List<Object>> values = new ArrayList<>();
         try {
             for (int i=0; i<listbill.size(); i++){

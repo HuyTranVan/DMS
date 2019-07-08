@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.mukesh.DrawingView;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -29,15 +28,14 @@ import wolve.dms.adapter.CartCheckinReasonAdapter;
 import wolve.dms.adapter.DebtAdapter;
 import wolve.dms.adapter.ProductReturnAdapter;
 import wolve.dms.adapter.StatisticalDebtAdapter;
-import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.apiconnect.UserConnect;
 import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickProduct;
+import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDouble;
-import wolve.dms.callback.CallbackJSONObject;
-import wolve.dms.callback.CallbackList;
+import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.callback.CallbackPayBill;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CTextIcon;
@@ -238,7 +236,7 @@ public class CustomCenterDialog {
         });
     }
 
-    public static void showDialogEditProduct(final Product product, final CallbackClickProduct callbackClickProduct){
+    public static void showDialogEditProduct(final BaseModel product, final CallbackClickProduct callbackClickProduct){
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_edit_product);
 
         final Button btnCancel = dialogResult.findViewById(R.id.btn_cancel);
@@ -328,8 +326,8 @@ public class CustomCenterDialog {
         btnChangeToPromotion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    Product newProduct = product;
+//                try {
+                    BaseModel newProduct = product;
                     newProduct.put("quantity", Integer.parseInt(edQuantity.getText().toString()));
                     newProduct.put("discount", product.getDouble("unitPrice"));
                     newProduct.put("totalMoney", "0");
@@ -337,16 +335,16 @@ public class CustomCenterDialog {
                     callbackClickProduct.ProductChoice(newProduct);
                     dialogResult.dismiss();
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
             }
         });
 
         btnCopyToPromotion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
+//                try {
                     Product newProduct = new Product();
 
                     newProduct.put("id", product.getString("id"));
@@ -368,9 +366,9 @@ public class CustomCenterDialog {
                     dialogResult.dismiss();
 
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
             }
         });
 
@@ -392,18 +390,18 @@ public class CustomCenterDialog {
                     Util.showToast("Vui lòng nhập giá tiền nhỏ hơn giá đơn vị ");
 
                 }else{
-                    try {
-                        Product newProduct = product;
-                        newProduct.put("quantity", Util.valueMoney(edQuantity));
-                        newProduct.put("discount", edDiscount.getText().toString().equals("") ? 0 : Util.valueMoney(edDiscount));
-                        newProduct.put("totalMoney", tvTotal.getText().toString().replace(".",""));
+//                    try {
+                    BaseModel newProduct = product;
+                    newProduct.put("quantity", Util.valueMoney(edQuantity));
+                    newProduct.put("discount", edDiscount.getText().toString().equals("") ? 0 : Util.valueMoney(edDiscount));
+                    newProduct.put("totalMoney", tvTotal.getText().toString().replace(".",""));
 
-                        callbackClickProduct.ProductChoice(newProduct);
-                        dialogResult.dismiss();
+                    callbackClickProduct.ProductChoice(newProduct);
+                    dialogResult.dismiss();
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
                 }
 
             }
@@ -429,7 +427,7 @@ public class CustomCenterDialog {
         tvSum.setText("TẠM TÍNH TRẢ HÀNG:     0");
         tvDebt.setText(String.format("Hóa đơn hiện tại còn nợ:     %s", Util.FormatMoney(currentBill.getDouble("debt"))));
 
-        final ProductReturnAdapter adapter = new ProductReturnAdapter(DataFilter.converArray2List(currentBill.getJSONArray("billDetails")), new CallbackDouble() {
+        final ProductReturnAdapter adapter = new ProductReturnAdapter(DataUtil.converArray2List(currentBill.getJSONArray("billDetails")), new CallbackDouble() {
             @Override
             public void Result(Double d) {
                 tvSum.setText(String.format("TẠM TÍNH TRẢ HÀNG:     %s",Util.FormatMoney(d)));
@@ -459,13 +457,13 @@ public class CustomCenterDialog {
 
                     }
 
-                    Double total = DataFilter.sumMoneyFromList(listProductSelected, "total");
+                    Double total = DataUtil.sumMoneyFromList(listProductSelected, "total");
 
 
 
 
 
-//                    final String params = DataFilter.createPostBillParam(customerId,total, 0.0, listProductSelected, String.valueOf(billId));
+//                    final String params = DataUtil.createPostBillParam(customerId,total, 0.0, listProductSelected, String.valueOf(billId));
 //
 //                    CustomerConnect.PostBill(params, new CallbackJSONObject() {
 //                        @Override
@@ -641,7 +639,7 @@ public class CustomCenterDialog {
 //                        e.printStackTrace();
 //                    }
 //
-//                    final String params = DataFilter.createPostBillParam(customerId,total, 0.0, listProductSelected, String.valueOf(billId));
+//                    final String params = DataUtil.createPostBillParam(customerId,total, 0.0, listProductSelected, String.valueOf(billId));
 //
 //                    CustomerConnect.PostBill(params, new CallbackJSONObject() {
 //                        @Override
@@ -757,7 +755,7 @@ public class CustomCenterDialog {
 //        });
 //    }
 
-    public static Dialog showDialogPayment(String title,  final List<BaseModel> listDebts , final CallbackList mListener){
+    public static Dialog showDialogPayment(String title,  final List<BaseModel> listDebts , final CallbackListCustom mListener){
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_input_paid);
         TextView tvTitle = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_title);
         TextView tvText = dialogResult.findViewById(R.id.dialog_input_paid_text);
@@ -997,13 +995,13 @@ public class CustomCenterDialog {
         }
         tvCount.setText(String.format("Tổng nợ: %s", Util.FormatMoney(debt)));
 
-        final StatisticalDebtAdapter adapter = new StatisticalDebtAdapter(tvCount, tvCount, DataFilter.groupDebtByCustomer(listDebt), new CallbackString() {
+        final StatisticalDebtAdapter adapter = new StatisticalDebtAdapter(tvCount, tvCount, DataUtil.groupDebtByCustomer(listDebt), new CallbackString() {
             @Override
             public void Result(String s) {
 
-                CustomerConnect.GetCustomerDetail(s, new CallbackJSONObject() {
+                CustomerConnect.GetCustomerDetail(s, new CallbackCustom() {
                     @Override
-                    public void onResponse(JSONObject result) {
+                    public void onResponse(BaseModel result) {
                         Transaction.gotoCustomerActivity(result.toString(), false);
 
                     }
@@ -1055,7 +1053,7 @@ public class CustomCenterDialog {
 
         edPhone.setText(user.getString("phone"));
 
-        Util.showKeyboardDelay(edPass);
+        Util.showKeyboardDelay(user.getString("phone").equals("")? edPhone : edPass);
 
 
         btnCancel.setOnClickListener(new View.OnClickListener() {

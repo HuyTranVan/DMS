@@ -29,9 +29,8 @@ import lecho.lib.hellocharts.view.ColumnChartView;
 import lecho.lib.hellocharts.view.PieChartView;
 import wolve.dms.R;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Bill;
 import wolve.dms.models.District;
-import wolve.dms.utils.DataFilter;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 /**
@@ -92,8 +91,8 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         }
     }
 
-    public void reloadData(List<BaseModel> list, List<BaseModel> listDetail){
-        setupIncomeChart(list, listDetail);
+    public void reloadData(List<BaseModel> list, List<BaseModel> listDetail, double paid, double debt){
+        setupIncomeChart(list, listDetail, paid, debt);
         setupDistrictChart(list);
 
     }
@@ -180,12 +179,12 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
 
     }
 
-    private void setupIncomeChart(List<BaseModel> list, List<BaseModel> listDetail){
+    private void setupIncomeChart(List<BaseModel> list, List<BaseModel> listDetail , double paid, double debt){
         float total = Util.getTotalMoney(list).floatValue();
-        float debt =Util.getTotalDebt(list).floatValue();
-        float income = Util.getTotalMoney(list).floatValue() - debt;
+        //float debt =Util.getTotalDebt(list).floatValue();
+        //float income = Util.getTotalMoney(list).floatValue() - debt;
         float bdf = 0.0f;
-        bdf = (float) DataFilter.defineBDFValue(listDetail);
+        bdf = (float) DataUtil.defineBDFValue(listDetail);
 
         setupBDFChart(total, bdf);
 
@@ -195,7 +194,7 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
 //        }
 //        float[] inputData = new float[]{total, income , debt , profit};
 
-        float[] inputData = new float[]{total, income , debt , bdf};
+        float[] inputData = new float[]{total, (float) paid, (float) debt, bdf};
 
         List<Column> columns = new ArrayList<Column>();
 

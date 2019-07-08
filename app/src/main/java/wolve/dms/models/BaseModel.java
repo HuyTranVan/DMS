@@ -6,6 +6,8 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 
+import wolve.dms.utils.Util;
+
 /**
  * Created by Engine on 12/27/2016.
  */
@@ -50,8 +52,13 @@ public class BaseModel implements Serializable {
         return null;
     }
 
-    public void put(String key, Object value) throws JSONException {
-        jsonObject.put(key, value);
+    public void put(String key, Object value) {
+        try {
+            jsonObject.put(key, value);
+        } catch (JSONException e) {
+            Util.showToast(e.toString());
+//            e.printStackTrace();
+        }
     }
 
     public String getString(String key) {
@@ -104,9 +111,10 @@ public class BaseModel implements Serializable {
         try {
             return jsonObject.getJSONObject(key);
         } catch (JSONException e) {
-            e.printStackTrace();
+            return new JSONObject();
+//            e.printStackTrace();
         }
-        return null;
+//        return null;
     }
 
 

@@ -63,6 +63,8 @@ import wolve.dms.adapter.CustomerSearchAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.apiconnect.LocationConnect;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackCustom;
+import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackLong;
@@ -380,7 +382,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 tvLocation.setTextColor(getResources().getColor(R.color.colorMain));
 //                mMap.setOnCameraMoveListener(null);
                 loadCustomer = false;
-                loadCustomersByDistrict(content, getCheckedFilter());
+                loadCustomersByDistrict(content);
             }
         });
     }
@@ -464,38 +466,33 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     }
 
     private void createCustomerFromLocation(final double lat, final double lng , final String shopType, final String shopName, final String phone){
-        LocationConnect.getAddressFromLocation(lat, lng, new CallbackJSONObject() {
+        LocationConnect.getAddressFromLocation(lat, lng, new CallbackCustom() {
             @Override
-            public void onResponse(JSONObject result) {
-                Customer customer = new Customer(new JSONObject());
-                JSONObject objectAdress = MapUtil.getAddressFromMapResult(result);
-                try {
-                    if (phone == null && shopType != null && shopName != null) {
-                        customer.put("shopType", shopType);
-                        customer.put("signBoard", shopName);
-                        customer.put("name", "Anh " + shopName.substring(shopName.lastIndexOf(" ") + 1));
-                        customer.put("phone", "");
-                    } else if (shopType == null && shopName == null && phone != null) {
-                        customer.put("shopType", Constants.shopType[0]);
-                        customer.put("signBoard", "");
-                        customer.put("name", "");
-                        customer.put("phone", phone);
-                    }
-
-                    customer.put("id", 0);
-                    customer.put("lat", lat);
-                    customer.put("lng", lng);
-                    customer.put("province", objectAdress.getString("province"));
-                    customer.put("district", objectAdress.getString("district"));
-                    customer.put("street", objectAdress.getString("street"));
-                    customer.put("address", objectAdress.getString("address"));
-                    customer.put("note", "");
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
+            public void onResponse(BaseModel result) {
+                BaseModel customer = new BaseModel();
+                BaseModel objectAdress = MapUtil.getAddressFromMapResult(result);
+                if (phone == null && shopType != null && shopName != null) {
+                    customer.put("shopType", shopType);
+                    customer.put("signBoard", shopName);
+                    customer.put("name", "Anh " + shopName.substring(shopName.lastIndexOf(" ") + 1));
+                    customer.put("phone", "");
+                } else if (shopType == null && shopName == null && phone != null) {
+                    customer.put("shopType", Constants.shopType[0]);
+                    customer.put("signBoard", "");
+                    customer.put("name", "");
+                    customer.put("phone", phone);
                 }
 
-                Transaction.gotoCustomerActivity(customer.CustomertoString(), true);
+                customer.put("id", 0);
+                customer.put("lat", lat);
+                customer.put("lng", lng);
+                customer.put("province", objectAdress.getString("province"));
+                customer.put("district", objectAdress.getString("district"));
+                customer.put("street", objectAdress.getString("street"));
+                customer.put("address", objectAdress.getString("address"));
+                customer.put("note", "");
+
+                Transaction.gotoCustomerActivity(customer.BaseModelstoString(), true);
                 CustomInputDialog.dismissDialog();
             }
 
@@ -506,58 +503,95 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         }, true);
     }
 
-    private void loadCustomersByDistrict(String district, final String isAll) {
+    private void loadCustomersByDistrict(String district) {
         String param = "district=" + Util.encodeString(district);
-        CustomerConnect.ListCustomer(param, new CallbackJSONArray() {
+        CustomerConnect.ListCustomer(param, 500, new CallbackCustomList() {
             @Override
-            public void onResponse(JSONArray result) {
-                try {
-                    List<BaseModel> tempCustomers = new ArrayList<>();
-                    for (int i = 0; i < result.length(); i++) {
-                        JSONObject object = result.getJSONObject(i);
-                        if (object.getJSONObject("distributor").getString("id").equals(Distributor.getDistributorId())) {
-                            tempCustomers.add(setCustomerMarker(new BaseModel(object)));
+            public void onResponse(List<BaseModel> results) {
+                List<BaseModel> tempCustomers = new ArrayList<>();
 
-                        }
+                for (int i = 0; i < results.size(); i++) {
+                    BaseModel distributor = new BaseModel(results.get(i).getJsonObject("distributor"));
+                    if (distributor.getString("id").equals(Distributor.getDistributorId())) {
+                        tempCustomers.add(setCustomerMarker(results.get(i)));
 
                     }
-                    addMarkertoMap(true,tempCustomers, true);
-//                    MapUtil.addListMarkertoMap(true, mMap,tempCustomers, getCheckedFilter(), true);
-//                    createRVCustomer(listCustomer);
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
-
+                addMarkertoMap(true,tempCustomers, true);
             }
 
             @Override
             public void onError(String error) {
             }
         }, true);
+
+
+//        CustomerConnect.ListCustomer(param, new CallbackJSONArray() {
+//            @Override
+//            public void onResponse(JSONArray result) {
+//                try {
+//                    List<BaseModel> tempCustomers = new ArrayList<>();
+//                    for (int i = 0; i < result.length(); i++) {
+//                        JSONObject object = result.getJSONObject(i);
+//                        if (object.getJSONObject("distributor").getString("id").equals(Distributor.getDistributorId())) {
+//                            tempCustomers.add(setCustomerMarker(new BaseModel(object)));
+//
+//                        }
+//
+//                    }
+//                    addMarkertoMap(true,tempCustomers, true);
+////                    MapUtil.addListMarkertoMap(true, mMap,tempCustomers, getCheckedFilter(), true);
+////                    createRVCustomer(listCustomer);
+//
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
+
+//            @Override
+//            public void onError(String error) {
+//            }
+//        }, true);
     }
 
     private void loadCustomersByLocation(final Boolean clearMap, Double lat, Double lng) {
         progressLoading.setVisibility(View.VISIBLE);
 
-        CustomerConnect.ListCustomerLocation(Util.encodeString(String.valueOf(lat)), Util.encodeString(String.valueOf(lng)), new CallbackJSONArray() {
+        CustomerConnect.ListCustomerLocation(Util.encodeString(String.valueOf(lat)), Util.encodeString(String.valueOf(lng)), new CallbackCustomList() {
+//            @Override
+//            public void onResponse(JSONArray result) {
+//                progressLoading.setVisibility(View.GONE);
+//                try {
+//                    List<BaseModel> tempCustomers = new ArrayList<>();
+//                    for (int i = 0; i < result.length(); i++) {
+//                        JSONObject object = result.getJSONObject(i);
+//                        if (object.getJSONObject("distributor").getString("id").equals(Distributor.getDistributorId())) {
+//                            tempCustomers.add(setCustomerMarker(new BaseModel(object)));
+//
+//                        }
+//                    }
+//                    addMarkertoMap(clearMap,tempCustomers, false);
+//
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+
             @Override
-            public void onResponse(JSONArray result) {
+            public void onResponse(List<BaseModel> results) {
                 progressLoading.setVisibility(View.GONE);
-                try {
-                    List<BaseModel> tempCustomers = new ArrayList<>();
-                    for (int i = 0; i < result.length(); i++) {
-                        JSONObject object = result.getJSONObject(i);
-                        if (object.getJSONObject("distributor").getString("id").equals(Distributor.getDistributorId())) {
-                            tempCustomers.add(setCustomerMarker(new BaseModel(object)));
+                List<BaseModel> tempCustomers = new ArrayList<>();
+                for (int i = 0; i < results.size(); i++) {
+                    BaseModel distributor = new BaseModel(results.get(i).getJsonObject("distributor"));
+                    if (distributor.getString("id").equals(Distributor.getDistributorId())) {
+                        tempCustomers.add(setCustomerMarker(results.get(i)));
 
-                        }
                     }
-                    addMarkertoMap(clearMap,tempCustomers, false);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
+                addMarkertoMap(clearMap,tempCustomers, false);
+
             }
 
             @Override
@@ -611,9 +645,9 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             public void onResponse(final Long value) {
                 String param = customer.getString("id");
 
-                CustomerConnect.GetCustomerDetail(param, new CallbackJSONObject() {
+                CustomerConnect.GetCustomerDetail(param, new CallbackCustom() {
                     @Override
-                    public void onResponse(final JSONObject result) {
+                    public void onResponse(final BaseModel result) {
                         if (value < Constants.CHECKIN_DISTANCE){
                             CustomCenterDialog.alertWithButton("Check In", "Vị trí hiện tại của bạn rất gần cửa hàng. Bắt đầu check in", "Tiếp tục", new CallbackBoolean() {
                                 @Override
@@ -679,11 +713,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     }
 
     private void reUpdateMarker(String id){
-        CustomerConnect.GetCustomerDetail(id, new CallbackJSONObject() {
+        CustomerConnect.GetCustomerDetail(id, new CallbackCustom() {
             @Override
-            public void onResponse(final JSONObject result) {
+            public void onResponse(final BaseModel result) {
                 setCurrentMarkerToDefault();
-                currentMarker = MapUtil.getCurrentMarker(mMap, setCustomerMarker(new BaseModel(result)));
+                currentMarker = MapUtil.getCurrentMarker(mMap, setCustomerMarker(result));
 
                 if (currentMarker.getTag() != null) {
                     final BaseModel customer = new BaseModel((JSONObject) currentMarker.getTag());
@@ -795,10 +829,13 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         String s = Constants.MARKER_ALL;
         if (rdFilter.getCheckedRadioButtonId() == R.id.map_filter_all) {
             s = Constants.MARKER_ALL;
+
         } else if (rdFilter.getCheckedRadioButtonId() == R.id.map_filter_interested) {
             s = Constants.MARKER_INTERESTED;
+
         } else {
             s = Constants.MARKER_ORDERED;
+
         }
         return s;
     }
@@ -960,7 +997,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         tvReload.setVisibility(loadCustomer?View.VISIBLE:View.GONE);
     }
 
-    private void createRVList(List<JSONObject> list){
+    private void createRVList(List<BaseModel> list){
         mSearchAdapter = new CustomerSearchAdapter(list, new CustomerSearchAdapter.CallbackObject() {
             @Override
             public void onResponse(JSONObject customer) {
@@ -1007,23 +1044,18 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 param = "shopName=" + Util.encodeString(mSearchText);
             }
 
-            CustomerConnect.ListCustomerSearch(param, new CallbackJSONArray() {
+            CustomerConnect.ListCustomer(param, 10, new CallbackCustomList() {
                 @Override
-                public void onResponse(JSONArray result) {
-                    List<JSONObject> listResult = new ArrayList<>();
-                    if (result.length() >0){
-                        for (int i=0; i<result.length(); i++){
-                            try {
-                                listResult.add(result.getJSONObject(i));
+                public void onResponse(List<BaseModel> results) {
+                    List<BaseModel> listResult = new ArrayList<>();
+                    if (results.size() >0){
+                        for (int i=0; i<results.size(); i++){
+                            listResult.add(results.get(i));
 
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
                         }
                     }
 
                     createRVList(listResult);
-
                 }
 
                 @Override
@@ -1039,18 +1071,18 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         CustomInputDialog.inputShopName(coParent, new CustomInputDialog.ShopNameListener() {
             @Override
             public void onShopname(final String shopname, String shoptype) {
-                getAddressFromLatlng(lat, lng, new CallbackObject() {
+                getAddressFromLatlng(lat, lng, new CallbackCustom() {
                     @Override
-                    public void onResponse(final JSONObject result) {
-                        //createCustomer to Server
-                        postCustomerFast(shopname, lat, lng, result, new CallbackJSONObject() {
-                            @Override
-                            public void onResponse(JSONObject result1) {
-                                BaseModel cust = new BaseModel(result1);
-                                reUpdateMarker(cust.getString("id"));
-
-                                CustomInputDialog.dismissDialog();
-                                Util.showToast("Tạo cửa hàng thành công");
+                    public void onResponse(BaseModel result1) {
+//createCustomer to Server
+                        postCustomerFast(shopname, lat, lng, result1, new CallbackCustom() {
+//                            @Override
+//                            public void onResponse(JSONObject result1) {
+//                                BaseModel cust = new BaseModel(result1);
+//                                reUpdateMarker(cust.getString("id"));
+//
+//                                CustomInputDialog.dismissDialog();
+//                                Util.showToast("Tạo cửa hàng thành công");
 
 //                                setCurrentMarkerToDefault();
 //                                Customer customer = new Customer(result1);
@@ -1058,6 +1090,14 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
 
 
+//                            }
+
+                            @Override
+                            public void onResponse(BaseModel result) {
+                                reUpdateMarker(result.getString("id"));
+
+                                CustomInputDialog.dismissDialog();
+                                Util.showToast("Tạo cửa hàng thành công");
                             }
 
                             @Override
@@ -1065,7 +1105,10 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
                             }
                         }, true);
+                    }
 
+                    @Override
+                    public void onError(String error) {
 
                     }
 
@@ -1124,12 +1167,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         });
     }
 
-    private void getAddressFromLatlng(Double lat, Double lng, final CallbackObject mListener, Boolean stopLoading){
-        LocationConnect.getAddressFromLocation(lat, lng, new CallbackJSONObject() {
+    private void getAddressFromLatlng(Double lat, Double lng, final CallbackCustom mListener, Boolean stopLoading){
+        LocationConnect.getAddressFromLocation(lat, lng, new CallbackCustom() {
             @Override
-            public void onResponse(JSONObject result) {
+            public void onResponse(BaseModel result) {
                 mListener.onResponse(MapUtil.getAddressFromMapResult(result));
-
             }
 
             @Override
@@ -1139,42 +1181,42 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         }, stopLoading);
     }
 
-    private void postCustomerFast(String shopName , Double lat, Double lng, JSONObject objectAdress, final CallbackJSONObject mListener, Boolean stopLoading){
-        Customer customer = new Customer();
-        try {
-            customer.put("id","0");
-            customer.put("name","Anh " + shopName.substring(shopName.lastIndexOf(" ") + 1));
-            customer.put("signBoard",shopName);
-            customer.put("phone","");
-            customer.put("note","");
-            customer.put("lat",lat);
-            customer.put("lng",lng);
-            customer.put("volumeEstimate","10");
-            customer.put("shopType",Constants.shopType[0]);
-            customer.put("status.id",Status.getStatusList().get(0).getInt("id"));
-            customer.put("address",objectAdress.getString("address"));
-            customer.put("street",objectAdress.getString("street"));
-            customer.put("district",objectAdress.getString("district"));
-            customer.put("province",objectAdress.getString("province"));
+    private void postCustomerFast(String shopName , Double lat, Double lng, BaseModel objectAdress, final CallbackCustom mListener, Boolean stopLoading){
+        BaseModel customer = new BaseModel();
+        customer.put("id","0");
+        customer.put("name","Anh " + shopName.substring(shopName.lastIndexOf(" ") + 1));
+        customer.put("signBoard",shopName);
+        customer.put("phone","");
+        customer.put("note","");
+        customer.put("lat",lat);
+        customer.put("lng",lng);
+        customer.put("volumeEstimate","10");
+        customer.put("shopType",Constants.shopType[0]);
+        customer.put("status.id",Status.getStatusList().get(0).getInt("id"));
+        customer.put("address",objectAdress.getString("address"));
+        customer.put("street",objectAdress.getString("street"));
+        customer.put("district",objectAdress.getString("district"));
+        customer.put("province",objectAdress.getString("province"));
 
-            CustomerConnect.CreateCustomer(createParamCustomer(customer), new CallbackJSONObject() {
-                @Override
-                public void onResponse(JSONObject result) {
-                    mListener.onResponse(result);
+        CustomerConnect.CreateCustomer(createParamCustomer(customer), new CallbackCustom() {
+//                @Override
+//                public void onResponse(JSONObject result) {
+//                    mListener.onResponse(result);
+//
+//                }
 
-                }
+            @Override
+            public void onResponse(BaseModel result) {
+                mListener.onResponse(result);
+            }
 
-                @Override
-                public void onError(String error) {
-                    mListener.onError(error);
-                }
-            }, stopLoading);
+            @Override
+            public void onError(String error) {
+                mListener.onError(error);
+            }
+        }, stopLoading);
 
 
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
     private void getDistanceFromCurrent(final Double lat, final Double lng, final CallbackLong mListener) {
@@ -1283,9 +1325,9 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             public void onClick(View v) {
                 String param = customer.getString("id");
 
-                CustomerConnect.GetCustomerDetail(param, new CallbackJSONObject() {
+                CustomerConnect.GetCustomerDetail(param, new CallbackCustom() {
                     @Override
-                    public void onResponse(final JSONObject result) {
+                    public void onResponse(final BaseModel result) {
                         Transaction.gotoCustomerActivity(result.toString(), distance < Constants.CHECKIN_DISTANCE? true : false);
 //                        if (distance < Constants.CHECKIN_DISTANCE){
 //                            CustomCenterDialog.alertWithButton("Check In", "Vị trí hiện tại của bạn rất gần cửa hàng. Bắt đầu check in", "Tiếp tục", new CallbackBoolean() {
@@ -1314,10 +1356,10 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             public void onClick(View v) {
                 String param = customer.getString("id");
 
-                CustomerConnect.GetCustomerDetail(param, new CallbackJSONObject() {
+                CustomerConnect.GetCustomerDetail(param, new CallbackCustom() {
                     @Override
-                    public void onResponse(final JSONObject result) {
-                        Transaction.gotoCustomerActivity(result.toString(), false);
+                    public void onResponse(final BaseModel result) {
+                        Transaction.gotoCustomerActivity(result.BaseModelstoString(), false);
 
                     }
 

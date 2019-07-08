@@ -16,7 +16,10 @@ import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.UserConnect;
+import wolve.dms.callback.CallbackBaseModel;
+import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackJSONObject;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
@@ -62,24 +65,17 @@ public class SplashScreenActivity extends BaseActivity {
                 }else {
                     String params = String.format(Api_link.LOGIN_PARAM,CustomSQL.getString(Constants.USER_USERNAME), CustomSQL.getString(Constants.USER_PASSWORD));
                     progressBar.setVisibility(View.VISIBLE);
-                    UserConnect.Login(params, new CallbackJSONObject() {
-                        @Override
-                        public void onResponse(JSONObject result) {
+                    UserConnect.Login(params, new CallbackCustom() {
+                        @Override public void onResponse(BaseModel object) {
                             progressBar.setVisibility(View.GONE);
-                            try {
-                                User user = new User(result);
-                                Distributor distributor = new Distributor(result.getJSONObject("distributor"));
+                            Distributor distributor = new Distributor(object.getJsonObject("distributor"));
 
-                                CustomSQL.setObject(Constants.USER, user);
-                                CustomSQL.setObject(Constants.DISTRIBUTOR, distributor);
+                            CustomSQL.setObject(Constants.USER, object);
+                            CustomSQL.setObject(Constants.DISTRIBUTOR, distributor);
 
-                                Util.showToast("Đăng nhập thành công");
-                                Transaction.gotoHomeActivity(true);
+                            Util.showToast("Đăng nhập thành công");
+                            Transaction.gotoHomeActivity(true);
 
-
-                            } catch (JSONException e) {
-                                gotoLoginScreen();
-                            }
                         }
 
                         @Override
@@ -87,16 +83,38 @@ public class SplashScreenActivity extends BaseActivity {
                             progressBar.setVisibility(View.GONE);
                             gotoLoginScreen();
                         }
+
                     }, false,true);
                 }
 
-
-
-
-                //return;
-
             }
         }, SPLASH_TIME_OUT);
+//                    new CallbackJSONObject() {
+//                        @Override
+//                        public void onResponse(JSONObject result) {
+//                            progressBar.setVisibility(View.GONE);
+//                            try {
+//                                User user = new User(result);
+//                                Distributor distributor = new Distributor(result.getJSONObject("distributor"));
+//
+//                                CustomSQL.setObject(Constants.USER, user);
+//                                CustomSQL.setObject(Constants.DISTRIBUTOR, distributor);
+//
+//                                Util.showToast("Đăng nhập thành công");
+//                                Transaction.gotoHomeActivity(true);
+//
+//                            } catch (JSONException e) {
+//                                gotoLoginScreen();
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onError(String error) {
+//                            progressBar.setVisibility(View.GONE);
+//                            gotoLoginScreen();
+//                        }
+//                    }, false,true);
+
     }
 
     @Override

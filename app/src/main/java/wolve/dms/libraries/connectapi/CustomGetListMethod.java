@@ -1,7 +1,6 @@
 package wolve.dms.libraries.connectapi;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,8 +15,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import wolve.dms.callback.Callback;
-import wolve.dms.callback.CallbackList;
+import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Util;
@@ -26,10 +24,10 @@ import wolve.dms.utils.Util;
  * Created by tranhuy on 7/22/16.
  */
 public class CustomGetListMethod extends AsyncTask<String, Void, List<String>> {
-    private CallbackList mListener = null;
+    private CallbackListCustom mListener = null;
     private String[] listURL;
 
-    public CustomGetListMethod(String[] listUrl, CallbackList listener) {
+    public CustomGetListMethod(String[] listUrl, CallbackListCustom listener) {
         this.mListener = listener;
         this.listURL = listUrl;
 

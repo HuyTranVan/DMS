@@ -11,16 +11,19 @@ import android.widget.TextView;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.CustomCenterDialog;
-import wolve.dms.utils.DataFilter;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 
@@ -29,20 +32,20 @@ import wolve.dms.utils.Util;
  */
 
 public class ProductGroupAdapter extends RecyclerView.Adapter<ProductGroupAdapter.ProductGroupAdapterViewHolder> {
-    private ArrayList<ProductGroup> mData = new ArrayList<>();
+    private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackClickAdapter mListener;
     private CallbackDeleteAdapter mDeleteListener;
 
-    public ProductGroupAdapter(ArrayList<ProductGroup> list,  CallbackClickAdapter callbackClickAdapter, CallbackDeleteAdapter callbackDeleteAdapter) {
+    public ProductGroupAdapter(List<BaseModel> list,  CallbackClickAdapter callbackClickAdapter, CallbackDeleteAdapter callbackDeleteAdapter) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mData = list;
         mListener = callbackClickAdapter;
         this.mDeleteListener = callbackDeleteAdapter;
 
-        DataFilter.sortProductGroup(mData, false);
+        DataUtil.sortProductGroup(mData, false);
     }
 
     @Override
@@ -65,7 +68,7 @@ public class ProductGroupAdapter extends RecyclerView.Adapter<ProductGroupAdapte
         holder.lnParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onRespone(mData.get(position).ProductGrouptoString() , position);
+                mListener.onRespone(mData.get(position).BaseModelstoString() , position);
 
             }
         });
@@ -80,7 +83,7 @@ public class ProductGroupAdapter extends RecyclerView.Adapter<ProductGroupAdapte
                         ProductConnect.DeleteProductGroup(param, new CallbackJSONObject() {
                             @Override
                             public void onResponse(JSONObject result) {
-                                mDeleteListener.onDelete(mData.get(position).ProductGrouptoString(), position);
+                                mDeleteListener.onDelete(mData.get(position).BaseModelstoString(), position);
                             }
 
                             @Override

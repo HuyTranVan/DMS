@@ -20,6 +20,7 @@ import wolve.dms.R;
 import wolve.dms.adapter.StatisticalCashAdapter;
 import wolve.dms.adapter.StatisticalCheckinsAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.models.BaseModel;
@@ -38,6 +39,7 @@ public class StatisticalCashFragment extends Fragment implements View.OnClickLis
 
 
     private StatisticalCashAdapter adapter;
+    private double totalPaid;
 
 
     @Nullable
@@ -91,11 +93,10 @@ public class StatisticalCashFragment extends Fragment implements View.OnClickLis
         adapter = new StatisticalCashAdapter(list, new CallbackString() {
             @Override
             public void Result(String s) {
-                CustomerConnect.GetCustomerDetail(s, new CallbackJSONObject() {
+                CustomerConnect.GetCustomerDetail(s, new CallbackCustom() {
                     @Override
-                    public void onResponse(JSONObject result) {
-                        Transaction.gotoCustomerActivity(result.toString(), false);
-
+                    public void onResponse(BaseModel result) {
+                        Transaction.gotoCustomerActivity(result.BaseModelstoString(), false);
                     }
 
                     @Override
@@ -112,11 +113,15 @@ public class StatisticalCashFragment extends Fragment implements View.OnClickLis
     }
 
     private Double getTotalPaid(List<BaseModel> list){
-        double paid= 0;
+        totalPaid = 0;
         for (int i=0; i<list.size(); i++){
-            paid += list.get(i).getDouble("paid");
+            totalPaid += list.get(i).getDouble("paid");
         }
-        return paid;
+        return totalPaid;
+    }
+
+    protected double getTotalPaid(){
+        return totalPaid;
     }
 
 }

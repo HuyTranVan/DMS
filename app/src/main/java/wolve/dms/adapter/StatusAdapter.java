@@ -12,6 +12,7 @@ import android.widget.TextView;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.apiconnect.StatusConnect;
@@ -20,6 +21,7 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.customviews.CTextIcon;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Status;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
@@ -30,13 +32,13 @@ import wolve.dms.utils.Util;
  */
 
 public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusAdapterViewHolder> {
-    private ArrayList<Status> mData = new ArrayList<>();
+    private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackClickAdapter mListener;
     private CallbackDeleteAdapter mDeleteListener;
 
-    public StatusAdapter( ArrayList<Status> list, CallbackClickAdapter callbackClickAdapter, CallbackDeleteAdapter callbackDeleteAdapter) {
+    public StatusAdapter(List<BaseModel> list, CallbackClickAdapter callbackClickAdapter, CallbackDeleteAdapter callbackDeleteAdapter) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mData = list;
@@ -68,7 +70,7 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusAdap
         holder.lnParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onRespone(mData.get(position).StatustoString() , position);
+                mListener.onRespone(mData.get(position).BaseModelstoString() , position);
 
             }
         });
@@ -84,7 +86,7 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusAdap
                             StatusConnect.DeleteStatus(param, new CallbackJSONObject() {
                                 @Override
                                 public void onResponse(JSONObject result) {
-                                    mDeleteListener.onDelete(mData.get(position).StatustoString(), position);
+                                    mDeleteListener.onDelete(mData.get(position).BaseModelstoString(), position);
                                 }
 
                                 @Override

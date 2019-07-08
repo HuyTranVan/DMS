@@ -3,6 +3,7 @@ package wolve.dms.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 
@@ -180,6 +181,17 @@ public class Transaction {
             context.startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
 
         }
+    }
+
+    public static void sendEmailReport(String content){
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        Uri data = Uri.parse(String.format("mailto:%s?subject=%s&body=%s",
+                Constants.DMS_EMAIL,
+                "DMS Error Report!!",
+                content));
+        intent.setData(data);
+        Util.getInstance().getCurrentActivity().startActivity(intent);
+
     }
 
 

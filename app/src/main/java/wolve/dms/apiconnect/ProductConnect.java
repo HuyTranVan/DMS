@@ -15,11 +15,15 @@ import java.net.URL;
 import java.util.Iterator;
 
 import wolve.dms.callback.Callback;
+import wolve.dms.callback.CallbackCustom;
+import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.libraries.connectapi.CustomDeleteMethod;
 import wolve.dms.libraries.connectapi.CustomGetMethod;
 import wolve.dms.libraries.connectapi.CustomPostMethod;
+import wolve.dms.models.BaseModel;
+import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
 
 /**
@@ -28,34 +32,56 @@ import wolve.dms.utils.Util;
 
 public class ProductConnect {
 
-    public static void ListProductGroup(Boolean loading, final CallbackJSONArray listener, final Boolean stopLoading){
+    public static void ListProductGroup(Boolean loading, final CallbackCustomList listener, final Boolean stopLoading){
         if (loading)
             Util.getInstance().showLoading();
 
         String url = Api_link.PRODUCT_GROUPS+ String.format(Api_link.DEFAULT_RANGE, 1,10);
 
-        new CustomGetMethod(url, new Callback() {
+        new CustomGetMethod(url, new CallbackCustom() {
             @Override
-            public void onResponse(JSONObject result) {
+            public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(stopLoading);
-                try {
-                    if (result.getInt("status") == 200) {
-                        listener.onResponse(result.getJSONArray("data"));
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeArraySuccess(result));
 
-                    } else {
-                        listener.onError("Unknow error");
-                    }
-                } catch (JSONException e) {
-                    listener.onError(e.toString());
+                }else {
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
                 }
-            }
 
+            }
 
             @Override
             public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
                 listener.onError(error);
-                Util.getInstance().stopLoading(stopLoading);
+
             }
+
+//            @Override
+//            public void onResponse(JSONObject result) {
+//                Util.getInstance().stopLoading(stopLoading);
+//                try {
+//                    if (result.getInt("status") == 200) {
+//                        listener.onResponse(result.getJSONArray("data"));
+//
+//                    } else {
+//                        listener.onError("Unknow error");
+//                    }
+//                } catch (JSONException e) {
+//                    listener.onError(e.toString());
+//                }
+//            }
+//
+//
+//            @Override
+//            public void onError(String error) {
+//                listener.onError(error);
+//                Util.getInstance().stopLoading(stopLoading);
+//            }
         }).execute();
     }
 
@@ -64,29 +90,29 @@ public class ProductConnect {
 
         String url = Api_link.PRODUCT_GROUP_NEW ;
 
-        new CustomPostMethod(url,params, false,new Callback() {
-            @Override
-            public void onResponse(JSONObject result) {
-                Util.getInstance().stopLoading(stopLoading);
-                try {
-                    if (result.getInt("status") == 200) {
-                        listener.onResponse(result.getJSONObject("data"));
-
-                    } else {
-                        listener.onError("Unknow error");
-                    }
-                } catch (JSONException e) {
-                    listener.onError(e.toString());
-                }
-            }
-
-
-            @Override
-            public void onError(String error) {
-                listener.onError(error);
-                Util.getInstance().stopLoading(stopLoading);
-            }
-        }).execute();
+//        new CustomPostMethod(url,params, false,new Callback() {
+//            @Override
+//            public void onResponse(JSONObject result) {
+//                Util.getInstance().stopLoading(stopLoading);
+//                try {
+//                    if (result.getInt("status") == 200) {
+//                        listener.onResponse(result.getJSONObject("data"));
+//
+//                    } else {
+//                        listener.onError("Unknow error");
+//                    }
+//                } catch (JSONException e) {
+//                    listener.onError(e.toString());
+//                }
+//            }
+//
+//
+//            @Override
+//            public void onError(String error) {
+//                listener.onError(error);
+//                Util.getInstance().stopLoading(stopLoading);
+//            }
+//        }).execute();
     }
 
     public static void DeleteProductGroup(String params,final CallbackJSONObject listener, final Boolean stopLoading){
@@ -119,32 +145,32 @@ public class ProductConnect {
         }).execute();
     }
 
-    public static void ListProduct(final CallbackJSONArray listener, final Boolean stopLoading){
+    public static void ListProduct(final CallbackCustomList listener, final Boolean stopLoading){
         Util.getInstance().showLoading();
 
         String url = Api_link.PRODUCTS+ String.format(Api_link.DEFAULT_RANGE, 1,500);
 
-        new CustomGetMethod(url, new Callback() {
+        new CustomGetMethod(url, new CallbackCustom() {
             @Override
-            public void onResponse(JSONObject result) {
+            public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(stopLoading);
-                try {
-                    if (result.getInt("status") == 200) {
-                        listener.onResponse(result.getJSONArray("data"));
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeArraySuccess(result));
 
-                    } else {
-                        listener.onError("Unknow error");
-                    }
-                } catch (JSONException e) {
-                    listener.onError(e.toString());
+                }else {
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
                 }
-            }
 
+            }
 
             @Override
             public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
                 listener.onError(error);
-                Util.getInstance().stopLoading(stopLoading);
+
             }
         }).execute();
     }
@@ -152,29 +178,29 @@ public class ProductConnect {
     public static void CreateProduct(final String params,final CallbackJSONObject listener, final Boolean stopLoading){
         Util.getInstance().showLoading();
         final String url = Api_link.PRODUCT_NEW ;
-        new CustomPostMethod(url,params, false,new Callback() {
-            @Override
-            public void onResponse(JSONObject result) {
-                Util.getInstance().stopLoading(stopLoading);
-                try {
-                    if (result.getInt("status") == 200) {
-                        listener.onResponse(result.getJSONObject("data"));
-
-                    } else {
-                        listener.onError("Unknow error");
-                    }
-                } catch (JSONException e) {
-                    listener.onError(e.toString());
-                }
-            }
-
-
-            @Override
-            public void onError(String error) {
-                listener.onError(error);
-                Util.getInstance().stopLoading(stopLoading);
-            }
-        }).execute();
+//        new CustomPostMethod(url,params, false,new Callback() {
+//            @Override
+//            public void onResponse(JSONObject result) {
+//                Util.getInstance().stopLoading(stopLoading);
+//                try {
+//                    if (result.getInt("status") == 200) {
+//                        listener.onResponse(result.getJSONObject("data"));
+//
+//                    } else {
+//                        listener.onError("Unknow error");
+//                    }
+//                } catch (JSONException e) {
+//                    listener.onError(e.toString());
+//                }
+//            }
+//
+//
+//            @Override
+//            public void onError(String error) {
+//                listener.onError(error);
+//                Util.getInstance().stopLoading(stopLoading);
+//            }
+//        }).execute();
 
 //            new AsyncTask() {
 //                @Override

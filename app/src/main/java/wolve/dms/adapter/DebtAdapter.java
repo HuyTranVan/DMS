@@ -111,7 +111,7 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.PrintBillViewH
 
     public void inputPaid(Double paid, boolean payNew){
         Double money = paid;
-        try {
+//        try {
             if (mData.size() ==1 && mData.get(0).getDouble("debt") <0){
                 if (money.equals(0.0)){
                     mData.get(0).put("tempPaid", 0);
@@ -164,10 +164,10 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.PrintBillViewH
 
 
 
-        } catch (JSONException e) {
+//        } catch (JSONException e) {
 //            e.printStackTrace();
             notifyDataSetChanged();
-        }
+//        }
     }
 
     public List<JSONObject> getListBillPayment(){

@@ -26,6 +26,7 @@ import wolve.dms.adapter.StatisticalViewpagerAdapter;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.apiconnect.SheetConnect;
+import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.customviews.CustomTabLayout;
@@ -264,36 +265,36 @@ public class StatisticalCustomerActivity extends BaseActivity implements  View.O
     private void loadListCheckin(final long starDay, final long lastDay){
         String param = String.format(Api_link.CUSTOMER_CHECKIN_RANGE_PARAM, starDay, lastDay);
 
-        CustomerConnect.ListCustomer(param, new CallbackJSONArray() {
-            @Override
-            public void onResponse(JSONArray result) {
-                if (loadBillNotYetPaid){
-                    loadBillNotYetPaid(starDay, lastDay);
-                }
-                loadBillNotYetPaid = false;
-
-                InitialCheckin =result;
-                Util.checkinFragment.reloadData(convertToListCheckin(tvEmployeeName.getText().toString().trim(),
-                        InitialCheckin,
-                        starDay,
-                        lastDay) );
-
-            }
-
-            @Override
-            public void onError(String error) {
-            }
-        }, false);
+//        CustomerConnect.ListCustomer(param, new CallbackJSONArray() {
+//            @Override
+//            public void onResponse(JSONArray result) {
+//                if (loadBillNotYetPaid){
+//                    loadBillNotYetPaid(starDay, lastDay);
+//                }
+//                loadBillNotYetPaid = false;
+//
+//                InitialCheckin =result;
+//                Util.checkinFragment.reloadData(convertToListCheckin(tvEmployeeName.getText().toString().trim(),
+//                        InitialCheckin,
+//                        starDay,
+//                        lastDay) );
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//            }
+//        }, false);
     }
 
     private void loadBillNotYetPaid(final long starDay, final long lastDay){
 //        String param = String.format(Api_link.BILL_NOT_YET_PAID_RANGE_PARAM, starDay, lastDay);
         String param = "";
 
-        CustomerConnect.ListBillNotYetPaid(param, new CallbackJSONArray() {
+        CustomerConnect.ListBillNotYetPaid(param, new CallbackCustomList() {
             @Override
-            public void onResponse(JSONArray result) {
-//                Util.debtFragment.reloadData(convertToListDebt(tvEmployeeName.getText().toString(),result));
+            public void onResponse(List<BaseModel> results) {
+
             }
 
             @Override

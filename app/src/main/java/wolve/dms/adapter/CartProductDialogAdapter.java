@@ -24,6 +24,7 @@ import wolve.dms.R;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackClickProduct;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Util;
@@ -34,7 +35,7 @@ import wolve.dms.utils.Util;
  */
 
 public class CartProductDialogAdapter extends RecyclerView.Adapter<CartProductDialogAdapter.ProductDialogShopCartAdapterViewHolder> {
-    private List<Product> mData = new ArrayList<>();
+    private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackViewPager mListener;
@@ -46,7 +47,7 @@ public class CartProductDialogAdapter extends RecyclerView.Adapter<CartProductDi
         void onChoosen(int position, int count);
     }
 
-    public CartProductDialogAdapter(List<Product> listChoosen, List<Product> list, int groupPosition, ProductGroup group, CallbackViewPager listener) {
+    public CartProductDialogAdapter(List<BaseModel> listChoosen, List<BaseModel> list, int groupPosition, BaseModel group, CallbackViewPager listener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mListener = listener;
@@ -94,7 +95,7 @@ public class CartProductDialogAdapter extends RecyclerView.Adapter<CartProductDi
         holder.lnParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
+//                try {
                      if (mData.get(position).getBoolean("checked")){
                          mData.get(position).put("checked", false);
                          holder.lnParent.setBackgroundColor(Color.parseColor("#ffffff") );
@@ -110,9 +111,9 @@ public class CartProductDialogAdapter extends RecyclerView.Adapter<CartProductDi
                          mListener.onChoosen(groupPosition,count);
 
                      }
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
+//                }catch (JSONException e){
+//                    e.printStackTrace();
+//                }
 
             }
         });
@@ -140,11 +141,11 @@ public class CartProductDialogAdapter extends RecyclerView.Adapter<CartProductDi
 
     }
 
-    public List<Product> getAllData(){
+    public List<BaseModel> getAllData(){
         return mData;
     }
 
-    private Boolean checkHasChoosen(List<Product> listChoosen, Product product){
+    private Boolean checkHasChoosen(List<BaseModel> listChoosen, BaseModel product){
         Boolean check = false;
         for (int i=0; i<listChoosen.size(); i++){
             if (listChoosen.get(i).getString("id").equals(product.getString("id"))){

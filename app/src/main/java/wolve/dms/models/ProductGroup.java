@@ -9,7 +9,7 @@ import java.util.List;
 
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
-import wolve.dms.utils.DataFilter;
+import wolve.dms.utils.DataUtil;
 
 /**
  * Created by macos on 9/16/17.
@@ -44,23 +44,25 @@ public class ProductGroup extends BaseModel{
         mListProductGroups = null;
     }
 
-    public static List<ProductGroup> getProductGroupList(){
+    public static List<BaseModel> getProductGroupList(){
+        List<BaseModel> mProductGroups = new ArrayList<>();
+
         if (mListProductGroups == null){
-            mListProductGroups = new ArrayList<>();
+            //mListProductGroups = new ArrayList<>();
             try {
                 JSONArray array = new JSONArray(CustomSQL.getString(Constants.PRODUCTGROUP_LIST));
                 for (int i=0; i<array.length(); i++){
-                    ProductGroup productGroup = new ProductGroup(array.getJSONObject(i));
-                    mListProductGroups.add(productGroup);
+                    BaseModel productGroup = new BaseModel(array.getJSONObject(i));
+                    mProductGroups.add(productGroup);
                 }
 
             } catch (JSONException e) {
-                return mListProductGroups;
+                return mProductGroups;
             }
 
         }
 
-        DataFilter.sortProductGroup(mListProductGroups, false);
-        return mListProductGroups;
+        DataUtil.sortProductGroup(mProductGroups, false);
+        return mProductGroups;
     }
 }

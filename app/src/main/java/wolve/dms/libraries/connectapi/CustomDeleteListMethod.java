@@ -1,13 +1,11 @@
 package wolve.dms.libraries.connectapi;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -17,8 +15,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import wolve.dms.callback.Callback;
-import wolve.dms.callback.CallbackList;
+import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Util;
@@ -27,10 +24,10 @@ import wolve.dms.utils.Util;
  * Created by tranhuy on 7/22/16.
  */
 public class CustomDeleteListMethod extends AsyncTask<String, Void, List<String>> {
-    private CallbackList mListener = null;
+    private CallbackListCustom mListener = null;
     private List<String> listURL;
 
-    public CustomDeleteListMethod(List<String> listurl,  CallbackList listener) {
+    public CustomDeleteListMethod(List<String> listurl,  CallbackListCustom listener) {
         mListener = listener;
         this.listURL = listurl;
 

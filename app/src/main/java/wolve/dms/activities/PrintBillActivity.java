@@ -32,8 +32,8 @@ import wolve.dms.adapter.PrintBillAdapter;
 import wolve.dms.adapter.PrintOldBillAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackJSONObject;
-import wolve.dms.callback.CallbackList;
+import wolve.dms.callback.CallbackCustom;
+import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.callback.CallbackProcess;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.libraries.printerdriver.BluetoothPrintBitmap;
@@ -45,7 +45,7 @@ import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomSQL;
-import wolve.dms.utils.DataFilter;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -142,7 +142,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     public void initialData() {
         currentCustomer = new Customer( getIntent().getExtras().getString(Constants.CUSTOMER));
         rePrint = getIntent().getExtras().getBoolean(Constants.RE_PRINT);
-        listBills = DataFilter.array2ListObject(getIntent().getExtras().getString(Constants.BILLS));
+        listBills = DataUtil.array2ListObject(getIntent().getExtras().getString(Constants.BILLS));
         listDebts = getListDebt(currentCustomer.getJSONArray("bills"));
 
         if (rePrint){
@@ -295,16 +295,16 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     private List<BaseModel> getAllDebt(){
         List<BaseModel> list = new ArrayList<>();
         BaseModel currentBill = new BaseModel();
-        try {
+//        try {
             currentBill.put("id", 0);
             currentBill.put("debt", adapterBill.getTotalMoney(listBills));
 
             list.add(0, currentBill);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
 
-        DataFilter.sortbyKey("createAt", listDebts, true);
+        DataUtil.sortbyKey("createAt", listDebts, true);
         for (int i=0; i< listDebts.size(); i++){
             list.add(listDebts.get(i));
         }
@@ -313,7 +313,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void showDialogPayment(){
-        dialogPayment = CustomCenterDialog.showDialogPayment("NHẬP SỐ TIỀN KHÁCH TRẢ", getAllDebt(), new CallbackList() {
+        dialogPayment = CustomCenterDialog.showDialogPayment("NHẬP SỐ TIỀN KHÁCH TRẢ", getAllDebt(), new CallbackListCustom() {
             @Override
             public void onResponse(final List result) {
                 dialogPayment.dismiss();
@@ -360,7 +360,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void createRVDebt(final List<BaseModel> list){
-        DataFilter.sortbyKey("createAt", list, true);
+        DataUtil.sortbyKey("createAt", list, true);
         adapterDebt = new DebtAdapter( list, true, false);
         Util.createLinearRV(rvDebts, adapterDebt);
 
@@ -454,7 +454,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
             for (int i=0; i<array.length(); i++){
                 mList.add(new BaseModel(array.getJSONObject(i)));
             }
-            listBill = DataFilter.mergeWithReturnBill(mList);
+            listBill = DataUtil.mergeWithReturnBill(mList);
 
             for (int j=0; j<listBill.size(); j++){
 //                JSONObject object = array.getJSONObject(j);
@@ -499,7 +499,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
     }
 
-    private void doPrintCurrentBill(final List<JSONObject> listPayments){
+    private void doPrintCurrentBill(final List<BaseModel> listPayments){
         Util.getInstance().showLoading("Đang in...");
         final Double total  = adapterBill.getTotalMoney() + adapterDebt.getTotalMoney();
         Double paid = getPaid(listPayments);
@@ -689,30 +689,45 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
     }
 
-    private void postBilltoServer(final List<JSONObject> listPayments) {
-        final String params = DataFilter.createPostBillParam(currentCustomer.getInt("id"), adapterBill.getTotalMoney(), 0.0, listBills, "");
+    private void postBilltoServer(final List<BaseModel> listPayments) {
+        final String params = DataUtil.createPostBillParam(currentCustomer.getInt("id"), adapterBill.getTotalMoney(), 0.0, listBills, "");
 
-        CustomerConnect.PostBill(params, new CallbackJSONObject() {
+        CustomerConnect.PostBill(params, new CallbackCustom() {
+//            @Override
+//            public void onResponse(JSONObject result) {
+//
+//                try {
+//                    if (listPayments.size()>0 ){
+//                        if (listPayments.get(0).getInt("billId") == 0){
+//                            listPayments.get(0).put("billId", result.getInt("id"));
+//                        }
+//
+//                        postPayToServer(DataUtil.createListPaymentParam(currentCustomer.getInt("id"),listPayments), true);
+//
+//                    }else {
+//                        Transaction.returnShopCartActivity(Constants.PRINT_BILL_ACTIVITY, Constants.RELOAD_DATA, Constants.RESULT_PRINTBILL_ACTIVITY);
+//
+//                    }
+//
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
+
             @Override
-            public void onResponse(JSONObject result) {
-
-                try {
-                    if (listPayments.size()>0 ){
-                        if (listPayments.get(0).getInt("billId") == 0){
-                            listPayments.get(0).put("billId", result.getInt("id"));
-                        }
-
-                        postPayToServer(DataFilter.createListPaymentParam(currentCustomer.getInt("id"),listPayments), true);
-
-                    }else {
-                        Transaction.returnShopCartActivity(Constants.PRINT_BILL_ACTIVITY, Constants.RELOAD_DATA, Constants.RESULT_PRINTBILL_ACTIVITY);
-
+            public void onResponse(BaseModel result) {
+                if (listPayments.size()>0 ){
+                    if (listPayments.get(0).getInt("billId") == 0){
+                        listPayments.get(0).put("billId", result.getInt("id"));
                     }
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                    postPayToServer(DataUtil.createListPaymentParam(currentCustomer.getInt("id"),listPayments), true);
 
+                }else {
+                    Transaction.returnShopCartActivity(Constants.PRINT_BILL_ACTIVITY, Constants.RELOAD_DATA, Constants.RESULT_PRINTBILL_ACTIVITY);
+
+                }
             }
 
             @Override
@@ -724,7 +739,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void postPayToServer(List<String> listParam, Boolean stopLoading){
-        CustomerConnect.PostListPay(listParam, new CallbackList() {
+        CustomerConnect.PostListPay(listParam, new CallbackListCustom() {
             @Override
             public void onResponse(List result) {
                 Transaction.returnShopCartActivity(Constants.PRINT_BILL_ACTIVITY, Constants.RELOAD_DATA, Constants.RESULT_PRINTBILL_ACTIVITY);
@@ -739,17 +754,14 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         }, stopLoading);
     }
 
-    private Double getPaid(List<JSONObject> listPayments){
+    private Double getPaid(List<BaseModel> listPayments){
         Double paid = 0.0;
 
-        try {
-            for (int i=0;i<listPayments.size();i++){
-                paid+= listPayments.get(i).getDouble("paid");
+        for (int i=0;i<listPayments.size();i++){
+            paid+= listPayments.get(i).getDouble("paid");
 
-            }
-        } catch (JSONException e) {
-            return paid;
         }
+
         return paid;
     }
 

@@ -14,14 +14,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.StatusAdapter;
 import wolve.dms.apiconnect.StatusConnect;
 import wolve.dms.callback.CallbackClickAdapter;
+import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONArray;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Status;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.Transaction;
@@ -90,11 +93,10 @@ public class StatusActivity extends BaseActivity implements View.OnClickListener
 
 
     protected void loadStatus() {
-        StatusConnect.ListStatus(new CallbackJSONArray() {
+        StatusConnect.ListStatus(new CallbackCustomList() {
             @Override
-            public void onResponse(JSONArray result) {
-                createRVProductGroup(result);
-
+            public void onResponse(List<BaseModel> results) {
+                createRVProductGroup(results);
             }
 
             @Override
@@ -105,19 +107,9 @@ public class StatusActivity extends BaseActivity implements View.OnClickListener
     }
 
 
-    private void createRVProductGroup(JSONArray jsonArray){
+    private void createRVProductGroup(List<BaseModel> list){
         listStatus = new ArrayList<>();
-
-        for (int i=0; i<jsonArray.length(); i++){
-            try {
-                Status status = new Status(jsonArray.getJSONObject(i));
-                listStatus.add(status);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        }
-        statusAdapter = new StatusAdapter(listStatus, new CallbackClickAdapter() {
+        statusAdapter = new StatusAdapter(list, new CallbackClickAdapter() {
             @Override
             public void onRespone(String data, int position) {
                 openFragmentNewStatus(data);

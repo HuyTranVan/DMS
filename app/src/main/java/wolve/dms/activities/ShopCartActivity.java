@@ -26,14 +26,15 @@ import wolve.dms.R;
 import wolve.dms.adapter.CartProductsAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackChangePrice;
-import wolve.dms.callback.CallbackJSONObject;
+import wolve.dms.callback.CallbackCustom;
 import wolve.dms.customviews.CInputForm;
 import wolve.dms.libraries.SwipeToDeleteCallback;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Customer;
 import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.DataFilter;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -53,12 +54,11 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     private FloatingActionButton btnAddProduct;
 
     private CartProductsAdapter adapterProducts;
-    private Customer currentCustomer;
-    protected List<Product> listInitialProduct = new ArrayList<>();
-//    private List<BaseModel> listBills = new ArrayList<>();
+    private BaseModel currentCustomer;
+    protected List<BaseModel> listInitialProduct = new ArrayList<>();
     private Uri imageChangeUri ;
-    protected List<Product> listProducts = new ArrayList<>();
-    protected List<ProductGroup> listProductGroups = new ArrayList<>();
+    protected List<BaseModel> listProducts = new ArrayList<>();
+    protected List<BaseModel> listProductGroups = new ArrayList<>();
 
 
     @Override
@@ -104,7 +104,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 //                for (int i=0; i<array.length(); i++){
 //                    mList.add(new BaseModel(array.getJSONObject(i)));
 //                }
-//                listBills = DataFilter.mergeWithReturnBill(mList);
+//                listBills = DataUtil.mergeWithReturnBill(mList);
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -172,7 +172,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
             case R.id.cart_submit:
 //                choicePayMethod();
-                Transaction.gotoPrintBillActivity(currentCustomer.CustomertoString(), DataFilter.convertListObject2Array(adapterProducts.getAllData()).toString(), false);
+                Transaction.gotoPrintBillActivity(currentCustomer.BaseModelstoString(), DataUtil.convertListObject2Array(adapterProducts.getAllData()).toString(), false);
 
                 break;
 
@@ -195,10 +195,10 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     }
 
     private void loadListProduct(){
-        List<Product> all = Product.getProductList();
-        try {
+        List<BaseModel> all = Product.getProductList();
+//        try {
             for (int i=0 ; i<all.size(); i++){
-                Product product = all.get(i);
+                BaseModel product = all.get(i);
                 product.put("checked", false);
                 //product.put("isvisible", true);
 
@@ -207,11 +207,11 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 //                }
 
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
 
-        DataFilter.sortProduct(listProducts, false);
+        DataUtil.sortProduct(listProducts, false);
     }
 
     private void loadListProductGroup(){
@@ -219,7 +219,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
     }
 
-    private void createRVProduct(final List<Product> list){
+    private void createRVProduct(final List<BaseModel> list){
         adapterProducts = new CartProductsAdapter(list, new CallbackChangePrice() {
             @Override
             public void NewPrice(Double price) {
@@ -239,9 +239,9 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
     }
 
-    protected void updatelistProduct(List<Product> list_product){
+    protected void updatelistProduct(List<BaseModel> list_product){
         for (int i=0; i<list_product.size(); i++){
-            try {
+//            try {
                 Product product = new Product(new JSONObject()) ;
                 product.put("id", list_product.get(i).getInt("id"));
                 product.put("name", list_product.get(i).getString("name"));
@@ -263,9 +263,9 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
                 adapterProducts.addItemProduct(0,product);
 
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
         }
         updateBDFValue();
 
@@ -275,7 +275,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     private void updateBDFValue(){
         if (adapterProducts.getAllDataProduct().size() >0 ){
             tvBDF.setVisibility(View.VISIBLE );
-            tvBDF.setText(String.format("BDF:%s ", DataFilter.defineBDFPercent(adapterProducts.getAllDataBase())) +"%");
+            tvBDF.setText(String.format("BDF:%s ", DataUtil.defineBDFPercent(adapterProducts.getAllDataBase())) +"%");
 
         }else {
             tvBDF.setVisibility(View.GONE);
@@ -283,7 +283,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     }
 
 //    private void submitBill(final Double total, final Double paid){
-//        final String params = DataFilter.createPostBillParam(currentCustomer.getInt("id"),total, paid, adapterProducts.getAllData(), tvNote.getText().toString().trim());
+//        final String params = DataUtil.createPostBillParam(currentCustomer.getInt("id"),total, paid, adapterProducts.getAllData(), tvNote.getText().toString().trim());
 //
 //        if (btsocket != null && btsocket.isConnected()){
 //            Util.getInstance().showLoading("Đang in...");
@@ -340,10 +340,10 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 //    }
 
     private void postBills(String params){
-        CustomerConnect.PostBill(params, new CallbackJSONObject() {
-            @Override
-            public void onResponse(JSONObject result) {
-                Transaction.returnCustomerActivity(Constants.SHOP_CART_ACTIVITY, "", Constants.RESULT_SHOPCART_ACTIVITY);
+        CustomerConnect.PostBill(params, new CallbackCustom() {
+//            @Override
+//            public void onResponse(JSONObject result) {
+//                Transaction.returnCustomerActivity(Constants.SHOP_CART_ACTIVITY, "", Constants.RESULT_SHOPCART_ACTIVITY);
 
                 //get customer detail from serer
 //                String param = currentCustomer.getString("id");
@@ -359,6 +359,11 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 //
 //                    }
 //                }, true);
+//            }
+
+            @Override
+            public void onResponse(BaseModel result) {
+                Transaction.returnCustomerActivity(Constants.SHOP_CART_ACTIVITY, "", Constants.RESULT_SHOPCART_ACTIVITY);
             }
 
             @Override
@@ -477,7 +482,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
     @Override
     public boolean onLongClick(View v) {
-        Transaction.gotoPrintBillActivity(currentCustomer.CustomertoString(), DataFilter.convertListObject2Array(adapterProducts.getAllData()).toString(), false);
+        Transaction.gotoPrintBillActivity(currentCustomer.BaseModelstoString(), DataUtil.convertListObject2Array(adapterProducts.getAllData()).toString(), false);
 
         return true;
     }

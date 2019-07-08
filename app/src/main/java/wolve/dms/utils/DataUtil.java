@@ -23,7 +23,7 @@ import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.models.User;
 
-public class DataFilter {
+public class DataUtil {
     public static String createPostBillParam(int customerId, final Double total, final Double paid, List<JSONObject> listProduct, String note){
         final JSONObject params = new JSONObject();
         try {
@@ -74,29 +74,25 @@ public class DataFilter {
 
     }
 
-    public static List<String> createListPaymentParam(int customerId,List<JSONObject> list){
+    public static List<String> createListPaymentParam(int customerId,List<BaseModel> list){
         List<String> results = new ArrayList<>();
-        try {
-            for (int i=0; i<list.size(); i++){
-                String s = String.format(Api_link.PAY_PARAM,
-                        customerId,
-                        String.valueOf(Math.round(list.get(i).getDouble("paid"))),
-                        list.get(i).getInt("billId"),
-                        User.getId(),
-                        "");
+        for (int i=0; i<list.size(); i++){
+            String s = String.format(Api_link.PAY_PARAM,
+                    customerId,
+                    String.valueOf(Math.round(list.get(i).getDouble("paid"))),
+                    list.get(i).getInt("billId"),
+                    User.getId(),
+                    "");
 //                        note.equals("")?"" :"&note="+note )
 
-                results.add(s);
+            results.add(s);
 
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
 
         return results;
     }
 
-    public static JSONArray convertListObject2Array(List<JSONObject> list){
+    public static JSONArray convertListObject2Array(List<BaseModel> list){
         JSONArray array = new JSONArray();
         for (int i=0; i< list.size(); i++){
             array.put(list.get(i));
@@ -123,9 +119,24 @@ public class DataFilter {
         return list;
     }
 
+    public static List<BaseModel> array2ListBaseModel(JSONArray array){
+        List<BaseModel> list = new ArrayList<>();
+        try {
+            for (int i=0; i<array.length(); i++){
+                list.add(new BaseModel(array.getJSONObject(i)));
+            }
+
+        } catch (JSONException e) {
+            return list;
+        }
+
+        return list;
+    }
+
+
     public static List<BaseModel> groupDebtByCustomer(final List<BaseModel> list){
         final List<BaseModel> listResult = new ArrayList<>();
-        try {
+//        try {
             for (int i=0; i<list.size(); i++){
                 BaseModel customer1 = new BaseModel(list.get(i).getJsonObject("customer"));
 
@@ -201,17 +212,17 @@ public class DataFilter {
 //                }
 
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
 
 
         return listResult;
     }
 
-    public static List<ProductGroup> sortProductGroup(List<ProductGroup> list, boolean reverse){
-        Collections.sort(list, new Comparator<ProductGroup>(){
-            public int compare(ProductGroup obj1, ProductGroup obj2) {
+    public static List<BaseModel> sortProductGroup(List<BaseModel> list, boolean reverse){
+        Collections.sort(list, new Comparator<BaseModel>(){
+            public int compare(BaseModel obj1, BaseModel obj2) {
                 return obj1.getString("name").compareToIgnoreCase(obj2.getString("name"));
             }
         });
@@ -223,9 +234,9 @@ public class DataFilter {
         return list;
     }
 
-    public static List<Product> sortProduct(List<Product> list, boolean reverse){
-        Collections.sort(list, new Comparator<Product>(){
-            public int compare(Product obj1, Product obj2) {
+    public static List<BaseModel> sortProduct(List<BaseModel> list, boolean reverse){
+        Collections.sort(list, new Comparator<BaseModel>(){
+            public int compare(BaseModel obj1, BaseModel obj2) {
                 return obj1.getString("name").compareToIgnoreCase(obj2.getString("name"));
             }
         });
@@ -389,7 +400,7 @@ public class DataFilter {
     }
 
     public static List<BaseModel> getCashByUser(List<BaseModel> listbill, List<BaseModel> listpayment, List<BaseModel> users){
-        try {
+//        try {
             for (BaseModel user: users){
                 double paid = 0.0;
                 user.put("paid", 0);
@@ -416,9 +427,9 @@ public class DataFilter {
                 }
             }
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
 
         return users;
 
@@ -501,6 +512,151 @@ public class DataFilter {
         }
 
         return result;
+    }
+
+    public static boolean checkDuplicate(List<BaseModel> list, String key, BaseModel object){
+        boolean check = false;
+        for (int i=0; i<list.size(); i++){
+            if (list.get(i).getString(key).equals( object.getString(key))){
+                check = true;
+                break;
+            }
+        }
+
+        return check;
+    }
+
+    private List<List<Object>> getListValueExportToSheet(List<Object> listSheetID, List<Bill> listbill){
+        List<List<Object>> values = new ArrayList<>();
+        try {
+            for (int i=0; i<listbill.size(); i++){
+                Bill bill = listbill.get(i);
+                if (!listSheetID.toString().contains(bill.getString("id"))){
+                    final Customer customer = new Customer(bill.getJsonObject("customer"));
+                    List<Object> data = new ArrayList<>();
+                    data.add(bill.getString("id"));
+                    data.add(Util.DateString(bill.getLong("createAt")));
+                    data.add(bill.getJsonObject("user").getString("displayName"));
+                    data.add(Constants.getShopTitle(customer.getString("shopType") , null) + " " + customer.getString("signBoard"));
+                    data.add(customer.getString("phone"));
+                    data.add(bill.getDouble("total"));
+                    data.add(bill.getDouble("paid"));
+                    data.add(bill.getDouble("debt"));
+                    data.add(bill.getString("note"));
+
+                    values.add(data);
+                }
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return values;
+    }
+
+    public static BaseModel createBillParam(long starDay, long lastDay){
+        BaseModel billparam = new BaseModel();
+        billparam.put("url", Api_link.BILLS
+                + String.format(Api_link.DEFAULT_RANGE, 1,5000)
+                + String.format(Api_link.BILL_RANGE_PARAM, starDay, lastDay));
+        billparam.put("method", "GET");
+        billparam.put("isjson", null );
+        billparam.put("param", null );
+
+        return billparam;
+
+    }
+
+
+    public static BaseModel createPaymentParam(long starDay, long lastDay){
+        BaseModel payparam = new BaseModel();
+        payparam.put("url", Api_link.BILLS_HAVE_PAYMENT
+                + String.format(Api_link.DEFAULT_RANGE, 1,1500)
+                + String.format(Api_link.BILL_HAVE_PAYMENT_RANGE_PARAM, starDay, lastDay));
+        payparam.put("method", "GET");
+        payparam.put("isjson", null );
+        payparam.put("param", null );
+
+        return payparam;
+
+    }
+
+    public static BaseModel createDebtParam(){
+        BaseModel payparam = new BaseModel();
+        payparam.put("url", Api_link.CUSTOMERS+ String.format(Api_link.DEFAULT_RANGE, 1,500));
+        payparam.put("method", "POST");
+        payparam.put("isjson", false );
+        payparam.put("param", String.format(Api_link.CUSTOMER_DEBT_PARAM, 0) );
+
+        return payparam;
+
+    }
+
+    public static BaseModel createNewCustomerParam(String param){
+        BaseModel paramCustomer = new BaseModel();
+        paramCustomer.put("url", Api_link.CUSTOMER_NEW );
+        paramCustomer.put("method", "POST");
+        paramCustomer.put("isjson", false );
+        paramCustomer.put("param", param );
+
+        return paramCustomer;
+
+    }
+
+    public static BaseModel getListCustomerParam(String param, int countinPage){
+        BaseModel paramCustomer = new BaseModel();
+        paramCustomer.put("url", Api_link.CUSTOMERS+ String.format(Api_link.DEFAULT_RANGE, 1,countinPage) );
+        paramCustomer.put("method", "POST");
+        paramCustomer.put("isjson", false );
+        paramCustomer.put("param", param );
+
+        return paramCustomer;
+
+    }
+
+    public static BaseModel postCheckinParam(String param){
+        BaseModel paramCheckin = new BaseModel();
+        paramCheckin.put("url", Api_link.CHECKIN_NEW );
+        paramCheckin.put("method", "POST");
+        paramCheckin.put("isjson", false );
+        paramCheckin.put("param", param );
+
+        return paramCheckin;
+
+    }
+
+    public static BaseModel postBillParam(String param){
+        BaseModel paramCheckin = new BaseModel();
+        paramCheckin.put("url", Api_link.CHECKIN_NEW );
+        paramCheckin.put("method", "POST");
+        paramCheckin.put("isjson", true );
+        paramCheckin.put("param", param );
+
+        return paramCheckin;
+
+    }
+
+    public static BaseModel postPayParam(String param){
+        BaseModel paramCheckin = new BaseModel();
+        paramCheckin.put("url", Api_link.PAY_NEW );
+        paramCheckin.put("method", "POST");
+        paramCheckin.put("isjson", false );
+        paramCheckin.put("param", param );
+
+        return paramCheckin;
+
+    }
+
+    public static BaseModel postLoginParam(String param){
+        BaseModel paramCheckin = new BaseModel();
+        paramCheckin.put("url", Api_link.LOGIN);
+        paramCheckin.put("method", "POST");
+        paramCheckin.put("isjson", false );
+        paramCheckin.put("param", param );
+
+        return paramCheckin;
+
     }
 
 }

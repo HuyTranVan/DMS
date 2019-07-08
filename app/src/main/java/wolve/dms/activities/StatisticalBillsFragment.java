@@ -25,6 +25,8 @@ import wolve.dms.R;
 import wolve.dms.adapter.StatisticalBillsAdapter;
 import wolve.dms.adapter.StatisticalDebtAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.callback.CallbackCustom;
+import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackString;
@@ -121,11 +123,10 @@ public class StatisticalBillsFragment extends Fragment implements View.OnClickLi
         adapter = new StatisticalBillsAdapter(rdTotal.isChecked()? list : listDebt, new CallbackString() {
             @Override
             public void Result(String s) {
-                CustomerConnect.GetCustomerDetail(s, new CallbackJSONObject() {
+                CustomerConnect.GetCustomerDetail(s, new CallbackCustom() {
                     @Override
-                    public void onResponse(JSONObject result) {
-                        Transaction.gotoCustomerActivity(result.toString(), false);
-
+                    public void onResponse(BaseModel result) {
+                        Transaction.gotoCustomerActivity(result.BaseModelstoString(), false);
                     }
 
                     @Override
@@ -154,28 +155,28 @@ public class StatisticalBillsFragment extends Fragment implements View.OnClickLi
 
     private void showAllDebt(final String userName){
         if (listDebt.size()==0){
-            CustomerConnect.ListBill("", new CallbackJSONArray() {
+            CustomerConnect.ListBill("", new CallbackCustomList() {
+//                @Override
+//                public void onResponse(JSONArray result) {
+//
+//                    //CustomCenterDialog.showDialogAllDebt(userName, listDebt);
+//
+//                }
+
                 @Override
-                public void onResponse(JSONArray result) {
-                    for (int i=0; i<result.length(); i++){
-                        try {
-                            JSONObject object = result.getJSONObject(i);
-                            if (object.getDouble("debt") != 0 ){
-                                listDebt.add(new BaseModel(object));
+                public void onResponse(List<BaseModel> results) {
+                    for (int i=0; i<results.size(); i++){
+                        if (results.get(i).getDouble("debt") != 0 ){
+                            listDebt.add(results.get(i));
 
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
 
                     }
-                    //CustomCenterDialog.showDialogAllDebt(userName, listDebt);
-
                 }
 
                 @Override
                 public void onError(String error) {
+
                 }
             }, true);
 

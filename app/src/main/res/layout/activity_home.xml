@@ -50,7 +50,7 @@
             android:orientation="horizontal"
             android:background="?selectableItemBackground"
             android:gravity="center_vertical"
-            android:layout_toLeftOf="@id/home_line">
+            android:layout_toLeftOf="@id/home_relogin">
 
             <wolve.dms.customviews.CTextIcon
                 android:id="@+id/home_logout"
@@ -71,26 +71,34 @@
 
         </LinearLayout>
 
-        <View
-            android:id="@+id/home_line"
-            android:layout_width="1dip"
-            android:layout_height="@dimen/_15sdp"
-            android:background="@color/black_text_color_hint"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:layout_marginLeft="@dimen/_10sdp"
-            android:layout_toLeftOf="@id/home_change_user"/>
+        <LinearLayout
+            android:id="@+id/home_relogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_alignParentRight="true">
 
-        <wolve.dms.customviews.CTextIcon
-            android:id="@+id/home_change_user"
-            android:layout_width="@dimen/_35sdp"
-            android:layout_height="@dimen/_35sdp"
-            android:background="?selectableItemBackgroundBorderless"
-            android:text="@string/icon_reload"
-            android:textColor="@color/black_text_color_hint"
-            android:textSize="@dimen/_14sdp"
-            android:layout_alignParentRight="true"
-            android:gravity="center"/>
+            <View
+                android:layout_width="1dip"
+                android:layout_height="@dimen/_15sdp"
+                android:background="@color/black_text_color_hint"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_toLeftOf="@id/home_change_user"/>
+
+            <wolve.dms.customviews.CTextIcon
+                android:id="@+id/home_change_user"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:background="?selectableItemBackgroundBorderless"
+                android:text="@string/icon_users"
+                android:textColor="@color/black_text_color_hint"
+                android:textSize="@dimen/_14sdp"
+                android:gravity="center"/>
+        </LinearLayout>
+
+
 
 
 

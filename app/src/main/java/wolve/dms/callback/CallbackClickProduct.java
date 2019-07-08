@@ -4,6 +4,7 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 
 /**
@@ -11,6 +12,6 @@ import wolve.dms.models.Product;
  */
 
 public interface CallbackClickProduct {
-    void ProductChoice(Product product);
-    void ProductAdded(Product newProduct);
+    void ProductChoice(BaseModel product);
+    void ProductAdded(BaseModel newProduct);
 }

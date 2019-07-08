@@ -38,12 +38,12 @@ import wolve.dms.utils.Util;
  */
 
 public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapter.CartProductsViewHolder> {
-    private List<Product> mData = new ArrayList<>();
+    private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackChangePrice mChangePrice;
 
-    public CartProductsAdapter(List<Product> list, CallbackChangePrice callbackChangePrice) {
+    public CartProductsAdapter(List<BaseModel> list, CallbackChangePrice callbackChangePrice) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mChangePrice = callbackChangePrice;
@@ -85,9 +85,9 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
             public void onClick(View v) {
                 CustomCenterDialog.showDialogEditProduct(mData.get(position), new CallbackClickProduct() {
                     @Override
-                    public void ProductChoice(Product product) {
+                    public void ProductChoice(BaseModel product) {
                         //mData.remove(position);
-                        try {
+//                        try {
                             mData.get(position).put("quantity", product.getInt("quantity"));
                             mData.get(position).put("discount", product.getDouble("discount"));
                             mData.get(position).put("totalMoney", product.getDouble("totalMoney"));
@@ -96,14 +96,14 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
                             mChangePrice.NewPrice(updatePrice(mData));
                             notifyItemChanged(position);
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
 
                     }
 
                     @Override
-                    public void ProductAdded(Product newProduct) {
+                    public void ProductAdded(BaseModel newProduct) {
                         mData.add(newProduct);
                         mChangePrice.NewPrice(updatePrice(mData));
                         notifyDataSetChanged();
@@ -115,7 +115,7 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
         holder.btnSub.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
+//                try {
                     int currentQuantity = mData.get(position).getInt("quantity");
                     if ( currentQuantity > 1){
                         mData.get(position).put("quantity", currentQuantity -1);
@@ -125,15 +125,15 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
                         mChangePrice.NewPrice(updatePrice(mData));
                         notifyItemChanged(position);
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
             }
         });
         holder.btnPlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
+//                try {
                     int currentQuantity = mData.get(position).getInt("quantity");
                     mData.get(position).put("quantity", currentQuantity +1);
                     Double discount = mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount");
@@ -141,9 +141,9 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
                     mChangePrice.NewPrice(updatePrice(mData));
                     notifyItemChanged(position);
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
             }
         });
 
@@ -244,14 +244,14 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
         mChangePrice.NewPrice(updatePrice(mData));
     }
 
-    public List<Product> getAllDataProduct(){
+    public List<BaseModel> getAllDataProduct(){
         return mData;
     }
 
     public void removeItem(final int pos){
 
 
-        final Product product = mData.get( pos);
+        final BaseModel product = mData.get( pos);
         Util.showSnackbar(String.format("Xóa sản phẩm %s", mData.get(pos).getString("name")),
                 "Hoàn tác",
                 new ActionClickListener() {
@@ -304,12 +304,12 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
         super.unregisterAdapterDataObserver(observer);
     }
 
-    public List<JSONObject> getAllData(){
-        List<JSONObject> list = new ArrayList<>();
-        for (int i=0; i<mData.size(); i++){
-            list.add(mData.get(i).ProductJSONObject());
-        }
-        return list;
+    public List<BaseModel> getAllData(){
+//        List<BaseModel> list = new ArrayList<>();
+//        for (int i=0; i<mData.size(); i++){
+//            list.add(mData.get(i).ProductJSONObject());
+//        }
+        return mData;
     }
 
     public List<BaseModel> getAllDataBase(){
@@ -320,7 +320,7 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
         return list;
     }
 
-    private Double updatePrice(List<Product> list){
+    private Double updatePrice(List<BaseModel> list){
         Double sum = 0.0;
         for (int i = 0; i < list.size(); i++) {
             sum += list.get(i).getDouble("totalMoney");

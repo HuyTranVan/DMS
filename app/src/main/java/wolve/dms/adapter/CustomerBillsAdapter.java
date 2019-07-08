@@ -18,12 +18,12 @@ import java.util.List;
 import wolve.dms.R;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackList;
+import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
-import wolve.dms.utils.DataFilter;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 /**
@@ -49,7 +49,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
         this.mListenerBill = listener;
         this.mListerner = listener4;
 
-        DataFilter.sortbyKey("createAt", mData, true);
+        DataUtil.sortbyKey("createAt", mData, true);
 
     }
 
@@ -202,7 +202,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
 //                        }
 //                    }
 
-                        CustomerConnect.DeleteListBill(listParams, new CallbackList() {
+                        CustomerConnect.DeleteListBill(listParams, new CallbackListCustom() {
                             @Override
                             public void onResponse(List result) {
                                 Util.showToast("Xóa thành công");
@@ -231,12 +231,12 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
 
             CustomCenterDialog.showDialogPayment(String.format("THANH TOÁN HÓA ĐƠN %s", Util.DateString(mData.get(currentPosition).getLong("createAt"))),
                     currentDebt,
-                    new CallbackList() {
+                    new CallbackListCustom() {
                         @Override
                         public void onResponse(List result) {
                             try {
-                                CustomerConnect.PostListPay(DataFilter.createListPaymentParam(new JSONObject(mData.get(currentPosition).getString("customer")).getInt("id"),
-                                        result), new CallbackList() {
+                                CustomerConnect.PostListPay(DataUtil.createListPaymentParam(new JSONObject(mData.get(currentPosition).getString("customer")).getInt("id"),
+                                        result), new CallbackListCustom() {
                                     @Override
                                     public void onResponse(List result) {
                                         mListerner.Method1(true);
@@ -270,7 +270,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
 
     private List<BaseModel> returnProduct(List<BaseModel> list){
         List<BaseModel> listResult = new ArrayList<>();
-        try {
+//        try {
             for (int i=0; i<list.size(); i++){
                 list.get(i).put("quantity", mergeQuantity(list, list.get(i)));
                 if (list.get(i).getInt("quantity") > 0){
@@ -278,9 +278,9 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
                 }
 
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
         return listResult;
 
     }

@@ -47,11 +47,11 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
         this.mData = list;
 
         for (int i=0; i<mData.size(); i++){
-            try {
+//            try {
                 mData.get(i).put("quantityReturn", 0);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
         }
 
     }
@@ -77,7 +77,7 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
         holder.btnSub.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
+//                try {
                     int currentQuantity = mData.get(position).getInt("quantityReturn");
                     if ( currentQuantity > 0){
                         mData.get(position).put("quantityReturn", currentQuantity -1);
@@ -85,9 +85,9 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
 
                         mListener.Result(sumReturnBill());
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
             }
         });
 
@@ -95,16 +95,16 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
             @Override
             public void onClick(View v) {
                 holder.btnPlus.setVisibility(View.INVISIBLE);
-                try {
+//                try {
                     int currentQuantity = mData.get(position).getInt("quantityReturn");
                     mData.get(position).put("quantityReturn", currentQuantity +1);
                     notifyItemChanged(position);
 
                     mListener.Result(sumReturnBill());
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
             }
         });
 
@@ -139,7 +139,7 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
 
         List<BaseModel> listResult = new ArrayList<>();
         for (int i=0; i<mData.size(); i++){
-            try {
+//            try {
                 if (mData.get(i).getInt("quantityReturn") >0){
                     mData.get(i).put("quantity", mData.get(i).getInt("quantityReturn")*-1);
                     Double total = (mData.get(i).getDouble("unitPrice") - mData.get(i).getDouble("discount")) *mData.get(i).getDouble("quantity") ;
@@ -151,16 +151,16 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
 
                     listResult.add(mData.get(i));
                 }
-            } catch (JSONException e) {
+//            } catch (JSONException e) {
 //                    e.printStackTrace();
-            }
+//            }
         }
 
         return listResult;
     }
 
     private Double getDiscountFromOldBill(BaseModel objectCurrent){
-        List<Product> listProduct = Product.getProductList();
+        List<BaseModel> listProduct = Product.getProductList();
         Double discount =0.0;
         for (int i=0; i<listProduct.size(); i++){
             if (listProduct.get(i).getInt("id") == objectCurrent.getInt("productId")){

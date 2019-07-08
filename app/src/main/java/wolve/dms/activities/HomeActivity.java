@@ -3,13 +3,9 @@ package wolve.dms.activities;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -17,24 +13,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.HomeAdapter;
-import wolve.dms.apiconnect.SheetConnect;
 import wolve.dms.apiconnect.SystemConnect;
 import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickAdapter;
-import wolve.dms.callback.CallbackList;
-import wolve.dms.callback.CallbackObject;
+import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.customviews.CTextIcon;
-import wolve.dms.libraries.ItemDecorationGridSpace;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.District;
@@ -58,7 +49,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     private RecyclerView rvItems;
     private CTextIcon btnLogout, btnChangeUser;
     private TextView tvFullname ;
-    private LinearLayout lnUser;
+    private LinearLayout lnUser, lnRelogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +73,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         tvFullname = findViewById(R.id.home_fullname);
         lnUser = findViewById(R.id.home_user);
         btnChangeUser = findViewById(R.id.home_change_user);
+        lnRelogin = findViewById(R.id.home_relogin);
     }
 
     @Override
@@ -93,6 +85,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         }
         createListItem();
         tvFullname.setText(String.format("%s _ %s (%s)",User.getFullName(), User.getRole(), Distributor.getName()));
+        lnRelogin.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN) ? View.VISIBLE : View.GONE);
 
     }
 
@@ -105,7 +98,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     public void addEvent() {
         btnChangeUser.setOnClickListener(this);
-        //lnUser.setOnLongClickListener(this);
         lnUser.setOnClickListener(this);
     }
 
@@ -159,38 +151,42 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             }
         });
 
-
-
     }
 
     private void changeUser(){
         List<BaseModel> listTemp = CustomSQL.getListObject(Constants.USER_LIST);
         List<BaseModel> listUser = new ArrayList<>();
 
-        try {
-            for (int i=0; i<listTemp.size(); i++){
-                if (listTemp.get(i).getInt("id") !=  User.getId()){
-                    listTemp.get(i).put("showName", String.format("%s (%s)",listTemp.get(i).getString("displayName") ,
-                            listTemp.get(i).getJsonObject("distributor").getString("name")) );
+        for (int i=0; i<listTemp.size(); i++){
+            if (listTemp.get(i).getInt("id") !=  User.getId()){
+                listTemp.get(i).put("showName", String.format("%s (%s)",listTemp.get(i).getString("displayName") ,
+                                                new BaseModel(listTemp.get(i).getJsonObject("distributor")).getString("name")) );
 
-                    listUser.add(listTemp.get(i));
+                listUser.add(listTemp.get(i));
 
-                }
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
 
-        if (listUser.size()>0){
-            CustomBottomDialog.choiceListObject("ĐỔI SANG TÀI KHOẢN", "showName", listUser, new CallbackBaseModel() {
-                @Override
-                public void onResponse(BaseModel object) {
-                    showReloginDialog(object);
+        BaseModel newobject = new BaseModel();
+        newobject.put("showName", "TÀI KHOẢN KHÁC ...");
+        newobject.put("phone","");
+        newobject.put("displayName","");
+        listUser.add(0, newobject);
 
-                }
+        CustomBottomDialog.choiceListObject("ĐỔI SANG TÀI KHOẢN", "showName", listUser, new CallbackBaseModel() {
+            @Override
+            public void onResponse(BaseModel object) {
+                showReloginDialog(object);
 
-            });
-        }
+            }
+
+            @Override
+            public void onError() {
+
+            }
+
+        });
+
     }
 
     private void showReloginDialog(BaseModel user){
@@ -266,12 +262,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             case 3:
                 Transaction.gotoScannerActivity();
 
-//                if (User.getRole().equals(Constants.ROLE_ADMIN)){
-
-//                }else {
-//                    Util.showToast("Chưa hỗ trợ");
-//                }
-
                 break;
 
             case 4:
@@ -286,7 +276,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     private void loadCurrentData() {
-        SystemConnect.getAllData(new CallbackList() {
+        SystemConnect.getAllData(new CallbackListCustom() {
             @Override
             public void onResponse(List result) {
                 try {

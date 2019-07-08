@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Util;
 
@@ -29,7 +30,7 @@ public class ViewpagerShopcartAdapter extends PagerAdapter {
     private  List<String> listTitle = new ArrayList<>();
     private View view;
 
-    public ViewpagerShopcartAdapter(List<CartProductDialogAdapter> listAdapter, List<ProductGroup> productGroups){
+    public ViewpagerShopcartAdapter(List<CartProductDialogAdapter> listAdapter, List<BaseModel> productGroups){
         this.mContext = Util.getInstance().getCurrentActivity();
         this.listAdapter = listAdapter;
 

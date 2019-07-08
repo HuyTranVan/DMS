@@ -34,6 +34,7 @@ public class StatisticalDebtAdapter extends RecyclerView.Adapter<StatisticalDebt
     private Context mContext;
     private TextView tvSum;
     private CallbackString mListener;
+    protected double totalDebt;
 
     public StatisticalDebtAdapter(TextView tvEmployee, TextView tvsum, List<BaseModel> data,  CallbackString listener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
@@ -55,7 +56,7 @@ public class StatisticalDebtAdapter extends RecyclerView.Adapter<StatisticalDebt
             }
         }
 
-        updateSumDebt(mData);
+        tvSum.setText(String.format("Tổng công nợ: %s", Util.FormatMoney(updateSumDebt(mData))));
 
         Collections.sort(mData, new Comparator<BaseModel>(){
             public int compare(BaseModel obj1, BaseModel obj2) {
@@ -147,7 +148,7 @@ public class StatisticalDebtAdapter extends RecyclerView.Adapter<StatisticalDebt
 
                     mData = listTemp;
                 }
-                updateSumDebt(mData);
+                tvSum.setText(String.format("Tổng công nợ: %s", Util.FormatMoney(updateSumDebt(mData))));
 
                 FilterResults filterResults = new FilterResults();
                 filterResults.values = mData;
@@ -162,11 +163,15 @@ public class StatisticalDebtAdapter extends RecyclerView.Adapter<StatisticalDebt
         };
     }
 
-    private void updateSumDebt(List<BaseModel> list){
-        double debt = 0.0;
+    private double updateSumDebt(List<BaseModel> list){
+        totalDebt = 0.0;
         for (BaseModel row : list){
-            debt += row.getDouble("debt");
+            totalDebt += row.getDouble("debt");
         }
-        tvSum.setText(String.format("Tổng công nợ: %s", Util.FormatMoney(debt)));
+        return totalDebt;
+    }
+
+    public double getTotalDebt(){
+        return totalDebt;
     }
 }

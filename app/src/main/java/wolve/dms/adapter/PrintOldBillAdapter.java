@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.utils.DataFilter;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 
@@ -51,7 +51,7 @@ public class PrintOldBillAdapter extends RecyclerView.Adapter<PrintOldBillAdapte
             holder.tvPaid.setText(Util.FormatMoney(mData.get(position).getDouble("paid")));
             holder.tvDebt.setText(Util.FormatMoney(mData.get(position).getDouble("debt")));
 
-            List<JSONObject> list = DataFilter.array2ListObject(mData.get(position).getString("billDetails"));
+            List<JSONObject> list = DataUtil.array2ListObject(mData.get(position).getString("billDetails"));
 
             PrintBillAdapter adapterBill = new PrintBillAdapter(printSize , list) ;
             Util.createLinearRV(holder.rvBill, adapterBill);

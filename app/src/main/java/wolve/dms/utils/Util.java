@@ -28,6 +28,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -72,6 +73,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import wolve.dms.R;
 import wolve.dms.activities.MapsActivity;
 import wolve.dms.activities.ShopCartActivity;
 import wolve.dms.activities.StatisticalBillsFragment;
@@ -87,6 +89,7 @@ import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
 import wolve.dms.models.Product;
 import wolve.dms.models.Province;
+import wolve.dms.models.User;
 
 import static wolve.dms.utils.Constants.REQUEST_GOOGLE_PLAY_SERVICES;
 
@@ -167,6 +170,13 @@ public class Util {
         showLoading("Đang xử lý...");
     }
 
+    public void showLoading(boolean show) {
+        if (show){
+            showLoading("Đang xử lý...");
+        }
+
+    }
+
     public void showLoading(final String message) {
         if (cDialog == null || !cDialog.isShowing()) {
 
@@ -218,6 +228,33 @@ public class Util {
 
         SnackbarManager.show(snb, Util.getInstance().getCurrentActivity()); // where it is displayed
     }
+
+    public static void showSnackbarError(String content) {
+        Snackbar snb = Snackbar.with(Util.getInstance().getCurrentActivity().getApplicationContext())
+                .type(SnackbarType.MULTI_LINE) // Set is as a multi-line snackbar
+                .text(content) // text to be displayed
+                .actionColor(Color.parseColor("#2196f3"))
+                .duration(Snackbar.SnackbarDuration.LENGTH_LONG)
+                .actionLabel("REPORT")
+                .actionColor(Util.getInstance().getCurrentActivity().getResources().getColor(R.color.colorBlue))
+                .actionListener(new ActionClickListener() {
+                    @Override
+                    public void onActionClicked(Snackbar snackbar) {
+                        Log.e("click", "yes");
+
+                        Transaction.sendEmailReport(String.format("User: %s\nPhone: %s\nCurrentTime: %s\n\nContent: %s",
+                                User.getFullName(),
+                                User.getPhone(),
+                                CurrentMonthYearHour(),
+                                content));
+
+                    }
+                });
+
+        SnackbarManager.show(snb, Util.getInstance().getCurrentActivity()); // where it is displayed
+    }
+
+
 
     public static void showSnackbar(String content, String actionlabel, boolean isIndefinite, ActionClickListener actionListener) {
         Snackbar snb = Snackbar.with(Util.getInstance().getCurrentActivity().getApplicationContext())
@@ -942,15 +979,15 @@ public class Util {
             }
         }
 
-        try {
+//        try {
             object.put("total", total);
             object.put("paid", paid);
             object.put("debt", debt);
             object.put("size", list.size());
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
         return object;
     }
 
@@ -1341,6 +1378,26 @@ public class Util {
             }
         }
         return true;
+    }
+
+    public static boolean isJSONObject(String test) {
+        try {
+            new JSONObject(test);
+            return true;
+        } catch (JSONException ex) {
+            return false;
+
+        }
+
+    }
+
+    public static String atCurrentLine() {
+        int level = 3;
+        StackTraceElement[] traces;
+        traces = Thread.currentThread().getStackTrace();
+        return (traces[level].toString() );
+
+//        return new Exception().getStackTrace()[0].getFileName();
     }
 
 }

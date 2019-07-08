@@ -20,6 +20,7 @@ import wolve.dms.R;
 import wolve.dms.adapter.StatisticalDebtAdapter;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackString;
@@ -40,7 +41,6 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
     private StatisticalActivity mActivity;
 
     protected StatisticalDebtAdapter adapter;
-    protected List<BaseModel> listDebt;
 
 
     @Nullable
@@ -57,7 +57,7 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
     }
 
     private void intitialData() {
-        listDebt = new ArrayList<>();
+        //listDebt = new ArrayList<>();
     }
 
     private void addEvent() {
@@ -89,40 +89,41 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
         }
     }
 
-    public void reloadData(){
-        listDebt = new ArrayList<>();
-        String param = String.format(Api_link.CUSTOMER_DEBT_PARAM, 0);
-        CustomerConnect.ListCustomer(param, new CallbackJSONArray() {
-            @Override
-            public void onResponse(JSONArray result) {
-                try {
-                    for (int i=0; i<result.length(); i++){
-                        BaseModel object = new BaseModel(result.getJSONObject(i));
-                        object.put("debt", object.getDouble("currentDebt"));
-
-                        if (!object.getString("note").isEmpty()  && Util.isJSONValid(object.getString("note"))){
-                            JSONObject note = new JSONObject(object.getString("note"));
-
-                            object.put("userName", note.getString("userName"));
-
-                            listDebt.add(object);
-
-
-                        }
-
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                createRVCDebt(listDebt);
-            }
-
-            @Override
-            public void onError(String error) {
-
-            }
-        }, true);
+    public void reloadData(List<BaseModel> listDebt){
+        createRVCDebt(listDebt);
+//        listDebt = new ArrayList<>();
+//        String param = String.format(Api_link.CUSTOMER_DEBT_PARAM, 0);
+//        CustomerConnect.ListCustomer(param, new CallbackJSONArray() {
+//            @Override
+//            public void onResponse(JSONArray result) {
+//                try {
+//                    for (int i=0; i<result.length(); i++){
+//                        BaseModel object = new BaseModel(result.getJSONObject(i));
+//                        object.put("debt", object.getDouble("currentDebt"));
+//
+//                        if (!object.getString("note").isEmpty()  && Util.isJSONValid(object.getString("note"))){
+//                            JSONObject note = new JSONObject(object.getString("note"));
+//
+//                            object.put("userName", note.getString("userName"));
+//
+//                            listDebt.add(object);
+//
+//
+//                        }
+//
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                createRVCDebt(listDebt);
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        }, true);
 
     }
 
@@ -130,11 +131,10 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
         adapter = new StatisticalDebtAdapter(mActivity.tvEmployeeName, tvSum, list, new CallbackString() {
             @Override
             public void Result(String s) {
-                CustomerConnect.GetCustomerDetail(s, new CallbackJSONObject() {
+                CustomerConnect.GetCustomerDetail(s, new CallbackCustom() {
                     @Override
-                    public void onResponse(JSONObject result) {
-                        Transaction.gotoCustomerActivity(result.toString(), false);
-
+                    public void onResponse(BaseModel result) {
+                        Transaction.gotoCustomerActivity(result.BaseModelstoString(), false);
                     }
 
                     @Override
@@ -147,6 +147,10 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
         });
         Util.createLinearRV(rvDebts, adapter);
 
+    }
+
+    protected double getTotalDebt(){
+        return adapter.getTotalDebt();
     }
 
 

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Customer;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.Util;
@@ -26,7 +27,7 @@ import static android.view.View.VISIBLE;
  */
 
 public class CustomerSearchAdapter extends RecyclerView.Adapter<CustomerSearchAdapter.CustomerSearchViewHolder> {
-    private List<JSONObject> mData = new ArrayList<>();
+    private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackObject mListener;
@@ -36,7 +37,7 @@ public class CustomerSearchAdapter extends RecyclerView.Adapter<CustomerSearchAd
         void onResponse(JSONObject object);
     }
 
-    public CustomerSearchAdapter(List<JSONObject> data, CallbackObject listener) {
+    public CustomerSearchAdapter(List<BaseModel> data, CallbackObject listener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mData = data;
         this.mContext = Util.getInstance().getCurrentActivity();
@@ -52,16 +53,11 @@ public class CustomerSearchAdapter extends RecyclerView.Adapter<CustomerSearchAd
 
     @Override
     public void onBindViewHolder(final CustomerSearchViewHolder holder, final int position) {
-        try {
-            holder.tvMainText.setText(String.format("%s - %s",mData.get(position).getString("signBoard"), mData.get(position).getString("name")));
-            String address = String.format("%s %s - %s",mData.get(position).getString("address"),mData.get(position).getString("street"), mData.get(position).getString("district"));
-            holder.tvSecondText.setText(address);
-            holder.tvPhone.setText(mData.get(position).getString("phone"));
-            holder.tvLine.setVisibility(position == mData.size()-1 ? GONE:VISIBLE);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        holder.tvMainText.setText(String.format("%s - %s",mData.get(position).getString("signBoard"), mData.get(position).getString("name")));
+        String address = String.format("%s %s - %s",mData.get(position).getString("address"),mData.get(position).getString("street"), mData.get(position).getString("district"));
+        holder.tvSecondText.setText(address);
+        holder.tvPhone.setText(mData.get(position).getString("phone"));
+        holder.tvLine.setVisibility(position == mData.size()-1 ? GONE:VISIBLE);
 
     }
 
@@ -83,7 +79,7 @@ public class CustomerSearchAdapter extends RecyclerView.Adapter<CustomerSearchAd
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mListener.onResponse(mData.get(getAdapterPosition()));
+                    mListener.onResponse(mData.get(getAdapterPosition()).convertJsonObject());
 
                 }
             });

@@ -19,6 +19,7 @@ import java.util.List;
 import wolve.dms.R;
 import wolve.dms.adapter.CartProductDialogAdapter;
 import wolve.dms.adapter.ViewpagerShopcartAdapter;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Util;
@@ -166,10 +167,10 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
 
 
     protected void  submitProduct(){
-        List<Product> listChecked = new ArrayList<Product>();
+        List<BaseModel> listChecked = new ArrayList<>();
 
         for (int i=0; i<listadapter.size(); i++){
-            List<Product> listTemp = new ArrayList<>();
+            List<BaseModel> listTemp = new ArrayList<>();
             listTemp = listadapter.get(i).getAllData();
             for (int j=0; j<listTemp.size(); j++){
                 if (listTemp.get(j).getBoolean("checked")){

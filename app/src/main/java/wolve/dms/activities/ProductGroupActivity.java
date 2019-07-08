@@ -12,14 +12,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.ProductGroupAdapter;
 import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.callback.CallbackClickAdapter;
+import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONArray;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
@@ -34,7 +37,7 @@ public class ProductGroupActivity extends BaseActivity implements View.OnClickLi
     private ProductGroupAdapter productGroupAdapter;
     private FloatingActionButton btnAddProductGroup;
 
-    public ArrayList<ProductGroup> listProductGroup ;
+    public List<BaseModel> listProductGroup ;
 
     @Override
     public int getResourceLayout() {
@@ -101,10 +104,10 @@ public class ProductGroupActivity extends BaseActivity implements View.OnClickLi
     protected void loadProductGroup() {
         listProductGroup = new ArrayList<>();
 
-        ProductConnect.ListProductGroup(true, new CallbackJSONArray() {
-            @Override
-            public void onResponse(JSONArray result) {
-                createRVProductGroup(result);
+        ProductConnect.ListProductGroup(true, new CallbackCustomList() {
+//            @Override
+//            public void onResponse(JSONArray result) {
+//
 
 //                for (int i=0; i<result.length(); i++){
 //                    try {
@@ -116,6 +119,11 @@ public class ProductGroupActivity extends BaseActivity implements View.OnClickLi
 //
 //                }
 
+//            }
+
+            @Override
+            public void onResponse(List<BaseModel> results) {
+                createRVProductGroup(results);
             }
 
             @Override
@@ -126,16 +134,11 @@ public class ProductGroupActivity extends BaseActivity implements View.OnClickLi
     }
 
 
-    private void createRVProductGroup(JSONArray jsonArray){
+    private void createRVProductGroup(List<BaseModel> list){
         listProductGroup = new ArrayList<>();
 
-        for (int i=0; i<jsonArray.length(); i++){
-            try {
-                ProductGroup productGroup = new ProductGroup(jsonArray.getJSONObject(i));
-                listProductGroup.add(productGroup);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+        for (int i=0; i<list.size(); i++){
+            listProductGroup.add(list.get(i));
 
         }
         productGroupAdapter = new ProductGroupAdapter(listProductGroup, new CallbackClickAdapter() {
@@ -151,11 +154,7 @@ public class ProductGroupActivity extends BaseActivity implements View.OnClickLi
             }
         });
         Util.createLinearRV(rvProductGroup, productGroupAdapter);
-//        rvProductGroup.setAdapter(productGroupAdapter);
-//        rvProductGroup.setHasFixedSize(true);
-//        rvProductGroup.setNestedScrollingEnabled(false);
-//        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-//        rvProductGroup.setLayoutManager(layoutManager);
+
     }
 
     private void openFragmentNewProductGroup(String productgroup){

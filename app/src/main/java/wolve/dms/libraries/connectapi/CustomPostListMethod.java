@@ -17,8 +17,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import wolve.dms.callback.Callback;
-import wolve.dms.callback.CallbackList;
+import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Util;
@@ -27,13 +26,13 @@ import wolve.dms.utils.Util;
  * Created by tranhuy on 7/22/16.
  */
 public class CustomPostListMethod extends AsyncTask<String, Void, List<String>> {
-    private CallbackList mListener = null;
+    private CallbackListCustom mListener = null;
     private String baseUrl;
     private List<String> mParams;
 
     private Boolean isJsonType= false;
 
-    public CustomPostListMethod(String url, List<String> listParams, Boolean isJsonType, CallbackList listener) {
+    public CustomPostListMethod(String url, List<String> listParams, Boolean isJsonType, CallbackListCustom listener) {
         mListener = listener;
         this.baseUrl = url;
         this.mParams = listParams;

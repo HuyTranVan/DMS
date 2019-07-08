@@ -24,6 +24,7 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.customviews.CTextIcon;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.CustomCenterDialog;
@@ -35,14 +36,14 @@ import wolve.dms.utils.Util;
  */
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductAdapterViewHolder> {
-    private List<Product> mData = new ArrayList<>();
-    private ProductGroup mGroup;
+    private List<BaseModel> mData = new ArrayList<>();
+    private BaseModel mGroup;
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackClickAdapter mListener;
     private CallbackDeleteAdapter mDeleteListener;
 
-    public ProductAdapter(ProductGroup group, List<Product> list, CallbackClickAdapter callbackClickAdapter, CallbackDeleteAdapter callbackDeleteAdapter) {
+    public ProductAdapter(BaseModel group, List<BaseModel> list, CallbackClickAdapter callbackClickAdapter, CallbackDeleteAdapter callbackDeleteAdapter) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
 //        this.mData = list;
@@ -96,7 +97,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
         holder.rlParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onRespone(mData.get(position).ProducttoString() , position);
+                mListener.onRespone(mData.get(position).BaseModelstoString() , position);
 
             }
         });
@@ -111,7 +112,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
                         ProductConnect.DeleteProduct(param, new CallbackJSONObject() {
                             @Override
                             public void onResponse(JSONObject result) {
-                                mDeleteListener.onDelete(mData.get(position).ProducttoString(), position);
+                                mDeleteListener.onDelete(mData.get(position).BaseModelstoString(), position);
                             }
 
                             @Override
