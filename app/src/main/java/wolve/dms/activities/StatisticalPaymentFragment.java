@@ -9,22 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.adapter.StatisticalCashAdapter;
-import wolve.dms.adapter.StatisticalCheckinsAdapter;
+import wolve.dms.adapter.StatisticaPaymentAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Bill;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -32,21 +24,20 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class StatisticalCashFragment extends Fragment implements View.OnClickListener {
+public class StatisticalPaymentFragment extends Fragment implements View.OnClickListener {
     private View view;
     private RecyclerView rvCash;
     private TextView tvCount;
 
 
-    private StatisticalCashAdapter adapter;
-    private double totalPaid;
+    private StatisticaPaymentAdapter adapter;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_statistical_cash,container,false);
-        Util.cashFragment = this;
+        Util.paymentFragment = this;
         initializeView();
 
         intitialData();
@@ -78,19 +69,13 @@ public class StatisticalCashFragment extends Fragment implements View.OnClickLis
         }
     }
 
-    public void reloadData(List<BaseModel> list){
-        createRVCash(list);
+    public void reloadData(String user, List<BaseModel> list ){
+        createRVCash(user, list);
     }
 
-    private void createRVCash(List<BaseModel> list) {
-        Collections.sort(list, new Comparator<BaseModel>() {
-            @Override
-            public int compare(BaseModel lhs, BaseModel rhs) {
-                return lhs.getLong("createAt").compareTo(rhs.getLong("createAt"));
-            }
-        });
+    private void createRVCash(String user, List<BaseModel> list) {
 
-        adapter = new StatisticalCashAdapter(list, new CallbackString() {
+        adapter = new StatisticaPaymentAdapter(user, list, new CallbackString() {
             @Override
             public void Result(String s) {
                 CustomerConnect.GetCustomerDetail(s, new CallbackCustom() {
@@ -108,20 +93,11 @@ public class StatisticalCashFragment extends Fragment implements View.OnClickLis
         });
         Util.createLinearRV(rvCash, adapter);
 
-        tvCount.setText(String.format("Tổng tiền thu:    %s",Util.FormatMoney(getTotalPaid(list))));
+        tvCount.setText(String.format("Tổng tiền thu:    %s",Util.FormatMoney(adapter.sumPayments())));
 
     }
 
-    private Double getTotalPaid(List<BaseModel> list){
-        totalPaid = 0;
-        for (int i=0; i<list.size(); i++){
-            totalPaid += list.get(i).getDouble("paid");
-        }
-        return totalPaid;
+    public double getSumPayment(){
+        return adapter.sumPayments();
     }
-
-    protected double getTotalPaid(){
-        return totalPaid;
-    }
-
 }

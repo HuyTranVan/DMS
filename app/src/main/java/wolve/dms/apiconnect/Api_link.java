@@ -12,6 +12,7 @@ public class Api_link {
     public final static String BASE_URL = BuildConfig.SERVER_URL;
     public final static String BASE_PHOTO_URL = BuildConfig.UPLOAD_URL;
     public final static String MAP_API = "https://maps.googleapis.com/maps/api/";
+    public final static String LUB_LINK = "http://dmslub.com?";
 
     public final static String GOOGLESHEET_CREDENTIALS_FILE_PATH = "/credentials.json";
     public final static String GOOGLESHEET_TOKENS_PATH = "tokens";
@@ -80,6 +81,8 @@ public class Api_link {
     public final static String BILL_NOT_YET_PAID_RANGE_PARAM ="&fromTime=%s&toTime=%s";
     public final static String PAY_NEW = BASE_URL + "token/payment";
     public final static String PAY_PARAM ="customerId=%d&paid=%s&billId=%d&userId=%d";
+
+    public final static String LUB_LINK_PARAM ="id=%s";
 
 
 }

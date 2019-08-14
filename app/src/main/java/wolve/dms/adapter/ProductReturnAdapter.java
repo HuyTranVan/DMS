@@ -26,7 +26,9 @@ import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.BillDetail;
 import wolve.dms.models.Product;
+import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 
@@ -40,18 +42,27 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
     private Context mContext;
     private CallbackDouble mListener;
 
-    public ProductReturnAdapter(List<BaseModel> list, CallbackDouble listener) {
+    public interface CallbackReturn{
+        void returnEqualLessDebt(List<BaseModel> listReturn, Double sumReturn, BaseModel bill);
+        void returnMoreThanDebt(List<BaseModel> listReturn, Double sumReturn, BaseModel bill);
+
+    }
+
+    public ProductReturnAdapter(BaseModel bill, CallbackDouble listener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mListener = listener;
-        this.mData = list;
+        this.mData = updateQuantityBills(bill);
 
-        for (int i=0; i<mData.size(); i++){
-//            try {
-                mData.get(i).put("quantityReturn", 0);
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
+        boolean check = false;
+        for (BaseModel baseModel: mData){
+            if (!baseModel.getDouble("mergeQuantity").equals(0.0)){
+                check = true;
+                break;
+            }
+        }
+        if (!check){
+            mListener.Result(-1.0);
         }
 
     }
@@ -69,25 +80,22 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
         holder.tvName.setText(String.format("%s (%s)",mData.get(position).getString("productName"), Util.FormatMoney(price)));
         holder.tvQuantity.setText(mData.get(position).getString("quantityReturn"));
         holder.btnSub.setVisibility(View.INVISIBLE);
-        holder.tvTotalQuantity.setText(String.format("%s",String.valueOf(mData.get(position).getInt("quantity") - mData.get(position).getInt("quantityReturn"))));
+        holder.tvTotalQuantity.setText(String.format("%s",String.valueOf(mData.get(position).getInt("mergeQuantity") - mData.get(position).getInt("quantityReturn"))));
 
         holder.btnSub.setVisibility(mData.get(position).getInt("quantityReturn") >0 ? View.VISIBLE :View.INVISIBLE);
-        holder.btnPlus.setVisibility(mData.get(position).getInt("quantityReturn") >= mData.get(position).getInt("quantity") ?View.INVISIBLE :View.VISIBLE);
+        holder.btnPlus.setVisibility(mData.get(position).getInt("quantityReturn") >= mData.get(position).getInt("mergeQuantity") ?View.INVISIBLE :View.VISIBLE);
 
         holder.btnSub.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                try {
-                    int currentQuantity = mData.get(position).getInt("quantityReturn");
-                    if ( currentQuantity > 0){
-                        mData.get(position).put("quantityReturn", currentQuantity -1);
-                        notifyItemChanged(position);
+                int currentQuantity = mData.get(position).getInt("quantityReturn");
+                if ( currentQuantity > 0){
+                    mData.get(position).put("quantityReturn", currentQuantity -1);
+                    notifyItemChanged(position);
 
-                        mListener.Result(sumReturnBill());
-                    }
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
+                    mListener.Result(sumReturnBill());
+                }
+
             }
         });
 
@@ -95,16 +103,13 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
             @Override
             public void onClick(View v) {
                 holder.btnPlus.setVisibility(View.INVISIBLE);
-//                try {
-                    int currentQuantity = mData.get(position).getInt("quantityReturn");
-                    mData.get(position).put("quantityReturn", currentQuantity +1);
-                    notifyItemChanged(position);
+                int currentQuantity = mData.get(position).getInt("quantityReturn");
+                mData.get(position).put("quantityReturn", currentQuantity +1);
+                notifyItemChanged(position);
 
-                    mListener.Result(sumReturnBill());
+                mListener.Result(sumReturnBill());
 
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
+
             }
         });
 
@@ -136,24 +141,20 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
     }
 
     public List<BaseModel> getListSelected(){
-
         List<BaseModel> listResult = new ArrayList<>();
         for (int i=0; i<mData.size(); i++){
-//            try {
-                if (mData.get(i).getInt("quantityReturn") >0){
-                    mData.get(i).put("quantity", mData.get(i).getInt("quantityReturn")*-1);
-                    Double total = (mData.get(i).getDouble("unitPrice") - mData.get(i).getDouble("discount")) *mData.get(i).getDouble("quantity") ;
-                    mData.get(i).put("total", total);
-                    Double discount = getDiscountFromOldBill(mData.get(i));
-                    mData.get(i).put("discount", discount);
-                    mData.get(i).put("id",mData.get(i).getInt("productId"));
+            if (mData.get(i).getInt("quantityReturn") >0){
+                mData.get(i).put("quantity", mData.get(i).getInt("quantityReturn")*-1);
+                Double total = (mData.get(i).getDouble("unitPrice") - mData.get(i).getDouble("discount")) *mData.get(i).getDouble("mergeQuantity") ;
+                mData.get(i).put("total", total);
+                Double discount = getDiscountFromOldBill(mData.get(i));
+                mData.get(i).put("discount", discount);
+                mData.get(i).put("id",mData.get(i).getInt("productId"));
 
 
-                    listResult.add(mData.get(i));
-                }
-//            } catch (JSONException e) {
-//                    e.printStackTrace();
-//            }
+                listResult.add(mData.get(i));
+            }
+
         }
 
         return listResult;
@@ -183,6 +184,43 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
         }
 
         return sum;
+    }
+
+    private List<BaseModel> updateQuantityBills(BaseModel bill){
+        List<BaseModel> listDetail = DataUtil.array2ListBaseModel(bill.getJSONArray("billDetails"));
+
+        for (BaseModel detail : listDetail){
+            detail.put("quantityReturn", 0);
+
+            if (bill.hasKey(Constants.HAVEBILLRETURN)){
+                List<BaseModel> listTemp = DataUtil.array2ListBaseModel(bill.getJSONArray(Constants.HAVEBILLRETURN));
+                List<BaseModel> listTempDetail = new ArrayList<>();
+                for (BaseModel baseModel : listTemp){
+                    listTempDetail.addAll(DataUtil.array2ListBaseModel(baseModel.getJSONArray("billDetails")));
+
+                }
+
+                int quantity = detail.getInt("quantity");
+                for (BaseModel tempDetail : listTempDetail){
+                    if (tempDetail.getInt("productId") == detail.getInt("productId") &&
+                            (tempDetail.getDouble("unitPrice") - tempDetail.getDouble("discount")) == (detail.getDouble("unitPrice") - detail.getDouble("discount"))){
+
+                        quantity += tempDetail.getInt("quantity");
+
+                    }
+
+                }
+
+                detail.put("mergeQuantity", quantity);
+
+            }else {
+                detail.put("mergeQuantity", detail.getInt("quantity"));
+
+            }
+
+        }
+
+        return listDetail;
     }
 
 }

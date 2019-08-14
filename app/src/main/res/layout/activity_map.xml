@@ -382,6 +382,37 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/map_detail_share"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/_30sdp"
+                            android:orientation="horizontal"
+                            android:background="@drawable/btn_round_border_blue"
+                            android:layout_marginRight="@dimen/_10sdp">
+
+                            <wolve.dms.customviews.CTextIcon
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:paddingLeft="@dimen/_10sdp"
+                                android:text="@string/icon_share"
+                                android:textColor="@color/colorBlue"
+                                android:textSize="@dimen/_14sdp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:text="Chia sẻ"
+                                android:textColor="@color/black_text_color"
+                                android:gravity="center"
+                                android:textSize="@dimen/_12sdp"
+                                android:paddingLeft="@dimen/_5sdp"
+                                android:paddingRight="@dimen/_10sdp"
+                                />
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
                             android:id="@+id/map_detail_direction"
                             android:layout_width="wrap_content"
                             android:layout_height="@dimen/_30sdp"
@@ -408,6 +439,8 @@
                                 android:paddingLeft="@dimen/_5sdp"
                                 android:paddingRight="@dimen/_10sdp"
                                 />
+
+
                         </LinearLayout>
 
 

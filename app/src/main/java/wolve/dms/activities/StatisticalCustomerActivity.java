@@ -186,7 +186,7 @@ public class StatisticalCustomerActivity extends BaseActivity implements  View.O
 //                            tvEmployeeName.setText(content);
 //                            loadBill(listInitialBill, content);
 //
-//                            Util.cashFragment.reloadData(convertToListPayment(tvEmployeeName.getText().toString().trim(),InitialBillHavePayment , getStartDay() , getEndDay()));
+//                            Util.paymentFragment.reloadData(convertToListPayment(tvEmployeeName.getText().toString().trim(),InitialBillHavePayment , getStartDay() , getEndDay()));
 //                            Util.checkinFragment.reloadData(convertToListCheckin(tvEmployeeName.getText().toString().trim(),
 //                                    InitialCheckin,
 //                                    getStartDay(),
@@ -238,29 +238,29 @@ public class StatisticalCustomerActivity extends BaseActivity implements  View.O
         datePickerDialogFragment.show(getSupportFragmentManager(), null);
     }
 
-    private void postListbill(){
-        SheetConnect.getALlValue(Api_link.STATISTICAL_SHEET_KEY, String.format(Api_link.STATISTICAL_SHEET_TAB1,3),  new GoogleSheetGetData.CallbackListList() {
-            @Override
-            public void onRespone(List<List<Object>> results) {
-                listSheetID = new ArrayList<>();
-                if (results != null){
-                    for (int i=0; i<results.size(); i++){
-                        listSheetID.add(results.get(i).get(0));
-                    }
-                }
-
-                String range = String.format(Api_link.STATISTICAL_SHEET_TAB1, listSheetID.size()+3);
-
-                SheetConnect.postValue(Api_link.STATISTICAL_SHEET_KEY, range, getListValueExportToSheet(listBill), new GoogleSheetGetData.CallbackListList() {
-                    @Override
-                    public void onRespone(List<List<Object>> results) {
-
-                    }
-                },true);
-
-            }
-        }, false);
-    }
+//    private void postListbill(){
+//        SheetConnect.getALlValue(Api_link.STATISTICAL_SHEET_KEY, String.format(Api_link.STATISTICAL_SHEET_TAB1,3),  new GoogleSheetGetData.CallbackListList() {
+//            @Override
+//            public void onRespone(List<List<Object>> results) {
+//                listSheetID = new ArrayList<>();
+//                if (results != null){
+//                    for (int i=0; i<results.size(); i++){
+//                        listSheetID.add(results.get(i).get(0));
+//                    }
+//                }
+//
+//                String range = String.format(Api_link.STATISTICAL_SHEET_TAB1, listSheetID.size()+3);
+//
+//                SheetConnect.postValue(Api_link.STATISTICAL_SHEET_KEY, range, getListValueExportToSheet(listBill), new GoogleSheetGetData.CallbackListList() {
+//                    @Override
+//                    public void onRespone(List<List<Object>> results) {
+//
+//                    }
+//                },true);
+//
+//            }
+//        }, false);
+//    }
 
     private void loadListCheckin(final long starDay, final long lastDay){
         String param = String.format(Api_link.CUSTOMER_CHECKIN_RANGE_PARAM, starDay, lastDay);
@@ -529,8 +529,8 @@ public class StatisticalCustomerActivity extends BaseActivity implements  View.O
 //                                newCash.put("customer", objectBill.getJSONObject("customer"));
 //
 //                                BaseModel user = new BaseModel(objectBill.getJSONObject("user"));
-//                                if (!checkDuplicate(listUser, "id" ,user)){
-//                                    listUser.add(user);
+//                                if (!checkDuplicate(listUserNameDisplay, "id" ,user)){
+//                                    listUserNameDisplay.add(user);
 //                                }
 //
 //                                if (userName.equals(ALL_FILTER)){

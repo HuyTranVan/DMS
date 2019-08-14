@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bills_return_item_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_white_corner_stroke_grey"
+    android:orientation="vertical"
+    android:padding="@dimen/_5sdp"
+    android:layout_marginTop="@dimen/_5sdp">
+
+    <TextView
+        android:id="@+id/bills_return_item_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Trả hàng:"
+        android:textSize="@dimen/_10sdp"
+        android:textColor="@color/black_text_color"
+        android:textStyle="italic"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/bills_return_item_rvproduct"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.7"
+            android:clipToPadding="true" />
+
+        <TextView
+            android:id="@+id/bills_return_item_total"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:gravity="right|center_vertical"
+            android:text="Default"
+            android:textSize="@dimen/_12sdp"
+            android:layout_gravity="center_vertical"/>
+
+    </LinearLayout>
+</LinearLayout>
+
+

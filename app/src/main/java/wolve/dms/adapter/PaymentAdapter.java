@@ -1,6 +1,8 @@
 package wolve.dms.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Util;
 
 
@@ -22,11 +25,11 @@ import wolve.dms.utils.Util;
  */
 
 public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.PrintBillViewHolder> {
-    private List<JSONObject> mData = new ArrayList<>();
+    private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
 
-    public PaymentAdapter(List<JSONObject> list) {
+    public PaymentAdapter(List<BaseModel> list) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mData = list;
@@ -39,18 +42,27 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.PrintBil
         return new PrintBillViewHolder(itemView);
     }
 
-
     @Override
     public void onBindViewHolder(final PrintBillViewHolder holder, final int position) {
-        try {
-            holder.tvDate.setText(String.format("%s",Util.DateHourString(mData.get(position).getLong("createAt"))));
-            holder.tvTotal.setText(String.format("Trả: %s",Util.FormatMoney(mData.get(position).getDouble("paid"))));
+        String date = Util.DateHourString(mData.get(position).getLong("createAt"));
+        String user = mData.get(position).getBaseModel("user").getString("displayName");
+        String note = "";
+        if (mData.get(position).hasKey("idbillreturn")){
+            note = "thu hàng";
+            //holder.tvTotal.setTypeface(null, Typeface.BOLD);
 
-            holder.vLine.setVisibility(position == mData.size() -1?View.GONE:View.VISIBLE);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
+        }else if (mData.get(position).getDouble("paid") <0.0){
+            note ="trả khách";
+            //holder.tvTotal.setTypeface(null, Typeface.BOLD);
+        }else {
+            note ="thu tiền";
+            //holder.tvTotal.setTypeface(null, Typeface.NORMAL);
         }
+
+        holder.tvDate.setText(String.format("%s %s %s:",date, user, note));
+        holder.tvTotal.setText(String.format("%s %s đ",mData.get(position).getDouble("paid") <0.0? "+" : "-",
+                mData.get(position).getDouble("paid") <0.0? Util.FormatMoney(mData.get(position).getDouble("paid") *-1) :Util.FormatMoney(mData.get(position).getDouble("paid"))));
+
 
 
     }
@@ -63,11 +75,11 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.PrintBil
     public Double getTotalMoney(){
         Double total =0.0;
         for (int i=0; i<mData.size(); i++){
-            try {
-                total += (mData.get(i).getDouble("debt") );
-            } catch (JSONException e) {
-                total =0.0;
-            }
+//            try {
+            total += (mData.get(i).getDouble("debt") );
+//            } catch (JSONException e) {
+//                total =0.0;
+//            }
         }
         return total;
     }

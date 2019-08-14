@@ -61,7 +61,7 @@ public class CartPromotionsAdapter extends RecyclerView.Adapter<CartPromotionsAd
     @Override
     public void onBindViewHolder(final ProductDialogShopCartAdapterViewHolder holder, final int position) {
         holder.tvName.setText(mData.get(position).getString("name") +" ("+Util.FormatMoney(mData.get(position).getDouble("unitPrice")) +")" );
-        holder.tvQuantity.setText(mData.get(position).getInt("quantity").toString());
+        //holder.tvQuantity.setText(mData.get(position).getInt("quantity").toString());
 
         holder.btnSub.setOnClickListener(new View.OnClickListener() {
             @Override

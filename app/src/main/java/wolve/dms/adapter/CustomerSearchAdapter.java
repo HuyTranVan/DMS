@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Customer;
 import wolve.dms.utils.CustomBottomDialog;
@@ -30,14 +31,14 @@ public class CustomerSearchAdapter extends RecyclerView.Adapter<CustomerSearchAd
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
-    private CallbackObject mListener;
+    private CallbackBaseModel mListener;
     private CustomBottomDialog.FourMethodListener mListerner;
 
     public interface CallbackObject {
         void onResponse(JSONObject object);
     }
 
-    public CustomerSearchAdapter(List<BaseModel> data, CallbackObject listener) {
+    public CustomerSearchAdapter(List<BaseModel> data, CallbackBaseModel listener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mData = data;
         this.mContext = Util.getInstance().getCurrentActivity();
@@ -79,7 +80,7 @@ public class CustomerSearchAdapter extends RecyclerView.Adapter<CustomerSearchAd
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mListener.onResponse(mData.get(getAdapterPosition()).convertJsonObject());
+                    mListener.onResponse(mData.get(getAdapterPosition()));
 
                 }
             });

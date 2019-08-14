@@ -61,6 +61,14 @@ public class BaseModel implements Serializable {
         }
     }
 
+    public void putBaseModel(String key, BaseModel value){
+        try {
+            jsonObject.put(key, value.BaseModelJSONObject());
+        } catch (JSONException e) {
+            Util.showToast(e.toString());
+        }
+    }
+
     public String getString(String key) {
         try {
             return jsonObject.getString(key);
@@ -79,13 +87,14 @@ public class BaseModel implements Serializable {
         return null;
     }
 
-    public Integer getInt(String key) {
+    public int getInt(String key) {
         try {
             return jsonObject.getInt(key);
         } catch (JSONException e) {
-            e.printStackTrace();
+            return 0;
+            //e.printStackTrace();
         }
-        return null;
+
     }
 
     public Double getDouble(String key) {
@@ -122,9 +131,17 @@ public class BaseModel implements Serializable {
         try {
             return jsonObject.getJSONArray(key);
         } catch (JSONException e) {
-            e.printStackTrace();
+            return new JSONArray();
         }
-        return null;
+
+    }
+
+    public BaseModel getBaseModel(String key){
+        try {
+            return new BaseModel(jsonObject.getJSONObject(key));
+        } catch (JSONException e) {
+            return new BaseModel();
+        }
     }
 
     public boolean has(String key) {

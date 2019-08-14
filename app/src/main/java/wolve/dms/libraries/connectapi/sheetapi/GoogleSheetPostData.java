@@ -46,12 +46,17 @@ public class GoogleSheetPostData extends AsyncTask<Void, Void, List<List<Object>
     private CallbackListList mListener;
     private List<String> SCOPES ;
     private List<List<Object>> mParams;
+    private String majorDimension;
+
+
+    public static String SHEET_ROW = "ROWS";
+    public static String SHEET_COLUM = "COLUMS";
 
     public interface CallbackListList{
         void onRespone(List<List<Object>> results);
     }
 
-    public GoogleSheetPostData(String sheetId, String range, List<List<Object>> param, CallbackListList callbackListList) {
+    public GoogleSheetPostData(String sheetId, String range, List<List<Object>> param,String major,  CallbackListList callbackListList) {
         this.spreadsheetId = sheetId;
         this.range = range;
         this.mParams = param;
@@ -59,6 +64,7 @@ public class GoogleSheetPostData extends AsyncTask<Void, Void, List<List<Object>
         this.mListener = callbackListList;
         this.JSON_FACTORY = JacksonFactory.getDefaultInstance();
         this.SCOPES = Collections.singletonList(SheetsScopes.SPREADSHEETS);
+        this.majorDimension =major;
     }
 
     private Credential getCredentials() {
@@ -88,7 +94,8 @@ public class GoogleSheetPostData extends AsyncTask<Void, Void, List<List<Object>
 //        String range = Api_link.GOOGLESHEET_TAB;
         ValueRange valueRange = new ValueRange();
 
-        valueRange.setMajorDimension("ROWS");
+//        valueRange.setMajorDimension("ROWS");
+        valueRange.setMajorDimension("COLUMNS");
         valueRange.setRange(range);
         valueRange.setValues(mParams);
 

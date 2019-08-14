@@ -49,7 +49,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_5sdp"
             android:layout_marginLeft="@dimen/_5sdp"
-            android:layout_marginRight="@dimen/_5sdp">
+            android:layout_marginRight="@dimen/_5sdp"
+            android:visibility="gone">
 
             <lecho.lib.hellocharts.view.PieChartView
                 android:id="@+id/statistical_dashboard_bdf"

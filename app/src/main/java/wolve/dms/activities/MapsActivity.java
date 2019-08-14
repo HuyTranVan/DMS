@@ -15,11 +15,13 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ShareCompat;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -62,6 +64,7 @@ import wolve.dms.adapter.CustomWindowAdapter;
 import wolve.dms.adapter.CustomerSearchAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.apiconnect.LocationConnect;
+import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomList;
@@ -73,6 +76,7 @@ import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.LatlngListener;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.libraries.FitScrollWithFullscreen;
+import wolve.dms.libraries.Security;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Customer;
 import wolve.dms.models.Distributor;
@@ -82,12 +86,14 @@ import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomInputDialog;
+import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.MapUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
 import static wolve.dms.apiconnect.CustomerConnect.createParamCustomer;
 import static wolve.dms.utils.Constants.REQUEST_PERMISSION_LOCATION;
+import static wolve.dms.utils.Constants.responeIsSuccess;
 import static wolve.dms.utils.MapUtil.removeMarker;
 
 /**
@@ -115,7 +121,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     private RelativeLayout rlSearchLayout;
     private RecyclerView rvSearch;
 //    private CardView ;
-    private LinearLayout lnSheetBody, lnBottomSheet, btnCheckin, btnDirection, btnCall;
+    private LinearLayout lnSheetBody, lnBottomSheet, btnCheckin, btnDirection, btnCall, btnShare;
     private TextView tvShopname, tvAddress, tvCheckin, tvDistance;
 
     private Handler mHandlerMoveMap = new Handler();
@@ -129,6 +135,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     private CustomWindowAdapter adapterInfoMarker;
     private Marker currentMarker;
     private BottomSheetBehavior mBottomSheetBehavior;
+    //private String VIEW_CUSTOMER_ID ="";
 
 
     @Override
@@ -182,8 +189,10 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         btnCheckin = findViewById(R.id.map_detail_checkin);
         btnCall = findViewById(R.id.map_detail_call);
         btnDirection = findViewById(R.id.map_detail_direction);
+        btnShare= findViewById(R.id.map_detail_share);
         tvCheckin = findViewById(R.id.map_detail_checkin_text);
         tvDistance = findViewById(R.id.map_detail_distance);
+
 
     }
 
@@ -334,40 +343,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == Constants.REQUEST_PERMISSION_LOCATION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                checkGPS();
-
-            } else {
-                Toast.makeText(this, "Cấp quyền truy cập không thành công!", Toast.LENGTH_LONG).show();
-                Transaction.gotoHomeActivityRight(true);
-            }
-        } else if (requestCode == Constants.REQUEST_PHONE_PERMISSION) {
-
-            if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                Util.showSnackbar("Không thể gọi do chưa được cấp quyền", null, null);
-
-            } else {
-                Intent callIntent = new Intent(Intent.ACTION_CALL);
-                callIntent.setData(Uri.parse("tel:" + Uri.encode(currentPhone)));
-                callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
-                }
-                startActivity(callIntent);
-            }
-        }
-
-    }
 
     @Override
     public void onCameraIdle() {
@@ -491,6 +466,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 customer.put("street", objectAdress.getString("street"));
                 customer.put("address", objectAdress.getString("address"));
                 customer.put("note", "");
+                customer.put("debt",0.0);
 
                 Transaction.gotoCustomerActivity(customer.BaseModelstoString(), true);
                 CustomInputDialog.dismissDialog();
@@ -524,61 +500,14 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             @Override
             public void onError(String error) {
             }
-        }, true);
+        }, true,true);
 
-
-//        CustomerConnect.ListCustomer(param, new CallbackJSONArray() {
-//            @Override
-//            public void onResponse(JSONArray result) {
-//                try {
-//                    List<BaseModel> tempCustomers = new ArrayList<>();
-//                    for (int i = 0; i < result.length(); i++) {
-//                        JSONObject object = result.getJSONObject(i);
-//                        if (object.getJSONObject("distributor").getString("id").equals(Distributor.getDistributorId())) {
-//                            tempCustomers.add(setCustomerMarker(new BaseModel(object)));
-//
-//                        }
-//
-//                    }
-//                    addMarkertoMap(true,tempCustomers, true);
-////                    MapUtil.addListMarkertoMap(true, mMap,tempCustomers, getCheckedFilter(), true);
-////                    createRVCustomer(listCustomer);
-//
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//
-//            }
-
-//            @Override
-//            public void onError(String error) {
-//            }
-//        }, true);
     }
 
     private void loadCustomersByLocation(final Boolean clearMap, Double lat, Double lng) {
         progressLoading.setVisibility(View.VISIBLE);
 
         CustomerConnect.ListCustomerLocation(Util.encodeString(String.valueOf(lat)), Util.encodeString(String.valueOf(lng)), new CallbackCustomList() {
-//            @Override
-//            public void onResponse(JSONArray result) {
-//                progressLoading.setVisibility(View.GONE);
-//                try {
-//                    List<BaseModel> tempCustomers = new ArrayList<>();
-//                    for (int i = 0; i < result.length(); i++) {
-//                        JSONObject object = result.getJSONObject(i);
-//                        if (object.getJSONObject("distributor").getString("id").equals(Distributor.getDistributorId())) {
-//                            tempCustomers.add(setCustomerMarker(new BaseModel(object)));
-//
-//                        }
-//                    }
-//                    addMarkertoMap(clearMap,tempCustomers, false);
-//
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-
             @Override
             public void onResponse(List<BaseModel> results) {
                 progressLoading.setVisibility(View.GONE);
@@ -914,7 +843,21 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
                         @Override
                         public void onSuccess(Location location) {
-                            if (location != null) {
+                            if (!CustomSQL.getString(Constants.CUSTOMER_ID).equals("")){
+                                CustomerConnect.GetCustomerDetail(CustomSQL.getString(Constants.CUSTOMER_ID), new CallbackCustom() {
+                                    @Override
+                                    public void onResponse(BaseModel result) {
+                                        showMarker(result);
+                                        CustomSQL.setString(Constants.CUSTOMER_ID, "");
+                                    }
+
+                                    @Override
+                                    public void onError(String error) {
+                                        CustomSQL.setString(Constants.CUSTOMER_ID, "");
+                                    }
+                                }, true);
+
+                            }else if (location != null) {
                                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                                 triggerCurrentLocation(latLng,  true);
                             }
@@ -924,11 +867,43 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == Constants.REQUEST_PERMISSION_LOCATION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                checkGPS();
+
+            } else {
+                Toast.makeText(this, "Cấp quyền truy cập không thành công!", Toast.LENGTH_LONG).show();
+                Transaction.gotoHomeActivityRight(true);
+            }
+        } else if (requestCode == Constants.REQUEST_PHONE_PERMISSION) {
+
+            if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                Util.showSnackbar("Không thể gọi do chưa được cấp quyền", null, null);
+
+            } else {
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse("tel:" + Uri.encode(currentPhone)));
+                callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+                startActivity(callIntent);
+            }
+        }
+
+    }
+
+
     private void backPress(){
-//        if (dialog != null && dialog.isShowing()){
-//            dialog.dismiss();
-//
-//        }else
         if (rlSearchLayout.getVisibility() == View.VISIBLE){
             closeSearch();
 
@@ -977,7 +952,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         rlSearchLayout.setVisibility(View.VISIBLE);
         edSearch.setFocusable(true);
         edSearch.setFocusableInTouchMode(true);
-        edSearch.setSelection(0);
+        edSearch.setSelection(edSearch.getText().toString().isEmpty()?0 :edSearch.getText().toString().length() );
         Util.showKeyboard(edSearch);
         tvLocation.setVisibility(View.GONE);
         tvReload.setVisibility(View.GONE);
@@ -997,42 +972,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         tvReload.setVisibility(loadCustomer?View.VISIBLE:View.GONE);
     }
 
-    private void createRVList(List<BaseModel> list){
-        mSearchAdapter = new CustomerSearchAdapter(list, new CustomerSearchAdapter.CallbackObject() {
-            @Override
-            public void onResponse(JSONObject customer) {
-                final BaseModel cust = new BaseModel(customer);
-                LatLng newLatLng = new LatLng(cust.getDouble("lat") , cust.getDouble("lng"));
-                triggerCurrentLocation(newLatLng ,  false);
-
-                Marker mMarker = MapUtil.addMarkerToMap(mMap, setCustomerMarker(cust), Constants.MARKER_ALL);
-                currentMarker = mMarker;
-                if (mMarker.getTag() != null) {
-                    getDistanceFromCurrent(cust.getDouble("lat"), cust.getDouble("lng"), new CallbackLong() {
-                        @Override
-                        public void onResponse(Long value) {
-                            Bitmap bitmap = MapUtil.GetBitmapMarker(MapsActivity.this, cust.getInt("icon"), cust.getString("checkincount"), R.color.pin_waiting);
-                            currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()*2,bitmap.getHeight()*2, false)));
-
-                            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                            updateBottomDetail(cust, value);
-                        }
-                    });
-
-
-//                    mMarker.showInfoWindow();
-//                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-//                    updateBottomDetail(customer, value);
-                }
-
-                closeSearch();
-
-
-            }
-        });
-        Util.createLinearRV(rvSearch, mSearchAdapter);
-    }
-
     private Runnable delayForSerch = new Runnable() {
         @Override
         public void run() {
@@ -1047,24 +986,59 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             CustomerConnect.ListCustomer(param, 10, new CallbackCustomList() {
                 @Override
                 public void onResponse(List<BaseModel> results) {
-                    List<BaseModel> listResult = new ArrayList<>();
-                    if (results.size() >0){
-                        for (int i=0; i<results.size(); i++){
-                            listResult.add(results.get(i));
-
-                        }
-                    }
-
-                    createRVList(listResult);
+                    createRVList(results);
                 }
 
                 @Override
                 public void onError(String error) {
 
                 }
-            }, true);
+            }, false,true);
         }
     };
+
+    private void createRVList(List<BaseModel> list){
+        mSearchAdapter = new CustomerSearchAdapter(list, new CallbackBaseModel() {
+            @Override
+            public void onResponse(BaseModel cust) {
+                showMarker(cust);
+                closeSearch();
+
+
+            }
+
+            @Override
+            public void onError() {
+                closeSearch();
+            }
+
+
+        });
+        Util.createLinearRV(rvSearch, mSearchAdapter);
+    }
+
+    private void showMarker(BaseModel customer){
+        progressLoading.setVisibility(View.GONE);
+        LatLng newLatLng = new LatLng(customer.getDouble("lat") , customer.getDouble("lng"));
+        triggerCurrentLocation(newLatLng ,  false);
+
+        Marker mMarker = MapUtil.addMarkerToMap(mMap, setCustomerMarker(customer), Constants.MARKER_ALL);
+        currentMarker = mMarker;
+        if (mMarker.getTag() != null) {
+            getDistanceFromCurrent(customer.getDouble("lat"), customer.getDouble("lng"), new CallbackLong() {
+                @Override
+                public void onResponse(Long value) {
+                    Bitmap bitmap = MapUtil.GetBitmapMarker(MapsActivity.this, customer.getInt("icon"), customer.getString("checkincount"), R.color.pin_waiting);
+                    currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()*2,bitmap.getHeight()*2, false)));
+
+                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    updateBottomDetail(customer, value);
+                }
+            });
+
+        }
+
+    }
 
     private void createCustomerFast(final Double lat, final Double lng){
         //Get shopName
@@ -1076,22 +1050,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                     public void onResponse(BaseModel result1) {
 //createCustomer to Server
                         postCustomerFast(shopname, lat, lng, result1, new CallbackCustom() {
-//                            @Override
-//                            public void onResponse(JSONObject result1) {
-//                                BaseModel cust = new BaseModel(result1);
-//                                reUpdateMarker(cust.getString("id"));
-//
-//                                CustomInputDialog.dismissDialog();
-//                                Util.showToast("Tạo cửa hàng thành công");
-
-//                                setCurrentMarkerToDefault();
-//                                Customer customer = new Customer(result1);
-//                                MapUtil.getCurrentMarker(mMap, setCustomerMarker(customer));
-
-
-
-//                            }
-
                             @Override
                             public void onResponse(BaseModel result) {
                                 reUpdateMarker(result.getString("id"));
@@ -1114,57 +1072,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
                 }, false);
             }
-
-//            @Override
-//            public void onShopname(String shopname) {
-//
-//            }
-//
-//            @Override
-//            public void onShopType(String shoptype) {
-//
-//            }
-//
-//            @Override
-//            public void Result(final String s) {
-//                //getAddress
-//                getAddressFromLatlng(lat, lng, new CallbackObject() {
-//                    @Override
-//                    public void onResponse(final JSONObject result) {
-//                        //createCustomer to Server
-//                        postCustomerFast(s, lat, lng, result, new CallbackJSONObject() {
-//                            @Override
-//                            public void onResponse(JSONObject result1) {
-//                                BaseModel cust = new BaseModel(result1);
-//                                reUpdateMarker(cust.getString("id"));
-//
-//                                CustomInputDialog.dismissDialog();
-//                                Util.showToast("Tạo cửa hàng thành công");
-//
-////                                setCurrentMarkerToDefault();
-////                                Customer customer = new Customer(result1);
-////                                MapUtil.getCurrentMarker(mMap, setCustomerMarker(customer));
-//
-//
-//
-//                            }
-//
-//                            @Override
-//                            public void onError(String error) {
-//
-//                            }
-//                        }, true);
-//
-//
-//                    }
-//
-//                }, false);
-//
-//
-//
-//            }
-
-        });
+      });
     }
 
     private void getAddressFromLatlng(Double lat, Double lng, final CallbackCustom mListener, Boolean stopLoading){
@@ -1197,14 +1105,9 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         customer.put("street",objectAdress.getString("street"));
         customer.put("district",objectAdress.getString("district"));
         customer.put("province",objectAdress.getString("province"));
+        customer.put("debt",0.0);
 
         CustomerConnect.CreateCustomer(createParamCustomer(customer), new CallbackCustom() {
-//                @Override
-//                public void onResponse(JSONObject result) {
-//                    mListener.onResponse(result);
-//
-//                }
-
             @Override
             public void onResponse(BaseModel result) {
                 mListener.onResponse(result);
@@ -1229,16 +1132,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             }
         });
 
-    }
-
-    private void openGoogleMap(String label, double latitude, double longitude){
-        String uriBegin = "geo:" + latitude + "," + longitude;
-        String query = latitude + "," + longitude + "(" + label + ")";
-        String encodedQuery = Uri.encode(query);
-        String uriString = uriBegin + "?q=" + encodedQuery + "&z=16";
-        Uri uri = Uri.parse(uriString);
-        Intent mapIntent = new Intent(android.content.Intent.ACTION_VIEW, uri);
-        startActivity(mapIntent);
     }
 
     @Override
@@ -1328,18 +1221,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 CustomerConnect.GetCustomerDetail(param, new CallbackCustom() {
                     @Override
                     public void onResponse(final BaseModel result) {
-                        Transaction.gotoCustomerActivity(result.toString(), distance < Constants.CHECKIN_DISTANCE? true : false);
-//                        if (distance < Constants.CHECKIN_DISTANCE){
-//                            CustomCenterDialog.alertWithButton("Check In", "Vị trí hiện tại của bạn rất gần cửa hàng. Bắt đầu check in", "Tiếp tục", new CallbackBoolean() {
-//                                @Override
-//                                public void onRespone(Boolean re) {
-//                                    Transaction.gotoCustomerActivity(result.toString(), true);
-//                                }
-//                            });
-//                        }else {
-//                            Transaction.gotoCustomerActivity(result.toString(), false);
-//                        }
-
+                        Transaction.gotoCustomerActivity(result.BaseModelstoString(), distance < Constants.CHECKIN_DISTANCE? true : false);
 
                     }
 
@@ -1378,6 +1260,13 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             }
         });
 
+        btnShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Transaction.shareViaZalo(customer.getString("id"));
+            }
+        });
+
         btnDirection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1385,14 +1274,13 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                     @Override
                     public void onRespone(Boolean re) {
                         if (re){
-                            openGoogleMap(title, customer.getDouble("lat"), customer.getDouble("lng"));
+                            Transaction.openGoogleMap(title, customer.getDouble("lat"), customer.getDouble("lng"));
 
                         }
 
                     }
                 });
 
-//                shareViaZalo();
             }
         });
 
@@ -1404,14 +1292,9 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         btnDirection.setOnClickListener(null);
     }
 
-    private void shareViaZalo(){
-        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-        sharingIntent.setType("text/plain");
-        String shareBody = "Your body here";
-        String shareSub = "Your subject here";
-        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, shareSub);
-        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-        startActivity(Intent.createChooser(sharingIntent, "Share using"));
-    }
+
+
+
+
 }
 

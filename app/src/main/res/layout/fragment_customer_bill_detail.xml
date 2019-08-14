@@ -161,7 +161,7 @@
                 android:id="@+id/bill_detail_tabs"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_30sdp"
-                android:background="@color/colorLightGrey"
+                android:background="@color/colorWhite"
                 android:layout_gravity="center"
                 app:tabGravity="fill"
                 app:tabPaddingStart="@dimen/_5sdp"
@@ -181,7 +181,7 @@
                 android:id="@+id/bill_detail_viewpager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/colorWhite" />
+                android:background="@color/colorLightGrey" />
 
         </LinearLayout>
 

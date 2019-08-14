@@ -12,20 +12,20 @@
         android:id="@+id/customer_billdetail_item_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.55"
+        android:layout_weight="0.8"
         android:textSize="@dimen/_10sdp"
-        android:paddingLeft="5dp"
         android:paddingTop="@dimen/_2sdp"
         android:paddingBottom="@dimen/_2sdp"/>
 
     <TextView
         android:id="@+id/customer_billdetail_item_quantity"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.25"
+        android:layout_height="match_parent"
+        android:layout_weight="0.2"
         android:text="6x125.000"
         android:textSize="@dimen/_8sdp"
-        android:singleLine="true"/>
+        android:singleLine="true"
+        android:gravity="center_vertical"/>
 
     <!--<TextView-->
         <!--android:id="@+id/customer_billdetail_item_discount"-->
@@ -37,15 +37,15 @@
         <!--android:singleLine="true"-->
         <!--android:gravity="center"/>-->
 
-    <TextView
-        android:id="@+id/customer_billdetail_item_total"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.2"
-        android:text="000.000"
-        android:textSize="@dimen/_8sdp"
-        android:singleLine="true"
-        android:gravity="right"
-        android:paddingRight="@dimen/_5sdp"/>
+    <!--<TextView-->
+        <!--android:id="@+id/customer_billdetail_item_total"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_weight="0.2"-->
+        <!--android:text="000.000"-->
+        <!--android:textSize="@dimen/_8sdp"-->
+        <!--android:singleLine="true"-->
+        <!--android:gravity="right"-->
+        <!--android:paddingRight="@dimen/_5sdp"/>-->
 
 </LinearLayout>

@@ -65,9 +65,11 @@
             android:gravity="right|center_vertical"/>
 
         <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+            android:id="@+id/dialog_return_product_pay_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
 
                 <TextView
                     android:id="@+id/text"
@@ -80,7 +82,7 @@
                     android:layout_centerVertical="true"/>
 
                 <EditText
-                    android:id="@+id/dialog_return_product_note"
+                    android:id="@+id/dialog_return_product_pay"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="@dimen/_35sdp"

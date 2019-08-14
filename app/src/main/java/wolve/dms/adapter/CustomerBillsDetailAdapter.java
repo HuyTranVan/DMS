@@ -47,7 +47,7 @@ public class CustomerBillsDetailAdapter extends RecyclerView.Adapter<CustomerBil
         Double sumMoney = mData.get(position).getInt("quantity") * (mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount"));
         holder.tvName.setText(mData.get(position).getString("productName"));
         holder.tvQuantity.setText(netMoney ==0 ? String.format("SL: %s",mData.get(position).getInt("quantity")) :String.format("%sx%s", mData.get(position).getInt("quantity") ,  Util.FormatMoney(netMoney) ));
-        holder.tvTotal.setText(sumMoney ==0 ? "--" : Util.FormatMoney(sumMoney));
+        //holder.tvTotal.setText(sumMoney ==0 ? "--" : Util.FormatMoney(sumMoney));
 
     }
 
@@ -64,7 +64,7 @@ public class CustomerBillsDetailAdapter extends RecyclerView.Adapter<CustomerBil
             super(itemView);
             tvName = (TextView) itemView.findViewById(R.id.customer_billdetail_item_name);
             tvQuantity = (TextView) itemView.findViewById(R.id.customer_billdetail_item_quantity);
-            tvTotal = (TextView) itemView.findViewById(R.id.customer_billdetail_item_total);
+            //tvTotal = (TextView) itemView.findViewById(R.id.customer_billdetail_item_total);
             lnParent = (LinearLayout) itemView.findViewById(R.id.customer_billdetail_item_parent);
 
         }

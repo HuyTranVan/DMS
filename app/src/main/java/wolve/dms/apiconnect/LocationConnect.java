@@ -26,23 +26,6 @@ public class LocationConnect {
 
         String address = String.format(Locale.ENGLISH, Api_link.MAP_GET_ADDRESS, lat, lng);
         new CustomGetMethod(address, new CallbackCustom() {
-//            @Override
-//            public void onResponse(JSONObject result) {
-//                Util.getInstance().stopLoading(stopLoading);
-//
-//
-//                try {
-//                    JSONArray results = (JSONArray) result.get("results");
-//                    if(results.length() > 0) {
-//                        JSONObject firstAddress = (JSONObject) results.get(0);
-//                        callback.onResponse(firstAddress);
-//                    }
-//
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//
-//            }
 
             @Override
             public void onResponse(BaseModel result) {
@@ -50,13 +33,16 @@ public class LocationConnect {
                 try {
                     JSONArray results = result.getJSONArray("results");
                     if(results.length() > 0) {
-                        BaseModel firstAddress = new BaseModel((String) results.get(0));
+                        BaseModel firstAddress = new BaseModel(results.getJSONObject(0));
                         listener.onResponse(firstAddress);
 
                     }
 
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Util.getInstance().stopLoading(true);
+                    Constants.throwError(e.toString());
+                    listener.onError(e.toString());
+
                 }
 
 

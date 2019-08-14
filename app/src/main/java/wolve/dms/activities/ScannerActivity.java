@@ -35,6 +35,8 @@ import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
+import static wolve.dms.libraries.connectapi.sheetapi.GoogleSheetPostData.SHEET_ROW;
+
 /**
  * Created by macos on 9/15/17.
  */
@@ -320,7 +322,7 @@ public class ScannerActivity extends BaseActivity implements View.OnClickListene
                 }
 
                 String range = String.format(Api_link.SCANNER_CODE_TAB, pos);
-                SheetConnect.postValue(Api_link.SCANNER_SHEET_KEY, range, getListValueExportToSheet(adapter.getAllItem()), new GoogleSheetGetData.CallbackListList() {
+                SheetConnect.postValue(Api_link.SCANNER_SHEET_KEY, range, getListValueExportToSheet(adapter.getAllItem()),SHEET_ROW, new GoogleSheetGetData.CallbackListList() {
                     @Override
                     public void onRespone(List<List<Object>> results) {
                         Util.showToast("Thành công");

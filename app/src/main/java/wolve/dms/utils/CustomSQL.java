@@ -77,9 +77,12 @@ public class CustomSQL {
 
     public static String getString(String title){
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
-        if(prefs != null)
+        if(prefs != null){
             return prefs.getString(title, "");
-        return "";
+        }else {
+            return "";
+        }
+
     }
 
     public static int getInt(String title){
@@ -169,6 +172,8 @@ public class CustomSQL {
         }
 
     }
+
+
 
 
 }

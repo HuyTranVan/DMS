@@ -30,6 +30,7 @@ import lecho.lib.hellocharts.view.PieChartView;
 import wolve.dms.R;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.District;
+import wolve.dms.utils.Constants;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
@@ -82,6 +83,7 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         chartDistrict = (PieChartView) view.findViewById(R.id.statistical_dashboard_district);
         chartBDF = view.findViewById(R.id.statistical_dashboard_bdf);
 
+
     }
 
     @Override
@@ -91,13 +93,35 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         }
     }
 
-    public void reloadData(List<BaseModel> list, List<BaseModel> listDetail, double paid, double debt){
-        setupIncomeChart(list, listDetail, paid, debt);
-        setupDistrictChart(list);
+    public void reloadData(String username, List<BaseModel> list, List<BaseModel> listDetail,double total, double paid, double debt){
+        List<BaseModel> mList = new ArrayList<>();
+        List<BaseModel> mListDetail= new ArrayList<>();
+        if (username.equals(Constants.ALL_FILTER)){
+            mList = list;
+            mListDetail = listDetail;
+
+        }else {
+            mList = new ArrayList<>();
+            mListDetail = new ArrayList<>();
+
+            for (BaseModel row1 : list){
+                if (row1.getBaseModel("user").getString("displayName").equals(username)){
+                    mList.add(row1);
+                }
+            }
+
+            for (BaseModel row2 : listDetail){
+                if (row2.getBaseModel("user").getString("displayName").equals(username)){
+                    mListDetail.add(row2);
+                }
+            }
+        }
+        setupIncomeChart(mList, mListDetail,total,  paid, debt);
+        setupDistrictChart(mList);
 
     }
 
-    private void setupBDFChart(float total, float bdf) {
+    private void setupBDFChart(double total, double bdf) {
         PieChartData data;
         double percent =0.0;
 
@@ -130,8 +154,7 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
             for (int i = 0; i< listDistrict.size(); i++){
                 Double total =0.0;
                 for (int j=0; j<list.size(); j++){
-                    JSONObject objectCustomer = new JSONObject(list.get(j).getString("customer"));
-                    if (objectCustomer.getString("district").equals(listDistrict.get(i))){
+                    if (list.get(j).getBaseModel("customer").getString("district").equals(listDistrict.get(i))){
                         total +=list.get(j).getDouble("total");
                     }
 
@@ -179,29 +202,29 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
 
     }
 
-    private void setupIncomeChart(List<BaseModel> list, List<BaseModel> listDetail , double paid, double debt){
-        float total = Util.getTotalMoney(list).floatValue();
-        //float debt =Util.getTotalDebt(list).floatValue();
+    private void setupIncomeChart(List<BaseModel> list, List<BaseModel> listDetail , double total, double paid, double debt){
+        //float total = Util.getTotalMoney(list).floatValue();
+        //float debt =Util.getSumDebt(list).floatValue();
         //float income = Util.getTotalMoney(list).floatValue() - debt;
-        float bdf = 0.0f;
-        bdf = (float) DataUtil.defineBDFValue(listDetail);
+        double bdf = 0.0f;
+        bdf = DataUtil.defineBDFValue(listDetail);
 
-        setupBDFChart(total, bdf);
+//        setupBDFChart(total, bdf);
 
 //        float profit = 0.0f;
 //        if (User.getRole().equals(Constants.ROLE_ADMIN)){
 //            profit =Util.getTotalProfit(list).floatValue();
 //        }
 //        float[] inputData = new float[]{total, income , debt , profit};
-
-        float[] inputData = new float[]{total, (float) paid, (float) debt, bdf};
+        double[] inputDataDouble = new double[]{total,  paid,  debt, bdf};
+        float[] inputData = new float[]{(float) total, (float) paid, (float) debt,(float)  bdf};
 
         List<Column> columns = new ArrayList<Column>();
 
         for (int i = 0; i < 4; ++i) {
             List<SubcolumnValue> values = new ArrayList<SubcolumnValue>();
             SubcolumnValue subcolumnValue = new SubcolumnValue(inputData[i], ChartUtils.nextColor());
-            subcolumnValue.setLabel(Util.FormatMoney((double) inputData[i]));
+            subcolumnValue.setLabel(Util.FormatMoney(inputDataDouble[i]));
 
             values.add(subcolumnValue);
 
@@ -217,7 +240,8 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         axisValues.add(new AxisValue(0, "Tổng bán hàng".toCharArray()));
         axisValues.add(new AxisValue(1, "Tiền đã thu".toCharArray()));
         axisValues.add(new AxisValue(2, "Công nợ".toCharArray()));
-        axisValues.add(new AxisValue(3, "BDF".toCharArray()));
+        String bdfString = new DecimalFormat("#.##").format(bdf *100 /total) + " %";
+        axisValues.add(new AxisValue(3, String.format("BDF (%s)", bdfString).toCharArray()));
         Axis axisX = new Axis(axisValues);
 
         data.setAxisXBottom(axisX);
@@ -237,6 +261,41 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
 
 
         chartIncome.setColumnChartData(data);
+
+        chartIncome.setOnValueTouchListener(new ColumnChartOnValueSelectListener() {
+            @Override
+            public void onValueSelected(int i, int i1, SubcolumnValue subcolumnValue) {
+                switch (i){
+                    case 0:
+                        mActivity.viewPager.setCurrentItem(1, true);
+                        break;
+
+                    case 1:
+                        mActivity.viewPager.setCurrentItem(3, true);
+
+                        break;
+
+                    case 2:
+                        mActivity.viewPager.setCurrentItem(4, true);
+                        break;
+
+                    case 3:
+
+                        break;
+
+
+
+                }
+
+
+                //Log.e("tag", "vị trí " + i + "  ... " + i1);
+            }
+
+            @Override
+            public void onValueDeselected() {
+
+            }
+        });
 
     }
 

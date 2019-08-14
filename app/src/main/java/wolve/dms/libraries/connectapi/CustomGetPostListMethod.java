@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
@@ -23,10 +24,10 @@ import wolve.dms.utils.Util;
  * Created by tranhuy on 7/22/16.
  */
 public class CustomGetPostListMethod extends AsyncTask<String, Void, List<String>> {
-    private CallbackListCustom mListener = null;
+    private CallbackCustomList mListener = null;
     private List<BaseModel> mParams;
 
-    public CustomGetPostListMethod( List<BaseModel> listParams, CallbackListCustom listener) {
+    public CustomGetPostListMethod( List<BaseModel> listParams, CallbackCustomList listener) {
         mListener = listener;
         this.mParams = listParams;
         //this.isJsonType = isJsonType;
@@ -146,8 +147,6 @@ public class CustomGetPostListMethod extends AsyncTask<String, Void, List<String
         mListener.onResponse(listResult);
 
     }
-
-
 
 }
 

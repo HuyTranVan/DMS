@@ -2,6 +2,7 @@ package wolve.dms.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +18,14 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackListCustom;
+import wolve.dms.customviews.CTextIcon;
+import wolve.dms.libraries.Security;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
+import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.DataUtil;
@@ -34,7 +39,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
-    private CallbackBill mListenerBill;
+    private CallbackBaseModel mListenerBill;
     private CustomBottomDialog.FourMethodListener mListerner;
 
     public interface CallbackBill {
@@ -42,14 +47,14 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
         void onResponse(BaseModel bill);
     }
 
-    public CustomerBillsAdapter(List<BaseModel> data, CallbackBill listener, CustomBottomDialog.FourMethodListener listener4) {
+    public CustomerBillsAdapter(List<BaseModel> data, CallbackBaseModel listener, CustomBottomDialog.FourMethodListener listener4) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mData = data;
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mListenerBill = listener;
         this.mListerner = listener4;
 
-        DataUtil.sortbyKey("createAt", mData, true);
+        DataUtil.sortbyStringKey("createAt", mData, true);
 
     }
 
@@ -62,54 +67,53 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
     @Override
     public void onBindViewHolder(final CustomerBillsAdapterViewHolder holder, final int position) {
         try {
-            holder.tvDate.setText(Util.DateString(mData.get(position).getLong("createAt")));
-            holder.tvHour.setText(Util.HourString(mData.get(position).getLong("createAt")));
-            holder.tvTotal.setText("Tổng: "+ Util.FormatMoney(mData.get(position).getDouble("total")));
-            holder.tvPay.setText("Trả: "+ Util.FormatMoney(mData.get(position).getDouble("paid")));
-            holder.tvDebt.setText("Nợ: "+ Util.FormatMoney(mData.get(position).getDouble("debt")));
-            if (mData.get(position).getString("note").equals("") || mData.get(position).getString("note").matches(Util.DETECT_NUMBER) ){
+            holder.tvDate.setText(Util.DateHourString(mData.get(position).getLong("createAt")));
+            holder.tvTotal.setText(Util.FormatMoney(mData.get(position).getDouble("total")) + " đ");
+            holder.tvDebt.setText(Util.FormatMoney(mData.get(position).getDouble("debt")) + " đ");
+            if (Util.isEmpty(mData.get(position).getString("note")) ){
                 holder.tvNote.setVisibility(View.GONE);
+                holder.rvReturn.setVisibility(View.GONE);
+
             }else {
-                holder.tvNote.setVisibility(View.VISIBLE);
-                holder.tvNote.setText(mData.get(position).getString("note"));
+                if (mData.get(position).hasKey(Constants.HAVEBILLRETURN)){
+                    holder.rvReturn.setVisibility(View.VISIBLE);
+                    holder.tvNote.setVisibility(View.GONE);
+
+                    List<BaseModel> listReturn = DataUtil.array2ListBaseModel(mData.get(position).getJSONArray(Constants.HAVEBILLRETURN));
+                    CustomerBillsReturnAdapter adapter = new CustomerBillsReturnAdapter(listReturn);
+                    Util.createLinearRV(holder.rvReturn, adapter);
+                }else {
+                    holder.tvNote.setVisibility(View.VISIBLE);
+                    holder.rvReturn.setVisibility(View.GONE);
+                }
+
             }
 
-            JSONArray arrayBillDetail = new JSONArray(mData.get(position).getString("billDetails"));
-            final List<BaseModel> listBillDetail = new ArrayList<>();
-            for (int i=0; i<arrayBillDetail.length(); i++){
-                BaseModel billDetail = new BaseModel(arrayBillDetail.getJSONObject(i));
-                listBillDetail.add(billDetail);
-            }
-
+            final List<BaseModel> listBillDetail = new ArrayList<>(DataUtil.array2ListBaseModel(new JSONArray(mData.get(position).getString("billDetails"))));
             CustomerBillsDetailAdapter adapter = new CustomerBillsDetailAdapter(listBillDetail);
             Util.createLinearRV(holder.rvBillDetail, adapter);
 
-            if (mData.get(position).getString("payments")!= null){
-                JSONArray arrayBillPayment = new JSONArray(mData.get(position).getString("payments"));
-                final List<JSONObject> listPayment = new ArrayList<>();
-                for (int j=0; j<arrayBillPayment.length(); j++){
-                    JSONObject object = arrayBillPayment.getJSONObject(j);
-                    listPayment.add(object);
+            JSONArray arrayBillPayment = new JSONArray(mData.get(position).getString("payments"));
+            List<BaseModel> listPayment = new ArrayList<>(DataUtil.array2ListBaseModel(arrayBillPayment));
 
-                }
+            if (mData.get(position).hasKey(Constants.PAYBYTRETURN)){
+                listPayment.addAll(DataUtil.array2ListBaseModel(mData.get(position).getJSONArray(Constants.PAYBYTRETURN)));
 
+            }
+
+            if (listPayment.size() >0){
+                holder.lnPayment.setVisibility(View.VISIBLE );
                 PaymentAdapter paymentAdapter = new PaymentAdapter(listPayment);
                 Util.createLinearRV(holder.rvPayment, paymentAdapter);
+
+            }else {
+                holder.lnPayment.setVisibility(View.GONE);
             }
 
-
-            if (mData.size()==1){
-                holder.vLineUpper.setVisibility(View.GONE);
-                holder.vLineUnder.setVisibility(View.GONE);
-            }else if(position ==0){
-                holder.vLineUpper.setVisibility(View.GONE);
-            }else if (position==mData.size()-1){
-                holder.vLineUnder.setVisibility(View.GONE);
-            }
 
             holder.tvIcon.setText(String.valueOf(mData.size()-position));
 
-            holder.tvIcon.setOnClickListener(new View.OnClickListener() {
+            holder.lnTitle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     CustomBottomDialog.choiceFourOption(mContext.getString(R.string.icon_money), "Thanh toán hóa đơn",
@@ -130,8 +134,6 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
                                 public void Method3(Boolean three) {
                                     mListenerBill.onResponse(mData.get(position));
 
-//                                    mListenerBill.onResponse(returnProduct(listBillDetail),mData.get(position).getDouble("total"), mData.get(position).getInt("id"));
-
                                 }
 
                                 @Override
@@ -144,7 +146,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
 
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -154,26 +156,24 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
     }
 
     public class CustomerBillsAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvDate, tvHour, tvPay, tvDebt, tvTotal, tvNote;
-        private RecyclerView rvBillDetail, rvPayment;
-        private TextView tvIcon;
-        private View vLineUpper, vLineUnder;
-        private LinearLayout lnParent;
+        private TextView tvDate, tvHour, tvPay, tvDebt, tvTotal, tvNote, tvIcon;
+        private RecyclerView rvBillDetail, rvPayment, rvReturn;
+        private LinearLayout lnPayment, lnTitle;
 
         public CustomerBillsAdapterViewHolder(View itemView) {
             super(itemView);
 
             tvDate = (TextView) itemView.findViewById(R.id.bills_item_date);
-            tvHour = (TextView) itemView.findViewById(R.id.bills_item_hour);
-            tvPay = (TextView) itemView.findViewById(R.id.bills_item_pay);
+            //tvPay = (TextView) itemView.findViewById(R.id.bills_item_pay);
             tvDebt = (TextView) itemView.findViewById(R.id.bills_item_debt);
             tvTotal = (TextView) itemView.findViewById(R.id.bills_item_total);
+            tvIcon = (TextView) itemView.findViewById(R.id.bills_item_icon);
             rvBillDetail = (RecyclerView) itemView.findViewById(R.id.bills_item_rvproduct);
             rvPayment = (RecyclerView) itemView.findViewById(R.id.bills_item_rvpayment);
-            vLineUnder = (View) itemView.findViewById(R.id.bills_item_under);
-            vLineUpper = (View) itemView.findViewById(R.id.bills_item_upper);
-            lnParent = (LinearLayout) itemView.findViewById(R.id.bills_item_content_parent);
-            tvIcon =  (TextView) itemView.findViewById(R.id.bills_item_icon);
+            rvReturn = (RecyclerView) itemView.findViewById(R.id.bills_item_rvreturn);
+            lnPayment = (LinearLayout) itemView.findViewById(R.id.bills_item_payment_parent);
+            //lnReturn = (LinearLayout) itemView.findViewById(R.id.bills_item_return_parent);
+            lnTitle = (LinearLayout) itemView.findViewById(R.id.bills_item_title);
             tvNote = itemView.findViewById(R.id.bills_item_note);
 
         }
@@ -191,16 +191,15 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
                 @Override
                 public void onRespone(Boolean result) {
                     if (result){
-//                        String currentId = String.valueOf(mData.get(currentPosition).getInt("id"));
-
                         List<String> listParams = new ArrayList<>();
-                        listParams = Util.arrayToList(mData.get(currentPosition).getString("idbill").split("-"));
-//                    listParams.add(currentId);
-//                    for (int i=0; i<mData.size(); i++){
-//                        if (Util.isBillReturn(mData.get(i))){
-//                            listParams.add(mData.get(i).getString("note"));
-//                        }
-//                    }
+                        listParams.add(mData.get(currentPosition).getString("id"));
+                        if (mData.get(currentPosition).hasKey(Constants.HAVEBILLRETURN)){
+                            List<BaseModel> list = DataUtil.array2ListBaseModel(mData.get(currentPosition).getJSONArray(Constants.HAVEBILLRETURN));
+                            for (BaseModel baseModel : list){
+                                listParams.add(baseModel.getString("id"));
+
+                            }
+                        }
 
                         CustomerConnect.DeleteListBill(listParams, new CallbackListCustom() {
                             @Override
@@ -231,6 +230,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
 
             CustomCenterDialog.showDialogPayment(String.format("THANH TOÁN HÓA ĐƠN %s", Util.DateString(mData.get(currentPosition).getLong("createAt"))),
                     currentDebt,
+                    0.0,
                     new CallbackListCustom() {
                         @Override
                         public void onResponse(List result) {
@@ -270,17 +270,14 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
 
     private List<BaseModel> returnProduct(List<BaseModel> list){
         List<BaseModel> listResult = new ArrayList<>();
-//        try {
-            for (int i=0; i<list.size(); i++){
-                list.get(i).put("quantity", mergeQuantity(list, list.get(i)));
-                if (list.get(i).getInt("quantity") > 0){
-                    listResult.add(list.get(i));
-                }
-
+        for (int i=0; i<list.size(); i++){
+            list.get(i).put("quantity", mergeQuantity(list, list.get(i)));
+            if (list.get(i).getInt("quantity") > 0){
+                listResult.add(list.get(i));
             }
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
+
+        }
+
         return listResult;
 
     }

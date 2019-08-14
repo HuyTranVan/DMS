@@ -97,7 +97,7 @@ public class StatisticalProductAdapter extends RecyclerView.Adapter<StatisticalP
             }
         });
 
-        holder.line.setVisibility(pos == mData.size() -1 ? View.GONE : View.VISIBLE);
+        //holder.line.setVisibility(pos == mData.size() -1 ? View.GONE : View.VISIBLE);
 
     }
 

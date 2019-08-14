@@ -89,46 +89,13 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
         }
     }
 
-    public void reloadData(List<BaseModel> listDebt){
-        createRVCDebt(listDebt);
-//        listDebt = new ArrayList<>();
-//        String param = String.format(Api_link.CUSTOMER_DEBT_PARAM, 0);
-//        CustomerConnect.ListCustomer(param, new CallbackJSONArray() {
-//            @Override
-//            public void onResponse(JSONArray result) {
-//                try {
-//                    for (int i=0; i<result.length(); i++){
-//                        BaseModel object = new BaseModel(result.getJSONObject(i));
-//                        object.put("debt", object.getDouble("currentDebt"));
-//
-//                        if (!object.getString("note").isEmpty()  && Util.isJSONValid(object.getString("note"))){
-//                            JSONObject note = new JSONObject(object.getString("note"));
-//
-//                            object.put("userName", note.getString("userName"));
-//
-//                            listDebt.add(object);
-//
-//
-//                        }
-//
-//                    }
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                createRVCDebt(listDebt);
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }, true);
+    public void reloadData(String user, List<BaseModel> listDebt){
+        createRVCDebt(user, listDebt);
 
     }
 
-    private void createRVCDebt(List<BaseModel> list) {
-        adapter = new StatisticalDebtAdapter(mActivity.tvEmployeeName, tvSum, list, new CallbackString() {
+    private void createRVCDebt(String user, List<BaseModel> list) {
+        adapter = new StatisticalDebtAdapter(user, list, new CallbackString() {
             @Override
             public void Result(String s) {
                 CustomerConnect.GetCustomerDetail(s, new CallbackCustom() {
@@ -146,11 +113,12 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
             }
         });
         Util.createLinearRV(rvDebts, adapter);
+        tvSum.setText(String.format("Tổng công nợ: %s", Util.FormatMoney(adapter.sumDebts())));
 
     }
 
-    protected double getTotalDebt(){
-        return adapter.getTotalDebt();
+    protected double getSumDebt(){
+        return adapter.sumDebts();
     }
 
 

@@ -217,7 +217,6 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
         currentCustomer = new BaseModel(CustomSQL.getString(Constants.CUSTOMER));
         setCheckinGroup();
         try {
-
             firstName = currentCustomer.getString("name");
             edName.setText(currentCustomer.getString("name") == null ? "" : currentCustomer.getString("name"));
             edPhone.setText(currentCustomer.getString("phone") == null ? "" : currentCustomer.getString("phone"));
@@ -277,6 +276,10 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
                 showMoneyOverview(mLists);
 
+            }
+
+            if (currentCustomer.isNull("bills")){
+                lnPaidParent.setVisibility(View.GONE);
             }
 
             if (currentCustomer.getInt("id") != 0) {
@@ -433,6 +436,8 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
             case R.id.customer_bill_more:
                 changeFragment(new BillDetailFragment() , true);
+                Util.smoothImageRotation(btnBack, -90);
+
 
                 break;
 
@@ -502,11 +507,6 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     private void submitCustomer(final CallbackObject mListener, Boolean loading){
         if (checkInputField()){
             CustomerConnect.CreateCustomer(createParamCustomer(getCurrentCustomer()), new CallbackCustom() {
-//                @Override
-//                public void onResponse(JSONObject result) {
-//
-//                }
-
                 @Override
                 public void onResponse(BaseModel result) {
                     mListener.onResponse(result.convertJsonObject());
@@ -524,13 +524,6 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     private void submitCustomerAndCheckin(final String statusNote){
         if (checkInputField()){
             CustomerConnect.CreateCustomer(createParamCustomer(getCurrentCustomer()), new CallbackCustom() {
-//                @Override
-//                public void onResponse(JSONObject result) {
-//                    final Customer responseCustomer = new Customer(result);
-//                    submitCheckin(responseCustomer, statusNote);
-//
-//                }
-
                 @Override
                 public void onResponse(BaseModel result) {
                     submitCheckin(result, statusNote);
@@ -626,6 +619,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
 
         }else if(mFragment != null && mFragment instanceof BillDetailFragment) {
             getSupportFragmentManager().popBackStack();
+            Util.smoothImageRotation(btnBack, 90);
 
         }else {
             returnPreviousScreen(null);
@@ -819,7 +813,8 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     protected void showMoneyOverview(List<BaseModel> listbill ){
-        listBills = DataUtil.mergeWithReturnBill(listbill);
+//        listBills = DataUtil.mergeWithReturnBill(listbill);
+        listBills = DataUtil.remakeBill(listbill);
         BaseModel object = Util.getTotal(listBills);
 
         lnPaidParent.setVisibility(object.getInt("size") > 0 ?View.VISIBLE :View.GONE);
@@ -831,43 +826,6 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     protected void reloadBills(final CallbackBoolean mListener){
         String param = currentCustomer.getString("id");
         CustomerConnect.GetCustomerDetail(param, new CallbackCustom() {
-//            @Override
-//            public void onResponse(JSONObject result) {
-//                Customer customer = new Customer(result);
-//                List<BaseModel> mList = new ArrayList<>();
-//                try{
-//                    if (customer.getString("bills") != null) {
-//                        JSONArray array = new JSONArray(customer.getString("bills"));
-//
-//                        for (int i = 0; i < array.length(); i++) {
-//                            JSONObject objectBill = array.getJSONObject(i);
-//                            JSONObject objectUser = objectBill.getJSONObject("user");
-//                            if (User.getRole().equals(Constants.ROLE_ADMIN)){
-//                                mList.add(new Bill(objectBill));
-//                            }else {
-//                                if (User.getId() == objectUser.getInt("id")){
-//                                    mList.add(new Bill(objectBill));
-//                                }
-//                            }
-//                            addYearToList(Util.YearString(objectBill.getLong("createAt")));
-//
-//                        }
-//
-//                        currentCustomer.put("bills", array);
-//                        showMoneyOverview(mList);
-//                        mListener.onRespone(true);
-//
-//
-//                        if (mList.size()>0){
-//                            rdOrdered.setChecked(true);
-//                        }
-//                    }
-//                } catch (JSONException e) {
-//                    mListener.onRespone(false);
-//                }
-
-//            }
-
             @Override
             public void onResponse(BaseModel customer) {
                 List<BaseModel> mList = new ArrayList<>();
@@ -960,38 +918,10 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
     }
 
     private void setDistrictEvent(){
-
         edDistrict.setDropdown(true, new CInputForm.ClickListener() {
             @Override
             public void onClick(View view) {
                 SystemConnect.getDistrict(Province.getDistrictId(edCity.getText().toString()), new CallbackCustomList() {
-//                    @Override
-//                    public void onResponse(JSONArray result) {
-//                        List<String> list = new ArrayList<>();
-//                        try {
-//                            for (int i=0; i<result.length(); i++){
-//                                JSONObject object = result.getJSONObject(i);
-//                                if (object.getString("name").matches(Util.DETECT_NUMBER)){
-//                                    list.add(String.format("%s %s",object.getString("type"),object.getString("name")));
-//                                }else {
-//                                    list.add(object.getString("name"));
-//                                }
-//
-//                            }
-//                        } catch (JSONException e) {
-//                            //e.printStackTrace();
-//                        }
-//
-//                        CustomBottomDialog.choiceList("CHỌN QUẬN/HUYỆN",list , new CustomBottomDialog.StringListener() {
-//                            @Override
-//                            public void onResponse(String content) {
-//                                edDistrict.setText(content);
-//
-//                            }
-//                        });
-//
-//                    }
-
                     @Override
                     public void onResponse(List<BaseModel> results) {
                         List<String> list = new ArrayList<>();

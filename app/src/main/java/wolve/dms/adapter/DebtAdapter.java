@@ -170,11 +170,11 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.PrintBillViewH
 //        }
     }
 
-    public List<JSONObject> getListBillPayment(){
-        List<JSONObject> listResult = new ArrayList<>();
-        try {
+    public List<BaseModel> getListBillPayment(){
+        List<BaseModel> listResult = new ArrayList<>();
+//        try {
             for (int i=0; i<mData.size(); i++){
-                JSONObject object = new JSONObject();
+                BaseModel object = new BaseModel();
                 if (!mData.get(i).isNull("tempPaid") && mData.get(i).getDouble("tempPaid") !=0){
                     object.put("billId", mData.get(i).getInt("id"));
                     object.put("paid", mData.get(i).getDouble("tempPaid"));
@@ -182,10 +182,10 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.PrintBillViewH
                 }
 
             }
-        } catch (JSONException e) {
-//            e.printStackTrace();
-            return listResult;
-        }
+//        } catch (JSONException e) {
+////            e.printStackTrace();
+//            return listResult;
+//        }
 
         return listResult;
     }

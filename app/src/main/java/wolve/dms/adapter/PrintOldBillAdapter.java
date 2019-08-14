@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.models.BaseModel;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
@@ -23,12 +24,12 @@ import wolve.dms.utils.Util;
  */
 
 public class PrintOldBillAdapter extends RecyclerView.Adapter<PrintOldBillAdapter.PrintBillViewHolder> {
-    private List<JSONObject> mData = new ArrayList<>();
+    private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private int printSize;
 
-    public PrintOldBillAdapter(int printSize, List<JSONObject> list) {
+    public PrintOldBillAdapter(int printSize, List<BaseModel> list) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mData = list;
@@ -45,21 +46,17 @@ public class PrintOldBillAdapter extends RecyclerView.Adapter<PrintOldBillAdapte
 
     @Override
     public void onBindViewHolder(final PrintBillViewHolder holder, final int position) {
-        try {
-            holder.tvDate.setText(Util.DateHourString(mData.get(position).getLong("createAt")));
-            holder.tvTotal.setText(Util.FormatMoney(mData.get(position).getDouble("total")));
-            holder.tvPaid.setText(Util.FormatMoney(mData.get(position).getDouble("paid")));
-            holder.tvDebt.setText(Util.FormatMoney(mData.get(position).getDouble("debt")));
+        holder.tvDate.setText(Util.DateHourString(mData.get(position).getLong("createAt")));
+        holder.tvTotal.setText(Util.FormatMoney(mData.get(position).getDouble("total")));
+        holder.tvPaid.setText(Util.FormatMoney(mData.get(position).getDouble("paid")));
+        holder.tvDebt.setText(Util.FormatMoney(mData.get(position).getDouble("debt")));
 
-            List<JSONObject> list = DataUtil.array2ListObject(mData.get(position).getString("billDetails"));
+        List<BaseModel> list = DataUtil.array2ListObject(mData.get(position).getString("billDetails"));
 
-            PrintBillAdapter adapterBill = new PrintBillAdapter(printSize , list) ;
-            Util.createLinearRV(holder.rvBill, adapterBill);
+        PrintBillAdapter adapterBill = new PrintBillAdapter(printSize , list) ;
+        Util.createLinearRV(holder.rvBill, adapterBill);
 
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
 
 
     }
@@ -72,11 +69,8 @@ public class PrintOldBillAdapter extends RecyclerView.Adapter<PrintOldBillAdapte
     public Double getDebtMoney(){
         Double total =0.0;
         for (int i=0; i<mData.size(); i++){
-            try {
-                total += (mData.get(i).getDouble("debt"));
-            } catch (JSONException e) {
-                total =0.0;
-            }
+            total += (mData.get(i).getDouble("debt"));
+
         }
         return total;
     }

@@ -42,12 +42,12 @@
             android:gravity="right"/>
     </LinearLayout>
 
-    <View
-        android:id="@+id/statistical_product_item_line"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_alignParentBottom="true"
-        android:background="#e5e5e5" />
+    <!--<View-->
+        <!--android:id="@+id/statistical_product_item_line"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1dp"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:background="#e5e5e5" />-->
 
 </RelativeLayout>
 

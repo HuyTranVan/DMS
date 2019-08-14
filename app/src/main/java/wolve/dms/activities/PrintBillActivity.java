@@ -71,7 +71,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     private PrintBillAdapter adapterBill;
     private PrintOldBillAdapter adapterOldBill;
     private DebtAdapter adapterDebt;
-    private List<JSONObject> listBills = new ArrayList<>();
+    private List<BaseModel> listBills = new ArrayList<>();
     private List<BaseModel> listDebts = new ArrayList<>();
     private Uri imageChangeUri ;
     private Dialog dialogPayment;
@@ -140,6 +140,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     public void initialData() {
+
         currentCustomer = new Customer( getIntent().getExtras().getString(Constants.CUSTOMER));
         rePrint = getIntent().getExtras().getBoolean(Constants.RE_PRINT);
         listBills = DataUtil.array2ListObject(getIntent().getExtras().getString(Constants.BILLS));
@@ -304,7 +305,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 //            e.printStackTrace();
 //        }
 
-        DataUtil.sortbyKey("createAt", listDebts, true);
+        DataUtil.sortbyStringKey("createAt", listDebts, true);
         for (int i=0; i< listDebts.size(); i++){
             list.add(listDebts.get(i));
         }
@@ -313,7 +314,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void showDialogPayment(){
-        dialogPayment = CustomCenterDialog.showDialogPayment("NHẬP SỐ TIỀN KHÁCH TRẢ", getAllDebt(), new CallbackListCustom() {
+        dialogPayment = CustomCenterDialog.showDialogPayment("NHẬP SỐ TIỀN KHÁCH TRẢ", getAllDebt(),0.0, new CallbackListCustom() {
             @Override
             public void onResponse(final List result) {
                 dialogPayment.dismiss();
@@ -353,20 +354,20 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
     }
 
-    private void createCurrentRVBill(final List<JSONObject> list){
+    private void createCurrentRVBill(final List<BaseModel> list){
         adapterBill = new PrintBillAdapter(tvPrintSize.getText().toString().equals(Constants.PRINTER_80)? 80:57 , list) ;
         Util.createLinearRV(rvBills, adapterBill);
 
     }
 
     private void createRVDebt(final List<BaseModel> list){
-        DataUtil.sortbyKey("createAt", list, true);
+        DataUtil.sortbyStringKey("createAt", list, true);
         adapterDebt = new DebtAdapter( list, true, false);
         Util.createLinearRV(rvDebts, adapterDebt);
 
     }
 
-    private void createOldRVBill(final List<JSONObject> list){
+    private void createOldRVBill(final List<BaseModel> list){
         adapterOldBill = new PrintOldBillAdapter(tvPrintSize.getText().toString().equals(Constants.PRINTER_80)? 80:57 , list) ;
         Util.createLinearRV(rvBills, adapterOldBill);
 
@@ -640,7 +641,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 //            Thread thread = new Thread(new Runnable() {
 //                @Override
 //                public void run() {
-//                    CustomerConnect.printOldBillCustom(tvPrintSize.getText().toString(), outputStream, currentCustomer,listBill, adapterOldBill.getDebtMoney(), new CallbackBoolean() {
+//                    CustomerConnect.printOldBillCustom(tvPrintSize.getText().toString(), outputStream, currentCustomer,listInitialBill, adapterOldBill.getDebtMoney(), new CallbackBoolean() {
 //                        @Override
 //                        public void onRespone(Boolean result) {
 //                            Util.getInstance().stopLoading(true);
@@ -653,7 +654,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 //
 //                                    @Override
 //                                    public void Cancel(Boolean boolCancel) {
-//                                        doPrintOldBill(listBill);
+//                                        doPrintOldBill(listInitialBill);
 //                                    }
 //
 //                                });

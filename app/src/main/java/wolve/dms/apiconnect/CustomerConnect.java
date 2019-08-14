@@ -49,6 +49,7 @@ public class CustomerConnect {
                     listener.onResponse(Constants.getResponeObjectSuccess(result));
 
                 }else {
+                    Util.getInstance().stopLoading(true);
                     Constants.throwError(result.getString("message"));
                     listener.onError(result.getString("message"));
 
@@ -67,8 +68,10 @@ public class CustomerConnect {
         }).execute();
     }
 
-    public static void ListCustomer(String param,int numberItem, final CallbackCustomList listener, final Boolean stopLoading){
-        Util.getInstance().showLoading();
+    public static void ListCustomer(String param,int numberItem, final CallbackCustomList listener, Boolean showloading, final Boolean stopLoading){
+        if (showloading){
+            Util.getInstance().showLoading();
+        }
 
         new CustomPostMethod(DataUtil.getListCustomerParam(param, numberItem),  new CallbackCustom() {
             @Override
@@ -255,6 +258,7 @@ public class CustomerConnect {
                     listener.onResponse(Constants.getResponeObjectSuccess(result));
 
                 }else {
+                    Util.getInstance().stopLoading(true);
                     Constants.throwError(result.getString("message"));
                     listener.onError(result.getString("message"));
 
@@ -276,7 +280,7 @@ public class CustomerConnect {
     public static void PostBill(String params, final CallbackCustom listener, final Boolean stopLoading) {
         Util.getInstance().showLoading();
 
-        String url = Api_link.BILL_NEW;
+        //String url = Api_link.BILL_NEW;
 
         new CustomPostMethod(DataUtil.postBillParam(params), new CallbackCustom() {
             @Override
@@ -286,6 +290,7 @@ public class CustomerConnect {
                     listener.onResponse(Constants.getResponeObjectSuccess(result));
 
                 }else {
+                    Util.getInstance().stopLoading(true);
                     Constants.throwError(result.getString("message"));
                     listener.onError(result.getString("message"));
 
@@ -301,28 +306,6 @@ public class CustomerConnect {
 
             }
 
-//            @Override
-//            public void onResponse(JSONObject result) {
-//                Util.getInstance().stopLoading(stopLoading);
-//
-//                try {
-//                    if (result.getInt("status") == 200) {
-//                        listener.onResponse(result.getJSONObject("data"));
-//
-//                    } else {
-//                        listener.onError("Unknow error");
-//                    }
-//                } catch (JSONException e) {
-//                    listener.onError(e.toString());
-//                }
-//            }
-//
-//
-//            @Override
-//            public void onError(String error) {
-//                listener.onError(error);
-//                Util.getInstance().stopLoading(true);
-//            }
         }).execute();
     }
 
@@ -357,6 +340,7 @@ public class CustomerConnect {
                     listener.onResponse(Constants.getResponeObjectSuccess(result));
 
                 }else {
+                    Util.getInstance().stopLoading(true);
                     Constants.throwError(result.getString("message"));
                     listener.onError(result.getString("message"));
 
@@ -366,23 +350,12 @@ public class CustomerConnect {
 
             @Override
             public void onError(String error) {
-                Util.getInstance().stopLoading(stopLoading);
+                Util.getInstance().stopLoading(true);
                 Constants.throwError(error);
                 listener.onError(error);
 
             }
 
-//            @Override
-//            public void onResponse(JSONObject result) {
-//                Util.getInstance().stopLoading(stopLoading);
-//                listener.onResponse(result);
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//                listener.onError(error);
-//                Util.getInstance().stopLoading(stopLoading);
-//            }
         }).execute();
     }
 
@@ -454,6 +427,7 @@ public class CustomerConnect {
                     listener.onResponse(Constants.getResponeArraySuccess(result));
 
                 }else {
+                    Util.getInstance().stopLoading(true);
                     Constants.throwError(result.getString("message"));
                     listener.onError(result.getString("message"));
 
@@ -852,7 +826,7 @@ public class CustomerConnect {
             for (int i=0; i<listBill.size(); i++){
                 UtilPrinter.printCustomTextNew(outputStream, "Hoa don "+Util.DateHourString(listBill.get(i).getLong("createAt")) , 2,0);
 
-                List<JSONObject> listDetail = DataUtil.array2ListObject(listBill.get(i).getString("billDetails"));
+                List<BaseModel> listDetail = DataUtil.array2ListObject(listBill.get(i).getString("billDetails"));
 
                 for (int a=0; a<listDetail.size(); a++){
                     UtilPrinter.printCustomTextNew(outputStream,
@@ -932,8 +906,8 @@ public class CustomerConnect {
                 customer.getInt("volumeEstimate"), //province
                 Util.encodeString(customer.getString("shopType")), //shopType
                 customer.getInt("status.id"), //currentStatusId
-                Distributor.getDistributorId(),
-                customer.getDouble("debt")//DistributorId
+                Distributor.getDistributorId(),//DistributorId
+                customer.getDouble("debt")
         );
 
         return param;

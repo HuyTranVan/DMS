@@ -40,9 +40,9 @@ public class SheetConnect {
         }).execute();
     }
 
-    public static void postValue(String sheetId, String range, List<List<Object>> params, final GoogleSheetGetData.CallbackListList callback, final Boolean stopLoadung){
+    public static void postValue(String sheetId, String range, List<List<Object>> params,String majorDimension, final GoogleSheetGetData.CallbackListList callback, final Boolean stopLoadung){
         Util.getInstance().showLoading();
-        new GoogleSheetPostData(sheetId, range, params, new GoogleSheetPostData.CallbackListList() {
+        new GoogleSheetPostData(sheetId, range, params, majorDimension, new GoogleSheetPostData.CallbackListList() {
             @Override
             public void onRespone(List<List<Object>> results) {
                 callback.onRespone(results);

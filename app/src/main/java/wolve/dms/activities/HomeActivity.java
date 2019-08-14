@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -78,14 +79,30 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void initialData() {
-        loadCurrentData();
-        if (CustomSQL.getBoolean(Constants.ON_MAP_SCREEN)){
-            Transaction.gotoMapsActivity();
+        ///Log.e("idasd111", CustomSQL.getString(Constants.CUSTOMER_RECEIVE) + 111);
+        loadCurrentData(new CallbackBoolean() {
+            @Override
+            public void onRespone(Boolean result) {
+                if (result){
+                    createListItem();
+                    tvFullname.setText(String.format("%s _ %s (%s)",User.getFullName(), User.getRole(), Distributor.getName()));
+                    lnRelogin.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN) ? View.VISIBLE : View.GONE);
 
-        }
-        createListItem();
-        tvFullname.setText(String.format("%s _ %s (%s)",User.getFullName(), User.getRole(), Distributor.getName()));
-        lnRelogin.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN) ? View.VISIBLE : View.GONE);
+                    //Log.e("idasd111", CustomSQL.getString(Constants.CUSTOMER_RECEIVE));
+                    if (!CustomSQL.getString(Constants.CUSTOMER_ID).equals("")){
+                        Transaction.gotoMapsActivity();
+
+                        //Log.e("idasd", CustomSQL.getString(Constants.CUSTOMER_RECEIVE));
+
+                    } else if (CustomSQL.getBoolean(Constants.ON_MAP_SCREEN)){
+                        Transaction.gotoMapsActivity();
+
+                    }
+
+                }
+            }
+        });
+
 
     }
 
@@ -194,8 +211,16 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         CustomCenterDialog.showDialogRelogin(String.format("Đăng nhập vào tài khoản %s", user.getString("displayName")), user, new Callback() {
             @Override
             public void onResponse(JSONObject result) {
-                loadCurrentData();
-                tvFullname.setText(String.format("%s _ %s (%s)",User.getFullName(), User.getRole(), Distributor.getName()));
+                loadCurrentData(new CallbackBoolean() {
+                    @Override
+                    public void onRespone(Boolean result) {
+                        if (result){
+                            tvFullname.setText(String.format("%s _ %s (%s)",User.getFullName(), User.getRole(), Distributor.getName()));
+                        }
+
+                    }
+                });
+
 
             }
 
@@ -275,7 +300,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         }
     }
 
-    private void loadCurrentData() {
+    private void loadCurrentData(CallbackBoolean listener) {
         SystemConnect.getAllData(new CallbackListCustom() {
             @Override
             public void onResponse(List result) {
@@ -290,6 +315,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                     e.printStackTrace();
                 }
 
+                listener.onRespone(true);
 
             }
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AppCompatActivity;
 
 import wolve.dms.R;
@@ -20,6 +21,8 @@ import wolve.dms.activities.ShopCartActivity;
 import wolve.dms.activities.StatisticalActivity;
 import wolve.dms.activities.StatisticalCustomerActivity;
 import wolve.dms.activities.StatusActivity;
+import wolve.dms.apiconnect.Api_link;
+import wolve.dms.libraries.Security;
 import wolve.dms.models.Customer;
 import wolve.dms.models.User;
 
@@ -58,13 +61,21 @@ public class Transaction {
     }
 
     public static void gotoMapsActivity() {
-        CustomSQL.setBoolean(Constants.ON_MAP_SCREEN, true);
-
         Context context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(context, MapsActivity.class);
+        CustomSQL.setBoolean(Constants.ON_MAP_SCREEN, true);
+//        if (customerid == null){
+//
+//
+//        }else if (!customerid.equals("")){
+//            intent.putExtra(Constants.CUSTOMER_ID, customerid);
+//            CustomSQL.setString(Constants.CUSTOMER_ID, "");
+//        }
+
         context.startActivity(intent);
         ((AppCompatActivity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-        ((AppCompatActivity) context).finish();
+        //((AppCompatActivity) context).finish();
+
     }
 
     public static void gotoProductActivity() {
@@ -192,6 +203,28 @@ public class Transaction {
         intent.setData(data);
         Util.getInstance().getCurrentActivity().startActivity(intent);
 
+    }
+
+    public static void shareViaZalo(String id){
+        String param = String.format(Api_link.LUB_LINK_PARAM, Security.encrypt(id));
+        //String param = String.format(Api_link.LUB_LINK_PARAM, id);
+        ShareCompat.IntentBuilder.from(Util.getInstance().getCurrentActivity())
+                .setType("text/plain")
+                .setChooserTitle("Chia sẻ thông qua")
+                .setText(Api_link.LUB_LINK + param)
+//                .setText(String.format("www.google.com/maps/search/?api=1&query=%s,%s", lat, lng))
+                .startChooser();
+
+    }
+
+    public static void openGoogleMap(String label, double latitude, double longitude){
+        String uriBegin = "geo:" + latitude + "," + longitude;
+        String query = latitude + "," + longitude + "(" + label + ")";
+        String encodedQuery = Uri.encode(query);
+        String uriString = uriBegin + "?q=" + encodedQuery + "&z=16";
+        Uri uri = Uri.parse(uriString);
+        Intent mapIntent = new Intent(android.content.Intent.ACTION_VIEW, uri);
+        Util.getInstance().getCurrentActivity().startActivity(mapIntent);
     }
 
 

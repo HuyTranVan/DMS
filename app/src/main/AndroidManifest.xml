@@ -84,9 +84,11 @@
             android:value="cloudinary://482386522287271:Mh2EsnmYHBAsTAp7jsNLoJ5dXhk@lubsolution"/>
 
         <!--activity-->
-        <activity android:name=".activities.SplashScreenActivity"
+        <activity
+            android:name=".activities.SplashScreenActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/FullScreen">
+            android:theme="@style/FullScreen"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -105,11 +107,15 @@
                 <!--<category android:name="android.intent.category.DEFAULT"/>-->
                 <!--<category android:name="android.intent.category.BROWSABLE"/>-->
             <!--</intent-filter>-->
+
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="company" android:host="invoice" android:path="/"/>
+                <data
+                    android:host="dmslub.com"
+                    android:scheme="http"/>
             </intent-filter>
 
         </activity>

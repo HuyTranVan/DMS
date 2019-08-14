@@ -9,6 +9,7 @@ import java.util.List;
 import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomList;
+import wolve.dms.callback.CallbackCustomListList;
 import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.callback.CallbackListBaseModel;
@@ -18,6 +19,7 @@ import wolve.dms.libraries.connectapi.CustomGetPostListMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 /**
@@ -25,31 +27,6 @@ import wolve.dms.utils.Util;
  */
 
 public class SystemConnect {
-
-    public static void loadList(List<BaseModel> listparam, CallbackListBaseModel listener){
-        Util.getInstance().showLoading();
-
-        new CustomGetPostListMethod(listparam, new CallbackListCustom() {
-            @Override
-            public void onResponse(List result) {
-                List<BaseModel> results = new ArrayList<>();
-                for (int i=0; i<result.size(); i++){
-                    //results.add(Constants.getResponeApiJson((JSONObject) result.get(i)));
-                }
-                listener.onResponse(results);
-                Util.getInstance().stopLoading(true);
-            }
-
-            @Override
-            public void onError(String error) {
-                Util.getInstance().stopLoading(true);
-                Constants.throwError(error);
-                listener.onError();
-            }
-        });
-
-    }
-
 
     public static void getAllData(final CallbackListCustom listener, final Boolean stopLoading){
         Util.getInstance().showLoading();
@@ -129,23 +106,28 @@ public class SystemConnect {
 
     }
 
-    public static void loadListObject(List<BaseModel> listParam, CallbackListCustom listener, final Boolean stopLoading){
+    public static void loadListObject(List<BaseModel> listParam, CallbackCustomListList listener, final Boolean stopLoading){
+        Util.getInstance().showLoading();
 
-        new CustomGetPostListMethod(listParam, new CallbackListCustom() {
+        new CustomGetPostListMethod(listParam, new CallbackCustomList() {
             @Override
-            public void onResponse(List result) {
+            public void onResponse(List<BaseModel> results) {
                 Util.getInstance().stopLoading(stopLoading);
+                List<List<BaseModel>> listResult = new ArrayList<>();
 
-//                for (int i=0; i<result.size(); i++){
-//                    if (Constants.responeIsSuccess((BaseModel) result.get(i))){
-//                        listener.onResponse(Constants.getResponeArraySuccess(result));
-//
-//                    }else {
-//                        Constants.throwError(result.getString("message"));
-//                        listener.onError(result.getString("message"));
-//
-//                    }
-//                }
+                for (int i=0; i<results.size(); i++){
+                    if (Constants.responeIsSuccess(results.get(i))){
+                        listResult.add(Constants.getResponeArraySuccess(results.get(i)));
+
+                    }else {
+                        listResult.add(new ArrayList<>());
+                        Constants.throwError(String.format("list position at %d error",1));
+                        listener.onError("");
+
+                    }
+                }
+
+                listener.onResponse(listResult);
 
 
             }

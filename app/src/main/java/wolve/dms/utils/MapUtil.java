@@ -155,6 +155,11 @@ public class MapUtil{
 
     public static BaseModel getAddressFromMapResult(BaseModel object){
         BaseModel objectResult = new BaseModel();
+        objectResult.put("address","");
+        objectResult.put("street","");
+        objectResult.put("district","");
+        objectResult.put("province","");
+        objectResult.put("street","");
 
         try {
             JSONArray array = object.getJSONArray("address_components");
@@ -163,21 +168,18 @@ public class MapUtil{
 
 
                 if (objectChild.getString("types").contains("route")){
-                    objectResult.put("street",objectChild.getString("long_name") );
+                    objectResult.put("street",objectChild.isNull("long_name") ? "--" : objectChild.getString("long_name") );
 
-                }else if (objectChild.getString("types").contains("administrative_area_level_2")){
-                    objectResult.put("district",objectChild.getString("long_name") );
+                }else if (objectChild.getString("types").contains("administrative_area_level_2") || objectChild.getString("types").contains("locality")){
+                    objectResult.put("district",objectChild.isNull("long_name") ? "--" : objectChild.getString("long_name").replace("thành phố ","") );
 
                 }else if (objectChild.getString("types").contains("administrative_area_level_1")){
-                    objectResult.put("province",objectChild.getString("long_name") );
+                    objectResult.put("province",objectChild.isNull("long_name") ? "--": objectChild.getString("long_name") );
 
-                }
-
-                if (objectChild.getString("types").contains("street_number")){
+                }else
+                    if (objectChild.getString("types").contains("street_number")){
                     objectResult.put("address",objectChild.getString("long_name") );
 
-                }else {
-                    objectResult.put("address", "");
                 }
             }
 

@@ -21,6 +21,7 @@ import wolve.dms.adapter.StatisticalProductGroupAdapter;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
 import wolve.dms.models.BillDetail;
+import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
 
 /**
@@ -67,7 +68,7 @@ public class StatisticalProductFragment extends Fragment implements View.OnClick
         }
     }
 
-    public void reloadData(List<BaseModel> listDetail){
+    public void reloadData(String username, List<BaseModel> listDetail){
 //        List<BaseModel> detailList = new ArrayList<>();
 //        try {
 //            for (int i=0; i<list.size(); i++){
@@ -80,11 +81,24 @@ public class StatisticalProductFragment extends Fragment implements View.OnClick
 //        } catch (JSONException e) {
 //            e.printStackTrace();
 //        }
-        createRVProductGroup(listDetail);
+        List<BaseModel> listTemp ;
+        if (username.equals(Constants.ALL_FILTER)){
+            listTemp = listDetail;
+
+        }else {
+            listTemp = new ArrayList<>();
+            for (BaseModel row : listDetail){
+                if (row.getBaseModel("user").getString("displayName").equals(username)){
+                    listTemp.add(row);
+                }
+            }
+        }
+
+        createRVProductGroup(listTemp);
     }
 
     private void createRVProductGroup(List<BaseModel> list) {
-        adapter = new StatisticalProductGroupAdapter(list);
+        adapter = new StatisticalProductGroupAdapter( list);
         Util.createLinearRV(rvProductGroup, adapter);
 
     }

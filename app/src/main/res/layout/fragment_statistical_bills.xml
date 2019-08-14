@@ -1,38 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="right">
 
-        <TextView
-            android:id="@+id/statistical_bills_count"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="?selectableItemBackgroundBorderless"
-            android:layout_weight="0.25"
-            android:text="Tất cả nợ!"
-            android:padding="@dimen/_5sdp"
-            android:textSize="@dimen/_10sdp"
-            android:textColor="@color/colorRedDark"
-            android:textStyle="italic"/>
+        <!--<TextView-->
+            <!--android:id="@+id/statistical_bills_count"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="?selectableItemBackgroundBorderless"-->
+            <!--android:layout_weight="0.25"-->
+            <!--android:text=""-->
+            <!--android:padding="@dimen/_5sdp"-->
+            <!--android:textSize="@dimen/_10sdp"-->
+            <!--android:textColor="@color/colorRedDark"-->
+            <!--android:textStyle="italic"/>-->
 
         <RadioGroup
             android:id="@+id/statistical_bills_totalgroup"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.77"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/_10sdp">
 
 
             <RadioButton
                 android:id="@+id/statistical_bills_debt"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.5"
                 android:text="tong cong"
                 android:paddingLeft="@dimen/_2sdp"
                 android:textSize="@dimen/_10sdp"
@@ -42,16 +44,16 @@
 
             <RadioButton
                 android:id="@+id/statistical_bills_total"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.5"
                 android:text="tong cong"
                 android:paddingLeft="@dimen/_2sdp"
                 android:textSize="@dimen/_10sdp"
                 android:textColor="@color/colorBlue"
                 android:checked="true"
                 android:backgroundTint="@color/colorBlue"
-                android:buttonTint="@color/colorBlue"/>
+                android:buttonTint="@color/colorBlue"
+                android:layout_marginLeft="@dimen/_40sdp"/>
 
         </RadioGroup>
 

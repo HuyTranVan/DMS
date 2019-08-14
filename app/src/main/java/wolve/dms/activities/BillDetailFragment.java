@@ -6,6 +6,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,16 +24,18 @@ import java.util.List;
 import wolve.dms.R;
 import wolve.dms.adapter.CustomerBillsAdapter;
 import wolve.dms.adapter.CustomerPaymentAdapter;
+import wolve.dms.adapter.ProductReturnAdapter;
 import wolve.dms.adapter.StatisticalProductGroupAdapter;
 import wolve.dms.adapter.ViewpagerBillDetailAdapter;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.apiconnect.SheetConnect;
+import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.customviews.CTextIcon;
+import wolve.dms.libraries.Security;
 import wolve.dms.libraries.connectapi.sheetapi.GoogleSheetGetData;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
@@ -45,6 +48,8 @@ import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.libraries.connectapi.sheetapi.GoogleSheetPostData.SHEET_ROW;
 
 /**
  * Created by macos on 9/16/17.
@@ -131,7 +136,7 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
     private void exportBillToSheet(){
         String range = String.format(Api_link.STATISTICAL_SHEET_TAB2, 2);
 
-        SheetConnect.postValue(Api_link.STATISTICAL_SHEET_KEY, range, getListValueExportToSheet(mBills), new GoogleSheetGetData.CallbackListList() {
+        SheetConnect.postValue(Api_link.STATISTICAL_SHEET_KEY, range, getListValueExportToSheet(mBills), SHEET_ROW, new GoogleSheetGetData.CallbackListList() {
             @Override
             public void onRespone(List<List<Object>> results) {
 
@@ -142,6 +147,7 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
     private void showDialogPayment(){
         CustomCenterDialog.showDialogPayment("THANH TOÁN CÁC HÓA ĐƠN NỢ",
                 getAllBillHaveDebt(),
+                0.0,
                 new CallbackListCustom() {
                     @Override
                     public void onResponse(List result) {
@@ -175,22 +181,16 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
     }
 
     private RecyclerView.Adapter createRVBill(List<BaseModel> listbill){
-        CustomerBillsAdapter adapter = new CustomerBillsAdapter(listbill, new CustomerBillsAdapter.CallbackBill() {
+        CustomerBillsAdapter adapter = new CustomerBillsAdapter(listbill, new CallbackBaseModel() {
             @Override
             public void onResponse(BaseModel bill) {
                 showDialogReturnProduct(bill);
             }
 
-//            @Override
-//            public void onResponse(List<BaseModel> listResult, Double total, int id) {
-//                if (listResult.size() >0){
-//                    showDialogReturnProduct(total, listResult, id);
-//
-//                }else {
-//                    Util.showToast("Đã thu lại hết sản phẩm");
-//                }
+            @Override
+            public void onError() {
 
-//            }
+            }
 
         }, new CustomBottomDialog.FourMethodListener() {
             @Override
@@ -233,28 +233,145 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
     }
 
     private void showDialogReturnProduct(BaseModel currentBill){
-        CustomCenterDialog.showDialogReturnProduct(currentBill, new CallbackBoolean() {
+        CustomCenterDialog.showDialogReturnProduct(getAllBillHaveDebt(), currentBill, new ProductReturnAdapter.CallbackReturn() {
             @Override
-            public void onRespone(Boolean result) {
+            public void returnEqualLessDebt(List<BaseModel> listReturn, Double sumReturn, BaseModel bill) {
+                postBillReturnAndUpdateBill(listReturn,sumReturn, bill);
+            }
 
-                Util.showToast(result? "Trả hàng thành công" : "Không trả hàng thành công");
-                reloadCustomer();
+            @Override
+            public void returnMoreThanDebt(List<BaseModel> listReturn, Double sumReturn, BaseModel bill) {
+                if (currentDebt - bill.getDouble("debt") == 0.0){
+                    postBillReturnAndCashBack(listReturn,sumReturn, bill );
+
+                }else if (sumReturn <= currentDebt - bill.getDouble("debt")){
+//                    CustomCenterDialog.showDialogPayment("thanh toán các hóa đơn nợ khác",
+//                            getListDebtRemain(getAllBillHaveDebt(), currentBill),
+//                            sumReturn - bill.getDouble("debt"),
+//                            new CallbackListCustom() {
+//                                @Override
+//                                public void onResponse(List result) {
+//                                    postBillReturn(listReturn,sumReturn, bill, result);
+//
+//                                }
+//
+//                                @Override
+//                                public void onError(String error) {
+//
+//                                }
+//                            });
+
+
+                }else if (sumReturn > currentDebt - bill.getDouble("debt")){
+
+                }
+
+
 
             }
+
         });
     }
 
-//    private void showDialogReturnProduct(Double total, List<BaseModel> listProductReturn, int billId){
-//        CustomCenterDialog.showDialogReturnProduct(billId, total, mActivity.currentCustomer.getInt("id"), listProductReturn, new CallbackBoolean() {
-//            @Override
-//            public void onRespone(Boolean result) {
-//
-//                Util.showToast(result? "Trả hàng thành công" : "Không trả hàng thành công");
-//                reloadCustomer();
-//
-//            }
-//        });
-//    }
+    private void postBillReturnAndCashBack(List<BaseModel> listProductReturn, Double sumreturn, BaseModel currentBill){
+        CustomCenterDialog.alertWithCancelButton("",
+                String.format("Trả lại khách tiền mặt: %s đ", Util.FormatMoney(sumreturn - currentBill.getDouble("debt"))),
+                "đồng ý",
+                "hủy", new CallbackBoolean() {
+                    @Override
+                    public void onRespone(Boolean result) {
+                        if (result){
+                            postPayment(mActivity.currentCustomer.getInt("id"),
+                                    currentBill.getInt("id"),
+                                    -1*(sumreturn - currentBill.getDouble("debt")),
+                                    new CallbackBoolean() {
+                                        @Override
+                                        public void onRespone(Boolean result) {
+                                            if (result){
+                                                postBillReturnAndUpdateBill(listProductReturn, sumreturn, currentBill);
+                                            }
+
+
+                                        }
+                                    });
+                        }
+
+
+                    }
+                });
+    }
+
+    private void postBillReturnAndUpdateBill(List<BaseModel> listProductReturn, Double sumreturn, BaseModel currentBill){
+        JSONObject noteObject = new JSONObject();
+        JSONObject noteContent = new JSONObject();
+        try {
+            noteContent.put("id", currentBill.getString("id"));
+            noteContent.put("createAt", currentBill.getLong("createAt"));
+            noteObject.put(Constants.ISBILLRETURN, noteContent);
+        } catch (JSONException e) {
+
+        }
+
+        String note = Security.encrypt(noteObject.toString());
+
+        String params = DataUtil.createPostBillParam(mActivity.currentCustomer.getInt("id"),
+                0.0,
+                0.0,
+                listProductReturn,
+                note);
+        CustomerConnect.PostBill(params, new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel returnBill) {
+                updateBillHaveReturn(mActivity.currentCustomer.getInt("id"), currentBill, returnBill, sumreturn);
+
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        }, false);
+
+
+
+
+
+    }
+
+    private void updateBillHaveReturn(int customerId, BaseModel currentBill, BaseModel billReturn, Double sumreturn){
+        String params = DataUtil.updateBillHaveReturnParam(customerId, currentBill,billReturn, sumreturn);
+
+        CustomerConnect.PostBill(params, new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                    Util.showToast("Trả hàng thành công");
+                    reloadCustomer();
+
+
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        }, true);
+
+    }
+
+    private void postPayment(int customerId, int billid, double paid, CallbackBoolean listener){
+        CustomerConnect.PostPay(DataUtil.createPostPaymentParam(customerId, paid, billid), new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                listener.onRespone(true);
+            }
+
+            @Override
+            public void onError(String error) {
+                listener.onRespone(true);
+            }
+        }, true);
+
+    }
 
     private void reloadCustomer(){
         String param = mActivity.currentCustomer.getString("id");
@@ -339,7 +456,7 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
 
             }
         }
-        DataUtil.sortbyKey("createAt", list, true);
+        DataUtil.sortbyStringKey("createAt", list, true);
         return list;
     }
 
@@ -436,7 +553,6 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
     }
 
     private void setupViewPager( final List<BaseModel> listbill){
-
         showOverViewDetail(Util.getTotal(listbill));
         tvBDF.setText(String.format("BDF:%s ", DataUtil.defineBDFPercent(getAllBillDetail(listbill))) +"%");
 
@@ -507,7 +623,7 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
     }
 
     private List<List<Object>> getListValueExportToSheet(List<BaseModel> listbill){
-        DataUtil.sortbyKey("createAt", listbill, false);
+        DataUtil.sortbyStringKey("createAt", listbill, false);
         List<List<Object>> values = new ArrayList<>();
         try {
             for (int i=0; i<listbill.size(); i++){
@@ -575,6 +691,20 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
         });
 
 
+
+    }
+
+    private List<BaseModel> getListDebtRemain(List<BaseModel> listdebt, BaseModel currentBill){
+        List<BaseModel> list = new ArrayList<>();
+
+        for (BaseModel bill: listdebt){
+
+            if (bill.getInt("id") != currentBill.getInt("id")){
+                list.add(bill);
+            }
+        }
+
+        return list;
 
     }
 

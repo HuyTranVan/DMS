@@ -33,8 +33,13 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,7 +82,7 @@ import wolve.dms.R;
 import wolve.dms.activities.MapsActivity;
 import wolve.dms.activities.ShopCartActivity;
 import wolve.dms.activities.StatisticalBillsFragment;
-import wolve.dms.activities.StatisticalCashFragment;
+import wolve.dms.activities.StatisticalPaymentFragment;
 import wolve.dms.activities.StatisticalCheckinFragment;
 import wolve.dms.activities.StatisticalDebtFragment;
 import wolve.dms.activities.StatisticalDashboardFragment;
@@ -105,7 +110,7 @@ public class Util {
     public static StatisticalBillsFragment billsFragment;
     public static StatisticalProductFragment productFragment;
     public static StatisticalCheckinFragment checkinFragment;
-    public static StatisticalCashFragment cashFragment;
+    public static StatisticalPaymentFragment paymentFragment;
     public static StatisticalDebtFragment debtFragment;
 
     public static ArrayList<Province> mListProvinces;
@@ -1398,6 +1403,14 @@ public class Util {
         return (traces[level].toString() );
 
 //        return new Exception().getStackTrace()[0].getFileName();
+    }
+
+    public static void smoothImageRotation(ImageView img, float degree){
+        img.animate().rotationBy(degree);
+
+    }
+    public static String firstTwo(String str) {
+        return str.length() < 2 ? str : str.substring(0, 2);
     }
 
 }

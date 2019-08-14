@@ -6,6 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -27,31 +29,49 @@ import wolve.dms.models.Bill;
 import wolve.dms.models.BillDetail;
 import wolve.dms.models.Customer;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 /**
  * Created by tranhuy on 5/24/17.
  */
 
-public class StatisticalBillsAdapter extends RecyclerView.Adapter<StatisticalBillsAdapter.StatisticalBillsViewHolder> {
+public class StatisticalBillsAdapter extends RecyclerView.Adapter<StatisticalBillsAdapter.StatisticalBillsViewHolder> implements Filterable {
+    private List<BaseModel> baseData;
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackString mListener;
 
-    public StatisticalBillsAdapter(List<BaseModel> data , CallbackString callbackString) {
+    public StatisticalBillsAdapter(String username, List<BaseModel> data , CallbackString callbackString) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
-        this.mData = data;
+//        this.mData = data;
+        //this.baseData = data;
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mListener = callbackString;
 
-        Collections.sort(mData, new Comparator<BaseModel>(){
-            @Override
-            public int compare(BaseModel lhs, BaseModel rhs) {
-                return lhs.getDouble("createAt").compareTo(rhs.getDouble("createAt"));
+        if (username.equals(Constants.ALL_FILTER)){
+            this.baseData = data;
+
+        }else {
+            baseData = new ArrayList<>();
+            for (BaseModel row : data){
+                if (row.getBaseModel("user").getString("displayName").equals(username)){
+                    baseData.add(row);
+                }
             }
-        });
-        Collections.reverse(mData);
+        }
+
+        this.mData = baseData;
+
+        DataUtil.sortbyStringKey("createAt", mData, true);
+//        Collections.sort(mData, new Comparator<BaseModel>(){
+//            @Override
+//            public int compare(BaseModel lhs, BaseModel rhs) {
+//                return lhs.getDouble("createAt").compareTo(rhs.getDouble("createAt"));
+//            }
+//        });
+//        Collections.reverse(mData);
     }
 
     @Override
@@ -83,8 +103,6 @@ public class StatisticalBillsAdapter extends RecyclerView.Adapter<StatisticalBil
                 holder.tvNumber.setTextColor(mContext.getResources().getColor(R.color.white_text_color));
 
             }
-
-
 
 
             holder.tvsignBoard.setText(Constants.getShopTitle(customer.getString("shopType") , null) + " " + customer.getString("signBoard"));
@@ -172,6 +190,61 @@ public class StatisticalBillsAdapter extends RecyclerView.Adapter<StatisticalBil
         return mData;
     }
 
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                String charString = charSequence.toString();
+                if (charString.equals(Constants.ALL_TOTAL)) {
+                    mData = baseData;
 
+                } else {
+                    List<BaseModel> listTemp = new ArrayList<>();
+                    for (BaseModel row : baseData) {
+                        if (row.getDouble("debt") > 0){
+                            listTemp.add(row);
+                        }
+
+                    }
+
+                    mData = listTemp;
+                }
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = mData;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                mData = (ArrayList<BaseModel>) filterResults.values;
+                notifyDataSetChanged();
+            }
+        };
+    }
+
+    public BaseModel sumBill(){
+        BaseModel bill = new BaseModel();
+        double total = 0.0;
+        double debt = 0.0;
+        for (int i=0; i<mData.size(); i++){
+            total +=mData.get(i).getDouble("total");
+            debt += mData.get(i).getDouble("debt");
+
+        }
+        bill.put("total", total);
+        bill.put("debt", debt);
+        return bill;
+    }
+
+    public double sumBillTotal(){
+        double total = 0.0;
+        for (int i=0; i<mData.size(); i++){
+            total +=mData.get(i).getDouble("total");
+
+        }
+
+        return total;
+    }
 
 }

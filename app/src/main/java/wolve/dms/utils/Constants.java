@@ -20,6 +20,8 @@ public class Constants {
     public final static String PRODUCT = "product";
     public final static String STATUS = "status";
     public final static String CUSTOMER = "customer";
+    public final static String CUSTOMER_RECEIVE = "customer_receive";
+    public final static String CUSTOMER_ID = "customer_id";
     public final static String BILLS = "bills";
     public final static String BILL = "bill";
     public final static String PAYMENT = "payment";
@@ -42,6 +44,9 @@ public class Constants {
     public static final String RELOAD_DATA = "reload_data";
     public static final String RE_PRINT = "reprint";
     public static final String BARCODE = "code";
+    public static final String ISBILLRETURN = "isBillReturn";
+    public static final String HAVEBILLRETURN = "haveBillReturn";
+    public static final String PAYBYTRETURN = "havePaymentReturn";
 
     public static final int PRINTER_57_WIDTH = 384;
     public static final int PRINTER_80_WIDTH = 576;
@@ -114,6 +119,9 @@ public class Constants {
 
     public final static String ALL_FILTER ="TẤT CẢ";
     public static final String USER_LIST = "user_list";
+
+    public static final String ALL_TOTAL = "all total";
+    public static final String ALL_DEBT = "all debt";
 
 
     //Home constant

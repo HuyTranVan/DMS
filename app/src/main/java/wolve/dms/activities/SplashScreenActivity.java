@@ -1,6 +1,7 @@
 package wolve.dms.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import wolve.dms.apiconnect.UserConnect;
 import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackJSONObject;
+import wolve.dms.libraries.Security;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
@@ -89,31 +91,6 @@ public class SplashScreenActivity extends BaseActivity {
 
             }
         }, SPLASH_TIME_OUT);
-//                    new CallbackJSONObject() {
-//                        @Override
-//                        public void onResponse(JSONObject result) {
-//                            progressBar.setVisibility(View.GONE);
-//                            try {
-//                                User user = new User(result);
-//                                Distributor distributor = new Distributor(result.getJSONObject("distributor"));
-//
-//                                CustomSQL.setObject(Constants.USER, user);
-//                                CustomSQL.setObject(Constants.DISTRIBUTOR, distributor);
-//
-//                                Util.showToast("Đăng nhập thành công");
-//                                Transaction.gotoHomeActivity(true);
-//
-//                            } catch (JSONException e) {
-//                                gotoLoginScreen();
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void onError(String error) {
-//                            progressBar.setVisibility(View.GONE);
-//                            gotoLoginScreen();
-//                        }
-//                    }, false,true);
 
     }
 
@@ -135,14 +112,25 @@ public class SplashScreenActivity extends BaseActivity {
     }
 
     private void openUri(){
-        Intent intent = new Intent("com.dms.wolve");
-        intent.addCategory(Intent.CATEGORY_DEFAULT);
-        intent.addCategory(Intent.CATEGORY_BROWSABLE);
-        Bundle bundle = new Bundle();
-        bundle.putString("msg_from_browser", "Launched from Browser");
-        intent.putExtras(bundle);
+        Intent intent = getIntent();
+        //String action = intent.getAction();
+        Uri data = intent.getData();
 
-        Log.e("mobikul-->", intent.toUri(Intent.URI_INTENT_SCHEME));
+
+        if (data != null) {
+            if (data.getQuery().contains("id")){
+                String id = Security.decrypt(data.getQueryParameter("id"));
+                CustomSQL.setString(Constants.CUSTOMER_ID, id);
+
+                Log.e("idabc" , id);
+            }
+
+
+
+
+        }
+
+
     }
 
 }

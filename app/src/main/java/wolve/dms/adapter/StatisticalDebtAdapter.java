@@ -2,68 +2,56 @@ package wolve.dms.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 /**
  * Created by tranhuy on 5/24/17.
  */
 
-public class StatisticalDebtAdapter extends RecyclerView.Adapter<StatisticalDebtAdapter.StatisticalBillsViewHolder> implements Filterable {
-    private List<BaseModel> baseData = new ArrayList<>();
+public class StatisticalDebtAdapter extends RecyclerView.Adapter<StatisticalDebtAdapter.StatisticalBillsViewHolder> {
+    //private List<BaseModel> baseData = new ArrayList<>();
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private TextView tvSum;
     private CallbackString mListener;
-    protected double totalDebt;
+    //protected double totalDebt;
 
-    public StatisticalDebtAdapter(TextView tvEmployee, TextView tvsum, List<BaseModel> data,  CallbackString listener) {
+    public StatisticalDebtAdapter(String user, List<BaseModel> data,  CallbackString listener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
-        this.tvSum = tvsum;
-        this.baseData = data;
-
+        //this.tvSum = tvsum;
+        //this.baseData = data;
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mListener = listener;
-//        Collections.reverse(mData);
-        if (tvEmployee.getText().toString().equals(Constants.ALL_FILTER)){
-            this.mData = baseData;
+
+        if (user.equals(Constants.ALL_FILTER)){
+            this.mData = data;
 
         }else {
             mData = new ArrayList<>();
-            for (BaseModel row : baseData){
-                if (row.getString("userName").equals(tvEmployee.getText().toString())){
+            for (BaseModel row : data){
+                if (row.getString("userName").equals(user)){
                     mData.add(row);
                 }
             }
         }
-
-        tvSum.setText(String.format("Tổng công nợ: %s", Util.FormatMoney(updateSumDebt(mData))));
-
-        Collections.sort(mData, new Comparator<BaseModel>(){
-            public int compare(BaseModel obj1, BaseModel obj2) {
-                return obj1.getDouble("debt").compareTo(obj2.getDouble("debt"));
-            }
-        });
-        Collections.reverse(mData);
+        DataUtil.sortbyDoubleKey("currentDebt", mData, true);
 
     }
 
@@ -86,7 +74,7 @@ public class StatisticalDebtAdapter extends RecyclerView.Adapter<StatisticalDebt
         String user = String.format("Nhân viên: %s",mData.get(position).getString("userName"));
         holder.tvUser.setText(user);
 
-        holder.tvDebt.setText(Util.FormatMoney(mData.get(position).getDouble("debt")));
+        holder.tvDebt.setText(Util.FormatMoney(mData.get(position).getDouble("currentDebt")));
 
         holder.vLine.setVisibility(position == mData.size()-1? View.GONE:View.VISIBLE);
 
@@ -129,49 +117,46 @@ public class StatisticalDebtAdapter extends RecyclerView.Adapter<StatisticalDebt
 
     }
 
-    @Override
-    public Filter getFilter() {
-        return new Filter() {
-            @Override
-            protected FilterResults performFiltering(CharSequence charSequence) {
-                String charString = charSequence.toString();
-                if (charString.equals(Constants.ALL_FILTER)) {
-                    mData = baseData;
-                } else {
-                    List<BaseModel> listTemp = new ArrayList<>();
-                    for (BaseModel row : baseData) {
-                        if (row.getString("userName").equals(charString)){
-                            listTemp.add(row);
-                        }
+//    @Override
+//    public Filter getFilter() {
+//        return new Filter() {
+//            @Override
+//            protected FilterResults performFiltering(CharSequence charSequence) {
+//                String charString = charSequence.toString();
+//                if (charString.equals(Constants.ALL_FILTER)) {
+//                    mData = baseData;
+//                } else {
+//                    List<BaseModel> listTemp = new ArrayList<>();
+//                    for (BaseModel row : baseData) {
+//                        if (row.getString("userName").equals(charString)){
+//                            listTemp.add(row);
+//                        }
+//
+//                    }
+//
+//                    mData = listTemp;
+//                }
+//                tvSum.setText(String.format("Tổng công nợ: %s", Util.FormatMoney(updateSumDebt(mData))));
+//
+//                FilterResults filterResults = new FilterResults();
+//                filterResults.values = mData;
+//                return filterResults;
+//            }
+//
+//            @Override
+//            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+//                mData = (ArrayList<BaseModel>) filterResults.values;
+//                notifyDataSetChanged();
+//            }
+//        };
+//    }
 
-                    }
-
-                    mData = listTemp;
-                }
-                tvSum.setText(String.format("Tổng công nợ: %s", Util.FormatMoney(updateSumDebt(mData))));
-
-                FilterResults filterResults = new FilterResults();
-                filterResults.values = mData;
-                return filterResults;
-            }
-
-            @Override
-            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                mData = (ArrayList<BaseModel>) filterResults.values;
-                notifyDataSetChanged();
-            }
-        };
-    }
-
-    private double updateSumDebt(List<BaseModel> list){
-        totalDebt = 0.0;
-        for (BaseModel row : list){
-            totalDebt += row.getDouble("debt");
+    public double sumDebts(){
+        double totalDebt = 0.0;
+        for (BaseModel row : mData){
+            totalDebt += row.getDouble("currentDebt");
         }
         return totalDebt;
     }
 
-    public double getTotalDebt(){
-        return totalDebt;
-    }
 }
