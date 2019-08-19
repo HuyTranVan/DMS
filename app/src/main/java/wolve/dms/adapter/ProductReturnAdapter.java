@@ -60,6 +60,7 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
                 check = true;
                 break;
             }
+
         }
         if (!check){
             mListener.Result(-1.0);
@@ -79,7 +80,6 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
         Double price = mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount");
         holder.tvName.setText(String.format("%s (%s)",mData.get(position).getString("productName"), Util.FormatMoney(price)));
         holder.tvQuantity.setText(mData.get(position).getString("quantityReturn"));
-        holder.btnSub.setVisibility(View.INVISIBLE);
         holder.tvTotalQuantity.setText(String.format("%s",String.valueOf(mData.get(position).getInt("mergeQuantity") - mData.get(position).getInt("quantityReturn"))));
 
         holder.btnSub.setVisibility(mData.get(position).getInt("quantityReturn") >0 ? View.VISIBLE :View.INVISIBLE);
@@ -144,15 +144,15 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
         List<BaseModel> listResult = new ArrayList<>();
         for (int i=0; i<mData.size(); i++){
             if (mData.get(i).getInt("quantityReturn") >0){
-                mData.get(i).put("quantity", mData.get(i).getInt("quantityReturn")*-1);
+                BaseModel product = new BaseModel();
+                product.put("quantity", mData.get(i).getInt("quantityReturn")*-1);
                 Double total = (mData.get(i).getDouble("unitPrice") - mData.get(i).getDouble("discount")) *mData.get(i).getDouble("mergeQuantity") ;
-                mData.get(i).put("total", total);
+                product.put("total", total);
                 Double discount = getDiscountFromOldBill(mData.get(i));
-                mData.get(i).put("discount", discount);
-                mData.get(i).put("id",mData.get(i).getInt("productId"));
+                product.put("discount", discount);
+                product.put("id",mData.get(i).getInt("productId"));
 
-
-                listResult.add(mData.get(i));
+                listResult.add(product);
             }
 
         }

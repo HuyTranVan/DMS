@@ -59,6 +59,8 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     private Uri imageChangeUri ;
     protected List<BaseModel> listProducts = new ArrayList<>();
     protected List<BaseModel> listProductGroups = new ArrayList<>();
+    private String customer;
+    private String debt;
 
 
     @Override
@@ -90,13 +92,14 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     @Override
     public void initialData() {
         Util.shopCartActivity = this;
-        String bundle = getIntent().getExtras().getString(Constants.CUSTOMER);
+        customer = getIntent().getExtras().getString(Constants.CUSTOMER);
+        debt = getIntent().getExtras().getString(Constants.ALL_DEBT);
+
         lnSubmitGroup.setVisibility(View.GONE);
         rlCover.setVisibility(View.VISIBLE);
-        if (bundle != null){
-            try {
-                currentCustomer = new Customer(new JSONObject(bundle));
-                tvTitle.setText(String.format("%s %s",Constants.getShopTitle(currentCustomer.getString("shopType") , null), currentCustomer.getString("signBoard").toUpperCase() ));
+        if (customer != null){
+            currentCustomer = new BaseModel(customer);
+            tvTitle.setText(String.format("%s %s",Constants.getShopTitle(currentCustomer.getString("shopType") , null), currentCustomer.getString("signBoard").toUpperCase() ));
 
 //                JSONArray array = new JSONArray(currentCustomer.getString("bills"));
 //                List<BaseModel> mList = new ArrayList<>();
@@ -106,9 +109,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 //                }
 //                listBills = DataUtil.mergeWithReturnBill(mList);
 
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+
         }
 
 
@@ -172,7 +173,10 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
             case R.id.cart_submit:
 //                choicePayMethod();
-                Transaction.gotoPrintBillActivity(currentCustomer.BaseModelstoString(), DataUtil.convertListObject2Array(adapterProducts.getAllData()).toString(), false);
+                Transaction.gotoPrintBillActivity(currentCustomer.BaseModelstoString(),
+                        DataUtil.convertListObject2Array(adapterProducts.getAllData()).toString(),
+                        debt,
+                        false);
 
                 break;
 
@@ -482,7 +486,10 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
     @Override
     public boolean onLongClick(View v) {
-        Transaction.gotoPrintBillActivity(currentCustomer.BaseModelstoString(), DataUtil.convertListObject2Array(adapterProducts.getAllData()).toString(), false);
+        Transaction.gotoPrintBillActivity(currentCustomer.BaseModelstoString(),
+                DataUtil.convertListObject2Array(adapterProducts.getAllData()).toString(),
+                debt,
+                false);
 
         return true;
     }

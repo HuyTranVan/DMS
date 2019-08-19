@@ -41,10 +41,12 @@ import wolve.dms.R;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CInputForm;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
@@ -343,10 +345,9 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
                 defineGroupId(edGroup.getText().toString().trim()),
                 urlImage);
 
-        ProductConnect.CreateProduct(param, new CallbackJSONObject() {
+        ProductConnect.CreateProduct(param, new CallbackCustom() {
             @Override
-            public void onResponse(JSONObject result) {
-                Log.e("ket qua", result.toString());
+            public void onResponse(BaseModel result) {
                 getActivity().getSupportFragmentManager().popBackStack();
                 mActivity.loadProduct();
             }

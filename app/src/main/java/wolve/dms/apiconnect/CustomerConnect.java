@@ -309,6 +309,27 @@ public class CustomerConnect {
         }).execute();
     }
 
+    public static void PostListBill(List<String> listParams, final CallbackListCustom listener, final Boolean stopLoading) {
+        Util.getInstance().showLoading();
+
+        String url = Api_link.BILL_NEW;
+
+        new CustomPostListMethod(url, listParams, true, new CallbackListCustom() {
+            @Override
+            public void onResponse(List result) {
+                Util.getInstance().stopLoading(stopLoading);
+                listener.onResponse(result);
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+            }
+        }).execute();
+    }
+
     public static void PostListPay(List<String> listParams, final CallbackListCustom listener, final Boolean stopLoading) {
         Util.getInstance().showLoading();
 
@@ -409,62 +430,6 @@ public class CustomerConnect {
                 listener.onError(error);
                 Util.getInstance().stopLoading(true);
             }
-        }).execute();
-    }
-
-    public static void ListBill(String param, final CallbackCustomList listener, final Boolean stopLoading){
-//        if (stopLoading){
-            Util.getInstance().showLoading();
-//        }
-
-        String url = Api_link.BILLS+ String.format(Api_link.DEFAULT_RANGE, 1,5000) + param;
-
-        new CustomGetMethod(url, new CallbackCustom() {
-            @Override
-            public void onResponse(BaseModel result) {
-                Util.getInstance().stopLoading(stopLoading);
-                if (Constants.responeIsSuccess(result)){
-                    listener.onResponse(Constants.getResponeArraySuccess(result));
-
-                }else {
-                    Util.getInstance().stopLoading(true);
-                    Constants.throwError(result.getString("message"));
-                    listener.onError(result.getString("message"));
-
-                }
-
-            }
-
-            @Override
-            public void onError(String error) {
-                Util.getInstance().stopLoading(true);
-                Constants.throwError(error);
-                listener.onError(error);
-
-            }
-
-//            @Override
-//            public void onResponse(JSONObject result) {
-//                Util.getInstance().stopLoading(stopLoading);
-//                try {
-//                    if (result.getInt("status") == 200) {
-//                        listener.onResponse(result.getJSONArray("data"));
-//
-//                    } else {
-//                        listener.onError("Unknow error");
-//                    }
-//                } catch (JSONException e) {
-//                    listener.onError(e.toString());
-//                    Util.getInstance().stopLoading(true);
-//                }
-//            }
-//
-//
-//            @Override
-//            public void onError(String error) {
-//                listener.onError(error);
-//                Util.getInstance().stopLoading(true);
-//            }
         }).execute();
     }
 

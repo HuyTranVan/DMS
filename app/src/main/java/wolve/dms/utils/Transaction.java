@@ -126,10 +126,11 @@ public class Transaction {
 
     }
 
-    public static void gotoShopCartActivity(String customer) {
+    public static void gotoShopCartActivity(String customer, String debt) {
         Activity context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(context, ShopCartActivity.class);
         intent.putExtra(Constants.CUSTOMER, customer);
+        intent.putExtra(Constants.ALL_DEBT, debt);
         context.startActivityForResult(intent, Constants.RESULT_SHOPCART_ACTIVITY);
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
@@ -144,12 +145,13 @@ public class Transaction {
 
     }
 
-    public static void gotoPrintBillActivity(String customer, String bill, Boolean rePrint) {
+    public static void gotoPrintBillActivity(String customer, String bill,String debt, Boolean rePrint) {
         Activity context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(context, PrintBillActivity.class);
         intent.putExtra(Constants.RE_PRINT, rePrint);
         intent.putExtra(Constants.CUSTOMER, customer);
         intent.putExtra(Constants.BILLS, bill);
+        intent.putExtra(Constants.ALL_DEBT, debt);
         context.startActivityForResult(intent, Constants.RESULT_PRINTBILL_ACTIVITY);
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }

@@ -1,18 +1,22 @@
 package wolve.dms.adapter;
 
 import android.content.Context;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,26 +68,44 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
         return new CustomerBillsAdapterViewHolder(itemView);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onBindViewHolder(final CustomerBillsAdapterViewHolder holder, final int position) {
         try {
             holder.tvDate.setText(Util.DateHourString(mData.get(position).getLong("createAt")));
             holder.tvTotal.setText(Util.FormatMoney(mData.get(position).getDouble("total")) + " đ");
             holder.tvDebt.setText(Util.FormatMoney(mData.get(position).getDouble("debt")) + " đ");
+            if ( mData.get(position).getDouble("debt") >0.0 ){
+                holder.tvDebt.setBackground(mContext.getDrawable(R.drawable.btn_round_border_red));
+                holder.tvDebt.setTextColor(mContext.getResources().getColor(R.color.colorRed));
+                holder.tvDebt.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        payBill(position);
+                    }
+                });
+            }else {
+                holder.tvDebt.setBackground(null);
+                holder.tvDebt.setTextColor(mContext.getResources().getColor(R.color.colorBlue));
+                holder.tvDebt.setOnClickListener(null);
+
+
+            }
+
             if (Util.isEmpty(mData.get(position).getString("note")) ){
-                holder.tvNote.setVisibility(View.GONE);
+                //holder.tvNote.setVisibility(View.GONE);
                 holder.rvReturn.setVisibility(View.GONE);
 
             }else {
                 if (mData.get(position).hasKey(Constants.HAVEBILLRETURN)){
                     holder.rvReturn.setVisibility(View.VISIBLE);
-                    holder.tvNote.setVisibility(View.GONE);
+                    //holder.tvNote.setVisibility(View.GONE);
 
                     List<BaseModel> listReturn = DataUtil.array2ListBaseModel(mData.get(position).getJSONArray(Constants.HAVEBILLRETURN));
                     CustomerBillsReturnAdapter adapter = new CustomerBillsReturnAdapter(listReturn);
                     Util.createLinearRV(holder.rvReturn, adapter);
                 }else {
-                    holder.tvNote.setVisibility(View.VISIBLE);
+                    //holder.tvNote.setVisibility(View.VISIBLE);
                     holder.rvReturn.setVisibility(View.GONE);
                 }
 
@@ -156,9 +178,10 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
     }
 
     public class CustomerBillsAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvDate, tvHour, tvPay, tvDebt, tvTotal, tvNote, tvIcon;
+        private TextView tvDate, tvHour, tvPay, tvDebt, tvTotal, tvIcon;
         private RecyclerView rvBillDetail, rvPayment, rvReturn;
-        private LinearLayout lnPayment, lnTitle;
+        private LinearLayout lnPayment;
+        private RelativeLayout lnTitle;
 
         public CustomerBillsAdapterViewHolder(View itemView) {
             super(itemView);
@@ -173,8 +196,8 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
             rvReturn = (RecyclerView) itemView.findViewById(R.id.bills_item_rvreturn);
             lnPayment = (LinearLayout) itemView.findViewById(R.id.bills_item_payment_parent);
             //lnReturn = (LinearLayout) itemView.findViewById(R.id.bills_item_return_parent);
-            lnTitle = (LinearLayout) itemView.findViewById(R.id.bills_item_title);
-            tvNote = itemView.findViewById(R.id.bills_item_note);
+            lnTitle =  (RelativeLayout) itemView.findViewById(R.id.bills_item_title);
+            //tvNote = itemView.findViewById(R.id.bills_item_note);
 
         }
 
@@ -231,6 +254,7 @@ public class CustomerBillsAdapter extends RecyclerView.Adapter<CustomerBillsAdap
             CustomCenterDialog.showDialogPayment(String.format("THANH TOÁN HÓA ĐƠN %s", Util.DateString(mData.get(currentPosition).getLong("createAt"))),
                     currentDebt,
                     0.0,
+                    true,
                     new CallbackListCustom() {
                         @Override
                         public void onResponse(List result) {

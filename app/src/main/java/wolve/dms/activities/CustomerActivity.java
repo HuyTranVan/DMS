@@ -468,7 +468,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
                     currentCustomer.put("id", result.getInt("id"));
 
                     result.put("bills", new JSONArray());
-                    Transaction.gotoShopCartActivity(result.BaseModelstoString());
+                    Transaction.gotoShopCartActivity(result.BaseModelstoString() , DataUtil.convertListObject2Array(DataUtil.getAllBillHaveDebt(listBills)).toString());
                 }
 
                 @Override
@@ -478,7 +478,7 @@ public class CustomerActivity extends BaseActivity implements OnMapReadyCallback
             }, true);
 
         }else {
-            Transaction.gotoShopCartActivity(customer.BaseModelstoString());
+            Transaction.gotoShopCartActivity(customer.BaseModelstoString() , DataUtil.convertListObject2Array(DataUtil.getAllBillHaveDebt(listBills)).toString());
 
         }
 

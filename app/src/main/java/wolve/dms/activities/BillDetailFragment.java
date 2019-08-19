@@ -146,8 +146,9 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
 
     private void showDialogPayment(){
         CustomCenterDialog.showDialogPayment("THANH TOÁN CÁC HÓA ĐƠN NỢ",
-                getAllBillHaveDebt(),
+                DataUtil.getAllBillHaveDebt(mActivity.listBills),
                 0.0,
+                true,
                 new CallbackListCustom() {
                     @Override
                     public void onResponse(List result) {
@@ -184,6 +185,8 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
         CustomerBillsAdapter adapter = new CustomerBillsAdapter(listbill, new CallbackBaseModel() {
             @Override
             public void onResponse(BaseModel bill) {
+//                mActivity.openFragment();
+
                 showDialogReturnProduct(bill);
             }
 
@@ -233,47 +236,184 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
     }
 
     private void showDialogReturnProduct(BaseModel currentBill){
-        CustomCenterDialog.showDialogReturnProduct(getAllBillHaveDebt(), currentBill, new ProductReturnAdapter.CallbackReturn() {
+        CustomCenterDialog.showDialogReturnProduct(DataUtil.getAllBillHaveDebt(mActivity.listBills), currentBill, new ProductReturnAdapter.CallbackReturn() {
             @Override
             public void returnEqualLessDebt(List<BaseModel> listReturn, Double sumReturn, BaseModel bill) {
-                postBillReturnAndUpdateBill(listReturn,sumReturn, bill);
+                postBillReturn(listReturn, sumReturn, bill, new CallbackCustom() {
+                    @Override
+                    public void onResponse(BaseModel result) {
+                        updateBillHaveReturn(mActivity.currentCustomer.getInt("id"), currentBill, result, sumReturn);
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        Util.showSnackbarError(error);
+                    }
+                }, false);
             }
 
             @Override
             public void returnMoreThanDebt(List<BaseModel> listReturn, Double sumReturn, BaseModel bill) {
                 if (currentDebt - bill.getDouble("debt") == 0.0){
-                    postBillReturnAndCashBack(listReturn,sumReturn, bill );
+                    postBillReturnAndUpdateBillAndCashBack(listReturn,sumReturn, bill );
 
-                }else if (sumReturn <= currentDebt - bill.getDouble("debt")){
-//                    CustomCenterDialog.showDialogPayment("thanh toán các hóa đơn nợ khác",
-//                            getListDebtRemain(getAllBillHaveDebt(), currentBill),
-//                            sumReturn - bill.getDouble("debt"),
-//                            new CallbackListCustom() {
-//                                @Override
-//                                public void onResponse(List result) {
-//                                    postBillReturn(listReturn,sumReturn, bill, result);
-//
-//                                }
-//
-//                                @Override
-//                                public void onError(String error) {
-//
-//                                }
-//                            });
+                }else if (sumReturn <= currentDebt ){
+                    postBillReturnUpdateBillAndUpdatePayment(listReturn,sumReturn, bill);
 
-
-                }else if (sumReturn > currentDebt - bill.getDouble("debt")){
+                }else if (sumReturn > currentDebt ){
+                    postBillReturnUpdateBillPaymentAndCashBack(listReturn,sumReturn, bill);
 
                 }
-
-
 
             }
 
         });
     }
 
-    private void postBillReturnAndCashBack(List<BaseModel> listProductReturn, Double sumreturn, BaseModel currentBill){
+
+    private void postBillReturnUpdateBillPaymentAndCashBack(List<BaseModel> listProductReturn, Double sumreturn, BaseModel currentBill) {
+        double deltaDebt = sumreturn - currentDebt;
+        List<BaseModel> listDebtRemain = DataUtil.getListDebtRemain(DataUtil.getAllBillHaveDebt(mActivity.listBills), currentBill);
+
+        String message = String.format("Tổng trả hàng %s đ LỚN HƠN tiền NỢ của tất cả hóa đơn %s đ \n\nTrả lại tiền dư %s đ cho khách hàng",
+                Util.FormatMoney(sumreturn),
+                Util.FormatMoney(currentDebt),
+                Util.FormatMoney(sumreturn - currentDebt));
+
+        CustomCenterDialog.alertWithCancelButton(null, message, "tiếp tục", "hủy", new CallbackBoolean() {
+            @Override
+            public void onRespone(Boolean result) {
+                if (result){
+                    postBillReturn(listProductReturn, sumreturn, currentBill, new CallbackCustom() {
+                        @Override
+                        public void onResponse(BaseModel billreturn) {
+                            //postCashBackAndUpdateListBill();
+                            //updateListBill(listpay, listDebtRemain, billreturn, currentBill);
+
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            Util.showSnackbarError(error);
+                        }
+                    }, false);
+
+
+                }
+
+
+            }
+        });
+
+    }
+
+    private void postCashBackAndUpdateListBill(List<BaseModel> listProductReturn, Double sumreturn, BaseModel currentBill){
+        postPayment(mActivity.currentCustomer.getInt("id"),
+                currentBill.getInt("id"),
+                -1*(sumreturn - currentBill.getDouble("debt")),
+                new CallbackBoolean() {
+                    @Override
+                    public void onRespone(Boolean result) {
+                        if (result){
+
+
+
+
+
+                        }
+
+                    }
+                }, false);
+
+
+
+    }
+
+    private void postBillReturnUpdateBillAndUpdatePayment(List<BaseModel> listProductReturn, Double sumreturn, BaseModel currentBill) {
+        double deltaDebt = sumreturn - currentBill.getDouble("debt");
+        List<BaseModel> listDebtRemain = DataUtil.getListDebtRemain(DataUtil.getAllBillHaveDebt(mActivity.listBills), currentBill);
+
+        String message = String.format("Tổng trả hàng %s đ LỚN HƠN tiền NỢ của hóa đơn hiện tại %s đ \n\nSử dụng phần tiền dư %s đ TRỪ vào các hóa đơn nợ khác",
+                Util.FormatMoney(sumreturn),
+                Util.FormatMoney(currentBill.getDouble("debt")),
+                Util.FormatMoney(sumreturn - currentBill.getDouble("debt") ));
+        CustomCenterDialog.alertWithCancelButton(null, message, "tiếp tục", "hủy", new CallbackBoolean() {
+            @Override
+            public void onRespone(Boolean result) {
+                if (result){
+                    CustomCenterDialog.showDialogPayment("thanh toán các hóa đơn nợ khác",
+                            listDebtRemain,
+                            deltaDebt,
+                            false,
+                            new CallbackListCustom() {
+                                @Override
+                                public void onResponse(List listpay) {
+                                    postBillReturn(listProductReturn, sumreturn, currentBill, new CallbackCustom() {
+                                        @Override
+                                        public void onResponse(BaseModel billreturn) {
+                                            updateListBill(listpay, listDebtRemain, billreturn, currentBill);
+
+                                        }
+
+                                        @Override
+                                        public void onError(String error) {
+                                            Util.showSnackbarError(error);
+                                        }
+                                    }, false);
+
+
+                                }
+
+                                @Override
+                                public void onError(String error) {
+                                    Util.showSnackbarError(error);
+                                }
+                            });
+                }
+
+
+            }
+        });
+
+    }
+
+    private void updateListBill(List<BaseModel> listPayment, List<BaseModel> listDebt , BaseModel billReturn , BaseModel currentBill){
+        List<String> listparams = new ArrayList<>();
+
+        //update debt Bill
+        for (BaseModel baseModel : listPayment){
+            for (int i=0; i<listDebt.size(); i++){
+                if (baseModel.getInt("billId") == listDebt.get(i).getInt("id")){
+                    String param = DataUtil.updateBillWithPaymentNoteParam(mActivity.currentCustomer.getInt("id"),
+                            listDebt.get(i),
+                            billReturn,
+                            baseModel.getDouble("paid"));
+                    listparams.add(param);
+
+                }
+            }
+        }
+        //update current Bill
+        String currentparam = DataUtil.updateBillHaveReturnParam(mActivity.currentCustomer.getInt("id"), currentBill, billReturn, currentBill.getDouble("debt"));
+        listparams.add(currentparam);
+
+        CustomerConnect.PostListBill(listparams, new CallbackListCustom() {
+            @Override
+            public void onResponse(List result) {
+                Util.showToast("Trả hàng thành công");
+                reloadCustomer();
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.showSnackbarError(error);
+            }
+        }, true);
+
+
+    }
+
+    private void postBillReturnAndUpdateBillAndCashBack(List<BaseModel> listProductReturn, Double sumreturn, BaseModel currentBill){
         CustomCenterDialog.alertWithCancelButton("",
                 String.format("Trả lại khách tiền mặt: %s đ", Util.FormatMoney(sumreturn - currentBill.getDouble("debt"))),
                 "đồng ý",
@@ -288,20 +428,32 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
                                         @Override
                                         public void onRespone(Boolean result) {
                                             if (result){
-                                                postBillReturnAndUpdateBill(listProductReturn, sumreturn, currentBill);
+                                                postBillReturn(listProductReturn, sumreturn, currentBill, new CallbackCustom() {
+                                                    @Override
+                                                    public void onResponse(BaseModel result) {
+                                                        updateBillHaveReturn(mActivity.currentCustomer.getInt("id"), currentBill, result, sumreturn);
+                                                    }
+
+                                                    @Override
+                                                    public void onError(String error) {
+                                                        Util.showSnackbarError(error);
+                                                    }
+                                                }, false);
+
+
+
+
                                             }
 
-
                                         }
-                                    });
+                                    }, true);
                         }
-
 
                     }
                 });
     }
 
-    private void postBillReturnAndUpdateBill(List<BaseModel> listProductReturn, Double sumreturn, BaseModel currentBill){
+    private void postBillReturn(List<BaseModel> listProductReturn, Double sumreturn, BaseModel currentBill, CallbackCustom listener, boolean loading){
         JSONObject noteObject = new JSONObject();
         JSONObject noteContent = new JSONObject();
         try {
@@ -322,19 +474,15 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
         CustomerConnect.PostBill(params, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel returnBill) {
-                updateBillHaveReturn(mActivity.currentCustomer.getInt("id"), currentBill, returnBill, sumreturn);
+                listener.onResponse(returnBill);
 
             }
 
             @Override
             public void onError(String error) {
-
+                listener.onError(error);
             }
-        }, false);
-
-
-
-
+        }, loading);
 
     }
 
@@ -347,7 +495,6 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
                     Util.showToast("Trả hàng thành công");
                     reloadCustomer();
 
-
             }
 
             @Override
@@ -358,7 +505,7 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
 
     }
 
-    private void postPayment(int customerId, int billid, double paid, CallbackBoolean listener){
+    private void postPayment(int customerId, int billid, double paid, CallbackBoolean listener, boolean stoploadding){
         CustomerConnect.PostPay(DataUtil.createPostPaymentParam(customerId, paid, billid), new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
@@ -367,9 +514,9 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
 
             @Override
             public void onError(String error) {
-                listener.onRespone(true);
+                listener.onRespone(false);
             }
-        }, true);
+        }, stoploadding);
 
     }
 
@@ -401,7 +548,13 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
                         mActivity.currentCustomer.put("bills", array);
                         mActivity.showMoneyOverview(mList);
 
-                        intitialData();
+                        if (array.length() >0){
+                            intitialData();
+                        }else {
+                            mActivity.onBackPressed();
+                        }
+
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -441,23 +594,13 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
 
         if (list.size() >0){
             Transaction.gotoPrintBillActivity(mActivity.currentCustomer.BaseModelstoString(),
-                    DataUtil.convertListObject2Array(list).toString(), true);
+                    DataUtil.convertListObject2Array(list).toString(),
+                    DataUtil.convertListObject2Array(DataUtil.getAllBillHaveDebt(mBills)).toString(),
+                    true);
         }else {
             Util.showToast("Không có hóa đơn nợ phù hợp");
         }
 
-    }
-
-    private List<BaseModel> getAllBillHaveDebt(){
-        List<BaseModel> list = new ArrayList<>();
-        for (int i=0; i<mBills.size(); i++) {
-            if (mBills.get(i).getDouble("debt") > 0) {
-                list.add(mBills.get(i));
-
-            }
-        }
-        DataUtil.sortbyStringKey("createAt", list, true);
-        return list;
     }
 
     private List<BaseModel> convert2ListPayment(List<BaseModel> listBill){
@@ -694,19 +837,6 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
 
     }
 
-    private List<BaseModel> getListDebtRemain(List<BaseModel> listdebt, BaseModel currentBill){
-        List<BaseModel> list = new ArrayList<>();
-
-        for (BaseModel bill: listdebt){
-
-            if (bill.getInt("id") != currentBill.getInt("id")){
-                list.add(bill);
-            }
-        }
-
-        return list;
-
-    }
 
 
 }

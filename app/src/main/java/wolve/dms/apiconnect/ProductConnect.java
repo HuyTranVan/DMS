@@ -24,6 +24,7 @@ import wolve.dms.libraries.connectapi.CustomGetMethod;
 import wolve.dms.libraries.connectapi.CustomPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 /**
@@ -61,58 +62,37 @@ public class ProductConnect {
 
             }
 
-//            @Override
-//            public void onResponse(JSONObject result) {
-//                Util.getInstance().stopLoading(stopLoading);
-//                try {
-//                    if (result.getInt("status") == 200) {
-//                        listener.onResponse(result.getJSONArray("data"));
-//
-//                    } else {
-//                        listener.onError("Unknow error");
-//                    }
-//                } catch (JSONException e) {
-//                    listener.onError(e.toString());
-//                }
-//            }
-//
-//
-//            @Override
-//            public void onError(String error) {
-//                listener.onError(error);
-//                Util.getInstance().stopLoading(stopLoading);
-//            }
         }).execute();
     }
 
-    public static void CreateProductGroup(String params,final CallbackJSONObject listener, final Boolean stopLoading){
+    public static void CreateProductGroup(String params,final CallbackCustom listener, final Boolean stopLoading){
         Util.getInstance().showLoading();
 
-        String url = Api_link.PRODUCT_GROUP_NEW ;
+        new CustomPostMethod(DataUtil.createNewProductParam(params),new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(stopLoading);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
 
-//        new CustomPostMethod(url,params, false,new Callback() {
-//            @Override
-//            public void onResponse(JSONObject result) {
-//                Util.getInstance().stopLoading(stopLoading);
-//                try {
-//                    if (result.getInt("status") == 200) {
-//                        listener.onResponse(result.getJSONObject("data"));
-//
-//                    } else {
-//                        listener.onError("Unknow error");
-//                    }
-//                } catch (JSONException e) {
-//                    listener.onError(e.toString());
-//                }
-//            }
-//
-//
-//            @Override
-//            public void onError(String error) {
-//                listener.onError(error);
-//                Util.getInstance().stopLoading(stopLoading);
-//            }
-//        }).execute();
+                }else {
+                    Util.getInstance().stopLoading(true);
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
+            }
+
+        }).execute();
     }
 
     public static void DeleteProductGroup(String params,final CallbackJSONObject listener, final Boolean stopLoading){
@@ -175,106 +155,36 @@ public class ProductConnect {
         }).execute();
     }
 
-    public static void CreateProduct(final String params,final CallbackJSONObject listener, final Boolean stopLoading){
+    public static void CreateProduct(final String params, CallbackCustom listener, final Boolean stopLoading){
         Util.getInstance().showLoading();
-        final String url = Api_link.PRODUCT_NEW ;
-//        new CustomPostMethod(url,params, false,new Callback() {
-//            @Override
-//            public void onResponse(JSONObject result) {
-//                Util.getInstance().stopLoading(stopLoading);
-//                try {
-//                    if (result.getInt("status") == 200) {
-//                        listener.onResponse(result.getJSONObject("data"));
-//
-//                    } else {
-//                        listener.onError("Unknow error");
-//                    }
-//                } catch (JSONException e) {
-//                    listener.onError(e.toString());
-//                }
-//            }
-//
-//
-//            @Override
-//            public void onError(String error) {
-//                listener.onError(error);
-//                Util.getInstance().stopLoading(stopLoading);
-//            }
-//        }).execute();
 
-//            new AsyncTask() {
-//                @Override
-//                protected Object doInBackground(Object[] objects) {
-//                    String id_user = null, token = null;
-//
-////                    User currentUser = User.getCurrentUser();
-////                    if (currentUser != null && currentUser.getToken() != null) {
-////                        token = currentUser.getToken();
-////                        id_user = currentUser.getId_user();
-////                    }
-//                    try {
-//                        File file = new File(params.getString("image"));
-//                        String s = multipartRequest(url, params, file.getAbsolutePath(), "image", "jpeg", token, id_user);
-//                        System.out.print(s);
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//                    return null;
-//                }
-//            }.execute();
-//        new CustomPostMethodMulti(url,params, new Callback() {
-//            @Override
-//            public void onResponse(JSONObject result) {
-//                Util.getInstance().dismissDialog(dismissDialog);
-//                try {
-//                    if (result.getInt("status") == 200) {
-//                        listener.onResponse(result.getJSONObject("data"));
-//
-//                    } else {
-//                        listener.onError("Unknow error");
-//                    }
-//                } catch (JSONException e) {
-//                    listener.onError(e.toString());
-//                }
-//            }
-//
-//
-//            @Override
-//            public void onError(String error) {
-//                listener.onError(error);
-//                Util.getInstance().dismissDialog(dismissDialog);
-//            }
-//        }).execute();
+        new CustomPostMethod(DataUtil.createNewProductParam(params),new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(stopLoading);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
+
+                }else {
+                    Util.getInstance().stopLoading(true);
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
+            }
+
+        }).execute();
+
     }
-
-//    public static void CreateProductMultipart(JSONObject params, final CallbackJSONObject listener, final Boolean dismissDialog){
-//        Util.getInstance().showLoading();
-//        String url = Api_link.PRODUCT_NEW ;
-//
-//        new CustomPostMultiPart(url,params, new Callback() {
-//            @Override
-//            public void onResponse(JSONObject result) {
-//                Util.getInstance().dismissDialog(dismissDialog);
-//                try {
-//                    if (result.getInt("status") == 200) {
-//                        listener.onResponse(result.getJSONObject("data"));
-//
-//                    } else {
-//                        listener.onError("Unknow error");
-//                    }
-//                } catch (JSONException e) {
-//                    listener.onError(e.toString());
-//                }
-//            }
-//
-//
-//            @Override
-//            public void onError(String error) {
-//                listener.onError(error);
-//                Util.getInstance().dismissDialog(dismissDialog);
-//            }
-//        }).execute();
-//    }
 
     public static void DeleteProduct(String params,final CallbackJSONObject listener, final Boolean stopLoading){
         Util.getInstance().showLoading();

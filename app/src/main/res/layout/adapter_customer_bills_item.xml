@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="@dimen/_4sdp"
+    app:cardCornerRadius="@dimen/_6sdp"
     app:cardElevation="@dimen/_4sdp"
     android:layout_marginTop="@dimen/_5sdp"
     android:layout_marginLeft="@dimen/_2sdp"
@@ -18,16 +18,16 @@
         android:background="@color/colorWhite"
         android:orientation="vertical">
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/bills_item_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorLightGrey"
-            android:orientation="horizontal"
             android:paddingLeft="@dimen/_5sdp"
             android:paddingRight="@dimen/_5sdp"
-            android:paddingTop="@dimen/_2sdp"
-            android:paddingBottom="@dimen/_2sdp">
+            android:paddingTop="@dimen/_5sdp"
+            android:paddingBottom="@dimen/_5sdp"
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/bills_item_icon"
@@ -38,31 +38,36 @@
                 android:text="000"
                 android:textSize="@dimen/_8sdp"
                 android:gravity="center"
-                android:layout_gravity="center"/>
+                android:layout_centerVertical="true"/>
 
             <TextView
                 android:id="@+id/bills_item_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_above="@+id/bills_item_line"
+                android:layout_toRightOf="@+id/bills_item_icon"
                 android:paddingLeft="@dimen/_2sdp"
                 android:text="Default"
                 android:textColor="@color/black_text_color_hint"
                 android:textSize="@dimen/_12sdp"
-                android:layout_marginLeft="@dimen/_5sdp"/>
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_centerVertical="true"/>
 
             <TextView
                 android:id="@+id/bills_item_debt"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minHeight="@dimen/_20sdp"
+                android:background="@drawable/btn_round_border_red"
                 android:gravity="right|center_vertical"
                 android:text="Default"
-                android:textColor="@color/colorRed"
+                android:textColor="@color/color_red"
                 android:textSize="@dimen/_14sdp"
-                android:textStyle="bold"/>
+                android:layout_alignParentRight="true"
+                android:paddingLeft="@dimen/_8sdp"
+                android:paddingRight="@dimen/_8sdp"
+                />
 
-
-        </LinearLayout>
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -102,14 +107,13 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/bills_item_note"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Default"
-                android:paddingLeft="@dimen/_10sdp"
-                android:textColor="@color/black_text_color"
-                android:textSize="@dimen/_8sdp" />
+            <!--<TextView-->
+                <!--android:id="@+id/bills_item_note"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:paddingLeft="@dimen/_10sdp"-->
+                <!--android:textColor="@color/black_text_color"-->
+                <!--android:textSize="@dimen/_8sdp" />-->
 
 
             <LinearLayout

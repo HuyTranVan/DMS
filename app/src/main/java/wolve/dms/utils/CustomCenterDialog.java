@@ -419,36 +419,43 @@ public class CustomCenterDialog {
         final Button btnSubmit = dialogResult.findViewById(R.id.btn_submit);
         TextView tvTitle = dialogResult.findViewById(R.id.dialog_return_product_title);
         RecyclerView rvProduct = dialogResult.findViewById(R.id.dialog_return_product_rv);
-        final RelativeLayout rlPay = dialogResult.findViewById(R.id.dialog_return_product_pay_parent);
-        final EditText edPay = dialogResult.findViewById(R.id.dialog_return_product_pay);
         final TextView tvSum = dialogResult.findViewById(R.id.dialog_return_product_sum);
         final TextView tvDebt = dialogResult.findViewById(R.id.dialog_return_product_debt);
+        TextView tvNote = dialogResult.findViewById(R.id.dialog_return_product_note);
 
+        double totalDebt = Util.getTotalDebt(listDebt);
         btnCancel.setText("HỦY");
         btnSubmit.setText("XÁC NHẬN");
         tvTitle.setText(String.format("TRẢ HÀNG HÓA ĐƠN %s", Util.DateString(currentBill.getLong("createAt"))));
         tvSum.setText("TẠM TÍNH TRẢ HÀNG:     0");
-        tvDebt.setText(String.format("Tạm tính hóa đơn hiện tại còn nợ:     %s", Util.FormatMoney(currentBill.getDouble("debt"))));
-        double totalDebt = Util.getTotalDebt(listDebt);
+        tvDebt.setText(String.format("Tạm tính các hóa đơn còn nợ:     %s", Util.FormatMoney(totalDebt)));
+
 
         final ProductReturnAdapter adapter = new ProductReturnAdapter(currentBill, new CallbackDouble() {
             @Override
             public void Result(Double d) {
                 tvSum.setText(String.format("TẠM TÍNH TRẢ HÀNG:     %s",Util.FormatMoney(d)));
-                tvDebt.setText(String.format("Tạm tính hóa đơn hiện tại còn nợ:     %s", Util.FormatMoney(currentBill.getDouble("debt") - d)));
+                tvDebt.setText(String.format("Tạm tính các hóa đơn còn nợ:     %s", Util.FormatMoney(totalDebt - d)));
+
                 if (d < 0.0){
                     dialogResult.dismiss();
                     Util.showToast("Hóa đơn đã trả hết hàng!");
+                    tvNote.setVisibility(View.GONE);
+                    tvDebt.setText(String.format("Tạm tính các hóa đơn còn nợ:     %s", Util.FormatMoney(totalDebt - d)));
 
-                }else if (d> currentBill.getDouble("debt")){
-                    btnSubmit.setText("TIẾP TỤC");
-                    //rlPay.setVisibility(View.VISIBLE);
+                }else if (d <= totalDebt){
+                    btnSubmit.setText("XÁC NHẬN");
+                    tvNote.setVisibility(View.GONE);
+                    tvDebt.setText(String.format("Tạm tính các hóa đơn còn nợ:     %s", Util.FormatMoney(totalDebt - d)));
 
                 }else {
-                    btnSubmit.setText("XÁC NHẬN");
-                    rlPay.setVisibility(View.GONE);
+                    btnSubmit.setText("TIẾP TỤC");
+                    tvNote.setVisibility(View.VISIBLE);
+                    tvNote.setText(String.format("Tiền dư trả lại khách:     %s", Util.FormatMoney(d- totalDebt)));
+                    tvDebt.setText(String.format("Tạm tính các hóa đơn còn nợ:     %s", Util.FormatMoney(0.0)));
 
                 }
+
             }
         });
         Util.createLinearRV(rvProduct, adapter);
@@ -718,7 +725,7 @@ public class CustomCenterDialog {
 //        });
 //    }
 
-    public static Dialog showDialogPayment(String title,  final List<BaseModel> listDebts , double money, final CallbackListCustom mListener){
+    public static Dialog showDialogPayment(String title, List<BaseModel> listDebts , double money, boolean changeAmount, final CallbackListCustom mListener){
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_input_paid);
         TextView tvTitle = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_title);
         TextView tvText = dialogResult.findViewById(R.id.dialog_input_paid_text);
@@ -735,109 +742,39 @@ public class CustomCenterDialog {
         final DebtAdapter debtAdapter = new DebtAdapter(listDebts == null? new ArrayList<BaseModel>() : listDebts, swFastPay.isChecked(), true);
         Util.createLinearRV(rvDebt, debtAdapter);
 
-//        final Double lastDebt = debtAdapter.getTotalMoney();
-//        final Double totalDebt =  currentDebt + lastDebt;
         final Double totalDebt = debtAdapter.getTotalMoney();
-
 
         tvTitle.setText(title);
         tvRemain.setText(Util.FormatMoney(totalDebt));
-//        tvTotal.setText(Util.FormatMoney(totalDebt));
         tvText.setText(totalDebt >= 0 ? "Số tiền khách trả": "Số tiền trả lại khách");
 
-//        tvTotal.setText(Util.FormatMoney(currentDebt));
-//        tvText.setText(currentDebt >= 0 ? "Số tiền khách trả": "Số tiền trả lại khách");
-
         swFastPay.setVisibility(listDebts.size() ==1 ?View.GONE: View.VISIBLE);
-//        if (paid !=0){
-//            edPaid.setText(Util.FormatMoney(paid));
-//        }
 
+        if (changeAmount){
+            edPaid.setFocusable(true);
+            edPaid.setFocusableInTouchMode(true);
+            Util.showKeyboardDelay(edPaid);
+
+        }else {
+            edPaid.setFocusable(false);
+        }
+
+        edPaid.setText(money == 0.0? "" : Util.FormatMoney(money));
 
         Util.textMoneyEvent(edPaid,totalDebt, new CallbackDouble() {
             @Override
             public void Result(Double s) {
                 debtAdapter.inputPaid(s, swFastPay.isChecked());
                 tvRemain.setText(Util.FormatMoney(totalDebt - s));
-
-                //                if (swFastPay.isChecked()){
-//                    if (s< currentDebt){
-//                        tvCurrentBillPaid.setText(Util.FormatMoney(s));
-//                        debtAdapter.inputPaid(null);
-//                    }else {
-//                        tvCurrentBillPaid.setText(Util.FormatMoney(currentDebt));
-//                        debtAdapter.inputPaid(s-currentDebt);
-//                    }
-//
-//                }else {
-//                    if (s < lastDebt){
-//                        tvCurrentBillPaid.setText("");
-//                        debtAdapter.inputPaid(s);
-//
-//                    }else {
-//                        tvCurrentBillPaid.setText(Util.FormatMoney(s - lastDebt));
-//                        debtAdapter.inputPaid(lastDebt);
-//                    }
-//                }
-//                tvTotal.setText(Util.FormatMoney(currentDebt - Util.valueMoney(tvCurrentBillPaid)));
-//                tvRemain.setText(Util.FormatMoney(totalDebt - s));
-//                debtAdapter.inputPaid(s, swFastPay.isChecked());
-//                if (swFastPay.isChecked()){
-//                    debtAdapter.inputPaid(s, swFastPay.isChecked());
-
-
-//                    if (s< currentDebt){
-//                        tvCurrentBillPaid.setText(Util.FormatMoney(s));
-//                        debtAdapter.inputPaid(null);
-//                    }else {
-//                        tvCurrentBillPaid.setText(Util.FormatMoney(currentDebt));
-//                        debtAdapter.inputPaid(s-currentDebt);
-//                    }
-
-//                }else {
-//                    if (s < lastDebt){
-//                        tvCurrentBillPaid.setText("");
-//                        debtAdapter.inputPaid(s);
-//
-//                    }else {
-//                        tvCurrentBillPaid.setText(Util.FormatMoney(s - lastDebt));
-//                        debtAdapter.inputPaid(lastDebt);
-//                    }
-//                }
-//                tvTotal.setText(Util.FormatMoney(currentDebt - Util.valueMoney(tvCurrentBillPaid)));
-//                tvRemain.setText(Util.FormatMoney(totalDebt - s));
-
             }
 
         });
-        edPaid.setText(Util.FormatMoney(money));
+
         swFastPay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 debtAdapter.inputPaid(Util.valueMoney(edPaid), swFastPay.isChecked());
 
-//                Double s =Util.valueMoney(edPaid);
-//                if (isChecked){
-//                    if (s< currentDebt){
-//                        tvCurrentBillPaid.setText(Util.FormatMoney(s));
-//                        debtAdapter.inputPaid(null);
-//                    }else {
-//                        tvCurrentBillPaid.setText(Util.FormatMoney(currentDebt));
-//                        debtAdapter.inputPaid(s-currentDebt);
-//                    }
-//
-//                }else {
-//                    if (s < lastDebt){
-//                        tvCurrentBillPaid.setText("");
-//                        debtAdapter.inputPaid(s);
-//
-//                    }else {
-//                        tvCurrentBillPaid.setText(Util.FormatMoney(s - lastDebt));
-//                        debtAdapter.inputPaid(lastDebt);
-//                    }
-//                }
-//                tvTotal.setText(Util.FormatMoney(currentDebt - Util.valueMoney(tvCurrentBillPaid)));
-//                tvRemain.setText(Util.FormatMoney(totalDebt - s));
             }
         });
 
@@ -854,24 +791,6 @@ public class CustomCenterDialog {
                 Util.hideKeyboard(v);
                 List<BaseModel> listPayment = debtAdapter.getListBillPayment();
                 mListener.onResponse(listPayment);
-//                try {
-//                    JSONObject object = new JSONObject();
-//                    object.put("billId", currentBillId);
-//                    object.put("paid", currentDebt >= 0? Util.valueMoney(tvCurrentBillPaid) : Util.valueMoney(edPaid)*-1);
-//
-//
-//                    if (Util.valueMoney(tvCurrentBillPaid) > 0 ){
-//                        listPayment.add(0,object);
-//
-//                    }else if (currentDebt <0 && Util.valueMoney(edPaid) >0){
-//                        listPayment.add(0,object);
-//                    }
-//
-//                    mListener.onResponse(listPayment);
-//
-//                } catch (JSONException e) {
-//                    Util.showToast("Lỗi ");
-//                }
                 dialogResult.dismiss();
 
             }

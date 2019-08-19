@@ -59,29 +59,12 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
     }
 
     private void intitialData() {
-//        String bundle = getArguments().getString(Constants.PRODUCTGROUP);
-//        productGroup = new ProductGroup(bundle);
-//        tvTitle.setText(String.format("CHỌN SẢN PHẨM %s", productGroup.getString("name")));
-//        List<Product> all = Product.getProductList();
-//        try {
-//            for (int i=0 ; i<all.size(); i++){
-//                Product product = all.get(i);
-//                product.put("checked", false);
-//
-//                listProducts.add(product);
-//
-//            }
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        createRVProduct(listProducts, productGroup);
         tabLayout.setupWithViewPager(viewPager);
         setupViewPager();
 
     }
 
     private void addEvent() {
-//        btnBack.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
 
     }

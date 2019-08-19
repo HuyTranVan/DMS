@@ -28,15 +28,11 @@ import wolve.dms.utils.Util;
  */
 public class CustomPostMethod extends AsyncTask<String, Void, String> {
     private CallbackCustom mListener ;
-    //private String baseUrl, mParams;
-    //private Boolean isJsonType;
     private BaseModel mParam;
 
     public CustomPostMethod(BaseModel param, CallbackCustom listener) {
         this.mListener = listener;
-        //this.baseUrl = url;
         this.mParam = param;
-        //this.isJsonType = isJsonType;
 
     }
 
@@ -44,10 +40,8 @@ public class CustomPostMethod extends AsyncTask<String, Void, String> {
         Log.d("url: ", mParam.getString("url"));
         Log.d("params: ", mParam.getString("param"));
 
-        //URL obj = null;
         StringBuffer response = null;
         try {
-            //obj = new URL(baseUrl);
             HttpURLConnection con = (HttpURLConnection) new URL(mParam.getString("url")).openConnection();
             con.setReadTimeout(5000);
             con.setConnectTimeout(5000);

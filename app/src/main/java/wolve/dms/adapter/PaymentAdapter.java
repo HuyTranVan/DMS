@@ -48,18 +48,18 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.PrintBil
         String user = mData.get(position).getBaseModel("user").getString("displayName");
         String note = "";
         if (mData.get(position).hasKey("idbillreturn")){
-            note = "thu hàng";
-            //holder.tvTotal.setTypeface(null, Typeface.BOLD);
+            note = "thu hàng".toUpperCase();
 
         }else if (mData.get(position).getDouble("paid") <0.0){
-            note ="trả khách";
-            //holder.tvTotal.setTypeface(null, Typeface.BOLD);
+            note ="trả khách".toUpperCase();
+
         }else {
-            note ="thu tiền";
-            //holder.tvTotal.setTypeface(null, Typeface.NORMAL);
+            note ="thu tiền".toUpperCase();
+
         }
 
-        holder.tvDate.setText(String.format("%s %s %s:",date, user, note));
+        holder.tvDate.setText(String.format("%s %s:",date, note));
+        holder.tvName.setText(user);
         holder.tvTotal.setText(String.format("%s %s đ",mData.get(position).getDouble("paid") <0.0? "+" : "-",
                 mData.get(position).getDouble("paid") <0.0? Util.FormatMoney(mData.get(position).getDouble("paid") *-1) :Util.FormatMoney(mData.get(position).getDouble("paid"))));
 
@@ -85,13 +85,14 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.PrintBil
     }
 
     public class PrintBillViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvDate, tvTotal ;
+        private TextView tvDate, tvTotal, tvName ;
         private View vLine;
 
         public PrintBillViewHolder(View itemView) {
             super(itemView);
             tvDate = (TextView) itemView.findViewById(R.id.payment_item_date);
             tvTotal = (TextView) itemView.findViewById(R.id.payment_item_total);
+            tvName = (TextView) itemView.findViewById(R.id.payment_item_name);
             vLine = itemView.findViewById(R.id.item_seperateline);
         }
 

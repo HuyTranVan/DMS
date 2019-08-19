@@ -67,7 +67,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     private View line1, line2, line3, line4;
     private NestedScrollView scContentParent;
 
-    private Customer currentCustomer;
+    private BaseModel currentCustomer;
     private PrintBillAdapter adapterBill;
     private PrintOldBillAdapter adapterOldBill;
     private DebtAdapter adapterDebt;
@@ -141,10 +141,10 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void initialData() {
 
-        currentCustomer = new Customer( getIntent().getExtras().getString(Constants.CUSTOMER));
+        currentCustomer = new BaseModel( getIntent().getExtras().getString(Constants.CUSTOMER));
         rePrint = getIntent().getExtras().getBoolean(Constants.RE_PRINT);
         listBills = DataUtil.array2ListObject(getIntent().getExtras().getString(Constants.BILLS));
-        listDebts = getListDebt(currentCustomer.getJSONArray("bills"));
+        listDebts = DataUtil.array2ListObject(getIntent().getExtras().getString(Constants.ALL_DEBT));
 
         if (rePrint){
             tvTitle.setText("HÓA ĐƠN (in lại)");
@@ -314,7 +314,11 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void showDialogPayment(){
-        dialogPayment = CustomCenterDialog.showDialogPayment("NHẬP SỐ TIỀN KHÁCH TRẢ", getAllDebt(),0.0, new CallbackListCustom() {
+        dialogPayment = CustomCenterDialog.showDialogPayment("NHẬP SỐ TIỀN KHÁCH TRẢ",
+                getAllDebt(),
+                0.0,
+                true,
+                new CallbackListCustom() {
             @Override
             public void onResponse(final List result) {
                 dialogPayment.dismiss();

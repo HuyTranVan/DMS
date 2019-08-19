@@ -16,11 +16,14 @@ import wolve.dms.R;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.customviews.CInputForm;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 /**
@@ -97,9 +100,9 @@ public class AddProdGroupFragment extends Fragment implements View.OnClickListen
                                 Util.encodeString(edInput.getText().toString()));
 
 
-                    ProductConnect.CreateProductGroup(param, new CallbackJSONObject() {
+                    ProductConnect.CreateProductGroup(param, new CallbackCustom() {
                         @Override
-                        public void onResponse(JSONObject result) {
+                        public void onResponse(BaseModel result) {
                             getActivity().getSupportFragmentManager().popBackStack();
                             mActivity.loadProductGroup();
                         }

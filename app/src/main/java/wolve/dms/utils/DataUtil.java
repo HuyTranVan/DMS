@@ -58,27 +58,6 @@ public class DataUtil {
 
     }
 
-//    public static String updateBillParam(int customerId, int billId, final Double total, final Double paid, String note){
-//        final JSONObject params = new JSONObject();
-//        try {
-//            params.put("id", billId);
-//            params.put("debt", total - paid);
-//            params.put("total", total);
-//            params.put("paid", paid);
-//            params.put("customerId", customerId);
-//            params.put("distributorId", Distributor.getDistributorId());
-//            params.put("userId", User.getUserId());
-//            params.put("note", note);
-//
-//            params.put("billDetails", (Object) null);
-//        } catch (JSONException e) {
-////            e.printStackTrace();
-//        }
-//
-//        return params.toString();
-//
-//    }
-
     public static String updateBillHaveReturnParam(int customerId, BaseModel currentBill, BaseModel billReturn, Double sumreturn){
         JSONObject params = new JSONObject();
         JSONObject objectNote = new JSONObject();
@@ -152,6 +131,58 @@ public class DataUtil {
         return params.toString();
 
     }
+
+    public static String updateBillWithPaymentNoteParam(int customerId, BaseModel currentBill, BaseModel billReturn, Double paid){
+        JSONObject params = new JSONObject();
+        JSONObject objectNote = new JSONObject();
+        try {
+            params.put("billDetails", (Object) null);
+            params.put("id", currentBill.getInt("id"));
+            params.put("total", currentBill.getDouble("total"));
+            params.put("paid", 0.0);
+            params.put("debt", currentBill.getDouble("total") );
+
+            params.put("customerId", customerId);
+            params.put("distributorId", currentBill.getBaseModel("distributor").getInt("id"));
+            params.put("userId", currentBill.getBaseModel("user").getInt("id"));
+
+            JSONObject objPay = new JSONObject();
+            objPay.put("createAt",billReturn.getLong("createAt") );
+            objPay.put("user", (billReturn.getJsonObject("user")));
+            objPay.put("paid", paid);
+            objPay.put("idbillreturn", billReturn.getInt("id"));
+            objPay.put("bill_date", billReturn.getLong("createAt"));
+
+
+            String currentNote = Security.decrypt(currentBill.getString("note"));
+
+            JSONArray arrayPayNote =new JSONArray();
+
+            if (Util.isJSONObject(currentNote)){
+                BaseModel noteObject = new BaseModel(currentNote);
+
+                if (noteObject.hasKey(Constants.PAYBYTRETURN)){
+                    JSONArray arrPay = noteObject.getJSONArray(Constants.PAYBYTRETURN);
+                    for (int j=0; j<arrPay.length(); j++){
+                        arrayPayNote.put(arrPay.getJSONObject(j));
+                    }
+                }
+
+            }
+
+            arrayPayNote.put(objPay);
+            objectNote.put(Constants.PAYBYTRETURN, arrayPayNote);
+
+            params.put("note", Security.encrypt(objectNote.toString()));
+
+        } catch (JSONException e) {
+//            e.printStackTrace();
+        }
+
+        return params.toString();
+
+    }
+
 
     public static List<String> createListPaymentParam(int customerId,List<BaseModel> list){
         List<String> results = new ArrayList<>();
@@ -426,6 +457,32 @@ public class DataUtil {
         }
 
         return listResult;
+
+    }
+
+    public static List<BaseModel> getAllBillHaveDebt(List<BaseModel> listbill){
+        List<BaseModel> list = new ArrayList<>();
+        for (int i=0; i<listbill.size(); i++) {
+            if (listbill.get(i).getDouble("debt") > 0) {
+                list.add(listbill.get(i));
+
+            }
+        }
+        DataUtil.sortbyStringKey("createAt", list, true);
+        return list;
+    }
+
+    public static List<BaseModel> getListDebtRemain(List<BaseModel> listdebt, BaseModel currentBill){
+        List<BaseModel> list = new ArrayList<>();
+
+        for (BaseModel bill: listdebt){
+
+            if (bill.getInt("id") != currentBill.getInt("id")){
+                list.add(bill);
+            }
+        }
+
+        return list;
 
     }
 
@@ -875,6 +932,28 @@ public class DataUtil {
         paramCheckin.put("param", param );
 
         return paramCheckin;
+
+    }
+
+    public static BaseModel createNewProductParam(String param){
+        BaseModel paramCustomer = new BaseModel();
+        paramCustomer.put("url", Api_link.PRODUCT_NEW );
+        paramCustomer.put("method", "POST");
+        paramCustomer.put("isjson", false );
+        paramCustomer.put("param", param );
+
+        return paramCustomer;
+
+    }
+
+    public static BaseModel createNewProductGroupParam(String param){
+        BaseModel paramCustomer = new BaseModel();
+        paramCustomer.put("url", Api_link.PRODUCT_GROUP_NEW );
+        paramCustomer.put("method", "POST");
+        paramCustomer.put("isjson", false );
+        paramCustomer.put("param", param );
+
+        return paramCustomer;
 
     }
 

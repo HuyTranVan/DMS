@@ -97,7 +97,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
     @Override
     public int setIdContainer() {
-        return 0;
+        return R.id.statistical_parent;
     }
 
     @Override
@@ -223,7 +223,8 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                 break;
 
             case R.id.statistical_reload:
-                loadInitialData(getStartDay(), getEndDay(), false);
+//                loadInitialData(getStartDay(), getEndDay(), false);
+                changeFragment(new ChoiceProductFragment() , true);
                 break;
         }
     }
