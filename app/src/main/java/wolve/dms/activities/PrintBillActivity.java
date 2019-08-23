@@ -38,7 +38,6 @@ import wolve.dms.callback.CallbackProcess;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.libraries.printerdriver.BluetoothPrintBitmap;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Customer;
 import wolve.dms.models.User;
 import wolve.dms.utils.BitmapView;
 import wolve.dms.utils.Constants;
@@ -188,11 +187,11 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         tvHotline.setText(Constants.COMPANY_HOTLINE);
         tvWebsite.setText(Constants.COMPANY_WEBSITE);
 
-        tvOrderPhone.setText(String.format("Đặt hàng: %s", Util.PhoneFormat(User.getPhone())));
+        tvOrderPhone.setText(String.format("Đặt hàng: %s", Util.FormatPhone(User.getPhone())));
         tvThanks.setText(Constants.COMPANY_THANKS);
         tvShopName.setText(String.format(": %s %s",Constants.getShopTitle(currentCustomer.getString("shopType"), null).toUpperCase() , currentCustomer.getString("signBoard").toUpperCase()));
 
-        String phone = currentCustomer.getString("phone").equals("")? "--" : Util.PhoneFormat(currentCustomer.getString("phone"));
+        String phone = currentCustomer.getString("phone").equals("")? "--" : Util.FormatPhone(currentCustomer.getString("phone"));
         tvCustomerName.setText(String.format(": %s - %s",currentCustomer.getString("name"), phone ));
 
         tvCustomerAddress.setText(": " + String.format("%s, %s", currentCustomer.getString("district"), currentCustomer.getString("province")));

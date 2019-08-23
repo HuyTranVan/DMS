@@ -12,11 +12,13 @@ import android.widget.TextView;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.adapter.StatisticaPaymentAdapter;
+import wolve.dms.adapter.Statistica_PaymentAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.models.BaseModel;
+import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -30,7 +32,7 @@ public class StatisticalPaymentFragment extends Fragment implements View.OnClick
     private TextView tvCount;
 
 
-    private StatisticaPaymentAdapter adapter;
+    private Statistica_PaymentAdapter adapter;
 
 
     @Nullable
@@ -75,20 +77,21 @@ public class StatisticalPaymentFragment extends Fragment implements View.OnClick
 
     private void createRVCash(String user, List<BaseModel> list) {
 
-        adapter = new StatisticaPaymentAdapter(user, list, new CallbackString() {
+        adapter = new Statistica_PaymentAdapter(user, list, new CallbackString() {
             @Override
             public void Result(String s) {
                 CustomerConnect.GetCustomerDetail(s, new CallbackCustom() {
                     @Override
                     public void onResponse(BaseModel result) {
-                        Transaction.gotoCustomerActivity(result.BaseModelstoString(), false);
+                        CustomSQL.setString(Constants.CUSTOMER, result.BaseModelstoString());
+                        Transaction.gotoCustomerActivity( false);
                     }
 
                     @Override
                     public void onError(String error) {
 
                     }
-                }, true);
+                }, true,true);
             }
         });
         Util.createLinearRV(rvCash, adapter);

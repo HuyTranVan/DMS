@@ -52,23 +52,24 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.PrintBillViewH
             holder.tvTotal.setTextColor(mContext.getResources().getColor(R.color.colorBlue));
 
         }else {
-            holder.tvDate.setText(String.format("HĐ %s", Util.DateMonthYearString(mData.get(position).getLong("createAt"))));
+            holder.tvDate.setText(String.format("HÓA ĐƠN %s", Util.DateHourString(mData.get(position).getLong("createAt"))));
             holder.tvDate.setTextColor(mContext.getResources().getColor(R.color.black_text_color));
-            holder.tvPaid.setTextColor(mContext.getResources().getColor(R.color.black_text_color_hint));
-            holder.tvTotal.setTextColor(mContext.getResources().getColor(R.color.black_text_color));
+//            holder.tvPaid.setTextColor(mContext.getResources().getColor(R.color.black_text_color_hint));
+//            holder.tvTotal.setTextColor(mContext.getResources().getColor(R.color.black_text_color));
 
         }
 
-        Double total =  !mData.get(position).isNull("tempPaid")? mData.get(position).getDouble("debt")-mData.get(position).getDouble("tempPaid"):
-                mData.get(position).getDouble("debt");
-//        holder.tvDate.setTextColor(total ==0.0? mContext.getResources().getColor(R.color.black_text_color_hint) : mContext.getResources().getColor(R.color.black_text_color));
-        holder.tvTotal.setText(String.format("%s",Util.FormatMoney(total)));
+//        Double total =  !mData.get(position).isNull("tempPaid")? mData.get(position).getDouble("debt")-mData.get(position).getDouble("tempPaid"):
+//                mData.get(position).getDouble("debt");
+        holder.tvTotal.setText(String.format("%s đ",Util.FormatMoney(mData.get(position).getDouble("debt"))));
         holder.tvPaid.setVisibility(showPaid? View.VISIBLE : View.GONE);
 
         if (!mData.get(position).isNull("tempPaid")){
-            holder.tvPaid.setText(Util.FormatMoney(mData.get(position).getDouble("tempPaid")));
+            holder.tvPaid.setText(String.format("%s đ",Util.FormatMoney(mData.get(position).getDouble("tempPaid"))));
+            holder.tvRemain.setText(String.format("%s đ",Util.FormatMoney(mData.get(position).getDouble("debt") - mData.get(position).getDouble("tempPaid"))));
         }
 
+        holder.line.setVisibility(position  == mData.size()-1 ? View.GONE : View.VISIBLE);
 
     }
 
@@ -87,13 +88,16 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.PrintBillViewH
     }
 
     public class PrintBillViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvDate, tvTotal, tvPaid;
+        private TextView tvDate, tvTotal, tvPaid, tvRemain;
+        private View line;
 
         public PrintBillViewHolder(View itemView) {
             super(itemView);
             tvDate = (TextView) itemView.findViewById(R.id.debt_item_date);
             tvTotal = (TextView) itemView.findViewById(R.id.debt_item_total);
             tvPaid = (TextView) itemView.findViewById(R.id.debt_item_paid);
+            tvRemain = (TextView) itemView.findViewById(R.id.debt_item_remain);
+            line = itemView.findViewById(R.id.line);
 
         }
 
@@ -152,12 +156,7 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.PrintBillViewH
                 }
             }
 
-
-
-//        } catch (JSONException e) {
-//            e.printStackTrace();
             notifyDataSetChanged();
-//        }
     }
 
     public List<BaseModel> getListBillPayment(){

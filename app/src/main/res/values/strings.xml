@@ -82,6 +82,10 @@
     <string name="icon_bomb">&#xf1e2;</string>
     <string name="icon_users">&#xf0c0;</string>
     <string name="icon_share">&#xf1e0;</string>
+    <string name="icon_menu">&#xf142;</string>
+    <string name="icon_pay">&#xf4c0;</string>
+    <string name="icon_receipt">&#xf543;</string>
+
 
     <string name="login_username">Nhập tài khoản hoặc SĐT</string>
     <string name="login_password">Nhập mật khẩu</string>

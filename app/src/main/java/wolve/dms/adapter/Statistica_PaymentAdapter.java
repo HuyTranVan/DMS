@@ -2,7 +2,6 @@ package wolve.dms.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +9,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,13 +24,13 @@ import wolve.dms.utils.Util;
  * Created by tranhuy on 5/24/17.
  */
 
-public class StatisticaPaymentAdapter extends RecyclerView.Adapter<StatisticaPaymentAdapter.StatisticalBillsViewHolder> {
+public class Statistica_PaymentAdapter extends RecyclerView.Adapter<Statistica_PaymentAdapter.StatisticalBillsViewHolder> {
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackString mListener;
 
-    public StatisticaPaymentAdapter(String user, List<BaseModel> data, CallbackString listener) {
+    public Statistica_PaymentAdapter(String user, List<BaseModel> data, CallbackString listener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         //this.mData = data;
         this.mContext = Util.getInstance().getCurrentActivity();

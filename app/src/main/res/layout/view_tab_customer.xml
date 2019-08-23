@@ -13,21 +13,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Lịch hẹn sắp tới"
-        android:textStyle="bold"
-        android:textSize="14sp"
-        android:textColor="@drawable/text_green_selected"
-        android:layout_marginRight="5dp"
-        android:layout_marginLeft="5dp"/>
+        android:textSize="@dimen/_10sdp"
+        android:textColor="@drawable/text_blue_selected"
+        android:textAllCaps="true"
+        android:layout_gravity="center"
+        />
 
     <TextView
         android:id="@+id/tabNotify"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:background="@drawable/bg_green_rounded_button"
-        android:text=""
-        android:textSize="@dimen/tiny"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/_12sdp"
+        android:minWidth="@dimen/_12sdp"
+        android:minHeight="@dimen/_12sdp"
+        android:background="@drawable/btn_round_grey_selected_blue"
+        android:text="1"
+        android:textSize="@dimen/_7sdp"
         android:textColor="@color/colorWhite"
         android:gravity="center"
-        android:layout_marginRight="5dp"/>
+        android:layout_gravity="center|right"
+        android:visibility="visible"
+        android:layout_marginLeft="@dimen/_2sdp"/>
 
 </LinearLayout>

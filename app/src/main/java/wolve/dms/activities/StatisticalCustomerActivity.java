@@ -22,17 +22,14 @@ import java.util.List;
 
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
-import wolve.dms.adapter.StatisticalViewpagerAdapter;
+import wolve.dms.adapter.Statistical_ViewpagerAdapter;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
-import wolve.dms.apiconnect.SheetConnect;
 import wolve.dms.callback.CallbackCustomList;
-import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.customviews.CustomTabLayout;
 import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialog;
 import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialogFragment;
-import wolve.dms.libraries.connectapi.sheetapi.GoogleSheetGetData;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
 import wolve.dms.models.Customer;
@@ -55,7 +52,7 @@ public class StatisticalCustomerActivity extends BaseActivity implements  View.O
     private LinearLayout btnEmployeeFilter;
     private RelativeLayout rlBottom;
 
-    private StatisticalViewpagerAdapter pageAdapter;
+    private Statistical_ViewpagerAdapter pageAdapter;
     protected List<Bill> listInitialBill = new ArrayList<>();
     protected JSONArray InitialBillHavePayment = new JSONArray();
     protected JSONArray InitialCheckin = new JSONArray();
@@ -127,7 +124,7 @@ public class StatisticalCustomerActivity extends BaseActivity implements  View.O
     }
 
     public void setupViewPager(ViewPager viewPager) {
-        pageAdapter = new StatisticalViewpagerAdapter(getSupportFragmentManager());
+        pageAdapter = new Statistical_ViewpagerAdapter(getSupportFragmentManager());
         pageAdapter.addFragment(Fragment.instantiate(this, StatisticalCheckinFragment.class.getName()),  getResources().getString(icons[4]), "Checkin");
         pageAdapter.addFragment(Fragment.instantiate(this, StatisticalDebtFragment.class.getName()),  getResources().getString(icons[4]), "Khách còn nợ");
 

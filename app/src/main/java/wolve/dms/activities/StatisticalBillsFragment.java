@@ -9,19 +9,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.adapter.StatisticalBillsAdapter;
+import wolve.dms.adapter.Statistical_BillsAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -35,7 +33,7 @@ public class StatisticalBillsFragment extends Fragment implements View.OnClickLi
     //private TextView tvCount;
     private RadioGroup rdGroup;
     private RadioButton rdTotal, rdDebt;
-    private StatisticalBillsAdapter adapter;
+    private Statistical_BillsAdapter adapter;
 
     private StatisticalActivity mActivity;
     //private List<BaseModel> listDebt = new ArrayList<>();
@@ -90,34 +88,21 @@ public class StatisticalBillsFragment extends Fragment implements View.OnClickLi
 
 
     public void CreateRVBill(String username, List<BaseModel> list){
-//        Double total = 0.0;
-//        Double debt = 0.0;
-//        List<BaseModel> listDebt = new ArrayList<>();
-//        for (int i=0; i<list.size(); i++){
-//            total +=list.get(i).getDouble("total");
-//            debt += list.get(i).getDouble("debt");
-//
-//            if (list.get(i).getDouble("debt") > 0){
-//                listDebt.add(list.get(i));
-//            }
-//        }
-//        tvCount.setText(String.format("HĐ: %s",rdTotal.isChecked()? list.size() : listDebt.size()));
-
-
-        adapter = new StatisticalBillsAdapter(username, list, new CallbackString() {
+        adapter = new Statistical_BillsAdapter(username, list, new CallbackString() {
             @Override
             public void Result(String s) {
                 CustomerConnect.GetCustomerDetail(s, new CallbackCustom() {
                     @Override
                     public void onResponse(BaseModel result) {
-                        Transaction.gotoCustomerActivity(result.BaseModelstoString(), false);
+                        CustomSQL.setString(Constants.CUSTOMER, result.BaseModelstoString());
+                        Transaction.gotoCustomerActivity(false);
                     }
 
                     @Override
                     public void onError(String error) {
 
                     }
-                }, true);
+                }, true,true);
             }
         });
         Util.createLinearRV(rvBill, adapter);

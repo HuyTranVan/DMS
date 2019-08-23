@@ -20,22 +20,22 @@ import wolve.dms.utils.Util;
  * Created by tranhuy on 5/24/17.
  */
 
-public class StatisticalViewpagerAdapter extends FragmentPagerAdapter{
+public class Customer_ViewpagerAdapter extends FragmentPagerAdapter{
 
     private Context mContext;
 
     private List<Fragment> mFragments = new ArrayList<>();
-    private List<String> mFragmentIcons = new ArrayList<>();
+    private List<Integer> mFragmentCount = new ArrayList<>();
     private List<String> mFragmentText = new ArrayList<>();
 
-    public StatisticalViewpagerAdapter( FragmentManager fm) {
+    public Customer_ViewpagerAdapter(FragmentManager fm) {
         super(fm);
         this.mContext = Util.getInstance().getCurrentActivity();
     }
 
-    public void addFragment(Fragment fragment, String title, String  text) {
+    public void addFragment(Fragment fragment, String  text, int count) {
         mFragments.add(fragment);
-        mFragmentIcons.add(title);
+        mFragmentCount.add(count);
         mFragmentText.add(text);
     }
 
@@ -64,12 +64,18 @@ public class StatisticalViewpagerAdapter extends FragmentPagerAdapter{
     }
 
     public View getTabView(int position) {
-        View tab = LayoutInflater.from(mContext).inflate(R.layout.view_tab_statistical, null);
-        TextView tvTitle = (TextView) tab.findViewById(R.id.statistical_tab_title);
-        CTextIcon tvIcon = (CTextIcon) tab.findViewById(R.id.statistical_tab_icon);
+        View tab = LayoutInflater.from(mContext).inflate(R.layout.view_tab_customer, null);
+        TextView tvTitle = (TextView) tab.findViewById(R.id.tabTitle);
+        TextView tvNotify = (TextView) tab.findViewById(R.id.tabNotify);
 
-        tvIcon.setText(mFragmentIcons.get(position));
+        //tvIcon.setText(mFragmentIcons.get(position));
         tvTitle.setText(mFragmentText.get(position));
+        if (mFragmentCount.get(position) !=0){
+            tvNotify.setVisibility(View.VISIBLE);
+            tvNotify.setText(String.valueOf(mFragmentCount.get(position)));
+        }else {
+            tvNotify.setVisibility(View.GONE);
+        }
 
         if (position == 0) {
             tab.setSelected(true);
@@ -77,20 +83,19 @@ public class StatisticalViewpagerAdapter extends FragmentPagerAdapter{
         return tab;
     }
 
-//    public View getNotifyBaged(int count){
-//        View tab = LayoutInflater.from(mContext).inflate(R.layout.view_tabbar, null);
-//        CTextView tabTextTitle = (CTextView) tab.findViewById(R.id.tabTextIcon);
-//        CTextView tabText = (CTextView) tab.findViewById(R.id.tabText);
-//        CTextViewDefault tabNotify = (CTextViewDefault) tab.findViewById(R.id.tabNotify);
-//        tabTextTitle.setText(mFragmentIcons.get(2));
-//        tabText.setText(mFragmentText.get(2));
-//        tabNotify.setVisibility(count ==0?View.GONE: View.VISIBLE);
-//        tabNotify.setText(count +"");
-//
-//
-//        return tab;
-//
-//    }
+    public View getNotifyBaged(int count){
+        View tab = LayoutInflater.from(mContext).inflate(R.layout.view_tab_customer, null);
+        TextView tvTitle = (TextView) tab.findViewById(R.id.tabTitle);
+        TextView tvNotify = (TextView) tab.findViewById(R.id.tabNotify);
+
+        tvTitle.setText(mFragmentText.get(1));
+        tvNotify.setVisibility(count ==0?View.GONE: View.VISIBLE);
+        tvNotify.setText(String.valueOf(count));
+
+
+        return tab;
+
+    }
 
 
 }

@@ -2,7 +2,6 @@ package wolve.dms.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +23,7 @@ import wolve.dms.utils.Util;
  * Created by tranhuy on 5/24/17.
  */
 
-public class StatisticalDebtAdapter extends RecyclerView.Adapter<StatisticalDebtAdapter.StatisticalBillsViewHolder> {
+public class Statistical_DebtAdapter extends RecyclerView.Adapter<Statistical_DebtAdapter.StatisticalBillsViewHolder> {
     //private List<BaseModel> baseData = new ArrayList<>();
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
@@ -33,7 +32,7 @@ public class StatisticalDebtAdapter extends RecyclerView.Adapter<StatisticalDebt
     private CallbackString mListener;
     //protected double totalDebt;
 
-    public StatisticalDebtAdapter(String user, List<BaseModel> data,  CallbackString listener) {
+    public Statistical_DebtAdapter(String user, List<BaseModel> data, CallbackString listener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         //this.tvSum = tvsum;
         //this.baseData = data;

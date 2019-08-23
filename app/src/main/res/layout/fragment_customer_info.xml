@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/customer_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite"
+    android:clickable="true"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ScrollView
+            android:id="@+id/customer_scrollview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/_20sdp">
+
+            <LinearLayout
+                android:id="@+id/customer_main"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <RadioGroup
+                    android:id="@+id/customer_radiogroup_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_below="@+id/add_customer_map_parent"
+                    android:background="@drawable/pink_out_line"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:weightSum="9"
+                    android:layout_marginLeft="@dimen/_20sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginRight="@dimen/_20sdp"
+                    android:checkedButton="@+id/customer_radio_status_interested">
+
+                    <RadioButton
+                        android:id="@+id/customer_radio_status_interested"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="3"
+                        android:background="@drawable/toggle_widget_background_left"
+                        android:text="Quan tâm"
+                        android:textSize="@dimen/_12sdp"
+                        android:textColor="@drawable/text_white_selected"
+                        android:button="@null"
+                        android:layout_marginLeft="1dp"
+                        android:layout_marginTop="1dp"
+                        android:layout_marginBottom="1dp"
+                        android:gravity="center"/>
+
+                    <RadioButton
+                        android:id="@+id/customer_radio_status_nointerested"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/toggle_widget_background_center"
+                        android:layout_weight="3"
+                        android:text="0 quan tâm"
+                        android:textSize="@dimen/_12sdp"
+                        android:textColor="@drawable/text_white_selected"
+                        android:button="@null"
+                        android:layout_marginTop="1dp"
+                        android:layout_marginBottom="1dp"
+                        android:layout_marginLeft="0.2dp"
+                        android:layout_marginRight="0.2dp"
+                        android:gravity="center"/>
+
+                    <RadioButton
+                        android:id="@+id/customer_radio_status_ordered"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/toggle_widget_background_right"
+                        android:layout_weight="3"
+                        android:text="Đã Order"
+                        android:textSize="@dimen/_12sdp"
+                        android:textColor="@drawable/text_white_selected"
+                        android:button="@null"
+                        android:layout_marginBottom="1dp"
+                        android:layout_marginTop="1dp"
+                        android:layout_marginRight="1dp"
+                        android:gravity="center"/>
+
+                </RadioGroup>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:background="@color/colorWhite"
+                    android:clickable="true">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingLeft="@dimen/_10sdp"
+                        android:paddingRight="@dimen/_10sdp">
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <wolve.dms.customviews.CInputForm
+                                android:id="@+id/add_customer_shoptype"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5"
+                                android:inputType="textCapWords"
+                                app:textHint="Rua xe"
+                                app:iconText="@string/icon_product"/>
+
+                            <View
+                                android:layout_width="1px"
+                                android:layout_height="match_parent"
+                                android:background="@color/colorGrey"
+                                android:layout_margin="@dimen/_5sdp" />
+
+                            <wolve.dms.customviews.CInputForm
+                                android:id="@+id/add_customer_shopname"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5"
+                                android:inputType="textCapWords"
+                                app:textHint=""
+                                app:iconText="@string/icon_home"/>
+
+                        </LinearLayout>
+
+                        <wolve.dms.customviews.CInputForm
+                            android:id="@+id/customer_info_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5"
+                            android:inputType="textCapWords"
+                            app:textHint="Tên chủ tiệm"
+                            app:iconText="@string/icon_username"/>
+
+                        <wolve.dms.customviews.CInputForm
+                            android:id="@+id/customer_info_phone"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"
+                            app:textHint="Số điện thoại"
+                            app:iconText="@string/icon_phone"/>
+
+
+                        <wolve.dms.customviews.CInputForm
+                            android:id="@+id/customer_info_adress"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:background="?selectableItemBackground"
+                            app:textColor="@drawable/text_white_selected"
+                            app:multiLine="true"
+                            app:textHint="Địa chỉ"
+                            app:iconText="@string/icon_district" />
+
+
+                        <EditText
+                            android:id="@+id/add_customer_note"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minHeight="@dimen/_50sdp"
+                            android:background="@drawable/bg_white_corner_stroke_grey"
+                            android:contextClickable="false"
+                            android:gravity="top"
+                            android:imeOptions="actionNext"
+                            android:padding="@dimen/_5sdp"
+                            android:textColor="#3d3d3d"
+                            android:textSize="@dimen/_12sdp"
+                            android:hint="Nhập ghi chú cửa hàng"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:inputType="textCapSentences|textMultiLine"/>
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+
+
+</android.support.design.widget.CoordinatorLayout>
+
+
+
+
+

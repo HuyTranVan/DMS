@@ -12,6 +12,7 @@
         <attr name="iconText" format="string" />
         <attr name="textSize" format="integer" />
         <attr name="textColor" format="integer" />
+        <attr name="multiLine" format="boolean" />
         <attr name="textColorHint" format="integer" />
         <attr name="text" format="string" />
         <attr name="textHint" format="string" />

@@ -3,24 +3,17 @@ package wolve.dms.activities;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.adapter.StatisticalProductGroupAdapter;
+import wolve.dms.adapter.Statistical_ProductGroupAdapter;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Bill;
-import wolve.dms.models.BillDetail;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
 
@@ -31,7 +24,7 @@ import wolve.dms.utils.Util;
 public class StatisticalProductFragment extends Fragment implements View.OnClickListener {
     private View view;
     private RecyclerView rvProductGroup;
-    private StatisticalProductGroupAdapter adapter;
+    private Statistical_ProductGroupAdapter adapter;
 
     @Nullable
     @Override
@@ -98,7 +91,7 @@ public class StatisticalProductFragment extends Fragment implements View.OnClick
     }
 
     private void createRVProductGroup(List<BaseModel> list) {
-        adapter = new StatisticalProductGroupAdapter( list);
+        adapter = new Statistical_ProductGroupAdapter( list);
         Util.createLinearRV(rvProductGroup, adapter);
 
     }

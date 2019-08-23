@@ -6,6 +6,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
@@ -33,7 +34,8 @@ public class CustomDropdow {
                 listItem.setTag(position);
                 listItem.setTextSize(16);
                 listItem.setPadding(30, 20, 30, 20);
-                listItem.setTextColor(Util.getInstance().getCurrentActivity().getResources().getColor(R.color.white));
+                listItem.setTextColor(Util.getInstance().getCurrentActivity().getResources().getColor(R.color.white_text_color));
+
                 return listItem;
             }
         };
@@ -55,10 +57,12 @@ public class CustomDropdow {
         });
         popup.setFocusable(true);
 
-        popup.setBackgroundDrawable(Util.getInstance().getCurrentActivity().getResources().getDrawable(R.color.pin_deactivated));
+        //popup.setBackgroundDrawable(Util.getInstance().getCurrentActivity().getResources().getDrawable(R.drawable.bg_grey_corner));
         popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
-        popup.setWidth(view.getWidth());
+        popup.setWidth(Util.getInstance().getCurrentActivity().getResources().getDimensionPixelSize(R.dimen._100sdp));
         popup.setContentView(listViewDogs);
         popup.showAsDropDown(view , 0, 0);
     }
+
+
 }

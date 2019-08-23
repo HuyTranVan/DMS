@@ -1,7 +1,6 @@
 package wolve.dms.adapter;
 
 import android.content.Context;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,22 +10,15 @@ import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.api.services.sheets.v4.model.Color;
-
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Bill;
-import wolve.dms.models.BillDetail;
 import wolve.dms.models.Customer;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.DataUtil;
@@ -36,14 +28,14 @@ import wolve.dms.utils.Util;
  * Created by tranhuy on 5/24/17.
  */
 
-public class StatisticalBillsAdapter extends RecyclerView.Adapter<StatisticalBillsAdapter.StatisticalBillsViewHolder> implements Filterable {
+public class Statistical_BillsAdapter extends RecyclerView.Adapter<Statistical_BillsAdapter.StatisticalBillsViewHolder> implements Filterable {
     private List<BaseModel> baseData;
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackString mListener;
 
-    public StatisticalBillsAdapter(String username, List<BaseModel> data , CallbackString callbackString) {
+    public Statistical_BillsAdapter(String username, List<BaseModel> data , CallbackString callbackString) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
 //        this.mData = data;
         //this.baseData = data;
@@ -65,13 +57,6 @@ public class StatisticalBillsAdapter extends RecyclerView.Adapter<StatisticalBil
         this.mData = baseData;
 
         DataUtil.sortbyStringKey("createAt", mData, true);
-//        Collections.sort(mData, new Comparator<BaseModel>(){
-//            @Override
-//            public int compare(BaseModel lhs, BaseModel rhs) {
-//                return lhs.getDouble("createAt").compareTo(rhs.getDouble("createAt"));
-//            }
-//        });
-//        Collections.reverse(mData);
     }
 
     @Override
@@ -117,7 +102,7 @@ public class StatisticalBillsAdapter extends RecyclerView.Adapter<StatisticalBil
                 BaseModel billDetail = new BaseModel(arrayBillDetail.getJSONObject(i));
                 listBillDetail.add(billDetail);
             }
-            CustomerBillsDetailAdapter adapter = new CustomerBillsDetailAdapter(listBillDetail);
+            Customer_BillsDetailAdapter adapter = new Customer_BillsDetailAdapter(listBillDetail);
             Util.createLinearRV(holder.rvBillDetail, adapter);
 
 //            if (mData.get(position).getString("payments")!= null){

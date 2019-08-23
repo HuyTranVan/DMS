@@ -144,6 +144,7 @@ dependencies {
     implementation 'com.mikepenz:fontawesome-typeface:4.7.0.0@aar'
     implementation 'jp.wasabeef:recyclerview-animators:2.2.6'
     implementation 'com.github.clans:fab:1.6.4'
+    implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.3.0'
 //    implementation 'com.hold1:keyboardheightprovider:0.0.7'
     //progress dialog
     implementation 'com.kaopiz:kprogresshud:1.1.0'

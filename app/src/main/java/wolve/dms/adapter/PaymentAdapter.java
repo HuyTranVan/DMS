@@ -17,6 +17,7 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.models.BaseModel;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 
@@ -34,6 +35,8 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.PrintBil
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mData = list;
 
+        DataUtil.sortbyStringKey("createAt", mData, true);
+
     }
 
     @Override
@@ -48,13 +51,13 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.PrintBil
         String user = mData.get(position).getBaseModel("user").getString("displayName");
         String note = "";
         if (mData.get(position).hasKey("idbillreturn")){
-            note = "thu hàng".toUpperCase();
+            note = "Trừ tiền thu hàng".toUpperCase();
 
         }else if (mData.get(position).getDouble("paid") <0.0){
-            note ="trả khách".toUpperCase();
+            note ="trả khách tiền mặt".toUpperCase();
 
         }else {
-            note ="thu tiền".toUpperCase();
+            note ="thu tiền mặt".toUpperCase();
 
         }
 

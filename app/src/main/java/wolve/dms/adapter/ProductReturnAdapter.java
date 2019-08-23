@@ -77,13 +77,17 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
 
     @Override
     public void onBindViewHolder(final CartProductsViewHolder holder, final int position) {
-        Double price = mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount");
+        double price = mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount");
         holder.tvName.setText(String.format("%s (%s)",mData.get(position).getString("productName"), Util.FormatMoney(price)));
         holder.tvQuantity.setText(mData.get(position).getString("quantityReturn"));
-        holder.tvTotalQuantity.setText(String.format("%s",String.valueOf(mData.get(position).getInt("mergeQuantity") - mData.get(position).getInt("quantityReturn"))));
+
+        int quantityremain = mData.get(position).getInt("mergeQuantity") - mData.get(position).getInt("quantityReturn");
+        holder.tvTotalQuantity.setText(String.format("%s",String.valueOf(quantityremain)));
 
         holder.btnSub.setVisibility(mData.get(position).getInt("quantityReturn") >0 ? View.VISIBLE :View.INVISIBLE);
         holder.btnPlus.setVisibility(mData.get(position).getInt("quantityReturn") >= mData.get(position).getInt("mergeQuantity") ?View.INVISIBLE :View.VISIBLE);
+
+        holder.tvNote.setVisibility(quantityremain >0 ? View.GONE :View.VISIBLE);
 
         holder.btnSub.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,7 +127,7 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
     }
 
     public class CartProductsViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvName, tvQuantity , tvTotalQuantity;
+        private TextView tvName, tvQuantity , tvTotalQuantity, tvNote;
         private RelativeLayout lnParent;
         private CTextIcon btnSub, btnPlus;
 
@@ -135,6 +139,7 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
             btnSub = (CTextIcon) itemView.findViewById(R.id.product_return_item_sub);
             btnPlus = (CTextIcon) itemView.findViewById(R.id.product_return_item_plus);
             tvTotalQuantity = itemView.findViewById(R.id.product_return_item_totalquantity);
+            tvNote = itemView.findViewById(R.id.product_return_item_note);
 
         }
 

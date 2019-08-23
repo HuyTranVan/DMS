@@ -3,7 +3,6 @@ package wolve.dms.utils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mortbay.util.ajax.JSON;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,7 +105,7 @@ public class Constants {
     public final static String COMPANY_ADDRESS = "MST: 3702405542";
     public final static String COMPANY_HOTLINE = "ĐT:0931.07.22.23";
     public final static String COMPANY_WEBSITE = "Website: www.wolver.vn";
-    public final static String COMPANY_ORDERPHONE = String.format("Đặt hàng: %s", Util.PhoneFormat(User.getPhone()));
+    public final static String COMPANY_ORDERPHONE = String.format("Đặt hàng: %s", Util.FormatPhone(User.getPhone()));
     public final static String COMPANY_THANKS = "Trân trọng cảm ơn quý khách hàng";
 
     public final static String PRINTER_57 = "57mm";

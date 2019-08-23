@@ -8,28 +8,22 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Bill;
-import wolve.dms.models.BillDetail;
 import wolve.dms.utils.Util;
 
 /**
  * Created by tranhuy on 5/24/17.
  */
 
-public class CustomerBillsDetailAdapter extends RecyclerView.Adapter<CustomerBillsDetailAdapter.CustomerBillsDetailAdapterViewHolder> {
+public class Customer_BillsDetailAdapter extends RecyclerView.Adapter<Customer_BillsDetailAdapter.CustomerBillsDetailAdapterViewHolder> {
     private List<BaseModel> mData = new ArrayList<>();
     private Context mContext;
 
-    public CustomerBillsDetailAdapter(List<BaseModel> data) {
+    public Customer_BillsDetailAdapter(List<BaseModel> data) {
         this.mData = data;
         this.mContext = Util.getInstance().getCurrentActivity();
 

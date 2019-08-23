@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorWhite"
+    android:clickable="true"
+    android:layout_marginTop="@dimen/_36sdp">
+
+    <TextView
+        android:id="@+id/customer_return_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_25sdp"
+        android:background="@color/colorLightGrey"
+        android:text="adb"
+        android:padding="@dimen/_5sdp"
+        android:gravity="center"/>
+
+    <ScrollView
+        android:id="@+id/customer_return_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        android:layout_marginTop="@dimen/_25sdp">
+
+        <LinearLayout
+            android:id="@+id/customer_return_body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/colorWhite"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:descendantFocusability="blocksDescendants">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/customer_return_rvreturn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/customer_return_sum"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_30sdp"
+                android:paddingRight="@dimen/_10sdp"
+                android:textSize="@dimen/_12sdp"
+                android:textColor="@color/black_text_color"
+                android:gravity="right|center_vertical"
+                android:textStyle="bold"/>
+
+
+            <LinearLayout
+                android:id="@+id/customer_return_option"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_30sdp"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Trả khách tiền mặt"
+                    android:textSize="@dimen/_12sdp"
+                    android:textColor="@color/black_text_color"/>
+
+                <Switch
+                    android:id="@+id/customer_return_paydebt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:checked="true"
+                    android:theme="@style/SwitchThemeOverlay"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:layout_marginRight="@dimen/_10sdp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Trừ vào công nợ "
+                    android:textSize="@dimen/_12sdp"
+                    android:textColor="@color/black_text_color"/>
+
+
+            </LinearLayout>
+
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/customer_return_rvdebt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_white_corner_stroke_grey"
+                    android:layout_margin="@dimen/_5sdp"
+                    android:padding="@dimen/_5sdp"
+                    android:visibility="gone"/>
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/customer_return_cashreturn"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_30sdp"
+                android:paddingRight="@dimen/_10sdp"
+                android:textSize="@dimen/_12sdp"
+                android:textColor="@color/colorBlue"
+                android:gravity="right|center_vertical"
+                android:textStyle="bold"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/dialog_return_product_note"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_25sdp"
+                android:paddingRight="@dimen/_10sdp"
+                android:textSize="@dimen/_12sdp"
+                android:textColor="@color/colorBlueDark"
+                android:textAllCaps="true"
+                android:gravity="right|center_vertical"
+                android:visibility="gone"/>
+
+
+            <Button
+                android:id="@+id/customer_return_submit"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_30sdp"
+                android:minWidth="@dimen/_150sdp"
+                android:background="@drawable/btn_confirm_blue"
+                android:layout_margin="@dimen/_20sdp"
+                android:text="XÁC NHẬN"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_14sdp"
+                android:layout_gravity="center_horizontal"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+
+</android.support.design.widget.CoordinatorLayout>

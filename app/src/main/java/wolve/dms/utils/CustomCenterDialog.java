@@ -11,13 +11,10 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import com.mukesh.DrawingView;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,15 +25,11 @@ import wolve.dms.R;
 import wolve.dms.adapter.CartCheckinReasonAdapter;
 import wolve.dms.adapter.DebtAdapter;
 import wolve.dms.adapter.ProductReturnAdapter;
-import wolve.dms.adapter.StatisticalDebtAdapter;
-import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.apiconnect.UserConnect;
 import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickProduct;
-import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDouble;
-import wolve.dms.callback.CallbackListBaseModel;
 import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.callback.CallbackPayBill;
 import wolve.dms.callback.CallbackString;
@@ -739,6 +732,7 @@ public class CustomCenterDialog {
         final Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
         final Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
 
+        dialogResult.setCanceledOnTouchOutside(true);
         final DebtAdapter debtAdapter = new DebtAdapter(listDebts == null? new ArrayList<BaseModel>() : listDebts, swFastPay.isChecked(), true);
         Util.createLinearRV(rvDebt, debtAdapter);
 
@@ -879,7 +873,7 @@ public class CustomCenterDialog {
 //        }
 //        tvCount.setText(String.format("Tổng nợ: %s", Util.FormatMoney(debt)));
 //
-//        final StatisticalDebtAdapter adapter = new StatisticalDebtAdapter(tvCount, tvCount, DataUtil.groupDebtByCustomer(listDebt), new CallbackString() {
+//        final Statistical_DebtAdapter adapter = new Statistical_DebtAdapter(tvCount, tvCount, DataUtil.groupDebtByCustomer(listDebt), new CallbackString() {
 //            @Override
 //            public void Result(String s) {
 //

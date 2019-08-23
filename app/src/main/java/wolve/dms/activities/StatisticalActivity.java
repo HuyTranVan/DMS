@@ -5,7 +5,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -24,7 +23,7 @@ import java.util.List;
 
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
-import wolve.dms.adapter.StatisticalViewpagerAdapter;
+import wolve.dms.adapter.Statistical_ViewpagerAdapter;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.SheetConnect;
 import wolve.dms.apiconnect.SystemConnect;
@@ -48,7 +47,6 @@ import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 import static wolve.dms.libraries.connectapi.sheetapi.GoogleSheetPostData.SHEET_COLUM;
-import static wolve.dms.libraries.connectapi.sheetapi.GoogleSheetPostData.SHEET_ROW;
 import static wolve.dms.utils.Constants.YEAR_DEFAULT;
 
 /**
@@ -67,7 +65,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     private LinearLayout btnEmployeeFilter;
     private RelativeLayout rlBottom;
 
-    private StatisticalViewpagerAdapter pageAdapter;
+    private Statistical_ViewpagerAdapter pageAdapter;
 
     protected List<BaseModel> InitialBillHavePayment = new ArrayList();
     protected JSONArray InitialCheckin = new JSONArray();
@@ -153,7 +151,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     }
 
     public void setupViewPager(ViewPager viewPager) {
-        pageAdapter = new StatisticalViewpagerAdapter(getSupportFragmentManager());
+        pageAdapter = new Statistical_ViewpagerAdapter(getSupportFragmentManager());
         pageAdapter.addFragment(Fragment.instantiate(this, StatisticalDashboardFragment.class.getName()),  getResources().getString(icons[0]), "Dashboard");
         pageAdapter.addFragment(Fragment.instantiate(this, StatisticalBillsFragment.class.getName()),  getResources().getString(icons[1]),"Hóa đơn");
         pageAdapter.addFragment(Fragment.instantiate(this, StatisticalProductFragment.class.getName()),  getResources().getString(icons[2]), "Sản Phẩm");

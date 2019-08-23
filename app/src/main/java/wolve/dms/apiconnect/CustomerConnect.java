@@ -214,8 +214,11 @@ public class CustomerConnect {
         }).execute();
     }
 
-    public static void GetCustomerDetail(String params,final CallbackCustom listener, final Boolean stopLoading){
-        Util.getInstance().showLoading();
+    public static void GetCustomerDetail(String params,final CallbackCustom listener, Boolean showLoading, Boolean stopLoading){
+        if (showLoading){
+            Util.getInstance().showLoading();
+        }
+
 
         String url = Api_link.CUSTOMER_GETDETAIL + params;
 
@@ -565,7 +568,7 @@ public class CustomerConnect {
             UtilPrinter.printCustomText(outputStream,"CH    : " + Constants.getShopTitle(currentCustomer.getString("shopType") , null) + " "+ currentCustomer.getString("signBoard") , 1,0);
             UtilPrinter.printCustomText(outputStream,"KH    : " + currentCustomer.getString("name"), 1,0);
 
-            String phone = currentCustomer.getString("phone").equals("")? "--" : Util.PhoneFormat(currentCustomer.getString("phone"));
+            String phone = currentCustomer.getString("phone").equals("")? "--" : Util.FormatPhone(currentCustomer.getString("phone"));
             UtilPrinter.printCustomText(outputStream,"SDT   : " + phone, 1,0);
             String add = String.format("%s, %s", currentCustomer.getString("street"), currentCustomer.getString("district"));
             String address = add.length()>23 ? add.substring(0,23) : add;
@@ -613,7 +616,7 @@ public class CustomerConnect {
             UtilPrinter.printCustomText(outputStream,longLine,1,1);
             UtilPrinter.printCustom2Text(outputStream,Constants.PRINTER_57,"CON LAI:", Util.FormatMoney(total + sumDebt - paid),4,2);
             UtilPrinter.printCustomText(outputStream,shortLine,3,1);
-            UtilPrinter.printCustomText(outputStream, String.format("Đặt hàng: %s", Util.PhoneFormat(User.getPhone())), 1,1);
+            UtilPrinter.printCustomText(outputStream, String.format("Đặt hàng: %s", Util.FormatPhone(User.getPhone())), 1,1);
             UtilPrinter.printCustomText(outputStream, "Tran trong cam on quy khach hang", 1,1);
             outputStream.write(PrinterCommands.FEED_LINE);
             outputStream.write(PrinterCommands.FEED_LINE);
@@ -667,7 +670,7 @@ public class CustomerConnect {
             UtilPrinter.printCustomTextNew(outputStream,"CH     : " + Constants.getShopTitle(currentCustomer.getString("shopType") , null) + " "+ currentCustomer.getString("signBoard") , 2,0);
             UtilPrinter.printCustomTextNew(outputStream,"KH     : " + currentCustomer.getString("name"), 2,0);
 
-            String phone = currentCustomer.getString("phone").equals("")? "--" : Util.PhoneFormat(currentCustomer.getString("phone"));
+            String phone = currentCustomer.getString("phone").equals("")? "--" : Util.FormatPhone(currentCustomer.getString("phone"));
             UtilPrinter.printCustomTextNew(outputStream,"SDT    : " + phone, 2,0);
             String add = String.format("%s, %s", currentCustomer.getString("street"), currentCustomer.getString("district"));
             int len = printerSize.equals(Constants.PRINTER_57)?23:40;
@@ -720,7 +723,7 @@ public class CustomerConnect {
 
             outputStream.write(PrinterCommands.FEED_LINE);
 
-            UtilPrinter.printCustomTextNew(outputStream, String.format("Đặt hàng: %s", Util.PhoneFormat(User.getPhone())), 22,1);
+            UtilPrinter.printCustomTextNew(outputStream, String.format("Đặt hàng: %s", Util.FormatPhone(User.getPhone())), 22,1);
             //UtilPrinter.printCustomText(outputStream, "Tran trong cam on quy khach hang", 1,1);
             outputStream.write(PrinterCommands.FEED_LINE);
             outputStream.write(PrinterCommands.FEED_LINE);
@@ -776,7 +779,7 @@ public class CustomerConnect {
             UtilPrinter.printCustomTextNew(outputStream,"CH     : " + Constants.getShopTitle(currentCustomer.getString("shopType") , null) + " "+ currentCustomer.getString("signBoard") , 2,0);
             UtilPrinter.printCustomTextNew(outputStream,"KH     : " + currentCustomer.getString("name"), 2,0);
 
-            String phone = currentCustomer.getString("phone").equals("")? "--" : Util.PhoneFormat(currentCustomer.getString("phone"));
+            String phone = currentCustomer.getString("phone").equals("")? "--" : Util.FormatPhone(currentCustomer.getString("phone"));
             UtilPrinter.printCustomTextNew(outputStream,"SDT    : " + phone, 2,0);
             String add = String.format("%s, %s", currentCustomer.getString("street"), currentCustomer.getString("district"));
             int len = printerSize.equals(Constants.PRINTER_57)?23:40;
@@ -837,7 +840,7 @@ public class CustomerConnect {
 
             outputStream.write(PrinterCommands.FEED_LINE);
 
-            UtilPrinter.printCustomTextNew(outputStream, String.format("Đặt hàng: %s", Util.PhoneFormat(User.getPhone())), 22,1);
+            UtilPrinter.printCustomTextNew(outputStream, String.format("Đặt hàng: %s", Util.FormatPhone(User.getPhone())), 22,1);
             //UtilPrinter.printCustomText(outputStream, "Tran trong cam on quy khach hang", 1,1);
             outputStream.write(PrinterCommands.FEED_LINE);
             outputStream.write(PrinterCommands.FEED_LINE);

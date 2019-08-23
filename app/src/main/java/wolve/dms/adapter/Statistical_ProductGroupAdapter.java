@@ -3,7 +3,6 @@ package wolve.dms.adapter;
 import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,24 +18,23 @@ import java.util.List;
 import wolve.dms.R;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.BillDetail;
 import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 /**
  * Created by tranhuy on 5/24/17.
  */
 
-public class StatisticalProductGroupAdapter extends RecyclerView.Adapter<StatisticalProductGroupAdapter.StatisticalProductGroupViewHolder> {
+public class Statistical_ProductGroupAdapter extends RecyclerView.Adapter<Statistical_ProductGroupAdapter.StatisticalProductGroupViewHolder> {
     //List<BillDetail> mListDetail = new ArrayList<>();
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
 
-    public StatisticalProductGroupAdapter(List<BaseModel> data) {
+    public Statistical_ProductGroupAdapter(List<BaseModel> data) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
-        //this.mListDetail = data;
         this.mContext = Util.getInstance().getCurrentActivity();
 
         List<BaseModel> listGroup = ProductGroup.getProductGroupList();
@@ -49,6 +47,20 @@ public class StatisticalProductGroupAdapter extends RecyclerView.Adapter<Statist
         }
 
 
+    }
+
+    public void updateData(List<BaseModel> data){
+        List<BaseModel> listGroup = ProductGroup.getProductGroupList();
+        mData = new ArrayList<>();
+
+        for (int i=0; i<listGroup.size(); i++){
+            BaseModel group = createGroupFromBill(listGroup.get(i), data);
+            if (group.getInt("count") >0){
+                mData.add(group);
+            }
+        }
+
+        notifyDataSetChanged();
     }
 
     @Override
@@ -66,7 +78,7 @@ public class StatisticalProductGroupAdapter extends RecyclerView.Adapter<Statist
         holder.tvGroupSum.setText(mData.get(position).getString("count"));
 
         List<Product> mProduct = new ArrayList<>();
-        StatisticalProductAdapter adapter = new StatisticalProductAdapter(mData.get(position).getJSONArray("products"), new CallbackString() {
+        Statistical_ProductAdapter adapter = new Statistical_ProductAdapter(mData.get(position).getJSONArray("products"), new CallbackString() {
             @Override
             public void Result(String s) {
                 if (!s.equals("0")){

@@ -3,9 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/input_data_parent"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="?selectableItemBackground">
-
+    android:layout_height="wrap_content">
 
     <EditText
         android:id="@+id/input_data_content"
@@ -19,7 +17,8 @@
         android:textColorHint="@color/black_text_color_hint"
         android:inputType="textCapSentences"
         android:gravity="center_vertical"
-        android:paddingLeft="@dimen/_25sdp"/>
+        android:paddingLeft="@dimen/_25sdp"
+        android:clickable="true"/>
 
     <wolve.dms.customviews.CTextIcon
         android:id="@+id/input_data_icon"

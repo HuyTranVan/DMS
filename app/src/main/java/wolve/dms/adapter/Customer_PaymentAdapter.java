@@ -15,13 +15,14 @@ import java.util.List;
 import wolve.dms.R;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 /**
  * Created by tranhuy on 5/24/17.
  */
 
-public class CustomerPaymentAdapter extends RecyclerView.Adapter<CustomerPaymentAdapter.CustomerPaymentViewHolder> {
+public class Customer_PaymentAdapter extends RecyclerView.Adapter<Customer_PaymentAdapter.CustomerPaymentViewHolder> {
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
@@ -31,11 +32,10 @@ public class CustomerPaymentAdapter extends RecyclerView.Adapter<CustomerPayment
         void onResponse(List<BaseModel> listResult, Double total, int id);
     }
 
-    public CustomerPaymentAdapter(List<BaseModel> data) {
+    public Customer_PaymentAdapter(List<BaseModel> data) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mData = data;
         this.mContext = Util.getInstance().getCurrentActivity();
-//        this.mListenerList = listener;
 
         Collections.sort(mData, new Comparator<BaseModel>(){
             public int compare(BaseModel obj1, BaseModel obj2) {
@@ -44,6 +44,17 @@ public class CustomerPaymentAdapter extends RecyclerView.Adapter<CustomerPayment
         });
         Collections.reverse(mData);
 
+    }
+
+    public void updateData(List<BaseModel> data){
+        this.mData = data;
+        Collections.sort(mData, new Comparator<BaseModel>(){
+            public int compare(BaseModel obj1, BaseModel obj2) {
+                return obj1.getString("createAt").compareToIgnoreCase(obj2.getString("createAt"));
+            }
+        });
+        Collections.reverse(mData);
+        notifyDataSetChanged();
     }
 
     @Override
@@ -55,24 +66,24 @@ public class CustomerPaymentAdapter extends RecyclerView.Adapter<CustomerPayment
     @Override
     public void onBindViewHolder(final CustomerPaymentViewHolder holder, final int position) {
         holder.tvTime.setText(Util.DateHourString(mData.get(position).getLong("createAt")));
-        switch (mData.get(position).getString("type")){
-            case Constants.BILL:
-                holder.tvText.setText("Mua hàng ");
-                holder.tvTotal.setTextColor(mContext.getResources().getColor(R.color.black_text_color));
-                holder.tvTotal.setText(Util.FormatMoney(mData.get(position).getDouble("total")));
 
-                break;
+        if (mData.get(position).hasKey("type")){
+            switch (mData.get(position).getString("type")){
+                case Constants.BILL:
+                    holder.tvText.setText("Mua hàng ");
+                    holder.tvTotal.setTextColor(mContext.getResources().getColor(R.color.black_text_color));
+                    holder.tvTotal.setText(Util.FormatMoney(mData.get(position).getDouble("total")));
 
-            case Constants.PAYMENT:
-                holder.tvText.setText("Khách hàng thanh toán ");
-                holder.tvTotal.setTextColor(mContext.getResources().getColor(R.color.colorBlue));
-                holder.tvTotal.setText("+ " + Util.FormatMoney(mData.get(position).getDouble("total")));
-//                holder.tvTotal.setVisibility(View.INVISIBLE);
-//                holder.tvPaid.setVisibility(View.VISIBLE);
-//                holder.tvPaid.setText(Util.FormatMoney(mData.get(position).getDouble("total")));
+                    break;
 
-                break;
+                case Constants.PAYMENT:
+                    holder.tvText.setText("Khách hàng thanh toán ");
+                    holder.tvTotal.setTextColor(mContext.getResources().getColor(R.color.colorBlue));
+                    holder.tvTotal.setText("+ " + Util.FormatMoney(mData.get(position).getDouble("total")));
 
+                    break;
+
+            }
         }
 
 

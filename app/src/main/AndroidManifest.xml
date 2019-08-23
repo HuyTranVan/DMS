@@ -87,8 +87,8 @@
         <activity
             android:name=".activities.SplashScreenActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/FullScreen"
-            android:launchMode="singleTask">
+            android:theme="@style/FullScreen">
+<!--            android:launchMode="singleTask">-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -16,7 +15,6 @@ import java.util.List;
 import wolve.dms.R;
 import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Customer;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.Util;
 
@@ -27,7 +25,7 @@ import static android.view.View.VISIBLE;
  * Created by tranhuy on 5/24/17.
  */
 
-public class CustomerSearchAdapter extends RecyclerView.Adapter<CustomerSearchAdapter.CustomerSearchViewHolder> {
+public class Customer_SearchAdapter extends RecyclerView.Adapter<Customer_SearchAdapter.CustomerSearchViewHolder> {
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
@@ -38,7 +36,7 @@ public class CustomerSearchAdapter extends RecyclerView.Adapter<CustomerSearchAd
         void onResponse(JSONObject object);
     }
 
-    public CustomerSearchAdapter(List<BaseModel> data, CallbackBaseModel listener) {
+    public Customer_SearchAdapter(List<BaseModel> data, CallbackBaseModel listener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mData = data;
         this.mContext = Util.getInstance().getCurrentActivity();

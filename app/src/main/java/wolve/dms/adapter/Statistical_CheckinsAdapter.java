@@ -1,7 +1,6 @@
 package wolve.dms.adapter;
 
 import android.content.Context;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,21 +8,15 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Bill;
-import wolve.dms.models.BillDetail;
-import wolve.dms.models.Customer;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
 
@@ -31,13 +24,13 @@ import wolve.dms.utils.Util;
  * Created by tranhuy on 5/24/17.
  */
 
-public class StatisticalCheckinsAdapter extends RecyclerView.Adapter<StatisticalCheckinsAdapter.StatisticalBillsViewHolder> {
+public class Statistical_CheckinsAdapter extends RecyclerView.Adapter<Statistical_CheckinsAdapter.StatisticalBillsViewHolder> {
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackString mListener;
 
-    public StatisticalCheckinsAdapter(List<BaseModel> data) {
+    public Statistical_CheckinsAdapter(List<BaseModel> data) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mData = data;
         this.mContext = Util.getInstance().getCurrentActivity();

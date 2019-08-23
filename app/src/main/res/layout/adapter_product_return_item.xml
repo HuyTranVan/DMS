@@ -7,18 +7,13 @@
     android:id="@+id/product_return_item_parent"
     android:background="@drawable/colorwhite_pressed">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/_10sdp"
-        android:layout_marginTop="@dimen/_5sdp"
-        android:layout_marginBottom="@dimen/_5sdp">
-
-        <RelativeLayout
+    <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginBottom="@dimen/_5sdp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -62,16 +57,6 @@
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="@dimen/_5sdp">
 
-                <!--<TextView-->
-                    <!--android:id="@+id/product_return_item_totalquantity"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:text="0"-->
-                    <!--android:textColor="@color/colorBlue"-->
-                    <!--android:textSize="@dimen/_12sdp"-->
-                    <!--android:layout_centerVertical="true"-->
-                    <!--android:layout_marginLeft="@dimen/_10sdp"-->
-                    <!--android:layout_marginRight="@dimen/_10sdp"/>-->
 
                 <wolve.dms.customviews.CTextIcon
                     android:id="@+id/product_return_item_sub"
@@ -115,15 +100,27 @@
 
         </RelativeLayout>
 
-
-    </LinearLayout>
+    <TextView
+        android:id="@+id/product_return_item_note"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_confirm_red"
+        android:text="Đã trả hết"
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/_8sdp"
+        android:textStyle="italic"
+        android:layout_marginLeft="@dimen/_20sdp"
+        android:paddingLeft="@dimen/_10sdp"
+        android:paddingRight="@dimen/_10sdp"
+        android:visibility="visible"
+        android:layout_alignParentBottom="true" />
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1px"
+        android:layout_height="1dp"
         android:background="@color/colorGrey"
         android:layout_alignParentBottom="true"
-        android:layout_marginTop="@dimen/_2sdp"
+
         android:layout_marginLeft="@dimen/_10sdp"
         android:layout_marginRight="@dimen/_10sdp"/>
 

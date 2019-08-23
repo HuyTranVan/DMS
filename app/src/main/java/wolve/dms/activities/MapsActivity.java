@@ -15,19 +15,18 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ShareCompat;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -61,22 +60,17 @@ import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.CustomWindowAdapter;
-import wolve.dms.adapter.CustomerSearchAdapter;
+import wolve.dms.adapter.Customer_SearchAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.apiconnect.LocationConnect;
 import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomList;
-import wolve.dms.callback.CallbackJSONArray;
-import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackLong;
-import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.LatlngListener;
 import wolve.dms.customviews.CTextIcon;
-import wolve.dms.libraries.FitScrollWithFullscreen;
-import wolve.dms.libraries.Security;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Customer;
 import wolve.dms.models.Distributor;
@@ -93,7 +87,6 @@ import wolve.dms.utils.Util;
 
 import static wolve.dms.apiconnect.CustomerConnect.createParamCustomer;
 import static wolve.dms.utils.Constants.REQUEST_PERMISSION_LOCATION;
-import static wolve.dms.utils.Constants.responeIsSuccess;
 import static wolve.dms.utils.MapUtil.removeMarker;
 
 /**
@@ -130,11 +123,12 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     private FusedLocationProviderClient mFusedLocationClient;
     private Boolean recheckGPS = false;
     private String mSearchText = "";
-    private CustomerSearchAdapter mSearchAdapter;
+    private Customer_SearchAdapter mSearchAdapter;
     private Boolean loadCustomer = false;
     private CustomWindowAdapter adapterInfoMarker;
     private Marker currentMarker;
     private BottomSheetBehavior mBottomSheetBehavior;
+    private ProgressBar progressLoadCustomer;
     //private String VIEW_CUSTOMER_ID ="";
 
 
@@ -192,6 +186,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         btnShare= findViewById(R.id.map_detail_share);
         tvCheckin = findViewById(R.id.map_detail_checkin_text);
         tvDistance = findViewById(R.id.map_detail_distance);
+        progressLoadCustomer = findViewById(R.id.map_loading_customer);
 
 
     }
@@ -468,7 +463,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 customer.put("note", "");
                 customer.put("debt",0.0);
 
-                Transaction.gotoCustomerActivity(customer.BaseModelstoString(), true);
+                CustomSQL.setString(Constants.CUSTOMER, customer.BaseModelstoString());
+                Transaction.gotoCustomerActivity( true);
                 CustomInputDialog.dismissDialog();
             }
 
@@ -567,37 +563,37 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     @Override
     public void onInfoWindowClick(final Marker marker) {
         //mMap.setOnCameraMoveListener(null);
-        final Customer customer = new Customer((JSONObject) marker.getTag());
-
-        getDistanceFromCurrent(customer.getDouble("lat"), customer.getDouble("lng"), new CallbackLong() {
-            @Override
-            public void onResponse(final Long value) {
-                String param = customer.getString("id");
-
-                CustomerConnect.GetCustomerDetail(param, new CallbackCustom() {
-                    @Override
-                    public void onResponse(final BaseModel result) {
-                        if (value < Constants.CHECKIN_DISTANCE){
-                            CustomCenterDialog.alertWithButton("Check In", "Vị trí hiện tại của bạn rất gần cửa hàng. Bắt đầu check in", "Tiếp tục", new CallbackBoolean() {
-                                @Override
-                                public void onRespone(Boolean re) {
-                                    Transaction.gotoCustomerActivity(result.toString(), true);
-                                }
-                            });
-                        }else {
-                            Transaction.gotoCustomerActivity(result.toString(), false);
-                        }
-
-
-                    }
-
-                    @Override
-                    public void onError(String error) {
-
-                    }
-                }, true);
-            }
-        });
+//        final Customer customer = new Customer((JSONObject) marker.getTag());
+//
+//        getDistanceFromCurrent(customer.getDouble("lat"), customer.getDouble("lng"), new CallbackLong() {
+//            @Override
+//            public void onResponse(final Long value) {
+//                String param = customer.getString("id");
+//
+//                CustomerConnect.GetCustomerDetail(param, new CallbackCustom() {
+//                    @Override
+//                    public void onResponse(final BaseModel result) {
+//                        if (value < Constants.CHECKIN_DISTANCE){
+//                            CustomCenterDialog.alertWithButton("Check In", "Vị trí hiện tại của bạn rất gần cửa hàng. Bắt đầu check in", "Tiếp tục", new CallbackBoolean() {
+//                                @Override
+//                                public void onRespone(Boolean re) {
+//                                    Transaction.gotoCustomerActivity(result.toString(), true);
+//                                }
+//                            });
+//                        }else {
+//                            Transaction.gotoCustomerActivity(result.toString(), false);
+//                        }
+//
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(String error) {
+//
+//                    }
+//                }, true);
+//            }
+//        });
 
     }
 
@@ -657,7 +653,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                             Bitmap bitmap = MapUtil.GetBitmapMarker(MapsActivity.this, customer.getInt("icon"), customer.getString("checkincount"), R.color.pin_waiting);
                             currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()*2,bitmap.getHeight()*2, false)));
 
-                            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
                             updateBottomDetail(customer, value);
                         }
                     });
@@ -670,7 +666,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             public void onError(String error) {
 
             }
-        }, true);
+        }, true, true);
 
 
     }
@@ -793,7 +789,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                     Bitmap bitmap = MapUtil.GetBitmapMarker(MapsActivity.this, customer.getInt("icon"), customer.getString("checkincount"), R.color.pin_waiting);
                     currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()*2,bitmap.getHeight()*2, false)));
 
-                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
                     updateBottomDetail(customer, value);
                 }
             });
@@ -855,7 +851,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                                     public void onError(String error) {
                                         CustomSQL.setString(Constants.CUSTOMER_ID, "");
                                     }
-                                }, true);
+                                }, true, true);
 
                             }else if (location != null) {
                                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
@@ -998,7 +994,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     };
 
     private void createRVList(List<BaseModel> list){
-        mSearchAdapter = new CustomerSearchAdapter(list, new CallbackBaseModel() {
+        mSearchAdapter = new Customer_SearchAdapter(list, new CallbackBaseModel() {
             @Override
             public void onResponse(BaseModel cust) {
                 showMarker(cust);
@@ -1031,7 +1027,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                     Bitmap bitmap = MapUtil.GetBitmapMarker(MapsActivity.this, customer.getInt("icon"), customer.getString("checkincount"), R.color.pin_waiting);
                     currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()*2,bitmap.getHeight()*2, false)));
 
-                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                     updateBottomDetail(customer, value);
                 }
             });
@@ -1156,6 +1151,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 if (BottomSheetBehavior.STATE_DRAGGING == newState) {
                     btnNewCustomer.animate().scaleX(0).scaleY(0).setDuration(200).start();
+
                 } else if (BottomSheetBehavior.STATE_COLLAPSED == newState) {
                     btnNewCustomer.animate().scaleX(1).scaleY(1).setDuration(200).start();
                 }
@@ -1190,6 +1186,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     }
 
     private void updateBottomDetail(final BaseModel customer, final long distance){
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
         final String title = Constants.getShopTitle(customer.getString("shopType"), null) +" " + customer.getString("signBoard");
         String add = String.format("%s %s, %s -",
                 customer.getString("address"),
@@ -1213,43 +1211,61 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
         btnCall.setVisibility(currentPhone.equals("")?View.GONE : View.VISIBLE);
 
+        progressLoadCustomer.setVisibility(View.VISIBLE);
+        CustomerConnect.GetCustomerDetail(customer.getString("id"), new CallbackCustom() {
+            @Override
+            public void onResponse(final BaseModel result) {
+                progressLoadCustomer.setVisibility(View.GONE);
+                CustomSQL.setString(Constants.CUSTOMER, result.BaseModelstoString());
+                //updateView();
+
+            }
+
+            @Override
+            public void onError(String error) {
+                progressLoadCustomer.setVisibility(View.GONE);
+                Util.showSnackbarError(error);
+            }
+        }, false, false);
+
         btnCheckin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String param = customer.getString("id");
 
-                CustomerConnect.GetCustomerDetail(param, new CallbackCustom() {
-                    @Override
-                    public void onResponse(final BaseModel result) {
-                        Transaction.gotoCustomerActivity(result.BaseModelstoString(), distance < Constants.CHECKIN_DISTANCE? true : false);
-
-                    }
-
-                    @Override
-                    public void onError(String error) {
-
-                    }
-                }, true);
+//                CustomerConnect.GetCustomerDetail(param, new CallbackCustom() {
+//                    @Override
+//                    public void onResponse(final BaseModel result) {
+//                        //Transaction.gotoCustomerActivity(result.BaseModelstoString(), distance < Constants.CHECKIN_DISTANCE? true : false);
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(String error) {
+//
+//                    }
+//                }, true);
             }
         });
 
         lnSheetBody.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String param = customer.getString("id");
-
-                CustomerConnect.GetCustomerDetail(param, new CallbackCustom() {
-                    @Override
-                    public void onResponse(final BaseModel result) {
-                        Transaction.gotoCustomerActivity(result.BaseModelstoString(), false);
-
-                    }
-
-                    @Override
-                    public void onError(String error) {
-
-                    }
-                }, true);
+                if (progressLoadCustomer.getVisibility() == View.GONE){
+                    Transaction.gotoCustomerActivity( false);
+                }
+//                CustomerConnect.GetCustomerDetail(customer.getString("id"), new CallbackCustom() {
+//                    @Override
+//                    public void onResponse(final BaseModel result) {
+//
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(String error) {
+//
+//                    }
+//                }, true);
             }
         });
 

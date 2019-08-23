@@ -6,7 +6,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.adapter.CustomerBillsAdapter;
-import wolve.dms.adapter.CustomerPaymentAdapter;
+import wolve.dms.adapter.Customer_BillsAdapter;
+import wolve.dms.adapter.Customer_PaymentAdapter;
 import wolve.dms.adapter.ProductReturnAdapter;
-import wolve.dms.adapter.StatisticalProductGroupAdapter;
+import wolve.dms.adapter.Statistical_ProductGroupAdapter;
 import wolve.dms.adapter.ViewpagerBillDetailAdapter;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
@@ -60,9 +59,6 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
     private TextView tvTitle, tvDebt, tvPaid, tvTotal, tvBDF;
     private CTextIcon tvExport;
     private RadioGroup rdYears;
-//    private RecyclerView rvBill ;
-//    private RadioGroup rgFilter;
-//    private RadioButton rdBill, rdPayment, rdProduct;
     private ViewPager viewPager;
     private TabLayout tabLayout;
 
@@ -107,9 +103,10 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
         tvDebt = view.findViewById(R.id.bill_detail_debt);
         tvPaid = view.findViewById(R.id.bill_detail_paid);
         tvTotal = view.findViewById(R.id.bill_detail_total);
+        tvBDF = view.findViewById(R.id.bill_detail_bdf);
         viewPager = view.findViewById(R.id.bill_detail_viewpager);
         tabLayout = view.findViewById(R.id.bill_detail_tabs);
-        tvBDF = view.findViewById(R.id.bill_detail_bdf);
+
         tvExport = view.findViewById(R.id.bill_detail_export);
         rdYears = view.findViewById(R.id.bill_detail_yeargroup);
 
@@ -182,7 +179,7 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
     }
 
     private RecyclerView.Adapter createRVBill(List<BaseModel> listbill){
-        CustomerBillsAdapter adapter = new CustomerBillsAdapter(listbill, new CallbackBaseModel() {
+        Customer_BillsAdapter adapter = new Customer_BillsAdapter(listbill, new CallbackBaseModel() {
             @Override
             public void onResponse(BaseModel bill) {
 //                mActivity.openFragment();
@@ -224,14 +221,14 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
 
     private RecyclerView.Adapter createRVPayment(List<BaseModel> listbill){
 //        rvBill.setAdapter(null);
-        CustomerPaymentAdapter adapter = new CustomerPaymentAdapter(convert2ListPayment(listbill));
+        Customer_PaymentAdapter adapter = new Customer_PaymentAdapter(convert2ListPayment(listbill));
 
         return adapter;
 
     }
 
     private RecyclerView.Adapter createRVProduct(List<BaseModel> listbill){
-        StatisticalProductGroupAdapter adapter = new StatisticalProductGroupAdapter(listbill);
+        Statistical_ProductGroupAdapter adapter = new Statistical_ProductGroupAdapter(listbill);
         return adapter;
     }
 
@@ -384,7 +381,7 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
         for (BaseModel baseModel : listPayment){
             for (int i=0; i<listDebt.size(); i++){
                 if (baseModel.getInt("billId") == listDebt.get(i).getInt("id")){
-                    String param = DataUtil.updateBillWithPaymentNoteParam(mActivity.currentCustomer.getInt("id"),
+                    String param = DataUtil.updateBillHavePaymentParam(mActivity.currentCustomer.getInt("id"),
                             listDebt.get(i),
                             billReturn,
                             baseModel.getDouble("paid"));
@@ -566,7 +563,7 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
             public void onError(String error) {
 
             }
-        }, true);
+        },true, true);
 
     }
 

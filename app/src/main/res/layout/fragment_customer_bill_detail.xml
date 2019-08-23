@@ -102,60 +102,10 @@
 
 
 
-        <!--<RadioGroup-->
-            <!--android:id="@+id/bill_detail_rgfilter"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:orientation="horizontal"-->
-            <!--android:weightSum="3"-->
-            <!--android:gravity="center"-->
-            <!--android:paddingLeft="@dimen/_10sdp"-->
-            <!--android:paddingRight="@dimen/_10sdp">-->
-
-            <!--<RadioButton-->
-                <!--android:id="@+id/bill_detail_rdbill"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="Hóa đơn"-->
-                <!--android:checked="true"/>-->
-
-            <!--<RadioButton-->
-                <!--android:id="@+id/bill_detail_rdpayment"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="Thanh toán"-->
-                <!--android:layout_marginLeft="@dimen/_15sdp"/>-->
-
-            <!--<RadioButton-->
-                <!--android:id="@+id/bill_detail_rdproduct"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="Sản phẩm"-->
-                <!--android:layout_marginLeft="@dimen/_15sdp"/>-->
-        <!--</RadioGroup>-->
-
-        <!--<View-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="1dp"-->
-            <!--android:background="@color/colorGrey"/>-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
-            <!--<TextView-->
-                <!--android:id="@+id/bill_detail_bdf"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="@dimen/_20sdp"-->
-                <!--android:background="@color/colorBlue"-->
-                <!--android:textColor="@color/colorWhite"-->
-                <!--android:text="BDF"-->
-                <!--android:gravity="center"/>-->
-
-            <!--<View-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="1dip"-->
-                <!--android:background="#75b9b3b3"/>-->
 
             <android.support.design.widget.TabLayout
                 android:id="@+id/bill_detail_tabs"

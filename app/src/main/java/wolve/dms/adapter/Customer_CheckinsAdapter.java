@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.json.JSONException;
@@ -25,12 +24,12 @@ import wolve.dms.utils.Util;
  * Created by tranhuy on 5/24/17.
  */
 
-public class CustomerCheckinsAdapter extends RecyclerView.Adapter<CustomerCheckinsAdapter.CheckinsAdapterViewHolder> {
+public class Customer_CheckinsAdapter extends RecyclerView.Adapter<Customer_CheckinsAdapter.CheckinsAdapterViewHolder> {
     private List<Checkin> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
 
-    public CustomerCheckinsAdapter(List<Checkin> list) {
+    public Customer_CheckinsAdapter(List<Checkin> list) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mData = list;

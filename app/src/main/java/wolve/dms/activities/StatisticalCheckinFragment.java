@@ -3,27 +3,17 @@ package wolve.dms.activities;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.adapter.StatisticalCheckinsAdapter;
-import wolve.dms.adapter.StatisticalProductGroupAdapter;
+import wolve.dms.adapter.Statistical_CheckinsAdapter;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Bill;
-import wolve.dms.models.BillDetail;
 import wolve.dms.utils.Util;
 
 /**
@@ -36,7 +26,7 @@ public class StatisticalCheckinFragment extends Fragment implements View.OnClick
     private TextView tvCount;
 
 
-    private StatisticalCheckinsAdapter adapter;
+    private Statistical_CheckinsAdapter adapter;
 
 
     @Nullable
@@ -81,7 +71,7 @@ public class StatisticalCheckinFragment extends Fragment implements View.OnClick
     }
 
     private void createRVCheckin(List<BaseModel> list) {
-        adapter = new StatisticalCheckinsAdapter(list);
+        adapter = new Statistical_CheckinsAdapter(list);
         Util.createLinearRV(rvCheckins, adapter);
 
         tvCount.setText(String.format("Số lần ghé cửa hàng: %d", adapter.getItemCount()));

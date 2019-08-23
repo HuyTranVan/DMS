@@ -102,16 +102,16 @@ public class Transaction {
         ((AppCompatActivity) context).finish();
     }
 
-    public static void gotoCustomerActivity(String customer, Boolean isCheckin) {
+    public static void gotoCustomerActivity( Boolean isCheckin) {
         if (!User.getRole().equals(Constants.ROLE_WAREHOUSE)){
             Activity context = Util.getInstance().getCurrentActivity();
             Intent intent = new Intent(context, CustomerActivity.class);
-            CustomSQL.setString(Constants.CUSTOMER, customer);
+            //CustomSQL.setString(Constants.CUSTOMER, customer);
             CustomSQL.setBoolean(Constants.CHECKIN_FLAG, isCheckin);
             CustomSQL.setLong(Constants.CHECKIN_TIME, Util.CurrentTimeStamp() );
 
             context.startActivityForResult(intent, Constants.RESULT_CUSTOMER_ACTIVITY);
-            context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            context.overridePendingTransition(R.anim.slide_up, R.anim.nothing);
         }
 
     }
@@ -220,13 +220,26 @@ public class Transaction {
     }
 
     public static void openGoogleMap(String label, double latitude, double longitude){
-        String uriBegin = "geo:" + latitude + "," + longitude;
-        String query = latitude + "," + longitude + "(" + label + ")";
-        String encodedQuery = Uri.encode(query);
-        String uriString = uriBegin + "?q=" + encodedQuery + "&z=16";
-        Uri uri = Uri.parse(uriString);
-        Intent mapIntent = new Intent(android.content.Intent.ACTION_VIEW, uri);
-        Util.getInstance().getCurrentActivity().startActivity(mapIntent);
+//        String uriBegin = "geo:" + latitude + "," + longitude;
+//        String query = latitude + "," + longitude + "(" + label + ")";
+//        String encodedQuery = Uri.encode(query);
+//        String uriString = uriBegin + "?q=" + encodedQuery + "&z=16";
+//        Uri uri = Uri.parse(uriString);
+//        Intent mapIntent = new Intent(android.content.Intent.ACTION_VIEW, uri);
+//        Util.getInstance().getCurrentActivity().startActivity(mapIntent);
+
+        String uriBegin = String.format("google.navigation:q=%s,%s", String.valueOf(latitude), String.valueOf(longitude));
+        Uri gmmIntentUri = Uri.parse(uriBegin);
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+
+        if (mapIntent.resolveActivity(Util.getInstance().getCurrentActivity().getPackageManager()) != null){
+            Util.getInstance().getCurrentActivity().startActivity(mapIntent);
+
+        }else {
+            Util.showToast("Couldn't open map!");
+        }
+
     }
 
 

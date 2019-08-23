@@ -10,22 +10,12 @@ import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.apiconnect.CustomerConnect;
-import wolve.dms.callback.CallbackBaseModel;
-import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackListCustom;
-import wolve.dms.libraries.Security;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.User;
-import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomBottomDialog;
-import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
@@ -33,12 +23,12 @@ import wolve.dms.utils.Util;
  * Created by tranhuy on 5/24/17.
  */
 
-public class CustomerBillsReturnAdapter extends RecyclerView.Adapter<CustomerBillsReturnAdapter.CustomerBillsReturnAdapterViewHolder> {
+public class Customer_BillsReturnAdapter extends RecyclerView.Adapter<Customer_BillsReturnAdapter.CustomerBillsReturnAdapterViewHolder> {
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
 
-    public CustomerBillsReturnAdapter(List<BaseModel> data) {
+    public Customer_BillsReturnAdapter(List<BaseModel> data) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mData = data;
         this.mContext = Util.getInstance().getCurrentActivity();
@@ -61,7 +51,7 @@ public class CustomerBillsReturnAdapter extends RecyclerView.Adapter<CustomerBil
 
             final List<BaseModel> listBillDetail = new ArrayList<>(DataUtil.array2ListBaseModel(new JSONArray(mData.get(position).getString("billDetails"))));
 
-            CustomerBillsDetailAdapter adapter = new CustomerBillsDetailAdapter(listBillDetail);
+            Customer_BillsDetailAdapter adapter = new Customer_BillsDetailAdapter(listBillDetail);
             Util.createLinearRV(holder.rvReturn, adapter);
 
         } catch (JSONException e) {

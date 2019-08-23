@@ -984,15 +984,11 @@ public class Util {
             }
         }
 
-//        try {
-            object.put("total", total);
-            object.put("paid", paid);
-            object.put("debt", debt);
-            object.put("size", list.size());
+        object.put("total", total);
+        object.put("paid", paid);
+        object.put("debt", debt);
+        object.put("size", list.size());
 
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
         return object;
     }
 
@@ -1099,7 +1095,7 @@ public class Util {
         return check;
     }
 
-    public static String PhoneFormat(String phone) {
+    public static String FormatPhone(String phone) {
         String currentPhone = "";
 
         switch (phone.replace(".", "").length()) {
@@ -1199,22 +1195,6 @@ public class Util {
 
                         mlistener.Result(Util.valueMoney(edText));
                         edText.addTextChangedListener(this);
-
-//                        edText.setText(Util.FormatMoney());
-//
-////                        int currentSelection = edText.getSelectionStart();
-////                        int prevStringLength = edText.getText().length();
-//
-////                        String valueInString = edText.getText().toString();
-//                        if (!TextUtils.isEmpty(valueInString)) {
-//                            String str = Util.valueMoneyString(edText);
-//                            String newString = Util.CurrencyUtil.convertDecimalToString(new BigDecimal(str));
-//                            edText.setText(newString);
-//                            //Set new selection
-//                            int selection = currentSelection + (newString.length() - prevStringLength);
-//                            edText.setSelection(selection);
-
-//                        }
 
                     }else if (limitMoney >0){
                         if (Util.valueMoney(edText) > limitMoney){
@@ -1331,6 +1311,15 @@ public class Util {
                 return realHeight - usableHeight;
             else
                 return 0;
+        }
+        return 0;
+    }
+
+    public static int getNavigationBarHeight() {
+        Resources resources = getInstance().getCurrentActivity().getResources();
+        int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            return resources.getDimensionPixelSize(resourceId);
         }
         return 0;
     }

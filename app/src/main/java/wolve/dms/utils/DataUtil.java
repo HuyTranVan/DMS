@@ -1,31 +1,22 @@
 package wolve.dms.utils;
 
-import android.util.Log;
-import android.view.View;
-
-import com.github.mikephil.charting.formatter.IFillFormatter;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import wolve.dms.adapter.CustomerBillsReturnAdapter;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.libraries.Security;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
+import wolve.dms.models.BillDetail;
 import wolve.dms.models.Customer;
 import wolve.dms.models.Distributor;
-import wolve.dms.models.Product;
-import wolve.dms.models.ProductGroup;
 import wolve.dms.models.User;
 
 public class DataUtil {
@@ -82,12 +73,12 @@ public class DataUtil {
             objReturn.put("debt", 0.0);
             objReturn.put("billDetails", billReturn.getJSONArray("billDetails"));
 
-            JSONObject objPay = new JSONObject();
-            objPay.put("createAt",billReturn.getLong("createAt") );
-            objPay.put("user", (billReturn.getJsonObject("user")));
-            objPay.put("paid", sumreturn);
-            objPay.put("idbillreturn", billReturn.getInt("id"));
-            objPay.put("bill_date", billReturn.getLong("createAt"));
+//            JSONObject objPay = new JSONObject();
+//            objPay.put("createAt",billReturn.getLong("createAt") );
+//            objPay.put("user", (billReturn.getJsonObject("user")));
+//            objPay.put("paid", sumreturn);
+//            objPay.put("idbillreturn", billReturn.getInt("id"));
+//            objPay.put("bill_date", billReturn.getLong("createAt"));
 
 
             String currentNote = Security.decrypt(currentBill.getString("note"));
@@ -106,7 +97,7 @@ public class DataUtil {
                 }
 
                 if (noteObject.hasKey(Constants.PAYBYTRETURN)){
-                    JSONArray arrPay = noteObject.getJSONArray(Constants.HAVEBILLRETURN);
+                    JSONArray arrPay = noteObject.getJSONArray(Constants.PAYBYTRETURN);
                     for (int j=0; j<arrPay.length(); j++){
                         arrayPayNote.put(arrPay.getJSONObject(j));
                     }
@@ -115,7 +106,7 @@ public class DataUtil {
             }
 
             arrayReturnNote.put(objReturn);
-            arrayPayNote.put(objPay);
+            //arrayPayNote.put(objPay);
             objectNote.put(Constants.HAVEBILLRETURN, arrayReturnNote);
             objectNote.put(Constants.PAYBYTRETURN, arrayPayNote);
 
@@ -132,7 +123,7 @@ public class DataUtil {
 
     }
 
-    public static String updateBillWithPaymentNoteParam(int customerId, BaseModel currentBill, BaseModel billReturn, Double paid){
+    public static String updateBillHavePaymentParam(int customerId, BaseModel currentBill, BaseModel billReturn, Double paid){
         JSONObject params = new JSONObject();
         JSONObject objectNote = new JSONObject();
         try {
@@ -156,10 +147,19 @@ public class DataUtil {
 
             String currentNote = Security.decrypt(currentBill.getString("note"));
 
+            JSONArray arrayReturnNote =new JSONArray();
             JSONArray arrayPayNote =new JSONArray();
 
             if (Util.isJSONObject(currentNote)){
                 BaseModel noteObject = new BaseModel(currentNote);
+
+                if (noteObject.hasKey(Constants.HAVEBILLRETURN)){
+                    JSONArray arrReturn = noteObject.getJSONArray(Constants.HAVEBILLRETURN);
+                    for (int i=0; i<arrReturn.length(); i++){
+                        arrayReturnNote.put(arrReturn.getJSONObject(i));
+                    }
+
+                }
 
                 if (noteObject.hasKey(Constants.PAYBYTRETURN)){
                     JSONArray arrPay = noteObject.getJSONArray(Constants.PAYBYTRETURN);
@@ -171,6 +171,7 @@ public class DataUtil {
             }
 
             arrayPayNote.put(objPay);
+            objectNote.put(Constants.HAVEBILLRETURN, arrayReturnNote);
             objectNote.put(Constants.PAYBYTRETURN, arrayPayNote);
 
             params.put("note", Security.encrypt(objectNote.toString()));
@@ -451,12 +452,29 @@ public class DataUtil {
                 }
             }
 
-
-
-
         }
 
         return listResult;
+
+    }
+
+    public static List<BaseModel> getAllBillDetail(List<BaseModel> listbill){
+        final List<BaseModel> listBillDetail = new ArrayList<>();
+
+        try {
+            for (int i=0; i<listbill.size(); i++){
+                JSONArray arrayBillDetail  = new JSONArray(listbill.get(i).getString("billDetails"));
+
+                for (int ii=0; ii<arrayBillDetail.length(); ii++){
+                    BillDetail billDetail = new BillDetail(arrayBillDetail.getJSONObject(ii));
+                    listBillDetail.add(billDetail);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return listBillDetail;
 
     }
 

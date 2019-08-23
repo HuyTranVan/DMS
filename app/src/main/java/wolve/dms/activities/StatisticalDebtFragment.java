@@ -9,23 +9,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.adapter.StatisticalDebtAdapter;
-import wolve.dms.apiconnect.Api_link;
+import wolve.dms.adapter.Statistical_DebtAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackJSONArray;
-import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
+import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -40,7 +34,7 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
     private CTextIcon tvSort ;
     private StatisticalActivity mActivity;
 
-    protected StatisticalDebtAdapter adapter;
+    protected Statistical_DebtAdapter adapter;
 
 
     @Nullable
@@ -95,20 +89,21 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
     }
 
     private void createRVCDebt(String user, List<BaseModel> list) {
-        adapter = new StatisticalDebtAdapter(user, list, new CallbackString() {
+        adapter = new Statistical_DebtAdapter(user, list, new CallbackString() {
             @Override
             public void Result(String s) {
                 CustomerConnect.GetCustomerDetail(s, new CallbackCustom() {
                     @Override
                     public void onResponse(BaseModel result) {
-                        Transaction.gotoCustomerActivity(result.BaseModelstoString(), false);
+                        CustomSQL.setString(Constants.CUSTOMER, result.BaseModelstoString());
+                        Transaction.gotoCustomerActivity(false);
                     }
 
                     @Override
                     public void onError(String error) {
 
                     }
-                }, true);
+                }, true, true);
 
             }
         });

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 
 import wolve.dms.R;
 import wolve.dms.callback.CallbackDouble;
+import wolve.dms.callback.CallbackString;
 import wolve.dms.utils.Util;
 
 /**
@@ -67,6 +68,10 @@ public class CInputForm extends FrameLayout {
         TypedArray a = mContext.obtainStyledAttributes(attrs, R.styleable.CInputForm, defStyleAttr, 0);
 
         if (a != null) {
+            if (a.hasValue(R.styleable.CInputForm_multiLine)) {
+                setMultiLine(a.getBoolean(R.styleable.CInputForm_multiLine,false));
+            }
+
             if (a.hasValue(R.styleable.CInputForm_iconColor)) {
                 setIconColor(a.getColor(R.styleable.CInputForm_iconColor,0));
             }
@@ -145,6 +150,21 @@ public class CInputForm extends FrameLayout {
 
     }
 
+    public void setFocusable(boolean value){
+        if (value){
+            edInput.setFocusable(true);
+            edInput.setFocusableInTouchMode(true);
+
+        }else {
+            edInput.setFocusable(false);
+        }
+    }
+
+    public void setMultiLine(boolean value){
+        edInput.setMaxLines(3);
+        edInput.setSingleLine(false);
+    }
+
     public void setSelection() {
         edInput.requestFocus();
         edInput.setSelection(edInput.getText().toString().trim().length());
@@ -175,6 +195,85 @@ public class CInputForm extends FrameLayout {
             @Override
             public void afterTextChanged(Editable s) {
                 listener.textChanged(s.toString());
+            }
+        });
+    }
+
+    public void addTextChangePhone(){
+        edInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                edInput.removeTextChangedListener(this);
+                try {
+                    edInput.setText(Util.FormatPhone(edInput.getText().toString().replace(".", "")));
+                    edInput.setSelection(edInput.getText().toString().length());
+
+                    //listener.Result(edInput.getText().toString().replace(".", ""));
+                    edInput.addTextChangedListener(this);
+
+
+
+
+
+                } catch (Exception ex) {
+//                    ex.printStackTrace();
+                    edInput.addTextChangedListener(this);
+                }
+
+            }
+        });
+    }
+
+    public void addTextChangeName(){
+        final int[] countText = {0};
+        edInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                countText[0] = s.length();
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                edInput.removeTextChangedListener(this);
+
+                if (countText[0] < s.toString().length() && s.toString().length() == 1){
+                    if (s.toString().equals("a") || s.toString().equals("A")){
+                        edInput.setText("Anh ");
+                        edInput.setSelection(edInput.getText().toString().length());
+
+                    }else if (s.toString().equals("c") || s.toString().equals("C")){
+                        edInput.setText("Chị ");
+                        edInput.setSelection(edInput.getText().toString().length());
+                    }
+
+
+
+                }
+
+                //listener.Result(edInput.getText().toString().trim());
+                edInput.addTextChangedListener(this);
+
+
+
+
+
+
+
             }
         });
     }
@@ -283,6 +382,15 @@ public class CInputForm extends FrameLayout {
         popup.setWidth(300);
         popup.setContentView(listViewDogs);
         popup.showAsDropDown(tvDropdown , 0, 0);
+    }
+
+    public void setOnClickView(ClickListener listener){
+        edInput.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onClick(v);
+            }
+        });
     }
 
     public interface OnQueryTextListener {
