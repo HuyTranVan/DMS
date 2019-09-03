@@ -3,6 +3,7 @@ package wolve.dms.libraries.calendarpicker;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.WindowManager;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import com.savvi.rangedatepicker.CalendarPickerView;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -101,7 +103,7 @@ public class YearPicker {
     }
 
     public static void showDialogDatePicker(final RadioButton rdButton, final CustomCenterDialog.CallbackRangeTime mListener, final CallbackBoolean clickListener){
-        final String result ="&billingFrom=%d&billingTo=%d";
+        //final String result ="&billingFrom=%d&billingTo=%d";
 
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_select_datepicker);
         dialogResult.setCancelable(true);
@@ -127,27 +129,50 @@ public class YearPicker {
 //        calendarView.deactivateDates(list);
 //        ArrayList<Date> arrayList = new ArrayList<>();
 //        try {
-//            SimpleDateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy");
-//            String strdate = "22-2-2018";
-//            String strdate2 = "26-2-2018";
+//
+//            String strdate = "22-2-2019";
+//            String strdate2 = "26-2-2019";
 //            Date newdate = dateformat.parse(strdate);
 //            Date newdate2 = dateformat.parse(strdate2);
 //            arrayList.add(newdate);
 //            arrayList.add(newdate2);
+//
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+
+//        Date newDate = new Date();
+//        newDate.setTime(Util.CurrentTimeStamp());
+
+//        try {
+//            SimpleDateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy");
+//            calendarView.scrollToDate(dateformat.parse("22-02-2019"));
+
+
 //        } catch (ParseException e) {
 //            e.printStackTrace();
 //        }
 
         calendarView.init(lastYear.getTime(), nextYear.getTime(),new SimpleDateFormat("MMMM, YYYY", Locale.getDefault()))
                 .inMode(CalendarPickerView.SelectionMode.RANGE)
+
                 .withSelectedDate(new Date());
-//                .withDeactivateDates(list)
-//                .withHighlightedDates(arrayList);
+//                .withDeactivateDates(list);
+                //.withHighlightedDates(arrayList);
+
+
+        new Handler().postDelayed (new Runnable() {
+            @Override
+            public void run() {
+                calendarView.scrollToDate(new Date());
+            }}, 200);
+
 
         dialogResult.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
                 clickListener.onRespone(false);
+
             }
         });
 
@@ -156,6 +181,7 @@ public class YearPicker {
             public void onClick(View v) {
                 dialogResult.dismiss();
                 clickListener.onRespone(false);
+
             }
         });
 

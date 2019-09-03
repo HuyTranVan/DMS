@@ -32,7 +32,7 @@ import wolve.dms.utils.Util;
 public class SplashScreenActivity extends BaseActivity {
     private ProgressBar progressBar;
 
-    private int SPLASH_TIME_OUT = 1500;
+    private int SPLASH_TIME_OUT = 1000;
 
     @Override
     public int getResourceLayout() {

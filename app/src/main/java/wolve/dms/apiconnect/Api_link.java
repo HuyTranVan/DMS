@@ -82,6 +82,8 @@ public class Api_link {
     public final static String PAY_NEW = BASE_URL + "token/payment";
     public final static String PAY_PARAM ="customerId=%d&paid=%s&billId=%d&userId=%d";
 
+    public final static String NOTE_PARAM = "http://lubsolution.com/";
+
     public final static String LUB_LINK_PARAM ="id=%s";
 
 

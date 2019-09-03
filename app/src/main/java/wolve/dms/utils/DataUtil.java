@@ -754,7 +754,7 @@ public class DataUtil {
                     deb += debt.getDouble("currentDebt");
 
                     String add = String.format("%s %s\n(%s - %s)",
-                            Constants.getShopTitle(debt.getString("shopType") , null).toUpperCase(),
+                            Constants.getShopName(debt.getString("shopType")).toUpperCase(),
                             debt.getString("signBoard").toUpperCase(),
                             debt.getString("street"),
                             debt.getString("district"));
@@ -831,7 +831,7 @@ public class DataUtil {
                     data.add(bill.getString("id"));
                     data.add(Util.DateString(bill.getLong("createAt")));
                     data.add(bill.getJsonObject("user").getString("displayName"));
-                    data.add(Constants.getShopTitle(customer.getString("shopType") , null) + " " + customer.getString("signBoard"));
+                    data.add(Constants.getShopName(customer.getString("shopType")) + " " + customer.getString("signBoard"));
                     data.add(customer.getString("phone"));
                     data.add(bill.getDouble("total"));
                     data.add(bill.getDouble("paid"));

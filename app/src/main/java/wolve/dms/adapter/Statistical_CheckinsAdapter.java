@@ -49,7 +49,7 @@ public class Statistical_CheckinsAdapter extends RecyclerView.Adapter<Statistica
     public void onBindViewHolder(final StatisticalBillsViewHolder holder, final int position) {
         try {
             holder.tvNumber.setText(String.valueOf(mData.size() -position));
-            holder.tvsignBoard.setText(Constants.getShopTitle(mData.get(position).getString("shopType") , null) + " " + mData.get(position).getString("signBoard"));
+            holder.tvsignBoard.setText(Constants.getShopName(mData.get(position).getString("shopType") ) + " " + mData.get(position).getString("signBoard"));
             holder.tvDistrict.setText(mData.get(position).getString("street") + " - " + mData.get(position).getString("district"));
 
             //JSONObject objectCheckin = mData.get(position).getJsonObject("checkin");

@@ -189,7 +189,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
         tvOrderPhone.setText(String.format("Đặt hàng: %s", Util.FormatPhone(User.getPhone())));
         tvThanks.setText(Constants.COMPANY_THANKS);
-        tvShopName.setText(String.format(": %s %s",Constants.getShopTitle(currentCustomer.getString("shopType"), null).toUpperCase() , currentCustomer.getString("signBoard").toUpperCase()));
+        tvShopName.setText(String.format(": %s %s",Constants.getShopName(currentCustomer.getString("shopType")).toUpperCase() , currentCustomer.getString("signBoard").toUpperCase()));
 
         String phone = currentCustomer.getString("phone").equals("")? "--" : Util.FormatPhone(currentCustomer.getString("phone"));
         tvCustomerName.setText(String.format(": %s - %s",currentCustomer.getString("name"), phone ));

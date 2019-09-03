@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionButton;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -30,7 +29,6 @@ import wolve.dms.callback.CallbackCustom;
 import wolve.dms.customviews.CInputForm;
 import wolve.dms.libraries.SwipeToDeleteCallback;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Customer;
 import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Constants;
@@ -99,7 +97,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         rlCover.setVisibility(View.VISIBLE);
         if (customer != null){
             currentCustomer = new BaseModel(customer);
-            tvTitle.setText(String.format("%s %s",Constants.getShopTitle(currentCustomer.getString("shopType") , null), currentCustomer.getString("signBoard").toUpperCase() ));
+            tvTitle.setText(String.format("%s %s",Constants.getShopName(currentCustomer.getString("shopType") ), currentCustomer.getString("signBoard").toUpperCase() ));
 
 //                JSONArray array = new JSONArray(currentCustomer.getString("bills"));
 //                List<BaseModel> mList = new ArrayList<>();

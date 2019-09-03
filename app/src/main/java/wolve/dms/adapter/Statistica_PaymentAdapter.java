@@ -65,7 +65,7 @@ public class Statistica_PaymentAdapter extends RecyclerView.Adapter<Statistica_P
             holder.tvNumber.setText(String.valueOf(mData.size() -position));
 
             final BaseModel customer = new BaseModel(mData.get(position).getJsonObject("customer"));
-            holder.tvsignBoard.setText(Constants.getShopTitle(customer.getString("shopType") , null) + " " + customer.getString("signBoard"));
+            holder.tvsignBoard.setText(Constants.getShopName(customer.getString("shopType") ) + " " + customer.getString("signBoard"));
             holder.tvDistrict.setText(customer.getString("street") + " - " + customer.getString("district"));
 
             String user = String.format("Nhân viên: %s",mData.get(position).getJsonObject("user").getString("displayName"));

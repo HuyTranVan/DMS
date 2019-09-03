@@ -106,6 +106,15 @@ public class BaseModel implements Serializable {
         return null;
     }
 
+    public double getDoubleValue(String key) {
+        try {
+            return jsonObject.getDouble(key);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return 0.0;
+    }
+
     public Long getLong(String key) {
         try {
             return jsonObject.getLong(key);

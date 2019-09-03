@@ -20,18 +20,19 @@
     <string name="icon_phone">&#xf095;</string>
     <string name="icon_idcard">&#xf02a;</string>
     <string name="icon_edit">&#xf044;</string>
+    <string name="icon_edit_pen">&#xf304;</string>
     <string name="icon_camera">&#xf030;</string>
     <string name="icon_facebook">&#xf09a;</string>
     <string name="icon_image">&#xf1c5;</string>
     <string name="icon_circle">&#xf111;</string>
-    <string name="icon_trash">&#xf014;</string>
+    <string name="icon_trash">&#xf2ed;</string>
     <string name="icon_upload">&#xf0ee;</string>
     <string name="icon_clock">&#xf017;</string>
     <string name="icon_heart">&#xf004;</string>
     <string name="icon_dashboard">&#xf0e4;</string>
     <string name="icon_group">&#xf0c0;</string>
     <string name="icon_setting">&#xf085;</string>
-    <string name="icon_logout">&#xf08b;</string>
+    <string name="icon_logout">&#xf2f5;</string>
     <string name="icon_info">&#xf05a;</string>
     <string name="icon_invite">&#xf0a1;</string>
     <string name="icon_qrcode">&#xf029;</string>
@@ -53,8 +54,8 @@
     <string name="icon_purchase">&#xf291;</string>
     <string name="icon_weight">&#xf019;</string>
     <string name="icon_adress">&#xf277;</string>
-    <string name="icon_district">&#xf041;</string>
-    <string name="icon_city">&#xf279;</string>
+    <string name="icon_district">&#xf3c5;</string>
+<!--    <string name="icon_city">&#xf279;</string>-->
     <string name="icon_flag">&#xf024;</string>
     <string name="icon_protect">&#xf132;</string>
     <string name="icon_bill">&#xf022;</string>
@@ -85,6 +86,9 @@
     <string name="icon_menu">&#xf142;</string>
     <string name="icon_pay">&#xf4c0;</string>
     <string name="icon_receipt">&#xf543;</string>
+    <string name="icon_street">&#xf018;</string>
+    <string name="icon_city">&#xf64f;</string>
+    <string name="icon_repair">&#xf7d9;</string>
 
 
     <string name="login_username">Nhập tài khoản hoặc SĐT</string>

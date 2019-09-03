@@ -800,17 +800,17 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     }
 
 
-    private void openCallScreen(String phone) {
-        if (PermissionChecker.checkSelfPermission(MapsActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, Constants.REQUEST_PHONE_PERMISSION);
-            return;
-        }
-        Intent callIntent = new Intent(Intent.ACTION_CALL);
-        callIntent.setData(Uri.parse("tel:" + Uri.encode(phone)));
-        callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(callIntent);
-
-    }
+//    private void openCallScreen(String phone) {
+//        if (PermissionChecker.checkSelfPermission(MapsActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, Constants.REQUEST_PHONE_PERMISSION);
+//            return;
+//        }
+//        Intent callIntent = new Intent(Intent.ACTION_CALL);
+//        callIntent.setData(Uri.parse("tel:" + Uri.encode(phone)));
+//        callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        startActivity(callIntent);
+//
+//    }
 
     public void checkGPS() {
         if (PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -863,40 +863,40 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == Constants.REQUEST_PERMISSION_LOCATION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                checkGPS();
-
-            } else {
-                Toast.makeText(this, "Cấp quyền truy cập không thành công!", Toast.LENGTH_LONG).show();
-                Transaction.gotoHomeActivityRight(true);
-            }
-        } else if (requestCode == Constants.REQUEST_PHONE_PERMISSION) {
-
-            if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                Util.showSnackbar("Không thể gọi do chưa được cấp quyền", null, null);
-
-            } else {
-                Intent callIntent = new Intent(Intent.ACTION_CALL);
-                callIntent.setData(Uri.parse("tel:" + Uri.encode(currentPhone)));
-                callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
-                }
-                startActivity(callIntent);
-            }
-        }
-
-    }
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        if (requestCode == Constants.REQUEST_PERMISSION_LOCATION) {
+//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                checkGPS();
+//
+//            } else {
+//                Toast.makeText(this, "Cấp quyền truy cập không thành công!", Toast.LENGTH_LONG).show();
+//                Transaction.gotoHomeActivityRight(true);
+//            }
+//        }
+//        else if (requestCode == Constants.REQUEST_PHONE_PERMISSION) {
+//
+//            if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+//                Util.showSnackbar("Không thể gọi do chưa được cấp quyền", null, null);
+//
+//            } else {
+//                Intent callIntent = new Intent(Intent.ACTION_CALL);
+//                callIntent.setData(Uri.parse("tel:" + Uri.encode(currentPhone)));
+//                callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+//                    // TODO: Consider calling
+//                    //    ActivityCompat#requestPermissions
+//                    // here to request the missing permissions, and then overriding
+//                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//                    //                                          int[] grantResults)
+//                    // to handle the case where the user grants the permission. See the documentation
+//                    // for ActivityCompat#requestPermissions for more details.
+//                    return;
+//                }
+//                startActivity(callIntent);
+//            }
+//        }
+//    }
 
 
     private void backPress(){
@@ -1102,7 +1102,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         customer.put("province",objectAdress.getString("province"));
         customer.put("debt",0.0);
 
-        CustomerConnect.CreateCustomer(createParamCustomer(customer), new CallbackCustom() {
+        CustomerConnect.CreateCustomer(createParamCustomer(customer, 0.0), new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
                 mListener.onResponse(result);
@@ -1188,7 +1188,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     private void updateBottomDetail(final BaseModel customer, final long distance){
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
-        final String title = Constants.getShopTitle(customer.getString("shopType"), null) +" " + customer.getString("signBoard");
+        final String title = Constants.getShopName(customer.getString("shopType")) +" " + customer.getString("signBoard");
         String add = String.format("%s %s, %s -",
                 customer.getString("address"),
                 customer.getString("street"),
@@ -1290,7 +1290,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                     @Override
                     public void onRespone(Boolean re) {
                         if (re){
-                            Transaction.openGoogleMap(title, customer.getDouble("lat"), customer.getDouble("lng"));
+                            Transaction.openGoogleMap( customer.getDouble("lat"), customer.getDouble("lng"));
 
                         }
 

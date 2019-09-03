@@ -68,7 +68,7 @@ public class Statistical_DebtAdapter extends RecyclerView.Adapter<Statistical_De
     @Override
     public void onBindViewHolder(final StatisticalBillsViewHolder holder, final int position) {
         holder.tvNumber.setText(mData.size() >0? String.valueOf(mData.size() -position) : "");
-        holder.tvsignBoard.setText(Constants.getShopTitle(mData.get(position).getString("shopType") , null) + " " + mData.get(position).getString("signBoard"));
+        holder.tvsignBoard.setText(Constants.getShopName(mData.get(position).getString("shopType") ) + " " + mData.get(position).getString("signBoard"));
         holder.tvDistrict.setText(mData.get(position).getString("street") + " - " + mData.get(position).getString("district"));
         String user = String.format("Nhân viên: %s",mData.get(position).getString("userName"));
         holder.tvUser.setText(user);

@@ -1,10 +1,7 @@
 package wolve.dms.adapter;
 
-import android.location.Location;
-import android.location.LocationListener;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -49,7 +46,7 @@ public class CustomWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
         JSONArray arrayCheckIns = customer.getJSONArray("checkIns");
 
-        String title = Constants.getShopTitle(customer.getString("shopType"), null) +" " + customer.getString("signBoard");
+        String title = Constants.getShopName(customer.getString("shopType")) +" " + customer.getString("signBoard");
         tvname.setText(title);
 
         tvPhoneIcon.setVisibility(customer.getString("phone").equals("")?View.GONE:View.VISIBLE);

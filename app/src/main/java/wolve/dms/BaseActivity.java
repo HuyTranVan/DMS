@@ -1,5 +1,6 @@
 package wolve.dms;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -7,18 +8,24 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 
 import com.orhanobut.dialogplus.DialogPlus;
@@ -29,6 +36,7 @@ import java.util.UUID;
 
 import wolve.dms.activities.AddProdGroupFragment;
 import wolve.dms.activities.AddProductFragment;
+import wolve.dms.activities.MapsActivity;
 import wolve.dms.callback.CallbackProcess;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
@@ -44,6 +52,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public static BluetoothAdapter mBluetoothAdapter = null;
     public static BluetoothSocket btsocket;
     public static OutputStream outputStream;
+    private String currentPhone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +92,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     //change fragment with bundle
     public void changeFragment(Fragment fragment, Bundle bundle, boolean isAnimation) {
+
         String tag = fragment.getClass().getSimpleName();
         fragment.setArguments(bundle);
         FragmentTransaction manager = this.getSupportFragmentManager().beginTransaction();
@@ -450,6 +460,42 @@ public abstract class BaseActivity extends AppCompatActivity {
         });connectThread.start();
     }
 
+    public void openCallScreen(String phone) {
+        currentPhone = phone;
+        if (PermissionChecker.checkSelfPermission(this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, Constants.REQUEST_PHONE_PERMISSION);
+            return;
+        }
+        Intent callIntent = new Intent(Intent.ACTION_CALL);
+        callIntent.setData(Uri.parse("tel:" + Uri.encode(phone)));
+        callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(callIntent);
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == Constants.REQUEST_PHONE_PERMISSION) {
+
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                Util.showSnackbar("Không thể gọi do chưa được cấp quyền", null, null);
+
+            } else {
+                openCallScreen(currentPhone);
+
+            }
+        }else if (requestCode == Constants.REQUEST_PERMISSION_LOCATION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                //checkGPS();
+
+            } else {
+                Toast.makeText(this, "Cấp quyền truy cập không thành công!", Toast.LENGTH_LONG).show();
+                Transaction.gotoHomeActivityRight(true);
+            }
+        }
+
+    }
 
 }

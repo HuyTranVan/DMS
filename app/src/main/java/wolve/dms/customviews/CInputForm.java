@@ -31,9 +31,9 @@ import wolve.dms.utils.Util;
 
 public class CInputForm extends FrameLayout {
     private EditText edInput;
-    private CTextIcon tvIcon, tvDropdown;
+    private CTextIcon tvIcon, tvMore;
     private Context mContext;
-    private View mLayout;
+    private View mLayout, mLine;
     private ArrayList<String> listDropdown = new ArrayList<>();
 
     public CInputForm(Context context) {
@@ -60,7 +60,8 @@ public class CInputForm extends FrameLayout {
 
         edInput = (EditText) mLayout.findViewById(R.id.input_data_content);
         tvIcon = (CTextIcon) mLayout.findViewById(R.id.input_data_icon);
-        tvDropdown = (CTextIcon) mLayout.findViewById(R.id.input_data_dropdown);
+        tvMore = (CTextIcon) mLayout.findViewById(R.id.input_data_dropdown);
+        mLine = (View) mLayout.findViewById(R.id.input_data_underline);
 
     }
 
@@ -112,17 +113,30 @@ public class CInputForm extends FrameLayout {
 //                setDropdown(a.getBoolean(R.styleable.CInputForm_isDropdown, false));
             }
 
+            if (a.hasValue(R.styleable.CInputForm_isShowBottomLine)) {
+                setVisibilityBottomLine(a.getBoolean(R.styleable.CInputForm_isShowBottomLine, false));
+            }
+
             a.recycle();
         }
     }
 
+    public void setIconMoreText(String text){
+        tvMore.setVisibility(VISIBLE);
+        tvMore.setText(text);
+    }
+
+    private void setVisibilityBottomLine(boolean value){
+        mLine.setVisibility(value ? GONE : VISIBLE);
+    }
+
     public void setDropdown(boolean aBoolean, final ClickListener mListener) {
         if (!aBoolean){
-            tvDropdown.setVisibility(GONE);
+            tvMore.setVisibility(GONE);
             edInput.setOnClickListener(null);
         }else {
-            tvDropdown.setVisibility(VISIBLE);
-            tvDropdown.setOnClickListener(new OnClickListener() {
+            tvMore.setVisibility(VISIBLE);
+            tvMore.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Util.hideKeyboard(v);
@@ -199,7 +213,7 @@ public class CInputForm extends FrameLayout {
         });
     }
 
-    public void addTextChangePhone(){
+    public void addTextChangePhone(CallbackString listener){
         edInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -214,6 +228,7 @@ public class CInputForm extends FrameLayout {
             @Override
             public void afterTextChanged(Editable s) {
                 edInput.removeTextChangedListener(this);
+                listener.Result(edInput.getText().toString().replace(".", ""));
                 try {
                     edInput.setText(Util.FormatPhone(edInput.getText().toString().replace(".", "")));
                     edInput.setSelection(edInput.getText().toString().length());
@@ -234,7 +249,7 @@ public class CInputForm extends FrameLayout {
         });
     }
 
-    public void addTextChangeName(){
+    public void addTextChangeName(CallbackString listener){
         final int[] countText = {0};
         edInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -250,7 +265,7 @@ public class CInputForm extends FrameLayout {
             @Override
             public void afterTextChanged(Editable s) {
                 edInput.removeTextChangedListener(this);
-
+                listener.Result(s.toString());
                 if (countText[0] < s.toString().length() && s.toString().length() == 1){
                     if (s.toString().equals("a") || s.toString().equals("A")){
                         edInput.setText("Anh ");
@@ -332,6 +347,13 @@ public class CInputForm extends FrameLayout {
         edInput.setTextColor(color);
     }
 
+    public void setBackgroundColor(int color) {
+        //edInput.setBackgroundColor(color);
+        mLayout.setBackgroundColor(color);
+
+    }
+
+
     public void setIconText(String string) {
         tvIcon.setText(string);
     }
@@ -381,14 +403,21 @@ public class CInputForm extends FrameLayout {
         popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
         popup.setWidth(300);
         popup.setContentView(listViewDogs);
-        popup.showAsDropDown(tvDropdown , 0, 0);
+        popup.showAsDropDown(tvMore, 0, 0);
     }
 
-    public void setOnClickView(ClickListener listener){
+    public void setOnMoreClickView(OnClickListener listener){
+        tvMore.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onClick(mLayout.getRootView());
+            }
+        });
+
         edInput.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onClick(v);
+                listener.onClick(mLayout.getRootView());
             }
         });
     }

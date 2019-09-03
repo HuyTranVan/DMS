@@ -159,7 +159,6 @@ public class MapUtil{
         objectResult.put("street","");
         objectResult.put("district","");
         objectResult.put("province","");
-        objectResult.put("street","");
 
         try {
             JSONArray array = object.getJSONArray("address_components");

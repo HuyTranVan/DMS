@@ -38,13 +38,15 @@ import wolve.dms.utils.Util;
 
 public class CustomerConnect {
 
-    public static void CreateCustomer(String params, final CallbackCustom listener, final Boolean stopLoading){
-        Util.getInstance().showLoading();
+    public static void CreateCustomer(String params, final CallbackCustom listener, final Boolean showLoading){
+        if (showLoading){
+            Util.getInstance().showLoading();
+        }
 
         new CustomPostMethod(DataUtil.createNewCustomerParam(params),new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
-                Util.getInstance().stopLoading(stopLoading);
+                Util.getInstance().stopLoading(true);
                 if (Constants.responeIsSuccess(result)){
                     listener.onResponse(Constants.getResponeObjectSuccess(result));
 
@@ -565,7 +567,7 @@ public class CustomerConnect {
             UtilPrinter.printCustomText(outputStream, "HÓA ĐƠN BÁN HÀNG",3,1);
             outputStream.write(PrinterCommands.FEED_LINE);
 
-            UtilPrinter.printCustomText(outputStream,"CH    : " + Constants.getShopTitle(currentCustomer.getString("shopType") , null) + " "+ currentCustomer.getString("signBoard") , 1,0);
+            UtilPrinter.printCustomText(outputStream,"CH    : " + Constants.getShopName(currentCustomer.getString("shopType")) + " "+ currentCustomer.getString("signBoard") , 1,0);
             UtilPrinter.printCustomText(outputStream,"KH    : " + currentCustomer.getString("name"), 1,0);
 
             String phone = currentCustomer.getString("phone").equals("")? "--" : Util.FormatPhone(currentCustomer.getString("phone"));
@@ -667,7 +669,7 @@ public class CustomerConnect {
             UtilPrinter.printCustomTextNew(outputStream, "HÓA ĐƠN BÁN HÀNG",33,1);
             outputStream.write(PrinterCommands.FEED_LINE);
 
-            UtilPrinter.printCustomTextNew(outputStream,"CH     : " + Constants.getShopTitle(currentCustomer.getString("shopType") , null) + " "+ currentCustomer.getString("signBoard") , 2,0);
+            UtilPrinter.printCustomTextNew(outputStream,"CH     : " + Constants.getShopName(currentCustomer.getString("shopType")) + " "+ currentCustomer.getString("signBoard") , 2,0);
             UtilPrinter.printCustomTextNew(outputStream,"KH     : " + currentCustomer.getString("name"), 2,0);
 
             String phone = currentCustomer.getString("phone").equals("")? "--" : Util.FormatPhone(currentCustomer.getString("phone"));
@@ -776,7 +778,7 @@ public class CustomerConnect {
             UtilPrinter.printCustomTextNew(outputStream, "HÓA ĐƠN (In lai)",33,1);
             outputStream.write(PrinterCommands.FEED_LINE);
 
-            UtilPrinter.printCustomTextNew(outputStream,"CH     : " + Constants.getShopTitle(currentCustomer.getString("shopType") , null) + " "+ currentCustomer.getString("signBoard") , 2,0);
+            UtilPrinter.printCustomTextNew(outputStream,"CH     : " + Constants.getShopName(currentCustomer.getString("shopType") ) + " "+ currentCustomer.getString("signBoard") , 2,0);
             UtilPrinter.printCustomTextNew(outputStream,"KH     : " + currentCustomer.getString("name"), 2,0);
 
             String phone = currentCustomer.getString("phone").equals("")? "--" : Util.FormatPhone(currentCustomer.getString("phone"));
@@ -859,7 +861,16 @@ public class CustomerConnect {
         }
     }
 
-    public static String createParamCustomer(BaseModel customer){
+    public static String createParamCustomer(BaseModel customer, double currentdebt){
+        int status =0;
+        if (customer.hasKey("status.id")){
+            status = customer.getInt("status.id");
+        }else {
+            status = new BaseModel(customer.getJsonObject("status")).getInt("id");
+        }
+
+        customer.put("currentDebt", currentdebt);
+
         String param = String.format(Api_link.CUSTOMER_CREATE_PARAM, customer.getInt("id") == 0? "" : String.format("id=%s&",customer.getString("id") ),
                 Util.encodeString(customer.getString("name")),//name
                 Util.encodeString(customer.getString("signBoard")),//signBoard
@@ -873,9 +884,9 @@ public class CustomerConnect {
                 customer.getDouble("lng"), //lng
                 customer.getInt("volumeEstimate"), //province
                 Util.encodeString(customer.getString("shopType")), //shopType
-                customer.getInt("status.id"), //currentStatusId
+                status, //currentStatusId
                 Distributor.getDistributorId(),//DistributorId
-                customer.getDouble("debt")
+                customer.getDouble("currentDebt")
         );
 
         return param;

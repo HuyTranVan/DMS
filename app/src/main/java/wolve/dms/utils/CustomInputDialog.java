@@ -1,19 +1,14 @@
 package wolve.dms.utils;
 
-import android.app.Dialog;
 import android.graphics.Rect;
-import android.support.v7.widget.AppCompatSpinner;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -70,7 +65,7 @@ public class CustomInputDialog {
                 boolean handled = false;
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     if (!edName.getText().toString().trim().equals("")) {
-                        mListener.onShopname(edName.getText().toString().trim(), Constants.getShopType(spShopType.getSelectedItem().toString()));
+                        mListener.onShopname(edName.getText().toString().trim(), Constants.getShopName(spShopType.getSelectedItem().toString()));
                         handled = true;
 
                     }else {
@@ -87,7 +82,7 @@ public class CustomInputDialog {
             public void onClick(View v) {
 
                 if (!edName.getText().toString().trim().equals("")) {
-                    mListener.onShopname(edName.getText().toString().trim(), Constants.getShopType(spShopType.getSelectedItem().toString()));
+                    mListener.onShopname(edName.getText().toString().trim(), Constants.getShopName(spShopType.getSelectedItem().toString()));
                     Util.hideKeyboard(v);
 
                 }else {

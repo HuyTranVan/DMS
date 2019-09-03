@@ -434,6 +434,15 @@ public class Util {
             }}, 500);
     }
 
+    public static void showKeyboardEditTextDelay(EditText view){
+        new Handler().postDelayed (new Runnable() {
+            @Override
+            public void run() {
+                Util.showKeyboard(view);
+                view.setSelection(view.getText().toString().trim().length());
+            }}, 500);
+    }
+
     public static void hideKeyboard(View view) {
         InputMethodManager imm = (InputMethodManager) Util.getInstance().getCurrentActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);

@@ -219,7 +219,7 @@ public class Transaction {
 
     }
 
-    public static void openGoogleMap(String label, double latitude, double longitude){
+    public static void openGoogleMap( double latitude, double longitude){
 //        String uriBegin = "geo:" + latitude + "," + longitude;
 //        String query = latitude + "," + longitude + "(" + label + ")";
 //        String encodedQuery = Uri.encode(query);

@@ -773,7 +773,7 @@ public class BillDetailFragment extends Fragment implements View.OnClickListener
                 final Customer customer = new Customer(bill.getJsonObject("customer"));
 //                data.add(i+1);
                 data.add(Util.DateString(bill.getLong("createAt")));
-                data.add(Constants.getShopTitle(customer.getString("shopType") , null) + " " + customer.getString("signBoard"));
+                data.add(Constants.getShopName(customer.getString("shopType") ) + " " + customer.getString("signBoard"));
                 data.add(customer.getString("phone"));
 
                 JSONArray arrayDetail = bill.getJSONArray("billDetails");

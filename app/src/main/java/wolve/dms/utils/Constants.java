@@ -174,6 +174,45 @@ public class Constants {
         return list;
     }
 
+    private  static List<BaseModel> shop(){
+        List<BaseModel> list = new ArrayList<>();
+
+        for (int i=0; i< shopType.length; i++){
+            BaseModel baseModel = new BaseModel();
+            baseModel.put("type", shopType[i]);
+            baseModel.put("name", shopName[i]);
+            list.add(baseModel);
+        }
+
+        return list;
+    }
+
+    public static String getShopName(String type){
+        String result = null;
+        for (BaseModel baseModel : shop()) {
+            if (type.equals(baseModel.getString("type"))) {
+                result =  baseModel.getString("name");
+                break;
+            }
+
+        }
+
+        return result;
+    }
+
+    public static String getShopType(String name){
+        String result = null;
+        for (BaseModel baseModel : shop()) {
+            if (name.equals(baseModel.getString("name"))) {
+                result =  baseModel.getString("type");
+                break;
+            }
+
+        }
+
+        return result;
+    }
+
     //Shoptype constant
     public static String[] shopType = new String[]{
             "SUA_XE",
@@ -185,38 +224,38 @@ public class Constants {
             "RỬA XE",
             "PHỤ TÙNG",
             "BẢO TRÌ"};
-    public static String getShopTitle(String type, String name){
-        String result ="";
-        if (type == null && name != null){
-            for (int i=0; i<shopName.length; i++){
-                if (shopName[i].equals(name)){
-                    result = shopType[i];
-                    break;
-                }
-            }
-        }else if (type != null && name == null){
-            for (int i=0; i<shopType.length; i++){
-                if (shopType[i].equals(type)){
-                    result = shopName[i];
-                    break;
-                }
-            }
-        }
-
-        return result;
-    }
-
-    public static String getShopType( String name){
-        String result ="";
-        for (int i=0; i<shopName.length; i++){
-            if (shopName[i].equals(name)){
-                result = shopType[i];
-                break;
-            }
-        }
-
-        return result;
-    }
+//    public static String getShopName(String type, String name){
+//        String result ="";
+//        if (type == null && name != null){
+//            for (int i=0; i<shopName.length; i++){
+//                if (shopName[i].equals(name)){
+//                    result = shopType[i];
+//                    break;
+//                }
+//            }
+//        }else if (type != null && name == null){
+//            for (int i=0; i<shopType.length; i++){
+//                if (shopType[i].equals(type)){
+//                    result = shopName[i];
+//                    break;
+//                }
+//            }
+//        }
+//
+//        return result;
+//    }
+//
+//    public static String getShopType(String name){
+//        String result ="";
+//        for (int i=0; i<shopName.length; i++){
+//            if (shopName[i].equals(name)){
+//                result = shopType[i];
+//                break;
+//            }
+//        }
+//
+//        return result;
+//    }
 
     public static void throwError(String err) {
         Util.showSnackbarError(err);

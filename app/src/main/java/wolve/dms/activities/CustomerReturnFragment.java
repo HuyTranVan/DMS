@@ -115,7 +115,7 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
 
     private void finish(){
         mActivity.reloadCustomer();
-        mActivity.btnShopCart.setVisibility(View.VISIBLE);
+        //mActivity.btnShopCart.setVisibility(View.VISIBLE);
         mActivity.getSupportFragmentManager().popBackStack();
 
 

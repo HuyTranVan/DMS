@@ -18,9 +18,19 @@
         <attr name="textHint" format="string" />
         <attr name="android:inputType"/>
         <attr name="isDropdown" format="boolean"/>
+        <attr name="isShowBottomLine" format="boolean"/>
+        <attr name="backgroundIcon" format="reference|color"/>
     </declare-styleable>
 
+<!--    <declare-styleable name="CButtonVertical">-->
+<!--        <attr name="iconColor" format="integer" />-->
+<!--        <attr name="iconSize" format="integer" />-->
+<!--        <attr name="iconText" format="string" />-->
+<!--        <attr name="textColor" format="integer" />-->
+<!--        <attr name="textSize" format="integer" />-->
+<!--        <attr name="text" format="string" />-->
 
+<!--    </declare-styleable>-->
 
     <declare-styleable name="MaterialSearchView">
         <attr name="searchBackground" format="integer" />
