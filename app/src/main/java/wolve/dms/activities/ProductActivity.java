@@ -33,6 +33,7 @@ import wolve.dms.libraries.MySwipeRefreshLayout;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
+import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.DataUtil;
 
@@ -78,6 +79,7 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
     public void initialData() {
         loadProductGroup(true);
         tabLayout.setupWithViewPager(viewPager);
+        btnAddProduct.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN) ? View.VISIBLE : View.GONE);
     }
 
     @Override

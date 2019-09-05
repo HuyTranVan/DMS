@@ -59,6 +59,6 @@
         android:layout_width="match_parent"
         android:layout_height="1dip"
         android:background="@color/colorGrey"
-        android:layout_alignParentBottom="true"/>
+        android:layout_below="@+id/input_data_content"/>
 
 </RelativeLayout>

@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -31,7 +30,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
@@ -107,7 +105,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     private RadioGroup rdFilter;
     private RadioButton rdAll, rdIntersted, rdOrdered;
     private ImageView btnBack, btnClose;
-    private CTextIcon tvLocation, tvReload;
+    private CTextIcon tvLocation, tvReload, tvStatusDot;
     private EditText edSearch;
     private CoordinatorLayout coParent;
     private SmoothProgressBar progressLoading;
@@ -115,7 +113,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     private RecyclerView rvSearch;
 //    private CardView ;
     private LinearLayout lnSheetBody, lnBottomSheet, btnCheckin, btnDirection, btnCall, btnShare;
-    private TextView tvShopname, tvAddress, tvCheckin, tvDistance;
+    private TextView tvShopname, tvAddress, tvCheckin, tvDistance, tvStatus;
 
     private Handler mHandlerMoveMap = new Handler();
     private Handler mHandlerSearch = new Handler();
@@ -187,6 +185,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         tvCheckin = findViewById(R.id.map_detail_checkin_text);
         tvDistance = findViewById(R.id.map_detail_distance);
         progressLoadCustomer = findViewById(R.id.map_loading_customer);
+        tvStatus = findViewById(R.id.map_detail_status);
+        tvStatusDot = findViewById(R.id.map_detail_status_dot);
 
 
     }
@@ -537,18 +537,28 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             if (arrayCheckIns.length() ==0 && customerStatus == 1){
                 currentCustomer.put("icon", R.drawable.ico_pin_pink);
                 currentCustomer.put("checkincount","N");
+                currentCustomer.put("statusDetail", "Khách hàng mới");
+                currentCustomer.put("statusColor", getResources().getColor(R.color.colorPink));
+
 
             }else if (customerStatus == 1) {
                 currentCustomer.put("icon", R.drawable.ico_pin_red);
                 currentCustomer.put("checkincount", arrayCheckIns.length());
+                currentCustomer.put("statusDetail", "Khách hàng có quan tâm");
+                currentCustomer.put("statusColor", getResources().getColor(R.color.orange_dark));
 
             } else if (customerStatus == 2) {
                 currentCustomer.put("icon", R.drawable.ico_pin_grey);
                 currentCustomer.put("checkincount", arrayCheckIns.length());
+                currentCustomer.put("statusDetail", "Khách hàng không quan tâm");
+                currentCustomer.put("statusColor", getResources().getColor(R.color.black_text_color_hint));
+
 
             } else {
                 currentCustomer.put("icon", R.drawable.ico_pin_blue);
                 currentCustomer.put("checkincount", arrayCheckIns.length());
+                currentCustomer.put("statusDetail", "Khách đã mua hàng");
+                currentCustomer.put("statusColor", getResources().getColor(R.color.colorBlue));
 
             }
 
@@ -1132,7 +1142,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     @Override
     public void onGlobalLayout() {
         coParent.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-        int height = getResources().getDimensionPixelSize(R.dimen._108sdp);
+        int height = getResources().getDimensionPixelSize(R.dimen._120sdp);
         ViewGroup.LayoutParams params = lnBottomSheet.getLayoutParams();
         params.height = height;
         lnBottomSheet.requestLayout();
@@ -1198,6 +1208,10 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         tvShopname.setText(title);
         tvAddress.setText(add);
         tvDistance.setText(distance >1000? String.valueOf(distance/1000) +" km" :distance +" m");
+
+        tvStatus.setText(customer.getString("statusDetail"));
+        //tvStatus.setTextColor(customer.getInt("statusColor"));
+        tvStatusDot.setTextColor(customer.getInt("statusColor"));
 
         if (distance < Constants.CHECKIN_DISTANCE){
             tvCheckin.setText("Checkin" );
@@ -1290,7 +1304,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                     @Override
                     public void onRespone(Boolean re) {
                         if (re){
-                            Transaction.openGoogleMap( customer.getDouble("lat"), customer.getDouble("lng"));
+                            Transaction.openGoogleMapRoute( customer.getDouble("lat"), customer.getDouble("lng"));
 
                         }
 

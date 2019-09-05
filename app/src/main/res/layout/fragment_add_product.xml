@@ -36,8 +36,8 @@
         android:id="@+id/add_product_image"
         android:layout_width="@dimen/_80sdp"
         android:layout_height="@dimen/_80sdp"
-        app:civ_border_width="1dip"
-        app:civ_border_color="@color/colorBlueTransparent"
+        app:civ_border_width="4dp"
+        app:civ_border_color="@color/colorLightGrey"
         android:src="@drawable/ic_wolver"
         android:layout_margin="@dimen/_10sdp"
         android:layout_gravity="center"/>
@@ -65,8 +65,7 @@
             app:textHint="Nhóm sản phẩm"
             app:iconText="@string/icon_product_group"
             app:isDropdown="true"
-            app:textColor="@color/colorBlue"
-            app:iconColor="@color/colorBlue"/>
+            app:textColor="@color/colorBlue"/>
 
         <wolve.dms.customviews.CInputForm
             android:id="@+id/add_product_unit_price"
@@ -100,8 +99,7 @@
             app:textHint=""
             app:iconText="@string/icon_gift"
             app:isDropdown="true"
-            app:textColor="@color/colorBlue"
-            app:iconColor="@color/colorBlue"/>
+            app:textColor="@color/colorBlue"/>
 
         <!--<LinearLayout-->
             <!--android:layout_width="match_parent"-->
@@ -127,11 +125,11 @@
 
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dip"
-        android:background="@color/colorGrey"
-        android:layout_gravity="bottom"/>
+<!--    <View-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="1dip"-->
+<!--        android:background="@color/colorGrey"-->
+<!--        android:layout_gravity="bottom"/>-->
 
     <Button
         android:id="@+id/add_product_submit"

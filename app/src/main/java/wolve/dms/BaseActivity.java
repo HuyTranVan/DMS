@@ -49,9 +49,9 @@ import static wolve.dms.utils.Constants.REQUEST_ENABLE_BT;
 public abstract class BaseActivity extends AppCompatActivity {
     protected LocationManager mLocationManager;
     private boolean doubleBackToExitPressedOnce = false;
-    public static BluetoothAdapter mBluetoothAdapter = null;
-    public static BluetoothSocket btsocket;
-    public static OutputStream outputStream;
+//    public static BluetoothAdapter mBluetoothAdapter = null;
+//    public static BluetoothSocket btsocket;
+//    public static OutputStream outputStream;
     private String currentPhone;
 
     @Override
@@ -144,54 +144,54 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     //Todo Location SETUP
-    public Location getCurLocation() {
-        return Util.getInstance().getCurrentLocation();
-    }
-
-    protected final LocationListener mLocationListener = new LocationListener() {
-        @Override
-        public void onLocationChanged(final Location location) {
-            Util.getInstance().stopLoading(true);
-
-            if (Util.getInstance().getCurrentActivity().getLocalClassName().equals("activities.MapsActivity")) {
-                if (Util.getInstance().getCurrentLocation() != null) {
-//                    Util.mapsActivity.animateMarker(
-//                            new LatLng(Util.getInstance().getCurrentLocation().getLatitude(), Util.getInstance().getCurrentLocation().getLongitude()),
-//                            new LatLng(location.getLatitude(), location.getLongitude()));
-
-                }
-            }
-            Util.getInstance().setCurrentLocation(location);
-
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-            switch (status) {
-                case LocationProvider.AVAILABLE:
-                    Log.d(Constants.DMS_LOGS, "LocationProvider.AVAILABLE");
-
-                    break;
-                case LocationProvider.OUT_OF_SERVICE:
-                    Log.d(Constants.DMS_LOGS, "LocationProvider.OUT_OF_SERVICE");
-                    break;
-                case LocationProvider.TEMPORARILY_UNAVAILABLE:
-                    Log.d(Constants.DMS_LOGS, "LocationProvider.TEMPORARILY_UNAVAILABLE");
-                    break;
-            }
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-            Log.e(Constants.DMS_LOGS, "Location enabled");
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-            Log.e(Constants.DMS_LOGS, "Location disabled");
-        }
-
-    };
+//    public Location getCurLocation() {
+//        return Util.getInstance().getCurrentLocation();
+//    }
+//
+//    protected final LocationListener mLocationListener = new LocationListener() {
+//        @Override
+//        public void onLocationChanged(final Location location) {
+//            Util.getInstance().stopLoading(true);
+//
+//            if (Util.getInstance().getCurrentActivity().getLocalClassName().equals("activities.MapsActivity")) {
+//                if (Util.getInstance().getCurrentLocation() != null) {
+////                    Util.mapsActivity.animateMarker(
+////                            new LatLng(Util.getInstance().getCurrentLocation().getLatitude(), Util.getInstance().getCurrentLocation().getLongitude()),
+////                            new LatLng(location.getLatitude(), location.getLongitude()));
+//
+//                }
+//            }
+//            Util.getInstance().setCurrentLocation(location);
+//
+//        }
+//
+//        @Override
+//        public void onStatusChanged(String provider, int status, Bundle extras) {
+//            switch (status) {
+//                case LocationProvider.AVAILABLE:
+//                    Log.d(Constants.DMS_LOGS, "LocationProvider.AVAILABLE");
+//
+//                    break;
+//                case LocationProvider.OUT_OF_SERVICE:
+//                    Log.d(Constants.DMS_LOGS, "LocationProvider.OUT_OF_SERVICE");
+//                    break;
+//                case LocationProvider.TEMPORARILY_UNAVAILABLE:
+//                    Log.d(Constants.DMS_LOGS, "LocationProvider.TEMPORARILY_UNAVAILABLE");
+//                    break;
+//            }
+//        }
+//
+//        @Override
+//        public void onProviderEnabled(String provider) {
+//            Log.e(Constants.DMS_LOGS, "Location enabled");
+//        }
+//
+//        @Override
+//        public void onProviderDisabled(String provider) {
+//            Log.e(Constants.DMS_LOGS, "Location disabled");
+//        }
+//
+//    };
 
     @Override
     public void onBackPressed() {
@@ -265,200 +265,203 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-    //Todo Bluetooth SETUP
-    @Override
-    protected void onDestroy() {
-        Util.getInstance().stopLoading(true);
-        try {
-            if(btsocket!= null){
-                if (outputStream != null)
-                    outputStream.close();
-                btsocket.close();
-                btsocket = null;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        super.onDestroy();
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        try {
-            unregisterReceiver(mBTReceiver);
-
-        } catch (Exception e) {
-            //e.printStackTrace();
-        }
-    }
-
-    public void registerBluetooth() {
-        try {
-            if (initDevicesList() != 0) {
-                this.finish();
-                return;
-            }
-
-        } catch (Exception ex) {
-            this.finish();
-            return;
-        }
-        IntentFilter btIntentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(mBTReceiver, btIntentFilter);
-
-    }
-
-    public final BroadcastReceiver mBTReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))){
-                    connectBluetoothDevice(device, new CallbackProcess() {
-                        @Override
-                        public void onStart() {
-
-                        }
-
-                        @Override
-                        public void onError() {
-
-                        }
-
-                        @Override
-                        public void onSuccess(String name) {
-
-                        }
-                    });
-                }
-
-            }
-        }
-    };
-
-    private Runnable socketErrorRunnable = new Runnable() {
-
-        @Override
-        public void run() {
-            Util.showToast("Cannot establish connection");
-            mBluetoothAdapter.startDiscovery();
-
-        }
-    };
-
-    public int initDevicesList() {
-        try {
-            if (btsocket != null) {
-                btsocket.close();
-
-                btsocket = null;
-            }
-
-            if (mBluetoothAdapter != null) {
-                mBluetoothAdapter.cancelDiscovery();
-            }
-
-            finalize();
-
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
-
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBluetoothAdapter == null) {
-            Util.showToast("Bluetooth not supported!!");
-
-            return -1;
-        }
-
-        if (mBluetoothAdapter.isDiscovering()) {
-            mBluetoothAdapter.cancelDiscovery();
-        }
-
-        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        try {
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-        } catch (Exception ex) {
-            return -2;
-        }
-//        Util.showToast("Getting all available Bluetooth Devices");
-
-        return 0;
-
-    }
-
-    public void  connectBluetoothDevice(final BluetoothDevice device, final CallbackProcess mListener){
-        mListener.onStart();
-        if (mBluetoothAdapter == null) {
-            mListener.onError();
-            return;
-
-        }
-
-        int a =device.getType();
-        int b =device.describeContents();
-
-        Thread connectThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (device.getUuids()!= null){
-                        UUID uuid = device.getUuids()[0].getUuid();
-                        btsocket = device.createRfcommSocketToServiceRecord(uuid);
-                        btsocket.connect();
-                    }
-
-                } catch (IOException ex) {
-                    runOnUiThread(socketErrorRunnable);
-                    try {
-                        if (btsocket != null)
-                            btsocket.close();
-                    } catch (IOException e) {
-                        mListener.onError();
-//                        e.printStackTrace();
-                    }
-                    btsocket = null;
-
-                    return;
-                } finally {
-                    runOnUiThread(new Runnable() {
-
-                        @Override
-                        public void run() {
-
-                            try {
-                                if (btsocket != null){
-                                    if (Util.getInstance().getCurrentActivity().getLocalClassName().equals("activities.ShopCartActivity")){
-//                                        Util.shopCartActivity.tvBluetooth.setText(R.string.icon_bluetooth_connected);
-//                                        Util.shopCartActivity.tvBluetooth.setTextColor(getResources().getColor(R.color.colorBlue));
-                                    }
-                                    CustomSQL.setString(Constants.BLUETOOTH_DEVICE, btsocket.getRemoteDevice().getAddress());
-                                    outputStream = btsocket.getOutputStream();
-                                    mBluetoothAdapter.cancelDiscovery();
-
-
-                                    mListener.onSuccess(device.getName());
-                                }else {
-                                    mListener.onError();
-                                }
-
-
-                            } catch (IOException e) {
-                                mListener.onError();
-//                                e.printStackTrace();
-                            }
-
-
-                        }
-                    });
-                }
-            }
-        });connectThread.start();
-    }
+//    //Todo Bluetooth SETUP
+//    @Override
+//    protected void onDestroy() {
+//        Util.getInstance().stopLoading(true);
+//        try {
+//            if(btsocket!= null){
+//                if (outputStream != null)
+//                    outputStream.close();
+//                btsocket.close();
+//                btsocket = null;
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        super.onDestroy();
+//
+//    }
+//
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        try {
+//            unregisterReceiver(mBTReceiver);
+//
+//        } catch (Exception e) {
+//            //e.printStackTrace();
+//        }
+//    }
+//
+//    public void registerBluetooth() {
+//        try {
+//            if (initDevicesList() != 0) {
+//                this.finish();
+//                return;
+//            }
+//
+//        } catch (Exception ex) {
+//            this.finish();
+//            return;
+//        }
+//        IntentFilter btIntentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+//        registerReceiver(mBTReceiver, btIntentFilter);
+//
+//    }
+//
+//    public final BroadcastReceiver mBTReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            String action = intent.getAction();
+//            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+//                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+//
+////                if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))){
+////
+////                    connectBluetoothDevice(device, new CallbackProcess() {
+////                        @Override
+////                        public void onStart() {
+////
+////                        }
+////
+////                        @Override
+////                        public void onError() {
+////
+////                        }
+////
+////                        @Override
+////                        public void onSuccess(String name) {
+////
+////                        }
+////                    });
+////                }
+//
+//            }
+//        }
+//    };
+//
+//    private Runnable socketErrorRunnable = new Runnable() {
+//
+//        @Override
+//        public void run() {
+//            Util.showToast("Cannot establish connection");
+//            mBluetoothAdapter.startDiscovery();
+//
+//        }
+//    };
+//
+//    public int initDevicesList() {
+//        try {
+//            if (btsocket != null) {
+//                btsocket.close();
+//
+//                btsocket = null;
+//            }
+//
+//            if (mBluetoothAdapter != null) {
+//                mBluetoothAdapter.cancelDiscovery();
+//            }
+//
+//            finalize();
+//
+//        } catch (Throwable throwable) {
+//            throwable.printStackTrace();
+//        }
+//
+//        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//        if (mBluetoothAdapter == null) {
+//            Util.showToast("Bluetooth not supported!!");
+//
+//            return -1;
+//        }
+//
+//        if (mBluetoothAdapter.isDiscovering()) {
+//            mBluetoothAdapter.cancelDiscovery();
+//        }
+//
+//        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//        try {
+//            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+//        } catch (Exception ex) {
+//            return -2;
+//        }
+////        Util.showToast("Getting all available Bluetooth Devices");
+//
+//        return 0;
+//
+//    }
+//
+//    public void  connectBluetoothDevice(final BluetoothDevice device, final CallbackProcess mListener){
+//        mListener.onStart();
+//        if (mBluetoothAdapter == null) {
+//            mListener.onError();
+//            return;
+//
+//        }
+//
+////        int a =device.getType();
+////        int b =device.describeContents();
+//
+//        Thread connectThread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    if (device.getUuids()!= null){
+//                        UUID uuid = device.getUuids()[0].getUuid();
+//                        btsocket = null;
+//                        btsocket = device.createRfcommSocketToServiceRecord(uuid);
+//                        btsocket.connect();
+//                    }
+//
+//                } catch (IOException ex) {
+//                    runOnUiThread(socketErrorRunnable);
+//                    try {
+//                        if (btsocket != null)
+//                            btsocket.close();
+//                    } catch (IOException e) {
+//                        mListener.onError();
+////                        e.printStackTrace();
+//                    }
+//                    btsocket = null;
+//
+//                    return;
+//                } finally {
+//                    runOnUiThread(new Runnable() {
+//
+//                        @Override
+//                        public void run() {
+//
+//                            try {
+//                                if (btsocket != null){
+//                                    if (Util.getInstance().getCurrentActivity().getLocalClassName().equals("activities.ShopCartActivity")){
+////                                        Util.shopCartActivity.tvBluetooth.setText(R.string.icon_bluetooth_connected);
+////                                        Util.shopCartActivity.tvBluetooth.setTextColor(getResources().getColor(R.color.colorBlue));
+//                                    }
+//                                    CustomSQL.setString(Constants.BLUETOOTH_DEVICE, btsocket.getRemoteDevice().getAddress());
+//                                    outputStream = btsocket.getOutputStream();
+//                                    mBluetoothAdapter.cancelDiscovery();
+//
+//
+//                                    mListener.onSuccess(device.getName());
+//                                }else {
+//                                    mListener.onError();
+//                                }
+//
+//
+//                            } catch (IOException e) {
+//                                mListener.onError();
+////                                e.printStackTrace();
+//                            }
+//
+//
+//                        }
+//                    });
+//                }
+//            }
+//        });connectThread.start();
+//    }
 
     public void openCallScreen(String phone) {
         currentPhone = phone;

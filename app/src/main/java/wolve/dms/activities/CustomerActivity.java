@@ -73,7 +73,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     protected Button btnSubmit;
     private FloatingActionButton btnCurrentLocation;
     private TextView  tvCheckInStatus, tvTime;
-    private TextView tvTitle, tvDebt, tvPaid, tvTotal, tvBDF, btnShopCart;
+    protected TextView tvTitle, tvDebt, tvPaid, tvTotal, tvBDF, btnShopCart;
     private RadioGroup rgStatus;
     private RadioButton rdInterested, rdNotInterested, rdOrdered;
     private ScrollView scContent;
@@ -273,10 +273,8 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         if (listBills.size() >0){
             scrollOverView.setVisibility(View.VISIBLE);
             showMoneyOverview(listBills);
-            Log.e("abcde", "hereeeee" + currentDebt +"dfsdf" + currentCustomer.getDouble("currentDebt"));
 
             if (!currentDebt.equals(currentCustomer.getDouble("currentDebt")) ){
-                Log.e("abcde", "here");
                 submitCustomer();
             }
         }else {
@@ -688,26 +686,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         mHandlerUpdateCustomer.removeCallbacks(mUpdateTask);
         mHandlerUpdateCustomer.postDelayed(mUpdateTask, 2000);
 
-
-//        BaseModel customer = new Customer();
-//        customer = currentCustomer;
-//        customer.put("name", edName.getText().toString().trim());
-//        customer.put("signBoard", edShopName.getText().toString().trim());
-//        customer.put("address", edAdress.getText().toString().trim());
-//        customer.put("phone", edPhone.getText().toString().trim());
-//        customer.put("street", edStreet.getText().toString().trim());
-////            customer.put("note", edNote.getText().toString().trim());
-//        customer.put("note", getCustomerNote());
-//        customer.put("district", edDistrict.getText().toString().trim());
-//        customer.put("province", edCity.getText().toString().trim());
-//        customer.put("lat", currentCustomer.getDouble("lat"));
-//        customer.put("lng", currentCustomer.getDouble("lng"));
-//        customer.put("volumeEstimate", 10);
-//        customer.put("shopType", Constants.getShopType(edShopType.getText().toString()));
-//        customer.put("status.id", currentStatus.getInt("id"));
-//        customer.put("debt", Util.getTotal(listBills).getDouble("debt") );
-//
-//        return customer;
     }
 
     private Runnable mUpdateTask = new Runnable() {
@@ -804,68 +782,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         tvBDF.setText(String.format("BDF:%s ", DataUtil.defineBDFPercent(listBillDetail)) +"%");
 
     }
-//
-//    protected void reloadBills(final CallbackBoolean mListener){
-//        String param = currentCustomer.getString("id");
-//        CustomerConnect.GetCustomerDetail(param, new CallbackCustom() {
-//            @Override
-//            public void onResponse(BaseModel customer) {
-//                List<BaseModel> mList = new ArrayList<>();
-//                if (customer.getString("bills") != null) {
-//                    //JSONArray array = customer.getJSONArray("bills");
-//                    List<BaseModel> listBill = DataUtil.array2ListBaseModel(customer.getJSONArray("bills"));
-//
-//                    for (int i = 0; i < listBill.size(); i++) {
-//                        //BaseModel objectBill = new BaseModel(array.getJSONObject(i);
-//                        BaseModel objectUser = new BaseModel(listBill.get(i).getJsonObject("user"));
-//                        if (User.getRole().equals(Constants.ROLE_ADMIN)) {
-//                            mList.add(listBill.get(i));
-//
-//                        } else {
-//                            if (User.getId() == objectUser.getInt("id")) {
-//                                mList.add(listBill.get(i));
-//                            }
-//                        }
-//                        addYearToList(Util.YearString(listBill.get(i).getLong("createAt")));
-//
-//                    }
-//
-//                    currentCustomer.put("bills", customer.getJSONArray("bills"));
-//                    showMoneyOverview(mList);
-//                    mListener.onRespone(true);
-//
-//
-//                    if (mList.size() > 0) {
-//                        rdOrdered.setChecked(true);
-//                    }
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//                mListener.onRespone(false);
-//            }
-//        }, true,true);
-//    }
-
-//    private void shopTypeEvent(){
-//        edShopType.setDropdown(true, new CInputForm.ClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                CustomBottomDialog.choiceList("CHỌN NHÓM CỬA HÀNG",Util.arrayToList(Constants.shopName) , new CustomBottomDialog.StringListener() {
-//                    @Override
-//                    public void onResponse(String content) {
-//                        edShopType.setText(content);
-//                    }
-//                });
-//
-//            }
-//        });
-//
-//    }
-
-
 
     private String createParamCheckin(BaseModel customer, String note){
         String params = String.format(Api_link.SCHECKIN_CREATE_PARAM, customer.getInt("id"),

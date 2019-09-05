@@ -43,7 +43,6 @@ import wolve.dms.utils.Util;
 public class ShopCartActivity extends BaseActivity implements  View.OnClickListener,  View.OnLongClickListener {
     private ImageView btnBack;
     private Button btnSubmit;
-//    protected TextView tvPrinterStatus;
     private TextView tvTitle, tvTotal, tvBDF;
     private CInputForm tvNote;
     private RecyclerView rvProducts;
@@ -171,10 +170,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
             case R.id.cart_submit:
 //                choicePayMethod();
-                Transaction.gotoPrintBillActivity(currentCustomer.BaseModelstoString(),
-                        DataUtil.convertListObject2Array(adapterProducts.getAllData()).toString(),
-                        debt,
-                        false);
+                Transaction.gotoPrintBillActivity(DataUtil.convertListObject2Array(adapterProducts.getAllData()).toString(), debt, false);
 
                 break;
 
@@ -284,125 +280,6 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         }
     }
 
-//    private void submitBill(final Double total, final Double paid){
-//        final String params = DataUtil.createPostBillParam(currentCustomer.getInt("id"),total, paid, adapterProducts.getAllData(), tvNote.getText().toString().trim());
-//
-//        if (btsocket != null && btsocket.isConnected()){
-//            Util.getInstance().showLoading("Đang in...");
-//
-//            Thread thread = new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    CustomerConnect.printBill(outputStream, currentCustomer, adapterProducts.getAllDataProduct(), listBills,total,  paid, new CallbackBoolean() {
-//                        @Override
-//                        public void onRespone(Boolean result) {
-//                            Util.getInstance().stopLoading(true);
-//                            if (result){
-//                                CustomCenterDialog.alertWithCancelButton2("TIẾP TỤC", "In thêm hoặc tiếp tục thanh toán", "TIẾP TỤC", "IN LẠI", new CustomCenterDialog.ButtonCallback() {
-//                                    @Override
-//                                    public void Submit(Boolean boolSubmit) {
-//                                        postBills(params.toString());
-//
-//                                    }
-//
-//                                    @Override
-//                                    public void Cancel(Boolean boolCancel) {
-//                                        submitBill(total,paid);
-//                                    }
-//
-//                                });
-//                            }else {
-//                                CustomCenterDialog.alertWithButton("LỖI", "Kết nối máy in thất bại. Vui lòng thực hiện kết nối lại", "ĐỒNG Ý", new CallbackBoolean() {
-//                                    @Override
-//                                    public void onRespone(Boolean result) {
-////                                        tvPrinterStatus.setText("Chưa kết nối được máy in");
-//                                    }
-//                                });
-//                            }
-//
-//                        }
-//                    });
-//
-//
-//
-//                }
-//            }); thread.start();
-//
-//        }else {
-//            CustomCenterDialog.alertWithCancelButton(null, "Chưa kết nối máy in. Bạn muốn tiếp tục thanh toán không xuất hóa đơn", "Tiếp tục","hủy", new CallbackBoolean() {
-//                @Override
-//                public void onRespone(Boolean result) {
-//                    postBills(params.toString());
-//
-//                }
-//            });
-//
-//        }
-//
-//    }
-
-    private void postBills(String params){
-        CustomerConnect.PostBill(params, new CallbackCustom() {
-//            @Override
-//            public void onResponse(JSONObject result) {
-//                Transaction.returnCustomerActivity(Constants.SHOP_CART_ACTIVITY, "", Constants.RESULT_SHOPCART_ACTIVITY);
-
-                //get customer detail from serer
-//                String param = currentCustomer.getString("id");
-//                CustomerConnect.GetCustomerDetail(param, new CallbackJSONObject() {
-//                    @Override
-//                    public void onResponse(JSONObject result) {
-//                        Transaction.returnCustomerActivity(new Customer(result));
-//
-//                    }
-//
-//                    @Override
-//                    public void onError(String error) {
-//
-//                    }
-//                }, true);
-//            }
-
-            @Override
-            public void onResponse(BaseModel result) {
-                Transaction.returnCustomerActivity(Constants.SHOP_CART_ACTIVITY, "", Constants.RESULT_SHOPCART_ACTIVITY);
-            }
-
-            @Override
-            public void onError(String error) {
-
-            }
-        }, true);
-    }
-
-//    private void choicePayMethod(){
-//        CustomBottomDialog.choiceTwoOption(getString(R.string.icon_money), "Thu tiền mặt",
-//                getString(R.string.icon_warning),"Công nợ", new CustomBottomDialog.TwoMethodListener() {
-//            @Override
-//            public void Method1(Boolean one) {
-//                submitBill(Util.valueMoney(tvTotal) , Util.valueMoney(tvTotal));
-//
-//            }
-//
-//            @Override
-//            public void Method2(Boolean two) {
-//                showDialogInputPaid();
-//            }
-//
-//        });
-//
-//    }
-//
-//    private void showDialogInputPaid() {
-//        CustomCenterDialog.showDialogInputPaid("Nhập số tiến khách trả", "Tổng tiền hóa đơn", Util.valueMoney(tvTotal.getText().toString()), new CallbackPayBill() {
-//                    @Override
-//                    public void OnRespone(final Double total, final Double pay) {
-//                        submitBill(total, pay);
-//
-//                    }
-//                });
-//    }
-
     @Override
     public void onActivityResult(int reqCode, int resultCode, Intent intent) {
         super.onActivityResult(reqCode, resultCode, intent);
@@ -484,10 +361,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
     @Override
     public boolean onLongClick(View v) {
-        Transaction.gotoPrintBillActivity(currentCustomer.BaseModelstoString(),
-                DataUtil.convertListObject2Array(adapterProducts.getAllData()).toString(),
-                debt,
-                false);
+        Transaction.gotoPrintBillActivity(DataUtil.convertListObject2Array(adapterProducts.getAllData()).toString(), debt, false);
 
         return true;
     }

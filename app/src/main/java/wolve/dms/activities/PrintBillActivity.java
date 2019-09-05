@@ -1,10 +1,16 @@
 package wolve.dms.activities;
 
 import android.app.Dialog;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -19,9 +25,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import androidmads.library.qrgenearator.QRGContents;
 import androidmads.library.qrgenearator.QRGEncoder;
@@ -75,6 +84,13 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     private Uri imageChangeUri ;
     private Dialog dialogPayment;
     private Boolean rePrint;
+    private Fragment mFragment;
+    private BluetoothListFragment bluFragment = null ;
+
+    protected BluetoothAdapter mBluetoothAdapter = null;
+    protected BluetoothSocket btsocket;
+    protected OutputStream outputStream;
+    protected List<BluetoothDevice> listDevice = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,8 +155,8 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     public void initialData() {
+        currentCustomer = new BaseModel(CustomSQL.getString(Constants.CUSTOMER));
 
-        currentCustomer = new BaseModel( getIntent().getExtras().getString(Constants.CUSTOMER));
         rePrint = getIntent().getExtras().getBoolean(Constants.RE_PRINT);
         listBills = DataUtil.array2ListObject(getIntent().getExtras().getString(Constants.BILLS));
         listDebts = DataUtil.array2ListObject(getIntent().getExtras().getString(Constants.ALL_DEBT));
@@ -218,8 +234,6 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
     }
 
-
-
     @Override
     public void addEvent() {
         btnBack.setOnClickListener(this);
@@ -244,8 +258,9 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
                 break;
 
             case R.id.print_bill_bottom_printerselect:
-                BluetoothListFragment fragment = new BluetoothListFragment();
-                showFragmentDialog(fragment );
+
+                bluFragment = new BluetoothListFragment();
+                showFragmentDialog(bluFragment );
 
                 break;
 
@@ -295,14 +310,11 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     private List<BaseModel> getAllDebt(){
         List<BaseModel> list = new ArrayList<>();
         BaseModel currentBill = new BaseModel();
-//        try {
-            currentBill.put("id", 0);
-            currentBill.put("debt", adapterBill.getTotalMoney(listBills));
+        currentBill.put("id", 0);
+        currentBill.put("debt", adapterBill.getTotalMoney(listBills));
 
-            list.add(0, currentBill);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
+        list.add(0, currentBill);
+
 
         DataUtil.sortbyStringKey("createAt", listDebts, true);
         for (int i=0; i< listDebts.size(); i++){
@@ -381,41 +393,44 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_ENABLE_BT && resultCode == RESULT_OK) {
-            try {
-                Set<BluetoothDevice> btDeviceList = mBluetoothAdapter.getBondedDevices();
-                if (btDeviceList.size() > 0) {
-                    for (final BluetoothDevice device : btDeviceList) {
-                        Log.e("printer", device.getAddress() +"\n" + device.getName() + "\n" +device.getBluetoothClass() +"\n" + device.getBondState() +"\n" + device.getType() +"\n" + device.getUuids());
-
-                        if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))){
-                            connectBluetoothDevice(device, new CallbackProcess() {
-                                @Override
-                                public void onStart() {
-                                    tvPrinterName.setText(Constants.CONNECTING_PRINTER);
-                                    lnBottom.setBackgroundColor(getResources().getColor(R.color.black_text_color_hint));
-
-                                }
-
-                                @Override
-                                public void onError() {
-                                    tvPrinterName.setText("Chưa kết nối được máy in");
-                                    Util.showToast(Constants.CONNECTED_PRINTER_ERROR);
-                                    lnBottom.setBackgroundColor(getResources().getColor(R.color.black_text_color_hint));
-                                }
-
-                                @Override
-                                public void onSuccess(String name) {
-                                    tvPrinterName.setText(String.format(Constants.CONNECTED_PRINTER, device.getName()));
-                                    lnBottom.setBackgroundColor(getResources().getColor(R.color.colorBlue));
-                                }
-                            });
-                        }
-
-                    }
-                }
-            } catch (Exception ex) {
-            }
             mBluetoothAdapter.startDiscovery();
+
+//
+//            try {
+//                Set<BluetoothDevice> btDeviceList = mBluetoothAdapter.getBondedDevices();
+//                if (btDeviceList.size() > 0) {
+//                    for (final BluetoothDevice device : btDeviceList) {
+//                        Log.e("printer", device.getAddress() +"\n" + device.getName() + "\n" +device.getBluetoothClass() +"\n" + device.getBondState() +"\n" + device.getType() +"\n" + device.getUuids());
+
+//                        if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))){
+//                            connectBluetoothDevice(device, new CallbackProcess() {
+//                                @Override
+//                                public void onStart() {
+//                                    tvPrinterName.setText(Constants.CONNECTING_PRINTER);
+//                                    lnBottom.setBackgroundColor(getResources().getColor(R.color.black_text_color_hint));
+//
+//                                }
+//
+//                                @Override
+//                                public void onError() {
+//                                    tvPrinterName.setText("Chưa kết nối được máy in");
+//                                    Util.showToast(Constants.CONNECTED_PRINTER_ERROR);
+//                                    lnBottom.setBackgroundColor(getResources().getColor(R.color.black_text_color_hint));
+//                                }
+//
+//                                @Override
+//                                public void onSuccess(String name) {
+//                                    tvPrinterName.setText(String.format(Constants.CONNECTED_PRINTER, device.getName()));
+//                                    lnBottom.setBackgroundColor(getResources().getColor(R.color.colorBlue));
+//                                }
+//                            });
+//                        }
+
+//                    }
+//                }
+//            } catch (Exception ex) {
+//            }
+
 
         }
     }
@@ -437,63 +452,63 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
-    private List<BaseModel> getListDebt(JSONArray array){
-
-//        String billHaveReturn = checkBillReturn(array).toString();
-//        for (int i=0; i<array.length(); i++){
-//            try {
-//                JSONObject object = array.getJSONObject(i);
-//                if (object.getDouble("debt") > 0 && !billHaveReturn.contains(object.getString("id"))){
-//                    listResult.add(object);
-//                }
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
+//    private List<BaseModel> getListDebt(JSONArray array){
 //
+////        String billHaveReturn = checkBillReturn(array).toString();
+////        for (int i=0; i<array.length(); i++){
+////            try {
+////                JSONObject object = array.getJSONObject(i);
+////                if (object.getDouble("debt") > 0 && !billHaveReturn.contains(object.getString("id"))){
+////                    listResult.add(object);
+////                }
+////            } catch (JSONException e) {
+////                e.printStackTrace();
+////            }
+////
+////        }
+//        List<BaseModel> listResult = new ArrayList<>();
+//        List<BaseModel> listBill = new ArrayList<>();
+//        List<BaseModel> mList = new ArrayList<>();
+//        try {
+//            for (int i=0; i<array.length(); i++){
+//                mList.add(new BaseModel(array.getJSONObject(i)));
+//            }
+//            listBill = DataUtil.mergeWithReturnBill(mList);
+//
+//            for (int j=0; j<listBill.size(); j++){
+////                JSONObject object = array.getJSONObject(j);
+//                if (listBill.get(j).getDouble("debt") > 0){
+//
+//
+//
+//                    listResult.add(listBill.get(j));
+//                }
+//            }
+//        }catch (JSONException e) {
+//            e.printStackTrace();
 //        }
-        List<BaseModel> listResult = new ArrayList<>();
-        List<BaseModel> listBill = new ArrayList<>();
-        List<BaseModel> mList = new ArrayList<>();
-        try {
-            for (int i=0; i<array.length(); i++){
-                mList.add(new BaseModel(array.getJSONObject(i)));
-            }
-            listBill = DataUtil.mergeWithReturnBill(mList);
-
-            for (int j=0; j<listBill.size(); j++){
-//                JSONObject object = array.getJSONObject(j);
-                if (listBill.get(j).getDouble("debt") > 0){
-
-
-
-                    listResult.add(listBill.get(j));
-                }
-            }
-        }catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return listResult;
-    }
-
-    private List<String> checkBillReturn(JSONArray array){
-        List<String> listResult = new ArrayList<>();
-        try {
-            for (int i=0; i<array.length(); i++){
-                JSONObject object = array.getJSONObject(i);
-
-                if (!object.getString("note").equals("") && object.getString("note").matches(Util.DETECT_NUMBER)){
-                    listResult.add(object.getString("id"));
-                    listResult.add(object.getString("note"));
-
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return listResult;
-
-    }
+//
+//        return listResult;
+//    }
+//
+//    private List<String> checkBillReturn(JSONArray array){
+//        List<String> listResult = new ArrayList<>();
+//        try {
+//            for (int i=0; i<array.length(); i++){
+//                JSONObject object = array.getJSONObject(i);
+//
+//                if (!object.getString("note").equals("") && object.getString("note").matches(Util.DETECT_NUMBER)){
+//                    listResult.add(object.getString("id"));
+//                    listResult.add(object.getString("note"));
+//
+//                }
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        return listResult;
+//
+//    }
 
     private Boolean isPrinterConnected(){
         if (btsocket != null && btsocket.isConnected())
@@ -506,7 +521,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     private void doPrintCurrentBill(final List<BaseModel> listPayments){
         Util.getInstance().showLoading("Đang in...");
         final Double total  = adapterBill.getTotalMoney() + adapterDebt.getTotalMoney();
-        Double paid = getPaid(listPayments);
+        Double paid = DataUtil.sumMoneyFromList(listPayments, "paid");
         Double remain = total -paid;
         int printSize = tvPrintSize.getText().toString().equals(Constants.PRINTER_80)? Constants.PRINTER_80_WIDTH: Constants.PRINTER_57_WIDTH;
 
@@ -554,47 +569,6 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
                         }
                     }
                 }).execute();
-
-
-
-
-//            Thread thread = new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-//                CustomerConnect.printBillCustom(tvPrintSize.getText().toString(), outputStream, currentCustomer,listBills, listDebts, total, getPaid(listPayments), new CallbackBoolean() {
-//                    @Override
-//                    public void onRespone(Boolean result) {
-//                        Util.getInstance().stopLoading(true);
-//                        if (result){
-//                            CustomCenterDialog.alertWithCancelButton2("TIẾP TỤC", "In thêm hoặc tiếp tục thanh toán", "TIẾP TỤC", "IN LẠI", new CustomCenterDialog.ButtonCallback() {
-//                                @Override
-//                                public void Submit(Boolean boolSubmit) {
-//                                    postBilltoServer(listPayments);
-//
-//                                }
-//
-//                                @Override
-//                                public void Cancel(Boolean boolCancel) {
-//                                    doPrintCurrentBill(listPayments);
-//                                }
-//
-//                            });
-//                        }else {
-//                            CustomCenterDialog.alertWithButton("LỖI", "Kết nối máy in thất bại. Vui lòng thực hiện kết nối lại", "ĐỒNG Ý", new CallbackBoolean() {
-//                                @Override
-//                                public void onRespone(Boolean result) {
-//                                    tvPrinterName.setText("Chưa kết nối được máy in");
-//                                    lnBottom.setBackgroundColor(getResources().getColor(R.color.black_text_color_hint));
-//                                }
-//                            });
-//                        }
-//
-//
-//                    }
-//                });
-//
-//                }
-//            }); thread.start();
 
     }
 
@@ -697,28 +671,6 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         final String params = DataUtil.createPostBillParam(currentCustomer.getInt("id"), adapterBill.getTotalMoney(), 0.0, listBills, "");
 
         CustomerConnect.PostBill(params, new CallbackCustom() {
-//            @Override
-//            public void onResponse(JSONObject result) {
-//
-//                try {
-//                    if (listPayments.size()>0 ){
-//                        if (listPayments.get(0).getInt("billId") == 0){
-//                            listPayments.get(0).put("billId", result.getInt("id"));
-//                        }
-//
-//                        postPayToServer(DataUtil.createListPaymentParam(currentCustomer.getInt("id"),listPayments), true);
-//
-//                    }else {
-//                        Transaction.returnShopCartActivity(Constants.PRINT_BILL_ACTIVITY, Constants.RELOAD_DATA, Constants.RESULT_PRINTBILL_ACTIVITY);
-//
-//                    }
-//
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//
-//            }
-
             @Override
             public void onResponse(BaseModel result) {
                 if (listPayments.size()>0 ){
@@ -758,19 +710,236 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         }, stopLoading);
     }
 
-    private Double getPaid(List<BaseModel> listPayments){
-        Double paid = 0.0;
-
-        for (int i=0;i<listPayments.size();i++){
-            paid+= listPayments.get(i).getDouble("paid");
-
-        }
-
-        return paid;
-    }
+    //************** Todo Bluetooth SETUP
 
     @Override
     protected void onDestroy() {
+        Util.getInstance().stopLoading(true);
+        try {
+            if(btsocket!= null){
+                if (outputStream != null)
+                    outputStream.close();
+                btsocket.close();
+                btsocket = null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         super.onDestroy();
+
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        try {
+            unregisterReceiver(mBTReceiver);
+
+        } catch (Exception e) {
+            //e.printStackTrace();
+        }
+    }
+
+    private Runnable socketErrorRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+            Util.showToast("Cannot establish connection");
+            mBluetoothAdapter.startDiscovery();
+
+        }
+    };
+
+    public void registerBluetooth() {
+        try {
+            if (initDevicesList() != 0) {
+                this.finish();
+                return;
+            }
+
+        } catch (Exception ex) {
+            this.finish();
+            return;
+        }
+        IntentFilter btIntentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(mBTReceiver, btIntentFilter);
+
+    }
+
+    public final BroadcastReceiver mBTReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
+                addBluetoothItem2List(device);
+
+                if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))){
+                    updateViewWhileConnectBlu(device, false);
+
+                }
+
+            }
+        }
+    };
+
+    protected void updateViewWhileConnectBlu(BluetoothDevice device, boolean showloading){
+        Util.getInstance().showLoading(showloading);
+        connectBluetoothDevice(device, new CallbackProcess() {
+            @Override
+            public void onStart() {
+                tvPrinterName.setText(Constants.CONNECTING_PRINTER);
+                lnBottom.setBackgroundColor(getResources().getColor(R.color.black_text_color_hint));
+
+            }
+
+            @Override
+            public void onError() {
+                Util.getInstance().stopLoading(true);
+                tvPrinterName.setText("Chưa kết nối được máy in");
+                Util.showToast(Constants.CONNECTED_PRINTER_ERROR);
+                lnBottom.setBackgroundColor(getResources().getColor(R.color.black_text_color_hint));
+            }
+
+            @Override
+            public void onSuccess(String name) {
+                Util.getInstance().stopLoading(true);
+                tvPrinterName.setText(String.format(Constants.CONNECTED_PRINTER, device.getName()));
+                lnBottom.setBackgroundColor(getResources().getColor(R.color.colorBlue));
+
+                if (bluFragment != null){
+                    bluFragment.finish();
+                }
+            }
+        });
+    }
+
+    public int initDevicesList() {
+        try {
+            if (btsocket != null) {
+                btsocket.close();
+
+                btsocket = null;
+            }
+
+            if (mBluetoothAdapter != null) {
+                mBluetoothAdapter.cancelDiscovery();
+            }
+
+            finalize();
+
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null) {
+            Util.showToast("Bluetooth not supported!!");
+
+            return -1;
+        }
+
+        if (mBluetoothAdapter.isDiscovering()) {
+            mBluetoothAdapter.cancelDiscovery();
+        }
+
+        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        try {
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        } catch (Exception ex) {
+            return -2;
+        }
+//        Util.showToast("Getting all available Bluetooth Devices");
+
+        return 0;
+
+    }
+
+    public void  connectBluetoothDevice(final BluetoothDevice device, final CallbackProcess mListener){
+        mListener.onStart();
+        if (mBluetoothAdapter == null) {
+            mListener.onError();
+            return;
+
+        }
+
+        Thread connectThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (device.getUuids()!= null){
+                        UUID uuid = device.getUuids()[0].getUuid();
+                        btsocket = null;
+                        btsocket = device.createRfcommSocketToServiceRecord(uuid);
+                        btsocket.connect();
+                    }
+
+                } catch (IOException ex) {
+                    runOnUiThread(socketErrorRunnable);
+                    try {
+                        if (btsocket != null)
+                            btsocket.close();
+                    } catch (IOException e) {
+                        mListener.onError();
+//                        e.printStackTrace();
+                    }
+                    btsocket = null;
+
+                    return;
+                } finally {
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+
+                            try {
+                                if (btsocket != null){
+                                    if (Util.getInstance().getCurrentActivity().getLocalClassName().equals("activities.ShopCartActivity")){
+//                                        Util.shopCartActivity.tvBluetooth.setText(R.string.icon_bluetooth_connected);
+//                                        Util.shopCartActivity.tvBluetooth.setTextColor(getResources().getColor(R.color.colorBlue));
+                                    }
+                                    CustomSQL.setString(Constants.BLUETOOTH_DEVICE, btsocket.getRemoteDevice().getAddress());
+                                    outputStream = btsocket.getOutputStream();
+                                    mBluetoothAdapter.cancelDiscovery();
+
+
+                                    mListener.onSuccess(device.getName());
+                                }else {
+                                    mListener.onError();
+                                }
+
+
+                            } catch (IOException e) {
+                                mListener.onError();
+//                                e.printStackTrace();
+                            }
+
+
+                        }
+                    });
+                }
+            }
+        });connectThread.start();
+    }
+
+    protected void addBluetoothItem2List(BluetoothDevice device){
+        Boolean exist = false;
+        for (int i=0; i<listDevice.size(); i++){
+            if (listDevice.get(i).getAddress().equals(device.getAddress()) ){
+                exist = true;
+                break;
+            }
+        }
+        if (!exist){
+            listDevice.add(device);
+
+            if (bluFragment != null){
+                bluFragment.updateList();
+            }
+
+        }
+    }
+
 }

@@ -367,9 +367,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
                     @Override
                     public void Method3(Boolean three) {
-                        if (User.getRole().equals(Constants.ROLE_ADMIN)){
-                            Transaction.gotoProductActivity();
-                        }
+                        Transaction.gotoProductActivity();
+
+//                        if (User.getRole().equals(Constants.ROLE_ADMIN)){
+//
+//                        }
 
                     }
 

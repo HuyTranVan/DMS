@@ -1,37 +1,23 @@
 package wolve.dms.activities;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.InputType;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 
-import net.cachapa.expandablelayout.ExpandableLayout;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CButtonVertical;
 import wolve.dms.customviews.CInputForm;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
@@ -167,7 +153,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
             @Override
             public void onRespone(Boolean re) {
                 if (re){
-                    Transaction.openGoogleMap(mActivity.currentCustomer.getDouble("lat"), mActivity.currentCustomer.getDouble("lng"));
+                    Transaction.openGoogleMapRoute(mActivity.currentCustomer.getDouble("lat"), mActivity.currentCustomer.getDouble("lng"));
 
                 }
 

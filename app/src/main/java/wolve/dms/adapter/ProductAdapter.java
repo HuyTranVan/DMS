@@ -27,6 +27,8 @@ import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
+import wolve.dms.models.User;
+import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
 
@@ -75,10 +77,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
 
     @Override
     public void onBindViewHolder(final ProductAdapterViewHolder holder, final int position) {
-        try {
+//        try {
             holder.tvName.setText(mData.get(position).getString("name"));
             holder.tvPrice.setText(Util.FormatMoney(mData.get(position).getDouble("unitPrice")));
-            holder.tvGroup.setText(new JSONObject(mData.get(position).getString("productGroup")).getString("name"));
+//            holder.tvGroup.setText(new JSONObject(mData.get(position).getString("productGroup")).getString("name"));
+            holder.tvGroup.setText(Util.FormatMoney(mData.get(position).getDouble("purchasePrice")));
             holder.tvGift.setVisibility(mData.get(position).getBoolean("promotion")?View.VISIBLE : View.GONE);
             if (!Util.checkImageNull(mData.get(position).getString("image"))){
                 Glide.with(mContext).load(mData.get(position).getString("image")).centerCrop().into(holder.imageProduct);
@@ -89,43 +92,46 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
             }
 
 
-        } catch (JSONException e) {
-            e.printStackTrace();
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+
+
+        if (User.getRole().equals(Constants.ROLE_ADMIN)){
+            holder.rlParent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mListener.onRespone(mData.get(position).BaseModelstoString() , position);
+
+                }
+            });
+
+            holder.rlParent.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    CustomCenterDialog.alertWithCancelButton(null, "Bạn muốn xóa sản phẩm " + mData.get(position).getString("name"), "ĐỒNG Ý","HỦY", new CallbackBoolean() {
+                        @Override
+                        public void onRespone(Boolean result) {
+                            String param = String.valueOf(mData.get(position).getInt("id"));
+                            ProductConnect.DeleteProduct(param, new CallbackJSONObject() {
+                                @Override
+                                public void onResponse(JSONObject result) {
+                                    mDeleteListener.onDelete(mData.get(position).BaseModelstoString(), position);
+                                }
+
+                                @Override
+                                public void onError(String error) {
+
+                                }
+                            }, true);
+                        }
+                    });
+
+                    return true;
+                }
+            });
         }
 
-
-        holder.rlParent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.onRespone(mData.get(position).BaseModelstoString() , position);
-
-            }
-        });
-
-        holder.rlParent.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                CustomCenterDialog.alertWithCancelButton(null, "Bạn muốn xóa sản phẩm " + mData.get(position).getString("name"), "ĐỒNG Ý","HỦY", new CallbackBoolean() {
-                    @Override
-                    public void onRespone(Boolean result) {
-                        String param = String.valueOf(mData.get(position).getInt("id"));
-                        ProductConnect.DeleteProduct(param, new CallbackJSONObject() {
-                            @Override
-                            public void onResponse(JSONObject result) {
-                                mDeleteListener.onDelete(mData.get(position).BaseModelstoString(), position);
-                            }
-
-                            @Override
-                            public void onError(String error) {
-
-                            }
-                        }, true);
-                    }
-                });
-
-                return true;
-            }
-        });
 
     }
 

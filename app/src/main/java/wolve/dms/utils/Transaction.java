@@ -145,11 +145,11 @@ public class Transaction {
 
     }
 
-    public static void gotoPrintBillActivity(String customer, String bill,String debt, Boolean rePrint) {
+    public static void gotoPrintBillActivity( String bill,String debt, Boolean rePrint) {
         Activity context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(context, PrintBillActivity.class);
         intent.putExtra(Constants.RE_PRINT, rePrint);
-        intent.putExtra(Constants.CUSTOMER, customer);
+        //intent.putExtra(Constants.CUSTOMER, customer);
         intent.putExtra(Constants.BILLS, bill);
         intent.putExtra(Constants.ALL_DEBT, debt);
         context.startActivityForResult(intent, Constants.RESULT_PRINTBILL_ACTIVITY);
@@ -219,7 +219,7 @@ public class Transaction {
 
     }
 
-    public static void openGoogleMap( double latitude, double longitude){
+    public static void openGoogleMapRoute(double latitude, double longitude){
 //        String uriBegin = "geo:" + latitude + "," + longitude;
 //        String query = latitude + "," + longitude + "(" + label + ")";
 //        String encodedQuery = Uri.encode(query);
@@ -241,6 +241,7 @@ public class Transaction {
         }
 
     }
+
 
 
 }

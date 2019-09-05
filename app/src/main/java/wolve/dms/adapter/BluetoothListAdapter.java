@@ -45,6 +45,10 @@ public class BluetoothListAdapter extends RecyclerView.Adapter<BluetoothListAdap
         notifyDataSetChanged();
     }
 
+    public void reloadList(List<BluetoothDevice> list){
+        mData = list;
+        notifyDataSetChanged();
+    }
 
     @Override
     public void onBindViewHolder(final BluetoothListViewHolder holder, final int position) {

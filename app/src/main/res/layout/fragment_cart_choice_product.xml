@@ -87,18 +87,18 @@
 
     <Button
         android:id="@+id/cart_choice_submit"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_30sdp"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/_25sdp"
+        android:minWidth="@dimen/_150sdp"
         android:background="@drawable/btn_confirm_blue"
-        android:layout_marginLeft="@dimen/_50sdp"
-        android:layout_marginRight="@dimen/_50sdp"
         android:layout_marginBottom="@dimen/_10sdp"
+        android:layout_centerHorizontal="true"
         android:text="CẬP NHẬT"
         android:textAllCaps="true"
         android:textColor="@color/white"
         android:textSize="@dimen/_14sdp"
         android:layout_alignParentBottom="true"
-        android:visibility="gone"/>
+        android:visibility="visible"/>
 
 
 
