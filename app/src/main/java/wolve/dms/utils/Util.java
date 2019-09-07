@@ -1259,6 +1259,47 @@ public class Util {
 
     }
 
+    public static void textPhoneEvent(final EditText edText, final CallbackString mlistener) {
+        edText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                edText.removeTextChangedListener(this);
+                mlistener.Result(edText.getText().toString().replace(".", ""));
+                try {
+                    edText.setText(Util.FormatPhone(edText.getText().toString().replace(".", "")));
+                    edText.setSelection(edText.getText().toString().length());
+
+                    //listener.Result(edInput.getText().toString().replace(".", ""));
+                    edText.addTextChangedListener(this);
+
+
+
+
+
+                } catch (Exception ex) {
+//                    ex.printStackTrace();
+                    edText.addTextChangedListener(this);
+                }
+
+            }
+        });
+    }
+
+    public static String getPhoneValue(EditText edText){
+        return edText.getText().toString().replace(".", "");
+    }
+
 
     public static void textEvent(final EditText edText, final CallbackString mlistener) {
         edText.addTextChangedListener(new TextWatcher() {

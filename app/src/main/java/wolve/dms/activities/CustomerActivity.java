@@ -271,14 +271,11 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         listDebtBill = DataUtil.getAllBillHaveDebt(listBills);
 
         if (listBills.size() >0){
-            scrollOverView.setVisibility(View.VISIBLE);
             showMoneyOverview(listBills);
 
             if (!currentDebt.equals(currentCustomer.getDouble("currentDebt")) ){
                 submitCustomer();
             }
-        }else {
-            scrollOverView.setVisibility(View.GONE);
         }
 
         billsFragment.updateList();
@@ -530,7 +527,10 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 CustomerConnect.DeleteCustomer(currentCustomer.getString("id"), new CallbackJSONObject() {
                     @Override
                     public void onResponse(JSONObject result) {
-                        returnPreviousScreen(String.format("delete-%s",currentCustomer.getString("id")));
+                        currentCustomer.put("deleted", true);
+                        CustomSQL.setString(Constants.CUSTOMER, currentCustomer.BaseModelstoString());
+
+                        returnPreviousScreen(currentCustomer.BaseModelstoString());
                     }
 
                     @Override
@@ -602,20 +602,20 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     @Override
     public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
         switch (checkedId){
-            case R.id.customer_radio_status_interested:
-                currentStatus = Status.getStatusList().get(0);
-
-                break;
-
-            case R.id.customer_radio_status_nointerested:
-                currentStatus = Status.getStatusList().get(1);
-
-                break;
-
-            case R.id.customer_radio_status_ordered:
-                currentStatus = Status.getStatusList().get(2);
-
-                break;
+//            case R.id.customer_radio_status_interested:
+//                currentStatus = Status.getStatusList().get(0);
+//
+//                break;
+//
+//            case R.id.customer_radio_status_nointerested:
+//                currentStatus = Status.getStatusList().get(1);
+//
+//                break;
+//
+//            case R.id.customer_radio_status_ordered:
+//                currentStatus = Status.getStatusList().get(2);
+//
+//                break;
 
         }
     }

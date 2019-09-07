@@ -32,7 +32,6 @@
         android:textColorHint="@color/black_text_color_hint"
         android:gravity="center_vertical"
         android:layout_below="@+id/button_vertical_icon"
-        android:textAllCaps="true"
         android:layout_marginTop="@dimen/_5sdp"/>
 
 </RelativeLayout>

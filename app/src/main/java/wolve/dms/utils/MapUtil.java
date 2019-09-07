@@ -183,7 +183,6 @@ public class MapUtil{
             }
 
 
-
         } catch (JSONException e) {
 //            e.printStackTrace();
             return objectResult;
@@ -493,6 +492,7 @@ public class MapUtil{
                     JSONObject object = new JSONObject(markers.get(i).getTag().toString());
                     if (object.getString("id").equals(id)){
                         markers.get(i).remove();
+                        CustomSQL.removeKey(Constants.CUSTOMER);
                         break;
                     }
                 }

@@ -21,75 +21,12 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <RadioGroup
-                android:id="@+id/customer_radiogroup_status"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_30sdp"
-                android:layout_below="@+id/add_customer_map_parent"
-                android:background="@drawable/pink_out_line"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:weightSum="9"
-                android:layout_marginLeft="@dimen/_20sdp"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:layout_marginRight="@dimen/_20sdp"
-                android:checkedButton="@+id/customer_radio_status_interested"
-                android:visibility="gone">
-
-                <RadioButton
-                    android:id="@+id/customer_radio_status_interested"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="3"
-                    android:background="@drawable/toggle_widget_background_left"
-                    android:text="Quan tâm"
-                    android:textSize="@dimen/_12sdp"
-                    android:textColor="@drawable/text_white_selected"
-                    android:button="@null"
-                    android:layout_marginLeft="1dp"
-                    android:layout_marginTop="1dp"
-                    android:layout_marginBottom="1dp"
-                    android:gravity="center"/>
-
-                <RadioButton
-                    android:id="@+id/customer_radio_status_nointerested"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/toggle_widget_background_center"
-                    android:layout_weight="3"
-                    android:text="0 quan tâm"
-                    android:textSize="@dimen/_12sdp"
-                    android:textColor="@drawable/text_white_selected"
-                    android:button="@null"
-                    android:layout_marginTop="1dp"
-                    android:layout_marginBottom="1dp"
-                    android:layout_marginLeft="0.2dp"
-                    android:layout_marginRight="0.2dp"
-                    android:gravity="center"/>
-
-                <RadioButton
-                    android:id="@+id/customer_radio_status_ordered"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/toggle_widget_background_right"
-                    android:layout_weight="3"
-                    android:text="Đã Order"
-                    android:textSize="@dimen/_12sdp"
-                    android:textColor="@drawable/text_white_selected"
-                    android:button="@null"
-                    android:layout_marginBottom="1dp"
-                    android:layout_marginTop="1dp"
-                    android:layout_marginRight="1dp"
-                    android:gravity="center"/>
-
-            </RadioGroup>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:background="@color/colorWhite"
-                android:clickable="true">
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:orientation="vertical"-->
+<!--                android:background="@color/colorWhite"-->
+<!--                android:clickable="true">-->
 
 
                 <LinearLayout
@@ -117,8 +54,10 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 app:iconText="@string/icon_phone"
-                                app:text="gọi điện"
-                                app:textColor="@color/colorBlueDark"
+                                app:text="Gọi điện"
+                                app:textColor="@color/black_text_color_hint"
+                                app:iconColor="@color/colorWhite"
+                                app:backgroundIcon="@drawable/btn_round_grey"
                                 android:layout_marginRight="@dimen/_20sdp"/>
 
                             <wolve.dms.customviews.CButtonVertical
@@ -127,10 +66,10 @@
                                 android:layout_height="wrap_content"
                                 app:iconText="@string/icon_direction"
                                 android:layout_marginRight="@dimen/_20sdp"
-                                app:text="chỉ đường"
-                                app:iconColor="@color/colorBlue"
-                                app:textColor="@color/colorBlueDark"
-                                app:backgroundIcon="@drawable/btn_round_border_blue"/>
+                                app:text="Chỉ đường"
+                                app:iconColor="@color/black_text_color_hint"
+                                app:textColor="@color/black_text_color_hint"
+                                app:backgroundIcon="@drawable/btn_round_border_grey"/>
 
                             <wolve.dms.customviews.CButtonVertical
                                 android:id="@+id/customer_info_print"
@@ -138,36 +77,135 @@
                                 android:layout_height="wrap_content"
                                 app:iconText="@string/icon_print"
                                 android:layout_marginRight="@dimen/_20sdp"
-                                app:text="in hđ nợ"
-                                app:iconColor="@color/colorBlue"
-                                app:textColor="@color/colorBlueDark"
-                                app:backgroundIcon="@drawable/btn_round_border_blue"/>
+                                app:text="In hđ nợ"
+                                app:iconColor="@color/black_text_color_hint"
+                                app:textColor="@color/black_text_color_hint"
+                                app:backgroundIcon="@drawable/btn_round_border_grey"/>
 
                         </LinearLayout>
 
                     </HorizontalScrollView>
 
+                    <View
+                        android:id="@+id/input_data_underline"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dip"
+                        android:background="@color/colorGrey"/>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minHeight="@dimen/_35sdp"
+                        android:orientation="horizontal"
+                        >
+
+                        <com.suke.widget.SwitchButton
+                            android:id="@+id/customer_info_switch"
+                            android:layout_width="@dimen/_50sdp"
+                            android:layout_height="@dimen/_25sdp"
+                            android:layout_gravity="center_vertical"
+                            app:sb_checked_color="@color/colorBlue"
+                            app:sb_uncheckcircle_color="@color/black_text_color"
+                            app:sb_checked="false"
+                            app:sb_show_indicator="false"
+                            app:sb_background="@color/black_text_color_hint"
+                            />
+
+                        <TextView
+                            android:id="@+id/customer_info_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Khách hàng có thiện chí"
+                            android:textSize="@dimen/_12sdp"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_gravity="center_vertical"
+                            android:textStyle="bold"/>
+
+
+                    </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
+                        android:orientation="vertical"
                         android:background="@drawable/bg_grey_corner"
-                        android:layout_marginTop="@dimen/_5sdp"
                         android:layout_marginBottom="@dimen/_5sdp"
                         android:padding="@dimen/_10sdp">
 
                         <RadioGroup
                             android:id="@+id/customer_info_shoptype"
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.3"
-                            android:layout_marginRight="@dimen/_10sdp"/>
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="@dimen/_5sdp">
+
+
+                            <RadioButton
+                                android:id="@+id/customer_info_repair"
+                                android:layout_width="wrap_content"
+                                android:layout_height="@dimen/_25sdp"
+                                android:minWidth="@dimen/_50sdp"
+                                android:button="@null"
+                                android:background="@drawable/btn_round_grey_selected_blue"
+                                android:checked="false"
+                                android:textColor="@color/colorWhite"
+                                android:text="SỬA XE"
+                                android:textSize="@dimen/_10sdp"
+                                android:paddingLeft="@dimen/_10sdp"
+                                android:paddingRight="@dimen/_10sdp"
+                                android:layout_marginRight="@dimen/_10sdp" />
+
+                            <RadioButton
+                                android:id="@+id/customer_info_wash"
+                                android:layout_width="wrap_content"
+                                android:layout_height="@dimen/_25sdp"
+                                android:minWidth="@dimen/_50sdp"
+                                android:button="@null"
+                                android:background="@drawable/btn_round_grey_selected_blue"
+                                android:checked="false"
+                                android:textColor="@color/colorWhite"
+                                android:text="RỬA XE"
+                                android:textSize="@dimen/_10sdp"
+                                android:paddingLeft="@dimen/_10sdp"
+                                android:paddingRight="@dimen/_10sdp"
+                                android:layout_marginRight="@dimen/_10sdp" />
+
+                            <RadioButton
+                                android:id="@+id/customer_info_access"
+                                android:layout_width="wrap_content"
+                                android:layout_height="@dimen/_25sdp"
+                                android:minWidth="@dimen/_50sdp"
+                                android:button="@null"
+                                android:background="@drawable/btn_round_grey_selected_blue"
+                                android:checked="false"
+                                android:textColor="@color/colorWhite"
+                                android:text="PHỤ TÙNG"
+                                android:textSize="@dimen/_10sdp"
+                                android:paddingLeft="@dimen/_10sdp"
+                                android:paddingRight="@dimen/_10sdp"
+                                android:layout_marginRight="@dimen/_10sdp" />
+
+                            <RadioButton
+                                android:id="@+id/customer_info_ser"
+                                android:layout_width="wrap_content"
+                                android:layout_height="@dimen/_25sdp"
+                                android:minWidth="@dimen/_50sdp"
+                                android:button="@null"
+                                android:background="@drawable/btn_round_grey_selected_blue"
+                                android:checked="false"
+                                android:textColor="@color/colorWhite"
+                                android:text="BẢO TRÌ"
+                                android:textSize="@dimen/_10sdp"
+                                android:paddingLeft="@dimen/_10sdp"
+                                android:paddingRight="@dimen/_10sdp" />
+
+                        </RadioGroup>
+
 
                         <EditText
                             android:id="@+id/customer_info_shopname_name"
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.7"
                             android:minHeight="@dimen/_30sdp"
                             android:background="@drawable/bg_white_corner_stroke_grey"
                             android:hint="Tên cửa hàng"
@@ -175,6 +213,12 @@
                             android:inputType="textCapWords"
                             android:layout_gravity="center_vertical"
                             android:paddingLeft="@dimen/_10sdp"/>
+
+                        </LinearLayout>
+
+
+
+
 
                     </LinearLayout>
 
@@ -185,6 +229,7 @@
                         android:layout_weight="0.5"
                         android:inputType="textCapWords"
                         app:textHint="Tên chủ tiệm"
+                        app:iconColor="@color/black_text_color_hint"
                         app:iconText="@string/icon_username"/>
 
                     <wolve.dms.customviews.CInputForm
@@ -229,9 +274,9 @@
 
                 </LinearLayout>
 
-            </LinearLayout>
+<!--            </LinearLayout>-->
 
-        </LinearLayout>
+<!--        </LinearLayout>-->
 
     </ScrollView>
 

@@ -28,21 +28,21 @@
         app:layout_anchor="@id/map_current_location"
         app:layout_anchorGravity="top|end">
 
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/map_new_fast"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/baseline_flash_on_white_18"
-            app:fab_label="Tạo nhanh"
-            style="@style/MenuButtonsStyle"
-            />
+<!--        <com.github.clans.fab.FloatingActionButton-->
+<!--            android:id="@+id/map_new_fast"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:src="@drawable/baseline_flash_on_white_18"-->
+<!--            app:fab_label="Tạo nhanh"-->
+<!--            style="@style/MenuButtonsStyle"-->
+<!--            />-->
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/map_new_addphone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_local_phone_white_18dp"
-            app:fab_label="Tạo bằng số điện thoại"
+            app:fab_label="TẠO BẰNG SỐ ĐIỆN THOẠI"
             style="@style/MenuButtonsStyleBlue"
             />
 
@@ -51,7 +51,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/ic_mode_edit_white_18dp"
-            app:fab_label="Tạo cửa hàng"
+            app:fab_label="TẠO CỬA HÀNG"
             style="@style/MenuButtonsStyleBlue" />
 
     </com.github.clans.fab.FloatingActionMenu>

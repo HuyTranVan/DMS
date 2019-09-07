@@ -1,14 +1,23 @@
 package wolve.dms.activities;
 
+import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
+import android.widget.ToggleButton;
+
+import com.suke.widget.SwitchButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,15 +37,15 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class CustomerInfoFragment extends Fragment implements View.OnClickListener {
+public class CustomerInfoFragment extends Fragment implements View.OnClickListener,  SwitchButton.OnCheckedChangeListener , RadioGroup.OnCheckedChangeListener {
     private View view;
     private CInputForm edAdress, edPhone, edName;
     private EditText edShopName, edNote;
-    private RadioGroup rdType;
     private CButtonVertical mDirection, mPrint, mCall;
+    private TextView tvStatus;
+    private SwitchButton swStatus;
+    private RadioGroup rgType;
 
-
-//    private Customer_PaymentAdapter adapter;
     private CustomerActivity mActivity;
 
     @Nullable
@@ -47,17 +56,24 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 
         initializeView();
 
+        addEvent();
+
         intitialData();
 
-        addEvent();
         return view;
     }
 
     public void intitialData() {
         edAdress.setIconMoreText(mActivity.getResources().getString(R.string.icon_edit_pen));
 
-//        mDirection.setIconBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_border_blue));
-//        mPrint.setIconBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_border_grey));
+        new Handler().postDelayed (new Runnable() {
+            @Override
+            public void run() {
+                swStatus.setChecked(true);
+            }}, 500);
+
+
+
 
 
     }
@@ -78,23 +94,32 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         edPhone.setText(Util.FormatPhone(mActivity.currentCustomer.getString("phone")));
         edName.setText(mActivity.currentCustomer.getString("name"));
         edShopName.setText(mActivity.currentCustomer.getString("signBoard"));
-        //edNote.setText(getCustomerNote());
-
-        createEditShopName(mActivity.currentCustomer.getString("shopType"));
-
         setNoteText(mActivity.currentCustomer.getString("note"));
+
+        if (mActivity.currentCustomer.getString("shopType").equals(Constants.shopType[0])){
+            rgType.check(R.id.customer_info_repair);
+        }else if (mActivity.currentCustomer.getString("shopType").equals(Constants.shopType[1])){
+            rgType.check(R.id.customer_info_wash);
+        }else if (mActivity.currentCustomer.getString("shopType").equals(Constants.shopType[2])){
+            rgType.check(R.id.customer_info_access);
+        }else if (mActivity.currentCustomer.getString("shopType").equals(Constants.shopType[3])){
+            rgType.check(R.id.customer_info_ser);
+        }
+
+
 
 //todo addevent after setdata
         phoneEvent();
         nameEvent();
         shopNameEvent();
         noteEvent();
+        rgType.setOnCheckedChangeListener(this);
     }
 
 
 
     private void addEvent() {
-
+        swStatus.setOnCheckedChangeListener(this);
         mDirection.setOnClickListener(this);
         mCall.setOnClickListener(this);
         mPrint.setOnClickListener(this);
@@ -110,19 +135,19 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 
     }
 
-
-
     private void initializeView() {
         mActivity = (CustomerActivity) getActivity();
         edAdress = (CInputForm) view.findViewById(R.id.customer_info_adress);
         edPhone = (CInputForm) view.findViewById(R.id.customer_info_phone);
         edName = (CInputForm) view.findViewById(R.id.customer_info_name);
         edShopName = (EditText) view.findViewById(R.id.customer_info_shopname_name);
-        rdType = view.findViewById(R.id.customer_info_shoptype);
         mDirection = view.findViewById(R.id.customer_info_direction);
         mPrint = view.findViewById(R.id.customer_info_print);
         mCall = view.findViewById(R.id.customer_info_call);
         edNote = view.findViewById(R.id.add_customer_note);
+        swStatus = view.findViewById(R.id.customer_info_switch);
+        tvStatus = view.findViewById(R.id.customer_info_status);
+        rgType = view.findViewById(R.id.customer_info_shoptype);
 
     }
 
@@ -161,44 +186,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         });
     }
 
-    private void createEditShopName(String shoptype) {
-        rdType.removeAllViews();
-        rdType.clearCheck();
 
-        rdType.setOrientation(RadioGroup.VERTICAL);//or RadioGroup.VERTICAL
-        for(int i=0; i< Constants.shopName.length; i++){
-            RadioButton radioButton  = new RadioButton(mActivity);
-            radioButton.setText(Constants.shopName[i]);
-
-
-            radioButton.setTag(Constants.shopType[i]);
-            rdType.addView(radioButton);
-
-            if (shoptype.equals(Constants.shopType[i])){
-                rdType.check(radioButton.getId());
-
-            }
-        }
-        rdType.setOnCheckedChangeListener(null);
-
-        rdType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                RadioButton radioButton = (RadioButton) view.findViewById(checkedId);
-                    if (radioButton != null){
-                        mActivity.currentCustomer.put("shopType", Constants.getShopType(radioButton.getText().toString()));
-                        updateShopName();
-
-                        mActivity.saveCustomerToLocal(mActivity.currentCustomer);
-
-                    }
-
-            }
-        });
-
-
-
-    }
     private void shopNameEvent(){
         Util.textEvent(edShopName, new CallbackString() {
             @Override
@@ -294,4 +282,71 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
     }
 
 
+    @Override
+    public void onCheckedChanged(SwitchButton view, boolean isChecked) {
+        if (isChecked){
+            changeShopTypeBackground(true);
+            mCall.setIconBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_blue));
+            mCall.setIconColor(mActivity.getResources().getColor(R.color.colorWhite));
+            mCall.setTextColor(mActivity.getResources().getColor(R.color.colorBlueTransparent));
+            mDirection.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
+            mPrint.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
+            edAdress.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
+            edName.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
+            edPhone.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
+            tvStatus.setTextColor(mActivity.getResources().getColor(R.color.colorBlue));
+
+        }else {
+            changeShopTypeBackground(false);
+            mCall.setIconBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_grey));
+            mCall.setIconColor(mActivity.getResources().getColor(R.color.colorWhite));
+            mCall.setTextColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
+            mDirection.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
+            mPrint.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
+            edAdress.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
+            edName.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
+            edPhone.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
+            tvStatus.setTextColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
+
+
+
+        }
+    }
+
+    private void changeShopTypeBackground(boolean isEnable){
+        for (int i = 0; i < rgType.getChildCount(); ++i) {
+            RadioButton radioButton = (RadioButton) rgType.getChildAt(i);
+            radioButton.setBackgroundResource(isEnable? R.drawable.btn_round_grey_selected_blue : R.drawable.btn_round_white_selected_grey);
+            radioButton.setTextColor(isEnable? getResources().getColor(R.color.colorWhite) : getResources().getColor(R.color.black_text_color));
+        }
+
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        switch (checkedId){
+            case R.id.customer_info_repair:
+                mActivity.currentCustomer.put("shopType", Constants.shopType[0]);
+
+                break;
+
+            case R.id.customer_info_wash:
+                mActivity.currentCustomer.put("shopType", Constants.shopType[1]);
+
+                break;
+
+            case R.id.customer_info_access:
+                mActivity.currentCustomer.put("shopType", Constants.shopType[2]);
+
+                break;
+
+            case R.id.customer_info_ser:
+
+                mActivity.currentCustomer.put("shopType", Constants.shopType[3]);
+                break;
+        }
+
+        updateShopName();
+        mActivity.saveCustomerToLocal(mActivity.currentCustomer);
+    }
 }

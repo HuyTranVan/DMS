@@ -80,6 +80,7 @@
     <string name="icon_direction">&#xf124;</string>
     <string name="icon_car">&#xf1b9;</string>
     <string name="icon_next">&#xf105;</string>
+    <string name="icon_next_circle">&#xf0a9;</string>
     <string name="icon_bomb">&#xf1e2;</string>
     <string name="icon_users">&#xf0c0;</string>
     <string name="icon_share">&#xf1e0;</string>
