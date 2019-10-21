@@ -114,8 +114,7 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
     }
 
     private void finish(){
-        mActivity.reloadCustomer();
-        //mActivity.btnShopCart.setVisibility(View.VISIBLE);
+        mActivity.reloadCustomer(mActivity.currentCustomer.getString("id"), 3);
         mActivity.getSupportFragmentManager().popBackStack();
 
 
@@ -319,10 +318,10 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
                         @Override
                         public void onRespone(Boolean result) {
                             if (result){
-
                                 postPayment(mActivity.currentCustomer.getInt("id"),
                                         currentBill.getInt("id"),
                                         mActivity.currentDebt - sumreturn ,
+                                        currentBill.getDouble("total"),
                                         new CallbackBoolean() {
                                             @Override
                                             public void onRespone(Boolean result) {
@@ -341,6 +340,7 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
                     postPayment(mActivity.currentCustomer.getInt("id"),
                             currentBill.getInt("id"),
                             mActivity.currentDebt - sumreturn ,
+                            currentBill.getDouble("total"),
                             new CallbackBoolean() {
                                 @Override
                                 public void onRespone(Boolean result) {
@@ -396,7 +396,6 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
             public void onResponse(List result) {
                 listener.onRespone(true);
 
-
             }
 
             @Override
@@ -405,7 +404,6 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
                 listener.onRespone(false);
             }
         }, loading);
-
 
     }
 
@@ -455,8 +453,8 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
     }
 
 
-    private void postPayment(int customerId, int billid, double paid, CallbackBoolean listener, boolean stoploadding){
-        CustomerConnect.PostPay(DataUtil.createPostPaymentParam(customerId, paid, billid), new CallbackCustom() {
+    private void postPayment(int customerId, int billid, double paid,double billTotal, CallbackBoolean listener, boolean stoploadding){
+        CustomerConnect.PostPay(DataUtil.createPostPaymentParam(customerId, paid, billid, billTotal), new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
                 listener.onRespone(true);

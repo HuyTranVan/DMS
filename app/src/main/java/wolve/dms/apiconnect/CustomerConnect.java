@@ -221,7 +221,6 @@ public class CustomerConnect {
             Util.getInstance().showLoading();
         }
 
-
         String url = Api_link.CUSTOMER_GETDETAIL + params;
 
         new CustomGetMethod(url, new CallbackCustom() {
@@ -284,8 +283,6 @@ public class CustomerConnect {
 
     public static void PostBill(String params, final CallbackCustom listener, final Boolean stopLoading) {
         Util.getInstance().showLoading();
-
-        //String url = Api_link.BILL_NEW;
 
         new CustomPostMethod(DataUtil.postBillParam(params), new CallbackCustom() {
             @Override
@@ -385,32 +382,34 @@ public class CustomerConnect {
         }).execute();
     }
 
-    public static void DeleteBill(String params,final CallbackJSONObject listener, final Boolean stopLoading){
+    public static void DeleteBill(String params,final CallbackCustom listener, final Boolean stopLoading){
         Util.getInstance().showLoading();
 
         String url = Api_link.BILL_DELETE + params;
 
         new CustomDeleteMethod(url, new Callback() {
+
             @Override
             public void onResponse(JSONObject result) {
                 Util.getInstance().stopLoading(stopLoading);
                 try {
                     if (result.getInt("status") == 200) {
-                        listener.onResponse(null);
+                        listener.onResponse(new BaseModel(result));
 
                     } else {
                         listener.onError("Unknow error");
                     }
                 } catch (JSONException e) {
                     listener.onError(e.toString());
+                    Util.getInstance().stopLoading(true);
                 }
-            }
 
+            }
 
             @Override
             public void onError(String error) {
                 listener.onError(error);
-                Util.getInstance().stopLoading(stopLoading);
+                Util.getInstance().stopLoading(true);
             }
         }).execute();
     }
@@ -861,7 +860,7 @@ public class CustomerConnect {
         }
     }
 
-    public static String createParamCustomer(BaseModel customer, double currentdebt){
+    public static String createParamCustomer(BaseModel customer){
         int status =0;
         if (customer.hasKey("status.id")){
             status = customer.getInt("status.id");
@@ -869,7 +868,7 @@ public class CustomerConnect {
             status = new BaseModel(customer.getJsonObject("status")).getInt("id");
         }
 
-        customer.put("currentDebt", currentdebt);
+        //customer.put("currentDebt", currentdebt);
 
         String param = String.format(Api_link.CUSTOMER_CREATE_PARAM, customer.getInt("id") == 0? "" : String.format("id=%s&",customer.getString("id") ),
                 Util.encodeString(customer.getString("name")),//name

@@ -1,33 +1,33 @@
 package wolve.dms.activities;
 
-import android.content.res.ColorStateList;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
-import com.suke.widget.SwitchButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 import wolve.dms.R;
+import wolve.dms.apiconnect.Api_link;
+import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CButtonVertical;
 import wolve.dms.customviews.CInputForm;
+import wolve.dms.libraries.CustomSwitchButton;
 import wolve.dms.models.BaseModel;
+import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Transaction;
@@ -37,16 +37,17 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class CustomerInfoFragment extends Fragment implements View.OnClickListener,  SwitchButton.OnCheckedChangeListener , RadioGroup.OnCheckedChangeListener {
-    private View view;
+public class CustomerInfoFragment extends Fragment implements View.OnClickListener,  RadioGroup.OnCheckedChangeListener {
+    private View view, swCover;
     private CInputForm edAdress, edPhone, edName;
     private EditText edShopName, edNote;
     private CButtonVertical mDirection, mPrint, mCall;
-    private TextView tvStatus;
-    private SwitchButton swStatus;
+    private TextView tvStatus, tvLastStatus, tvType;
+    private CustomSwitchButton swStatus;
     private RadioGroup rgType;
 
     private CustomerActivity mActivity;
+
 
     @Nullable
     @Override
@@ -58,81 +59,8 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 
         addEvent();
 
-        intitialData();
 
         return view;
-    }
-
-    public void intitialData() {
-        edAdress.setIconMoreText(mActivity.getResources().getString(R.string.icon_edit_pen));
-
-        new Handler().postDelayed (new Runnable() {
-            @Override
-            public void run() {
-                swStatus.setChecked(true);
-            }}, 500);
-
-
-
-
-
-    }
-
-    protected void reshowAddress(BaseModel address){
-        String add= String.format("%s%s, %s, %s",
-                Util.isEmpty(address.getString("address")) ? "" : address.getString("address") + " ",
-                Util.isEmpty(address.getString("street")) ? "" : address.getString("street"),
-                address.getString("district"),
-                address.getString("province"));
-        edAdress.setText(add);
-        edAdress.setFocusable(false);
-    }
-
-    public void reloadInfo(){
-        reshowAddress(mActivity.currentCustomer);
-        updateCallButton();
-        edPhone.setText(Util.FormatPhone(mActivity.currentCustomer.getString("phone")));
-        edName.setText(mActivity.currentCustomer.getString("name"));
-        edShopName.setText(mActivity.currentCustomer.getString("signBoard"));
-        setNoteText(mActivity.currentCustomer.getString("note"));
-
-        if (mActivity.currentCustomer.getString("shopType").equals(Constants.shopType[0])){
-            rgType.check(R.id.customer_info_repair);
-        }else if (mActivity.currentCustomer.getString("shopType").equals(Constants.shopType[1])){
-            rgType.check(R.id.customer_info_wash);
-        }else if (mActivity.currentCustomer.getString("shopType").equals(Constants.shopType[2])){
-            rgType.check(R.id.customer_info_access);
-        }else if (mActivity.currentCustomer.getString("shopType").equals(Constants.shopType[3])){
-            rgType.check(R.id.customer_info_ser);
-        }
-
-
-
-//todo addevent after setdata
-        phoneEvent();
-        nameEvent();
-        shopNameEvent();
-        noteEvent();
-        rgType.setOnCheckedChangeListener(this);
-    }
-
-
-
-    private void addEvent() {
-        swStatus.setOnCheckedChangeListener(this);
-        mDirection.setOnClickListener(this);
-        mCall.setOnClickListener(this);
-        mPrint.setOnClickListener(this);
-        edAdress.setOnMoreClickView(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Util.hideKeyboard(v);
-                mActivity.openEditMapFragment();
-
-            }
-        });
-
-
     }
 
     private void initializeView() {
@@ -147,7 +75,153 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         edNote = view.findViewById(R.id.add_customer_note);
         swStatus = view.findViewById(R.id.customer_info_switch);
         tvStatus = view.findViewById(R.id.customer_info_status);
+        tvLastStatus = view.findViewById(R.id.customer_info_last_status);
         rgType = view.findViewById(R.id.customer_info_shoptype);
+        swCover = view.findViewById(R.id.customer_info_switch_cover);
+        tvType = view.findViewById(R.id.customer_info_type);
+
+    }
+
+
+    protected void reshowAddress(BaseModel address){
+        String add= String.format("%s%s, %s, %s",
+                Util.isEmpty(address.getString("address")) ? "" : address.getString("address") + " ",
+                Util.isEmpty(address.getString("street")) ? "" : address.getString("street"),
+                address.getString("district"),
+                address.getString("province"));
+        edAdress.setText(add);
+        edAdress.setFocusable(false);
+    }
+
+    public void reloadInfo(){
+        edAdress.setIconMoreText(mActivity.getResources().getString(R.string.icon_edit_pen));
+
+        reshowAddress(mActivity.currentCustomer);
+
+        edPhone.setText(Util.FormatPhone(mActivity.currentCustomer.getString("phone")));
+        mCall.setVisibility(mActivity.currentCustomer.getString("phone").equals("")?View.GONE: View.VISIBLE);
+
+        edName.setText(mActivity.currentCustomer.getString("name"));
+        edShopName.setText(mActivity.currentCustomer.getString("signBoard"));
+        setNoteText(mActivity.currentCustomer.getString("note"));
+        tvType.setText(Constants.getShopName(mActivity.currentCustomer.getString("shopType")));
+
+        if (mActivity.currentCustomer.getString("shopType").equals(Constants.shopType[0])){
+            rgType.check(R.id.customer_info_repair);
+        }else if (mActivity.currentCustomer.getString("shopType").equals(Constants.shopType[1])){
+            rgType.check(R.id.customer_info_wash);
+        }else if (mActivity.currentCustomer.getString("shopType").equals(Constants.shopType[2])){
+            rgType.check(R.id.customer_info_access);
+        }else if (mActivity.currentCustomer.getString("shopType").equals(Constants.shopType[3])){
+            rgType.check(R.id.customer_info_ser);
+        }
+
+        if (mActivity.listCheckins.size() >0){
+            String checkin = String.format("%s %s",Util.DateHourString(mActivity.listCheckins.get(mActivity.listCheckins.size()-1).getLong("createAt")), mActivity.listCheckins.get(mActivity.listCheckins.size()-1).getString("note") );
+            tvLastStatus.setText(checkin);
+        }
+
+        mPrint.setVisibility(mActivity.listDebtBill.size() > 0? View.VISIBLE : View.GONE);
+        updateStatus();
+
+
+//todo addevent after setdata
+        phoneEvent();
+        nameEvent();
+        shopNameEvent();
+        noteEvent();
+        rgType.setOnCheckedChangeListener(this);
+    }
+
+    private void addEvent() {
+        //swStatus.setOnCheckedChangeListener(this);
+        mDirection.setOnClickListener(this);
+        mCall.setOnClickListener(this);
+        mPrint.setOnClickListener(this);
+        swCover.setOnClickListener(this);
+        edAdress.setOnMoreClickView(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.hideKeyboard(v);
+                mActivity.openEditMapFragment();
+
+            }
+        });
+
+
+    }
+
+    private void updateStatus(){
+        if (mActivity.customerStatusID ==2){
+            swStatus.setChecked(false);
+            tvStatus.setText("Khách hàng không quan tâm");
+            tvStatus.setTextColor(mActivity.getResources().getColor(R.color.black_text_color));
+            tvType.setBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_border_grey));
+            tvType.setTextColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
+
+            //changeShopTypeBackground(false);
+            mCall.setIconBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_grey));
+            mCall.setIconColor(mActivity.getResources().getColor(R.color.colorWhite));
+            mCall.setTextColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
+            mDirection.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
+            mPrint.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
+            edAdress.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
+            edName.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
+            edPhone.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
+
+
+            mActivity.btnShopCart.setBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_border_blue));
+            mActivity.btnShopCart.setTextColor(mActivity.getResources().getColor(R.color.colorBlue));
+
+
+        }else {
+            swStatus.setChecked(true);
+            //changeShopTypeBackground(true);
+            mCall.setIconBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_blue));
+            mCall.setIconColor(mActivity.getResources().getColor(R.color.colorWhite));
+            mCall.setTextColor(mActivity.getResources().getColor(R.color.colorBlueTransparent));
+            mDirection.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
+            mPrint.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
+            edAdress.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
+            edName.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
+            edPhone.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
+
+            tvType.setBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_border_grey));
+            tvType.setTextColor(mActivity.getResources().getColor(R.color.colorBlue));
+
+            mActivity.btnShopCart.setBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_blue));
+            mActivity.btnShopCart.setTextColor(mActivity.getResources().getColor(R.color.colorWhite));
+
+            if (mActivity.customerStatusID == 3){
+                swStatus.setCheckedColor(getResources().getColor(R.color.colorBlue));
+                tvStatus.setTextColor(mActivity.getResources().getColor(R.color.colorBlue));
+                if (mActivity.listBills.size() >0){
+                    String text = String.format("Khách đã mua hàng - Cách %d ngày", Util.countDay(mActivity.listBills.get(0).getLong("createAt")));
+                    tvStatus.setText(text);
+
+                }else {
+                    tvStatus.setText("Khách đã mua hàng");
+                }
+
+            }else if (mActivity.customerStatusID ==1){
+                if (mActivity.listCheckins.size() >0){
+                    swStatus.setCheckedColor(getResources().getColor(R.color.orange_dark));
+                    tvStatus.setTextColor(mActivity.getResources().getColor(R.color.orange_dark));
+                    tvStatus.setText("Khách hàng có quan tâm");
+
+                }else {
+                    swStatus.setCheckedColor(getResources().getColor(R.color.colorPink));
+                    tvStatus.setTextColor(mActivity.getResources().getColor(R.color.colorPink));
+                    tvStatus.setText("Khách hàng mới");
+
+                }
+
+            }
+
+
+
+
+        }
 
     }
 
@@ -166,6 +240,26 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
                 break;
 
             case R.id.customer_info_print:
+                mActivity.printDebtBills(true);
+
+                break;
+
+            case R.id.customer_info_switch_cover:
+                if (swStatus.isChecked()){
+                    CustomCenterDialog.showReasonChoice("CHỌN LÝ DO KHÔNG QUAN TÂM",
+                            "Nhập lý do khác ",
+                            new ArrayList<>(), new CallbackString() {
+                                @Override
+                                public void Result(String s) {
+                                    updateRessonNotInterted(s);
+
+                                }
+                            });
+
+                }else {
+                    mActivity.customerStatusID = 1;
+                    updateStatus();
+                }
 
 
                 break;
@@ -186,14 +280,12 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         });
     }
 
-
     private void shopNameEvent(){
         Util.textEvent(edShopName, new CallbackString() {
             @Override
             public void Result(String s) {
-                mActivity.currentCustomer.put("signBoard", s);
+                mActivity.saveCustomerToLocal("signBoard", s);
                 updateShopName();
-                mActivity.saveCustomerToLocal(mActivity.currentCustomer);
 
             }
         });
@@ -203,10 +295,9 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         edPhone.addTextChangePhone(new CallbackString() {
             @Override
             public void Result(String s) {
-                mActivity.currentCustomer.put("phone", s);
-                mActivity.saveCustomerToLocal(mActivity.currentCustomer);
+                mActivity.saveCustomerToLocal("phone", s);
 
-                updateCallButton();
+                mCall.setVisibility(mActivity.currentCustomer.getString("phone").equals("")?View.GONE: View.VISIBLE);
 
             }
         });
@@ -216,8 +307,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         edName.addTextChangeName(new CallbackString() {
             @Override
             public void Result(String s) {
-                mActivity.currentCustomer.put("name", s);
-                mActivity.saveCustomerToLocal(mActivity.currentCustomer);
+                mActivity.saveCustomerToLocal("name", s);
 
             }
         });
@@ -227,8 +317,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         Util.textEvent(edNote, new CallbackString() {
             @Override
             public void Result(String s) {
-                mActivity.currentCustomer.put("note", getCustomerNote());
-                mActivity.saveCustomerToLocal(mActivity.currentCustomer);
+                mActivity.saveCustomerToLocal("note", getCustomerNote(edNote.getText().toString()));
             }
         });
     }
@@ -254,12 +343,8 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 
     }
 
-    private void updateCallButton(){
-        mCall.setVisibility(mActivity.currentCustomer.getString("phone").equals("")?View.GONE: View.VISIBLE);
-    }
-
-    private String getCustomerNote(){
-        String note = "";
+    private String getCustomerNote(String text){
+        String result = "";
         //Double total = Util.getTotal(listBills).getDouble("debt");
         if (mActivity.currentDebt > 0.0){
             try{
@@ -268,85 +353,92 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
                 object.put("note", edNote.getText().toString());
                 object.put("userId", mActivity.listBills.get(mActivity.listBills.size()-1).getJsonObject("user").getInt("id"));
                 object.put("userName", mActivity.listBills.get(mActivity.listBills.size()-1).getJsonObject("user").getString("displayName"));
-                note = object.toString();
+                result = object.toString();
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
         }else {
-            note = edNote.getText().toString();
+            result = text;
         }
 
-        return note;
+        return result;
     }
 
 
-    @Override
-    public void onCheckedChanged(SwitchButton view, boolean isChecked) {
-        if (isChecked){
-            changeShopTypeBackground(true);
-            mCall.setIconBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_blue));
-            mCall.setIconColor(mActivity.getResources().getColor(R.color.colorWhite));
-            mCall.setTextColor(mActivity.getResources().getColor(R.color.colorBlueTransparent));
-            mDirection.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
-            mPrint.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
-            edAdress.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
-            edName.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
-            edPhone.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
-            tvStatus.setTextColor(mActivity.getResources().getColor(R.color.colorBlue));
 
-        }else {
-            changeShopTypeBackground(false);
-            mCall.setIconBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_grey));
-            mCall.setIconColor(mActivity.getResources().getColor(R.color.colorWhite));
-            mCall.setTextColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
-            mDirection.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
-            mPrint.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
-            edAdress.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
-            edName.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
-            edPhone.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
-            tvStatus.setTextColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
-
-
-
-        }
-    }
-
-    private void changeShopTypeBackground(boolean isEnable){
-        for (int i = 0; i < rgType.getChildCount(); ++i) {
-            RadioButton radioButton = (RadioButton) rgType.getChildAt(i);
-            radioButton.setBackgroundResource(isEnable? R.drawable.btn_round_grey_selected_blue : R.drawable.btn_round_white_selected_grey);
-            radioButton.setTextColor(isEnable? getResources().getColor(R.color.colorWhite) : getResources().getColor(R.color.black_text_color));
-        }
-
-    }
+//    private void changeShopTypeBackground(boolean isEnable){
+//        for (int i = 0; i < rgType.getChildCount(); ++i) {
+//            RadioButton radioButton = (RadioButton) rgType.getChildAt(i);
+//            radioButton.setBackgroundResource(isEnable? R.drawable.btn_round_white_selected_grey : R.drawable.btn_round_white_selected_grey);
+//            radioButton.setTextColor(isEnable? getResources().getColor(R.color.black_text_color) : getResources().getColor(R.color.black_text_color));
+//        }
+//
+//    }
 
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
         switch (checkedId){
             case R.id.customer_info_repair:
-                mActivity.currentCustomer.put("shopType", Constants.shopType[0]);
-
+                mActivity.saveCustomerToLocal("shopType", Constants.shopType[0]);
+                tvType.setText(Constants.shopName[0]);
                 break;
 
             case R.id.customer_info_wash:
-                mActivity.currentCustomer.put("shopType", Constants.shopType[1]);
-
+                mActivity.saveCustomerToLocal("shopType", Constants.shopType[1]);
+                tvType.setText(Constants.shopName[1]);
                 break;
 
             case R.id.customer_info_access:
-                mActivity.currentCustomer.put("shopType", Constants.shopType[2]);
-
+                mActivity.saveCustomerToLocal("shopType", Constants.shopType[2]);
+                tvType.setText(Constants.shopName[2]);
                 break;
 
             case R.id.customer_info_ser:
-
-                mActivity.currentCustomer.put("shopType", Constants.shopType[3]);
+                mActivity.saveCustomerToLocal("shopType", Constants.shopType[3]);
+                tvType.setText(Constants.shopName[3]);
                 break;
         }
 
         updateShopName();
-        mActivity.saveCustomerToLocal(mActivity.currentCustomer);
+
     }
+
+    private void updateRessonNotInterted(String content){
+        String note = String.format("CHUYỂN SANG KHÔNG QUAN TÂM VÌ: %s", content);
+        mActivity.customerStatusID = 2;
+
+        CustomerConnect.PostCheckin(createParamCheckin(mActivity.currentCustomer, mActivity.customerStatusID, note), new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                mActivity.saveCustomerToLocal("status.id",2);
+                //mActivity.currentCustomer.put("status.id", mActivity.customerStatusID);
+                //mActivity.submitCustomer();
+                updateStatus();
+
+                Util.showToast("Đã chuyển sang không quan tâm");
+
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        }, true);
+    }
+
+    private String createParamCheckin(BaseModel customer, int statusId, String note){
+        String params = String.format(Api_link.SCHECKIN_CREATE_PARAM, customer.getInt("id"),
+                statusId,
+                Util.encodeString(note),
+                User.getUserId());
+                //Util.encodeString(String.format("[%s] %s", Util.HourStringNatural(countTime), note)),
+
+
+        return params;
+    }
+
+
 }
+

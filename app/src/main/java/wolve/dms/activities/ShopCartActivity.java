@@ -1,11 +1,8 @@
 package wolve.dms.activities;
 
 import android.content.Intent;
-import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -15,6 +12,7 @@ import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionButton;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -27,11 +25,13 @@ import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackChangePrice;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.customviews.CInputForm;
-import wolve.dms.libraries.SwipeToDeleteCallback;
+import wolve.dms.libraries.Security;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
+import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
@@ -43,7 +43,7 @@ import wolve.dms.utils.Util;
 public class ShopCartActivity extends BaseActivity implements  View.OnClickListener,  View.OnLongClickListener {
     private ImageView btnBack;
     private Button btnSubmit;
-    private TextView tvTitle, tvTotal, tvBDF;
+    private TextView tvTitle, tvTotal, tvBDF, tvAddress;
     private CInputForm tvNote;
     private RecyclerView rvProducts;
     private RelativeLayout rlCover;
@@ -53,10 +53,9 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     private CartProductsAdapter adapterProducts;
     private BaseModel currentCustomer;
     protected List<BaseModel> listInitialProduct = new ArrayList<>();
-    private Uri imageChangeUri ;
     protected List<BaseModel> listProducts = new ArrayList<>();
     protected List<BaseModel> listProductGroups = new ArrayList<>();
-    private String customer;
+    protected List<BaseModel> listBillDetail = new ArrayList<>();
     private String debt;
 
 
@@ -77,38 +76,33 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         tvTitle =  findViewById(R.id.cart_title);
         tvTotal =  findViewById(R.id.cart_total);
         tvBDF = findViewById(R.id.cart_bdf);
-//        tvPrinterStatus =  findViewById(R.id.cart_printer_status);
         tvNote =  findViewById(R.id.cart_note);
         lnSubmitGroup = findViewById(R.id.cart_submit_group);
         rvProducts =  findViewById(R.id.cart_rvproduct);
         rlCover =  findViewById(R.id.cart_cover);
         btnAddProduct = findViewById(R.id.add_product);
+        tvAddress = findViewById(R.id.cart_address);
 
     }
 
     @Override
     public void initialData() {
         Util.shopCartActivity = this;
-        customer = getIntent().getExtras().getString(Constants.CUSTOMER);
+        currentCustomer = CustomSQL.getBaseModel(Constants.CUSTOMER);
         debt = getIntent().getExtras().getString(Constants.ALL_DEBT);
+        listBillDetail = DataUtil.array2ListObject(CustomSQL.getString(Constants.BILL_DETAIL));
 
         lnSubmitGroup.setVisibility(View.GONE);
         rlCover.setVisibility(View.VISIBLE);
-        if (customer != null){
-            currentCustomer = new BaseModel(customer);
-            tvTitle.setText(String.format("%s %s",Constants.getShopName(currentCustomer.getString("shopType") ), currentCustomer.getString("signBoard").toUpperCase() ));
+        tvTitle.setText(String.format("%s %s",Constants.getShopName(currentCustomer.getString("shopType") ), currentCustomer.getString("signBoard").toUpperCase() ));
 
-//                JSONArray array = new JSONArray(currentCustomer.getString("bills"));
-//                List<BaseModel> mList = new ArrayList<>();
-//
-//                for (int i=0; i<array.length(); i++){
-//                    mList.add(new BaseModel(array.getJSONObject(i)));
-//                }
-//                listBills = DataUtil.mergeWithReturnBill(mList);
+        btnSubmit.setText(CustomSQL.getLong(Constants.CHECKIN_TIME) != 0 ? "in và thanh toán" : "lưu hóa đơn");
 
-
-        }
-
+        tvAddress.setText(String.format(Constants.addressFormat,
+                currentCustomer.getString("address"),
+                currentCustomer.getString("street"),
+                currentCustomer.getString("district"),
+                currentCustomer.getString("province")));
 
 //        if (!CustomSQL.getString("logo").equals("")){
 //            Glide.with(this).load(CustomSQL.getString("logo")).centerCrop().into(imgLogo);
@@ -126,10 +120,6 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
             changeFragment(new ChoiceProductFragment() , true);
         }
 
-//        if (!Util.getDeviceName().equals(Constants.currentEmulatorDevice)){
-////            registerBluetooth();
-//        }
-
     }
 
     @Override
@@ -137,7 +127,6 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         btnBack.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
         btnSubmit.setOnLongClickListener(this);
-//        tvPrinterStatus.setOnClickListener(this);
         btnAddProduct.setOnClickListener(this);
     }
 
@@ -169,8 +158,12 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 break;
 
             case R.id.cart_submit:
-//                choicePayMethod();
-                Transaction.gotoPrintBillActivity(DataUtil.convertListObject2Array(adapterProducts.getAllData()).toString(), debt, false);
+                if (CustomSQL.getLong(Constants.CHECKIN_TIME) != 0){
+                    Transaction.gotoPrintBillActivity(DataUtil.convertListObject2Array(adapterProducts.getAllData()).toString(), debt, false);
+
+                }else {
+                    postBillAndSave();
+                }
 
                 break;
 
@@ -179,11 +172,6 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 //                gotoImageChooser();
 //                break;
 
-//            case R.id.cart_printer_status:
-//                BluetoothListFragment fragment = new BluetoothListFragment();
-//                showFragmentDialog(fragment );
-//
-//                break;
 
             case R.id.add_product:
                 changeFragment(new ChoiceProductFragment() , true);
@@ -194,20 +182,12 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
     private void loadListProduct(){
         List<BaseModel> all = Product.getProductList();
-//        try {
-            for (int i=0 ; i<all.size(); i++){
-                BaseModel product = all.get(i);
-                product.put("checked", false);
-                //product.put("isvisible", true);
+        for (int i=0 ; i<all.size(); i++){
+            BaseModel product = all.get(i);
+            product.put("checked", false);
+            listProducts.add(product);
 
-//                if (product.getBoolean("isvisible")){
-                    listProducts.add(product);
-//                }
-
-            }
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
+        }
 
         DataUtil.sortProduct(listProducts, false);
     }
@@ -218,7 +198,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     }
 
     private void createRVProduct(final List<BaseModel> list){
-        adapterProducts = new CartProductsAdapter(list, new CallbackChangePrice() {
+        adapterProducts = new CartProductsAdapter(list, listBillDetail, new CallbackChangePrice() {
             @Override
             public void NewPrice(Double price) {
                 tvTotal.setText(Util.FormatMoney(price));
@@ -233,37 +213,29 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
             }
         }) ;
         Util.createLinearRV(rvProducts, adapterProducts);
-        enableSwipeToDeleteAndUndo();
 
     }
 
     protected void updatelistProduct(List<BaseModel> list_product){
         for (int i=0; i<list_product.size(); i++){
-//            try {
-                Product product = new Product(new JSONObject()) ;
-                product.put("id", list_product.get(i).getInt("id"));
-                product.put("name", list_product.get(i).getString("name"));
-                product.put("productGroup", list_product.get(i).getString("productGroup"));
-                product.put("promotion", list_product.get(i).getBoolean("promotion"));
-                product.put("unitPrice", list_product.get(i).getDouble("unitPrice"));
-                product.put("purchasePrice", list_product.get(i).getDouble("purchasePrice"));
-                product.put("volume", list_product.get(i).getInt("volume"));
-                product.put("image", list_product.get(i).getString("image"));
-                product.put("imageUrl", list_product.get(i).getString("imageUrl"));
-                product.put("checked", list_product.get(i).getBoolean("checked"));
-                product.put("isPromotion", false);
-                product.put("quantity", 1);
-                product.put("totalMoney", product.getDouble("unitPrice"));
-                product.put("discount", 0);
-                //product.put("isvisible", false);
+            Product product = new Product(new JSONObject()) ;
+            product.put("id", list_product.get(i).getInt("id"));
+            product.put("name", list_product.get(i).getString("name"));
+            product.put("productGroup", list_product.get(i).getString("productGroup"));
+            product.put("promotion", list_product.get(i).getBoolean("promotion"));
+            product.put("unitPrice", list_product.get(i).getDouble("unitPrice"));
+            product.put("purchasePrice", list_product.get(i).getDouble("purchasePrice"));
+            product.put("volume", list_product.get(i).getInt("volume"));
+            product.put("image", list_product.get(i).getString("image"));
+            product.put("imageUrl", list_product.get(i).getString("imageUrl"));
+            product.put("checked", list_product.get(i).getBoolean("checked"));
+            product.put("isPromotion", false);
+            product.put("quantity", 1);
+            product.put("totalMoney", product.getDouble("unitPrice"));
+            product.put("discount", 0);
 
-                //list_product.get(i).put("isvisible", false);
+            adapterProducts.addItemProduct(product);
 
-                adapterProducts.addItemProduct(0,product);
-
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
         }
         updateBDFValue();
 
@@ -273,7 +245,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     private void updateBDFValue(){
         if (adapterProducts.getAllDataProduct().size() >0 ){
             tvBDF.setVisibility(View.VISIBLE );
-            tvBDF.setText(String.format("BDF:%s ", DataUtil.defineBDFPercent(adapterProducts.getAllDataBase())) +"%");
+            tvBDF.setText(String.format("BDF:%s ", DataUtil.defineBDFPercent(adapterProducts.getAllData())) +"%");
 
         }else {
             tvBDF.setVisibility(View.GONE);
@@ -292,95 +264,57 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
             }
 
         }
-//        else {
-//            if (reqCode == REQUEST_ENABLE_BT && resultCode == RESULT_OK){
-//                try {
-//                    Set<BluetoothDevice> btDeviceList = mBluetoothAdapter.getBondedDevices();
-//                    if (btDeviceList.size() > 0) {
-//                        for (final BluetoothDevice device : btDeviceList) {
-//                            Log.e("printer", device.getAddress() +"\n" + device.getName() + "\n" +device.getBluetoothClass() +"\n" + device.getBondState() +"\n" + device.getType() +"\n" + device.getUuids());
-//
-//                            if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))){
-//                                connectBluetoothDevice(device, new CallbackProcess() {
-//                                    @Override
-//                                    public void onStart() {
-//                                        tvPrinterStatus.setText(Constants.CONNECTING_PRINTER);
-//                                        tvPrinterStatus.setOnClickListener(null);
-//
-//                                    }
-//
-//                                    @Override
-//                                    public void onError() {
-//                                        tvPrinterStatus.setText("Chưa kết nối được máy in");
-//                                        Util.showToast(Constants.CONNECTED_PRINTER_ERROR);
-//                                        tvPrinterStatus.setOnClickListener(ShopCartActivity.this);
-//                                    }
-//
-//                                    @Override
-//                                    public void onSuccess(String name) {
-//                                        tvPrinterStatus.setText(String.format(Constants.CONNECTED_PRINTER, device.getName()));
-//                                        tvPrinterStatus.setOnClickListener(ShopCartActivity.this);
-//                                    }
-//                                });
-//                            }
-//
-//                        }
-//                    }
-//                } catch (Exception ex) {
-//
-//                }
-//                mBluetoothAdapter.startDiscovery();
-//            }
-//
-//
-//        }
-
-//        if (reqCode == REQUEST_CHOOSE_IMAGE) {
-//            if (intent != null) {
-//                Crop.of(Uri.parse(intent.getData().toString()), imageChangeUri).withAspect(35, 15).withMaxSize(350, 150).start(this);
-//
-//            }
-//
-//        }
-//        else if (reqCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
-//            Glide.with(this).load(imageChangeUri).fitCenter().into(imgLogo);
-//
-//        } else if (reqCode == Crop.REQUEST_CROP) {
-//            if (resultCode == RESULT_OK) {
-//                Glide.with(this).load(imageChangeUri).fitCenter().into(imgLogo);
-//                CustomSQL.setString("logo", Util.getRealPathFromURI(imageChangeUri));
-//
-//            } else if (resultCode == Crop.RESULT_ERROR) {
-//                Util.showToast(Crop.getError(intent).getMessage());
-//
-//            }
-//        }
-
 
     }
 
     @Override
     public boolean onLongClick(View v) {
-        Transaction.gotoPrintBillActivity(DataUtil.convertListObject2Array(adapterProducts.getAllData()).toString(), debt, false);
+        if (User.getRole().equals(Constants.ROLE_ADMIN)){
+            Transaction.gotoPrintBillActivity(DataUtil.convertListObject2Array(adapterProducts.getAllData()).toString(), debt, false);
+
+        }
 
         return true;
     }
 
-    private void enableSwipeToDeleteAndUndo() {
-        SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(this) {
+    private void postBillAndSave(){
+        final String params = DataUtil.createPostBillParam(currentCustomer.getInt("id"),
+                adapterProducts.totalPrice(),
+                0.0,
+                adapterProducts.getAllData(),
+                createNoteTemp());
+
+        CustomerConnect.PostBill(params, new CallbackCustom() {
             @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-                final int position = viewHolder.getAdapterPosition();
-//                final Product item = adapterProducts.getAllDataProduct().get(position);
-
-                adapterProducts.removeItem(position);
-
-
+            public void onResponse(BaseModel result) {
+                Transaction.returnCustomerActivity(Constants.SHOP_CART_ACTIVITY,
+                        currentCustomer.getString("id") ,
+                        Constants.RESULT_SHOPCART_ACTIVITY);
             }
-        };
 
-        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToDeleteCallback);
-        itemTouchhelper.attachToRecyclerView(rvProducts );
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+            }
+
+        }, true);
+
+
     }
+
+    private String createNoteTemp(){
+        JSONObject noteObject = new JSONObject();
+        try {
+            noteObject.put(Constants.TEMPBILL, true);
+
+        } catch (JSONException e) {
+            return "";
+        }
+
+        return Security.encrypt(noteObject.toString());
+    }
+
+
+
 
 }

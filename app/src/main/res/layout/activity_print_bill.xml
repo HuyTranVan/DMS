@@ -118,7 +118,13 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Nhân viên"
+                        android:text="Bán hàng"
+                        android:textSize="@dimen/_12sdp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Giao hàng"
                         android:textSize="@dimen/_12sdp"/>
 
                 </LinearLayout>
@@ -164,6 +170,13 @@
 
                     <TextView
                         android:id="@+id/print_bill_employee"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Website "
+                        android:textSize="@dimen/_12sdp"/>
+
+                    <TextView
+                        android:id="@+id/print_bill_deliver"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Website "

@@ -7,11 +7,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -31,6 +31,7 @@ import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomDropdow;
+import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
@@ -42,15 +43,13 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
-    private CallbackBaseModel mListenerBill;
-    private CustomBottomDialog.FourMethodListener mListerner;
+    private CallbackBaseModel mListener;
 
-    public Customer_BillsAdapter(List<BaseModel> data, CallbackBaseModel listener, CustomBottomDialog.FourMethodListener listener4) {
+    public Customer_BillsAdapter(List<BaseModel> data, CallbackBaseModel listener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mData = data;
         this.mContext = Util.getInstance().getCurrentActivity();
-        this.mListenerBill = listener;
-        this.mListerner = listener4;
+        this.mListener = listener;
 
         DataUtil.sortbyStringKey("createAt", mData, true);
 
@@ -71,133 +70,123 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onBindViewHolder(final CustomerBillsAdapterViewHolder holder, final int position) {
-        try {
-            holder.tvDate.setText(Util.DateHourString(mData.get(position).getLong("createAt")));
-            holder.tvTotal.setText(Util.FormatMoney(mData.get(position).getDouble("total")) + " đ");
-            holder.tvDebt.setText(Util.FormatMoney(mData.get(position).getDouble("debt")) + " đ");
-            if ( mData.get(position).getDouble("debt") >0.0 ){
-                holder.tvDebt.setBackground(mContext.getDrawable(R.drawable.btn_round_border_red));
-                holder.tvDebt.setTextColor(mContext.getResources().getColor(R.color.colorRed));
-                holder.tvDebt.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        payBill(position);
-                    }
-                });
-            }else {
-                holder.tvDebt.setBackground(null);
-                holder.tvDebt.setTextColor(mContext.getResources().getColor(R.color.colorBlue));
-                holder.tvDebt.setOnClickListener(null);
+        holder.lnCover.setVisibility(mData.get(position).getBoolean(Constants.TEMPBILL)? View.VISIBLE: View.GONE);
+        holder.btnDelete.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN)||
+                User.getId() == mData.get(position).getBaseModel("user").getInt("id")
+                ? View.VISIBLE:View.GONE);
 
+        holder.btnConfirm.setVisibility(CustomSQL.getLong(Constants.CHECKIN_TIME) != 0 ? View.VISIBLE : View.GONE);
 
-            }
-            holder.btnMenu.setOnClickListener(new View.OnClickListener() {
+        holder.tvDate.setText(Util.DateHourString(mData.get(position).getLong("createAt")));
+        holder.tvTotal.setText(Util.FormatMoney(mData.get(position).getDouble("total")) + " đ");
+        holder.tvDebt.setText(Util.FormatMoney(mData.get(position).getDouble("debt")) + " đ");
+        if ( mData.get(position).getDouble("debt") >0.0 ){
+            holder.tvDebt.setBackground(mContext.getDrawable(R.drawable.btn_round_border_red));
+            holder.tvDebt.setTextColor(mContext.getResources().getColor(R.color.colorRed));
+            holder.tvDebt.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    List<String> list = new ArrayList<>();
-                    list.add("Trả hàng");
-
-                    if (User.getRole().equals(Constants.ROLE_ADMIN)){
-                        list.add("Xóa hóa đơn");
-                    }
-
-                    CustomDropdow.createDropdown(holder.btnMenu,
-                            list,
-                            new CallbackString() {
-                                @Override
-                                public void Result(String s) {
-                                    if (s.equals(list.get(0))){
-                                        mListenerBill.onResponse(mData.get(position));
-
-                                    }else if (s.equals(list.get(1))){
-                                        deleteBill(position);
-
-                                    }
-                                }
-                            });
-
-
+                    payBill(position);
                 }
             });
+        }else {
+            holder.tvDebt.setBackground(null);
+            holder.tvDebt.setTextColor(mContext.getResources().getColor(R.color.colorBlue));
+            holder.tvDebt.setOnClickListener(null);
 
-            if (Util.isEmpty(mData.get(position).getString("note")) ){
-                //holder.tvNote.setVisibility(View.GONE);
-                holder.rvReturn.setVisibility(View.GONE);
+        }
+        holder.btnMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<String> list = new ArrayList<>();
+                list.add("Trả hàng");
 
-            }else {
-                if (mData.get(position).hasKey(Constants.HAVEBILLRETURN)){
-                    holder.rvReturn.setVisibility(View.VISIBLE);
-                    //holder.tvNote.setVisibility(View.GONE);
-
-                    List<BaseModel> listReturn = DataUtil.array2ListBaseModel(mData.get(position).getJSONArray(Constants.HAVEBILLRETURN));
-                    Customer_BillsReturnAdapter adapter = new Customer_BillsReturnAdapter(listReturn);
-                    Util.createLinearRV(holder.rvReturn, adapter);
-                }else {
-                    //holder.tvNote.setVisibility(View.VISIBLE);
-                    holder.rvReturn.setVisibility(View.GONE);
+                if (User.getRole().equals(Constants.ROLE_ADMIN)){
+                    list.add("Xóa hóa đơn");
                 }
 
+                CustomDropdow.createDropdown(holder.btnMenu,
+                        list,
+                        new CallbackString() {
+                            @Override
+                            public void Result(String s) {
+                                if (s.equals(list.get(0))){
+                                    BaseModel respone = new BaseModel();
+                                    respone.put(Constants.TYPE, Constants.BILL_RETURN);
+                                    respone.putBaseModel(Constants.RESULT, mData.get(position));
+                                    mListener.onResponse(respone);
+
+                                }else if (s.equals(list.get(1))){
+                                    deleteBill(position);
+
+                                }
+                            }
+                        });
+
+
             }
+        });
 
-            final List<BaseModel> listBillDetail = new ArrayList<>(DataUtil.array2ListBaseModel(new JSONArray(mData.get(position).getString("billDetails"))));
-            Customer_BillsDetailAdapter adapter = new Customer_BillsDetailAdapter(listBillDetail);
-            Util.createLinearRV(holder.rvBillDetail, adapter);
+        if (Util.isEmpty(mData.get(position).getString("note")) ){
+            holder.rvReturn.setVisibility(View.GONE);
 
-            JSONArray arrayBillPayment = new JSONArray(mData.get(position).getString("payments"));
-            List<BaseModel> listPayment = new ArrayList<>(DataUtil.array2ListBaseModel(arrayBillPayment));
+        }else {
+            if (mData.get(position).hasKey(Constants.HAVEBILLRETURN)){
+                holder.rvReturn.setVisibility(View.VISIBLE);
+                //holder.tvNote.setVisibility(View.GONE);
 
-            if (mData.get(position).hasKey(Constants.PAYBYTRETURN)){
-                listPayment.addAll(DataUtil.array2ListBaseModel(mData.get(position).getJSONArray(Constants.PAYBYTRETURN)));
-
-            }
-
-            if (listPayment.size() >0){
-                holder.lnPayment.setVisibility(View.VISIBLE );
-                PaymentAdapter paymentAdapter = new PaymentAdapter(listPayment);
-                Util.createLinearRV(holder.rvPayment, paymentAdapter);
+                List<BaseModel> listReturn = new ArrayList<>(DataUtil.array2ListObject(mData.get(position).getString(Constants.HAVEBILLRETURN)));
+                Customer_BillsReturnAdapter adapter = new Customer_BillsReturnAdapter(listReturn);
+                Util.createLinearRV(holder.rvReturn, adapter);
 
             }else {
-                holder.lnPayment.setVisibility(View.GONE);
+                holder.rvReturn.setVisibility(View.GONE);
+
             }
 
-
-            holder.tvIcon.setText(String.valueOf(mData.size()-position));
-
-//            holder.lnTitle.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    CustomBottomDialog.choiceFourOption(mContext.getString(R.string.icon_money), "Thanh toán hóa đơn",
-//                            mContext.getString(R.string.icon_print), "In lại những hóa đơn nợ",
-//                            mContext.getString(R.string.icon_return), "Thu lại hàng",
-//                            mContext.getString(R.string.icon_delete), "Xóa hóa đơn", new CustomBottomDialog.FourMethodListener() {
-//                                @Override
-//                                public void Method1(Boolean one) {
-//                                    payBill(position);
-//                                }
-//
-//                                @Override
-//                                public void Method2(Boolean two) {
-//                                    mListerner.Method2(true);
-//                                }
-//
-//                                @Override
-//                                public void Method3(Boolean three) {
-//                                    mListenerBill.onResponse(mData.get(position));
-//
-//                                }
-//
-//                                @Override
-//                                public void Method4(Boolean four) {
-//                                    deleteBill(position);
-//                                }
-//                            });
-//                }
-//            });
-
-
-        } catch (JSONException e) {
-            //e.printStackTrace();
         }
+
+        final List<BaseModel> listBillDetail = new ArrayList<>(DataUtil.array2ListObject(mData.get(position).getString("billDetails")));
+        Customer_BillsDetailAdapter adapter = new Customer_BillsDetailAdapter(listBillDetail);
+        Util.createLinearRV(holder.rvBillDetail, adapter);
+
+        List<BaseModel> listPayment = new ArrayList<>(DataUtil.array2ListObject(mData.get(position).getString("payments")));
+
+        if (mData.get(position).hasKey(Constants.PAYBYTRETURN)){
+            listPayment.addAll(DataUtil.array2ListBaseModel(mData.get(position).getJSONArray(Constants.PAYBYTRETURN)));
+
+        }
+
+        if (listPayment.size() >0){
+            holder.lnPayment.setVisibility(View.VISIBLE );
+            PaymentAdapter paymentAdapter = new PaymentAdapter(listPayment);
+            Util.createLinearRV(holder.rvPayment, paymentAdapter);
+
+        }else {
+            holder.lnPayment.setVisibility(View.GONE);
+        }
+
+
+        holder.tvIcon.setText(String.valueOf(mData.size()-position));
+
+        holder.btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteBill(position);
+            }
+        });
+
+        holder.btnConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BaseModel respone = new BaseModel();
+                respone.put(Constants.TYPE, Constants.BILL_DELIVER);
+                respone.putBaseModel(Constants.RESULT, mData.get(position));
+                mListener.onResponse(respone);
+            }
+        });
+
+
     }
 
     @Override
@@ -209,8 +198,9 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
         private TextView tvDate, tvHour, tvPay, tvDebt, tvTotal, tvIcon;
         private CTextIcon btnMenu;
         private RecyclerView rvBillDetail, rvPayment, rvReturn;
-        private LinearLayout lnPayment;
+        private LinearLayout lnPayment, lnCover;
         private RelativeLayout lnTitle;
+        private Button btnDelete, btnConfirm;
 
         public CustomerBillsAdapterViewHolder(View itemView) {
             super(itemView);
@@ -226,7 +216,10 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
             lnPayment = (LinearLayout) itemView.findViewById(R.id.bills_item_payment_parent);
             //lnReturn = (LinearLayout) itemView.findViewById(R.id.bills_item_return_parent);
             lnTitle =  (RelativeLayout) itemView.findViewById(R.id.bills_item_title);
-            //tvNote = itemView.findViewById(R.id.bills_item_note);
+            lnCover = itemView.findViewById(R.id.bills_item_cover);
+            btnDelete = itemView.findViewById(R.id.btn_delete);
+            btnConfirm = itemView.findViewById(R.id.btn_confirm);
+
 
         }
 
@@ -256,19 +249,22 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
                         @Override
                         public void onResponse(List result) {
                             Util.showToast("Xóa thành công");
-                            mListerner.Method4(true);
+                            BaseModel respone = new BaseModel();
+                            respone.put(Constants.TYPE, Constants.BILL_DELETE);
+                            mListener.onResponse(respone);
+
                         }
 
                         @Override
                         public void onError(String error) {
-                            mListerner.Method4(false);
+                            Util.showSnackbarError(error);
+                            mListener.onError();
                         }
                     }, true);
                 }
 
             }
         });
-
 
     }
 
@@ -289,7 +285,10 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
                                         result), new CallbackListCustom() {
                                     @Override
                                     public void onResponse(List result) {
-                                        mListerner.Method1(true);
+                                        Util.showToast("Thanh toán thành công");
+                                        BaseModel respone = new BaseModel();
+                                        respone.put(Constants.TYPE, Constants.BILL_PAY);
+                                        mListener.onResponse(respone);
 
                                     }
 
@@ -308,7 +307,8 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
 
                         @Override
                         public void onError(String error) {
-                            mListerner.Method1(false);
+                            Util.showSnackbarError(error);
+                            mListener.onError();
                         }
                     });
 

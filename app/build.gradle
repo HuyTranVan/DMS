@@ -147,6 +147,7 @@ dependencies {
     implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.3.0'
     implementation 'net.cachapa.expandablelayout:expandablelayout:2.9.2'
     implementation 'com.github.zcweng:switch-button:0.0.3@aar'
+//    implementation 'com.ogaclejapan.arclayout:library:1.1.0@aar'
 //    implementation 'com.hold1:keyboardheightprovider:0.0.7'
     //progress dialog
     implementation 'com.kaopiz:kprogresshud:1.1.0'

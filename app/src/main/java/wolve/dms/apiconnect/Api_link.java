@@ -80,7 +80,7 @@ public class Api_link {
     public final static String BILL_HAVE_PAYMENT_RANGE_PARAM ="&paymentFrom=%s&paymentTo=%s";
     public final static String BILL_NOT_YET_PAID_RANGE_PARAM ="&fromTime=%s&toTime=%s";
     public final static String PAY_NEW = BASE_URL + "token/payment";
-    public final static String PAY_PARAM ="customerId=%d&paid=%s&billId=%d&userId=%d";
+    public final static String PAY_PARAM ="customerId=%d&paid=%s&billId=%d&userId=%d&note=%s";
 
     public final static String NOTE_PARAM = "http://lubsolution.com/";
 

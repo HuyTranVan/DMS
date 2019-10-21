@@ -93,7 +93,7 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         }
     }
 
-    public void reloadData(String username, List<BaseModel> list, List<BaseModel> listDetail,double total, double paid, double debt){
+    public void reloadData(String username, List<BaseModel> list, List<BaseModel> listDetail,double total, double paid, double debt, double profit){
         List<BaseModel> mList = new ArrayList<>();
         List<BaseModel> mListDetail= new ArrayList<>();
         if (username.equals(Constants.ALL_FILTER)){
@@ -116,35 +116,35 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
                 }
             }
         }
-        setupIncomeChart(mList, mListDetail,total,  paid, debt);
+        setupIncomeChart( mListDetail,total,  paid, debt, profit);
         setupDistrictChart(mList);
 
     }
 
-    private void setupBDFChart(double total, double bdf) {
-        PieChartData data;
-        double percent =0.0;
-
-        percent = bdf *100 /total;
-
-        List<SliceValue> values = new ArrayList<SliceValue>();
-
-        SliceValue sliceValue1 = new SliceValue((float) total, ChartUtils.nextColor());
-        sliceValue1.setLabel("Tổng");
-        values.add(sliceValue1);
-
-        SliceValue sliceValue2 = new SliceValue((float) bdf, ChartUtils.nextColor());
-        sliceValue2.setLabel("BDF" + " - " + new DecimalFormat("#.##").format(percent) + "%");
-        values.add(sliceValue2);
-
-        data = new PieChartData(values);
-        data.setHasLabels(true);
-        data.setHasLabelsOutside(true);
-
-        chartBDF.setPieChartData(data);
-        chartBDF.setCircleFillRatio(0.95f);
-
-    }
+//    private void setupBDFChart(double total, double bdf) {
+//        PieChartData data;
+//        double percent =0.0;
+//
+//        percent = bdf *100 /total;
+//
+//        List<SliceValue> values = new ArrayList<SliceValue>();
+//
+//        SliceValue sliceValue1 = new SliceValue((float) total, ChartUtils.nextColor());
+//        sliceValue1.setLabel("Tổng");
+//        values.add(sliceValue1);
+//
+//        SliceValue sliceValue2 = new SliceValue((float) bdf, ChartUtils.nextColor());
+//        sliceValue2.setLabel("BDF" + " - " + new DecimalFormat("#.##").format(percent) + "%");
+//        values.add(sliceValue2);
+//
+//        data = new PieChartData(values);
+//        data.setHasLabels(true);
+//        data.setHasLabelsOutside(true);
+//
+//        chartBDF.setPieChartData(data);
+//        chartBDF.setCircleFillRatio(0.95f);
+//
+//    }
 
     private void setupDistrictChart(List<BaseModel> list) {
         //repair data for Chart
@@ -202,7 +202,7 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
 
     }
 
-    private void setupIncomeChart(List<BaseModel> list, List<BaseModel> listDetail , double total, double paid, double debt){
+    private void setupIncomeChart( List<BaseModel> listDetail , double total, double paid, double debt, double profit){
         //float total = Util.getTotalMoney(list).floatValue();
         //float debt =Util.getSumDebt(list).floatValue();
         //float income = Util.getTotalMoney(list).floatValue() - debt;
@@ -216,12 +216,12 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
 //            profit =Util.getTotalProfit(list).floatValue();
 //        }
 //        float[] inputData = new float[]{total, income , debt , profit};
-        double[] inputDataDouble = new double[]{total,  paid,  debt, bdf};
-        float[] inputData = new float[]{(float) total, (float) paid, (float) debt,(float)  bdf};
+        double[] inputDataDouble = new double[]{total,  paid, profit,  debt, bdf};
+        float[] inputData = new float[]{(float) total, (float) paid, (float) profit, (float) debt,(float)  bdf};
 
         List<Column> columns = new ArrayList<Column>();
 
-        for (int i = 0; i < 4; ++i) {
+        for (int i = 0; i < inputData.length; ++i) {
             List<SubcolumnValue> values = new ArrayList<SubcolumnValue>();
             SubcolumnValue subcolumnValue = new SubcolumnValue(inputData[i], ChartUtils.nextColor());
             subcolumnValue.setLabel(Util.FormatMoney(inputDataDouble[i]));
@@ -238,10 +238,16 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
 
         List<AxisValue> axisValues = new ArrayList<AxisValue>();
         axisValues.add(new AxisValue(0, "Tổng bán hàng".toCharArray()));
+
         axisValues.add(new AxisValue(1, "Tiền đã thu".toCharArray()));
-        axisValues.add(new AxisValue(2, "Công nợ".toCharArray()));
+
+        String profitString = new DecimalFormat("#.##").format(profit *100 /paid) + " %";
+        axisValues.add(new AxisValue(2, String.format("### (%s)", profitString).toCharArray()));
+
+        axisValues.add(new AxisValue(3, "Công nợ".toCharArray()));
+
         String bdfString = new DecimalFormat("#.##").format(bdf *100 /total) + " %";
-        axisValues.add(new AxisValue(3, String.format("BDF (%s)", bdfString).toCharArray()));
+        axisValues.add(new AxisValue(4, String.format("BDF (%s)", bdfString).toCharArray()));
         Axis axisX = new Axis(axisValues);
 
         data.setAxisXBottom(axisX);

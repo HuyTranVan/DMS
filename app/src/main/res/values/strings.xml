@@ -90,6 +90,10 @@
     <string name="icon_street">&#xf018;</string>
     <string name="icon_city">&#xf64f;</string>
     <string name="icon_repair">&#xf7d9;</string>
+    <string name="icon_close">&#xf057;</string>
+    <string name="icon_copy">&#xf0c5;</string>
+    <string name="icon_cart">&#xf07a;</string>
+
 
 
     <string name="login_username">Nhập tài khoản hoặc SĐT</string>

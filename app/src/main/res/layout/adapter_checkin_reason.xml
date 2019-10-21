@@ -1,28 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/checkin_reason_parent"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:minHeight="@dimen/_30sdp"
     android:background="@drawable/colorwhite_pressed">
 
 
     <TextView
         android:id="@+id/checkin_reason_name"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Default"
         android:textColor="@color/black_text_color"
         android:textSize="@dimen/_12sdp"
-        android:paddingLeft="@dimen/_10sdp"
-        android:paddingTop="@dimen/_8sdp"
-        android:paddingBottom="@dimen/_8sdp"/>
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/checkin_reason_close"/>
 
-    <TextView
+    <wolve.dms.customviews.CTextIcon
+        android:id="@+id/checkin_reason_close"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:background="?selectableItemBackgroundBorderless"
+        android:layout_alignParentRight="true"
+        android:text="@string/icon_close"
+        android:textColor="@color/black_text_color_hint"
+        android:textSize="@dimen/_14sdp"
+        android:gravity="center"/>
+
+    <View
         android:id="@+id/checkin_reason_line"
         android:layout_width="match_parent"
         android:layout_height="1dip"
-        android:background="#0d000000"/>
+        android:background="#0d000000"
+        android:layout_alignParentBottom="true"/>
 
-</LinearLayout>
+</RelativeLayout>

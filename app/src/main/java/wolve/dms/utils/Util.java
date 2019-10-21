@@ -690,6 +690,34 @@ public class Util {
         return new SimpleDateFormat("MM-yyyy").format(Calendar.getInstance().getTime());
     }
 
+    public static String Current01MonthYear() {
+        return new SimpleDateFormat("01-MM-yyyy").format(Calendar.getInstance().getTime());
+    }
+
+    public static String Next01MonthYear() {
+        int mMonth = Calendar.getInstance().get(Calendar.MONTH) + 2;
+        int mYear = Calendar.getInstance().get(Calendar.YEAR);
+
+        String month;
+        String year ;
+
+        if (mMonth <10){
+            month = "0"+ String.valueOf(mMonth);
+            year = String.valueOf(mYear);
+        }else if (mMonth>12){
+            month = "01";
+            year = String.valueOf(mYear +1);
+        }else {
+            month = String.valueOf(mMonth);
+            year = String.valueOf(mYear);
+        }
+
+
+
+        return String.format("01-%s-%s",month, year);
+        //return new SimpleDateFormat(monthFormat).format(Calendar.getInstance().getTime());
+    }
+
     public static String CurrentDayMonthYear() {
         return new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime());
     }
@@ -826,11 +854,12 @@ public class Util {
 
     }
 
-    public static long countDay(long timestamp){
+    public static int countDay(long timestamp){
         long time = CurrentTimeStamp() - timestamp;
 
-        return time/(1000*24*60*60) ;
+        return (int) (time/(1000*24*60*60));
     }
+
     public static String HourStringNatural(long timestamp) {
         String date = "";
 
@@ -1043,6 +1072,32 @@ public class Util {
         }
         return profit;
     }
+
+    public static double getProfit(BaseModel bill) {
+        Double profit = 0.0;
+        List<BaseModel> billdetails = DataUtil.array2ListBaseModel(bill.getJSONArray("billDetails"));
+        for (int i = 0; i < billdetails.size(); i++) {
+            profit += (billdetails.get(i).getDouble("unitPrice") - billdetails.get(i).getDouble("discount") - billdetails.get(i).getDouble("purchasePrice"))
+                    * billdetails.get(i).getDouble("quantity");
+        }
+
+
+        return profit;
+    }
+
+    public static double getProfitByPayment(BaseModel bill, double paid) {
+        Double profit = 0.0;
+        List<BaseModel> billdetails = DataUtil.array2ListBaseModel(bill.getJSONArray("billDetails"));
+        for (int i = 0; i < billdetails.size(); i++) {
+            profit += (billdetails.get(i).getDouble("unitPrice") - billdetails.get(i).getDouble("discount") - billdetails.get(i).getDouble("purchasePrice"))
+                    * billdetails.get(i).getDouble("quantity");
+        }
+
+        double va =(paid * profit /  bill.getDouble("total"));
+
+        return Math.round(va);
+    }
+
 
     public static boolean isBillReturn(BaseModel bill){
         boolean id = false;
@@ -1379,6 +1434,14 @@ public class Util {
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(), LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+    }
+
+    public static void createHorizontalRV(RecyclerView recyclerView, RecyclerView.Adapter adapter){
+        recyclerView.setAdapter(adapter);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setNestedScrollingEnabled(false);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(), LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(layoutManager);
     }
 

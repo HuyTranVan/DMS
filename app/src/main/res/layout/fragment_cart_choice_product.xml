@@ -76,29 +76,40 @@
 
     </LinearLayout>
 
-    <!--<android.support.v7.widget.RecyclerView-->
-        <!--android:id="@+id/cart_choice_rvproduct"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:clipToPadding="false"-->
-        <!--android:paddingTop="@dimen/_5sdp"-->
-        <!--android:paddingBottom="@dimen/_55sdp"-->
-        <!--android:layout_below="@+id/cart_choice_header"/>-->
-
-    <Button
+    <LinearLayout
         android:id="@+id/cart_choice_submit"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/_25sdp"
-        android:minWidth="@dimen/_150sdp"
+        android:orientation="horizontal"
         android:background="@drawable/btn_confirm_blue"
+        android:layout_alignParentBottom="true"
         android:layout_marginBottom="@dimen/_10sdp"
         android:layout_centerHorizontal="true"
-        android:text="CẬP NHẬT"
-        android:textAllCaps="true"
-        android:textColor="@color/white"
-        android:textSize="@dimen/_14sdp"
-        android:layout_alignParentBottom="true"
-        android:visibility="visible"/>
+        android:visibility="gone">
+
+        <wolve.dms.customviews.CTextIcon
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/icon_cart"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/_12sdp"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_gravity="center"/>
+
+
+        <TextView
+            android:id="@+id/cart_choice_tvsubmit"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="THÊM VÀO GIỎ HÀNG"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12sdp"
+            android:gravity="center"
+            android:layout_marginRight="@dimen/_20sdp"/>
+    </LinearLayout>
+
 
 
 

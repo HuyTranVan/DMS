@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/price_suggest_parent"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/btn_round_border_grey"
+    android:layout_marginRight="@dimen/_10sdp"
+    android:layout_marginBottom="@dimen/_5sdp">
+
+    <TextView
+        android:id="@+id/price_suggest_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/_20sdp"
+        android:text="Bán hàng"
+        android:textColor="@color/black_text_color"
+        android:textSize="@dimen/_10sdp"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/_10sdp"
+        android:paddingRight="@dimen/_10sdp"
+        />
+
+</LinearLayout>

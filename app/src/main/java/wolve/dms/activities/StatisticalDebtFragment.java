@@ -20,6 +20,7 @@ import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -95,7 +96,9 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
                 CustomerConnect.GetCustomerDetail(s, new CallbackCustom() {
                     @Override
                     public void onResponse(BaseModel result) {
-                        CustomSQL.setString(Constants.CUSTOMER, result.BaseModelstoString());
+                        BaseModel customer = DataUtil.rebuiltCustomer(result);
+                        CustomSQL.setBaseModel(Constants.CUSTOMER, customer);
+
                         Transaction.gotoCustomerActivity(false);
                     }
 

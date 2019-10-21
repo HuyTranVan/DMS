@@ -15,7 +15,10 @@ import wolve.dms.R;
 import wolve.dms.adapter.Customer_BillsAdapter;
 import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.models.BaseModel;
+import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
+import wolve.dms.utils.DataUtil;
+import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
 /**
@@ -74,9 +77,26 @@ public class CustomerBillsFragment extends Fragment implements View.OnClickListe
     public void CreateRVBill(){
         adapter = new Customer_BillsAdapter(new ArrayList<>(), new CallbackBaseModel() {
             @Override
-            public void onResponse(BaseModel bill) {
-                mActivity.openReturnFragment(bill);
+            public void onResponse(BaseModel result) {
+                switch (result.getString(Constants.TYPE)){
+                    case Constants.BILL_RETURN:
+                        mActivity.openReturnFragment(result.getBaseModel(Constants.RESULT));
+                        break;
 
+                    case Constants.BILL_DELIVER:
+                        mActivity.printTempBill();
+                        break;
+
+                    case Constants.BILL_DELETE:
+                        mActivity.reloadCustomer(mActivity.currentCustomer.getString("id"), 3);
+                        break;
+
+                    case Constants.BILL_PAY:
+                        mActivity.reloadCustomer(mActivity.currentCustomer.getString("id"), 3);
+                        break;
+
+
+                }
             }
 
             @Override
@@ -84,27 +104,6 @@ public class CustomerBillsFragment extends Fragment implements View.OnClickListe
 
             }
 
-        }, new CustomBottomDialog.FourMethodListener() {
-            @Override
-            public void Method1(Boolean one) {
-                mActivity.reloadCustomer();
-            }
-
-            @Override
-            public void Method2(Boolean two) {
-                mActivity.reloadCustomer();
-
-            }
-
-            @Override
-            public void Method3(Boolean three) {
-                mActivity.reloadCustomer();
-            }
-
-            @Override
-            public void Method4(Boolean four) {
-                mActivity.reloadCustomer();
-            }
         });
 
         Util.createLinearRV(rvBill, adapter);

@@ -53,12 +53,6 @@ public class SplashScreenActivity extends BaseActivity {
     public void initialData() {
         openUri();
         new Handler().postDelayed(new Runnable() {
-
-            /*
-             * Showing splash screen with a timer. This will be useful when you
-             * want to show case your app logo_signup / company
-             */
-
             @Override
             public void run() {
                 if (CustomSQL.getString(Constants.USER_USERNAME).isEmpty()){

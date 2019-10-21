@@ -5,7 +5,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.util.List;
 
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 /**
@@ -67,6 +69,15 @@ public class BaseModel implements Serializable {
         } catch (JSONException e) {
             Util.showToast(e.toString());
         }
+    }
+
+    public void putList(String key, List<BaseModel> list){
+        try {
+            jsonObject.put(key, DataUtil.convertListObject2Array(list));
+        } catch (JSONException e) {
+            Util.showToast(e.toString());
+        }
+
     }
 
     public String getString(String key) {
@@ -168,4 +179,7 @@ public class BaseModel implements Serializable {
     public boolean isNull(String key){
         return jsonObject.isNull(key);
     }
+
+
+
 }

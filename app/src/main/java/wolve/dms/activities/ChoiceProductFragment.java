@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.json.JSONException;
@@ -31,14 +32,12 @@ import wolve.dms.utils.Util;
 public class ChoiceProductFragment extends Fragment implements View.OnClickListener {
     private View view;
 //    private ImageView btnBack;
-    private TextView tvTitle;
-//    private RecyclerView rvProduct;
-    private Button btnSubmit ;
+    private TextView tvSubmit;
+    private LinearLayout btnSubmit ;
     private ViewPager viewPager;
     private TabLayout tabLayout;
 
     private ShopCartActivity mActivity;
-//    private List<Product> listProducts = new ArrayList<>();
     private CartProductDialogAdapter adapter;
     private ProductGroup productGroup;
     private ViewpagerShopcartAdapter viewpagerAdapter;
@@ -71,10 +70,8 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
 
     private void initializeView() {
         mActivity = (ShopCartActivity) getActivity();
-        tvTitle = view.findViewById(R.id.cart_choice_header_title);
-//        rvProduct = view.findViewById(R.id.cart_choice_rvproduct);
-        btnSubmit = (Button) view.findViewById(R.id.cart_choice_submit);
-//        btnBack = (ImageView) view.findViewById(R.id.icon_back);
+        tvSubmit = view.findViewById(R.id.cart_choice_tvsubmit);
+        btnSubmit =  view.findViewById(R.id.cart_choice_submit);
         viewPager = view.findViewById(R.id.cart_choice_viewpager);
         tabLayout = view.findViewById(R.id.cart_choice_tabs);
 
@@ -194,6 +191,7 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
         }
 
         btnSubmit.setVisibility(count == 0?View.GONE: View.VISIBLE);
+        tvSubmit.setText(String.format("Thêm vào giỏ hàng (%d)", count));
     }
 
 

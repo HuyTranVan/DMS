@@ -19,6 +19,7 @@ import wolve.dms.callback.CallbackString;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -83,7 +84,9 @@ public class StatisticalPaymentFragment extends Fragment implements View.OnClick
                 CustomerConnect.GetCustomerDetail(s, new CallbackCustom() {
                     @Override
                     public void onResponse(BaseModel result) {
-                        CustomSQL.setString(Constants.CUSTOMER, result.BaseModelstoString());
+                        BaseModel customer = DataUtil.rebuiltCustomer(result);
+                        CustomSQL.setBaseModel(Constants.CUSTOMER, customer);
+
                         Transaction.gotoCustomerActivity( false);
                     }
 
@@ -102,5 +105,10 @@ public class StatisticalPaymentFragment extends Fragment implements View.OnClick
 
     public double getSumPayment(){
         return adapter.sumPayments();
+    }
+
+    public double getSumProfit(){
+        return adapter.sumProfit();
+
     }
 }

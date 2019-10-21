@@ -107,8 +107,14 @@ public class Transaction {
             Activity context = Util.getInstance().getCurrentActivity();
             Intent intent = new Intent(context, CustomerActivity.class);
             //CustomSQL.setString(Constants.CUSTOMER, customer);
-            CustomSQL.setBoolean(Constants.CHECKIN_FLAG, isCheckin);
-            CustomSQL.setLong(Constants.CHECKIN_TIME, Util.CurrentTimeStamp() );
+            //CustomSQL.setLong(Constants.CHECKIN_FLAG, isCheckin);
+            if (isCheckin){
+                CustomSQL.setLong(Constants.CHECKIN_TIME, Util.CurrentTimeStamp() );
+
+            }else {
+                CustomSQL.setLong(Constants.CHECKIN_TIME, 0 );
+            }
+
 
             context.startActivityForResult(intent, Constants.RESULT_CUSTOMER_ACTIVITY);
             context.overridePendingTransition(R.anim.slide_up, R.anim.nothing);
@@ -126,10 +132,9 @@ public class Transaction {
 
     }
 
-    public static void gotoShopCartActivity(String customer, String debt) {
+    public static void gotoShopCartActivity(String debt) {
         Activity context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(context, ShopCartActivity.class);
-        intent.putExtra(Constants.CUSTOMER, customer);
         intent.putExtra(Constants.ALL_DEBT, debt);
         context.startActivityForResult(intent, Constants.RESULT_SHOPCART_ACTIVITY);
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
@@ -150,7 +155,7 @@ public class Transaction {
         Intent intent = new Intent(context, PrintBillActivity.class);
         intent.putExtra(Constants.RE_PRINT, rePrint);
         //intent.putExtra(Constants.CUSTOMER, customer);
-        intent.putExtra(Constants.BILLS, bill);
+        intent.putExtra(Constants.BILL, bill);
         intent.putExtra(Constants.ALL_DEBT, debt);
         context.startActivityForResult(intent, Constants.RESULT_PRINTBILL_ACTIVITY);
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);

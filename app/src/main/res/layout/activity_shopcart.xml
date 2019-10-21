@@ -22,15 +22,37 @@
             android:padding="@dimen/_8sdp"
             android:background="?selectableItemBackground"/>
 
-        <TextView
-            android:id="@+id/cart_title"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/_14sdp"
-            android:textColor="@color/black_text_color"
-            android:singleLine="true"
-            android:layout_centerInParent="true"
-            android:gravity="center"/>
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_toRightOf="@+id/icon_back"
+            android:layout_toLeftOf="@+id/edit_map_edit">
+
+            <TextView
+                android:id="@+id/cart_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="SẢN PHẨM"
+                android:textSize="@dimen/_12sdp"
+                android:textColor="@color/black_text_color"
+                android:gravity="center"
+                android:textAllCaps="true"/>
+
+            <TextView
+                android:id="@+id/cart_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black_text_color_hint"
+                android:text="dia chi"
+                android:textSize="@dimen/_8sdp"
+                android:gravity="center"
+                android:textStyle="italic"/>
+
+
+        </LinearLayout>
 
 
         <!--<ImageView-->
@@ -58,31 +80,13 @@
 
     </RelativeLayout>
 
-    <!--<TextView-->
-        <!--android:id="@+id/cart_printer_status"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:background="@color/black_text_color_hint"-->
-        <!--android:text="Chưa kết nối máy in."-->
-        <!--android:textColor="@color/white_text_color"-->
-        <!--android:gravity="center"-->
-        <!--android:textSize="@dimen/_8sdp"-->
-        <!--android:padding="@dimen/_2sdp"-->
-        <!--android:layout_below="@+id/cart_header"/>-->
-
-    <!--<TextView-->
-    <!--android:id="@+id/bill_detail_bdf"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="@dimen/_20sdp"-->
-    <!--android:background="@color/colorBlue"-->
-    <!--android:textColor="@color/colorWhite"-->
-    <!--android:text="BDF"-->
-    <!--android:gravity="center"/>-->
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/cart_header">
+        android:layout_below="@+id/cart_header"
+        android:background="@color/colorGrey"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/_60sdp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -97,8 +101,8 @@
                     android:id="@+id/cart_bdf"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_20sdp"
-                    android:background="@color/colorBlue"
-                    android:textColor="@color/colorWhite"
+                    android:background="@color/colorMainStroke"
+                    android:textColor="@color/black_text_color_hint"
                     android:text="BDF"
                     android:gravity="center"/>
 
@@ -106,7 +110,7 @@
                     android:id="@+id/cart_rvproduct"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:clipToPadding="false"
+                    android:background="@color/colorWhite"
                     android:layout_below="@+id/cart_bdf"/>
 
                 <!--<android.support.v7.widget.RecyclerView-->
@@ -133,8 +137,20 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/_5sdp"
-                    android:background="@color/colorLightGrey">
+                    android:padding="@dimen/_5sdp">
+
+<!--                    <wolve.dms.customviews.CTextIcon-->
+<!--                        android:id="@+id/cart_save"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="@dimen/_25sdp"-->
+<!--                        android:minWidth="@dimen/_30sdp"-->
+<!--                        android:background="@drawable/btn_cancel_grey"-->
+<!--                        android:text="@string/icon_save"-->
+<!--                        android:textAllCaps="true"-->
+<!--                        android:textColor="@color/white"-->
+<!--                        android:textSize="@dimen/_12sdp"-->
+<!--                        android:layout_gravity="center_horizontal"-->
+<!--                        android:gravity="center"/>-->
 
                     <Button
                         android:id="@+id/cart_submit"
@@ -146,7 +162,7 @@
                         android:textColor="@color/white"
                         android:textSize="@dimen/_12sdp"
                         android:layout_gravity="center_horizontal"
-                        android:layout_marginLeft="@dimen/_10sdp"
+                        android:layout_marginLeft="@dimen/_20sdp"
                         android:layout_marginRight="@dimen/_20sdp"
                         android:layout_toLeftOf="@+id/cart_total"/>
 
@@ -159,7 +175,8 @@
                         android:textSize="@dimen/_14sdp"
                         android:layout_toLeftOf="@+id/cart_d"
                         android:layout_marginRight="@dimen/_5sdp"
-                        android:layout_centerVertical="true"/>
+                        android:layout_centerVertical="true"
+                        android:textStyle="bold"/>
 
                     <TextView
                         android:id="@+id/cart_d"
@@ -186,9 +203,9 @@
                 <!--android:layout_alignParentBottom="true"/>-->
             </LinearLayout>
 
-            <View
-                android:layout_height="@dimen/_60sdp"
-                android:layout_width="match_parent"/>
+<!--            <View-->
+<!--                android:layout_height="@dimen/_60sdp"-->
+<!--                android:layout_width="match_parent"/>-->
 
 
         </LinearLayout>
@@ -213,7 +230,7 @@
         android:gravity="center"
         android:layout_below="@+id/cart_header"
         android:clickable="true"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <wolve.dms.customviews.CTextIcon
             android:id="@+id/cart_icon"

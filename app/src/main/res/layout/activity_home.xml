@@ -41,8 +41,6 @@
 
         </RelativeLayout>
 
-
-
         <LinearLayout
             android:id="@+id/home_user"
             android:layout_width="wrap_content"
@@ -50,7 +48,7 @@
             android:orientation="horizontal"
             android:background="?selectableItemBackground"
             android:gravity="center_vertical"
-            android:layout_toLeftOf="@id/home_relogin">
+            android:layout_alignParentRight="true">
 
             <wolve.dms.customviews.CTextIcon
                 android:id="@+id/home_logout"
@@ -67,24 +65,17 @@
                 android:text="Huy Tran"
                 android:textColor="@color/black_text_color_hint"
                 android:textSize="@dimen/_10sdp"
-                android:layout_marginLeft="@dimen/_5sdp"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/home_relogin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_alignParentRight="true">
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginRight="@dimen/_10sdp"/>
 
             <View
+                android:id="@+id/home_change_line"
                 android:layout_width="1dip"
                 android:layout_height="@dimen/_15sdp"
                 android:background="@color/black_text_color_hint"
                 android:layout_marginTop="@dimen/_10sdp"
                 android:layout_marginBottom="@dimen/_10sdp"
-                android:layout_marginLeft="@dimen/_10sdp"
+
                 android:layout_toLeftOf="@id/home_change_user"/>
 
             <wolve.dms.customviews.CTextIcon
@@ -96,6 +87,48 @@
                 android:textColor="@color/black_text_color_hint"
                 android:textSize="@dimen/_14sdp"
                 android:gravity="center"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/home_relogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="@dimen/_10sdp"
+            android:gravity="right">
+
+            <TextView
+                android:id="@+id/home_month"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tổng bán hàng:"
+                android:textSize="@dimen/_10sdp"
+                android:textStyle="italic"
+                android:textColor="@color/black_text_color_hint"
+                android:layout_marginBottom="@dimen/_5sdp"/>
+
+            <TextView
+                android:id="@+id/home_cash"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tiền mặt:"
+                android:textSize="@dimen/_10sdp"
+                android:textColor="@color/colorBlue"/>
+
+            <TextView
+                android:id="@+id/home_profit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chênh lệch:"
+                android:textSize="@dimen/_10sdp"
+                android:textColor="@color/colorRed"/>
+
+
+
+
         </LinearLayout>
 
 

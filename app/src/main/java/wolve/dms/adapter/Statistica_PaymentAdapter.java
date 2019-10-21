@@ -37,11 +37,11 @@ public class Statistica_PaymentAdapter extends RecyclerView.Adapter<Statistica_P
         this.mListener = listener;
 
         if (user.equals(Constants.ALL_FILTER)){
-            this.mData = groupCustomerPayment(data);
+            this.mData = DataUtil.groupCustomerPayment(data);
 
         }else {
             mData = new ArrayList<>();
-            List<BaseModel> listTemp = groupCustomerPayment(data);
+            List<BaseModel> listTemp = DataUtil.groupCustomerPayment(data);
             for (BaseModel row : listTemp){
                 if (row.getBaseModel("user").getString("displayName").equals(user)){
                     mData.add(row);
@@ -61,33 +61,34 @@ public class Statistica_PaymentAdapter extends RecyclerView.Adapter<Statistica_P
 
     @Override
     public void onBindViewHolder(final StatisticalBillsViewHolder holder, final int position) {
-        try {
-            holder.tvNumber.setText(String.valueOf(mData.size() -position));
+        holder.tvNumber.setText(String.valueOf(mData.size() -position));
 
-            final BaseModel customer = new BaseModel(mData.get(position).getJsonObject("customer"));
-            holder.tvsignBoard.setText(Constants.getShopName(customer.getString("shopType") ) + " " + customer.getString("signBoard"));
-            holder.tvDistrict.setText(customer.getString("street") + " - " + customer.getString("district"));
+        final BaseModel customer = new BaseModel(mData.get(position).getJsonObject("customer"));
+        holder.tvsignBoard.setText(Constants.getShopName(customer.getString("shopType") ) + " " + customer.getString("signBoard"));
+        holder.tvDistrict.setText(customer.getString("street") + " - " + customer.getString("district"));
 
-            String user = String.format("Nhân viên: %s",mData.get(position).getJsonObject("user").getString("displayName"));
-            holder.tvUser.setText(user);
+        String user = String.format("Nhân viên: %s",mData.get(position).getBaseModel("user").getString("displayName"));
+        holder.tvUser.setText(user);
 
-            String time = Util.DateHourString(mData.get(position).getLong("createAt"));
-            holder.tvTime.setText(time);
+        String time = Util.DateHourString(mData.get(position).getLong("createAt"));
+        holder.tvTime.setText(time  );
 
-            holder.tvPaid.setText(Util.FormatMoney(mData.get(position).getDouble("paid")));
+        //double va = mData.get(position).getDouble("paid") * mData.get(position).getDouble("billProfit") /  mData.get(position).getDouble("billTotal");
+        holder.tvProfit.setText(String.format("(%s)",Util.FormatMoney(mData.get(position).getDouble("billProfit"))));
 
-            holder.vLine.setVisibility(position == mData.size()-1? View.GONE:View.VISIBLE);
+        holder.tvPaid.setText(Util.FormatMoney(mData.get(position).getDouble("paid")));
 
-            holder.tvNumber.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mListener.Result(customer.getString("id"));
-                }
-            });
+        holder.vLine.setVisibility(position == mData.size()-1? View.GONE:View.VISIBLE);
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        holder.tvNumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.Result(customer.getString("id"));
+            }
+
+        });
+
+
     }
 
     @Override
@@ -96,7 +97,7 @@ public class Statistica_PaymentAdapter extends RecyclerView.Adapter<Statistica_P
     }
 
     public class StatisticalBillsViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvNumber, tvsignBoard, tvDistrict, tvUser, tvTime, tvPaid;
+        private TextView tvNumber, tvsignBoard, tvDistrict, tvUser, tvTime, tvPaid, tvProfit;
         private View vLine;
 //        private View vLineUpper, vLineUnder;
         private LinearLayout lnParent;
@@ -109,10 +110,8 @@ public class Statistica_PaymentAdapter extends RecyclerView.Adapter<Statistica_P
             tvUser = itemView.findViewById(R.id.statistical_cash_item_user);
             tvTime = itemView.findViewById(R.id.statistical_cash_item_time);
             tvPaid = itemView.findViewById(R.id.statistical_cash_item_paid);
+            tvProfit = itemView.findViewById(R.id.statistical_cash_item_profit);
             vLine =itemView.findViewById(R.id.statistical_cash_item_line);
-//            vLineUnder = itemView.findViewById(R.id.statistical_cash_item_under);
-//            vLineUpper = itemView.findViewById(R.id.statistical_cash_item_upper);
-
 
         }
     }
@@ -125,45 +124,14 @@ public class Statistica_PaymentAdapter extends RecyclerView.Adapter<Statistica_P
         return totalPayment;
     }
 
-    private List<BaseModel> groupCustomerPayment(List<BaseModel> list){
-        List<BaseModel> listResult = new ArrayList<>();
-        for ( int i=0; i<list.size(); i++ ){
-            boolean check = false;
-            for (int a=0; a<listResult.size(); a++){
-                if (Util.DateString(listResult.get(a).getLong("createAt")).equals(Util.DateString(list.get(i).getLong("createAt")))
-                    && listResult.get(a).getString("customer").equals(list.get(i).getString("customer"))){
-
-                    check = true;
-                    break;
-                }
-            }
-
-
-
-            if (!check){
-                BaseModel row = new BaseModel();
-                row.put("createAt", list.get(i).getLong("createAt"));
-                row.put("user", list.get(i).getJsonObject("user"));
-                row.put("customer", list.get(i).getJsonObject("customer"));
-
-                double paid = list.get(i).getDouble("paid");
-                for (int ii= i+1; ii<list.size(); ii++){
-                    if (Util.DateString(row.getLong("createAt")).equals(Util.DateString(list.get(ii).getLong("createAt")))
-                        && row.getString("customer").equals(list.get(ii).getString("customer"))){
-
-                        paid += list.get(ii).getDouble("paid");
-
-                    }
-                }
-                row.put("paid", paid);
-
-                listResult.add(row);
-
-            }
+    public double sumProfit(){
+        double totalProfit = 0.0;
+        for (BaseModel row : mData){
+            totalProfit += row.getDouble("billProfit");
         }
-
-
-        return listResult;
+        return totalProfit;
     }
+
+
 
 }

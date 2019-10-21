@@ -34,7 +34,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="CỬA HÀNG"
-                    android:textSize="@dimen/_12sdp"
+                    android:textSize="@dimen/_14sdp"
                     android:textColor="@color/black_text_color"
                     android:layout_centerInParent="true"
                     android:textAllCaps="true"/>
@@ -236,18 +236,54 @@
 
     </LinearLayout>
 
-<!--    <Button-->
-<!--        android:id="@+id/customer_shopcart"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="@dimen/_30sdp"-->
-<!--        android:minWidth="@dimen/_100sdp"-->
-<!--        android:background="@drawable/btn_confirm_blue"-->
-<!--        android:layout_margin="@dimen/_10sdp"-->
-<!--        android:text="MUA HÀNG"-->
-<!--        android:textAllCaps="true"-->
-<!--        android:textColor="@color/colorWhite"-->
-<!--        android:textSize="@dimen/_12sdp"-->
-<!--        android:layout_gravity="bottom|center_horizontal"/>-->
+<!--    <LinearLayout-->
+<!--        android:id="@+id/customer_newbill_parent"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="vertical"-->
+<!--        android:layout_gravity="bottom"-->
+<!--        android:visibility="visible">-->
+
+<!--        <View-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="@dimen/_4sdp"-->
+<!--            android:background="@drawable/colorgrey_gradient"/>-->
+
+<!--        <RelativeLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="@color/colorWhite">-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/customer_newbill_text"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:background="?selectableItemBackground"-->
+<!--                android:minHeight="@dimen/_35sdp"-->
+<!--                android:text="Hóa đơn ABC tạo lúc 11h00 23-9-2019"-->
+<!--                android:textColor="@color/colorBlueDark"-->
+<!--                android:gravity="center_vertical"-->
+<!--                android:paddingLeft="@dimen/_10sdp"-->
+<!--                android:textSize="@dimen/_12sdp"-->
+<!--                android:layout_centerVertical="true"-->
+<!--                android:layout_toLeftOf="@+id/customer_newbill_delete"/>-->
+
+<!--            <wolve.dms.customviews.CTextIcon-->
+<!--                android:id="@+id/customer_newbill_delete"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:background="?selectableItemBackgroundBorderless"-->
+<!--                android:text="@string/icon_close"-->
+<!--                android:textSize="@dimen/_14sdp"-->
+<!--                android:textColor="@color/black_text_color_hint"-->
+<!--                android:padding="@dimen/_10sdp"-->
+<!--                android:layout_alignParentRight="true"-->
+<!--                android:layout_centerVertical="true"/>-->
+<!--        </RelativeLayout>-->
+
+
+
+<!--    </LinearLayout>-->
 
 </android.support.design.widget.CoordinatorLayout>
 

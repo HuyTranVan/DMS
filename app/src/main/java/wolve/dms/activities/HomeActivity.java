@@ -15,6 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import wolve.dms.BaseActivity;
@@ -25,6 +26,7 @@ import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickAdapter;
+import wolve.dms.callback.CallbackCustomListList;
 import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
@@ -39,6 +41,7 @@ import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomSQL;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -49,8 +52,11 @@ import wolve.dms.utils.Util;
 public class HomeActivity extends BaseActivity implements View.OnClickListener, CallbackClickAdapter{
     private RecyclerView rvItems;
     private CTextIcon btnLogout, btnChangeUser;
-    private TextView tvFullname ;
-    private LinearLayout lnUser, lnRelogin;
+    private TextView tvFullname , tvCash, tvProfit, tvMonth;
+    private LinearLayout lnUser;
+    private View line;
+
+    private List<BaseModel> listPayment = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,34 +80,39 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         tvFullname = findViewById(R.id.home_fullname);
         lnUser = findViewById(R.id.home_user);
         btnChangeUser = findViewById(R.id.home_change_user);
-        lnRelogin = findViewById(R.id.home_relogin);
+        line = findViewById(R.id.home_change_line);
+        tvCash = findViewById(R.id.home_cash);
+        tvProfit = findViewById(R.id.home_profit);
+        tvMonth = findViewById(R.id.home_month);
+
     }
 
     @Override
     public void initialData() {
-        ///Log.e("idasd111", CustomSQL.getString(Constants.CUSTOMER_RECEIVE) + 111);
         loadCurrentData(new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
                 if (result){
                     createListItem();
                     tvFullname.setText(String.format("%s _ %s (%s)",User.getFullName(), User.getRole(), Distributor.getName()));
-                    lnRelogin.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN) ? View.VISIBLE : View.GONE);
+                    btnChangeUser.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN) ? View.VISIBLE : View.GONE);
+                    line.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN) ? View.VISIBLE : View.GONE);
 
-                    //Log.e("idasd111", CustomSQL.getString(Constants.CUSTOMER_RECEIVE));
                     if (!CustomSQL.getString(Constants.CUSTOMER_ID).equals("")){
                         Transaction.gotoMapsActivity();
-
-                        //Log.e("idasd", CustomSQL.getString(Constants.CUSTOMER_RECEIVE));
 
                     } else if (CustomSQL.getBoolean(Constants.ON_MAP_SCREEN)){
                         Transaction.gotoMapsActivity();
 
+                    }else {
+                        loadOverView();
                     }
 
                 }
             }
         });
+
+        tvMonth.setText(String.format("***Tháng %s:", Util.CurrentMonthYear()));
 
 
     }
@@ -110,6 +121,33 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         HomeAdapter adapter = new HomeAdapter(HomeActivity.this);
         Util.createGridRV(rvItems, adapter, 3);
 
+    }
+
+    private void loadOverView(){
+        List<BaseModel> params = new ArrayList<>();
+        long start = Util.TimeStamp1(Util.Current01MonthYear());
+        long end = Util.TimeStamp1(Util.Next01MonthYear());
+
+
+
+        params.add(DataUtil.createPaymentParam(start,end ));
+        //params.add(1, DataUtil.createBillParam(start, end));
+        SystemConnect.loadListObject(params, new CallbackCustomListList() {
+            @Override
+            public void onResponse(List<List<BaseModel>> results) {
+                String user = User.getRole().equals(Constants.ROLE_ADMIN)? Constants.ALL_FILTER: User.getFullName();
+                listPayment = DataUtil.groupCustomerPayment(DataUtil.convertPaymentList(user, results.get(0), start, end));
+
+                tvCash.setText(String.format(    "Tiền mặt:     %s đ", Util.FormatMoney(DataUtil.sumMoneyFromList(listPayment, "paid"))));
+                tvProfit.setText(String.format("Chênh lệch:     %s đ", Util.FormatMoney(DataUtil.sumMoneyFromList(listPayment, "billProfit"))));
+
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        }, true);
     }
 
     @Override

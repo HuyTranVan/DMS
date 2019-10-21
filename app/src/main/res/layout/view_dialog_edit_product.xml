@@ -53,23 +53,63 @@
                 android:layout_height="wrap_content"
                 android:hint="Giảm giá (đ)"
                 android:inputType="number"
-                app:backgroundTint="@color/colorBlueDark" />
+                app:backgroundTint="@color/colorBlueDark"
+                />
 
         </android.support.design.widget.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <EditText
-                android:id="@+id/dialog_edit_product_netprice"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/ip"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Giá NET"
-                android:inputType="number"
-                app:backgroundTint="@color/colorBlueDark"/>
+                android:orientation="horizontal">
 
-        </android.support.design.widget.TextInputLayout>
+                <EditText
+                    android:id="@+id/dialog_edit_product_netprice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Giá NET"
+                    android:inputType="number"
+                    app:backgroundTint="@color/colorBlueDark" />
+
+<!--                <AutoCompleteTextView-->
+<!--                    android:id="@+id/dialog_edit_product_netprice"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:hint="Giá NET"-->
+<!--                    android:inputType="number"-->
+<!--                    app:backgroundTint="@color/colorBlueDark"/>-->
+
+
+
+            </android.support.design.widget.TextInputLayout>
+
+
+            <wolve.dms.customviews.CTextIcon
+                android:id="@+id/dialog_edit_product_netprice_clear"
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="@dimen/_25sdp"
+                android:background="?selectableItemBackgroundBorderless"
+                android:text="@string/icon_close"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:gravity="center"
+                android:clickable="true"/>
+
+
+
+        </RelativeLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/dialog_edit_product_rvprice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -118,31 +158,31 @@
             android:layout_height="2px"
             android:background="#0d000000"/>
 
-        <TextView
-            android:id="@+id/dialog_edit_product_topromotion"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
-            android:text="Chuyển sản phẩm thành khuyến mãi"
-            android:textAllCaps="true"
-            android:textColor="@color/colorBlue"
-            android:gravity="center"
-            android:padding="@dimen/_10sdp"/>
+<!--        <TextView-->
+<!--            android:id="@+id/dialog_edit_product_topromotion"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="?selectableItemBackground"-->
+<!--            android:text="Chuyển sản phẩm thành khuyến mãi"-->
+<!--            android:textAllCaps="true"-->
+<!--            android:textColor="@color/colorBlue"-->
+<!--            android:gravity="center"-->
+<!--            android:padding="@dimen/_10sdp"/>-->
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2px"
-            android:background="#0d000000"/>
+<!--        <View-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="2px"-->
+<!--            android:background="#0d000000"/>-->
 
-        <TextView
-            android:id="@+id/dialog_edit_product_copypromotion"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
-            android:text="Copy thêm khuyến mãi"
-            android:textAllCaps="true"
-            android:gravity="center"
-            android:padding="@dimen/_10sdp"/>
+<!--        <TextView-->
+<!--            android:id="@+id/dialog_edit_product_copypromotion"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="?selectableItemBackground"-->
+<!--            android:text="Copy thêm khuyến mãi"-->
+<!--            android:textAllCaps="true"-->
+<!--            android:gravity="center"-->
+<!--            android:padding="@dimen/_10sdp"/>-->
 
         <include android:layout_height="wrap_content"
             android:layout_width="match_parent"

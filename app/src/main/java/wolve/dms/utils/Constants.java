@@ -22,7 +22,9 @@ public class Constants {
     public final static String CUSTOMER_RECEIVE = "customer_receive";
     public final static String CUSTOMER_ID = "customer_id";
     public final static String BILLS = "bills";
+    public final static String DEBTS = "debts";
     public final static String BILL = "bill";
+    public final static String BILL_DETAIL = "billDetails";
     public final static String PAYMENT = "payment";
     public final static String SHOP_CART_ACTIVITY = "shopcart";
     public final static String PRINT_BILL_ACTIVITY = "printbill";
@@ -46,6 +48,14 @@ public class Constants {
     public static final String ISBILLRETURN = "isBillReturn";
     public static final String HAVEBILLRETURN = "haveBillReturn";
     public static final String PAYBYTRETURN = "havePaymentReturn";
+    public static final String TEMPBILL = "temp_bill";
+    public static final String addressFormat = "%s %s, %s, %s";
+
+    public static final String TYPE = "type";
+    public static final String BILL_RETURN = "bill_return";
+    public static final String BILL_DELETE = "bill_delete";
+    public static final String BILL_PAY = "bill_pay";
+    public static final String BILL_DELIVER = "bill_deliver";
 
     public static final int PRINTER_57_WIDTH = 384;
     public static final int PRINTER_80_WIDTH = 576;

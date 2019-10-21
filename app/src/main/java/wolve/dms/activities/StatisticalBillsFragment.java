@@ -20,6 +20,7 @@ import wolve.dms.callback.CallbackString;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -94,7 +95,9 @@ public class StatisticalBillsFragment extends Fragment implements View.OnClickLi
                 CustomerConnect.GetCustomerDetail(s, new CallbackCustom() {
                     @Override
                     public void onResponse(BaseModel result) {
-                        CustomSQL.setString(Constants.CUSTOMER, result.BaseModelstoString());
+                        BaseModel customer = DataUtil.rebuiltCustomer(result);
+                        CustomSQL.setBaseModel(Constants.CUSTOMER, customer);
+
                         Transaction.gotoCustomerActivity(false);
                     }
 

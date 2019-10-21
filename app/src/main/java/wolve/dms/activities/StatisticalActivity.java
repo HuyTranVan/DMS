@@ -39,10 +39,12 @@ import wolve.dms.libraries.calendarpicker.YearPicker;
 import wolve.dms.libraries.connectapi.sheetapi.GoogleSheetGetAllTab;
 import wolve.dms.libraries.connectapi.sheetapi.GoogleSheetGetData;
 import wolve.dms.models.BaseModel;
+import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
+import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
@@ -221,8 +223,8 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                 break;
 
             case R.id.statistical_reload:
-//                loadInitialData(getStartDay(), getEndDay(), false);
-                changeFragment(new ChoiceProductFragment() , true);
+                loadInitialData(getStartDay(), getEndDay(), false);
+//                changeFragment(new ChoiceProductFragment() , true);
                 break;
         }
     }
@@ -479,6 +481,8 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                             newCash.put("paid", payments.get(a).getDouble("paid"));
                             newCash.put("user", list.get(i).getJsonObject("user"));
                             newCash.put("customer", list.get(i).getJsonObject("customer"));
+                            newCash.put("billTotal", list.get(i).getDouble("total"));
+                            newCash.put("billProfit", Util.getProfitByPayment(list.get(i), payments.get(a).getDouble("paid")));
 
                             updateListUser(new BaseModel(list.get(i).getJsonObject("user")));
 
@@ -496,12 +500,15 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
     private void updateDebtList(List<BaseModel> list){
         listInitialDebt = new ArrayList<>();
+        int distributorID = Distributor.getId();
         for (int i=0; i<list.size(); i++){
             BaseModel itemDebt = list.get(i);
             if (!list.get(i).getString("note").isEmpty()  && Util.isJSONValid(list.get(i).getString("note"))){
                 itemDebt.put("userName", new BaseModel(itemDebt.getString("note")).getString("userName"));
 
-                listInitialDebt.add(list.get(i));
+                if (list.get(i).getBaseModel("distributor").getInt("id") == distributorID){
+                    listInitialDebt.add(list.get(i));
+                }
 
             }
 
@@ -515,7 +522,12 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         Util.debtFragment.reloadData(username, listInitialDebt);
         Util.billsFragment.reloadData(username,listInitialBill);
         Util.productFragment.reloadData(username,listInitialBillDetail);
-        Util.dashboardFragment.reloadData(username,listInitialBill, listInitialBillDetail,Util.billsFragment.getSumBillTotal(), Util.paymentFragment.getSumPayment(), Util.debtFragment.getSumDebt());
+        Util.dashboardFragment.reloadData(username,listInitialBill,
+                listInitialBillDetail,
+                Util.billsFragment.getSumBillTotal(),
+                Util.paymentFragment.getSumPayment(),
+                Util.debtFragment.getSumDebt(),
+                Util.paymentFragment.getSumProfit());
 
     }
 
@@ -524,7 +536,6 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         //2. LoadPayment
         //3. LoadDebt
         List<BaseModel> listResult = new ArrayList<>();
-
 
         listResult.add(0,DataUtil.createPaymentParam(starDay, lastDay));
         if (loadDebt){
@@ -540,68 +551,12 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Util.getInstance().setCurrentActivity(this);
         if (data.getStringExtra(Constants.CUSTOMER) != null && requestCode == Constants.RESULT_CUSTOMER_ACTIVITY){
-            //reloadData();
+            loadInitialData(getStartDay(), getEndDay(), true);
         }
 
     }
-
-//    private List<BaseModel> convertToListPayment(String userName, List<BaseModel> list, long start, long end){
-//        List<BaseModel> listPayments = new ArrayList<>();
-//        for (int i=0; i<list.size(); i++){
-//            //JSONObject objectBill = arrayResult.getJSONObject(i);
-//
-//            List<BaseModel> payments = DataUtil.array2ListBaseModel(list.get(i).getJSONArray("payments"));
-//
-//            if (payments.size() >0){
-//                for (int a=0; a<payments.size(); a++){
-//                    //BaseModel objectPayment = new BaseModel(arrayPayment.getJSONObject(a));
-//
-//                    if (payments.get(a).getLong("createAt") - start >= 0 &&
-//                            payments.get(a).getLong("createAt") - end <= 0){
-//
-//                        if (!DataUtil.checkDuplicate(listPayments,"id", payments.get(a))){
-//                            BaseModel newCash = new BaseModel();
-//                            newCash.put("id", payments.get(a).getInt("id"));
-//                            newCash.put("createAt", payments.get(a).getLong("createAt"));
-//                            newCash.put("updateAt", payments.get(a).getLong("updateAt"));
-//                            newCash.put("note", payments.get(a).getString("note"));
-//                            newCash.put("paid", payments.get(a).getDouble("paid"));
-//                            newCash.put("user", list.get(i).getJsonObject("user"));
-//                            newCash.put("customer", list.get(i).getJsonObject("customer"));
-//
-//                            BaseModel user = new BaseModel(list.get(i).getJsonObject("user"));
-//                            if (!DataUtil.checkDuplicate(listUserNameDisplay, "id" ,user)){
-//                                if (User.getRole().equals(Constants.ROLE_WAREHOUSE)){
-//                                    if (!user.getString("role").equals(Constants.ROLE_ADMIN)){
-//                                        listUserNameDisplay.add(user);
-//                                    }
-//                                }else {
-//                                    listUserNameDisplay.add(user);
-//                                }
-//
-//                            }
-//
-//                            if (userName.equals(Constants.ALL_FILTER)){
-//                                listPayments.add(newCash);
-//
-//                            }else {
-//                                if (user.getString("displayName").equals(userName)){
-//                                    listPayments.add(newCash);
-//                                }
-//
-//                            }
-//
-//                        }
-//
-//                    }
-//                }
-//            }
-//
-//        }
-//
-//        return listPayments;
-//    }
 
     @Override
     public boolean onLongClick(View v) {

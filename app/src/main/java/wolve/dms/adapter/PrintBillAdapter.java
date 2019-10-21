@@ -26,13 +26,13 @@ public class PrintBillAdapter extends RecyclerView.Adapter<PrintBillAdapter.Prin
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
-    private int printSize;
+    //private int printSize;
 
     public PrintBillAdapter(int printSize, List<BaseModel> list) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mData = list;
-        this.printSize = printSize;
+        //this.printSize = printSize;
 
     }
 
@@ -52,24 +52,12 @@ public class PrintBillAdapter extends RecyclerView.Adapter<PrintBillAdapter.Prin
 
             holder.tvPrice.setText(Util.FormatMoney((mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount"))/1000));
 
-//            Double discount = mData.get(position).getDouble("discount");
-//            holder.tvPrice.setText(String.format("%sx(%s%s)",
-//                    mData.get(position).getString("quantity"),
-//                    Util.FormatMoney(mData.get(position).getDouble("unitPrice")),
-//                    discount ==0.0 ?"" : " - "+ Util.FormatMoney(discount)));
-//
-
             Double total = (mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount")) * mData.get(position).getDouble("quantity");
             holder.tvTotal.setText(Util.FormatMoney(total));
 
             if (!mData.get(position).isNull("name")){
                 holder.vLine.setVisibility(position == mData.size()-1 ? View.GONE : View.VISIBLE);
             }
-
-
-
-
-
 
     }
 

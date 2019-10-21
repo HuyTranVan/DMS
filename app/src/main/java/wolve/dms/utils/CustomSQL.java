@@ -3,6 +3,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,6 +18,12 @@ import wolve.dms.models.BaseModel;
 public class CustomSQL {
     final static String MY_PREFS = "DMS_data";
     static SharedPreferences prefs;
+
+    public static void setBaseModel(String title, BaseModel value){
+        prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
+        prefs.edit().putString(title, value.BaseModelstoString()).commit();
+
+    }
 
     public static void setString(String title, String value){
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
@@ -74,6 +81,16 @@ public class CustomSQL {
     }
 
     //----------------------------
+    public static BaseModel getBaseModel(String title){
+        prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
+        if(prefs != null){
+            return new BaseModel(prefs.getString(title, ""));
+        }else {
+            return new BaseModel();
+        }
+
+    }
+
 
     public static String getString(String title){
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
@@ -173,6 +190,26 @@ public class CustomSQL {
 
     }
 
+//    public static void saveListObject2Local(String key, List<BaseModel> list){
+//        prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
+//
+//        prefs.edit().putString(key, new Gson().toJson(list)).commit();
+//
+//
+//    }
+//
+//    public static List loadObjectFromLocal(String key){
+//        prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
+//        List<BaseModel> listResults = new ArrayList<>();
+//        if(prefs != null){
+//            listResults= (ArrayList<BaseModel>) new Gson().fromJson(prefs.getString(key, ""),
+//                    new TypeToken<ArrayList<BaseModel>>() {}.getType());
+//
+//
+//        }
+//        return listResults;
+//
+//    }
 
 
 

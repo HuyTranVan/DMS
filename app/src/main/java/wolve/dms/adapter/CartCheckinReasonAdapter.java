@@ -6,14 +6,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackString;
+import wolve.dms.customviews.CTextIcon;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Status;
+import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Util;
 
 
@@ -22,33 +28,20 @@ import wolve.dms.utils.Util;
  */
 
 public class CartCheckinReasonAdapter extends RecyclerView.Adapter<CartCheckinReasonAdapter.ReasonAdapterViewHolder> {
-    private List<Status> mStatus = new ArrayList<>();
-    private List<String> mData = new ArrayList<>();
+    private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
-    private CallbackString mListener;
+    private ReasonCallback mListener;
 
-    public interface CallbackStatus {
-        void Status(Status status);
-        void UpdateOnly();
+    public interface ReasonCallback{
+        void onResult(BaseModel result, int position);
     }
 
-
-    public CartCheckinReasonAdapter(List<String> list, CallbackString callbackStatus) {
+    public CartCheckinReasonAdapter(List<BaseModel> list, ReasonCallback callback) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
-        this.mListener = callbackStatus ;
+        this.mListener = callback ;
         this.mData = list;
-
-        //this.mStatus = list;
-
-//        for (int i=0; i<list.size(); i++){
-//            if (!list.get(i).getBoolean("defaultStatus")){
-//                this.mData.add(list.get(i).getString("name"));
-//                this.mStatus.add(list.get(i));
-//            }
-//        }
-//        mData.add("Chỉ lưu thông tin cập nhật");
 
     }
 
@@ -60,20 +53,26 @@ public class CartCheckinReasonAdapter extends RecyclerView.Adapter<CartCheckinRe
 
     @Override
     public void onBindViewHolder(final ReasonAdapterViewHolder holder, final int position) {
-        holder.tvName.setText(mData.get(position));
-
-        holder.tvLine.setVisibility(position == mData.size() -1 ? View.GONE : View.VISIBLE);
+        holder.tvName.setText(mData.get(position).getString("content"));
+        holder.line.setVisibility(position == mData.size() -1 ? View.GONE : View.VISIBLE);
 
         holder.lnParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.Result(mData.get(position));
-//                if (position == mData.size()-1){
-//                    callbackStatus.UpdateOnly();
-//                }else {
-//                    callbackStatus.Status(mStatus.get(position));
-//                }
+                mListener.onResult(mData.get(position), position);
 
+
+            }
+        });
+
+        holder.btnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mData.remove(position);
+                CustomSQL.setListBaseModel(Constants.STATUS, mData);
+                notifyDataSetChanged();
+//                notifyItemRemoved(position);
+//                notifyItemChanged(position);
             }
         });
 
@@ -86,14 +85,17 @@ public class CartCheckinReasonAdapter extends RecyclerView.Adapter<CartCheckinRe
 
 
     public class ReasonAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvName, tvLine;
-        private LinearLayout lnParent;
+        private TextView tvName;
+        private View line;
+        private CTextIcon btnClose;
+        private RelativeLayout lnParent;
 
         public ReasonAdapterViewHolder(View itemView) {
             super(itemView);
             tvName = (TextView) itemView.findViewById(R.id.checkin_reason_name);
-            lnParent = (LinearLayout) itemView.findViewById(R.id.checkin_reason_parent);
-            tvLine = itemView.findViewById(R.id.checkin_reason_line);
+            btnClose = (CTextIcon) itemView.findViewById(R.id.checkin_reason_close);
+            lnParent = (RelativeLayout) itemView.findViewById(R.id.checkin_reason_parent);
+            line = itemView.findViewById(R.id.checkin_reason_line);
         }
 
     }

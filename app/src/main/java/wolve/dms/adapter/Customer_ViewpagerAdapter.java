@@ -66,15 +66,15 @@ public class Customer_ViewpagerAdapter extends FragmentPagerAdapter{
     public View getTabView(int position) {
         View tab = LayoutInflater.from(mContext).inflate(R.layout.view_tab_customer, null);
         TextView tvTitle = (TextView) tab.findViewById(R.id.tabTitle);
+        TextView tvNotifyCount = (TextView) tab.findViewById(R.id.tabNotifyCount);
         TextView tvNotify = (TextView) tab.findViewById(R.id.tabNotify);
 
-        //tvIcon.setText(mFragmentIcons.get(position));
         tvTitle.setText(mFragmentText.get(position));
         if (mFragmentCount.get(position) !=0){
-            tvNotify.setVisibility(View.VISIBLE);
-            tvNotify.setText(String.valueOf(mFragmentCount.get(position)));
+            tvNotifyCount.setVisibility(View.VISIBLE);
+            tvNotifyCount.setText(String.valueOf(mFragmentCount.get(position)));
         }else {
-            tvNotify.setVisibility(View.GONE);
+            tvNotifyCount.setVisibility(View.GONE);
         }
 
         if (position == 0) {
@@ -83,14 +83,27 @@ public class Customer_ViewpagerAdapter extends FragmentPagerAdapter{
         return tab;
     }
 
-    public View getNotifyBaged(int count){
+    public View getNotifyBaged(int count, boolean highlight){
         View tab = LayoutInflater.from(mContext).inflate(R.layout.view_tab_customer, null);
         TextView tvTitle = (TextView) tab.findViewById(R.id.tabTitle);
+        TextView tvNotifyCount = (TextView) tab.findViewById(R.id.tabNotifyCount);
         TextView tvNotify = (TextView) tab.findViewById(R.id.tabNotify);
 
         tvTitle.setText(mFragmentText.get(1));
-        tvNotify.setVisibility(count ==0?View.GONE: View.VISIBLE);
-        tvNotify.setText(String.valueOf(count));
+
+        if (highlight){
+            tvNotifyCount.setVisibility(View.GONE);
+            tvNotify.setVisibility(View.VISIBLE);
+
+        }else {
+            tvNotifyCount.setVisibility(count ==0?View.GONE: View.VISIBLE);
+            tvNotifyCount.setText(String.valueOf(count));
+            tvNotify.setVisibility(View.GONE);
+        }
+
+
+
+
 
 
         return tab;

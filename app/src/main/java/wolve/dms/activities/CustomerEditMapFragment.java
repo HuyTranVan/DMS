@@ -81,7 +81,6 @@ public class CustomerEditMapFragment extends Fragment implements View.OnClickLis
     private CustomerActivity mActivity;
     private Handler mHandlerMoveMap = new Handler();
     private FusedLocationProviderClient mFusedLocationClient;
-    private String addressFormat = "%s %s, %s, %s";
     private BaseModel objectAdress = new BaseModel();
 
 
@@ -172,7 +171,7 @@ public class CustomerEditMapFragment extends Fragment implements View.OnClickLis
             @Override
             public void Result(String s) {
                 objectAdress.put("address", s);
-                tvAddress.setText(String.format(addressFormat,
+                tvAddress.setText(String.format(Constants.addressFormat,
                         objectAdress.getString("address"),
                         objectAdress.getString("street"),
                         objectAdress.getString("district"),
@@ -186,7 +185,7 @@ public class CustomerEditMapFragment extends Fragment implements View.OnClickLis
             @Override
             public void Result(String s) {
                 objectAdress.put("street", s);
-                tvAddress.setText(String.format(addressFormat,
+                tvAddress.setText(String.format(Constants.addressFormat,
                         objectAdress.getString("address"),
                         objectAdress.getString("street"),
                         objectAdress.getString("district"),
@@ -202,7 +201,7 @@ public class CustomerEditMapFragment extends Fragment implements View.OnClickLis
         objectAdress.put("province", add.getString("province"));
 
 
-        tvAddress.setText(String.format(addressFormat,
+        tvAddress.setText(String.format(Constants.addressFormat,
                 objectAdress.getString("address"),
                 objectAdress.getString("street"),
                 objectAdress.getString("district"),
