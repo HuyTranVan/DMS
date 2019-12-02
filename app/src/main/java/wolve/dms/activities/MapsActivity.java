@@ -18,6 +18,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -409,11 +410,12 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 List<BaseModel> tempCustomers = new ArrayList<>();
 
                 for (int i = 0; i < results.size(); i++) {
-                    BaseModel distributor = new BaseModel(results.get(i).getJsonObject("distributor"));
-                    if (distributor.getString("id").equals(Distributor.getDistributorId())) {
-                        tempCustomers.add(setCustomerMarker(results.get(i)));
+                    tempCustomers.add(setCustomerMarker(results.get(i)));
 
-                    }
+//                    BaseModel distributor = new BaseModel(results.get(i).getJsonObject("distributor"));
+//                    if (distributor.getString("id").equals(Distributor.getDistributorId())) {
+//                        tempCustomers.add(setCustomerMarker(results.get(i)));
+//                    }
 
                 }
                 addMarkertoMap(true,tempCustomers, true);
@@ -434,14 +436,17 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             public void onResponse(List<BaseModel> results) {
                 progressLoading.setVisibility(View.GONE);
                 List<BaseModel> tempCustomers = new ArrayList<>();
-                for (int i = 0; i < results.size(); i++) {
-                    BaseModel distributor = new BaseModel(results.get(i).getJsonObject("distributor"));
-                    if (distributor.getString("id").equals(Distributor.getDistributorId())) {
-                        tempCustomers.add(setCustomerMarker(results.get(i)));
 
-                    }
+                for (int i = 0; i < results.size(); i++) {
+                    tempCustomers.add(setCustomerMarker(results.get(i)));
+
+//                    BaseModel distributor = new BaseModel(results.get(i).getJsonObject("distributor"));
+//                    if (distributor.getString("id").equals(Distributor.getDistributorId())) {
+//                        tempCustomers.add(setCustomerMarker(results.get(i)));
+//
+//                    }
                 }
-                addMarkertoMap(clearMap,tempCustomers, false);
+                addMarkertoMap(clearMap, tempCustomers,false);
 
             }
 
@@ -460,7 +465,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         int customerStatus = currentCustomer.getBaseModel("status").getInt("id");
         currentCustomer.put("statusID", customerStatus);
 
-        if (arrayCheckIns.length() ==0 && customerStatus == 1){
+        if (customer.getInt("checkinCount") ==0 && customerStatus == 1){
             currentCustomer.put("icon", R.drawable.ico_pin_pink);
             currentCustomer.put("checkincount","N");
             currentCustomer.put("statusDetail", "Khách hàng mới");
@@ -470,23 +475,21 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
         }else if (customerStatus == 1) {
             currentCustomer.put("icon", R.drawable.ico_pin_red);
-            currentCustomer.put("checkincount", arrayCheckIns.length());
+            currentCustomer.put("checkincount", customer.getInt("checkinCount"));
             currentCustomer.put("statusDetail", "Khách hàng có quan tâm");
             currentCustomer.put("statusColor", getResources().getColor(R.color.orange_dark));
             currentCustomer.put("statusInterested", true);
 
         } else if (customerStatus == 2) {
             currentCustomer.put("icon", R.drawable.ico_pin_grey);
-            currentCustomer.put("checkincount", arrayCheckIns.length());
+            currentCustomer.put("checkincount", customer.getInt("checkinCount"));
             currentCustomer.put("statusDetail", "Khách hàng không quan tâm");
             currentCustomer.put("statusColor", getResources().getColor(R.color.black_text_color_hint));
             currentCustomer.put("statusInterested", false);
 
-
         } else {
-
             currentCustomer.put("icon", R.drawable.ico_pin_blue);
-            currentCustomer.put("checkincount", arrayCheckIns.length());
+            currentCustomer.put("checkincount", customer.getInt("checkinCount"));
             currentCustomer.put("statusDetail", "Khách đã mua hàng" );
             currentCustomer.put("statusColor", getResources().getColor(R.color.colorBlue));
             currentCustomer.put("statusInterested", true);
@@ -514,7 +517,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                     currentMarker =null;
                     mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
-                } else {
+                }else {
                     //updateBottomDetail();
 
                     //reUpdateMarkerDetail(cust);
@@ -658,8 +661,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
         if (marker.getTag() != null) {
             final BaseModel customer = new BaseModel((JSONObject) marker.getTag());
-//            LatLng newLatLng = new LatLng(customer.getDouble("lat") , customer.getDouble("lng"));
-//            triggerCurrentLocation(newLatLng ,  false);
 
             getDistanceFromCurrent(customer.getDouble("lat"), customer.getDouble("lng"), new CallbackLong() {
                 @Override
@@ -865,7 +866,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 showMarker(cust);
                 closeSearch();
 
-
             }
 
             @Override
@@ -918,7 +918,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
                     @Override
                     public void onError(String error) {
-
+                        Log.e("errrororr", error);
                     }
                 }, true);
             }
@@ -964,7 +964,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         customer.put("street",objectAdress.getString("street"));
         customer.put("district",objectAdress.getString("district"));
         customer.put("province",objectAdress.getString("province"));
-        customer.put("currentDebt",0.0);
+        customer.put("currentDebt",0);
 
         CustomerConnect.CreateCustomer(CustomerConnect.createParamCustomer(customer), new CallbackCustom() {
             @Override
@@ -1087,7 +1087,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             btnCheckin.setBackground(getResources().getDrawable(R.drawable.btn_round_grey));
         }
 
-
         btnCall.setVisibility(currentPhone.equals("")?View.GONE : View.VISIBLE);
 
         progressLoadCustomer.setVisibility(View.VISIBLE);
@@ -1114,7 +1113,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                             Transaction.gotoCustomerActivity( distance < Constants.CHECKIN_DISTANCE? true : false);
 
                         }
-
                     }
                 });
             }
@@ -1176,44 +1174,5 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
 }
 
-//    private void createCustomerFromLocation(final double lat, final double lng , final String shopType, final String shopName, final String phone){
-//        LocationConnect.getAddressFromLocation(lat, lng, new CallbackCustom() {
-//            @Override
-//            public void onResponse(BaseModel result) {
-//                BaseModel customer = new BaseModel();
-//                BaseModel objectAdress = MapUtil.getAddressFromMapResult(result);
-//                if (phone == null && shopType != null && shopName != null) {
-//                    customer.put("shopType", shopType);
-//                    customer.put("signBoard", shopName);
-//                    customer.put("name", "Anh " + shopName.substring(shopName.lastIndexOf(" ") + 1));
-//                    customer.put("phone", "");
-//                } else if (shopType == null && shopName == null && phone != null) {
-//                    customer.put("shopType", Constants.shopType[0]);
-//                    customer.put("signBoard", "");
-//                    customer.put("name", "");
-//                    customer.put("phone", phone);
-//                }
-//
-//                customer.put("id", 0);
-//                customer.put("lat", lat);
-//                customer.put("lng", lng);
-//                customer.put("province", objectAdress.getString("province"));
-//                customer.put("district", objectAdress.getString("district"));
-//                customer.put("street", objectAdress.getString("street"));
-//                customer.put("address", objectAdress.getString("address"));
-//                customer.put("note", "");
-//                customer.put("debt",0.0);
-//
-//                CustomSQL.setString(Constants.CUSTOMER, customer.BaseModelstoString());
-//                Transaction.gotoCustomerActivity( true);
-//                CustomInputDialog.dismissDialog();
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }, true);
-//    }
 
 

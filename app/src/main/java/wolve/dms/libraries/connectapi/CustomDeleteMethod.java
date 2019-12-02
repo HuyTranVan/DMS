@@ -15,6 +15,8 @@ import java.net.ProtocolException;
 import java.net.URL;
 
 import wolve.dms.callback.Callback;
+import wolve.dms.callback.CallbackCustom;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Util;
@@ -23,10 +25,10 @@ import wolve.dms.utils.Util;
  * Created by tranhuy on 7/22/16.
  */
 public class CustomDeleteMethod extends AsyncTask<String, Void, String> {
-    private Callback mListener = null;
+    private CallbackCustom mListener = null;
     private String baseUrl;
 
-    public CustomDeleteMethod(String url, Callback listener) {
+    public CustomDeleteMethod(String url, CallbackCustom listener) {
         mListener = listener;
         this.baseUrl = url;
 
@@ -57,42 +59,25 @@ public class CustomDeleteMethod extends AsyncTask<String, Void, String> {
             while ((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
             }
-            in.close();
+            return String.valueOf(response);
 
         } catch (MalformedURLException e) {
-            e.printStackTrace();
-            return "errorCode: 01";
+            return e.toString();
         } catch (ProtocolException e) {
-            e.printStackTrace();
-            return "errorCode: 02";
+            return e.toString();
         } catch (IOException e) {
-            e.printStackTrace();
-            return "errorCode: 03";
+            return e.toString();
         }
-        Log.d("output: ", String.valueOf(response));
-
-        return String.valueOf(response);
-        }
+    }
 
     @Override
     protected void onPostExecute(String response) {
-        if (response.contains("errorCode")){
-            mListener.onError(response);
-            if (response.contains("errorCode: 01")){
-                Util.getInstance().showSnackbar("Lỗi kết nối server ", null, null);
-            }else if (response.contains("errorCode: 02")){
-                Util.getInstance().showSnackbar("Lỗi đường truyền ", null, null);
-            }else if (response.contains("errorCode: 03")){
-                Util.getInstance().showSnackbar("Lỗi kết nối server", null, null);
-            }
-        }else {
-            try {
-                mListener.onResponse(new JSONObject(response));
+        if (Util.isJSONObject(response)){
+            mListener.onResponse(new BaseModel(response));
 
-            } catch (JSONException e) {
-                mListener.onError("Data error");
-                Util.getInstance().showSnackbar("Lỗi dữ liệu", null, null);
-            }
+        }else {
+            mListener.onError(response);
+
         }
 
     }

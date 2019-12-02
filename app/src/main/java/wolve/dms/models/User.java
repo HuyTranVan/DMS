@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
+import wolve.dms.utils.Util;
 
 
 /**
@@ -39,7 +40,7 @@ public class User extends BaseModel {
 
     public static String getUserId(){
         int id_user = 0;
-        User currentUser = CustomSQL.getObject(Constants.USER, User.class);
+        BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
 
         if (currentUser != null) {
             id_user = currentUser.getInt("id");
@@ -49,7 +50,7 @@ public class User extends BaseModel {
 
     public static int getId(){
         int id_user = 0;
-        User currentUser = CustomSQL.getObject(Constants.USER, User.class);
+        BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
 
         if (currentUser != null) {
             id_user = currentUser.getInt("id");
@@ -59,7 +60,7 @@ public class User extends BaseModel {
 
     public static String getToken(){
         String token = "";
-        User currentUser = CustomSQL.getObject(Constants.USER, User.class);
+        BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
 
         if (currentUser != null) {
             token = currentUser.getString("token");
@@ -69,7 +70,7 @@ public class User extends BaseModel {
 
     public static String getFullName(){
         String name = "";
-        User currentUser = CustomSQL.getObject(Constants.USER, User.class);
+        BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
 
         if (currentUser != null) {
             name = currentUser.getString("displayName");
@@ -80,7 +81,7 @@ public class User extends BaseModel {
 
     public static String getRole(){
         String role = "";
-        User currentUser = CustomSQL.getObject(Constants.USER, User.class);
+        BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
 
         if (currentUser != null) {
             role = currentUser.getString("role");
@@ -90,7 +91,7 @@ public class User extends BaseModel {
 
     public static String getPhone(){
         String phone = "";
-        User currentUser = CustomSQL.getObject(Constants.USER, User.class);
+        BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
 
         if (currentUser != null) {
             phone = currentUser.getString("phone");
@@ -98,14 +99,35 @@ public class User extends BaseModel {
         return phone;
     }
 
-    public static JSONObject getCurrentUser(){
-        String phone = "";
-        User currentUser = CustomSQL.getObject(Constants.USER, User.class);
+    public static BaseModel getCurrentUser(){
+        BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
+        BaseModel user = new BaseModel();
+        user.put("id", currentUser.getInt("id"));
+        user.put("displayName", currentUser.getString("displayName"));
+        user.put("phone", currentUser.getString("phone"));
+        user.put("role", currentUser.getString("role"));
 
-//        if (currentUser != null) {
-//            phone = currentUser.getString("phone");
-//        }
-        return currentUser.BaseModelJSONObject();
+        return user;
     }
+
+    public static JSONObject getCurrentUserString(){
+        BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
+        JSONObject user = new JSONObject();
+        try {
+            user.put("id", currentUser.getInt("id"));
+            user.put("displayName", currentUser.getString("displayName"));
+            user.put("phone", currentUser.getString("phone"));
+            user.put("role", currentUser.getString("role"));
+            user.put("currentTime", Util.CurrentMonthYearHour());
+
+
+        } catch (JSONException e) {
+            //e.printStackTrace();
+        }
+
+        return user;
+    }
+
+
 
 }

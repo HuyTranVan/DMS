@@ -86,7 +86,7 @@ public class BaseModel implements Serializable {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return null;
+        return "";
     }
 
     public Boolean getBoolean(String key) {

@@ -21,6 +21,8 @@ import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.libraries.Security;
+import wolve.dms.libraries.connectapi.CustomGetMethod;
+import wolve.dms.libraries.connectapi.CustomPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
@@ -28,6 +30,8 @@ import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.BuildConfig.SERVER_URL;
 
 public class SplashScreenActivity extends BaseActivity {
     private ProgressBar progressBar;
@@ -51,6 +55,39 @@ public class SplashScreenActivity extends BaseActivity {
 
     @Override
     public void initialData() {
+//        JSONObject object = new JSONObject();
+//        try {
+//            object.put("huy", "abd");
+//            object.put("isgay", true);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//
+//        BaseModel paramCustomer = new BaseModel();
+//        paramCustomer.put("url", SERVER_URL + "user");
+//        paramCustomer.put("method", "POST");
+//        paramCustomer.put("isjson", false );
+//        paramCustomer.put("param", object );
+//
+//
+//
+//        new CustomPostMethod(paramCustomer, new CallbackCustom() {
+//            @Override
+//            public void onResponse(BaseModel result) {
+//                Log.e("result", result.BaseModelstoString());
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        }).execute();
+
+
+
+
         openUri();
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -66,7 +103,7 @@ public class SplashScreenActivity extends BaseActivity {
                             progressBar.setVisibility(View.GONE);
                             Distributor distributor = new Distributor(object.getJsonObject("distributor"));
 
-                            CustomSQL.setObject(Constants.USER, object);
+                            CustomSQL.setBaseModel(Constants.USER, object);
                             CustomSQL.setObject(Constants.DISTRIBUTOR, distributor);
 
                             Util.showToast("Đăng nhập thành công");

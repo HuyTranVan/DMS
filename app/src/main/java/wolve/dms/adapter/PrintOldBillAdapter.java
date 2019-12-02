@@ -48,16 +48,13 @@ public class PrintOldBillAdapter extends RecyclerView.Adapter<PrintOldBillAdapte
     public void onBindViewHolder(final PrintBillViewHolder holder, final int position) {
         holder.tvDate.setText(Util.DateHourString(mData.get(position).getLong("createAt")));
         holder.tvTotal.setText(Util.FormatMoney(mData.get(position).getDouble("total")));
-        holder.tvPaid.setText(Util.FormatMoney(mData.get(position).getDouble("paid")));
+        holder.tvPaid.setText(Util.FormatMoney(mData.get(position).getDouble("total") - mData.get(position).getDouble("debt")));
         holder.tvDebt.setText(Util.FormatMoney(mData.get(position).getDouble("debt")));
 
         List<BaseModel> list = DataUtil.array2ListObject(mData.get(position).getString("billDetails"));
 
         PrintBillAdapter adapterBill = new PrintBillAdapter(printSize , list) ;
         Util.createLinearRV(holder.rvBill, adapterBill);
-
-
-
 
     }
 

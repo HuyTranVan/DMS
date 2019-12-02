@@ -23,6 +23,7 @@ import wolve.dms.activities.StatisticalCustomerActivity;
 import wolve.dms.activities.StatusActivity;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.libraries.Security;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Customer;
 import wolve.dms.models.User;
 
@@ -150,13 +151,13 @@ public class Transaction {
 
     }
 
-    public static void gotoPrintBillActivity( String bill,String debt, Boolean rePrint) {
+    public static void gotoPrintBillActivity(BaseModel bill, Boolean rePrint) {
         Activity context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(context, PrintBillActivity.class);
         intent.putExtra(Constants.RE_PRINT, rePrint);
         //intent.putExtra(Constants.CUSTOMER, customer);
-        intent.putExtra(Constants.BILL, bill);
-        intent.putExtra(Constants.ALL_DEBT, debt);
+        intent.putExtra(Constants.BILL, bill.BaseModelstoString());
+        //intent.putExtra(Constants.ALL_DEBT, debt);
         context.startActivityForResult(intent, Constants.RESULT_PRINTBILL_ACTIVITY);
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }

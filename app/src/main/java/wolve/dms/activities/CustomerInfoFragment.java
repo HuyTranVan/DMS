@@ -59,7 +59,6 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 
         addEvent();
 
-
         return view;
     }
 
@@ -91,6 +90,8 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
                 address.getString("province"));
         edAdress.setText(add);
         edAdress.setFocusable(false);
+
+        mActivity.reshowAdd(address);
     }
 
     public void reloadInfo(){
@@ -99,7 +100,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         reshowAddress(mActivity.currentCustomer);
 
         edPhone.setText(Util.FormatPhone(mActivity.currentCustomer.getString("phone")));
-        mCall.setVisibility(mActivity.currentCustomer.getString("phone").equals("")?View.GONE: View.VISIBLE);
+
 
         edName.setText(mActivity.currentCustomer.getString("name"));
         edShopName.setText(mActivity.currentCustomer.getString("signBoard"));
@@ -122,6 +123,8 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         }
 
         mPrint.setVisibility(mActivity.listDebtBill.size() > 0? View.VISIBLE : View.GONE);
+        mCall.setVisibility(mActivity.currentCustomer.getString("phone").equals("")?View.GONE: View.VISIBLE);
+        
         updateStatus();
 
 
@@ -240,7 +243,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
                 break;
 
             case R.id.customer_info_print:
-                mActivity.printDebtBills(true);
+                mActivity.printDebtBills();
 
                 break;
 
@@ -363,7 +366,8 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
             result = text;
         }
 
-        return result;
+        //return result;
+        return  text;
     }
 
 

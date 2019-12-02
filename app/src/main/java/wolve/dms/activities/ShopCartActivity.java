@@ -159,7 +159,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
             case R.id.cart_submit:
                 if (CustomSQL.getLong(Constants.CHECKIN_TIME) != 0){
-                    Transaction.gotoPrintBillActivity(DataUtil.convertListObject2Array(adapterProducts.getAllData()).toString(), debt, false);
+                    gotoPrintBill();
 
                 }else {
                     postBillAndSave();
@@ -270,7 +270,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     @Override
     public boolean onLongClick(View v) {
         if (User.getRole().equals(Constants.ROLE_ADMIN)){
-            Transaction.gotoPrintBillActivity(DataUtil.convertListObject2Array(adapterProducts.getAllData()).toString(), debt, false);
+            gotoPrintBill();
 
         }
 
@@ -314,7 +314,16 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         return Security.encrypt(noteObject.toString());
     }
 
+    private void gotoPrintBill(){
+        BaseModel bill = new BaseModel();
+        bill.put("id",0);
+        bill.putBaseModel("user", User.getCurrentUser());
+        bill.put("total", adapterProducts.totalPrice());
+        bill.put("debt", adapterProducts.totalPrice());
+        bill.putList(Constants.BILL_DETAIL,adapterProducts.getAllData() );
 
+        Transaction.gotoPrintBillActivity(bill, false);
+    }
 
 
 }

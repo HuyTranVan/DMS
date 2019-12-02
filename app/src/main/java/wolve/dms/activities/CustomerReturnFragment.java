@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -408,6 +409,8 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
     }
 
     private void postUpdateBillReturn(List<BaseModel> listProductReturn, Double sumreturn, BaseModel currentBill, callbackbill listener, boolean loading){
+//        String note = Security.decrypt(currentBill.getString("note"));
+
         JSONObject noteObject = new JSONObject();
         JSONObject noteContent = new JSONObject();
         try {
@@ -418,12 +421,14 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
         } catch (JSONException e) {
 
         }
-        String note = Security.encrypt(noteObject.toString());
+
+        String note = DataUtil.createBillNote(currentBill.getString("note"), Constants.ISBILLRETURN, noteContent);
 
         String params = DataUtil.createPostBillParam(mActivity.currentCustomer.getInt("id"), 0.0, 0.0, listProductReturn, note);
         CustomerConnect.PostBill(params, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel billReturn) {
+                Log.e("returnmnnnn", billReturn.BaseModelstoString());
                 String params = DataUtil.updateBillHaveReturnParam(mActivity.currentCustomer.getInt("id"), currentBill, billReturn, sumreturn);
 
                 CustomerConnect.PostBill(params, new CallbackCustom() {

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,12 +71,14 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onBindViewHolder(final CustomerBillsAdapterViewHolder holder, final int position) {
-        holder.lnCover.setVisibility(mData.get(position).getBoolean(Constants.TEMPBILL)? View.VISIBLE: View.GONE);
+        holder.lnCover.setVisibility(mData.get(position).hasKey(Constants.TEMPBILL) && mData.get(position).getBoolean(Constants.TEMPBILL)? View.VISIBLE: View.GONE);
         holder.btnDelete.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN)||
                 User.getId() == mData.get(position).getBaseModel("user").getInt("id")
                 ? View.VISIBLE:View.GONE);
 
         holder.btnConfirm.setVisibility(CustomSQL.getLong(Constants.CHECKIN_TIME) != 0 ? View.VISIBLE : View.GONE);
+//        holder.btnConfirm.setVisibility(View.GONE);
+//        holder.btnDelete.setVisibility(View.GONE);
 
         holder.tvDate.setText(Util.DateHourString(mData.get(position).getLong("createAt")));
         holder.tvTotal.setText(Util.FormatMoney(mData.get(position).getDouble("total")) + " đ");
@@ -87,6 +90,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
                 @Override
                 public void onClick(View v) {
                     payBill(position);
+
                 }
             });
         }else {
@@ -129,6 +133,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
 
         if (Util.isEmpty(mData.get(position).getString("note")) ){
             holder.rvReturn.setVisibility(View.GONE);
+            holder.tvDeliver.setVisibility(View.GONE);
 
         }else {
             if (mData.get(position).hasKey(Constants.HAVEBILLRETURN)){
@@ -141,6 +146,17 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
 
             }else {
                 holder.rvReturn.setVisibility(View.GONE);
+
+            }
+
+            if (mData.get(position).hasKey(Constants.DELIVER_BY)){
+                String s = mData.get(position).getString(Constants.DELIVER_BY);
+                holder.tvDeliver.setVisibility(View.VISIBLE);
+                holder.tvDeliver.setText(String.format("Giao bởi: %s vào %s", mData.get(position).getBaseModel(Constants.DELIVER_BY).getString("displayName"),
+                        mData.get(position).getBaseModel(Constants.DELIVER_BY).getString("currentTime")));
+
+            }else {
+                holder.tvDeliver.setVisibility(View.GONE);
 
             }
 
@@ -195,7 +211,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
     }
 
     public class CustomerBillsAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvDate, tvHour, tvPay, tvDebt, tvTotal, tvIcon;
+        private TextView tvDate, tvHour, tvPay, tvDebt, tvTotal, tvIcon, tvDeliver;
         private CTextIcon btnMenu;
         private RecyclerView rvBillDetail, rvPayment, rvReturn;
         private LinearLayout lnPayment, lnCover;
@@ -219,6 +235,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
             lnCover = itemView.findViewById(R.id.bills_item_cover);
             btnDelete = itemView.findViewById(R.id.btn_delete);
             btnConfirm = itemView.findViewById(R.id.btn_confirm);
+            tvDeliver = itemView.findViewById(R.id.bills_item_deliver_name);
 
 
         }
@@ -272,6 +289,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
         if (mData.get(currentPosition).getDouble("debt") != 0){
             List currentDebt = new ArrayList();
             currentDebt.add(mData.get(currentPosition));
+            Log.e("reasdfasdf", mData.get(currentPosition).BaseModelstoString());
 
             CustomCenterDialog.showDialogPayment(String.format("THANH TOÁN HÓA ĐƠN %s", Util.DateString(mData.get(currentPosition).getLong("createAt"))),
                     currentDebt,
@@ -280,11 +298,13 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
                     new CallbackListCustom() {
                         @Override
                         public void onResponse(List result) {
+
                             try {
                                 CustomerConnect.PostListPay(DataUtil.createListPaymentParam(new JSONObject(mData.get(currentPosition).getString("customer")).getInt("id"),
                                         result), new CallbackListCustom() {
                                     @Override
                                     public void onResponse(List result) {
+
                                         Util.showToast("Thanh toán thành công");
                                         BaseModel respone = new BaseModel();
                                         respone.put(Constants.TYPE, Constants.BILL_PAY);

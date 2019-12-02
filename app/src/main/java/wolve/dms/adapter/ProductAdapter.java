@@ -21,6 +21,7 @@ import wolve.dms.R;
 import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.customviews.CTextIcon;
@@ -77,25 +78,18 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
 
     @Override
     public void onBindViewHolder(final ProductAdapterViewHolder holder, final int position) {
-//        try {
-            holder.tvName.setText(mData.get(position).getString("name"));
-            holder.tvPrice.setText(Util.FormatMoney(mData.get(position).getDouble("unitPrice")));
+        holder.tvName.setText(mData.get(position).getString("name"));
+        holder.tvPrice.setText(Util.FormatMoney(mData.get(position).getDouble("unitPrice")));
 //            holder.tvGroup.setText(new JSONObject(mData.get(position).getString("productGroup")).getString("name"));
-            holder.tvGroup.setText(Util.FormatMoney(mData.get(position).getDouble("purchasePrice")));
-            holder.tvGift.setVisibility(mData.get(position).getBoolean("promotion")?View.VISIBLE : View.GONE);
-            if (!Util.checkImageNull(mData.get(position).getString("image"))){
-                Glide.with(mContext).load(mData.get(position).getString("image")).centerCrop().into(holder.imageProduct);
+        holder.tvGroup.setText(Util.FormatMoney(mData.get(position).getDouble("purchasePrice")));
+        holder.tvGift.setVisibility(mData.get(position).getBoolean("promotion")?View.VISIBLE : View.GONE);
+        if (!Util.checkImageNull(mData.get(position).getString("image"))){
+            Glide.with(mContext).load(mData.get(position).getString("image")).centerCrop().into(holder.imageProduct);
 
-            }else {
-                Glide.with(mContext).load( R.drawable.ic_wolver).centerCrop().into(holder.imageProduct);
+        }else {
+            Glide.with(mContext).load( R.drawable.ic_wolver).centerCrop().into(holder.imageProduct);
 
-            }
-
-
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-
+        }
 
         if (User.getRole().equals(Constants.ROLE_ADMIN)){
             holder.rlParent.setOnClickListener(new View.OnClickListener() {
@@ -113,14 +107,28 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
                         @Override
                         public void onRespone(Boolean result) {
                             String param = String.valueOf(mData.get(position).getInt("id"));
-                            ProductConnect.DeleteProduct(param, new CallbackJSONObject() {
+                            ProductConnect.DeleteProduct(param, new CallbackCustom() {
                                 @Override
-                                public void onResponse(JSONObject result) {
+                                public void onResponse(BaseModel result) {
+                                    Util.getInstance().stopLoading(true);
                                     mDeleteListener.onDelete(mData.get(position).BaseModelstoString(), position);
+
+//                                    if (Constants.responeIsSuccess(result)){
+//
+//
+//                                    }else {
+//                                        Util.getInstance().stopLoading(true);
+//                                        Constants.throwError(result.getString("message"));
+//
+//
+//                                    }
+
                                 }
 
                                 @Override
                                 public void onError(String error) {
+                                    Util.getInstance().stopLoading(true);
+                                    Constants.throwError(error);
 
                                 }
                             }, true);

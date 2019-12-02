@@ -121,6 +121,10 @@ public class CInputForm extends FrameLayout {
         }
     }
 
+    public EditText getEdInput(){
+        return edInput;
+    }
+
     public void setIconMoreText(String text){
         tvMore.setVisibility(VISIBLE);
         tvMore.setText(text);

@@ -1,5 +1,7 @@
 package wolve.dms.apiconnect;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -186,32 +188,33 @@ public class CustomerConnect {
 //        }).execute();
 //    }
 
-    public static void DeleteCustomer(String params,final CallbackJSONObject listener, final Boolean stopLoading){
+    public static void DeleteCustomer(String params,final CallbackCustom listener, final Boolean stopLoading){
         Util.getInstance().showLoading();
 
         String url = Api_link.CUSTOMER_DELETE + params;
 
-        new CustomDeleteMethod(url, new Callback() {
+        new CustomDeleteMethod(url, new CallbackCustom() {
             @Override
-            public void onResponse(JSONObject result) {
-                Util.getInstance().stopLoading(stopLoading);
-                try {
-                    if (result.getInt("status") == 200) {
-                        listener.onResponse(null);
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(true);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
 
-                    } else {
-                        listener.onError("Unknow error");
-                    }
-                } catch (JSONException e) {
-                    listener.onError(e.toString());
+                }else {
+                    Util.getInstance().stopLoading(true);
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
                 }
-            }
 
+            }
 
             @Override
             public void onError(String error) {
-                listener.onError(error);
                 Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
             }
         }).execute();
     }
@@ -382,37 +385,37 @@ public class CustomerConnect {
         }).execute();
     }
 
-    public static void DeleteBill(String params,final CallbackCustom listener, final Boolean stopLoading){
-        Util.getInstance().showLoading();
-
-        String url = Api_link.BILL_DELETE + params;
-
-        new CustomDeleteMethod(url, new Callback() {
-
-            @Override
-            public void onResponse(JSONObject result) {
-                Util.getInstance().stopLoading(stopLoading);
-                try {
-                    if (result.getInt("status") == 200) {
-                        listener.onResponse(new BaseModel(result));
-
-                    } else {
-                        listener.onError("Unknow error");
-                    }
-                } catch (JSONException e) {
-                    listener.onError(e.toString());
-                    Util.getInstance().stopLoading(true);
-                }
-
-            }
-
-            @Override
-            public void onError(String error) {
-                listener.onError(error);
-                Util.getInstance().stopLoading(true);
-            }
-        }).execute();
-    }
+//    public static void DeleteBill(String params,final CallbackCustom listener, final Boolean stopLoading){
+//        Util.getInstance().showLoading();
+//
+//        String url = Api_link.BILL_DELETE + params;
+//
+//        new CustomDeleteMethod(url, new Callback() {
+//
+//            @Override
+//            public void onResponse(JSONObject result) {
+//                Util.getInstance().stopLoading(stopLoading);
+//                try {
+//                    if (result.getInt("status") == 200) {
+//                        listener.onResponse(new BaseModel(result));
+//
+//                    } else {
+//                        listener.onError("Unknow error");
+//                    }
+//                } catch (JSONException e) {
+//                    listener.onError(e.toString());
+//                    Util.getInstance().stopLoading(true);
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                listener.onError(error);
+//                Util.getInstance().stopLoading(true);
+//            }
+//        }).execute();
+//    }
 
     public static void DeleteListBill(List<String> listParams, final CallbackListCustom listener, final Boolean stopLoading) {
         Util.getInstance().showLoading();

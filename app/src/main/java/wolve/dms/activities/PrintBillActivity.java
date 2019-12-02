@@ -68,7 +68,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     private ImageView imgLogo, btnBack, imgOrderPhone;
     private TextView tvCompany, tvAdress, tvHotline, tvWebsite, tvTitle, tvShopName, tvCustomerName, tvCustomerAddress, tvDate, tvEmployee,
             tvSumCurrentBill, tvOrderPhone, tvThanks, tvPrintSize, tvPrinterMainText, tvPrinterName, tvTotal, tvPaid, tvRemain, tvTotalTitle,
-            tvEmployeeSign, tvDeliver;
+            tvEmployeeSign, tvDeliver, tvDeliverTitle;
     private CTextIcon tvListPrinter;
     private RecyclerView rvBills, rvDebts;
     private LinearLayout lnMain, lnBottom, lnSubmit, lnTotalGroup, lnPaidGroup, lnRemainGroup, lnSignature;
@@ -79,7 +79,6 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     private PrintBillAdapter adapterBill;
     private PrintOldBillAdapter adapterOldBill;
     private DebtAdapter adapterDebt;
-    //private List<BaseModel> listBills = new ArrayList<>();
     private List<BaseModel> listDebts = new ArrayList<>();
     private Uri imageChangeUri ;
     private Dialog dialogPayment;
@@ -119,6 +118,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         tvTitle = findViewById(R.id.print_bill_title);
         tvShopName = findViewById(R.id.print_bill_shopname);
         tvCustomerName = findViewById(R.id.print_bill_customername);
+        tvDeliverTitle = findViewById(R.id.print_bill_deliver_title);
         tvDeliver = findViewById(R.id.print_bill_deliver);
         tvCustomerAddress = findViewById(R.id.print_bill_customeraddress);
         tvDate = findViewById(R.id.print_bill_date);
@@ -156,25 +156,26 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void initialData() {
         currentCustomer = new BaseModel(CustomSQL.getString(Constants.CUSTOMER));
+        currentBill = new BaseModel(getIntent().getExtras().getString(Constants.BILL));
+        listDebts = new ArrayList<>(DataUtil.array2ListObject(currentCustomer.getString(Constants.DEBTS)));
 
         rePrint = getIntent().getExtras().getBoolean(Constants.RE_PRINT);
-        currentBill = new BaseModel(getIntent().getExtras().getString(Constants.BILL));
-        listDebts = DataUtil.array2ListObject(getIntent().getExtras().getString(Constants.ALL_DEBT));
-
         if (rePrint){
-            tvTitle.setText("HÓA ĐƠN (in lại)");
+            tvTitle.setText("CÔNG NỢ ");
             line1.setVisibility(View.GONE);
             line2.setVisibility(View.GONE);
             line3.setVisibility(View.GONE);
             tvSumCurrentBill.setVisibility(View.GONE);
             tvPrinterMainText.setText("IN LẠI HÓA ĐƠN");
-            //createOldRVBill(listBills);
             tvTotalTitle.setText("Tổng nợ:");
-            tvTotal.setText(Util.FormatMoney(adapterOldBill.getDebtMoney()));
             lnPaidGroup.setVisibility(View.GONE);
             lnRemainGroup.setVisibility(View.GONE);
+            tvDeliverTitle.setVisibility(View.GONE);
             tvDeliver.setVisibility(View.GONE);
+            tvEmployee.setText       (": " + User.getFullName());
 
+            createOldRVBill(listDebts);
+            tvTotal.setText(Util.FormatMoney(adapterOldBill.getDebtMoney()));
 
         }else {
             tvTitle.setText("HÓA ĐƠN");
@@ -183,20 +184,22 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
             line3.setVisibility(View.VISIBLE);
             tvSumCurrentBill.setVisibility(View.VISIBLE);
             tvPrinterMainText.setText("IN HÓA ĐƠN & LƯU");
+            lnPaidGroup.setVisibility(View.VISIBLE);
+            lnRemainGroup.setVisibility(View.VISIBLE);
+            tvDeliverTitle.setVisibility(View.VISIBLE);
+            tvDeliver.setVisibility(View.VISIBLE);
+            tvDeliver.setText       (": " + User.getFullName());
+            tvEmployee.setText       (": " + currentBill.getBaseModel("user").getString("displayName"));
+
             createCurrentRVBill(currentBill);
             createRVDebt(listDebts);
-
             tvSumCurrentBill.setText(Util.FormatMoney(adapterBill.getTotalMoney()));
             String totalMoney = Util.FormatMoney(adapterBill.getTotalMoney() + adapterDebt.getTotalMoney());
             tvTotalTitle.setText("Tổng:");
             tvTotal.setText(totalMoney);
-            lnPaidGroup.setVisibility(View.VISIBLE);
-            lnRemainGroup.setVisibility(View.VISIBLE);
+
             tvPaid.setText("0");
             tvRemain.setText(totalMoney);
-
-            tvDeliver.setVisibility(View.VISIBLE);
-            tvDeliver.setText       (": " + User.getFullName());
 
         }
 
@@ -214,7 +217,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
         tvCustomerAddress.setText(": " + String.format("%s, %s", currentCustomer.getString("district"), currentCustomer.getString("province")));
         tvDate.setText           (": " + Util.CurrentMonthYearHour());
-        tvEmployee.setText       (": " + currentBill.getBaseModel("user").getString("displayName"));
+
 
 
         if (!Util.getDeviceName().equals(Constants.currentEmulatorDevice)){
@@ -312,11 +315,11 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
     private List<BaseModel> getAllDebt(){
         List<BaseModel> list = new ArrayList<>();
-        BaseModel currentBill = new BaseModel();
-        currentBill.put("id", 0);
-        currentBill.put("debt", currentBill.getDouble("total"));
+        BaseModel currentdebt = new BaseModel();
+        currentdebt.put("id", 0);
+        currentdebt.put("debt", currentBill.getDouble("total"));
 
-        list.add(0, currentBill);
+        list.add(0, currentdebt);
 
 
         DataUtil.sortbyStringKey("createAt", listDebts, true);
@@ -471,6 +474,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
                                 public void onRespone(Boolean result) {
                                     tvPrinterName.setText("Chưa kết nối được máy in");
                                     lnBottom.setBackgroundColor(getResources().getColor(R.color.black_text_color_hint));
+
                                 }
                             });
                         }
@@ -482,7 +486,6 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     private void doPrintOldBill(){
 //        if (isPrinterConnected()){
             Util.getInstance().showLoading("Đang in...");
-            //final Double total  = adapterBill.getTotalMoney() + adapterDebt.getTotalMoney();
 
             int printSize = tvPrintSize.getText().toString().equals(Constants.PRINTER_80)? Constants.PRINTER_80_WIDTH: Constants.PRINTER_57_WIDTH;
 
@@ -523,11 +526,20 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void postBilltoServer(final List<BaseModel> listPayments) {
-        final String params = DataUtil.createPostBillParam(currentCustomer.getInt("id"),
-                adapterBill.getTotalMoney(),
-                0.0,
-                DataUtil.array2ListObject(currentBill.getString(Constants.BILL_DETAIL)),
-                "");
+        String params = "";
+
+        if (currentBill.hasKey(Constants.TEMPBILL) && currentBill.getBoolean(Constants.TEMPBILL)){
+            params = DataUtil.updateBillDelivered(currentCustomer.getInt("id"),
+                    currentBill,
+                    User.getCurrentUserString());
+
+        }else {
+            params = DataUtil.createPostBillParam(currentCustomer.getInt("id"),
+                    adapterBill.getTotalMoney(),
+                    0.0,
+                    DataUtil.array2ListObject(currentBill.getString(Constants.BILL_DETAIL)),
+                    "");
+        }
 
         CustomerConnect.PostBill(params, new CallbackCustom() {
             @Override

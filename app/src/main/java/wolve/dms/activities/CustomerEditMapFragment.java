@@ -219,16 +219,15 @@ public class CustomerEditMapFragment extends Fragment implements View.OnClickLis
                 break;
 
             case R.id.edit_map_submit:
-                mActivity.currentCustomer.put("address", objectAdress.getString("address"));
-                mActivity.currentCustomer.put("street", objectAdress.getString("street"));
-                mActivity.currentCustomer.put("district", objectAdress.getString("district"));
-                mActivity.currentCustomer.put("province", objectAdress.getString("province"));
-
                 LatLng center = mMap.getCameraPosition().target;
-                mActivity.currentCustomer.put("lat", center.latitude);
-                mActivity.currentCustomer.put("lng", center.longitude);
+                mActivity.saveCustomerToLocal("lat", center.latitude);
+                mActivity.saveCustomerToLocal("lng", center.longitude);
+                mActivity.saveCustomerToLocal("address", objectAdress.getString("address"));
+                mActivity.saveCustomerToLocal("street", objectAdress.getString("street"));
+                mActivity.saveCustomerToLocal("district", objectAdress.getString("district"));
+                mActivity.saveCustomerToLocal("province", objectAdress.getString("province"));
 
-                mActivity.submitCustomer();
+                mActivity.reshowAdd(objectAdress);
 
                 backEvent();
 
@@ -324,6 +323,8 @@ public class CustomerEditMapFragment extends Fragment implements View.OnClickLis
 
     @Override
     public void onCameraMove() {
+        btnSubmit.setVisibility(View.GONE);
+
         mHandlerMoveMap.removeCallbacks(mFilterTask);
         mHandlerMoveMap.postDelayed(mFilterTask, 1000);
     }
@@ -331,6 +332,8 @@ public class CustomerEditMapFragment extends Fragment implements View.OnClickLis
     private Runnable mFilterTask = new Runnable() {
         @Override
         public void run() {
+            btnSubmit.setVisibility(View.VISIBLE);
+
             LatLng center = mMap.getCameraPosition().target;
             updateLocation(center.latitude , center.longitude);
 

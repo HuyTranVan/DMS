@@ -13,6 +13,7 @@ import wolve.dms.libraries.connectapi.CustomGetMethod;
 import wolve.dms.libraries.connectapi.CustomPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 /**
@@ -51,62 +52,64 @@ public class StatusConnect {
         }).execute();
     }
 
-    public static void CreateStatus(String params,final CallbackJSONObject listener, final Boolean stopLoading){
+    public static void CreateStatus(String params,final CallbackCustom listener, final Boolean stopLoading){
         Util.getInstance().showLoading();
 
         String url = Api_link.STATUS_NEW ;
 
-//        new CustomPostMethod(url,params,false, new Callback() {
-//            @Override
-//            public void onResponse(JSONObject result) {
-//                Util.getInstance().stopLoading(stopLoading);
-//                try {
-//                    if (result.getInt("status") == 200) {
-//                        listener.onResponse(result.getJSONObject("data"));
-//
-//                    } else {
-//                        listener.onError("Unknow error");
-//                    }
-//                } catch (JSONException e) {
-//                    listener.onError(e.toString());
-//                }
-//            }
-//
-//
-//            @Override
-//            public void onError(String error) {
-//                listener.onError(error);
-//                Util.getInstance().stopLoading(stopLoading);
-//            }
-//        }).execute();
+        new CustomPostMethod(DataUtil.createNewStatusParam(params), new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(stopLoading);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
+
+                }else {
+                    Util.getInstance().stopLoading(true);
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
+            }
+        }).execute();
     }
 
-    public static void DeleteStatus(String params,final CallbackJSONObject listener, final Boolean stopLoading){
+    public static void DeleteStatus(String params,final CallbackCustom listener, final Boolean stopLoading){
         Util.getInstance().showLoading();
 
         String url = Api_link.STATUS_DELETE + params;
 
-        new CustomDeleteMethod(url, new Callback() {
+        new CustomDeleteMethod(url, new CallbackCustom() {
             @Override
-            public void onResponse(JSONObject result) {
-                Util.getInstance().stopLoading(stopLoading);
-                try {
-                    if (result.getInt("status") == 200) {
-                        listener.onResponse(null);
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(true);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
 
-                    } else {
-                        listener.onError("Unknow error");
-                    }
-                } catch (JSONException e) {
-                    listener.onError(e.toString());
+                }else {
+                    Util.getInstance().stopLoading(true);
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
                 }
-            }
 
+            }
 
             @Override
             public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
                 listener.onError(error);
-                Util.getInstance().stopLoading(stopLoading);
+
             }
         }).execute();
     }

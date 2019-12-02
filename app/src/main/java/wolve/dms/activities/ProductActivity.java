@@ -109,7 +109,6 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
         ProductConnect.ListProductGroup(loading, new CallbackCustomList() {
             @Override
             public void onResponse(List<BaseModel> results) {
-//createRVProductGroup(result);
                 for (int i=0; i<results.size(); i++){
                     listProductGroup.add(results.get(i));
 
@@ -145,7 +144,6 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
             }
         }, true);
     }
-
 
     private void openFragmentNewProduct(String product){
         AddProductFragment groupFragment = new AddProductFragment();

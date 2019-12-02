@@ -506,10 +506,10 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
             if (!list.get(i).getString("note").isEmpty()  && Util.isJSONValid(list.get(i).getString("note"))){
                 itemDebt.put("userName", new BaseModel(itemDebt.getString("note")).getString("userName"));
 
-                if (list.get(i).getBaseModel("distributor").getInt("id") == distributorID){
+                if (list.get(i).hasKey("distributor") && list.get(i).getBaseModel("distributor").getInt("id") == distributorID
+                        || list.get(i).getInt("distributor_id") == distributorID){
                     listInitialDebt.add(list.get(i));
                 }
-
             }
 
         }

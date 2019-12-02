@@ -49,7 +49,7 @@ public class ProductConnect {
                 }else {
                     Constants.throwError(result.getString("message"));
                     listener.onError(result.getString("message"));
-
+                    Util.getInstance().stopLoading(true);
                 }
 
             }
@@ -68,7 +68,7 @@ public class ProductConnect {
     public static void CreateProductGroup(String params,final CallbackCustom listener, final Boolean stopLoading){
         Util.getInstance().showLoading();
 
-        new CustomPostMethod(DataUtil.createNewProductParam(params),new CallbackCustom() {
+        new CustomPostMethod(DataUtil.createNewProductGroupParam(params),new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(stopLoading);
@@ -95,32 +95,33 @@ public class ProductConnect {
         }).execute();
     }
 
-    public static void DeleteProductGroup(String params,final CallbackJSONObject listener, final Boolean stopLoading){
+    public static void DeleteProductGroup(String params,final CallbackCustom listener, final Boolean stopLoading){
         Util.getInstance().showLoading();
 
         String url = Api_link.PRODUCT_GROUP_DELETE + params;
 
-        new CustomDeleteMethod(url, new Callback() {
+        new CustomDeleteMethod(url, new CallbackCustom() {
             @Override
-            public void onResponse(JSONObject result) {
-                Util.getInstance().stopLoading(stopLoading);
-                try {
-                    if (result.getInt("status") == 200) {
-                        listener.onResponse(null);
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(true);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
 
-                    } else {
-                        listener.onError("Unknow error");
-                    }
-                } catch (JSONException e) {
-                    listener.onError(e.toString());
+                }else {
+                    Util.getInstance().stopLoading(true);
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
                 }
-            }
 
+            }
 
             @Override
             public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
                 listener.onError(error);
-                Util.getInstance().stopLoading(stopLoading);
+
             }
         }).execute();
     }
@@ -186,32 +187,33 @@ public class ProductConnect {
 
     }
 
-    public static void DeleteProduct(String params,final CallbackJSONObject listener, final Boolean stopLoading){
+    public static void DeleteProduct(String params,final CallbackCustom listener, final Boolean stopLoading){
         Util.getInstance().showLoading();
 
         String url = Api_link.PRODUCT_DELETE + params;
 
-        new CustomDeleteMethod(url, new Callback() {
+        new CustomDeleteMethod(url, new CallbackCustom() {
             @Override
-            public void onResponse(JSONObject result) {
-                Util.getInstance().stopLoading(stopLoading);
-                try {
-                    if (result.getInt("status") == 200) {
-                        listener.onResponse(null);
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(true);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
 
-                    } else {
-                        listener.onError("Unknow error");
-                    }
-                } catch (JSONException e) {
-                    listener.onError(e.toString());
+                }else {
+                    Util.getInstance().stopLoading(true);
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
                 }
-            }
 
+            }
 
             @Override
             public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
                 listener.onError(error);
-                Util.getInstance().stopLoading(stopLoading);
+
             }
         }).execute();
     }

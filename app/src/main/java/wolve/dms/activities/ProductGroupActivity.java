@@ -105,22 +105,6 @@ public class ProductGroupActivity extends BaseActivity implements View.OnClickLi
         listProductGroup = new ArrayList<>();
 
         ProductConnect.ListProductGroup(true, new CallbackCustomList() {
-//            @Override
-//            public void onResponse(JSONArray result) {
-//
-
-//                for (int i=0; i<result.length(); i++){
-//                    try {
-//                        ProductGroup productGroup = new ProductGroup(result.getJSONObject(i));
-//                        listProductGroup.add(productGroup);
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                }
-
-//            }
-
             @Override
             public void onResponse(List<BaseModel> results) {
                 createRVProductGroup(results);

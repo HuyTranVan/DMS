@@ -119,7 +119,7 @@ public class UserConnect {
             public void onResponse(BaseModel object) {
                 Distributor distributor = new Distributor(object.getJsonObject("distributor"));
 
-                CustomSQL.setObject(Constants.USER, object);
+                CustomSQL.setBaseModel(Constants.USER, object);
                 CustomSQL.setObject(Constants.DISTRIBUTOR, distributor);
                 CustomSQL.setString(Constants.USER_USERNAME, username);
                 CustomSQL.setString(Constants.USER_PASSWORD, pass);

@@ -8,6 +8,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
@@ -51,7 +52,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     private CTextIcon tvTrash, tvDeleteBill;
     protected Button btnSubmit;
     private TextView  tvCheckInStatus, tvTime;
-    protected TextView tvTitle, tvDebt, tvPaid, tvTotal, tvBDF, btnShopCart;
+    protected TextView tvTitle,tvAddress, tvDebt, tvPaid, tvTotal, tvBDF, btnShopCart;
     private ScrollView scContent;
     private CoordinatorLayout coParent;
     private RecyclerView rvCheckin;
@@ -122,11 +123,10 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     public void findViewById() {
         coParent = (CoordinatorLayout) findViewById(R.id.customer_parent);
         coParent.setPadding(0, 0, 0, Util.getNavigationBarHeight());
-        //lnNewBillParent = (LinearLayout) findViewById(R.id.customer_newbill_parent);
         btnBack = (ImageView) findViewById(R.id.icon_back);
         btnShopCart = (TextView) findViewById(R.id.customer_shopcart);
         tvTrash = (CTextIcon) findViewById(R.id.icon_more);
-        tvTitle = (TextView) findViewById(R.id.add_customer_title);
+        tvTitle = (TextView) findViewById(R.id.customer_title);
         tvDebt = (TextView) findViewById(R.id.customer_debt);
         scContent = (ScrollView) findViewById(R.id.customer_scrollview);
         tvCheckInStatus = findViewById(R.id.customer_checkin_status);
@@ -140,7 +140,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         tvBDF = findViewById(R.id.customer_bdf);
         scrollOverView = findViewById(R.id.customer_overview);
         smLoading = findViewById(R.id.customer_loading);
-        //tvDeleteBill = findViewById(R.id.customer_newbill_delete);
+        tvAddress = findViewById(R.id.customer_address);
 
 
     }
@@ -167,18 +167,18 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
         updateView(currentCustomer, customerStatusID);
 
-
     }
 
     private void updateView(BaseModel customer, int status){
-        tvTitle.setText(String.format("%s %s", Constants.getShopName(currentCustomer.getString("shopType")), currentCustomer.getString("signBoard")));
+        tvTitle.setText(String.format("%s %s", Constants.getShopName(customer.getString("shopType")), customer.getString("signBoard")));
+
         rlStatusGroup.setVisibility(CustomSQL.getLong(Constants.CHECKIN_TIME) != 0 ? View.VISIBLE : View.GONE);
 
         tempBill = null;
         customerStatusID = status;
-        currentCustomer = customer;
+        //currentCustomer = customer;
 
-        if (customer.hasKey(Constants.TEMPBILL)){
+        if (customer.hasKey(Constants.TEMPBILL) && CustomSQL.getLong(Constants.CHECKIN_TIME) != 0){
             tempBill = customer.getBaseModel(Constants.TEMPBILL);
 
         }
@@ -188,7 +188,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         listBillDetail = new ArrayList<>(DataUtil.getAllBillDetail(listBills));
 
 
-        listCheckins = new ArrayList<>(DataUtil.array2ListBaseModel(currentCustomer.getJSONArray("checkIns")));
+        listCheckins = new ArrayList<>(DataUtil.array2ListBaseModel(customer.getJSONArray("checkIns")));
 
         if (listBills.size() >0){
             BaseModel object = Util.getTotal(listBills);
@@ -202,7 +202,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
             currentDebt = 0.0;
             if (customerStatusID ==3){
                 saveCustomerToLocal("status.id", 1);
-                updateView(currentCustomer, 1);
+                updateView(customer, 1);
             }
         }
 
@@ -214,7 +214,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
         if (tempBill != null){
             CustomCenterDialog.alertWithCancelButton("Hóa đơn tạm",
-                    String.format("Khách hảng có 1 hóa đơn do %s tạo vói số tiên %sđ nhưng chưa giao\n Bấm -giao hàng- nếu bạn là nhân viên giao hàng",
+                    String.format("Khách hàng có 1 hóa đơn do %s tạo vói số tiên %sđ nhưng chưa giao\n Bấm -giao hàng- nếu bạn là nhân viên giao hàng",
                             tempBill.getBaseModel("user").getString("displayName"),
                             Util.FormatMoney(tempBill.getDouble("total"))),
                     "Giao hàng",
@@ -231,7 +231,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
                         }
                     }
-
 
             );
 
@@ -405,19 +404,27 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         CustomCenterDialog.alertWithCancelButton(null, String.format("Xóa khách hàng %s", tvTitle.getText().toString()) , "ĐỒNG Ý","HỦY", new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
-                CustomerConnect.DeleteCustomer(currentCustomer.getString("id"), new CallbackJSONObject() {
+                CustomerConnect.DeleteCustomer(currentCustomer.getString("id"), new CallbackCustom() {
                     @Override
-                    public void onResponse(JSONObject result) {
+                    public void onResponse(BaseModel result) {
+                        Util.getInstance().stopLoading(true);
                         currentCustomer.put("deleted", true);
                         CustomSQL.setString(Constants.CUSTOMER, currentCustomer.BaseModelstoString());
 
+                        Util.showToast("Xóa thành công!");
                         returnPreviousScreen(currentCustomer.BaseModelstoString());
+
+
                     }
 
                     @Override
                     public void onError(String error) {
+                        Util.getInstance().stopLoading(true);
+                        Constants.throwError(error);
 
                     }
+
+
                 }, true);
             }
         });
@@ -490,22 +497,26 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
             @Override
             public void onResponse(BaseModel result) {
                 smLoading.setVisibility(View.INVISIBLE);
-                CustomSQL.setBaseModel(Constants.CUSTOMER, result);
-                currentCustomer =result;
 
-                infoFragment.reshowAddress(result);
+
 
             }
 
             @Override
             public void onError(String error) {
                 smLoading.setVisibility(View.INVISIBLE);
-                Util.showToast(error);
             }
         }, false);
     }
 
+    protected void reshowAdd(BaseModel add){
+        tvAddress.setText(String.format(Constants.addressFormat,
+                add.getString("address"),
+                add.getString("street"),
+                add.getString("district"),
+                add.getString("province")));
 
+    }
 
     private String createParamCheckin(BaseModel customer, String note){
         String params = String.format(Api_link.SCHECKIN_CREATE_PARAM, customer.getInt("id"),
@@ -531,10 +542,9 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         CustomerConnect.GetCustomerDetail(id, new CallbackCustom() {
             @Override
             public void onResponse(final BaseModel result) {
-
-                CustomSQL.setBaseModel(Constants.CUSTOMER, result);
-                updateView(result, statusID);
-
+                BaseModel customer = DataUtil.rebuiltCustomer(result);
+                CustomSQL.setBaseModel(Constants.CUSTOMER, customer);
+                updateView(customer, statusID);
 
             }
 
@@ -582,17 +592,13 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         }, true);
     }
 
-    protected void printDebtBills(Boolean printOnlyDebt){
-        Transaction.gotoPrintBillActivity(DataUtil.convertListObject2Array(listDebtBill).toString(),
-                DataUtil.convertListObject2Array(new ArrayList<>()).toString(),
-                true);
+    protected void printDebtBills(){
+        Transaction.gotoPrintBillActivity(new BaseModel(), true);
 
     }
 
     protected void printTempBill(){
-        Transaction.gotoPrintBillActivity(tempBill.BaseModelstoString(),
-                DataUtil.convertListObject2Array(listDebtBill).toString(),
-                false);
+        Transaction.gotoPrintBillActivity(tempBill, false);
 
     }
 

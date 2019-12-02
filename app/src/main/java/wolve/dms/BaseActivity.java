@@ -195,74 +195,80 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        switch (Util.getInstance().getCurrentActivity().getLocalClassName()){
-            case "activities.HomeActivity":
-                if (doubleBackToExitPressedOnce) {
-                    finish();
-                }
+        if(Util.getInstance().isLoading()){
+            Util.getInstance().stopLoading(true);
 
-                this.doubleBackToExitPressedOnce = true;
-                Util.showToast("Ấn Back để thoát khỏi ứng dụng");
-
-                new Handler().postDelayed(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        doubleBackToExitPressedOnce = false;
+        }else {
+            switch (Util.getInstance().getCurrentActivity().getLocalClassName()){
+                case "activities.HomeActivity":
+                    if (doubleBackToExitPressedOnce) {
+                        finish();
                     }
-                }, 2000);
 
-                break;
+                    this.doubleBackToExitPressedOnce = true;
+                    Util.showToast("Ấn Back để thoát khỏi ứng dụng");
 
-            case "activities.StatisticalActivity":
-                finish();
-                Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                    new Handler().postDelayed(new Runnable() {
 
-                break;
+                        @Override
+                        public void run() {
+                            doubleBackToExitPressedOnce = false;
+                        }
+                    }, 2000);
 
-            case "activities.StatisticalCustomerActivity":
-                finish();
-                Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                    break;
 
-                break;
+                case "activities.StatisticalActivity":
+                    finish();
+                    Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
 
-            case "activities.ProductGroupActivity":
-                Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.product_parent);
-                if(mFragment != null && mFragment instanceof AddProdGroupFragment
-                        ||mFragment != null && mFragment instanceof AddProductFragment) {
-                    getSupportFragmentManager().popBackStack();
-                }else {
-                    Transaction.gotoHomeActivityRight(true);
-                }
+                    break;
 
-                break;
+                case "activities.StatisticalCustomerActivity":
+                    finish();
+                    Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
 
+                    break;
 
-            case "activities.ProductActivity":
-                mFragment = getSupportFragmentManager().findFragmentById(R.id.product_parent);
-                if(mFragment != null && mFragment instanceof AddProdGroupFragment
-                        ||mFragment != null && mFragment instanceof AddProductFragment) {
-                    getSupportFragmentManager().popBackStack();
-                }else {
-                    Transaction.gotoHomeActivityRight(true);
-                }
+                case "activities.ProductGroupActivity":
+                    Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.product_parent);
+                    if(mFragment != null && mFragment instanceof AddProdGroupFragment
+                            ||mFragment != null && mFragment instanceof AddProductFragment) {
+                        getSupportFragmentManager().popBackStack();
+                    }else {
+                        Transaction.gotoHomeActivityRight(true);
+                    }
 
-                break;
-
-            case "activities.StatusActivity":
-                mFragment = getSupportFragmentManager().findFragmentById(R.id.product_parent);
-                if(mFragment != null && mFragment instanceof AddProdGroupFragment
-                        ||mFragment != null && mFragment instanceof AddProductFragment) {
-                    getSupportFragmentManager().popBackStack();
-                }else {
-                    Transaction.gotoHomeActivityRight(true);
-                }
-
-                break;
+                    break;
 
 
+                case "activities.ProductActivity":
+                    mFragment = getSupportFragmentManager().findFragmentById(R.id.product_parent);
+                    if(mFragment != null && mFragment instanceof AddProdGroupFragment
+                            ||mFragment != null && mFragment instanceof AddProductFragment) {
+                        getSupportFragmentManager().popBackStack();
+                    }else {
+                        Transaction.gotoHomeActivityRight(true);
+                    }
 
+                    break;
+
+                case "activities.StatusActivity":
+                    mFragment = getSupportFragmentManager().findFragmentById(R.id.product_parent);
+                    if(mFragment != null && mFragment instanceof AddProdGroupFragment
+                            ||mFragment != null && mFragment instanceof AddProductFragment) {
+                        getSupportFragmentManager().popBackStack();
+                    }else {
+                        Transaction.gotoHomeActivityRight(true);
+                    }
+
+                    break;
+
+
+
+            }
         }
+
     }
 
 //    //Todo Bluetooth SETUP

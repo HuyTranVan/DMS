@@ -125,7 +125,6 @@ public class CustomGetPostListMethod extends AsyncTask<String, Void, List<String
 
         }
 
-
         return listResult;
     }
 

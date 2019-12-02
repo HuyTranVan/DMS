@@ -48,6 +48,7 @@ public class Constants {
     public static final String ISBILLRETURN = "isBillReturn";
     public static final String HAVEBILLRETURN = "haveBillReturn";
     public static final String PAYBYTRETURN = "havePaymentReturn";
+    public static final String DELIVER_BY = "deliverBy";
     public static final String TEMPBILL = "temp_bill";
     public static final String addressFormat = "%s %s, %s, %s";
 

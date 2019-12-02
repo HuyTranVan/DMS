@@ -18,11 +18,13 @@ import wolve.dms.R;
 import wolve.dms.apiconnect.StatusConnect;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Status;
+import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
 
@@ -83,14 +85,18 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusAdap
                         @Override
                         public void onRespone(Boolean result) {
                             String param = String.valueOf(mData.get(position).getInt("id"));
-                            StatusConnect.DeleteStatus(param, new CallbackJSONObject() {
+                            StatusConnect.DeleteStatus(param, new CallbackCustom() {
                                 @Override
-                                public void onResponse(JSONObject result) {
+                                public void onResponse(BaseModel result) {
+                                    Util.getInstance().stopLoading(true);
                                     mDeleteListener.onDelete(mData.get(position).BaseModelstoString(), position);
+
                                 }
 
                                 @Override
                                 public void onError(String error) {
+                                    Util.getInstance().stopLoading(true);
+                                    Constants.throwError(error);
 
                                 }
                             }, true);

@@ -18,10 +18,12 @@ import wolve.dms.R;
 import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.ProductGroup;
+import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
@@ -80,16 +82,31 @@ public class ProductGroupAdapter extends RecyclerView.Adapter<ProductGroupAdapte
                     @Override
                     public void onRespone(Boolean result) {
                         String param = String.valueOf(mData.get(position).getInt("id"));
-                        ProductConnect.DeleteProductGroup(param, new CallbackJSONObject() {
+                        ProductConnect.DeleteProductGroup(param, new CallbackCustom() {
                             @Override
-                            public void onResponse(JSONObject result) {
+                            public void onResponse(BaseModel result) {
+                                Util.getInstance().stopLoading(true);
                                 mDeleteListener.onDelete(mData.get(position).BaseModelstoString(), position);
+
+//                                if (Constants.responeIsSuccess(result)){
+//
+//
+//                                }else {
+//                                    Util.getInstance().stopLoading(true);
+//                                    Constants.throwError(result.getString("message"));
+//
+//
+//                                }
+
                             }
 
                             @Override
                             public void onError(String error) {
+                                Util.getInstance().stopLoading(true);
+                                Constants.throwError(error);
 
                             }
+
                         }, true);
                     }
                 });

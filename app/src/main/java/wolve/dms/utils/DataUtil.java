@@ -1,6 +1,6 @@
 package wolve.dms.utils;
 
-import android.view.View;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,7 +16,6 @@ import wolve.dms.apiconnect.Api_link;
 import wolve.dms.libraries.Security;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
-import wolve.dms.models.BillDetail;
 import wolve.dms.models.Customer;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
@@ -75,13 +74,6 @@ public class DataUtil {
             objReturn.put("debt", 0.0);
             objReturn.put("billDetails", billReturn.getJSONArray("billDetails"));
 
-//            JSONObject objPay = new JSONObject();
-//            objPay.put("createAt",billReturn.getLong("createAt") );
-//            objPay.put("user", (billReturn.getJsonObject("user")));
-//            objPay.put("paid", sumreturn);
-//            objPay.put("idbillreturn", billReturn.getInt("id"));
-//            objPay.put("bill_date", billReturn.getLong("createAt"));
-
 
             String currentNote = Security.decrypt(currentBill.getString("note"));
 
@@ -89,6 +81,7 @@ public class DataUtil {
             JSONArray arrayPayNote =new JSONArray();
 
             if (Util.isJSONObject(currentNote)){
+                objectNote = new JSONObject(currentNote);
                 BaseModel noteObject = new BaseModel(currentNote);
 
                 if (noteObject.hasKey(Constants.HAVEBILLRETURN)){
@@ -109,7 +102,8 @@ public class DataUtil {
             }
 
             arrayReturnNote.put(objReturn);
-            //arrayPayNote.put(objPay);
+
+            //arrayReturnNote.put(objPay);
             objectNote.put(Constants.HAVEBILLRETURN, arrayReturnNote);
             objectNote.put(Constants.PAYBYTRETURN, arrayPayNote);
 
@@ -125,6 +119,33 @@ public class DataUtil {
         return params.toString();
 
     }
+
+    public static String updateBillDelivered(int customerId, BaseModel currentBill, Object user){
+        JSONObject params = new JSONObject();
+        JSONObject objectNote = new JSONObject();
+        try {
+            params.put("billDetails", (Object) null);
+            params.put("id", currentBill.getInt("id"));
+            params.put("total", currentBill.getDouble("total"));
+            params.put("paid", 0.0);
+            params.put("debt", currentBill.getDouble("total") );
+
+            params.put("customerId", customerId);
+            params.put("distributorId", currentBill.getBaseModel("distributor").getInt("id"));
+            params.put("userId", currentBill.getBaseModel("user").getInt("id"));
+
+            params.put("note", createBillNote(currentBill.getString("note"), Constants.TEMPBILL, false));
+            params.put("note", createBillNote(params.getString("note"), Constants.DELIVER_BY, user));
+
+
+        } catch (JSONException e) {
+//            e.printStackTrace();
+        }
+
+        return params.toString();
+
+    }
+
 
     public static String updateBillHavePaymentParam(int customerId, BaseModel currentBill, BaseModel billReturn, Double paid){
         JSONObject params = new JSONObject();
@@ -154,6 +175,7 @@ public class DataUtil {
             JSONArray arrayPayNote =new JSONArray();
 
             if (Util.isJSONObject(currentNote)){
+                objectNote = new JSONObject(currentNote);
                 BaseModel noteObject = new BaseModel(currentNote);
 
                 if (noteObject.hasKey(Constants.HAVEBILLRETURN)){
@@ -174,6 +196,7 @@ public class DataUtil {
             }
 
             arrayPayNote.put(objPay);
+
             objectNote.put(Constants.HAVEBILLRETURN, arrayReturnNote);
             objectNote.put(Constants.PAYBYTRETURN, arrayPayNote);
 
@@ -184,6 +207,37 @@ public class DataUtil {
         }
 
         return params.toString();
+
+    }
+
+    public static String createBillNote(String currentnote, String key, Object value){
+        JSONObject jsonNote = new JSONObject();
+
+        try {
+            if (currentnote.equals("")){
+                jsonNote = new JSONObject();
+                jsonNote.put(key, value);
+
+            }else {
+                String note = Security.decrypt(currentnote);
+                if (Util.isJSONObject(note)){
+                    jsonNote = new JSONObject(note);
+                    jsonNote.put(key, value);
+
+                }else {
+                    jsonNote = new JSONObject();
+                    jsonNote.put(key, value);
+
+                }
+
+
+            }
+
+        } catch (JSONException e) {
+
+        }
+
+        return Security.encrypt(jsonNote.toString());
 
     }
 
@@ -406,7 +460,11 @@ public class DataUtil {
                         }
                         baseModel.put("debt", debtreturn);
 
-                        baseModel.put(Constants.TEMPBILL, noteObject.hasKey(Constants.TEMPBILL)? true : false);
+                        baseModel.put(Constants.TEMPBILL, noteObject.hasKey(Constants.TEMPBILL) && noteObject.getBoolean(Constants.TEMPBILL)? true : false);
+
+                        if (noteObject.hasKey(Constants.DELIVER_BY)){
+                            baseModel.put(Constants.DELIVER_BY, noteObject.getJsonObject(Constants.DELIVER_BY));
+                        }
 
                         bills.add(baseModel);
 
@@ -496,7 +554,7 @@ public class DataUtil {
     public static List<BaseModel> getAllBillHaveDebt(List<BaseModel> listbill){
         List<BaseModel> list = new ArrayList<>();
         for (int i=0; i<listbill.size(); i++) {
-            if (listbill.get(i).getDouble("debt") > 0 && !listbill.get(i).hasKey(Constants.TEMPBILL)) {
+            if (listbill.get(i).getDouble("debt") > 0 && !listbill.get(i).getBoolean(Constants.TEMPBILL)) {
                 list.add(listbill.get(i));
 
             }
@@ -527,7 +585,7 @@ public class DataUtil {
                 String note = Security.decrypt(bill.getString("note"));
                 if (Util.isJSONObject(note)){
                     BaseModel noteObject = new BaseModel(note);
-                    if (noteObject.hasKey(Constants.TEMPBILL)){
+                    if (noteObject.hasKey(Constants.TEMPBILL) && noteObject.getBoolean(Constants.TEMPBILL)){
                         result = bill;
                         break;
 
@@ -1039,6 +1097,17 @@ public class DataUtil {
     public static BaseModel createNewProductGroupParam(String param){
         BaseModel paramCustomer = new BaseModel();
         paramCustomer.put("url", Api_link.PRODUCT_GROUP_NEW );
+        paramCustomer.put("method", "POST");
+        paramCustomer.put("isjson", false );
+        paramCustomer.put("param", param );
+
+        return paramCustomer;
+
+    }
+
+    public static BaseModel createNewStatusParam(String param){
+        BaseModel paramCustomer = new BaseModel();
+        paramCustomer.put("url", Api_link.STATUS_NEW );
         paramCustomer.put("method", "POST");
         paramCustomer.put("isjson", false );
         paramCustomer.put("param", param );

@@ -52,6 +52,12 @@ public class CustomSQL {
 
     }
 
+    public static void setBasemodel (String title, BaseModel value){
+        prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
+        prefs.edit().putString(title, value.BaseModelstoString()).commit();
+
+    }
+
     public static void setListObject (String title, List<Object> value){
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
         prefs.edit().putString(title, new Gson().toJson(value)).commit();

@@ -56,6 +56,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     private LinearLayout lnUser;
     private View line;
 
+
     private List<BaseModel> listPayment = new ArrayList<>();
 
     @Override
@@ -89,12 +90,16 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void initialData() {
+        createListItem();
+        tvFullname.setText(String.format("%s _ %s (%s)",User.getFullName(), User.getRole(), Distributor.getName()));
+
+
         loadCurrentData(new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
                 if (result){
-                    createListItem();
-                    tvFullname.setText(String.format("%s _ %s (%s)",User.getFullName(), User.getRole(), Distributor.getName()));
+
+
                     btnChangeUser.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN) ? View.VISIBLE : View.GONE);
                     line.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN) ? View.VISIBLE : View.GONE);
 
@@ -105,7 +110,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                         Transaction.gotoMapsActivity();
 
                     }else {
-                        loadOverView();
+                        //loadOverView();
                     }
 
                 }
@@ -128,10 +133,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         long start = Util.TimeStamp1(Util.Current01MonthYear());
         long end = Util.TimeStamp1(Util.Next01MonthYear());
 
-
-
         params.add(DataUtil.createPaymentParam(start,end ));
-        //params.add(1, DataUtil.createBillParam(start, end));
         SystemConnect.loadListObject(params, new CallbackCustomListList() {
             @Override
             public void onResponse(List<List<BaseModel>> results) {
@@ -336,6 +338,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 Util.showToast("Chưa hỗ trợ");
                 break;
         }
+
+
+
     }
 
     private void loadCurrentData(CallbackBoolean listener) {

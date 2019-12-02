@@ -62,6 +62,8 @@ public class AddProdGroupFragment extends Fragment implements View.OnClickListen
             }
         }
 
+        Util.showKeyboardEditTextDelay(edInput.getEdInput());
+
 
     }
 

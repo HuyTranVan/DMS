@@ -24,8 +24,10 @@ import wolve.dms.R;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.StatusConnect;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.customviews.CInputForm;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Status;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
@@ -151,11 +153,9 @@ public class AddStatusFragment extends Fragment implements View.OnClickListener,
                             currentColor,
                             defaultStatus);
 
-
-                    StatusConnect.CreateStatus(param, new CallbackJSONObject() {
+                    StatusConnect.CreateStatus(param, new CallbackCustom() {
                         @Override
-                        public void onResponse(JSONObject result) {
-
+                        public void onResponse(BaseModel result) {
                             getActivity().getSupportFragmentManager().popBackStack();
                             mActivity.loadStatus();
                         }
