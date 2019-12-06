@@ -130,7 +130,7 @@
                             android:background="@color/colorGrey"
                             android:layout_margin="@dimen/_4sdp"/>
 
-                        <android.support.design.widget.TextInputLayout
+                        <com.google.android.material.textfield.TextInputLayout
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="0.85"
@@ -151,7 +151,7 @@
                                 android:inputType="textPassword"
                                 android:gravity="center_vertical"/>
 
-                        </android.support.design.widget.TextInputLayout>
+                        </com.google.android.material.textfield.TextInputLayout>
 
 
 

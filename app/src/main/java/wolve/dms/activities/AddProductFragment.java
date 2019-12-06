@@ -8,12 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.FileProvider;
-import android.support.v4.content.PermissionChecker;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +16,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
+import androidx.core.content.PermissionChecker;
+import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.cloudinary.android.MediaManager;
@@ -46,6 +48,7 @@ import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CInputForm;
+import wolve.dms.libraries.connectapi.CustomPostMultiPart;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.utils.Constants;
@@ -153,7 +156,7 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
                 edIsPromotion.setText(product.getBoolean("promotion")? Constants.IS_PROMOTION :Constants.NO_PROMOTION);
 
                 if (!Util.checkImageNull(product.getString("image"))){
-                    Glide.with(this).load(product.getString("image")).centerCrop().into(imgProduct);
+                    Glide.with(AddProductFragment.this).load(product.getString("image")).centerCrop().into(imgProduct);
 
                 }else {
                     Glide.with(this).load( R.drawable.ic_wolver).centerCrop().into(imgProduct);
@@ -311,13 +314,14 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
 
         }else {
             if (imageChangeUri != null){
-                uploadImage(new CallbackString() {
-                    @Override
-                    public void Result(String s) {
-                        updateProduct(s);
-
-                    }
-                });
+//                uploadImage(new CallbackString() {
+//                    @Override
+//                    public void Result(String s) {
+//                        updateProduct(s);
+//
+//                    }
+//                });
+                uploadImageNew();
             }else {
                 if (product.getInt("id") ==0){
                     updateProduct("");
@@ -427,6 +431,10 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
                 // your code here
                 Util.getInstance().stopLoading(true);
             }}).dispatch();
+    }
+
+    private void uploadImageNew(){
+        new CustomPostMultiPart(Api_link.IMAGES, imageChangeUri);
     }
 
     private void unitPriceEvent(){

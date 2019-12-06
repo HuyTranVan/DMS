@@ -1,14 +1,16 @@
 package wolve.dms.activities;
 
 import android.content.Intent;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.clans.fab.FloatingActionButton;
 

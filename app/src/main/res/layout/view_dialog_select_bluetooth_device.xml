@@ -17,7 +17,7 @@
         android:gravity="center"/>
 
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/dialog_select_bluetooth_rvdevice"
         android:layout_below="@+id/dialog_select_bluetooth_title"
         android:layout_width="match_parent"

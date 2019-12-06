@@ -27,6 +27,7 @@ public class Api_link {
 
 
     public final static String LOGO_BILL = "http://res.cloudinary.com/lubsolution/image/upload/v1514902531/wolver_logo.jpg";
+    public final static String IMAGES = BASE_URL + "images";
 
     public final static String PROVINCES = BASE_URL + "provinces";
     public final static String DISTRICTS = BASE_URL + "districts?provinceid=";

@@ -34,7 +34,7 @@
             android:layout_marginBottom="@dimen/_5sdp"
             android:descendantFocusability="blocksDescendants">
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/customer_return_rvreturn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
@@ -91,7 +91,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/customer_return_rvdebt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

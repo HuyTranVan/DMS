@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.v7.widget.CardView
+<androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -21,12 +21,12 @@
         <RelativeLayout
             android:id="@+id/bills_item_title"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/_30sdp"
+
             android:background="@color/colorLightGrey"
             android:paddingLeft="@dimen/_5sdp"
             android:paddingRight="@dimen/_5sdp"
-            android:paddingTop="@dimen/_5sdp"
-            android:paddingBottom="@dimen/_5sdp"
+
             android:gravity="center_vertical">
 
             <TextView
@@ -40,17 +40,38 @@
                 android:gravity="center"
                 android:layout_centerVertical="true"/>
 
-            <TextView
-                android:id="@+id/bills_item_date"
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
                 android:layout_toRightOf="@+id/bills_item_icon"
-                android:paddingLeft="@dimen/_2sdp"
-                android:text="Default"
-                android:textColor="@color/black_text_color_hint"
-                android:textSize="@dimen/_12sdp"
                 android:layout_marginLeft="@dimen/_5sdp"
-                android:layout_centerVertical="true"/>
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/bills_item_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Default"
+                    android:textColor="@color/black_text_color_hint"
+                    android:textSize="@dimen/_12sdp"
+                    />
+
+                <TextView
+                    android:id="@+id/bills_item_deliver_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/_10sdp"
+                    android:background="@drawable/btn_round_grey"
+                    android:text="aaaa"
+                    android:textSize="@dimen/_7sdp"
+                    android:textColor="@color/colorWhite"
+                    android:paddingLeft="@dimen/_5sdp"
+                    android:paddingRight="@dimen/_5sdp"
+                    android:layout_marginBottom="@dimen/_2sdp"
+                    android:gravity="center"/>
+            </LinearLayout>
+
 
             <TextView
                 android:id="@+id/bills_item_debt"
@@ -64,7 +85,8 @@
                 android:textSize="@dimen/_14sdp"
                 android:paddingLeft="@dimen/_8sdp"
                 android:paddingRight="@dimen/_8sdp"
-                android:layout_toLeftOf="@+id/bills_item_delete"/>
+                android:layout_toLeftOf="@+id/bills_item_delete"
+                android:layout_centerVertical="true"/>
 
             <wolve.dms.customviews.CTextIcon
                 android:id="@+id/bills_item_delete"
@@ -146,7 +168,7 @@
                     android:textStyle="italic"/>
 
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/bills_item_rvpayment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
@@ -154,7 +176,7 @@
 
             </LinearLayout>
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/bills_item_rvreturn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
@@ -170,7 +192,8 @@
         android:orientation="vertical"
         android:background="@color/black_text_color_hint"
         android:gravity="center_horizontal|bottom"
-        android:clickable="true">
+        android:clickable="true"
+        android:visibility="gone">
 
         <TextView
             android:layout_width="match_parent"
@@ -222,5 +245,5 @@
 
 
 
-</android.support.v7.widget.CardView>
+</androidx.cardview.widget.CardView>
 

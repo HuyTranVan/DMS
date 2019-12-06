@@ -2,7 +2,6 @@ package wolve.dms.utils;
 
 import android.graphics.Rect;
 import android.inputmethodservice.KeyboardView;
-import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -18,6 +17,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 //import com.hold1.keyboardheightprovider.KeyboardHeightProvider;
+import androidx.cardview.widget.CardView;
+
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.OnBackPressListener;
 import com.orhanobut.dialogplus.OnCancelListener;

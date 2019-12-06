@@ -1,10 +1,11 @@
 package wolve.dms.customviews;
 
 import android.content.Context;
-import android.support.design.widget.TabLayout;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.ViewGroup;
+
+import com.google.android.material.tabs.TabLayout;
 
 public class CustomTabLayout extends TabLayout {
 

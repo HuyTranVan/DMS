@@ -46,7 +46,7 @@
             <!--android:layout_height="1dp"-->
             <!--android:background="#75b9b3b3"/>-->
 
-        <android.support.design.widget.TabLayout
+        <com.google.android.material.tabs.TabLayout
             android:id="@+id/cart_choice_tabs"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_30sdp"
@@ -68,7 +68,7 @@
             android:background="#75b9b3b3"/>
 
 
-        <android.support.v4.view.ViewPager
+        <androidx.viewpager.widget.ViewPager
             android:id="@+id/cart_choice_viewpager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

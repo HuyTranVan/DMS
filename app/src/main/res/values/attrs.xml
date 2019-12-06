@@ -8,7 +8,7 @@
 
     <declare-styleable name="CInputForm">
         <attr name="iconColor" format="integer" />
-        <attr name="iconSize" format="integer" />
+        <attr name="icon_Size" format="integer" />
         <attr name="iconText" format="string" />
         <attr name="textSize" format="integer" />
         <attr name="textColor" format="integer" />

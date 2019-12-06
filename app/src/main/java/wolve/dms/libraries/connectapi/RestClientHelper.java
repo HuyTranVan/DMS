@@ -2,9 +2,11 @@ package wolve.dms.libraries.connectapi;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.v4.util.ArrayMap;
+
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.collection.ArrayMap;
 
 import com.google.gson.Gson;
 

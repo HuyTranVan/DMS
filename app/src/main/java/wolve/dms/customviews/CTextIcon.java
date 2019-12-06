@@ -6,10 +6,12 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.Log;
 
+import androidx.appcompat.widget.AppCompatTextView;
+
 import wolve.dms.R;
 
 
-public class CTextIcon extends android.support.v7.widget.AppCompatTextView {
+public class CTextIcon extends AppCompatTextView {
     private static final String TAG = "TextView";
 
     public CTextIcon(Context context) {

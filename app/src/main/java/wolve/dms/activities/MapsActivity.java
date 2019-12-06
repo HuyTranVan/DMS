@@ -8,13 +8,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Handler;
 import android.provider.Settings;
-import android.support.annotation.IdRes;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.PermissionChecker;
-import android.support.v7.widget.RecyclerView;
+
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -31,6 +25,13 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.PermissionChecker;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -38,6 +39,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -46,6 +48,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -96,7 +99,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         ViewTreeObserver.OnGlobalLayoutListener{
     public GoogleMap mMap;
     private FloatingActionMenu btnNewCustomer;
-    private android.support.design.widget.FloatingActionButton btnLocation;
+    private com.google.android.material.floatingactionbutton.FloatingActionButton btnLocation;
     private FloatingActionButton  btnRepair, btnPhoneNumber;
     public SupportMapFragment mapFragment;
     private RadioGroup rdFilter;
@@ -135,7 +138,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     @Override
     public void findViewById() {
-        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment =  (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         btnLocation = findViewById(R.id.map_current_location);
         btnNewCustomer = (FloatingActionMenu) findViewById(R.id.map_new_customer);
         btnRepair = (FloatingActionButton) findViewById(R.id.map_new_repair);

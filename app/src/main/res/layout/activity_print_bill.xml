@@ -8,7 +8,7 @@
     android:clickable="true"
     android:id="@+id/print_bill_parent">
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/print_bill_content_parent"
         android:layout_width="350dp"
         android:layout_height="wrap_content"
@@ -122,6 +122,7 @@
                         android:textSize="@dimen/_12sdp"/>
 
                     <TextView
+                        android:id="@+id/print_bill_deliver_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Giao hàng"
@@ -266,7 +267,7 @@
                 android:layout_height="1dp"
                 android:background="#0d000000" />
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/print_bill_bills"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
@@ -292,7 +293,7 @@
 
 
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/print_bill_rvdebt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
@@ -476,7 +477,7 @@
                 android:layout_gravity="center_horizontal"/>
 
         </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <ImageView
         android:id="@+id/icon_back"

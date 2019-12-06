@@ -73,8 +73,8 @@ public class CButtonVertical extends RelativeLayout {
                 setIconColor(a.getColor(R.styleable.CInputForm_iconColor,0));
             }
 
-            if (a.hasValue(R.styleable.CInputForm_iconSize)) {
-                setIconSize(a.getDimension(R.styleable.CInputForm_iconSize, 0));
+            if (a.hasValue(R.styleable.CInputForm_icon_Size)) {
+                setIconSize(a.getDimension(R.styleable.CInputForm_icon_Size, 0));
             }
 
             if (a.hasValue(R.styleable.CInputForm_iconText)) {
