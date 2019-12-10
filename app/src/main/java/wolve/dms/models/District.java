@@ -10,6 +10,8 @@ import java.util.List;
 
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
+import wolve.dms.utils.DataUtil;
+import wolve.dms.utils.Util;
 
 /**
  * Created by macos on 9/16/17.
@@ -58,4 +60,31 @@ public class District extends BaseModel{
 
         return mListDistricts;
     }
+
+    public static List<BaseModel> getDistrictObjectyList(){
+        List<BaseModel> list = new ArrayList<>();
+        if (mListDistricts == null){
+            mListDistricts = new ArrayList<>();
+            try {
+                JSONArray array = new JSONArray(CustomSQL.getString(Constants.DISTRICT_LIST));
+                for (int i=0; i<array.length(); i++){
+                    BaseModel object = new BaseModel(array.getJSONObject(i));
+                    if (!object.getString("name").contains(" ")){
+                        object.put("text",object.getString("type") + " " + object.getString("name"));
+                    }else {
+                        object.put("text",object.getString("name"));
+                    }
+
+                    list.add(object);
+                }
+
+                DataUtil.sortbyStringKey("text", list, false);
+            } catch (JSONException e) {
+                return list;
+            }
+        }
+
+        return list;
+    }
+
 }

@@ -214,12 +214,12 @@ public class ScannerActivity extends BaseActivity implements View.OnClickListene
             ipDistributor.setDropdown(true, new CInputForm.ClickListener() {
                 @Override
                 public void onClick(View view) {
-                    CustomBottomDialog.choiceList("CHỌN NHÀ PHÂN PHỐI",listDistributor , new CustomBottomDialog.StringListener() {
-                        @Override
-                        public void onResponse(String content) {
-                            ipDistributor.setText(content);
-                        }
-                    });
+//                    CustomBottomDialog.choiceList("CHỌN NHÀ PHÂN PHỐI",listDistributor , new CustomBottomDialog.StringListener() {
+//                        @Override
+//                        public void onResponse(String content) {
+//                            ipDistributor.setText(content);
+//                        }
+//                    });
 
                 }
             });

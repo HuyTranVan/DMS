@@ -302,7 +302,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
 
                             try {
                                 CustomerConnect.PostListPay(DataUtil.createListPaymentParam(new JSONObject(mData.get(currentPosition).getString("customer")).getInt("id"),
-                                        result), new CallbackListCustom() {
+                                        result,false), new CallbackListCustom() {
                                     @Override
                                     public void onResponse(List result) {
 

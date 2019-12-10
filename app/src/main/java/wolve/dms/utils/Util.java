@@ -1517,4 +1517,9 @@ public class Util {
         return str.length() < 2 ? str : str.substring(0, 2);
     }
 
+    public static int convertSdpToInt(int sdp){
+        //sdp : R.dimen._sdp
+        return getInstance().getCurrentActivity().getResources().getDimensionPixelSize(sdp);
+    }
+
 }

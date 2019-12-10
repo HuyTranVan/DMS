@@ -460,7 +460,7 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
 
 
     private void postPayment(int customerId, int billid, double paid,double billTotal, CallbackBoolean listener, boolean stoploadding){
-        CustomerConnect.PostPay(DataUtil.createPostPaymentParam(customerId, paid, billid, billTotal), new CallbackCustom() {
+        CustomerConnect.PostPay(DataUtil.createPostPaymentParam(customerId, paid, billid, billTotal, false), new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
                 listener.onRespone(true);

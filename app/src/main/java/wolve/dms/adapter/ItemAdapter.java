@@ -11,15 +11,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.customviews.CTextIcon;
+import wolve.dms.models.BaseModel;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.Util;
 
 /**
  * Created by tranhuy on 9/30/16.
  */
-public class StringAdapter extends RecyclerView.Adapter<StringAdapter.ChoiceMethodViewHolder>{
+public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ChoiceMethodViewHolder>{
 
-    private List<String> mData;
+    private List<BaseModel> mData;
     private Context mContext;
     private LayoutInflater mLayoutInflater;
     private CustomBottomDialog.PositionListener mListener;
@@ -28,7 +30,7 @@ public class StringAdapter extends RecyclerView.Adapter<StringAdapter.ChoiceMeth
         void onRespone(int count);
     }
 
-    public StringAdapter(List<String> data, CustomBottomDialog.PositionListener mListener) {
+    public ItemAdapter(List<BaseModel> data, CustomBottomDialog.PositionListener mListener) {
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mLayoutInflater = LayoutInflater.from(mContext);
         this.mListener = mListener;
@@ -48,16 +50,17 @@ public class StringAdapter extends RecyclerView.Adapter<StringAdapter.ChoiceMeth
 
     public class ChoiceMethodViewHolder extends RecyclerView.ViewHolder {
         private TextView text, line;
+        private CTextIcon icon;
 
         public ChoiceMethodViewHolder(View itemView) {
             super(itemView);
             text = (TextView) itemView.findViewById(R.id.list_method_text);
             line = (TextView) itemView.findViewById(R.id.list_method_line);
+            icon = itemView.findViewById(R.id.list_method_icon);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                   mListener.onResponse(getAdapterPosition());
 
                 }
@@ -69,8 +72,14 @@ public class StringAdapter extends RecyclerView.Adapter<StringAdapter.ChoiceMeth
 
     @Override
     public void onBindViewHolder(final ChoiceMethodViewHolder holder, final int position) {
-        holder.text.setText(mData.get(position));
+        holder.text.setText(mData.get(position).getString("text"));
         holder.line.setVisibility(position == mData.size() -1?View.GONE:View.VISIBLE);
+        if (mData.get(position).hasKey("icon")){
+            holder.icon.setVisibility(View.VISIBLE);
+            holder.icon.setText(mData.get(position).getString("icon"));
+        }else {
+            holder.icon.setVisibility(View.GONE);
+        }
 
     }
 

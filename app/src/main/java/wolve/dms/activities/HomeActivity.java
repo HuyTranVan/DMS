@@ -217,7 +217,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
         for (int i=0; i<listTemp.size(); i++){
             if (listTemp.get(i).getInt("id") !=  User.getId()){
-                listTemp.get(i).put("showName", String.format("%s (%s)",listTemp.get(i).getString("displayName") ,
+                listTemp.get(i).put("text", String.format("%s (%s)",listTemp.get(i).getString("displayName") ,
                                                 new BaseModel(listTemp.get(i).getJsonObject("distributor")).getString("name")) );
 
                 listUser.add(listTemp.get(i));
@@ -226,12 +226,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         }
 
         BaseModel newobject = new BaseModel();
-        newobject.put("showName", "TÀI KHOẢN KHÁC ...");
+        newobject.put("text", "TÀI KHOẢN KHÁC ...");
         newobject.put("phone","");
         newobject.put("displayName","");
         listUser.add(0, newobject);
 
-        CustomBottomDialog.choiceListObject("ĐỔI SANG TÀI KHOẢN", "showName", listUser, new CallbackBaseModel() {
+        CustomBottomDialog.choiceListObject("ĐỔI SANG TÀI KHOẢN", listUser, new CallbackBaseModel() {
             @Override
             public void onResponse(BaseModel object) {
                 showReloginDialog(object);
@@ -336,7 +336,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 break;
 
             case 5:
-                Util.showToast("Chưa hỗ trợ");
+                Transaction.gotoDistributorActivity();
                 break;
         }
 

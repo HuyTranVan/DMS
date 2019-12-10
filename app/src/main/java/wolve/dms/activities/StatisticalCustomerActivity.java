@@ -528,8 +528,8 @@ public class StatisticalCustomerActivity extends BaseActivity implements  View.O
 //                                newCash.put("customer", objectBill.getJSONObject("customer"));
 //
 //                                BaseModel user = new BaseModel(objectBill.getJSONObject("user"));
-//                                if (!checkDuplicate(listUserNameDisplay, "id" ,user)){
-//                                    listUserNameDisplay.add(user);
+//                                if (!checkDuplicate(listUser, "id" ,user)){
+//                                    listUser.add(user);
 //                                }
 //
 //                                if (userName.equals(ALL_FILTER)){

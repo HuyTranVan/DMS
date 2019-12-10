@@ -16,6 +16,7 @@ import wolve.dms.callback.CallbackListBaseModel;
 import wolve.dms.libraries.connectapi.CustomGetListMethod;
 import wolve.dms.libraries.connectapi.CustomGetMethod;
 import wolve.dms.libraries.connectapi.CustomGetPostListMethod;
+import wolve.dms.libraries.connectapi.CustomPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.utils.Constants;
@@ -80,28 +81,6 @@ public class SystemConnect {
 
             }
 
-
-//            @Override
-//            public void onResponse(JSONObject result) {
-//                Util.getInstance().stopLoading(true);
-//                try {
-//                    if (result.getInt("status") == 200) {
-//                        listener.onResponse(result.getJSONArray("data"));
-//
-//                    } else {
-//                        listener.onError("Unknow error");
-//                    }
-//                } catch (JSONException e) {
-//                    listener.onError(e.toString());
-//                    Util.getInstance().stopLoading(true);
-//                }
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//                listener.onError(error);
-//                Util.getInstance().stopLoading(true);
-//            }
         }).execute();
 
     }
@@ -140,6 +119,69 @@ public class SystemConnect {
             }
         }).execute();
     }
+
+    public static void GetDistributorDetail(String params,final CallbackCustom listener, Boolean stopLoading){
+        Util.getInstance().showLoading();
+
+        String url = Api_link.DISTRIBUTOR_DETAIL + params;
+        new CustomGetMethod(url, new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(stopLoading);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
+
+                }else {
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
+            }
+
+        }).execute();
+    }
+
+    public static void CreateDistributor(String params, final CallbackCustom listener, final Boolean showLoading){
+
+        Util.getInstance().showLoading();
+
+        new CustomPostMethod(DataUtil.createNewDistributorParam(params),new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
+                    Util.getInstance().stopLoading(showLoading);
+
+                }else {
+                    Util.getInstance().stopLoading(true);
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
+            }
+
+        }).execute();
+    }
+
 
 
 

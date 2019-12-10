@@ -117,6 +117,9 @@ public class CInputForm extends FrameLayout {
                 setVisibilityBottomLine(a.getBoolean(R.styleable.CInputForm_isShowBottomLine, false));
             }
 
+
+
+
             a.recycle();
         }
     }

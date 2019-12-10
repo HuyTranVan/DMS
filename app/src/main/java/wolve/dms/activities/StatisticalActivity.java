@@ -28,6 +28,7 @@ import wolve.dms.adapter.Statistical_ViewpagerAdapter;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.SheetConnect;
 import wolve.dms.apiconnect.SystemConnect;
+import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 
 import wolve.dms.callback.CallbackCustomListList;
@@ -45,7 +46,6 @@ import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
-import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
@@ -75,11 +75,12 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     protected List<BaseModel> listInitialBill = new ArrayList<>();
     //protected List<BaseModel> listInitialBill = new ArrayList<>();
     protected List<BaseModel> listInitialBillDetail = new ArrayList<>();
-    protected List<String> listUserNameDisplay;
+//    protected List<String> listUser;
+    protected List<BaseModel> listUser;
     protected List<BaseModel> listInitialPayment;
     protected List<BaseModel> listInitialDebt;
     //private List<Object> listSheetID = new ArrayList<>();
-    private int[] icons = new int[]{R.string.icon_chart,
+    private int[] icons = new int[]{R.string.icon_chartline,
             R.string.icon_bill,
             R.string.icon_product_group,
             R.string.icon_money,
@@ -121,8 +122,9 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
     @Override
     public void initialData() {
-        listUserNameDisplay = new ArrayList<String>();
-        listUserNameDisplay.add(Constants.ALL_FILTER);
+        listUser = new ArrayList<>();
+
+        listUser.add(0, getAllFilterUser());
 
         rdMonth.setText(Util.CurrentMonthYear());
         rdDate.setText(Constants.DATE_DEFAULT);
@@ -208,14 +210,28 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                 break;
 
             case R.id.statistical_filter_by_employee:
-                CustomBottomDialog.choiceList("Chọn nhân viên",listUserNameDisplay , new CustomBottomDialog.StringListener() {
+                CustomBottomDialog.choiceListObject("Chọn nhân viên", listUser, new CallbackBaseModel() {
                     @Override
-                    public void onResponse(String content) {
-                        tvEmployeeName.setText(content);
+                    public void onResponse(BaseModel object) {
+                        tvEmployeeName.setText(object.getString("text"));
                         updateAllFragmentData();
 
                     }
+
+                    @Override
+                    public void onError() {
+
+                    }
                 });
+
+//                new CustomBottomDialog.StringListener() {
+//                    @Override
+//                    public void onResponse(String content) {
+//                        tvEmployeeName.setText(content);
+//                        updateAllFragmentData();
+//
+//                    }
+//                });
 
                 break;
 
@@ -595,9 +611,9 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                         public void onRespone(List<List<Object>> results) {
                             updateSheetIncomeData(rdMonth.getText().toString() ,
                                             SHEET_COLUM,
-                                            DataUtil.updateIncomeByUserToSheet(startday, endday, listUserNameDisplay, listInitialBill, listInitialBillDetail, listInitialPayment, listInitialDebt));
+                                            DataUtil.updateIncomeByUserToSheet(startday, endday, listUser, listInitialBill, listInitialBillDetail, listInitialPayment, listInitialDebt));
 
-//                                            DataUtil.getCashByUser(listInitialBill, listInitialPayment, listUserNameDisplay)));
+//                                            DataUtil.getCashByUser(listInitialBill, listInitialPayment, listUser)));
 
                         }
                     },false);
@@ -605,9 +621,9 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                 }else {
                     updateSheetIncomeData(rdMonth.getText().toString(),
                                     SHEET_COLUM,
-                                    DataUtil.updateIncomeByUserToSheet(startday, endday, listUserNameDisplay, listInitialBill, listInitialBillDetail, listInitialPayment, listInitialDebt));
+                                    DataUtil.updateIncomeByUserToSheet(startday, endday, listUser, listInitialBill, listInitialBillDetail, listInitialPayment, listInitialDebt));
 
-//                                    DataUtil.getCashByUser(listInitialBill, listInitialPayment, listUserNameDisplay)));
+//                                    DataUtil.getCashByUser(listInitialBill, listInitialPayment, listUser)));
 
                 }
 
@@ -633,17 +649,25 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
     private void updateListUser(BaseModel user){
         boolean check = false;
-        for (int i = 0; i< listUserNameDisplay.size(); i++){
-            if (listUserNameDisplay.get(i).equals( user.getString("displayName"))){
+        for (int i = 0; i< listUser.size(); i++){
+            if (listUser.get(i).getString("text").equals( user.getString("displayName"))){
                 check = true;
                 break;
             }
         }
 
         if (!check){
-            listUserNameDisplay.add(user.getString("displayName"));
+            user.put("text", user.getString("displayName"));
+            listUser.add(user);
         }
 
+    }
+
+    private BaseModel getAllFilterUser(){
+        BaseModel model = new BaseModel();
+        model.put("text", Constants.ALL_FILTER);
+
+        return model;
     }
 
 }
@@ -654,13 +678,13 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 //
 //            if (distributor.getInt("id") == Distributor.getId()){
 //
-//                if (!DataUtil.checkDuplicate(listUserNameDisplay, "id" ,user)){
+//                if (!DataUtil.checkDuplicate(listUser, "id" ,user)){
 //                    if (User.getRole().equals(Constants.ROLE_WAREHOUSE)){
 //                        if (!user.getString("role").equals(Constants.ROLE_ADMIN)){
-//                            listUserNameDisplay.add(user);
+//                            listUser.add(user);
 //                        }
 //                    }else {
-//                        listUserNameDisplay.add(user);
+//                        listUser.add(user);
 //                    }
 //                }
 //                listInitialBill.add(list.get(i));
@@ -715,13 +739,13 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 //                                checkin.put("shopType", objectCustomer.getString("shopType"));
 //
 //                                BaseModel user = new BaseModel(objectDetail.getJsonObject("user"));
-//                                if (!checkDuplicate(listUserNameDisplay, "id" ,user)){
+//                                if (!checkDuplicate(listUser, "id" ,user)){
 //                                    if (User.getRole().equals(Constants.ROLE_WAREHOUSE)){
 //                                        if (!user.getString("role").equals(Constants.ROLE_ADMIN)){
-//                                            listUserNameDisplay.add(user);
+//                                            listUser.add(user);
 //                                        }
 //                                    }else {
-//                                        listUserNameDisplay.add(user);
+//                                        listUser.add(user);
 //                                    }
 //                                }
 //
@@ -768,13 +792,13 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 ////
 ////                        if (bill.getJsonObject("distributor").getInt("id") == Distributor.getId()){
 ////
-////                            if (!DataUtil.checkDuplicate(listUserNameDisplay, "id" ,user)){
+////                            if (!DataUtil.checkDuplicate(listUser, "id" ,user)){
 ////                                if (User.getRole().equals(Constants.ROLE_WAREHOUSE)){
 ////                                    if (!user.getString("role").equals(Constants.ROLE_ADMIN)){
-////                                        listUserNameDisplay.add(user);
+////                                        listUser.add(user);
 ////                                    }
 ////                                }else {
-////                                    listUserNameDisplay.add(user);
+////                                    listUser.add(user);
 ////                                }
 ////                            }
 ////                            listInitialBill.add(bill);
@@ -801,13 +825,13 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 //
 //                    if (distributor.getInt("id") == Distributor.getId()){
 //
-//                        if (!DataUtil.checkDuplicate(listUserNameDisplay, "id" ,user)){
+//                        if (!DataUtil.checkDuplicate(listUser, "id" ,user)){
 //                            if (User.getRole().equals(Constants.ROLE_WAREHOUSE)){
 //                                if (!user.getString("role").equals(Constants.ROLE_ADMIN)){
-//                                    listUserNameDisplay.add(user);
+//                                    listUser.add(user);
 //                                }
 //                            }else {
-//                                listUserNameDisplay.add(user);
+//                                listUser.add(user);
 //                            }
 //                        }
 //                        listInitialBill.add(results.get(i));
@@ -934,13 +958,13 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 //                                newCash.put("customer", objectBill.getJSONObject("customer"));
 //
 //                                BaseModel user = new BaseModel(objectBill.getJSONObject("user"));
-//                                if (!DataUtil.checkDuplicate(listUserNameDisplay, "id" ,user)){
+//                                if (!DataUtil.checkDuplicate(listUser, "id" ,user)){
 //                                    if (User.getRole().equals(Constants.ROLE_WAREHOUSE)){
 //                                        if (!user.getString("role").equals(Constants.ROLE_ADMIN)){
-//                                            listUserNameDisplay.add(user);
+//                                            listUser.add(user);
 //                                        }
 //                                    }else {
-//                                        listUserNameDisplay.add(user);
+//                                        listUser.add(user);
 //                                    }
 //
 //                                }

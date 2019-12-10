@@ -330,16 +330,30 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     }
 
     private void showListDistrict() {
-        CustomBottomDialog.choiceList("Chọn quận / huyện", District.getDistrictList(), new CustomBottomDialog.StringListener() {
-            @Override
-            public void onResponse(String content) {
-                //mSearchView.setText(content);
-                tvLocation.setTextColor(getResources().getColor(R.color.colorMain));
+        CustomBottomDialog.choiceListObject("Chọn quận / huyện", District.getDistrictObjectyList(), new CallbackBaseModel() {
+                    @Override
+                    public void onResponse(BaseModel object) {
+                        tvLocation.setTextColor(getResources().getColor(R.color.colorMain));
 //                mMap.setOnCameraMoveListener(null);
-                loadCustomer = false;
-                loadCustomersByDistrict(content);
-            }
-        });
+                        loadCustomer = false;
+                        loadCustomersByDistrict(object.getString("text"));
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+
+//            @Override
+//            public void onResponse(String content) {
+//                //mSearchView.setText(content);
+//                tvLocation.setTextColor(getResources().getColor(R.color.colorMain));
+////                mMap.setOnCameraMoveListener(null);
+//                loadCustomer = false;
+//                loadCustomersByDistrict(content);
+//            }
+//        });
     }
 
     public void triggerCurrentLocation(LatLng latLng, Boolean loadAround) {
@@ -999,9 +1013,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     @Override
     public void onGlobalLayout() {
         coParent.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-        int height = getResources().getDimensionPixelSize(R.dimen._120sdp);
         ViewGroup.LayoutParams params = lnBottomSheet.getLayoutParams();
-        params.height = height;
+        params.height = Util.convertSdpToInt(R.dimen._120sdp);
         lnBottomSheet.requestLayout();
 
         setupBottomSheet();

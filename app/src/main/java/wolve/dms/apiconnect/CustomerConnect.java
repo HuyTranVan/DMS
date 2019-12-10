@@ -137,57 +137,6 @@ public class CustomerConnect {
         }).execute();
     }
 
-//    public static void ListCustomerSearch(String param, final CallbackCustomList listener, final Boolean stopLoading){
-//        String url = Api_link.CUSTOMERS+ String.format(Api_link.DEFAULT_RANGE, 1,8);
-//
-//        new CustomPostMethod(url,param, false, new CallbackCustom() {
-//            @Override
-//            public void onResponse(BaseModel result) {
-//                Util.getInstance().stopLoading(stopLoading);
-//                if (Constants.responeIsSuccess(result)){
-//                    listener.onResponse(Constants.getResponeArraySuccess(result));
-//
-//                }else {
-//                    Constants.throwError(result.getString("message"));
-//                    listener.onError(result.getString("message"));
-//
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//                Util.getInstance().stopLoading(true);
-//                Constants.throwError(error);
-//                listener.onError(error);
-//
-//            }
-//
-//
-////            @Override
-////            public void onResponse(JSONObject result) {
-////                Util.getInstance().stopLoading(stopLoading);
-////                try {
-////                    if (result.getInt("status") == 200) {
-////                        listener.onResponse(result.getJSONArray("data"));
-////
-////                    } else {
-////                        listener.onError("Unknow error");
-////                    }
-////                } catch (JSONException e) {
-////                    listener.onError(e.toString());
-////                }
-////            }
-////
-////
-////            @Override
-////            public void onError(String error) {
-////                listener.onError(error);
-////                Util.getInstance().stopLoading(stopLoading);
-////            }
-//        }).execute();
-//    }
-
     public static void DeleteCustomer(String params,final CallbackCustom listener, final Boolean stopLoading){
         Util.getInstance().showLoading();
 

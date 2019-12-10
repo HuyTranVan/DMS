@@ -566,7 +566,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 new CallbackListCustom() {
                     @Override
                     public void onResponse(List result) {
-                        postPayToServer(DataUtil.createListPaymentParam(currentCustomer.getInt("id"),  result) );
+                        postPayToServer(DataUtil.createListPaymentParam(currentCustomer.getInt("id"),  result, false) );
 
                     }
 

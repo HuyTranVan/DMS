@@ -106,6 +106,10 @@ public class CustomPostMultiPart extends AsyncTask<Object, String, String> {
         return file_name;
     }
 
+    @Override
+    protected void onPostExecute(String s) {
+        super.onPostExecute(s);
+    }
 }
 /**
  * Created by tranhuy on 7/22/16.

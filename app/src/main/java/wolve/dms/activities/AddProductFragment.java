@@ -1,6 +1,7 @@
 package wolve.dms.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -25,14 +26,20 @@ import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.cloudinary.Api;
 import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
+import com.cloudinary.utils.ObjectUtils;
 import com.soundcloud.android.crop.Crop;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,13 +49,17 @@ import wolve.dms.BuildConfig;
 import wolve.dms.R;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.ProductConnect;
+import wolve.dms.callback.Callback;
+import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CInputForm;
+//import wolve.dms.libraries.FileUploader;
 import wolve.dms.libraries.connectapi.CustomPostMultiPart;
+import wolve.dms.libraries.connectapi.UploadCloudaryMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.utils.Constants;
@@ -73,7 +84,7 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
 
     private Product product;
     private ProductActivity mActivity;
-    private List<String> listGroup = new ArrayList<>();
+    //private List<String> listGroup = new ArrayList<>();
     private List<String> listBoolean = new ArrayList<>();
     private Uri imageChangeUri ;
 
@@ -93,23 +104,30 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
     private void intitialData() {
 
         for (int i=0; i<mActivity.listProductGroup.size(); i++){
-            listGroup.add(mActivity.listProductGroup.get(i).getString("name"));
+            //listGroup.add(mActivity.listProductGroup.get(i).getString("name"));
+            mActivity.listProductGroup.get(i).put("text", mActivity.listProductGroup.get(i).getString("name"));
         }
 
         listBoolean.add(0,Constants.IS_PROMOTION);
         listBoolean.add(1,Constants.NO_PROMOTION);
 
-//        edGroup.setDropdownList(listGroup);
-        edGroup.setText(listGroup.get(mActivity.currentPosition));
+        edGroup.setText(mActivity.listProductGroup.get(mActivity.currentPosition).getString("name"));
         edGroup.setDropdown(true, new CInputForm.ClickListener() {
             @Override
             public void onClick(View view) {
-                CustomBottomDialog.choiceList("CHỌN NHÓM SẢN PHẨM", listGroup, new CustomBottomDialog.StringListener() {
+
+                CustomBottomDialog.choiceListObject("CHỌN NHÓM SẢN PHẨM", mActivity.listProductGroup, new CallbackBaseModel() {
                     @Override
-                    public void onResponse(String content) {
-                        edGroup.setText(content);
+                    public void onResponse(BaseModel object) {
+                        edGroup.setText(object.getString("text"));
+                    }
+
+                    @Override
+                    public void onError() {
+
                     }
                 });
+
             }
         });
 
@@ -118,12 +136,25 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
         edIsPromotion.setDropdown(true, new CInputForm.ClickListener() {
             @Override
             public void onClick(View view) {
-                CustomBottomDialog.choiceList("TÙY CHỌN", listBoolean, new CustomBottomDialog.StringListener() {
-                    @Override
-                    public void onResponse(String content) {
-                        edIsPromotion.setText(content);
-                    }
-                });
+                CustomBottomDialog.choiceTwoOption(mActivity.getResources().getString(R.string.icon_gift),Constants.IS_PROMOTION,
+                                                    mActivity.getResources().getString(R.string.icon_empty), Constants.NO_PROMOTION,
+                                                            new CustomBottomDialog.TwoMethodListener() {
+                                                                @Override
+                                                                public void Method1(Boolean one) {
+                                                                    edIsPromotion.setText(Constants.IS_PROMOTION);
+                                                                }
+
+                                                                @Override
+                                                                public void Method2(Boolean two) {
+                                                                    edIsPromotion.setText(Constants.NO_PROMOTION);
+                                                                }
+                                                            });
+//                CustomBottomDialog.choiceList("TÙY CHỌN", listBoolean, new CustomBottomDialog.StringListener() {
+//                    @Override
+//                    public void onResponse(String content) {
+//                        edIsPromotion.setText(content);
+//                    }
+//                });
             }
         });
 
@@ -190,6 +221,7 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
 
     }
 
+    @SuppressLint("WrongConstant")
     private void checkPermission(){
         if (PermissionChecker.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED
                 || PermissionChecker.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
@@ -234,6 +266,7 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
 
             case R.id.add_product_submit:
                 submitProduct();
+//                uploadImageNew();
                 break;
 
             case R.id.add_product_image:
@@ -314,14 +347,14 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
 
         }else {
             if (imageChangeUri != null){
-//                uploadImage(new CallbackString() {
-//                    @Override
-//                    public void Result(String s) {
-//                        updateProduct(s);
-//
-//                    }
-//                });
-                uploadImageNew();
+                uploadImage(new CallbackString() {
+                    @Override
+                    public void Result(String s) {
+                        updateProduct(s);
+
+                    }
+                });
+
             }else {
                 if (product.getInt("id") ==0){
                     updateProduct("");
@@ -402,39 +435,74 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
 
     private void uploadImage(final CallbackString mListener){
         Util.getInstance().showLoading();
-        MediaManager.get().upload(imageChangeUri).callback(new UploadCallback() {
+        new UploadCloudaryMethod(imageChangeUri, new CallbackCustom() {
             @Override
-            public void onStart(String requestId) {
-
-                // your code here
-            }
-            @Override
-            public void onProgress(String requestId, long bytes, long totalBytes) {
-                // example code starts here
-                Double progress = (double) bytes/totalBytes;
-                // post progress to app UI (e.g. progress bar, notification)
-                // example code ends here
-            }
-            @Override
-            public void onSuccess(String requestId, Map resultData) {
-                mListener.Result(resultData.get("url").toString());
-
-                // your code here
-            }
-            @Override
-            public void onError(String requestId, ErrorInfo error) {
-                // your code here
+            public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(true);
+                mListener.Result(result.get("url").toString());
             }
+
             @Override
-            public void onReschedule(String requestId, ErrorInfo error) {
-                // your code here
+            public void onError(String error) {
                 Util.getInstance().stopLoading(true);
-            }}).dispatch();
+                Util.showSnackbarError(error);
+            }
+        }).execute();
+
+//        String  uri = Util.getRealPathFromURI(imageChangeUri);
+//        try {
+//            Api_link.getImageCloud().uploader().upload(imageChangeUri, ObjectUtils.emptyMap());
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+//        MediaManager.get().upload(imageChangeUri).callback(new UploadCallback() {
+//            @Override
+//            public void onStart(String requestId) {
+//
+//                // your code here
+//            }
+//            @Override
+//            public void onProgress(String requestId, long bytes, long totalBytes) {
+//                // example code starts here
+//                Double progress = (double) bytes/totalBytes;
+//                // post progress to app UI (e.g. progress bar, notification)
+//                // example code ends here
+//            }
+//            @Override
+//            public void onSuccess(String requestId, Map resultData) {
+//                mListener.Result(resultData.get("url").toString());
+//
+//                // your code here
+//            }
+//            @Override
+//            public void onError(String requestId, ErrorInfo error) {
+//                // your code here
+//                Util.getInstance().stopLoading(true);
+//            }
+//            @Override
+//            public void onReschedule(String requestId, ErrorInfo error) {
+//                // your code here
+//                Util.getInstance().stopLoading(true);
+//            }}).dispatch();
     }
 
     private void uploadImageNew(){
-        new CustomPostMultiPart(Api_link.IMAGES, imageChangeUri);
+        //new CustomPostMultiPart(Api_link.IMAGES, imageChangeUri);
+//        String[] result = {Util.getRealPathFromURI(imageChangeUri)};
+//        try {
+//            new FileUploader(imageChangeUri).main(null);
+//        } catch (NoSuchAlgorithmException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (InvalidKeyException e) {
+//            e.printStackTrace();
+//        } catch (XmlPullParserException e) {
+//            e.printStackTrace();
+//        }
+
     }
 
     private void unitPriceEvent(){

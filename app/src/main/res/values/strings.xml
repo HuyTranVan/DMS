@@ -58,10 +58,10 @@
 <!--    <string name="icon_city">&#xf279;</string>-->
     <string name="icon_flag">&#xf024;</string>
     <string name="icon_protect">&#xf132;</string>
-    <string name="icon_bill">&#xf022;</string>
+    <string name="icon_bill">&#xf543;</string>
     <string name="icon_save">&#xf0c7;</string>
     <string name="icon_edit_map">&#xf279;</string>
-    <string name="icon_money">&#xf0d6;</string>
+    <string name="icon_money">&#xf53a;</string>
     <string name="icon_warning">&#xf071;</string>
     <string name="icon_print">&#xf02f;</string>
     <string name="icon_keyboard">&#xf11c;</string>
@@ -81,7 +81,7 @@
     <string name="icon_car">&#xf1b9;</string>
     <string name="icon_next">&#xf105;</string>
     <string name="icon_next_circle">&#xf0a9;</string>
-    <string name="icon_bomb">&#xf1e2;</string>
+    <string name="icon_bomb">&#xf4fd;</string>
     <string name="icon_users">&#xf0c0;</string>
     <string name="icon_share">&#xf1e0;</string>
     <string name="icon_menu">&#xf142;</string>
@@ -93,6 +93,12 @@
     <string name="icon_close">&#xf057;</string>
     <string name="icon_copy">&#xf0c5;</string>
     <string name="icon_cart">&#xf07a;</string>
+    <string name="icon_empty">&#xf656;</string>
+    <string name="icon_web">&#xf37e;</string>
+    <string name="icon_smile">&#xf118;</string>
+    <string name="icon_building">&#xf1ad;</string>
+    <string name="icon_global">&#xf0ac;</string>
+    <string name="icon_chartline">&#xf201;</string>
 
 
 

@@ -141,15 +141,15 @@ public class Constants {
                 Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_chart),
                 Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_import),
                 Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_barcode),
-                Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_setting),
-                Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_username)};
+                Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_product_group),
+                Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_setting)};
         String[] texts = new String[]{
                 "Bán hàng",
                 "Thống kê",
                 "Xuất nhập tồn",
                 "Quét mã",
-                "Cài đặt",
-                "Tài khoản"};
+                "Danh mục",
+                "Cài đặt"};
         String[] colors = new String[]{
                 "Bán hàng",
                 "Thống kê",

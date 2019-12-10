@@ -1,30 +1,22 @@
 package wolve.dms.utils;
 
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.OnBackPressListener;
 import com.orhanobut.dialogplus.ViewHolder;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.adapter.StringAdapter;
+import wolve.dms.adapter.ItemAdapter;
 import wolve.dms.callback.CallbackBaseModel;
-import wolve.dms.callback.CallbackObject;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 
@@ -319,15 +311,54 @@ public class CustomBottomDialog {
         dialog.show();
     }
 
-    public static void choiceList(String title, final List<String> list, final StringListener mListener){
-        int heigh = list.size()>5 ? 400: list.size()*50 +65;
+//    public static void choiceList(String title, final List<String> list, final StringListener mListener){
+//        int heigh = list.size()>5 ? 400: list.size()*50 +65;
+//
+//        final DialogPlus dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
+//                .setContentHolder(new ViewHolder(R.layout.view_choice_listmethod))
+//                .setGravity(Gravity.BOTTOM)
+//                .setBackgroundColorResId(R.drawable.colorwhite_corner)
+//                .setMargin(20,20,20,20)
+//                .setContentHeight((int) Util.convertDp2Px(heigh))
+//                .setInAnimation(R.anim.slide_up)
+//                .setOnBackPressListener(new OnBackPressListener() {
+//                    @Override
+//                    public void onBackPressed(DialogPlus dialogPlus) {
+//                        dialogPlus.dismiss();
+//                    }
+//                }).create();
+//
+//        RecyclerView rvList = (RecyclerView) dialog.findViewById(R.id.view_list_method_rv);
+//        TextView tvTitle = (TextView) dialog.findViewById(R.id.view_listmethod_title);
+//
+//        if (title == null){
+//            tvTitle.setVisibility(View.GONE);
+//        }else {
+//            tvTitle.setVisibility(View.VISIBLE);
+//            tvTitle.setText(title);
+//        }
+//
+//        ItemAdapter adapter = new ItemAdapter(list, new PositionListener() {
+//            @Override
+//            public void onResponse(int pos) {
+//                dialog.dismiss();
+//                mListener.onResponse(list.get(pos));
+//            }
+//        });
+//        Util.createLinearRV(rvList, adapter);
+//
+//        dialog.show();
+//    }
 
+    public static void choiceListObject(String title, final List<BaseModel> list, final CallbackBaseModel mListener){
+        int heigh = list.size()>5 ? Util.convertSdpToInt(R.dimen._300sdp):
+                (list.size()+1)*Util.convertSdpToInt(R.dimen._35sdp); //+Util.convertSdpToInt(R.dimen._30sdp);
         final DialogPlus dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
                 .setContentHolder(new ViewHolder(R.layout.view_choice_listmethod))
                 .setGravity(Gravity.BOTTOM)
                 .setBackgroundColorResId(R.drawable.colorwhite_corner)
                 .setMargin(20,20,20,20)
-                .setContentHeight((int) Util.convertDp2Px(heigh))
+                .setContentHeight(heigh)
                 .setInAnimation(R.anim.slide_up)
                 .setOnBackPressListener(new OnBackPressListener() {
                     @Override
@@ -346,77 +377,16 @@ public class CustomBottomDialog {
             tvTitle.setText(title);
         }
 
-        StringAdapter adapter = new StringAdapter(list, new PositionListener() {
+
+        ItemAdapter adapter = new ItemAdapter(list, new PositionListener() {
             @Override
             public void onResponse(int pos) {
                 dialog.dismiss();
                 mListener.onResponse(list.get(pos));
             }
 
-//            @Override
-//            public void onResponse(String content) {
-//
-//            }
         });
-        adapter.notifyDataSetChanged();
-        rvList.setAdapter(adapter);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(),LinearLayoutManager.VERTICAL,false);
-        linearLayoutManager.setAutoMeasureEnabled(true);
-        rvList.setLayoutManager(linearLayoutManager);
-
-        dialog.show();
-    }
-
-    public static void choiceListObject(String title, String key, final List<BaseModel> list, final CallbackBaseModel mListener){
-        List<String> listName = new ArrayList<>();
-        for (int i=0; i<list.size(); i++){
-            listName.add(list.get(i).getString(key));
-
-        }
-
-        int heigh = list.size()>5 ? 400: listName.size()*50 +65;
-        final DialogPlus dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
-                .setContentHolder(new ViewHolder(R.layout.view_choice_listmethod))
-                .setGravity(Gravity.BOTTOM)
-                .setBackgroundColorResId(R.drawable.colorwhite_corner)
-                .setMargin(20,20,20,20)
-                .setContentHeight((int) Util.convertDp2Px(heigh))
-                .setInAnimation(R.anim.slide_up)
-                .setOnBackPressListener(new OnBackPressListener() {
-                    @Override
-                    public void onBackPressed(DialogPlus dialogPlus) {
-                        dialogPlus.dismiss();
-                    }
-                }).create();
-
-        RecyclerView rvList = (RecyclerView) dialog.findViewById(R.id.view_list_method_rv);
-        TextView tvTitle = (TextView) dialog.findViewById(R.id.view_listmethod_title);
-
-        if (title == null){
-            tvTitle.setVisibility(View.GONE);
-        }else {
-            tvTitle.setVisibility(View.VISIBLE);
-            tvTitle.setText(title);
-        }
-
-
-        StringAdapter adapter = new StringAdapter(listName, new PositionListener() {
-            @Override
-            public void onResponse(int pos) {
-                dialog.dismiss();
-                mListener.onResponse(list.get(pos));
-            }
-
-//            @Override
-//            public void onResponse(String content) {
-//
-//            }
-        });
-        adapter.notifyDataSetChanged();
-        rvList.setAdapter(adapter);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(Util.getInstance().getCurrentActivity(),LinearLayoutManager.VERTICAL,false);
-        linearLayoutManager.setAutoMeasureEnabled(true);
-        rvList.setLayoutManager(linearLayoutManager);
+        Util.createLinearRV(rvList, adapter);
 
         dialog.show();
     }

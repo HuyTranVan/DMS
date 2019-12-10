@@ -1,0 +1,296 @@
+package wolve.dms.activities;
+
+import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.provider.MediaStore;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.viewpager.widget.ViewPager;
+
+import com.bumptech.glide.Glide;
+import com.github.clans.fab.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
+import com.soundcloud.android.crop.Crop;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import wolve.dms.BaseActivity;
+import wolve.dms.BuildConfig;
+import wolve.dms.R;
+import wolve.dms.adapter.ProductAdapter;
+import wolve.dms.adapter.ProductGroupAdapter;
+import wolve.dms.adapter.ViewpagerProductAdapter;
+import wolve.dms.apiconnect.Api_link;
+import wolve.dms.apiconnect.ProductConnect;
+import wolve.dms.apiconnect.SystemConnect;
+import wolve.dms.callback.CallbackClickAdapter;
+import wolve.dms.callback.CallbackCustom;
+import wolve.dms.callback.CallbackCustomList;
+import wolve.dms.callback.CallbackDeleteAdapter;
+import wolve.dms.callback.CallbackString;
+import wolve.dms.customviews.CInputForm;
+import wolve.dms.libraries.MySwipeRefreshLayout;
+import wolve.dms.libraries.connectapi.UploadCloudaryMethod;
+import wolve.dms.models.BaseModel;
+import wolve.dms.models.Distributor;
+import wolve.dms.models.User;
+import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomBottomDialog;
+import wolve.dms.utils.DataUtil;
+import wolve.dms.utils.Transaction;
+import wolve.dms.utils.Util;
+
+import static wolve.dms.utils.Constants.REQUEST_CHOOSE_IMAGE;
+import static wolve.dms.utils.Constants.REQUEST_IMAGE_CAPTURE;
+
+/**
+ * Created by macos on 9/16/17.
+ */
+
+public class DistributorActivity extends BaseActivity implements View.OnClickListener{
+    private ImageView btnBack;
+    private CInputForm tvCompany, tvPhone, tvAddress, tvSite, tvThanks;
+    private Button btnSubmit;
+    private TextView tvTitle;
+    private RelativeLayout rlImage;
+    private ImageView image;
+
+    private BaseModel currentDistributor;
+    private Uri imageChangeUri ;
+
+    @Override
+    public int getResourceLayout() {
+        return R.layout.activity_distributor;
+    }
+
+    @Override
+    public int setIdContainer() {
+        return R.id.distributor_parent;
+    }
+
+    @Override
+    public void findViewById() {
+        btnBack = (ImageView) findViewById(R.id.icon_back);
+        tvCompany = findViewById(R.id.distributor_company_name);
+        tvAddress = findViewById(R.id.distributor_company_add);
+        tvPhone = findViewById(R.id.distributor_company_hotline);
+        tvSite = findViewById(R.id.distributor_company_web);
+        tvThanks = findViewById(R.id.distributor_company_thanks);
+        btnSubmit = findViewById(R.id.distributor_submit);
+        tvTitle = findViewById(R.id.distributor_title);
+        rlImage = findViewById(R.id.distributor_image_parent);
+        image = findViewById(R.id.distributor_image);
+
+    }
+
+    @Override
+    public void initialData() {
+        SystemConnect.GetDistributorDetail(Distributor.getDistributorId(), new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                currentDistributor = result;
+                updateView(currentDistributor);
+
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        }, true);
+
+    }
+
+    private void updateView(BaseModel content){
+        tvCompany.setText(content.getString("company"));
+        tvAddress.setText(content.getString("address"));
+        tvPhone.setText(Util.FormatPhone(content.getString("phone")));
+        tvSite.setText(content.getString("website"));
+        tvThanks.setText(content.getString("thanks"));
+        tvTitle.setText(content.getString("name"));
+        if (!Util.checkImageNull(content.getString("image"))){
+            Glide.with(this).load(content.getString("image")).centerCrop().into(image);
+
+        }else {
+            Glide.with(this).load( R.drawable.lub_logo_red).centerCrop().into(image);
+
+        }
+
+    }
+
+    @Override
+    public void addEvent() {
+        btnBack.setOnClickListener(this);
+        btnSubmit.setOnClickListener(this);
+        rlImage.setOnClickListener(this);
+        phoneEvent();
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.icon_back:
+                Transaction.gotoHomeActivityRight(true);
+                break;
+
+            case R.id.distributor_submit:
+                submitDistributor();
+                break;
+
+            case R.id.distributor_image_parent:
+                CustomBottomDialog.choiceTwoOption(getString(R.string.icon_image),
+                        "Chọn ảnh thư viện",
+                        getString(R.string.icon_camera),
+                        "Chụp ảnh",
+                        new CustomBottomDialog.TwoMethodListener() {
+                            @Override
+                            public void Method1(Boolean one) {
+                                startImageChooser();
+                            }
+
+                            @Override
+                            public void Method2(Boolean two) {
+                                startCamera();
+                            }
+                        });
+                break;
+
+
+        }
+    }
+
+    private void submitDistributor(){
+        if (imageChangeUri != null){
+            uploadImage(new CallbackString() {
+                @Override
+                public void Result(String s) {
+                    updateDistributor(s);
+
+                }
+            });
+
+        }else {
+            updateDistributor(currentDistributor.getString("image"));
+
+        }
+
+    }
+
+    private void updateDistributor(String imageLink){
+        String param = String.format(Api_link.DISTRIBUTOR_CREATE_PARAM, currentDistributor.getInt("id") == 0? "" : String.format("id=%s&",currentDistributor.getString("id") ),
+                Util.encodeString(tvCompany.getText().toString()),
+                Util.encodeString(tvAddress.getText().toString()),
+                Util.encodeString(tvPhone.getText().toString().replace(".", "")),
+                Util.encodeString(tvSite.getText().toString()),
+                Util.encodeString(tvThanks.getText().toString()),
+                imageLink);
+
+        SystemConnect.CreateDistributor(param, new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Transaction.gotoHomeActivityRight(true);
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        }, true);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CHOOSE_IMAGE ){
+            if (data != null){
+                Crop.of(Uri.parse(data.getData().toString()), imageChangeUri).asSquare().withMaxSize(512,512).start(this);
+
+            }
+
+        }else if (requestCode == REQUEST_IMAGE_CAPTURE){
+            Crop.of(imageChangeUri, imageChangeUri).asSquare().withMaxSize(512,512).start(this);
+
+        }
+        else if (data != null && requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
+            Glide.with(this).load(imageChangeUri).centerCrop().into(image);
+
+        } else if (requestCode == Crop.REQUEST_CROP) {
+            if (resultCode == RESULT_OK) {
+                Glide.with(this).load(imageChangeUri).centerCrop().into(image);
+
+            } else if (resultCode == Crop.RESULT_ERROR) {
+                Util.showToast(Crop.getError(data).getMessage());
+
+            }
+        }
+
+    }
+
+    private void startImageChooser() {
+        imageChangeUri = Uri.fromFile(Util.getOutputMediaFile());
+        if (Build.VERSION.SDK_INT <= 19) {
+            Intent i = new Intent();
+            i.setType("image/*");
+            i.setAction(Intent.ACTION_GET_CONTENT);
+            i.addCategory(Intent.CATEGORY_OPENABLE);
+            startActivityForResult(i, REQUEST_CHOOSE_IMAGE);
+
+        } else if (Build.VERSION.SDK_INT > 19) {
+            Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
+        }
+    }
+
+    public void startCamera() {
+        imageChangeUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", Util.getOutputMediaFile());
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT,imageChangeUri );
+        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+
+    }
+
+    private void uploadImage(final CallbackString mListener){
+        Util.getInstance().showLoading();
+        new UploadCloudaryMethod(imageChangeUri, new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(true);
+                mListener.Result(result.get("url").toString());
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Util.showSnackbarError(error);
+            }
+        }).execute();
+
+    }
+
+    private void phoneEvent(){
+        tvPhone.addTextChangePhone(new CallbackString() {
+            @Override
+            public void Result(String s) {
+
+            }
+        });
+    }
+
+
+
+
+
+}

@@ -64,7 +64,8 @@
         android:largeHeap="true"
         android:theme="@style/FullScreen"
         android:allowBackup="true"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        tools:replace="android:allowBackup">
 
 <!--        <provider-->
 <!--            android:name="android.support.v4.content.FileProvider"-->
@@ -202,6 +203,13 @@
 
         <activity
             android:name=".activities.ScannerActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/FullScreen"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+
+        <activity
+            android:name=".activities.DistributorActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/FullScreen"

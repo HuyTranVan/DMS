@@ -162,22 +162,22 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 //    }
 //
 //    private void saveUser(JSONObject user){
-//        List<JSONObject> listUserNameDisplay = CustomSQL.getListObject(Constants.USER_LIST);
+//        List<JSONObject> listUser = CustomSQL.getListObject(Constants.USER_LIST);
 //
 //        boolean check = false;
 //        try{
-//            for (int i=0; i< listUserNameDisplay.size(); i++){
-//                if (listUserNameDisplay.get(i).getInt("id") == user.getInt("id")){
+//            for (int i=0; i< listUser.size(); i++){
+//                if (listUser.get(i).getInt("id") == user.getInt("id")){
 //                    check = true;
 //                    break;
 //                }
 //            }
 //
 //            if (!check){
-//                listUserNameDisplay.add(user);
+//                listUser.add(user);
 //            }
 //
-//            CustomSQL.setListJSONObject(Constants.USER_LIST, listUserNameDisplay);
+//            CustomSQL.setListJSONObject(Constants.USER_LIST, listUser);
 //
 //        } catch (JSONException e) {
 //            //e.printStackTrace();

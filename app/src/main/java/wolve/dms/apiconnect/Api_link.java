@@ -1,5 +1,10 @@
 package wolve.dms.apiconnect;
 
+import com.cloudinary.Cloudinary;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import wolve.dms.BuildConfig;
 import wolve.dms.R;
 import wolve.dms.utils.Util;
@@ -13,6 +18,9 @@ public class Api_link {
     public final static String BASE_PHOTO_URL = BuildConfig.UPLOAD_URL;
     public final static String MAP_API = "https://maps.googleapis.com/maps/api/";
     public final static String LUB_LINK = "http://dmslub.com?";
+    public final static String HOST_IMAGE="http://lubsolution.com:8800";
+    public final static String HOST_IMAGE_USER="paramaxgo";
+    public final static String HOST_IMAGE_PASS="paramaxgo@1";
 
     public final static String GOOGLESHEET_CREDENTIALS_FILE_PATH = "/credentials.json";
     public final static String GOOGLESHEET_TOKENS_PATH = "tokens";
@@ -27,7 +35,6 @@ public class Api_link {
 
 
     public final static String LOGO_BILL = "http://res.cloudinary.com/lubsolution/image/upload/v1514902531/wolver_logo.jpg";
-    public final static String IMAGES = BASE_URL + "images";
 
     public final static String PROVINCES = BASE_URL + "provinces";
     public final static String DISTRICTS = BASE_URL + "districts?provinceid=";
@@ -69,6 +76,10 @@ public class Api_link {
     public final static String CUSTOMER_DEBT_PARAM ="debt=%d";
     public final static String CUSTOMER_CREATE_PARAM ="%sname=%s&signBoard=%s&address=%s&phone=%s&street=%s&note=%s&district=%s&province=%s&lat=%s&lng=%s&volumeEstimate=%s&shopType=%s&status.id=%d&distributor.id=%s&currentDebt=%s";
 
+    public final static String DISTRIBUTOR_DETAIL = BASE_URL + "token/distributor/";
+    public final static String DISTRIBUTOR_NEW = BASE_URL + "token/distributor/create_or_update";
+    public final static String DISTRIBUTOR_CREATE_PARAM ="%scompany=%s&address=%s&phone=%s&website=%s&thanks=%s&image=%s";
+
     public final static String CHECKIN_NEW = BASE_URL + "token/customer/checkin";
     public final static String SCHECKIN_CREATE_PARAM ="customer.id=%d&status.id=%d&note=%s&user.id=%s";
 
@@ -81,12 +92,22 @@ public class Api_link {
     public final static String BILL_HAVE_PAYMENT_RANGE_PARAM ="&paymentFrom=%s&paymentTo=%s";
     public final static String BILL_NOT_YET_PAID_RANGE_PARAM ="&fromTime=%s&toTime=%s";
     public final static String PAY_NEW = BASE_URL + "token/payment";
-    public final static String PAY_PARAM ="customerId=%d&paid=%s&billId=%d&userId=%d&note=%s";
+    public final static String PAY_PARAM ="customerId=%d&paid=%s&billId=%d&userId=%d&note=%s&payByReturn=%d";
 
     public final static String NOTE_PARAM = "http://lubsolution.com/";
 
     public final static String LUB_LINK_PARAM ="id=%s";
 
+    public static Cloudinary getImageCloud() {
+        Map config = new HashMap();
+        config.put("cloud_name", "lubsolution");
+        config.put("api_key", "482386522287271");
+        config.put("api_secret", "Mh2EsnmYHBAsTAp7jsNLoJ5dXhk");
+        Cloudinary cloudinary = new Cloudinary(config);
+
+        return cloudinary;
+
+    }
 
 }
 

@@ -20,6 +20,7 @@ import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.zxing.WriterException;
 
 import org.json.JSONArray;
@@ -48,6 +49,7 @@ import wolve.dms.callback.CallbackProcess;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.libraries.printerdriver.BluetoothPrintBitmap;
 import wolve.dms.models.BaseModel;
+import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.BitmapView;
 import wolve.dms.utils.Constants;
@@ -160,6 +162,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         currentBill = new BaseModel(getIntent().getExtras().getString(Constants.BILL));
         listDebts = new ArrayList<>(DataUtil.array2ListObject(currentCustomer.getString(Constants.DEBTS)));
 
+
         rePrint = getIntent().getExtras().getBoolean(Constants.RE_PRINT);
         if (rePrint){
             tvTitle.setText("CÔNG NỢ ");
@@ -204,13 +207,26 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
         }
 
-        tvCompany.setText(Constants.COMPANY_NAME);
-        tvAdress.setText(Constants.COMPANY_ADDRESS);
-        tvHotline.setText(Constants.COMPANY_HOTLINE);
-        tvWebsite.setText(Constants.COMPANY_WEBSITE);
+//        tvCompany.setText(Constants.COMPANY_NAME);
+//        tvAdress.setText(Constants.COMPANY_ADDRESS);
+//        tvHotline.setText(Constants.COMPANY_HOTLINE);
+//        tvWebsite.setText(Constants.COMPANY_WEBSITE);
+        BaseModel distributor = Distributor.getObject();
+        tvCompany.setText(distributor.getString("company"));
+        tvAdress.setText(distributor.getString("address"));
+        tvHotline.setText(String.format("Hotline: %s", Util.FormatPhone(distributor.getString("address"))));
+        tvWebsite.setText(distributor.getString("website"));
+        if (!Util.checkImageNull(distributor.getString("image"))){
+            Glide.with(this).load(distributor.getString("image")).centerCrop().into(imgLogo);
+
+        }else {
+            Glide.with(this).load( R.drawable.lub_logo_red).centerCrop().into(imgLogo);
+
+        }
+
 
         tvOrderPhone.setText(String.format("Đặt hàng: %s", Util.FormatPhone(User.getPhone())));
-        tvThanks.setText(Constants.COMPANY_THANKS);
+        tvThanks.setText(distributor.getString("thanks"));
         tvShopName.setText(String.format(": %s %s",Constants.getShopName(currentCustomer.getString("shopType")).toUpperCase() , currentCustomer.getString("signBoard").toUpperCase()));
 
         String phone = currentCustomer.getString("phone").equals("")? "--" : Util.FormatPhone(currentCustomer.getString("phone"));
@@ -551,7 +567,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
                         listPayments.get(0).put("billTotal", result.getDouble("total"));
                     }
 
-                    postPayToServer(DataUtil.createListPaymentParam(currentCustomer.getInt("id"),listPayments), true);
+                    postPayToServer(DataUtil.createListPaymentParam(currentCustomer.getInt("id"),listPayments, false), true);
 
                 }else {
                     Transaction.returnShopCartActivity(Constants.PRINT_BILL_ACTIVITY, currentCustomer.getString("id"), Constants.RESULT_PRINTBILL_ACTIVITY);

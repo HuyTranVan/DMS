@@ -11,6 +11,7 @@ import androidx.core.app.ShareCompat;
 
 import wolve.dms.R;
 import wolve.dms.activities.CustomerActivity;
+import wolve.dms.activities.DistributorActivity;
 import wolve.dms.activities.HomeActivity;
 import wolve.dms.activities.LoginActivity;
 import wolve.dms.activities.MapsActivity;
@@ -180,6 +181,13 @@ public class Transaction {
     public static void gotoStatisticalCustomerActivity() {
         Activity context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(context, StatisticalCustomerActivity.class);
+        context.startActivity(intent);
+        context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
+
+    public static void gotoDistributorActivity() {
+        Activity context = Util.getInstance().getCurrentActivity();
+        Intent intent = new Intent(context, DistributorActivity.class);
         context.startActivity(intent);
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }

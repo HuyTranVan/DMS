@@ -63,5 +63,16 @@ public class Distributor extends BaseModel{
 
     }
 
+    public static BaseModel getObject(){
+        String name = "";
+        BaseModel currentDistributor = CustomSQL.getObject(Constants.DISTRIBUTOR, Distributor.class);
+
+        if (currentDistributor != null) {
+            return currentDistributor;
+        }
+        return new BaseModel();
+
+    }
+
 
 }

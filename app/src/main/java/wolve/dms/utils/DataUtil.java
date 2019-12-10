@@ -242,7 +242,7 @@ public class DataUtil {
     }
 
 
-    public static List<String> createListPaymentParam(int customerId,List<BaseModel> list){
+    public static List<String> createListPaymentParam(int customerId,List<BaseModel> list, boolean payByReturn){
         List<String> results = new ArrayList<>();
         for (int i=0; i<list.size(); i++){
             String s = String.format(Api_link.PAY_PARAM,
@@ -250,7 +250,8 @@ public class DataUtil {
                     String.valueOf(Math.round(list.get(i).getDouble("paid"))),
                     list.get(i).getInt("billId"),
                     User.getId(),
-                    String.valueOf(Math.round(list.get(i).getDouble("billTotal"))));
+                    String.valueOf(Math.round(list.get(i).getDouble("billTotal"))),
+                    payByReturn?1:0);
 //                        note.equals("")?"" :"&note="+note )
 
             results.add(s);
@@ -260,13 +261,14 @@ public class DataUtil {
         return results;
     }
 
-    public static String createPostPaymentParam(int customerId, double paid, int billId, double billTotal){
+    public static String createPostPaymentParam(int customerId, double paid, int billId, double billTotal, boolean payByReturn){
         String s = String.format(Api_link.PAY_PARAM,
                 customerId,
                 String.valueOf(Math.round(paid)),
                 billId,
                 User.getId(),
-                String.valueOf(Math.round(billTotal)));
+                String.valueOf(Math.round(billTotal)),
+                payByReturn?1:0);
 
 
         return s;
@@ -721,7 +723,7 @@ public class DataUtil {
 //
 //    }
 
-    public static List<List<Object>> updateIncomeByUserToSheet(String startDate, String endDate,List<String> users,  List<BaseModel> listbill, List<BaseModel> listbilldetail, List<BaseModel> listpayment, List<BaseModel> listdebt){
+    public static List<List<Object>> updateIncomeByUserToSheet(String startDate, String endDate,List<BaseModel> users,  List<BaseModel> listbill, List<BaseModel> listbilldetail, List<BaseModel> listpayment, List<BaseModel> listdebt){
         List<List<Object>> values = new ArrayList<>();
 
         List<Object> column0 = new ArrayList<>();
@@ -747,7 +749,7 @@ public class DataUtil {
 //total bill
             double totalbill =0.0;
             for (BaseModel bill: listbill){
-                if (bill.getBaseModel("user").getString("displayName").equals(users.get(i))){
+                if (bill.getBaseModel("user").getString("displayName").equals(users.get(i).getString("displayName"))){
                     totalbill += bill.getDouble("total");
                 }
             }
@@ -756,7 +758,7 @@ public class DataUtil {
 //payment
             double pay =0.0;
             for (BaseModel payment: listpayment){
-                if (payment.getBaseModel("user").getString("displayName").equals(users.get(i))){
+                if (payment.getBaseModel("user").getString("displayName").equals(users.get(i).getString("displayName"))){
                     pay += payment.getDouble("paid");
                 }
             }
@@ -777,7 +779,7 @@ public class DataUtil {
             column1.add("TÊN CỬA HÀNG");
             column2.add("CÒN NỢ");
             for (BaseModel debt : listdebt){
-                if (debt.getString("userName").equals(users.get(i))){
+                if (debt.getString("userName").equals(users.get(i).getString("displayName"))){
                     deb += debt.getDouble("currentDebt");
 
                     String add = String.format("%s %s\n(%s - %s)",
@@ -1113,6 +1115,17 @@ public class DataUtil {
         paramCustomer.put("param", param );
 
         return paramCustomer;
+
+    }
+
+    public static BaseModel createNewDistributorParam(String param){
+        BaseModel paramDistributor = new BaseModel();
+        paramDistributor.put("url", Api_link.DISTRIBUTOR_NEW );
+        paramDistributor.put("method", "POST");
+        paramDistributor.put("isjson", false );
+        paramDistributor.put("param", param );
+
+        return paramDistributor;
 
     }
 
