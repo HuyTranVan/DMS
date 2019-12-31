@@ -100,7 +100,7 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
                         BaseModel customer = DataUtil.rebuiltCustomer(result);
                         CustomSQL.setBaseModel(Constants.CUSTOMER, customer);
 
-                        Transaction.gotoCustomerActivity(false);
+                        Transaction.gotoCustomerActivity();
                     }
 
                     @Override

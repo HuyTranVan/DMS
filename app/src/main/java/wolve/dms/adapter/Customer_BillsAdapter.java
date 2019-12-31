@@ -27,6 +27,7 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CTextIcon;
+import wolve.dms.libraries.Security;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
@@ -63,6 +64,16 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
         notifyDataSetChanged();
     }
 
+    public void updateTempBill(){
+        notifyDataSetChanged();
+//        for (int i=0; i<mData.size(); i++){
+//            if (mData.get(i).isNull(Constants.DELIVER_BY) && CustomSQL.getLong(Constants.CURRENT_DISTANCE) < 500){
+//                notifyItemChanged(i);
+//            }
+//        }
+
+    }
+
     @Override
     public CustomerBillsAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(mContext).inflate(R.layout.adapter_customer_bills_item, parent, false);
@@ -72,14 +83,12 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onBindViewHolder(final CustomerBillsAdapterViewHolder holder, final int position) {
-        holder.lnCover.setVisibility(mData.get(position).hasKey(Constants.TEMPBILL) && mData.get(position).getBoolean(Constants.TEMPBILL)? View.VISIBLE: View.GONE);
+        holder.lnCover.setVisibility(mData.get(position).isNull(Constants.DELIVER_BY)? View.VISIBLE: View.GONE);
         holder.btnDelete.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN)||
-                User.getId() == mData.get(position).getBaseModel("user").getInt("id")
+                User.getId() == mData.get(position).getInt("user_id")
                 ? View.VISIBLE:View.GONE);
 
-        holder.btnConfirm.setVisibility(CustomSQL.getLong(Constants.CHECKIN_TIME) != 0 ? View.VISIBLE : View.GONE);
-//        holder.btnConfirm.setVisibility(View.GONE);
-//        holder.btnDelete.setVisibility(View.GONE);
+        holder.btnConfirm.setVisibility(CustomSQL.getLong(Constants.CURRENT_DISTANCE) < 500 ? View.VISIBLE : View.GONE);
 
         holder.tvDate.setText(Util.DateHourString(mData.get(position).getLong("createAt")));
         holder.tvTotal.setText(Util.FormatMoney(mData.get(position).getDouble("total")) + " đ");
@@ -100,80 +109,28 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
             holder.tvDebt.setOnClickListener(null);
 
         }
-        holder.btnMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                List<String> list = new ArrayList<>();
-                list.add("Trả hàng");
-
-                if (User.getRole().equals(Constants.ROLE_ADMIN)){
-                    list.add("Xóa hóa đơn");
-                }
-
-                CustomDropdow.createDropdown(holder.btnMenu,
-                        list,
-                        new CallbackString() {
-                            @Override
-                            public void Result(String s) {
-                                if (s.equals(list.get(0))){
-                                    BaseModel respone = new BaseModel();
-                                    respone.put(Constants.TYPE, Constants.BILL_RETURN);
-                                    respone.putBaseModel(Constants.RESULT, mData.get(position));
-                                    mListener.onResponse(respone);
-
-                                }else if (s.equals(list.get(1))){
-                                    deleteBill(position);
-
-                                }
-                            }
-                        });
 
 
-            }
-        });
+        List<BaseModel> listReturn = new ArrayList<>(DataUtil.array2ListObject(mData.get(position).getString("billReturn")));
+        Customer_BillsReturnAdapter adapterReturn = new Customer_BillsReturnAdapter(listReturn);
+        Util.createLinearRV(holder.rvReturn, adapterReturn);
 
-        if (Util.isEmpty(mData.get(position).getString("note")) ){
-            holder.rvReturn.setVisibility(View.GONE);
-            holder.tvDeliver.setVisibility(View.GONE);
+        if (!mData.get(position).isNull(Constants.DELIVER_BY)){
+            holder.tvDeliver.setVisibility(View.VISIBLE);
+            holder.tvDeliver.setText(String.format("%s giao hàng %s",
+                    mData.get(position).getBaseModel("deliverByObject").getString("displayName"),
+                    mData.get(position).getLong("createAt").equals(mData.get(position).getLong("deliverTime"))? "" : Util.DateHourString(mData.get(position).getLong("deliverTime"))));
 
         }else {
-            if (mData.get(position).hasKey(Constants.HAVEBILLRETURN)){
-                holder.rvReturn.setVisibility(View.VISIBLE);
-                //holder.tvNote.setVisibility(View.GONE);
-
-                List<BaseModel> listReturn = new ArrayList<>(DataUtil.array2ListObject(mData.get(position).getString(Constants.HAVEBILLRETURN)));
-                Customer_BillsReturnAdapter adapter = new Customer_BillsReturnAdapter(listReturn);
-                Util.createLinearRV(holder.rvReturn, adapter);
-
-            }else {
-                holder.rvReturn.setVisibility(View.GONE);
-
-            }
-
-            if (mData.get(position).hasKey(Constants.DELIVER_BY)){
-                String s = mData.get(position).getString(Constants.DELIVER_BY);
-                holder.tvDeliver.setVisibility(View.VISIBLE);
-                holder.tvDeliver.setText(String.format("Giao bởi: %s vào %s", mData.get(position).getBaseModel(Constants.DELIVER_BY).getString("displayName"),
-                        mData.get(position).getBaseModel(Constants.DELIVER_BY).getString("currentTime")));
-
-            }else {
-                holder.tvDeliver.setVisibility(View.GONE);
-
-            }
-
+            holder.tvDeliver.setVisibility(View.GONE);
         }
+
 
         final List<BaseModel> listBillDetail = new ArrayList<>(DataUtil.array2ListObject(mData.get(position).getString("billDetails")));
-        Customer_BillsDetailAdapter adapter = new Customer_BillsDetailAdapter(listBillDetail);
-        Util.createLinearRV(holder.rvBillDetail, adapter);
+        Customer_BillsDetailAdapter adapterDetail = new Customer_BillsDetailAdapter(listBillDetail);
+        Util.createLinearRV(holder.rvBillDetail, adapterDetail);
 
         List<BaseModel> listPayment = new ArrayList<>(DataUtil.array2ListObject(mData.get(position).getString("payments")));
-
-        if (mData.get(position).hasKey(Constants.PAYBYTRETURN)){
-            listPayment.addAll(DataUtil.array2ListBaseModel(mData.get(position).getJSONArray(Constants.PAYBYTRETURN)));
-
-        }
-
         if (listPayment.size() >0){
             holder.lnPayment.setVisibility(View.VISIBLE );
             PaymentAdapter paymentAdapter = new PaymentAdapter(listPayment);
@@ -203,6 +160,41 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
             }
         });
 
+        holder.btnMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<String> list = new ArrayList<>();
+                list.add("Trả hàng");
+
+                if (User.getRole().equals(Constants.ROLE_ADMIN)){
+                    list.add("Xóa hóa đơn");
+                }
+
+                CustomDropdow.createDropdown(holder.btnMenu, list, new CallbackString() {
+                    @Override
+                    public void Result(String s) {
+                        if (s.equals(list.get(0))){
+                            BaseModel respone = new BaseModel();
+                            respone.put(Constants.TYPE, Constants.BILL_RETURN);
+                            respone.putBaseModel(Constants.RESULT, mData.get(position));
+                            mListener.onResponse(respone);
+
+                        }else if (s.equals(list.get(1))){
+                            if (listPayment.size() >0 ){
+                                Util.showToast("Không thể xóa hóa đơn có phát sinh thanh toán ");
+                            }else if (listReturn.size() >0){
+                                Util.showToast("Không thể xóa hóa đơn có phát sinh trả hàng ");
+                            }else {
+                                deleteBill(position);
+                            }
+
+
+                        }
+                    }
+                });
+
+            }
+        });
 
     }
 
@@ -213,11 +205,11 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
 
     public class CustomerBillsAdapterViewHolder extends RecyclerView.ViewHolder {
         private TextView tvDate, tvHour, tvPay, tvDebt, tvTotal, tvIcon, tvDeliver;
-        private CTextIcon btnMenu;
+        private CTextIcon btnMenu, btnDelete;
         private RecyclerView rvBillDetail, rvPayment, rvReturn;
-        private LinearLayout lnPayment, lnCover;
-        private RelativeLayout lnTitle;
-        private Button btnDelete, btnConfirm;
+        private LinearLayout lnPayment;
+        private RelativeLayout lnTitle,lnCover ;
+        private Button btnConfirm;
 
         public CustomerBillsAdapterViewHolder(View itemView) {
             super(itemView);
@@ -238,7 +230,6 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
             btnConfirm = itemView.findViewById(R.id.btn_confirm);
             tvDeliver = itemView.findViewById(R.id.bills_item_deliver_name);
 
-
         }
 
     }
@@ -255,6 +246,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
                 if (result){
                     List<String> listParams = new ArrayList<>();
                     listParams.add(mData.get(currentPosition).getString("id"));
+
                     if (mData.get(currentPosition).hasKey(Constants.HAVEBILLRETURN)){
                         List<BaseModel> list = DataUtil.array2ListBaseModel(mData.get(currentPosition).getJSONArray(Constants.HAVEBILLRETURN));
                         for (BaseModel baseModel : list){
@@ -290,7 +282,6 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
         if (mData.get(currentPosition).getDouble("debt") != 0){
             List currentDebt = new ArrayList();
             currentDebt.add(mData.get(currentPosition));
-            Log.e("reasdfasdf", mData.get(currentPosition).BaseModelstoString());
 
             CustomCenterDialog.showDialogPayment(String.format("THANH TOÁN HÓA ĐƠN %s", Util.DateString(mData.get(currentPosition).getLong("createAt"))),
                     currentDebt,

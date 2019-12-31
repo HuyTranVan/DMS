@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -46,6 +47,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
     private TextView tvStatus, tvLastStatus, tvType;
     private CustomSwitchButton swStatus;
     private RadioGroup rgType;
+    private LinearLayout lnHistory;
 
     private CustomerActivity mActivity;
 
@@ -79,6 +81,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         rgType = view.findViewById(R.id.customer_info_shoptype);
         swCover = view.findViewById(R.id.customer_info_switch_cover);
         tvType = view.findViewById(R.id.customer_info_type);
+        lnHistory = view.findViewById(R.id.customer_history);
 
     }
 
@@ -97,12 +100,9 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 
     public void reloadInfo(){
         edAdress.setIconMoreText(mActivity.getResources().getString(R.string.icon_edit_pen));
-
         reshowAddress(mActivity.currentCustomer);
 
         edPhone.setText(Util.FormatPhone(mActivity.currentCustomer.getString("phone")));
-
-
         edName.setText(mActivity.currentCustomer.getString("name"));
         edShopName.setText(mActivity.currentCustomer.getString("signBoard"));
         setNoteText(mActivity.currentCustomer.getString("note"));
@@ -121,6 +121,10 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         if (mActivity.listCheckins.size() >0){
             String checkin = String.format("%s %s",Util.DateHourString(mActivity.listCheckins.get(mActivity.listCheckins.size()-1).getLong("createAt")), mActivity.listCheckins.get(mActivity.listCheckins.size()-1).getString("note") );
             tvLastStatus.setText(checkin);
+            lnHistory.setVisibility(View.VISIBLE);
+        }else {
+            lnHistory.setVisibility(View.GONE);
+
         }
 
         mPrint.setVisibility(mActivity.listDebtBill.size() > 0? View.VISIBLE : View.GONE);
@@ -138,7 +142,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
     }
 
     private void addEvent() {
-        //swStatus.setOnCheckedChangeListener(this);
+        lnHistory.setOnClickListener(this);
         mDirection.setOnClickListener(this);
         mCall.setOnClickListener(this);
         mPrint.setOnClickListener(this);
@@ -239,12 +243,17 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
                 break;
 
             case R.id.customer_info_call:
-                mActivity.openCallScreen(mActivity.currentCustomer.getString("phone"));
+                Transaction.openCallScreen(mActivity.currentCustomer.getString("phone"));
 
                 break;
 
             case R.id.customer_info_print:
                 mActivity.printDebtBills();
+
+                break;
+
+            case R.id.customer_history:
+                mActivity.changeFragment(new CheckinFragment() , true);
 
                 break;
 

@@ -17,7 +17,9 @@ import java.util.Collections;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.models.BaseModel;
 import wolve.dms.models.Checkin;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 
@@ -26,15 +28,16 @@ import wolve.dms.utils.Util;
  */
 
 public class Customer_CheckinsAdapter extends RecyclerView.Adapter<Customer_CheckinsAdapter.CheckinsAdapterViewHolder> {
-    private List<Checkin> mData = new ArrayList<>();
+    private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
 
-    public Customer_CheckinsAdapter(List<Checkin> list) {
+    public Customer_CheckinsAdapter(List<BaseModel> list) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mData = list;
-        Collections.reverse(mData);
+
+        DataUtil.sortbyStringKey("create", mData, true);
 
     }
 
@@ -44,34 +47,16 @@ public class Customer_CheckinsAdapter extends RecyclerView.Adapter<Customer_Chec
         return new CheckinsAdapterViewHolder(itemView);
     }
 
-    public void addItems(ArrayList<Checkin> list){
-        mData = new ArrayList<>();
-        mData.addAll(list);
-        notifyDataSetChanged();
-    }
-
-
     @Override
     public void onBindViewHolder(final CheckinsAdapterViewHolder holder, final int position) {
-        try {
-            JSONObject user = new JSONObject(mData.get(position).getString("user"));
-            holder.tvNumber.setText(String.valueOf(mData.size()-position));
-            holder.tvContent.setText(mData.get(position).getString("note"));
-            holder.tvDate.setText(Util.DateHourString(mData.get(position).getLong("createAt")));
-            holder.tvEmployee.setText(String.format("Nhân viên: %s", user.getString("displayName")));
+        BaseModel user = mData.get(position).getBaseModel("user");
 
-//            holder.tvName.setText(object.getString("name"));
-//            holder.tvNote.setText(mData.get(position).getString("note").equals("")? "--":mData.get(position).getString("note"));
-//            holder.tvDate.setText(Util.DateMonthString(mData.get(position).getLong("updateAt")));
-//            holder.tvYear.setText(Util.YearString(mData.get(position).getLong("updateAt")));
-//            holder.tvHour.setText(Util.HourString(mData.get(position).getLong("updateAt")));
+        holder.tvNumber.setText(String.valueOf(mData.size()-position));
+        holder.tvContent.setText(mData.get(position).getString("note"));
+        holder.tvDate.setText(Util.DateHourString(mData.get(position).getLong("createAt")));
+        holder.tvEmployee.setText(String.format("Nhân viên: %s", user.getString("displayName")));
 
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
+        holder.line.setVisibility(position == mData.size() -1 ? View.GONE : View.VISIBLE);
 
     }
 
@@ -83,6 +68,7 @@ public class Customer_CheckinsAdapter extends RecyclerView.Adapter<Customer_Chec
     public class CheckinsAdapterViewHolder extends RecyclerView.ViewHolder {
         private TextView tvNumber, tvEmployee, tvContent, tvDate, tvTime;
         private LinearLayout lnParent;
+        private View line;
 
         public CheckinsAdapterViewHolder(View itemView) {
             super(itemView);
@@ -91,7 +77,7 @@ public class Customer_CheckinsAdapter extends RecyclerView.Adapter<Customer_Chec
             tvNumber = (TextView) itemView.findViewById(R.id.checkins_item_number);
             tvEmployee = (TextView) itemView.findViewById(R.id.checkins_item_employee);
             tvContent = (TextView) itemView.findViewById(R.id.checkins_item_content);
-//            tvTime = (TextView) itemView.findViewById(R.id.checkins_item_time);
+            line = (View) itemView.findViewById(R.id.checkins_item_line);
 
         }
 

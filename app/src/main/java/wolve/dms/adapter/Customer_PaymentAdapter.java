@@ -67,6 +67,7 @@ public class Customer_PaymentAdapter extends RecyclerView.Adapter<Customer_Payme
     @Override
     public void onBindViewHolder(final CustomerPaymentViewHolder holder, final int position) {
         holder.tvTime.setText(Util.DateHourString(mData.get(position).getLong("createAt")));
+        holder.line.setVisibility(position == mData.size() -1 ? View.GONE: View.VISIBLE);
 
         if (mData.get(position).hasKey("type")){
             switch (mData.get(position).getString("type")){
@@ -78,9 +79,29 @@ public class Customer_PaymentAdapter extends RecyclerView.Adapter<Customer_Payme
                     break;
 
                 case Constants.PAYMENT:
-                    holder.tvText.setText("Khách hàng thanh toán ");
-                    holder.tvTotal.setTextColor(mContext.getResources().getColor(R.color.colorBlue));
-                    holder.tvTotal.setText("+ " + Util.FormatMoney(mData.get(position).getDouble("total")));
+
+                    if (mData.get(position).getDoubleValue("total")> 0.0){
+                        if (mData.get(position).hasKey("payByReturn") && mData.get(position).getInt("payByReturn") != 1){
+                            holder.tvTotal.setTextColor(mContext.getResources().getColor(R.color.colorBlue));
+                            holder.tvText.setTextColor(mContext.getResources().getColor(R.color.black_text_color));
+                            holder.tvText.setText("Khách hàng thanh toán ");
+                            holder.tvTotal.setText("+ "+ Util.FormatMoney(mData.get(position).getDouble("total")));
+
+                        }else {
+                            holder.tvTotal.setTextColor(mContext.getResources().getColor(R.color.black_text_color_hint));
+                            holder.tvText.setTextColor(mContext.getResources().getColor(R.color.black_text_color_hint));
+                            holder.tvText.setText("Trừ tiền trả hàng ");
+                            holder.tvTotal.setText("+ "+ Util.FormatMoney(mData.get(position).getDouble("total")));
+                        }
+
+
+                    }else {
+                        holder.tvTotal.setTextColor(mContext.getResources().getColor(R.color.orange_dark));
+                        holder.tvText.setTextColor(mContext.getResources().getColor(R.color.black_text_color));
+                        holder.tvText.setText("Trả lại khách hàng ");
+                        holder.tvTotal.setText("- "+ Util.FormatMoney(mData.get(position).getDouble("total")*-1));
+                    }
+
 
                     break;
 
@@ -97,6 +118,7 @@ public class Customer_PaymentAdapter extends RecyclerView.Adapter<Customer_Payme
 
     public class CustomerPaymentViewHolder extends RecyclerView.ViewHolder {
         private TextView tvTime, tvText, tvTotal;
+        private View line;
 
 
         public CustomerPaymentViewHolder(View itemView) {
@@ -104,6 +126,7 @@ public class Customer_PaymentAdapter extends RecyclerView.Adapter<Customer_Payme
             tvTime = itemView.findViewById(R.id.customer_payment_item_time);
             tvTotal = (TextView) itemView.findViewById(R.id.customer_payment_item_total);
             tvText = (TextView) itemView.findViewById(R.id.customer_payment_item_content);
+            line = itemView.findViewById(R.id.line_bottom);
 
 
         }

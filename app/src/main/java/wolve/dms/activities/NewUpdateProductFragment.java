@@ -7,10 +7,8 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,39 +24,26 @@ import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
-import com.cloudinary.Api;
-import com.cloudinary.android.MediaManager;
-import com.cloudinary.android.callback.ErrorInfo;
-import com.cloudinary.android.callback.UploadCallback;
-import com.cloudinary.utils.ObjectUtils;
 import com.soundcloud.android.crop.Crop;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.xmlpull.v1.XmlPullParserException;
 
-import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.BuildConfig;
 import wolve.dms.R;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.ProductConnect;
-import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDouble;
-import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CInputForm;
 //import wolve.dms.libraries.FileUploader;
-import wolve.dms.libraries.connectapi.CustomPostMultiPart;
 import wolve.dms.libraries.connectapi.UploadCloudaryMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
@@ -75,7 +60,7 @@ import static wolve.dms.utils.Constants.REQUEST_IMAGE_CAPTURE;
  * Created by macos on 9/16/17.
  */
 
-public class AddProductFragment extends Fragment implements View.OnClickListener {
+public class NewUpdateProductFragment extends Fragment implements View.OnClickListener {
     private View view;
     private ImageView btnBack;
     private CInputForm edName, edUnitPrice, edPurchasePrice, edGroup, edVolume, edIsPromotion;
@@ -187,7 +172,7 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
                 edIsPromotion.setText(product.getBoolean("promotion")? Constants.IS_PROMOTION :Constants.NO_PROMOTION);
 
                 if (!Util.checkImageNull(product.getString("image"))){
-                    Glide.with(AddProductFragment.this).load(product.getString("image")).centerCrop().into(imgProduct);
+                    Glide.with(NewUpdateProductFragment.this).load(product.getString("image")).centerCrop().into(imgProduct);
 
                 }else {
                     Glide.with(this).load( R.drawable.ic_wolver).centerCrop().into(imgProduct);
@@ -400,12 +385,12 @@ public class AddProductFragment extends Fragment implements View.OnClickListener
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CHOOSE_IMAGE ){
             if (data != null){
-                Crop.of(Uri.parse(data.getData().toString()), imageChangeUri).asSquare().withMaxSize(200,200).start(getActivity(), AddProductFragment.this);
+                Crop.of(Uri.parse(data.getData().toString()), imageChangeUri).asSquare().withMaxSize(200,200).start(getActivity(), NewUpdateProductFragment.this);
 
             }
 
         }else if (requestCode == REQUEST_IMAGE_CAPTURE){
-            Crop.of(imageChangeUri, imageChangeUri).asSquare().withMaxSize(200,200).start(getActivity(), AddProductFragment.this);
+            Crop.of(imageChangeUri, imageChangeUri).asSquare().withMaxSize(200,200).start(getActivity(), NewUpdateProductFragment.this);
 
         }
         else if (data != null && requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {

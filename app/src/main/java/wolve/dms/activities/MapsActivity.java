@@ -1,6 +1,7 @@
 package wolve.dms.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -111,13 +112,13 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     private SmoothProgressBar progressLoading;
     private RelativeLayout rlSearchLayout;
     private RecyclerView rvSearch;
-    private LinearLayout lnSheetBody, lnBottomSheet, btnCheckin, btnDirection, btnCall, btnShare;
+    private LinearLayout lnSheetBody, lnBottomSheet, lnCheckin, btnDirection, btnCall, btnShare;
     private TextView tvShopname, tvAddress, tvCheckin, tvDistance, tvStatus, tvTempBill;
 
     private Handler mHandlerMoveMap = new Handler();
     private Handler mHandlerSearch = new Handler();
     private String currentPhone;
-    private FusedLocationProviderClient mFusedLocationClient;
+    //private FusedLocationProviderClient mFusedLocationClient;
     private Boolean recheckGPS = false;
     private String mSearchText = "";
     private Customer_SearchAdapter mSearchAdapter;
@@ -162,11 +163,12 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         lnBottomSheet = (LinearLayout) findViewById(R.id.map_bottom_sheet);
         tvShopname = findViewById(R.id.map_detail_shopname);
         tvAddress = findViewById(R.id.map_detail_address);
-        btnCheckin = findViewById(R.id.map_detail_checkin);
+        lnCheckin = findViewById(R.id.map_detail_checkin_group);
+        tvCheckin = findViewById(R.id.map_detail_checkin_text);
         btnCall = findViewById(R.id.map_detail_call);
         btnDirection = findViewById(R.id.map_detail_direction);
         btnShare= findViewById(R.id.map_detail_share);
-        tvCheckin = findViewById(R.id.map_detail_checkin_text);
+
         tvDistance = findViewById(R.id.map_detail_distance);
         progressLoadCustomer = findViewById(R.id.map_loading_customer);
         tvStatus = findViewById(R.id.map_detail_status);
@@ -178,6 +180,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     @Override
     public void initialData() {
+        checkLocationPermission();
         Util.hideKeyboard(edSearch);
         Util.mapsActivity = this;
         MapUtil.customers = new ArrayList<>();
@@ -199,7 +202,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         edSearch.setOnClickListener(this);
         btnClose.setOnClickListener(this);
         searchEvent();
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
         tvReload.setOnClickListener(this);
         coParent.getViewTreeObserver().addOnGlobalLayoutListener(this);
 
@@ -317,8 +320,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             }
         });
         mMap.setInfoWindowAdapter(adapterInfoMarker);
-//        LocationC
-
         checkGPS();
 
     }
@@ -330,7 +331,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     }
 
     private void showListDistrict() {
-        CustomBottomDialog.choiceListObject("Chọn quận / huyện", District.getDistrictObjectyList(), new CallbackBaseModel() {
+        CustomBottomDialog.choiceListObject("Chọn quận / huyện", District.getDistricts(), new CallbackBaseModel() {
                     @Override
                     public void onResponse(BaseModel object) {
                         tvLocation.setTextColor(getResources().getColor(R.color.colorMain));
@@ -345,15 +346,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                     }
                 });
 
-//            @Override
-//            public void onResponse(String content) {
-//                //mSearchView.setText(content);
-//                tvLocation.setTextColor(getResources().getColor(R.color.colorMain));
-////                mMap.setOnCameraMoveListener(null);
-//                loadCustomer = false;
-//                loadCustomersByDistrict(content);
-//            }
-//        });
     }
 
     public void triggerCurrentLocation(LatLng latLng, Boolean loadAround) {
@@ -401,22 +393,22 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     }
 
-    private void getCurrentLocation(final LocationListener mListener) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            return;
-        }
-        mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(final Location location) {
-                if (location != null) {
-                    mListener.onLocationChanged(location);
-
-                }
-            }
-        });
-    }
+//    private void getCurrentLocation(final LocationListener mListener) {
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+//                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//
+//            return;
+//        }
+//        mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+//            @Override
+//            public void onSuccess(final Location location) {
+//                if (location != null) {
+//                    mListener.onLocationChanged(location);
+//
+//                }
+//            }
+//        });
+//    }
 
 
     private void loadCustomersByDistrict(String district) {
@@ -571,11 +563,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     }
 
-    @Override
-    public void onMapLongClick(final LatLng latLng) {
-        inputShopName(latLng.latitude, latLng.longitude);
 
-    }
 
     @Override
     public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
@@ -614,7 +602,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             CustomCenterDialog.alertWithCancelButton(null, "Gọi điện thoại cho " + customer.getString("name") + " (" + customer.getString("phone") + ")", "ĐỒNG Ý", "HỦY", new CallbackBoolean() {
                 @Override
                 public void onRespone(Boolean result) {
-                    openCallScreen(currentPhone);
+                    Transaction.openCallScreen(currentPhone);
 
                 }
             });
@@ -696,11 +684,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     }
 
     public void checkGPS() {
-        if (PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(Util.getInstance().getCurrentActivity(),
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_PERMISSION_LOCATION);
-            return;
-        }
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
         mMap.getUiSettings().setRotateGesturesEnabled(false);
@@ -719,67 +702,35 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             });
 
         } else {
-            mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            if (!CustomSQL.getString(Constants.CUSTOMER_ID).equals("")){
-                                CustomerConnect.GetCustomerDetail(CustomSQL.getString(Constants.CUSTOMER_ID), new CallbackCustom() {
-                                    @Override
-                                    public void onResponse(BaseModel result) {
-                                        showMarker(result);
-                                        CustomSQL.setString(Constants.CUSTOMER_ID, "");
-                                    }
-
-                                    @Override
-                                    public void onError(String error) {
-                                        CustomSQL.setString(Constants.CUSTOMER_ID, "");
-                                    }
-                                }, true, true);
-
-                            }else if (location != null) {
-                                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                                triggerCurrentLocation(latLng,  true);
+            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+            getCurrentLocation(new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    if (!CustomSQL.getString(Constants.CUSTOMER_ID).equals("")) {
+                        CustomerConnect.GetCustomerDetail(CustomSQL.getString(Constants.CUSTOMER_ID), new CallbackCustom() {
+                            @Override
+                            public void onResponse(BaseModel result) {
+                                showMarker(result);
+                                CustomSQL.setString(Constants.CUSTOMER_ID, "");
                             }
-                        }
-                    });
 
-            }
+                            @Override
+                            public void onError(String error) {
+                                CustomSQL.setString(Constants.CUSTOMER_ID, "");
+                            }
+                        }, true, true);
+
+                    } else if (location != null) {
+                        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                        triggerCurrentLocation(latLng, true);
+                    }
+                }
+            });
+        }
+
+
     }
 
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        if (requestCode == Constants.REQUEST_PERMISSION_LOCATION) {
-//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                checkGPS();
-//
-//            } else {
-//                Toast.makeText(this, "Cấp quyền truy cập không thành công!", Toast.LENGTH_LONG).show();
-//                Transaction.gotoHomeActivityRight(true);
-//            }
-//        }
-//        else if (requestCode == Constants.REQUEST_PHONE_PERMISSION) {
-//
-//            if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-//                Util.showSnackbar("Không thể gọi do chưa được cấp quyền", null, null);
-//
-//            } else {
-//                Intent callIntent = new Intent(Intent.ACTION_CALL);
-//                callIntent.setData(Uri.parse("tel:" + Uri.encode(currentPhone)));
-//                callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-//                    // TODO: Consider calling
-//                    //    ActivityCompat#requestPermissions
-//                    // here to request the missing permissions, and then overriding
-//                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//                    //                                          int[] grantResults)
-//                    // to handle the case where the user grants the permission. See the documentation
-//                    // for ActivityCompat#requestPermissions for more details.
-//                    return;
-//                }
-//                startActivity(callIntent);
-//            }
-//        }
-//    }
 
 
     private void backPress(){
@@ -1002,7 +953,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         getCurrentLocation(new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                Double distance = MapUtil.distance(location.getLatitude(), location.getLongitude(), lat, lng);
+                double distance = MapUtil.distance(location.getLatitude(), location.getLongitude(), lat, lng);
 
                 mListener.onResponse(Math.round(distance));
             }
@@ -1065,11 +1016,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         });
     }
 
-    private void updateBottomDetail(final BaseModel customer, final long distance){
+    private void updateBottomDetail(final BaseModel customer, long distance){
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
         final String title = Constants.getShopName(customer.getString("shopType")) +" " + customer.getString("signBoard");
-        String add = String.format("%s %s, %s -",
+        String add = String.format("%s %s, %s",
                 customer.getString("address"),
                 customer.getString("street"),
                 customer.getString("district"));
@@ -1077,7 +1028,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
         tvShopname.setText(title);
         tvAddress.setText(add);
-        tvDistance.setText(distance >1000? String.valueOf(distance/1000) +" km" :distance +" m");
+        tvDistance.setText(distance >1000? distance/1000 +" km" :distance +" m");
 
         tvStatus.setText(customer.getString("statusDetail"));
         tvStatusDot.setTextColor(customer.getInt("statusColor"));
@@ -1094,14 +1045,14 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
         }
 
-        if (distance < Constants.CHECKIN_DISTANCE){
-            tvCheckin.setText("Checkin" );
-            btnCheckin.setBackground(getResources().getDrawable(R.drawable.btn_round_blue));
-
-        }else {
-            tvCheckin.setText("Xem chi tiết");
-            btnCheckin.setBackground(getResources().getDrawable(R.drawable.btn_round_grey));
-        }
+//        if (distance < Constants.CHECKIN_DISTANCE){
+//            tvCheckin.setText("Checkin" );
+//            btnCheckin.setBackground(getResources().getDrawable(R.drawable.btn_round_blue));
+//
+//        }else {
+//            tvCheckin.setText("Xem chi tiết");
+//            btnCheckin.setBackground(getResources().getDrawable(R.drawable.btn_round_grey));
+//        }
 
         btnCall.setVisibility(currentPhone.equals("")?View.GONE : View.VISIBLE);
 
@@ -1114,19 +1065,27 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 BaseModel customer = DataUtil.rebuiltCustomer(result);
                 CustomSQL.setBaseModel(Constants.CUSTOMER, customer);
 
-                List<BaseModel> listbill = DataUtil.array2ListObject(customer.getString("bills"));
+                List<BaseModel> listbill = DataUtil.array2ListObject(customer.getString(Constants.BILLS));
+                List<BaseModel> listcheckin = DataUtil.array2ListObject(customer.getString(Constants.CHECKINS));
+
 
                 if (listbill.size() >0){
                     tvStatus.setText(String.format("Khách đã mua hàng - Cách %d ngày", Util.countDay(listbill.get(listbill.size() -1).getLong("createAt"))));
                 }
 
-                tvTempBill.setVisibility (customer.hasKey(Constants.TEMPBILL) ? View.VISIBLE : View.GONE);
+                if (listcheckin.size() >0){
+                    lnCheckin.setVisibility(View.VISIBLE);
+                    tvCheckin.setText(String.format("Checkin %d lần",listcheckin.size()));
+                }else {
+                    lnCheckin.setVisibility(View.GONE);
+                }
 
+                tvTempBill.setVisibility (customer.hasKey(Constants.TEMPBILL) ? View.VISIBLE : View.GONE);
                 lnSheetBody.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (progressLoadCustomer.getVisibility() == View.GONE){
-                            Transaction.gotoCustomerActivity( distance < Constants.CHECKIN_DISTANCE? true : false);
+                            Transaction.gotoCustomerActivity();
 
                         }
                     }
@@ -1140,18 +1099,12 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             }
         }, false, false);
 
-        btnCheckin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-
-            }
-        });
 
         btnCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openCallScreen(currentPhone);
+                Transaction.openCallScreen(currentPhone);
             }
         });
 
@@ -1182,12 +1135,24 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     }
 
     private void setNullButton(){
-        btnCheckin.setOnClickListener(null);
         btnCall.setOnClickListener(null);
         btnDirection.setOnClickListener(null);
     }
 
+    @SuppressLint("WrongConstant")
+    private void checkLocationPermission(){
+        if (PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(Util.getInstance().getCurrentActivity(),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_PERMISSION_LOCATION);
+            return;
+        }
+    }
 
+
+    @Override
+    public void onMapLongClick(LatLng latLng) {
+        inputShopName(latLng.latitude, latLng.longitude);
+    }
 }
 
 

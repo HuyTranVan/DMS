@@ -180,6 +180,11 @@ public class BaseModel implements Serializable {
         return jsonObject.isNull(key);
     }
 
+    public void removeKey(String key){
+        jsonObject.remove(key);
+
+    }
+
 
 
 }

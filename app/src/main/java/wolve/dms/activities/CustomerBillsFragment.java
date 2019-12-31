@@ -85,7 +85,7 @@ public class CustomerBillsFragment extends Fragment implements View.OnClickListe
                         break;
 
                     case Constants.BILL_DELIVER:
-                        mActivity.printTempBill();
+                        mActivity.printTempBill(result.getBaseModel(Constants.RESULT));
                         break;
 
                     case Constants.BILL_DELETE:
@@ -109,6 +109,10 @@ public class CustomerBillsFragment extends Fragment implements View.OnClickListe
 
         Util.createLinearRV(rvBill, adapter);
 
+    }
+
+    public void updateTempBill(){
+        adapter.updateTempBill();
     }
 
 }

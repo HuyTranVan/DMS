@@ -1489,9 +1489,20 @@ public class Util {
         return true;
     }
 
-    public static boolean isJSONObject(String test) {
+    public static boolean isJSONObject(String text) {
         try {
-            new JSONObject(test);
+            new JSONObject(text);
+            return true;
+        } catch (JSONException ex) {
+            return false;
+
+        }
+
+    }
+
+    public static boolean isJSONArray(String text) {
+        try {
+            new JSONArray(text);
             return true;
         } catch (JSONException ex) {
             return false;
@@ -1520,6 +1531,15 @@ public class Util {
     public static int convertSdpToInt(int sdp){
         //sdp : R.dimen._sdp
         return getInstance().getCurrentActivity().getResources().getDimensionPixelSize(sdp);
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        long factor = (long) Math.pow(10, places);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
     }
 
 }

@@ -38,7 +38,7 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class AddStatusFragment extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
+public class NewUpdateStatusFragment extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
     private View view;
     private ImageView btnBack;
     private CInputForm edName;

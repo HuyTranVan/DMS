@@ -214,15 +214,17 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         BaseModel distributor = Distributor.getObject();
         tvCompany.setText(distributor.getString("company"));
         tvAdress.setText(distributor.getString("address"));
-        tvHotline.setText(String.format("Hotline: %s", Util.FormatPhone(distributor.getString("address"))));
+        tvHotline.setText(String.format("Hotline: %s", Util.FormatPhone(distributor.getString("phone"))));
         tvWebsite.setText(distributor.getString("website"));
         if (!Util.checkImageNull(distributor.getString("image"))){
             Glide.with(this).load(distributor.getString("image")).centerCrop().into(imgLogo);
 
-        }else {
-            Glide.with(this).load( R.drawable.lub_logo_red).centerCrop().into(imgLogo);
-
         }
+
+//        else {
+//            Glide.with(this).load( R.drawable.lub_logo_red).centerCrop().into(imgLogo);
+//
+//        }
 
 
         tvOrderPhone.setText(String.format("Đặt hàng: %s", Util.FormatPhone(User.getPhone())));
@@ -387,7 +389,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Transaction.returnShopCartActivity(Constants.PRINT_BILL_ACTIVITY, "", Constants.RESULT_PRINTBILL_ACTIVITY);
+        Transaction.returnPreviousActivity(Constants.PRINT_BILL_ACTIVITY, new BaseModel(), Constants.RESULT_PRINTBILL_ACTIVITY);
 
     }
 
@@ -545,17 +547,20 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     private void postBilltoServer(final List<BaseModel> listPayments) {
         String params = "";
 
-        if (currentBill.hasKey(Constants.TEMPBILL) && currentBill.getBoolean(Constants.TEMPBILL)){
+        if (currentBill.isNull(Constants.DELIVER_BY) && currentBill.getInt("id") != 0){
             params = DataUtil.updateBillDelivered(currentCustomer.getInt("id"),
                     currentBill,
-                    User.getCurrentUserString());
+                    User.getId());
 
         }else {
             params = DataUtil.createPostBillParam(currentCustomer.getInt("id"),
+                    User.getId(),
                     adapterBill.getTotalMoney(),
                     0.0,
                     DataUtil.array2ListObject(currentBill.getString(Constants.BILL_DETAIL)),
-                    "");
+                    "",
+                    User.getId(),
+                    0);
         }
 
         CustomerConnect.PostBill(params, new CallbackCustom() {
@@ -565,12 +570,14 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
                     if (listPayments.get(0).getInt("billId") == 0){
                         listPayments.get(0).put("billId", result.getInt("id"));
                         listPayments.get(0).put("billTotal", result.getDouble("total"));
-                    }
 
+                    }
                     postPayToServer(DataUtil.createListPaymentParam(currentCustomer.getInt("id"),listPayments, false), true);
 
                 }else {
-                    Transaction.returnShopCartActivity(Constants.PRINT_BILL_ACTIVITY, currentCustomer.getString("id"), Constants.RESULT_PRINTBILL_ACTIVITY);
+                    BaseModel modelResult = new BaseModel();
+                    modelResult.put(Constants.RELOAD_DATA, true);
+                    Transaction.returnPreviousActivity(Constants.PRINT_BILL_ACTIVITY, modelResult, Constants.RESULT_PRINTBILL_ACTIVITY);
 
                 }
             }
@@ -587,7 +594,9 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         CustomerConnect.PostListPay(listParam, new CallbackListCustom() {
             @Override
             public void onResponse(List result) {
-                Transaction.returnShopCartActivity(Constants.PRINT_BILL_ACTIVITY, currentCustomer.getString("id"), Constants.RESULT_PRINTBILL_ACTIVITY);
+                BaseModel modelResult = new BaseModel();
+                modelResult.put(Constants.RELOAD_DATA, true);
+                Transaction.returnPreviousActivity(Constants.PRINT_BILL_ACTIVITY, modelResult, Constants.RESULT_PRINTBILL_ACTIVITY);
 
 
             }
@@ -784,10 +793,6 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
                             try {
                                 if (btsocket != null){
-                                    if (Util.getInstance().getCurrentActivity().getLocalClassName().equals("activities.ShopCartActivity")){
-//                                        Util.shopCartActivity.tvBluetooth.setText(R.string.icon_bluetooth_connected);
-//                                        Util.shopCartActivity.tvBluetooth.setTextColor(getResources().getColor(R.color.colorBlue));
-                                    }
                                     CustomSQL.setString(Constants.BLUETOOTH_DEVICE, btsocket.getRemoteDevice().getAddress());
                                     outputStream = btsocket.getOutputStream();
                                     mBluetoothAdapter.cancelDiscovery();

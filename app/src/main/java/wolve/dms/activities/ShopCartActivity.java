@@ -143,7 +143,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
             fragment.submitProduct();
 
         }else {
-            Transaction.returnCustomerActivity(Constants.SHOP_CART_ACTIVITY, "", Constants.RESULT_SHOPCART_ACTIVITY);
+            Transaction.returnPreviousActivity(Constants.SHOP_CART_ACTIVITY, new BaseModel(), Constants.RESULT_SHOPCART_ACTIVITY);
 
         }
 
@@ -259,9 +259,9 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         super.onActivityResult(reqCode, resultCode, intent);
         Util.getInstance().setCurrentActivity(this);
         if (reqCode == Constants.RESULT_PRINTBILL_ACTIVITY){
-            String data = intent.getStringExtra(Constants.PRINT_BILL_ACTIVITY);
-            if (!data.equals("")){
-                Transaction.returnCustomerActivity(Constants.SHOP_CART_ACTIVITY,data , Constants.RESULT_SHOPCART_ACTIVITY);
+            BaseModel data = new BaseModel(intent.getStringExtra(Constants.PRINT_BILL_ACTIVITY));
+            if (data.hasKey(Constants.RELOAD_DATA) && data.getBoolean(Constants.RELOAD_DATA)){
+                Transaction.returnPreviousActivity(Constants.SHOP_CART_ACTIVITY,data , Constants.RESULT_SHOPCART_ACTIVITY);
 
             }
 
@@ -281,17 +281,20 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
     private void postBillAndSave(){
         final String params = DataUtil.createPostBillParam(currentCustomer.getInt("id"),
+                User.getId(),
                 adapterProducts.totalPrice(),
                 0.0,
                 adapterProducts.getAllData(),
-                createNoteTemp());
+                "",
+                0,
+                0);
 
         CustomerConnect.PostBill(params, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
-                Transaction.returnCustomerActivity(Constants.SHOP_CART_ACTIVITY,
-                        currentCustomer.getString("id") ,
-                        Constants.RESULT_SHOPCART_ACTIVITY);
+                BaseModel modelResult = new BaseModel();
+                modelResult.put(Constants.RELOAD_DATA, true);
+                Transaction.returnPreviousActivity(Constants.SHOP_CART_ACTIVITY,modelResult,Constants.RESULT_SHOPCART_ACTIVITY);
             }
 
             @Override

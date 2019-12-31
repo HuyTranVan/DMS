@@ -487,7 +487,8 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
             if (payments.size() >0){
                 for (int a=0; a<payments.size(); a++){
                     if (payments.get(a).getLong("createAt") - starDay >= 0 &&
-                            payments.get(a).getLong("createAt") - lastDay <= 0){
+                            payments.get(a).getLong("createAt") - lastDay <= 0 &&
+                            payments.get(a).getInt("payByReturn") == 0){
 
                         if (!DataUtil.checkDuplicate(listInitialPayment,"id", payments.get(a))){
                             BaseModel newCash = new BaseModel();

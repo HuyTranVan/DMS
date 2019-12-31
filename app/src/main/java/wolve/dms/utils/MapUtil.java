@@ -129,14 +129,14 @@ public class MapUtil{
     }
 
     public static double distance(double lat1, double lon1, double lat2, double lon2, String unit) {
-        return distance(lat1, lon1, lat2, lon2, 0,0);
+        return distance(lat1, lon1, lat2, lon2, 0,0, unit);
     }
 
     public static double distance(double lat1, double lon1, double lat2, double lon2) {
-        return distance(lat1, lon1, lat2, lon2, 0,0);
+        return distance(lat1, lon1, lat2, lon2, 0,0, "m");
     }
 
-    public static double distance(double lat1, double lon1, double lat2, double lon2, double el1, double el2) {
+    public static double distance(double lat1, double lon1, double lat2, double lon2, double el1, double el2, String unit) {
 
         final int R = 6371; // Radius of the earth
 
@@ -146,7 +146,7 @@ public class MapUtil{
                 + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
         Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double distance = R * c * 1000; // convert to meters
+        double distance = unit.equals("m")?R * c * 1000 : R * c; // convert to meters
 
         double height = el1 - el2;
 

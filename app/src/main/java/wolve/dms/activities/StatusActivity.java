@@ -1,7 +1,6 @@
 package wolve.dms.activities;
 
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -9,9 +8,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.clans.fab.FloatingActionButton;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,11 +19,9 @@ import wolve.dms.apiconnect.StatusConnect;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackDeleteAdapter;
-import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Status;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.Transaction;
 
 /**
  * Created by macos on 9/16/17.
@@ -130,7 +124,7 @@ public class StatusActivity extends BaseActivity implements View.OnClickListener
 
 
     private void openFragmentNewStatus(String status){
-        AddStatusFragment statusFragment = new AddStatusFragment();
+        NewUpdateStatusFragment statusFragment = new NewUpdateStatusFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constants.STATUS, status);
         changeFragment(statusFragment, bundle, true );

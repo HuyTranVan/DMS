@@ -96,7 +96,6 @@ public class ScannerActivity extends BaseActivity implements View.OnClickListene
         createRVCode(listCodes);
         submitVisibleEvent(listCodes.size());
 
-
     }
 
     @Override

@@ -85,6 +85,37 @@ public class SystemConnect {
 
     }
 
+    public static void getCategories(final CallbackCustom listener){
+        Util.getInstance().showLoading();
+
+        String url = Api_link.CATEGORIES;
+        new CustomGetMethod(url, new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(true);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
+
+                }else {
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
+            }
+
+        }).execute();
+
+    }
+
     public static void loadListObject(List<BaseModel> listParam, CallbackCustomListList listener, final Boolean stopLoading){
         Util.getInstance().showLoading();
 
@@ -182,7 +213,36 @@ public class SystemConnect {
         }).execute();
     }
 
+    public static void getLastestProductUpdated(final CallbackCustom listener, boolean showLoading){
+        Util.getInstance().showLoading(showLoading);
 
+        String url = Api_link.PRODUCT_LASTEST;
+        new CustomGetMethod(url, new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(true);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
+
+                }else {
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
+            }
+
+        }).execute();
+
+    }
 
 
 }

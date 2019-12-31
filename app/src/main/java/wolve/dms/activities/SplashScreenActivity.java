@@ -54,69 +54,41 @@ public class SplashScreenActivity extends BaseActivity {
 
     @Override
     public void initialData() {
-//        JSONObject object = new JSONObject();
-//        try {
-//            object.put("huy", "abd");
-//            object.put("isgay", true);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//
-//
-//
-//        BaseModel paramCustomer = new BaseModel();
-//        paramCustomer.put("url", SERVER_URL + "user");
-//        paramCustomer.put("method", "POST");
-//        paramCustomer.put("isjson", false );
-//        paramCustomer.put("param", object );
-//
-//
-//
-//        new CustomPostMethod(paramCustomer, new CallbackCustom() {
-//            @Override
-//            public void onResponse(BaseModel result) {
-//                Log.e("result", result.BaseModelstoString());
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }).execute();
-
-
-
-
-        openUri();
+        //openUri();
+        progressBar.setVisibility(View.VISIBLE);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (CustomSQL.getString(Constants.USER_USERNAME).isEmpty()){
+                progressBar.setVisibility(View.GONE);
+                if (CustomSQL.getString(Constants.USER_USERNAME).isEmpty() || User.getToken().equals("")){
                     gotoLoginScreen();
 
                 }else {
-                    String params = String.format(Api_link.LOGIN_PARAM,CustomSQL.getString(Constants.USER_USERNAME), CustomSQL.getString(Constants.USER_PASSWORD));
-                    progressBar.setVisibility(View.VISIBLE);
-                    UserConnect.Login(params, new CallbackCustom() {
-                        @Override public void onResponse(BaseModel object) {
-                            progressBar.setVisibility(View.GONE);
-                            Distributor distributor = new Distributor(object.getJsonObject("distributor"));
+                    Transaction.gotoHomeActivity();
 
-                            CustomSQL.setBaseModel(Constants.USER, object);
-                            CustomSQL.setObject(Constants.DISTRIBUTOR, distributor);
-
-                            Util.showToast("Đăng nhập thành công");
-                            Transaction.gotoHomeActivity(true);
-
-                        }
-
-                        @Override
-                        public void onError(String error) {
-                            progressBar.setVisibility(View.GONE);
-                            gotoLoginScreen();
-                        }
-
-                    }, false,true);
+//                    String params = String.format(Api_link.LOGIN_PARAM,CustomSQL.getString(Constants.USER_USERNAME), CustomSQL.getString(Constants.USER_PASSWORD));
+//                    progressBar.setVisibility(View.VISIBLE);
+//                    UserConnect.Login(params, new CallbackCustom() {
+//                        @Override public void onResponse(BaseModel object) {
+//                            progressBar.setVisibility(View.GONE);
+//                            Distributor distributor = new Distributor(object.getJsonObject("distributor"));
+//
+//                            CustomSQL.setBaseModel(Constants.USER, object);
+//                            CustomSQL.setObject(Constants.DISTRIBUTOR, distributor);
+//                            CustomSQL.setString(Constants.DISTRICT_LIST, object.getString("district"));
+//
+//                            Util.showToast("Đăng nhập thành công");
+//                            Transaction.gotoHomeActivity(true);
+//
+//                        }
+//
+//                        @Override
+//                        public void onError(String error) {
+//                            progressBar.setVisibility(View.GONE);
+//                            gotoLoginScreen();
+//                        }
+//
+//                    }, false,true);
                 }
 
             }
@@ -143,7 +115,6 @@ public class SplashScreenActivity extends BaseActivity {
 
     private void openUri(){
         Intent intent = getIntent();
-        //String action = intent.getAction();
         Uri data = intent.getData();
 
 

@@ -150,12 +150,12 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
     private void setupDistrictChart(List<BaseModel> list) {
         //repair data for Chart
         ArrayList<JSONObject> listData = new ArrayList<>();
-        List<String> listDistrict = District.getDistrictList();
+        List<BaseModel> listDistrict = District.getDistricts();
         try {
             for (int i = 0; i< listDistrict.size(); i++){
                 Double total =0.0;
                 for (int j=0; j<list.size(); j++){
-                    if (list.get(j).getBaseModel("customer").getString("district").equals(listDistrict.get(i))){
+                    if (list.get(j).getBaseModel("customer").getString("district").equals(listDistrict.get(i).getString("text"))){
                         total +=list.get(j).getDouble("total");
                     }
 

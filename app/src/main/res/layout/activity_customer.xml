@@ -95,29 +95,33 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorMainStroke"
-            android:gravity="center">
-
-
-            <TextView
-                android:id="@+id/customer_checkin_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Đang checkin..."
-                android:textSize="@dimen/_12sdp"
-                android:textColor="@color/black_text_disable"
-                android:gravity="center"
-                android:layout_centerInParent="true"/>
+            android:gravity="center"
+            android:padding="@dimen/_2sdp">
 
             <TextView
                 android:id="@+id/customer_checkin_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:layout_marginLeft="@dimen/_5sdp"
-                android:textColor="@color/black_text_disable"
-                android:layout_toRightOf="@+id/customer_checkin_status"
+                android:textSize="@dimen/_10sdp"
+                android:textColor="@color/colorBlueDark"
                 android:visibility="visible"
                 android:layout_centerVertical="true"/>
+
+            <TextView
+                android:id="@+id/customer_checkin_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="..."
+                android:textSize="@dimen/_10sdp"
+                android:textColor="@color/black_text_disable"
+                android:gravity="center"
+                android:layout_centerInParent="true"
+                android:textStyle="italic"
+                android:layout_toRightOf="@+id/customer_checkin_time"
+                android:layout_marginLeft="@dimen/_10sdp"/>
+
+
 
         </RelativeLayout>
         <fr.castorflex.android.smoothprogressbar.SmoothProgressBar

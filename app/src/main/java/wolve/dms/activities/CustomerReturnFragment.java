@@ -32,6 +32,7 @@ import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.libraries.Security;
 import wolve.dms.models.BaseModel;
+import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
@@ -137,25 +138,27 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
                 onlyPostUpdateBillReturn(adapterReturn.getListSelected(), 0.0, mActivity.currentBill);
             }
 
-        }else {
-
-            //extent option not complete
-            if (totalReturn > 0.0 ){
-                List<BaseModel> listP = new ArrayList<>();
-
-                BaseModel object = new BaseModel();
-                object.put("billId", mActivity.currentBill.getInt("id"));
-                object.put("paid", totalReturn);
-                listP.add(object);
-
-                postBillReturnUpdatePaymentAndCash(adapterReturn.getListSelected(),listP, totalReturn, mActivity.currentBill);
-
-            }else {
-                onlyPostUpdateBillReturn(adapterReturn.getListSelected(), 0.0, mActivity.currentBill);
-
-            }
-
         }
+
+//        else {
+//
+//            //extent option not complete
+//            if (totalReturn > 0.0 ){
+//                List<BaseModel> listP = new ArrayList<>();
+//
+//                BaseModel object = new BaseModel();
+//                object.put("billId", mActivity.currentBill.getInt("id"));
+//                object.put("paid", totalReturn);
+//                listP.add(object);
+//
+//                postBillReturnUpdatePaymentAndCash(adapterReturn.getListSelected(),listP, totalReturn, mActivity.currentBill);
+//
+//            }else {
+//                onlyPostUpdateBillReturn(adapterReturn.getListSelected(), 0.0, mActivity.currentBill);
+//
+//            }
+
+//        }
 
 
 
@@ -262,9 +265,9 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
     }
 
     private void onlyPostUpdateBillReturn(List<BaseModel> listProductReturn, Double sumreturn, BaseModel currentBill){
-        postUpdateBillReturn(listProductReturn, sumreturn, currentBill, new callbackbill() {
+        postUpdateBillReturn(listProductReturn, sumreturn, currentBill, new CallbackCustom() {
             @Override
-            public void onRespone(BaseModel currentBill, BaseModel returnBill) {
+            public void onResponse(BaseModel result) {
                 Util.showToast("Trả hàng thành công");
                 finish();
             }
@@ -279,18 +282,23 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
     }
 
     private void postBillReturnUpdatePayment(List<BaseModel> listProductReturn,  Double sumreturn, BaseModel currentBill){
-        postUpdateBillReturn(listProductReturn, sumreturn, currentBill, new callbackbill() {
+        postUpdateBillReturn(listProductReturn, sumreturn, currentBill, new CallbackCustom() {
             @Override
-            public void onRespone(BaseModel currentBill, BaseModel returnBill) {
-                updateListBill(adapterDebt.getListBillPayment(), returnBill, currentBill, new CallbackBoolean() {
+            public void onResponse(BaseModel result) {
+                postListPayment(DataUtil.createListPaymentParam(mActivity.currentCustomer.getInt("id"),
+                        adapterDebt.getListBillPayment(), true), new CallbackListCustom() {
                     @Override
-                    public void onRespone(Boolean result) {
-                        if (result){
-                            Util.showToast("Trả hàng thành công");
-                            finish();
-                        }
+                    public void onResponse(List result) {
+                        Util.showToast("Trả hàng thành công");
+                        finish();
                     }
-                }, true);
+
+                    @Override
+                    public void onError(String error) {
+
+                    }
+                });
+
             }
 
             @Override
@@ -303,58 +311,90 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
     }
 
     private void postBillReturnUpdatePaymentAndCash(List<BaseModel> listProductReturn,List<BaseModel> listpay,  Double sumreturn, BaseModel currentBill){
-        postUpdateBillReturn(listProductReturn, sumreturn, currentBill, new callbackbill() {
+        postUpdateBillReturn(listProductReturn, sumreturn, currentBill, new CallbackCustom() {
             @Override
-            public void onRespone(BaseModel currBill, BaseModel reBill) {
-                List<BaseModel> listpayment = new ArrayList<>();
-
-                for (int i=0; i<listpay.size(); i++){
-                    listpayment.add(i, listpay.get(i));
-
+            public void onResponse(BaseModel result) {
+                List<BaseModel> listpayment = adapterDebt.getListBillPayment();
+                for (BaseModel model: listpayment){
+                    if (currentBill.getInt("id") == model.getInt("billId")){
+                        model.put("paid", sumreturn - mActivity.currentDebt + currentBill.getDouble("debt"));
+                        break;
+                    }
                 }
 
-                if (listpayment.size() > 0){
-                    listpayment.get(0).put("paid", sumreturn - mActivity.currentDebt + currentBill.getDouble("debt"));
+                List<String> payments = DataUtil.createListPaymentParam(mActivity.currentCustomer.getInt("id"),
+                        listpayment, true);
 
-                    updateListBill(listpayment, reBill, currBill, new CallbackBoolean() {
-                        @Override
-                        public void onRespone(Boolean result) {
-                            if (result){
-                                postPayment(mActivity.currentCustomer.getInt("id"),
-                                        currentBill.getInt("id"),
-                                        mActivity.currentDebt - sumreturn ,
-                                        currentBill.getDouble("total"),
-                                        new CallbackBoolean() {
-                                            @Override
-                                            public void onRespone(Boolean result) {
-                                                if (result){
-                                                    Util.showToast("Trả hàng thành công");
-                                                    finish();
 
-                                                }
-                                            }
-                                        }, true);
-                            }
-                        }
-                    }, false);
+                payments.add(DataUtil.createPostPaymentParam(mActivity.currentCustomer.getInt("id"),
+                        mActivity.currentDebt - sumreturn ,
+                        currentBill.getInt("id"),
+                        currentBill.getDouble("total"), false));
 
-                }else {
-                    postPayment(mActivity.currentCustomer.getInt("id"),
-                            currentBill.getInt("id"),
-                            mActivity.currentDebt - sumreturn ,
-                            currentBill.getDouble("total"),
-                            new CallbackBoolean() {
-                                @Override
-                                public void onRespone(Boolean result) {
-                                    if (result){
-                                        Util.showToast("Trả hàng thành công");
-                                        finish();
 
-                                    }
-                                }
-                            }, true);
-                }
+                postListPayment(payments, new CallbackListCustom() {
+                    @Override
+                    public void onResponse(List result) {
+                        Util.showToast("Trả hàng thành công");
+                        finish();
+                    }
 
+                    @Override
+                    public void onError(String error) {
+
+                    }
+                });
+
+//                List<BaseModel> listpayment = new ArrayList<>();
+//
+//                for (int i=0; i<listpay.size(); i++){
+//                    listpayment.add(i, listpay.get(i));
+//
+//                }
+//
+//                if (listpayment.size() > 0){
+//                    listpayment.get(0).put("paid", sumreturn - mActivity.currentDebt + currentBill.getDouble("debt"));
+
+
+
+//                    updateListBill(listpayment, reBill, currBill, new CallbackBoolean() {
+//                        @Override
+//                        public void onRespone(Boolean result) {
+//                            if (result){
+//                                postPayment(mActivity.currentCustomer.getInt("id"),
+//                                        currentBill.getInt("id"),
+//                                        mActivity.currentDebt - sumreturn ,
+//                                        currentBill.getDouble("total"),
+//                                        new CallbackBoolean() {
+//                                            @Override
+//                                            public void onRespone(Boolean result) {
+//                                                if (result){
+//                                                    Util.showToast("Trả hàng thành công");
+//                                                    finish();
+//
+//                                                }
+//                                            }
+//                                        }, true);
+//                            }
+//                        }
+//                    }, false);
+
+//                }else {
+//                    postPayment(mActivity.currentCustomer.getInt("id"),
+//                            currentBill.getInt("id"),
+//                            mActivity.currentDebt - sumreturn ,
+//                            currentBill.getDouble("total"),
+//                            new CallbackBoolean() {
+//                                @Override
+//                                public void onRespone(Boolean result) {
+//                                    if (result){
+//                                        Util.showToast("Trả hàng thành công");
+//                                        finish();
+//
+//                                    }
+//                                }
+//                            }, true);
+//                }
             }
 
             @Override
@@ -366,95 +406,100 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
 
     }
 
-    private void updateListBill(List<BaseModel> listPayment , BaseModel billReturn, BaseModel currentbill , CallbackBoolean listener, boolean loading){
-        List<String> listparams = new ArrayList<>();
-        //update debt Bill
-        for (BaseModel baseModel : listPayment){
-            for (int i=0; i<listDebt.size(); i++){
-                if (baseModel.getInt("billId") == listDebt.get(i).getInt("id")){
-                    String param = "";
-                    if (listDebt.get(i).getInt("id") == currentbill.getInt("id")){
-                        param = DataUtil.updateBillHavePaymentParam(mActivity.currentCustomer.getInt("id"),
-                                currentbill,
-                                billReturn,
-                                baseModel.getDouble("paid"));
+//    private void updateListBill(List<BaseModel> listPayment , BaseModel billReturn, BaseModel currentbill , CallbackBoolean listener, boolean loading){
+//        List<String> listparams = new ArrayList<>();
+//        //update debt Bill
+//        for (BaseModel baseModel : listPayment){
+//            for (int i=0; i<listDebt.size(); i++){
+//                if (baseModel.getInt("billId") == listDebt.get(i).getInt("id")){
+//                    String param = "";
+//                    if (listDebt.get(i).getInt("id") == currentbill.getInt("id")){
+//                        param = DataUtil.updateBillHavePaymentParam(mActivity.currentCustomer.getInt("id"),
+//                                currentbill,
+//                                billReturn,
+//                                baseModel.getDouble("paid"));
+//
+//                    }else {
+//                        param = DataUtil.updateBillHavePaymentParam(mActivity.currentCustomer.getInt("id"),
+//                                listDebt.get(i),
+//                                billReturn,
+//                                baseModel.getDouble("paid"));
+//
+//                    }
+//
+//                    listparams.add(param);
+//
+//                }
+//            }
+//        }
+//
+//        CustomerConnect.PostListBill(listparams, new CallbackListCustom() {
+//            @Override
+//            public void onResponse(List result) {
+//                listener.onRespone(true);
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                Util.showSnackbarError(error);
+//                listener.onRespone(false);
+//            }
+//        }, loading);
+//
+//    }
 
-                    }else {
-                        param = DataUtil.updateBillHavePaymentParam(mActivity.currentCustomer.getInt("id"),
-                                listDebt.get(i),
-                                billReturn,
-                                baseModel.getDouble("paid"));
-
-                    }
-
-                    listparams.add(param);
-
-                }
-            }
-        }
-
-        CustomerConnect.PostListBill(listparams, new CallbackListCustom() {
-            @Override
-            public void onResponse(List result) {
-                listener.onRespone(true);
-
-            }
-
-            @Override
-            public void onError(String error) {
-                Util.showSnackbarError(error);
-                listener.onRespone(false);
-            }
-        }, loading);
-
-    }
-
-    private void postUpdateBillReturn(List<BaseModel> listProductReturn, Double sumreturn, BaseModel currentBill, callbackbill listener, boolean loading){
-//        String note = Security.decrypt(currentBill.getString("note"));
-
-        JSONObject noteObject = new JSONObject();
-        JSONObject noteContent = new JSONObject();
-        try {
-            noteContent.put("id", currentBill.getString("id"));
-            noteContent.put("createAt", currentBill.getLong("createAt"));
-            noteObject.put(Constants.ISBILLRETURN, noteContent);
-
-        } catch (JSONException e) {
-
-        }
-
-        String note = DataUtil.createBillNote(currentBill.getString("note"), Constants.ISBILLRETURN, noteContent);
-
-        String params = DataUtil.createPostBillParam(mActivity.currentCustomer.getInt("id"), 0.0, 0.0, listProductReturn, note);
+    private void postUpdateBillReturn(List<BaseModel> listProductReturn, Double sumreturn, BaseModel currentBill, CallbackCustom listener, boolean loading){
+        String params = DataUtil.createPostBillParam(mActivity.currentCustomer.getInt("id"),
+                                                    User.getId(),
+                                                    0.0,
+                                                    0.0,
+                                                    listProductReturn,
+                                                    "",
+                                                    User.getId(),
+                                                    currentBill.getInt("id"));
         CustomerConnect.PostBill(params, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel billReturn) {
-                Log.e("returnmnnnn", billReturn.BaseModelstoString());
-                String params = DataUtil.updateBillHaveReturnParam(mActivity.currentCustomer.getInt("id"), currentBill, billReturn, sumreturn);
-
-                CustomerConnect.PostBill(params, new CallbackCustom() {
-                    @Override
-                    public void onResponse(BaseModel currbill) {
-                        listener.onRespone(currbill, billReturn);
-
-                    }
-
-                    @Override
-                    public void onError(String error) {
-                        Util.showSnackbarError(error);
-                        listener.onError(error);
-                    }
-                }, loading);
-
-
+                listener.onResponse(billReturn);
             }
-
             @Override
             public void onError(String error) {
                 Util.showSnackbarError(error);
                 listener.onError(error);
             }
         }, false);
+
+//        String note = Security.decrypt(currentBill.getString("note"));
+
+//        JSONObject noteObject = new JSONObject();
+//        JSONObject noteContent = new JSONObject();
+//        try {
+//            noteContent.put("id", currentBill.getString("id"));
+//            noteContent.put("createAt", currentBill.getLong("createAt"));
+//            noteObject.put(Constants.ISBILLRETURN, noteContent);
+//
+//        } catch (JSONException e) {
+//
+//        }
+
+        //String note = DataUtil.createBillNote(currentBill.getString("note"), Constants.ISBILLRETURN, noteContent);
+
+//                String params = DataUtil.updateBillHaveReturnParam(mActivity.currentCustomer.getInt("id"), currentBill, billReturn, sumreturn);
+//
+//                CustomerConnect.PostBill(params, new CallbackCustom() {
+//                    @Override
+//                    public void onResponse(BaseModel currbill) {
+//                        listener.onRespone(currbill, billReturn);
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(String error) {
+//                        Util.showSnackbarError(error);
+//                        listener.onError(error);
+//                    }
+//                }, loading);
 
     }
 
@@ -473,6 +518,21 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
 
         }, stoploadding);
 
+    }
+
+    private void postListPayment(List<String> listParam, CallbackListCustom listener){
+        CustomerConnect.PostListPay(listParam, new CallbackListCustom() {
+            @Override
+            public void onResponse(List result) {
+                listener.onResponse(result);
+
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }//
+        }, true);
     }
 
 

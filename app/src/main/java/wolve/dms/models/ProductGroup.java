@@ -1,5 +1,7 @@
 package wolve.dms.models;
 
+import com.google.gson.Gson;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,7 +42,10 @@ public class ProductGroup extends BaseModel{
     }
 
     public static void saveProductGroupList(JSONArray productgroup){
+        //CustomSQL.setString(Constants.PRODUCTGROUP_LIST, new Gson().toJson(productgroup.toString()));
         CustomSQL.setString(Constants.PRODUCTGROUP_LIST, productgroup.toString());
+        Product.saveProductList(productgroup);
+
         mListProductGroups = null;
     }
 
@@ -48,7 +53,6 @@ public class ProductGroup extends BaseModel{
         List<BaseModel> mProductGroups = new ArrayList<>();
 
         if (mListProductGroups == null){
-            //mListProductGroups = new ArrayList<>();
             try {
                 JSONArray array = new JSONArray(CustomSQL.getString(Constants.PRODUCTGROUP_LIST));
                 for (int i=0; i<array.length(); i++){

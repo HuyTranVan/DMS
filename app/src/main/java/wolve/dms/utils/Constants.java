@@ -26,6 +26,8 @@ public class Constants {
     public final static String BILL = "bill";
     public final static String BILL_DETAIL = "billDetails";
     public final static String PAYMENT = "payment";
+    public final static String PAYMENTS = "payments";
+    public final static String CHECKINS = "checkins";
     public final static String SHOP_CART_ACTIVITY = "shopcart";
     public final static String PRINT_BILL_ACTIVITY = "printbill";
     public final static String USER = "user";
@@ -40,7 +42,8 @@ public class Constants {
     public final static String IS_ADMIN = "is_admin";
     public final static String PRINTER_SIZE = "printer_size";
     public static final String CHECKIN_FLAG = "check_in";
-    public static final long CHECKIN_DISTANCE = 200;
+    public static final long CHECKIN_DISTANCE = 500;
+    public static final String CURRENT_DISTANCE = "current_distance";
     public static final String CHECKIN_TIME = "check_in_time";
     public static final String RELOAD_DATA = "reload_data";
     public static final String RE_PRINT = "reprint";
@@ -50,6 +53,7 @@ public class Constants {
     public static final String PAYBYTRETURN = "havePaymentReturn";
     public static final String DELIVER_BY = "deliverBy";
     public static final String TEMPBILL = "temp_bill";
+    public static final String LAST_PRODUCT_UPDATE = "last_product_update";
     public static final String addressFormat = "%s %s, %s, %s";
 
     public static final String TYPE = "type";
@@ -87,6 +91,7 @@ public class Constants {
     public final static int REQUEST_PERMISSION_LOCATION = 1007;
     public final static int REQUEST_CAMERA_PERMISSION = 1008;
     public final static int REQUEST_PHONE_PERMISSION = 1009;
+    public final static int REQUEST_PERMISSION = 1010;
     public final static String RESULT_ERROR_TITLE = "Có lỗi xảy ra";
     public final static String RESULT = "result";
     public final static boolean RESULT_FALSE = false;

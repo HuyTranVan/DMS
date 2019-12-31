@@ -60,6 +60,11 @@ public class Api_link {
     public final static String PRODUCT_NEW = BASE_URL + "token/product/create_or_update";
     public final static String PRODUCT_DELETE = BASE_URL + "token/product/";
     public final static String PRODUCT_CREATE_PARAM ="%sname=%s&promotion=%s&unitPrice=%s&purchasePrice=%s&volume=%s&productGroup.id=%d&image=%s";
+    public final static String PRODUCT_LASTEST = BASE_URL +"token/lastproduct";
+
+    public final static String USERS = BASE_URL + "token/users";
+    public final static String USER_NEW = BASE_URL + "token/user/create_or_update";
+    public final static String USER_DELETE = BASE_URL + "token/user/";
 
     public final static String STATUS = BASE_URL + "token/status";
     public final static String STATUS_NEW = BASE_URL + "token/status/create_or_update";
@@ -82,6 +87,8 @@ public class Api_link {
 
     public final static String CHECKIN_NEW = BASE_URL + "token/customer/checkin";
     public final static String SCHECKIN_CREATE_PARAM ="customer.id=%d&status.id=%d&note=%s&user.id=%s";
+
+    public final static String CATEGORIES = BASE_URL + "token/categories";
 
     public final static String BILLS = BASE_URL + "token/bills";
     public final static String BILLS_HAVE_PAYMENT = BASE_URL + "token/bills/have_payment";
@@ -106,7 +113,6 @@ public class Api_link {
         Cloudinary cloudinary = new Cloudinary(config);
 
         return cloudinary;
-
     }
 
 }

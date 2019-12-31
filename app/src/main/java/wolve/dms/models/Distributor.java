@@ -22,7 +22,7 @@ public class Distributor extends BaseModel{
 
     public static String getDistributorId(){
         String id_distributor = "";
-        Distributor currentDistributor = CustomSQL.getObject(Constants.DISTRIBUTOR, Distributor.class);
+        BaseModel currentDistributor = CustomSQL.getBaseModel(Constants.DISTRIBUTOR);
 
         if (currentDistributor != null) {
             id_distributor = String.valueOf(currentDistributor.getInt("id"));
@@ -32,7 +32,7 @@ public class Distributor extends BaseModel{
 
     public static int getId(){
         int id_distributor = 0;
-        Distributor currentDistributor = CustomSQL.getObject(Constants.DISTRIBUTOR, Distributor.class);
+        BaseModel currentDistributor = CustomSQL.getBaseModel(Constants.DISTRIBUTOR);
 
         if (currentDistributor != null) {
             id_distributor = currentDistributor.getInt("id");
@@ -42,7 +42,7 @@ public class Distributor extends BaseModel{
 
     public static String getName(){
         String name = "";
-        Distributor currentDistributor = CustomSQL.getObject(Constants.DISTRIBUTOR, Distributor.class);
+        BaseModel currentDistributor = CustomSQL.getBaseModel(Constants.DISTRIBUTOR);
 
         if (currentDistributor != null) {
             name = currentDistributor.getString("name");
@@ -53,7 +53,7 @@ public class Distributor extends BaseModel{
 
     public static int getLocationId(){
         int location = 0;
-        Distributor currentDistributor = CustomSQL.getObject(Constants.DISTRIBUTOR, Distributor.class);
+        BaseModel currentDistributor = CustomSQL.getBaseModel(Constants.DISTRIBUTOR);
 
         if (currentDistributor != null) {
             location = currentDistributor.getInt("location");
@@ -65,7 +65,7 @@ public class Distributor extends BaseModel{
 
     public static BaseModel getObject(){
         String name = "";
-        BaseModel currentDistributor = CustomSQL.getObject(Constants.DISTRIBUTOR, Distributor.class);
+        BaseModel currentDistributor = CustomSQL.getBaseModel(Constants.DISTRIBUTOR);
 
         if (currentDistributor != null) {
             return currentDistributor;

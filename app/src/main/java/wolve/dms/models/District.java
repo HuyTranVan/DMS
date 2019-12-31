@@ -32,59 +32,53 @@ public class District extends BaseModel{
         return jsonObject.toString();
     }
 
-    public static void saveDistrictList(JSONArray district){
-        CustomSQL.setString(Constants.DISTRICT_LIST, district.toString());
-        mListDistricts = null;
-    }
+//    public static void saveDistrictList(JSONArray district){
+//        CustomSQL.setString(Constants.DISTRICT_LIST, district.toString());
+//        mListDistricts = null;
+//    }
 
-    public static List<String> getDistrictList(){
-        if (mListDistricts == null){
-            mListDistricts = new ArrayList<>();
-            try {
-                JSONArray array = new JSONArray(CustomSQL.getString(Constants.DISTRICT_LIST));
-                for (int i=0; i<array.length(); i++){
-                    JSONObject object = array.getJSONObject(i);
-                    if (!object.getString("name").contains(" ")){
-                        mListDistricts.add(object.getString("type") + " " + object.getString("name"));
-                    }else {
-                        mListDistricts.add(object.getString("name"));
-                    }
+//    public static List<String> getDistrictList(){
+//        if (mListDistricts == null){
+//            mListDistricts = new ArrayList<>();
+//            try {
+//                JSONArray array = new JSONArray(CustomSQL.getString(Constants.DISTRICT_LIST));
+//                for (int i=0; i<array.length(); i++){
+//                    JSONObject object = array.getJSONObject(i);
+//                    if (!object.getString("name").contains(" ")){
+//                        mListDistricts.add(object.getString("type") + " " + object.getString("name"));
+//                    }else {
+//                        mListDistricts.add(object.getString("name"));
+//                    }
+//                }
+//
+//                Collections.sort(mListDistricts, String.CASE_INSENSITIVE_ORDER);
+////                mListDistricts.add(0, "Chọn quận");
+//            } catch (JSONException e) {
+//                return mListDistricts;
+//            }
+//        }
+//
+//        return mListDistricts;
+//    }
+
+    public static List<BaseModel> getDistricts() {
+        List<BaseModel> listResult = new ArrayList<>();
+        String district = CustomSQL.getString(Constants.DISTRICT_LIST);
+        if (Util.isJSONArray(district)) {
+            listResult = DataUtil.array2ListObject(district);
+
+            for (BaseModel model : listResult) {
+                if (!model.getString("name").contains(" ")) {
+                    model.put("text", model.getString("type") + " " + model.getString("name"));
+                } else {
+                    model.put("text", model.getString("name"));
                 }
 
-                Collections.sort(mListDistricts, String.CASE_INSENSITIVE_ORDER);
-//                mListDistricts.add(0, "Chọn quận");
-            } catch (JSONException e) {
-                return mListDistricts;
+
             }
+
         }
-
-        return mListDistricts;
-    }
-
-    public static List<BaseModel> getDistrictObjectyList(){
-        List<BaseModel> list = new ArrayList<>();
-        if (mListDistricts == null){
-            mListDistricts = new ArrayList<>();
-            try {
-                JSONArray array = new JSONArray(CustomSQL.getString(Constants.DISTRICT_LIST));
-                for (int i=0; i<array.length(); i++){
-                    BaseModel object = new BaseModel(array.getJSONObject(i));
-                    if (!object.getString("name").contains(" ")){
-                        object.put("text",object.getString("type") + " " + object.getString("name"));
-                    }else {
-                        object.put("text",object.getString("name"));
-                    }
-
-                    list.add(object);
-                }
-
-                DataUtil.sortbyStringKey("text", list, false);
-            } catch (JSONException e) {
-                return list;
-            }
-        }
-
-        return list;
+        return listResult;
     }
 
 }

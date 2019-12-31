@@ -69,6 +69,7 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
 
     private BaseModel currentDistributor;
     private Uri imageChangeUri ;
+    private String imgURL;
 
     @Override
     public int getResourceLayout() {
@@ -97,6 +98,7 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void initialData() {
+
         SystemConnect.GetDistributorDetail(Distributor.getDistributorId(), new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
@@ -121,10 +123,12 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
         tvThanks.setText(content.getString("thanks"));
         tvTitle.setText(content.getString("name"));
         if (!Util.checkImageNull(content.getString("image"))){
-            Glide.with(this).load(content.getString("image")).centerCrop().into(image);
+            Glide.with(this).load(content.getString("image")).fitCenter().into(image);
+            imgURL = content.getString("image");
 
         }else {
-            Glide.with(this).load( R.drawable.lub_logo_red).centerCrop().into(image);
+            Glide.with(this).load( R.drawable.lub_logo_red).fitCenter().into(image);
+            imgURL = "";
 
         }
 
@@ -140,10 +144,16 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Transaction.gotoHomeActivityRight(true);
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.icon_back:
-                Transaction.gotoHomeActivityRight(true);
+                onBackPressed();
                 break;
 
             case R.id.distributor_submit:
@@ -151,19 +161,30 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
                 break;
 
             case R.id.distributor_image_parent:
-                CustomBottomDialog.choiceTwoOption(getString(R.string.icon_image),
+                CustomBottomDialog.choiceThreeOption(getString(R.string.icon_image),
                         "Chọn ảnh thư viện",
                         getString(R.string.icon_camera),
                         "Chụp ảnh",
-                        new CustomBottomDialog.TwoMethodListener() {
+                        getString(R.string.icon_empty),
+                        "Mặc định",
+                        new CustomBottomDialog.ThreeMethodListener() {
                             @Override
                             public void Method1(Boolean one) {
-                                startImageChooser();
+                                imageChangeUri = Uri.fromFile(Util.getOutputMediaFile());
+                                Transaction.startImageChooser();
                             }
 
                             @Override
                             public void Method2(Boolean two) {
-                                startCamera();
+                                Transaction.startCamera(imageChangeUri);
+                            }
+
+                            @Override
+                            public void Method3(Boolean three) {
+                                imgURL = "";
+                                imageChangeUri = FileProvider.getUriForFile(DistributorActivity.this, BuildConfig.APPLICATION_ID + ".provider", Util.getOutputMediaFile());
+
+                                Glide.with(DistributorActivity.this).load( R.drawable.lub_logo_red).fitCenter().into(image);
                             }
                         });
                 break;
@@ -183,7 +204,7 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
             });
 
         }else {
-            updateDistributor(currentDistributor.getString("image"));
+            updateDistributor(imgURL);
 
         }
 
@@ -238,29 +259,29 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
 
     }
 
-    private void startImageChooser() {
-        imageChangeUri = Uri.fromFile(Util.getOutputMediaFile());
-        if (Build.VERSION.SDK_INT <= 19) {
-            Intent i = new Intent();
-            i.setType("image/*");
-            i.setAction(Intent.ACTION_GET_CONTENT);
-            i.addCategory(Intent.CATEGORY_OPENABLE);
-            startActivityForResult(i, REQUEST_CHOOSE_IMAGE);
+//    private void startImageChooser() {
+//        imageChangeUri = Uri.fromFile(Util.getOutputMediaFile());
+//        if (Build.VERSION.SDK_INT <= 19) {
+//            Intent i = new Intent();
+//            i.setType("image/*");
+//            i.setAction(Intent.ACTION_GET_CONTENT);
+//            i.addCategory(Intent.CATEGORY_OPENABLE);
+//            startActivityForResult(i, REQUEST_CHOOSE_IMAGE);
+//
+//        } else if (Build.VERSION.SDK_INT > 19) {
+//            Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//            startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
+//        }
+//    }
 
-        } else if (Build.VERSION.SDK_INT > 19) {
-            Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
-        }
-    }
-
-    public void startCamera() {
-        imageChangeUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", Util.getOutputMediaFile());
-
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT,imageChangeUri );
-        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-
-    }
+//    public void startCamera() {
+//        imageChangeUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", Util.getOutputMediaFile());
+//
+//        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        intent.putExtra(MediaStore.EXTRA_OUTPUT,imageChangeUri );
+//        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+//
+//    }
 
     private void uploadImage(final CallbackString mListener){
         Util.getInstance().showLoading();

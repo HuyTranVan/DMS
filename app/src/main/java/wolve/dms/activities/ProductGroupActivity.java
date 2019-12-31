@@ -8,9 +8,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.clans.fab.FloatingActionButton;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,9 +18,7 @@ import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackDeleteAdapter;
-import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
 
@@ -90,8 +85,8 @@ public class ProductGroupActivity extends BaseActivity implements View.OnClickLi
 //    public boolean onKeyDown(int keyCode, KeyEvent event) {
 //        if (keyCode == KeyEvent.KEYCODE_BACK){
 //            Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.product_parent);
-//            if(mFragment != null && mFragment instanceof AddProdGroupFragment
-//                    ||mFragment != null && mFragment instanceof AddProductFragment) {
+//            if(mFragment != null && mFragment instanceof NewUpdateProductGroupFragment
+//                    ||mFragment != null && mFragment instanceof NewUpdateProductFragment) {
 //                getSupportFragmentManager().popBackStack();
 //            }else {
 //                Transaction.gotoHomeActivityRight(true);
@@ -142,7 +137,7 @@ public class ProductGroupActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void openFragmentNewProductGroup(String productgroup){
-        AddProdGroupFragment groupFragment = new AddProdGroupFragment();
+        NewUpdateProductGroupFragment groupFragment = new NewUpdateProductGroupFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constants.PRODUCTGROUP, productgroup);
         changeFragment(groupFragment, bundle, true );

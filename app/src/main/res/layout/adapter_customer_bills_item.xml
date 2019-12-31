@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -62,11 +61,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:minHeight="@dimen/_10sdp"
-                    android:background="@drawable/btn_round_grey"
                     android:text="aaaa"
                     android:textSize="@dimen/_7sdp"
-                    android:textColor="@color/colorWhite"
-                    android:paddingLeft="@dimen/_5sdp"
+                    android:textColor="@color/black_text_disable"
                     android:paddingRight="@dimen/_5sdp"
                     android:layout_marginBottom="@dimen/_2sdp"
                     android:gravity="center"/>
@@ -109,14 +106,6 @@
             android:orientation="vertical"
             android:padding="@dimen/_5sdp">
 
-            <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="Mua hàng:"-->
-                <!--android:textSize="@dimen/_10sdp"-->
-                <!--android:textColor="@color/black_text_color"-->
-                <!--/>-->
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -141,23 +130,13 @@
 
             </LinearLayout>
 
-            <!--<TextView-->
-                <!--android:id="@+id/bills_item_note"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:paddingLeft="@dimen/_10sdp"-->
-                <!--android:textColor="@color/black_text_color"-->
-                <!--android:textSize="@dimen/_8sdp" />-->
-
-
             <LinearLayout
                 android:id="@+id/bills_item_payment_parent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:background="@drawable/bg_white_corner_stroke_grey"
-                android:padding="@dimen/_5sdp"
-                >
+                android:padding="@dimen/_5sdp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -185,64 +164,57 @@
 
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/bills_item_cover"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@color/black_text_color_hint"
-        android:gravity="center_horizontal|bottom"
+        android:background="#ad000000"
         android:clickable="true"
         android:visibility="gone">
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="hóa đơn chưa giao"
-            android:textColor="@color/text_color_white_hint"
+            android:textColor="@color/white_text_color_hint"
             android:gravity="center"
-            android:textSize="@dimen/_16sdp"
-            />
+            android:textSize="@dimen/_12sdp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/_10sdp"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <wolve.dms.customviews.CTextIcon
+            android:id="@+id/btn_delete"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:background="?selectableItemBackgroundBorderless"
+            android:textColor="@color/white_text_color_hint"
+            android:text="@string/icon_delete"
+            android:textSize="@dimen/_30sdp"
+            android:textAllCaps="true"
+            android:layout_gravity="center"
+            android:visibility="visible"
+            android:layout_centerInParent="true"
+            android:padding="@dimen/_10sdp"/>
 
-            <Button
-                android:id="@+id/btn_delete"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/_25sdp"
-                android:minWidth="@dimen/_100sdp"
-                android:background="@drawable/btn_cancel_grey"
-                android:textColor="@color/colorWhite"
-                android:text="Xóa"
-                android:textSize="@dimen/_12sdp"
-                android:textAllCaps="true"
-                android:layout_gravity="center"
-                android:visibility="visible"
-                android:layout_margin="@dimen/_10sdp"/>
-
-            <Button
-                android:id="@+id/btn_confirm"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/_25sdp"
-                android:minWidth="@dimen/_100sdp"
-                android:background="@drawable/btn_confirm_blue"
-                android:textColor="@color/colorWhite"
-                android:text="in - giao hàng"
-                android:textSize="@dimen/_12sdp"
-                android:textAllCaps="true"
-                android:layout_gravity="center"
-                android:visibility="visible"
-                android:layout_margin="@dimen/_10sdp"/>
-
-        </LinearLayout>
+        <Button
+            android:id="@+id/btn_confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_25sdp"
+            android:minWidth="@dimen/_100sdp"
+            android:background="@drawable/btn_confirm_blue"
+            android:textColor="@color/colorWhite"
+            android:text="giao hàng"
+            android:textSize="@dimen/_12sdp"
+            android:textAllCaps="true"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"/>
 
 
-    </LinearLayout>
-
+    </RelativeLayout>
 
 
 </androidx.cardview.widget.CardView>

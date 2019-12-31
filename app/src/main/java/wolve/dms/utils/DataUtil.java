@@ -21,7 +21,14 @@ import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 
 public class DataUtil {
-    public static String createPostBillParam(int customerId, final Double total, final Double paid, List<BaseModel> listProduct, String note){
+    public static String createPostBillParam(int customerId,
+                                             int userId,
+                                             final Double total,
+                                             final Double paid,
+                                             List<BaseModel> listProduct,
+                                             String note,
+                                             int deliverBy,
+                                             int isreturnBill){
         final JSONObject params = new JSONObject();
         try {
             params.put("debt", total - paid);
@@ -29,8 +36,11 @@ public class DataUtil {
             params.put("paid", paid);
             params.put("customerId", customerId);
             params.put("distributorId", Distributor.getDistributorId());
-            params.put("userId", User.getUserId());
+            params.put("userId", userId);
             params.put("note", note);
+            params.put("deliverBy", deliverBy);
+            params.put("isReturn", isreturnBill);
+
 
             JSONArray array = new JSONArray();
             for (int i=0; i< listProduct.size(); i++){
@@ -120,22 +130,28 @@ public class DataUtil {
 
     }
 
-    public static String updateBillDelivered(int customerId, BaseModel currentBill, Object user){
+    public static String updateBillDelivered(int customerId, BaseModel currentBill, int userid){
         JSONObject params = new JSONObject();
-        JSONObject objectNote = new JSONObject();
         try {
-            params.put("billDetails", (Object) null);
             params.put("id", currentBill.getInt("id"));
-            params.put("total", currentBill.getDouble("total"));
-            params.put("paid", 0.0);
-            params.put("debt", currentBill.getDouble("total") );
+            params.put("note", currentBill.getString("note"));
+            params.put("deliverBy", userid);
+            params.put("isReturn", currentBill.getInt("isReturn"));
 
-            params.put("customerId", customerId);
-            params.put("distributorId", currentBill.getBaseModel("distributor").getInt("id"));
-            params.put("userId", currentBill.getBaseModel("user").getInt("id"));
+            //params.put("billDetails", (Object) null);
 
-            params.put("note", createBillNote(currentBill.getString("note"), Constants.TEMPBILL, false));
-            params.put("note", createBillNote(params.getString("note"), Constants.DELIVER_BY, user));
+            //params.put("total", currentBill.getDouble("total"));
+            //params.put("paid", 0.0);
+            //params.put("debt", currentBill.getDouble("total") );
+
+            //params.put("customerId", customerId);
+            //params.put("distributorId", currentBill.getBaseModel("distributor").getInt("id"));
+            //params.put("userId", currentBill.getBaseModel("user").getInt("id"));
+
+
+
+//            params.put("note", createBillNote(currentBill.getString("note"), Constants.TEMPBILL, false));
+//            params.put("note", createBillNote(params.getString("note"), Constants.DELIVER_BY, user));
 
 
         } catch (JSONException e) {
@@ -146,69 +162,6 @@ public class DataUtil {
 
     }
 
-
-    public static String updateBillHavePaymentParam(int customerId, BaseModel currentBill, BaseModel billReturn, Double paid){
-        JSONObject params = new JSONObject();
-        JSONObject objectNote = new JSONObject();
-        try {
-            params.put("billDetails", (Object) null);
-            params.put("id", currentBill.getInt("id"));
-            params.put("total", currentBill.getDouble("total"));
-            params.put("paid", 0.0);
-            params.put("debt", currentBill.getDouble("total") );
-
-            params.put("customerId", customerId);
-            params.put("distributorId", currentBill.getBaseModel("distributor").getInt("id"));
-            params.put("userId", currentBill.getBaseModel("user").getInt("id"));
-
-            JSONObject objPay = new JSONObject();
-            objPay.put("createAt",billReturn.getLong("createAt") );
-            objPay.put("user", (billReturn.getJsonObject("user")));
-            objPay.put("paid", paid);
-            objPay.put("idbillreturn", billReturn.getInt("id"));
-            objPay.put("bill_date", billReturn.getLong("createAt"));
-
-
-            String currentNote = Security.decrypt(currentBill.getString("note"));
-
-            JSONArray arrayReturnNote =new JSONArray();
-            JSONArray arrayPayNote =new JSONArray();
-
-            if (Util.isJSONObject(currentNote)){
-                objectNote = new JSONObject(currentNote);
-                BaseModel noteObject = new BaseModel(currentNote);
-
-                if (noteObject.hasKey(Constants.HAVEBILLRETURN)){
-                    JSONArray arrReturn = noteObject.getJSONArray(Constants.HAVEBILLRETURN);
-                    for (int i=0; i<arrReturn.length(); i++){
-                        arrayReturnNote.put(arrReturn.getJSONObject(i));
-                    }
-
-                }
-
-                if (noteObject.hasKey(Constants.PAYBYTRETURN)){
-                    JSONArray arrPay = noteObject.getJSONArray(Constants.PAYBYTRETURN);
-                    for (int j=0; j<arrPay.length(); j++){
-                        arrayPayNote.put(arrPay.getJSONObject(j));
-                    }
-                }
-
-            }
-
-            arrayPayNote.put(objPay);
-
-            objectNote.put(Constants.HAVEBILLRETURN, arrayReturnNote);
-            objectNote.put(Constants.PAYBYTRETURN, arrayPayNote);
-
-            params.put("note", Security.encrypt(objectNote.toString()));
-
-        } catch (JSONException e) {
-//            e.printStackTrace();
-        }
-
-        return params.toString();
-
-    }
 
     public static String createBillNote(String currentnote, String key, Object value){
         JSONObject jsonNote = new JSONObject();
@@ -241,7 +194,6 @@ public class DataUtil {
 
     }
 
-
     public static List<String> createListPaymentParam(int customerId,List<BaseModel> list, boolean payByReturn){
         List<String> results = new ArrayList<>();
         for (int i=0; i<list.size(); i++){
@@ -252,7 +204,6 @@ public class DataUtil {
                     User.getId(),
                     String.valueOf(Math.round(list.get(i).getDouble("billTotal"))),
                     payByReturn?1:0);
-//                        note.equals("")?"" :"&note="+note )
 
             results.add(s);
 
@@ -319,7 +270,6 @@ public class DataUtil {
 
     public static List<BaseModel> groupDebtByCustomer(final List<BaseModel> list){
         final List<BaseModel> listResult = new ArrayList<>();
-//        try {
             for (int i=0; i<list.size(); i++){
                 BaseModel customer1 = new BaseModel(list.get(i).getJsonObject("customer"));
 
@@ -426,73 +376,15 @@ public class DataUtil {
     }
 
     public static List<BaseModel> remakeBill(List<BaseModel> listbill){
-        List<BaseModel> bills = new ArrayList<>();
         List<BaseModel> listBillByUser = new ArrayList<>();
-
-        for (BaseModel baseModel : listbill){
-            if (Util.isEmpty(baseModel.getString("note")) ){
-                baseModel.put(Constants.TEMPBILL,  false);
-                bills.add(baseModel);
-
-            }else {
-                String note = Security.decrypt(baseModel.getString("note"));
-
-                if (Util.isJSONObject(note)){
-                    BaseModel noteObject = new BaseModel(note);
-                    double debtreturn = baseModel.getDouble("debt");
-
-                    if (!noteObject.hasKey(Constants.ISBILLRETURN)){
-                        if (noteObject.hasKey(Constants.PAYBYTRETURN)){
-                            List<BaseModel> array = DataUtil.array2ListObject(noteObject.getString(Constants.PAYBYTRETURN));
-
-                            for (int i=0; i<array.size(); i++){
-                                debtreturn -= array.get(i).getDouble("paid");
-                            }
-                            baseModel.putList(Constants.PAYBYTRETURN, array);
-
-                        }
-
-                        if (noteObject.hasKey(Constants.HAVEBILLRETURN)){
-                            List<BaseModel> array = DataUtil.array2ListObject(noteObject.getString(Constants.HAVEBILLRETURN));
-                            for (int i=0; i<array.size(); i++){
-                                debtreturn -= array.get(i).getDouble("total");
-                            }
-                            baseModel.putList(Constants.HAVEBILLRETURN, array);
-
-                        }
-                        baseModel.put("debt", debtreturn);
-
-                        baseModel.put(Constants.TEMPBILL, noteObject.hasKey(Constants.TEMPBILL) && noteObject.getBoolean(Constants.TEMPBILL)? true : false);
-
-                        if (noteObject.hasKey(Constants.DELIVER_BY)){
-                            baseModel.put(Constants.DELIVER_BY, noteObject.getJsonObject(Constants.DELIVER_BY));
-                        }
-
-                        bills.add(baseModel);
-
-
-                    }
-
-                }else {
-                    baseModel.put(Constants.TEMPBILL,  false);
-                    bills.add(baseModel);
-
-                }
-
-            }
-
-        }
-        for (BaseModel model: bills){
+        for (BaseModel model: listbill){
             if (User.getRole().equals(Constants.ROLE_ADMIN)) {
                 listBillByUser.add(model);
 
-            } else {
-                if (model.getBoolean(Constants.TEMPBILL)){
-                    listBillByUser.add(model);
-                }else if (User.getId() == model.getBaseModel("user").getInt("id")) {
-                    listBillByUser.add(model);
-                }
+            } else if(User.getId() == model.getInt("user_id")){
+                listBillByUser.add(model);
             }
+
         }
 
         return listBillByUser;
@@ -521,20 +413,18 @@ public class DataUtil {
         customerResult.put("checkIns", customer.getJsonObject("checkIns"));
         customerResult.put("currentDebt", customer.getDouble("currentDebt"));
         customerResult.put("status", customer.getJsonObject("status"));
-        customerResult.put("distributor", customer.getJsonObject("distributor"));
+        customerResult.put("distributor_id", customer.getInt("distributor_id"));
 
         List<BaseModel> listOriginalBill= new ArrayList<>(DataUtil.array2ListObject(customer.getString("bills")));
-
-        if (listOriginalBill.size() >0) {
-            BaseModel tempBill = DataUtil.getTempBill(listOriginalBill);
-            if (tempBill != null) {
-                customerResult.putBaseModel(Constants.TEMPBILL, tempBill);
-            }
-
+        if (getTempBill(listOriginalBill) != null){
+            customerResult.putBaseModel(Constants.TEMPBILL, getTempBill(listOriginalBill));
         }
+
         List<BaseModel> listBill= new ArrayList<>(remakeBill(listOriginalBill));
         customerResult.putList(Constants.BILLS, listBill);
         customerResult.putList(Constants.DEBTS, getAllBillHaveDebt(listBill));
+        customerResult.putList(Constants.PAYMENTS, DataUtil.array2ListObject(customer.getString("payments")) );
+        customerResult.putList(Constants.CHECKINS, DataUtil.array2ListObject(customer.getString("checkins")));
 
         return customerResult;
     }
@@ -546,6 +436,14 @@ public class DataUtil {
             List<BaseModel> billDetails  = new ArrayList<>(array2ListObject(listbill.get(i).getString("billDetails")));
             listResult.addAll(billDetails);
 
+            List<BaseModel> billReturns = new ArrayList<>(array2ListObject(listbill.get(i).getString("billReturn")));
+            for (int ii=0; ii<billReturns.size(); ii++){
+                List<BaseModel> billReturnDetails  = new ArrayList<>(array2ListObject(billReturns.get(ii).getString("billDetails")));
+                listResult.addAll(billReturnDetails);
+            }
+
+
+
         }
 
 
@@ -556,7 +454,7 @@ public class DataUtil {
     public static List<BaseModel> getAllBillHaveDebt(List<BaseModel> listbill){
         List<BaseModel> list = new ArrayList<>();
         for (int i=0; i<listbill.size(); i++) {
-            if (listbill.get(i).getDouble("debt") > 0 && !listbill.get(i).getBoolean(Constants.TEMPBILL)) {
+            if (listbill.get(i).getDouble("debt") > 0 && !listbill.get(i).isNull(Constants.DELIVER_BY)) {
                 list.add(listbill.get(i));
 
             }
@@ -583,18 +481,12 @@ public class DataUtil {
     public static BaseModel getTempBill(List<BaseModel> listbill){
         BaseModel result = null;
         for (BaseModel bill: listbill){
-            if (!Util.isEmpty(bill.getString("note")) ){
-                String note = Security.decrypt(bill.getString("note"));
-                if (Util.isJSONObject(note)){
-                    BaseModel noteObject = new BaseModel(note);
-                    if (noteObject.hasKey(Constants.TEMPBILL) && noteObject.getBoolean(Constants.TEMPBILL)){
-                        result = bill;
-                        break;
-
-                    }
-                }
+            if (bill.isNull("deliverBy")){
+                result = bill;
+                break;
 
             }
+
         }
         return result;
     }
@@ -795,20 +687,10 @@ public class DataUtil {
             column1.add(4,deb);
             column2.add(4,"--");
 
-
-
             values.add(column1);
             values.add(column2);
 
-
-
-
-
         }
-
-
-
-
 
         return values;
     }
@@ -859,7 +741,6 @@ public class DataUtil {
 
         return check;
     }
-
 
     private List<List<Object>> getListValueExportToSheet(List<Object> listSheetID, List<Bill> listbill){
         List<List<Object>> values = new ArrayList<>();
@@ -994,7 +875,6 @@ public class DataUtil {
 
     }
 
-
     public static BaseModel createPaymentParam(long starDay, long lastDay){
         BaseModel payparam = new BaseModel();
         payparam.put("url", Api_link.BILLS_HAVE_PAYMENT
@@ -1128,5 +1008,101 @@ public class DataUtil {
         return paramDistributor;
 
     }
+
+    public static String formatString(String text){
+
+        StringBuilder json = new StringBuilder();
+        String indentString = "";
+
+        for (int i = 0; i < text.length(); i++) {
+            char letter = text.charAt(i);
+            switch (letter) {
+                case '{':
+                case '[':
+                    json.append("\n" + indentString + letter + "\n");
+                    indentString = indentString + "\t";
+                    json.append(indentString);
+                    break;
+                case '}':
+                case ']':
+                    indentString = indentString.replaceFirst("\t", "");
+                    json.append("\n" + indentString + letter);
+                    break;
+                case ',':
+                    json.append(letter + "\n" + indentString);
+                    break;
+
+                default:
+                    json.append(letter);
+                    break;
+            }
+        }
+
+        return json.toString();
+    }
+
+    public static String updateBillHavePaymentParam(int customerId, BaseModel currentBill, BaseModel billReturn, Double paid){
+        JSONObject params = new JSONObject();
+        JSONObject objectNote = new JSONObject();
+        try {
+            params.put("billDetails", (Object) null);
+            params.put("id", currentBill.getInt("id"));
+            params.put("total", currentBill.getDouble("total"));
+            params.put("paid", 0.0);
+            params.put("debt", currentBill.getDouble("total") );
+
+            params.put("customerId", customerId);
+            params.put("distributorId", currentBill.getBaseModel("distributor").getInt("id"));
+            params.put("userId", currentBill.getBaseModel("user").getInt("id"));
+
+            JSONObject objPay = new JSONObject();
+            objPay.put("createAt",billReturn.getLong("createAt") );
+            objPay.put("user", (billReturn.getJsonObject("user")));
+            objPay.put("paid", paid);
+            objPay.put("idbillreturn", billReturn.getInt("id"));
+            objPay.put("bill_date", billReturn.getLong("createAt"));
+
+
+            String currentNote = Security.decrypt(currentBill.getString("note"));
+
+            JSONArray arrayReturnNote =new JSONArray();
+            JSONArray arrayPayNote =new JSONArray();
+
+            if (Util.isJSONObject(currentNote)){
+                objectNote = new JSONObject(currentNote);
+                BaseModel noteObject = new BaseModel(currentNote);
+
+                if (noteObject.hasKey(Constants.HAVEBILLRETURN)){
+                    JSONArray arrReturn = noteObject.getJSONArray(Constants.HAVEBILLRETURN);
+                    for (int i=0; i<arrReturn.length(); i++){
+                        arrayReturnNote.put(arrReturn.getJSONObject(i));
+                    }
+
+                }
+
+                if (noteObject.hasKey(Constants.PAYBYTRETURN)){
+                    JSONArray arrPay = noteObject.getJSONArray(Constants.PAYBYTRETURN);
+                    for (int j=0; j<arrPay.length(); j++){
+                        arrayPayNote.put(arrPay.getJSONObject(j));
+                    }
+                }
+
+            }
+
+            arrayPayNote.put(objPay);
+
+            objectNote.put(Constants.HAVEBILLRETURN, arrayReturnNote);
+            objectNote.put(Constants.PAYBYTRETURN, arrayPayNote);
+
+            params.put("note", Security.encrypt(objectNote.toString()));
+
+        } catch (JSONException e) {
+//            e.printStackTrace();
+        }
+
+        return params.toString();
+
+    }
+
 
 }

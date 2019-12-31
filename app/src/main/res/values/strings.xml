@@ -24,7 +24,7 @@
     <string name="icon_camera">&#xf030;</string>
     <string name="icon_facebook">&#xf09a;</string>
     <string name="icon_image">&#xf1c5;</string>
-    <string name="icon_circle">&#xf111;</string>
+    <string name="icon_circle">&#xf058;</string>
     <string name="icon_trash">&#xf2ed;</string>
     <string name="icon_upload">&#xf0ee;</string>
     <string name="icon_clock">&#xf017;</string>
@@ -99,6 +99,13 @@
     <string name="icon_building">&#xf1ad;</string>
     <string name="icon_global">&#xf0ac;</string>
     <string name="icon_chartline">&#xf201;</string>
+    <string name="icon_right">&#xf0da;</string>
+    <string name="icon_chat">&#xf086;</string>
+    <string name="calendar_check">&#xf274;</string>
+    <string name="icon_gender">&#xf228;</string>
+    <string name="icon_role">&#xf507;</string>
+
+
 
 
 

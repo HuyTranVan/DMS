@@ -1,6 +1,7 @@
 package wolve.dms.activities;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -17,6 +18,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.material.tabs.TabLayout;
 
 import org.json.JSONObject;
@@ -36,12 +39,14 @@ import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
+import wolve.dms.models.Customer;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.libraries.FitScrollWithFullscreen;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
+import wolve.dms.utils.MapUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -63,7 +68,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     private HorizontalScrollView scrollOverView;
     private SmoothProgressBar smLoading;
     private RelativeLayout rlStatusGroup;
-    //private LinearLayout lnNewBillParent;
 
     protected BaseModel currentCustomer;
     protected int customerStatusID;
@@ -75,10 +79,10 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     private Fragment mFragment;
     protected List<String> mYears = new ArrayList<>();
     private Customer_ViewpagerAdapter pageAdapter;
-    protected BaseModel currentBill, tempBill;
+    protected BaseModel currentBill, tempBill = null;
     protected Double currentDebt =0.0;
     private Handler mHandlerUpdateCustomer = new Handler();
-    private String tempBillFormat = "Hóa đơn %s tạo %s";
+
     protected static CustomerBillsFragment billsFragment;
     protected static CustomerInfoFragment infoFragment;
     protected static CustomerProductFragment productFragment;
@@ -159,7 +163,8 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     @Override
     public void initialData() {
         countTime = Util.CurrentTimeStamp()  - CustomSQL.getLong(Constants.CHECKIN_TIME);
-        threadShowTime.start();
+        CustomSQL.removeKey(Constants.CURRENT_DISTANCE);
+
         tvTrash.setVisibility(User.getRole().equals("MANAGER") ? View.VISIBLE : View.GONE);
         currentCustomer = CustomSQL.getBaseModel(Constants.CUSTOMER);
         customerStatusID = currentCustomer.getBaseModel("status").getInt("id");
@@ -168,29 +173,39 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         setupTabLayout(tabLayout);
 
         updateView(currentCustomer, customerStatusID);
+        checkLocation(new CallbackBoolean() {
+            @Override
+            public void onRespone(Boolean result) {
+                if (result){
+                    billsFragment.updateTempBill();
+
+                }
+            }
+        });
 
     }
 
     private void updateView(BaseModel customer, int status){
         tvTitle.setText(String.format("%s %s", Constants.getShopName(customer.getString("shopType")), customer.getString("signBoard")));
 
-        rlStatusGroup.setVisibility(CustomSQL.getLong(Constants.CHECKIN_TIME) != 0 ? View.VISIBLE : View.GONE);
-
-        tempBill = null;
         customerStatusID = status;
-        //currentCustomer = customer;
 
-        if (customer.hasKey(Constants.TEMPBILL) && CustomSQL.getLong(Constants.CHECKIN_TIME) != 0){
-            tempBill = customer.getBaseModel(Constants.TEMPBILL);
+        if (currentCustomer.hasKey(Constants.TEMPBILL) ){
+            tempBill = currentCustomer.getBaseModel(Constants.TEMPBILL);
+            viewPager.setCurrentItem(1, true);
 
         }
+
+//        if (customer.hasKey(Constants.TEMPBILL) && CustomSQL.getLong(Constants.CHECKIN_TIME) != 0){
+//            tempBill = customer.getBaseModel(Constants.TEMPBILL);
+//            dialogTempBill(tempBill);
+//
+//        }
 
         listDebtBill = new ArrayList<>(DataUtil.array2ListObject(customer.getString(Constants.DEBTS)));
         listBills = new ArrayList<>(DataUtil.array2ListObject(customer.getString(Constants.BILLS)));
         listBillDetail = new ArrayList<>(DataUtil.getAllBillDetail(listBills));
-
-
-        listCheckins = new ArrayList<>(DataUtil.array2ListBaseModel(customer.getJSONArray("checkIns")));
+        listCheckins = new ArrayList<>(DataUtil.array2ListBaseModel(customer.getJSONArray(Constants.CHECKINS)));
 
         if (listBills.size() >0){
             BaseModel object = Util.getTotal(listBills);
@@ -212,36 +227,9 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         infoFragment.reloadInfo();
         productFragment.updateList();
         paymentFragment.updateList();
-        updateBillTabNotify(tempBill != null? true : false, listBills.size());
 
-        if (tempBill != null){
-            CustomCenterDialog.alertWithCancelButton("Hóa đơn tạm",
-                    String.format("Khách hàng có 1 hóa đơn do %s tạo vói số tiên %sđ nhưng chưa giao\n Bấm -giao hàng- nếu bạn là nhân viên giao hàng",
-                            tempBill.getBaseModel("user").getString("displayName"),
-                            Util.FormatMoney(tempBill.getDouble("total"))),
-                    "Giao hàng",
-                    "Hủy",
-                    new CallbackBoolean() {
-                        @Override
-                        public void onRespone(Boolean result) {
-                            if (result){
-                                printTempBill();
-
-                            }else {
-                                viewPager.setCurrentItem(1, true);
-                            }
-
-                        }
-                    }
-
-            );
-
-
-        }
-
+        updateBillTabNotify(tempBill != null?true : false , listBills.size());
         editStatusCustomerWithOldData(customer, status);
-
-
 
     }
 
@@ -435,6 +423,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void onBackPressed() {
+
         mFragment = getSupportFragmentManager().findFragmentById(R.id.customer_parent);
         if (Util.getInstance().isLoading()){
             Util.getInstance().stopLoading(true);
@@ -445,7 +434,10 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         } else if(mFragment != null && mFragment instanceof CustomerEditMapFragment) {
             getSupportFragmentManager().popBackStack();
 
-        }else if(tabLayout.getSelectedTabPosition() !=0){
+        }else if(mFragment != null && mFragment instanceof CheckinFragment) {
+            getSupportFragmentManager().popBackStack();
+
+        } else if(tabLayout.getSelectedTabPosition() !=0){
             TabLayout.Tab tab = tabLayout.getTabAt(0);
             tab.select();
 
@@ -456,13 +448,20 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
         Util.getInstance().setCurrentActivity(this);
-
         if (requestCode == Constants.RESULT_SHOPCART_ACTIVITY){
-            if (!data.getStringExtra(Constants.SHOP_CART_ACTIVITY).equals("")) {
-                reloadCustomer(data.getStringExtra(Constants.SHOP_CART_ACTIVITY), 3);
+            BaseModel data = new BaseModel(intent.getStringExtra(Constants.SHOP_CART_ACTIVITY));
+            if (data.hasKey(Constants.RELOAD_DATA) && data.getBoolean(Constants.RELOAD_DATA)) {
+                reloadCustomer(CustomSQL.getBaseModel(Constants.CUSTOMER).getString("id"), 3);
+
+            }
+
+        }else if (requestCode == Constants.RESULT_PRINTBILL_ACTIVITY){
+            BaseModel data = new BaseModel(intent.getStringExtra(Constants.PRINT_BILL_ACTIVITY));
+            if (data.hasKey(Constants.RELOAD_DATA) && data.getBoolean(Constants.RELOAD_DATA)) {
+                reloadCustomer(CustomSQL.getBaseModel(Constants.CUSTOMER).getString("id"), 3);
 
             }
 
@@ -599,9 +598,57 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     }
 
-    protected void printTempBill(){
-        Transaction.gotoPrintBillActivity(tempBill, false);
+    private void dialogTempBill(BaseModel tempBill){
+        CustomCenterDialog.alertWithCancelButton("Hóa đơn tạm",
+                String.format("Khách hàng có 1 hóa đơn do %s tạo vói số tiên %sđ nhưng chưa giao\n Bấm -giao hàng- nếu bạn là nhân viên giao hàng",
+                        tempBill.getBaseModel("user").getString("displayName"),
+                        Util.FormatMoney(tempBill.getDouble("total"))),
+                "Giao hàng",
+                "Không",
+                new CallbackBoolean() {
+                    @Override
+                    public void onRespone(Boolean result) {
+                        if (result){
+                            printTempBill(tempBill);
 
+                        }else {
+                            viewPager.setCurrentItem(1, true);
+                        }
+
+                    }
+                }
+
+        );
+
+
+    }
+
+    protected void printTempBill(BaseModel bill){
+        Transaction.gotoPrintBillActivity(bill, false);
+
+    }
+
+    private void checkLocation(CallbackBoolean mSuccess){
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        tvCheckInStatus.setText("Đang kiểm tra vị trí...");
+        getCurrentLocation(new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                double distance = MapUtil.distance(location.getLatitude(), location.getLongitude(), currentCustomer.getDouble("lat"), currentCustomer.getDouble("lng"));
+                CustomSQL.setLong(Constants.CURRENT_DISTANCE, (long) distance);
+                mSuccess.onRespone(true);
+
+                if (distance < Constants.CHECKIN_DISTANCE){
+                    tvCheckInStatus.setText(String.format("Đang trong phạm vi cửa hàng ~%sm", Math.round(distance)));
+                    threadShowTime.start();
+
+                }else {
+                    tvCheckInStatus.setText(String.format("Đang bên ngoài cửa hàng ~%s", distance >1000? Math.round(distance)/1000 +"km": Math.round(distance) + "m"));
+
+                }
+
+            }
+        });
     }
 
 

@@ -1,24 +1,14 @@
 package wolve.dms;
 
 import android.Manifest;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
-import android.location.LocationProvider;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 
-import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 
@@ -30,31 +20,21 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.orhanobut.dialogplus.DialogPlus;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.UUID;
-
-import wolve.dms.activities.AddProdGroupFragment;
-import wolve.dms.activities.AddProductFragment;
-import wolve.dms.activities.MapsActivity;
-import wolve.dms.callback.CallbackProcess;
+import wolve.dms.activities.NewUpdateProductGroupFragment;
+import wolve.dms.activities.NewUpdateProductFragment;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
-
-import static wolve.dms.utils.Constants.REQUEST_ENABLE_BT;
 
 
 public abstract class BaseActivity extends AppCompatActivity {
     protected LocationManager mLocationManager;
+    protected FusedLocationProviderClient mFusedLocationClient;
     private boolean doubleBackToExitPressedOnce = false;
-//    public static BluetoothAdapter mBluetoothAdapter = null;
-//    public static BluetoothSocket btsocket;
-//    public static OutputStream outputStream;
-    private String currentPhone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,56 +125,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         fragmentReplace.show(manager, tag);
     }
 
-    //Todo Location SETUP
-//    public Location getCurLocation() {
-//        return Util.getInstance().getCurrentLocation();
-//    }
-//
-//    protected final LocationListener mLocationListener = new LocationListener() {
-//        @Override
-//        public void onLocationChanged(final Location location) {
-//            Util.getInstance().stopLoading(true);
-//
-//            if (Util.getInstance().getCurrentActivity().getLocalClassName().equals("activities.MapsActivity")) {
-//                if (Util.getInstance().getCurrentLocation() != null) {
-////                    Util.mapsActivity.animateMarker(
-////                            new LatLng(Util.getInstance().getCurrentLocation().getLatitude(), Util.getInstance().getCurrentLocation().getLongitude()),
-////                            new LatLng(location.getLatitude(), location.getLongitude()));
-//
-//                }
-//            }
-//            Util.getInstance().setCurrentLocation(location);
-//
-//        }
-//
-//        @Override
-//        public void onStatusChanged(String provider, int status, Bundle extras) {
-//            switch (status) {
-//                case LocationProvider.AVAILABLE:
-//                    Log.d(Constants.DMS_LOGS, "LocationProvider.AVAILABLE");
-//
-//                    break;
-//                case LocationProvider.OUT_OF_SERVICE:
-//                    Log.d(Constants.DMS_LOGS, "LocationProvider.OUT_OF_SERVICE");
-//                    break;
-//                case LocationProvider.TEMPORARILY_UNAVAILABLE:
-//                    Log.d(Constants.DMS_LOGS, "LocationProvider.TEMPORARILY_UNAVAILABLE");
-//                    break;
-//            }
-//        }
-//
-//        @Override
-//        public void onProviderEnabled(String provider) {
-//            Log.e(Constants.DMS_LOGS, "Location enabled");
-//        }
-//
-//        @Override
-//        public void onProviderDisabled(String provider) {
-//            Log.e(Constants.DMS_LOGS, "Location disabled");
-//        }
-//
-//    };
-
     @Override
     public void onBackPressed() {
         if(Util.getInstance().isLoading()){
@@ -234,8 +164,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                 case "activities.ProductGroupActivity":
                     Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.product_parent);
-                    if(mFragment != null && mFragment instanceof AddProdGroupFragment
-                            ||mFragment != null && mFragment instanceof AddProductFragment) {
+                    if(mFragment != null && mFragment instanceof NewUpdateProductGroupFragment
+                            ||mFragment != null && mFragment instanceof NewUpdateProductFragment) {
                         getSupportFragmentManager().popBackStack();
                     }else {
                         Transaction.gotoHomeActivityRight(true);
@@ -246,8 +176,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                 case "activities.ProductActivity":
                     mFragment = getSupportFragmentManager().findFragmentById(R.id.product_parent);
-                    if(mFragment != null && mFragment instanceof AddProdGroupFragment
-                            ||mFragment != null && mFragment instanceof AddProductFragment) {
+                    if(mFragment != null && mFragment instanceof NewUpdateProductGroupFragment
+                            ||mFragment != null && mFragment instanceof NewUpdateProductFragment) {
                         getSupportFragmentManager().popBackStack();
                     }else {
                         Transaction.gotoHomeActivityRight(true);
@@ -257,8 +187,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                 case "activities.StatusActivity":
                     mFragment = getSupportFragmentManager().findFragmentById(R.id.product_parent);
-                    if(mFragment != null && mFragment instanceof AddProdGroupFragment
-                            ||mFragment != null && mFragment instanceof AddProductFragment) {
+                    if(mFragment != null && mFragment instanceof NewUpdateProductGroupFragment
+                            ||mFragment != null && mFragment instanceof NewUpdateProductFragment) {
                         getSupportFragmentManager().popBackStack();
                     }else {
                         Transaction.gotoHomeActivityRight(true);
@@ -273,240 +203,17 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
-//    //Todo Bluetooth SETUP
-//    @Override
-//    protected void onDestroy() {
-//        Util.getInstance().stopLoading(true);
-//        try {
-//            if(btsocket!= null){
-//                if (outputStream != null)
-//                    outputStream.close();
-//                btsocket.close();
-//                btsocket = null;
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        super.onDestroy();
-//
-//    }
-//
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//        try {
-//            unregisterReceiver(mBTReceiver);
-//
-//        } catch (Exception e) {
-//            //e.printStackTrace();
-//        }
-//    }
-//
-//    public void registerBluetooth() {
-//        try {
-//            if (initDevicesList() != 0) {
-//                this.finish();
-//                return;
-//            }
-//
-//        } catch (Exception ex) {
-//            this.finish();
-//            return;
-//        }
-//        IntentFilter btIntentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-//        registerReceiver(mBTReceiver, btIntentFilter);
-//
-//    }
-//
-//    public final BroadcastReceiver mBTReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            String action = intent.getAction();
-//            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-//                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-//
-////                if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))){
-////
-////                    connectBluetoothDevice(device, new CallbackProcess() {
-////                        @Override
-////                        public void onStart() {
-////
-////                        }
-////
-////                        @Override
-////                        public void onError() {
-////
-////                        }
-////
-////                        @Override
-////                        public void onSuccess(String name) {
-////
-////                        }
-////                    });
-////                }
-//
-//            }
-//        }
-//    };
-//
-//    private Runnable socketErrorRunnable = new Runnable() {
-//
-//        @Override
-//        public void run() {
-//            Util.showToast("Cannot establish connection");
-//            mBluetoothAdapter.startDiscovery();
-//
-//        }
-//    };
-//
-//    public int initDevicesList() {
-//        try {
-//            if (btsocket != null) {
-//                btsocket.close();
-//
-//                btsocket = null;
-//            }
-//
-//            if (mBluetoothAdapter != null) {
-//                mBluetoothAdapter.cancelDiscovery();
-//            }
-//
-//            finalize();
-//
-//        } catch (Throwable throwable) {
-//            throwable.printStackTrace();
-//        }
-//
-//        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-//        if (mBluetoothAdapter == null) {
-//            Util.showToast("Bluetooth not supported!!");
-//
-//            return -1;
-//        }
-//
-//        if (mBluetoothAdapter.isDiscovering()) {
-//            mBluetoothAdapter.cancelDiscovery();
-//        }
-//
-//        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-//        try {
-//            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-//        } catch (Exception ex) {
-//            return -2;
-//        }
-////        Util.showToast("Getting all available Bluetooth Devices");
-//
-//        return 0;
-//
-//    }
-//
-//    public void  connectBluetoothDevice(final BluetoothDevice device, final CallbackProcess mListener){
-//        mListener.onStart();
-//        if (mBluetoothAdapter == null) {
-//            mListener.onError();
-//            return;
-//
-//        }
-//
-////        int a =device.getType();
-////        int b =device.describeContents();
-//
-//        Thread connectThread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    if (device.getUuids()!= null){
-//                        UUID uuid = device.getUuids()[0].getUuid();
-//                        btsocket = null;
-//                        btsocket = device.createRfcommSocketToServiceRecord(uuid);
-//                        btsocket.connect();
-//                    }
-//
-//                } catch (IOException ex) {
-//                    runOnUiThread(socketErrorRunnable);
-//                    try {
-//                        if (btsocket != null)
-//                            btsocket.close();
-//                    } catch (IOException e) {
-//                        mListener.onError();
-////                        e.printStackTrace();
-//                    }
-//                    btsocket = null;
-//
-//                    return;
-//                } finally {
-//                    runOnUiThread(new Runnable() {
-//
-//                        @Override
-//                        public void run() {
-//
-//                            try {
-//                                if (btsocket != null){
-//                                    if (Util.getInstance().getCurrentActivity().getLocalClassName().equals("activities.ShopCartActivity")){
-////                                        Util.shopCartActivity.tvBluetooth.setText(R.string.icon_bluetooth_connected);
-////                                        Util.shopCartActivity.tvBluetooth.setTextColor(getResources().getColor(R.color.colorBlue));
-//                                    }
-//                                    CustomSQL.setString(Constants.BLUETOOTH_DEVICE, btsocket.getRemoteDevice().getAddress());
-//                                    outputStream = btsocket.getOutputStream();
-//                                    mBluetoothAdapter.cancelDiscovery();
-//
-//
-//                                    mListener.onSuccess(device.getName());
-//                                }else {
-//                                    mListener.onError();
-//                                }
-//
-//
-//                            } catch (IOException e) {
-//                                mListener.onError();
-////                                e.printStackTrace();
-//                            }
-//
-//
-//                        }
-//                    });
-//                }
-//            }
-//        });connectThread.start();
-//    }
 
-    public void openCallScreen(String phone) {
-        currentPhone = phone;
-        if (PermissionChecker.checkSelfPermission(this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, Constants.REQUEST_PHONE_PERMISSION);
-            return;
-        }
-        Intent callIntent = new Intent(Intent.ACTION_CALL);
-        callIntent.setData(Uri.parse("tel:" + Uri.encode(phone)));
-        callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(callIntent);
+    public void getCurrentLocation(final LocationListener mListener) {
+        mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(final Location location) {
+                if (location != null) {
+                    mListener.onLocationChanged(location);
 
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == Constants.REQUEST_PHONE_PERMISSION) {
-
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                Util.showSnackbar("Không thể gọi do chưa được cấp quyền", null, null);
-
-            } else {
-                openCallScreen(currentPhone);
-
+                }
             }
-        }else if (requestCode == Constants.REQUEST_PERMISSION_LOCATION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //checkGPS();
-
-            } else {
-                Toast.makeText(this, "Cấp quyền truy cập không thành công!", Toast.LENGTH_LONG).show();
-                Transaction.gotoHomeActivityRight(true);
-            }
-        }
-
+        });
     }
 
 }

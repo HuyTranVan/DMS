@@ -1,5 +1,9 @@
 package wolve.dms.activities;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -9,6 +13,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.PermissionChecker;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
@@ -27,6 +33,7 @@ import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickAdapter;
+import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomListList;
 import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.customviews.CTextIcon;
@@ -46,6 +53,8 @@ import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
+import static wolve.dms.utils.Constants.REQUEST_PERMISSION_LOCATION;
+
 /**
  * Created by macos on 9/15/17.
  */
@@ -53,10 +62,9 @@ import wolve.dms.utils.Util;
 public class HomeActivity extends BaseActivity implements View.OnClickListener, CallbackClickAdapter{
     private RecyclerView rvItems;
     private CTextIcon btnLogout, btnChangeUser;
-    private TextView tvFullname , tvCash, tvProfit, tvMonth;
+    private TextView tvFullname , tvCash, tvProfit, tvMonth, tvHaveNewProduct;
     private LinearLayout lnUser;
     private View line;
-
 
     private List<BaseModel> listPayment = new ArrayList<>();
 
@@ -86,40 +94,34 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         tvCash = findViewById(R.id.home_cash);
         tvProfit = findViewById(R.id.home_profit);
         tvMonth = findViewById(R.id.home_month);
+        tvHaveNewProduct = findViewById(R.id.home_new_product);
 
     }
 
     @Override
     public void initialData() {
-        createListItem();
+        checkPermission();
+
+
         tvFullname.setText(String.format("%s _ %s (%s)",User.getFullName(), User.getRole(), Distributor.getName()));
+        btnChangeUser.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN) ? View.VISIBLE : View.GONE);
+        line.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN) ? View.VISIBLE : View.GONE);
 
+        if (CustomSQL.getBoolean(Constants.ON_MAP_SCREEN)) {
+            Transaction.gotoMapsActivity();
+        }
 
-        loadCurrentData(new CallbackBoolean() {
-            @Override
-            public void onRespone(Boolean result) {
-                if (result){
+        if (!CustomSQL.getString(Constants.CUSTOMER_ID).equals("")){
+            Transaction.gotoMapsActivity();
+        }
 
-
-                    btnChangeUser.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN) ? View.VISIBLE : View.GONE);
-                    line.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN) ? View.VISIBLE : View.GONE);
-
-                    if (!CustomSQL.getString(Constants.CUSTOMER_ID).equals("")){
-                        Transaction.gotoMapsActivity();
-
-                    } else if (CustomSQL.getBoolean(Constants.ON_MAP_SCREEN)){
-                        Transaction.gotoMapsActivity();
-
-                    }else {
-                        //loadOverView();
-                    }
-
-                }
-            }
-        });
-
+        if (CustomSQL.getBoolean(Constants.LOGIN_SUCCESS)){
+            loadCurrentData();
+            CustomSQL.setBoolean(Constants.LOGIN_SUCCESS, true);
+        }else {
+            checkNewProductUpdated();
+        }
         tvMonth.setText(String.format("***Tháng %s:", Util.CurrentMonthYear()));
-
 
     }
 
@@ -157,6 +159,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     public void addEvent() {
         btnChangeUser.setOnClickListener(this);
         lnUser.setOnClickListener(this);
+        tvHaveNewProduct.setOnClickListener(this);
     }
 
     @Override
@@ -178,11 +181,16 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
                             @Override
                             public void Method2(Boolean two) {
-                                doLogout();
+                                doLogout(true);
                             }
                         });
 
                 break;
+
+            case R.id.home_new_product:
+                loadCurrentData();
+                break;
+
         }
     }
 
@@ -248,19 +256,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     private void showReloginDialog(BaseModel user){
-
         CustomCenterDialog.showDialogRelogin(String.format("Đăng nhập vào tài khoản %s", user.getString("displayName")), user, new Callback() {
             @Override
             public void onResponse(JSONObject result) {
-                loadCurrentData(new CallbackBoolean() {
-                    @Override
-                    public void onRespone(Boolean result) {
-                        if (result){
-                            tvFullname.setText(String.format("%s _ %s (%s)",User.getFullName(), User.getRole(), Distributor.getName()));
-                        }
-
-                    }
-                });
+                loadCurrentData();
 
 
             }
@@ -272,37 +271,33 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         });
     }
 
-    private void doLogout() {
-        CustomCenterDialog.alertWithCancelButton(null, String.format("Đăng xuất tài khoản %s",User.getFullName()) , "ĐỒNG Ý","HỦY", new CallbackBoolean() {
-            @Override
-            public void onRespone(Boolean result) {
+    private void doLogout(boolean showAlert) {
+        if (showAlert){
+            CustomCenterDialog.alertWithCancelButton(null, String.format("Đăng xuất tài khoản %s",User.getFullName()) , "ĐỒNG Ý","HỦY", new CallbackBoolean() {
+                @Override
+                public void onRespone(Boolean result) {
 //                CustomSQL.setString(Constants.USER_USERNAME,"");
 //                CustomSQL.setString(Constants.USER_PASSWORD,"");
-                if (result){
-                    List<BaseModel> listUser = CustomSQL.getListObject(Constants.USER_LIST);
-                    CustomSQL.clear();
-                    CustomSQL.setListBaseModel(Constants.USER_LIST, listUser);
+                    if (result){
+                        List<BaseModel> listUser = CustomSQL.getListObject(Constants.USER_LIST);
+                        CustomSQL.clear();
+                        CustomSQL.setListBaseModel(Constants.USER_LIST, listUser);
 
-                    Transaction.gotoLoginActivityRight();
+                        Transaction.gotoLoginActivityRight();
+                    }
+
                 }
+            });
 
-            }
-        });
+        }else {
+            List<BaseModel> listUser = CustomSQL.getListObject(Constants.USER_LIST);
+            CustomSQL.clear();
+            CustomSQL.setListBaseModel(Constants.USER_LIST, listUser);
+
+            Transaction.gotoLoginActivityRight();
+        }
 
 
-//        String params = String.format(Api_link.LOGOUT_PARAM,User.getToken(), User.getUserId());
-//
-//        UserConnect.Logout(params, new CallbackJSONObject() {
-//            @Override
-//            public void onResponse(JSONObject result) {
-//                String s = result.toString();
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }, true);
     }
 
     @Override
@@ -320,13 +315,18 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
             case 2:
                 Util.showToast("Chưa hỗ trợ");
-                CustomCenterDialog.showDialogSignature();
+                //CustomCenterDialog.showDialogSignature();
 
 
                 break;
 
             case 3:
-                Transaction.gotoScannerActivity();
+                if (CustomSQL.getBoolean(Constants.IS_ADMIN)){
+                    Transaction.gotoTestActivity();
+                }else {
+                    Util.showToast("Chưa hỗ trợ");
+                }
+
 
                 break;
 
@@ -336,7 +336,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 break;
 
             case 5:
-                Transaction.gotoDistributorActivity();
+                if (CustomSQL.getBoolean(Constants.IS_ADMIN)){
+                    Transaction.gotoDistributorActivity();
+                }else {
+                    Util.showToast("Chưa hỗ trợ");
+
+                }
+
                 break;
         }
 
@@ -344,22 +350,15 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     }
 
-    private void loadCurrentData(CallbackBoolean listener) {
-        SystemConnect.getAllData(new CallbackListCustom() {
+    private void loadCurrentData() {
+        SystemConnect.getCategories(new CallbackCustom() {
             @Override
-            public void onResponse(List result) {
-                try {
-                    Status.saveStatusList(new JSONArray(result.get(0).toString()));
-                    District.saveDistrictList(new JSONArray(result.get(1).toString()));
-                    ProductGroup.saveProductGroupList(new JSONArray(result.get(2).toString()));
-                    Product.saveProductList(new JSONArray(result.get(3).toString()));
-                    Province.saveProvinceList(new JSONArray(result.get(4).toString()));
+            public void onResponse(BaseModel result) {
+                Status.saveStatusList(result.getJSONArray("Status"));
+                ProductGroup.saveProductGroupList(result.getJSONArray("ProductGroup"));
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                listener.onRespone(true);
+                CustomSQL.setLong(Constants.LAST_PRODUCT_UPDATE, result.getLong("LastProductUpdate"));
+                tvHaveNewProduct.setVisibility(View.GONE);
 
             }
 
@@ -367,27 +366,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             public void onError(String error) {
 
             }
-        }, true);
+        });
 
-    }
-
-    private void choiceStatisticalItem(){
-        CustomBottomDialog.choiceTwoOption(getString(R.string.icon_dashboard), "Thống kê hóa đơn",
-                getString(R.string.icon_group), "Thống kê khách hàng"
-                , new CustomBottomDialog.TwoMethodListener() {
-                    @Override
-                    public void Method1(Boolean one) {
-                        Transaction.gotoStatisticalActivity();
-
-                    }
-
-                    @Override
-                    public void Method2(Boolean two) {
-                        Transaction.gotoStatisticalCustomerActivity();
-
-                    }
-
-                });
     }
 
     private void choiceSetupItem(){
@@ -397,7 +377,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 getString(R.string.icon_comment), "Trạng thái", new CustomBottomDialog.FourMethodListener() {
                     @Override
                     public void Method1(Boolean one) {
-                        Util.showToast("Chưa hỗ trợ");
+                        Transaction.gotoUserActivity();
 
                     }
 
@@ -429,22 +409,132 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 });
     }
 
-    @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == Constants.REQUEST_PERMISSION_LOCATION) {
-            if (grantResults[0] == PackageManager.PERMISSION_DENIED || grantResults[1] == PackageManager.PERMISSION_DENIED ) {
-                Util.showToast("Cấp quyền truy cập không thành công");
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
-            }else {
-                Transaction.gotoMapsActivity();
+    private void checkNewProductUpdated(){
+        SystemConnect.getLastestProductUpdated(new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                if (result.getLong("lastProductUpdate") > CustomSQL.getLong(Constants.LAST_PRODUCT_UPDATE)){
+                    tvHaveNewProduct.setVisibility(View.VISIBLE);
+
+                    CustomCenterDialog.alertWithCancelButton("CÓ SẢN PHẨM MỚI",
+                            "Đồng bộ danh mục sản phẩm với thiết bị của bạn",
+                                    "ĐỒNG Ý",
+                            "HỦY",
+                            new CallbackBoolean() {
+                                @Override
+                                public void onRespone(Boolean result) {
+                                    if (result){
+                                        loadCurrentData();
+                                    }
+                                }
+                            });
+                }else {
+                    tvHaveNewProduct.setVisibility(View.GONE);
+                }
             }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        }, false);
+    }
+
+    @SuppressLint("WrongConstant")
+    private void checkPermission(){
+        Activity context = Util.getInstance().getCurrentActivity();
+        if (PermissionChecker.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                PermissionChecker.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                PermissionChecker.checkSelfPermission(context, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED ||
+                PermissionChecker.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED ||
+                PermissionChecker.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+                PermissionChecker.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+
+
+            CustomCenterDialog.alertWithCancelButton("Cấp quyền truy cập!",
+                    "Ứng dụng cần bạn đồng ý các quyền truy cập sau để tiếp tục",
+                    "đồng ý",
+                    "hủy",
+                    new CallbackBoolean() {
+                        @Override
+                        public void onRespone(Boolean result) {
+                            if (result){
+                                ActivityCompat.requestPermissions(context, new String[]{
+                                        android.Manifest.permission.ACCESS_FINE_LOCATION,
+                                        android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                                        android.Manifest.permission.CALL_PHONE,
+                                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                        android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                                        android.Manifest.permission.CAMERA,
+
+                                }, Constants.REQUEST_PERMISSION);
+
+                            }else {
+                                doLogout(false);
+
+                            }
+                    }
+
+            });
+
+        }else {
+            createListItem();
 
         }
 
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == Constants.REQUEST_PERMISSION) {
+            if (grantResults.length > 0 ) {
+
+                boolean hasDenied = false;
+                for (int i=0; i<grantResults.length; i++){
+                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED){
+                        hasDenied = true;
+                        break;
+                    }
+                }
+
+                if (!hasDenied){
+                    createListItem();
+
+                }else {
+                    Util.showToast("Cấp quyền truy cập không thành công!");
+                    CustomCenterDialog.alertWithCancelButton("Cấp quyền truy cập!",
+                            "Ứng dụng chưa được cấp quyền đầy đủ",
+                            "Cấp lại",
+                            "hủy",
+                            new CallbackBoolean() {
+                                @Override
+                                public void onRespone(Boolean result) {
+                                    if (result){
+                                        checkPermission();
+
+                                    }else {
+                                        doLogout(false);
+
+                                    }
+
+
+                                }
+
+                            });
+
+
+                }
+
+
+            }
+        }
+
     }
+
 
 }

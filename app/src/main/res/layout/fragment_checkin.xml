@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorWhite"
+    android:clickable="true"
+    android:layout_marginTop="@dimen/_36sdp">
+
+    <RelativeLayout
+        android:id="@+id/checkin_header"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_20sdp"
+        android:background="#f4f4f4">
+
+        <TextView
+            android:id="@+id/cart_choice_header_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Danh sách check-in"
+            android:textStyle="italic"
+            android:textSize="@dimen/_12sdp"
+            android:textColor="@color/black_text_color_hint"/>
+
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/checkins_rvcheckin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/checkin_header"
+        />
+
+
+
+
+
+
+
+
+</RelativeLayout>

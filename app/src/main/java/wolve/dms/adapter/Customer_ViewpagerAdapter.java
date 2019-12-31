@@ -102,11 +102,6 @@ public class Customer_ViewpagerAdapter extends FragmentPagerAdapter {
             tvNotify.setVisibility(View.GONE);
         }
 
-
-
-
-
-
         return tab;
 
     }

@@ -51,20 +51,24 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.PrintBil
         String date = Util.DateHourString(mData.get(position).getLong("createAt"));
         String user = mData.get(position).getBaseModel("user").getString("displayName");
         String note = "";
-        if (mData.get(position).hasKey("idbillreturn")){
+
+        if (mData.get(position).getInt("payByReturn") == 1){
             note = "Trừ tiền thu hàng".toUpperCase();
+            holder.tvTotal.setTextColor(mContext.getResources().getColor(R.color.black_text_color_hint));
 
         }else if (mData.get(position).getDouble("paid") <0.0){
             note ="trả khách tiền mặt".toUpperCase();
+            holder.tvTotal.setTextColor(mContext.getResources().getColor(R.color.colorRedTransparent));
 
         }else {
             note ="thu tiền mặt".toUpperCase();
+            holder.tvTotal.setTextColor(mContext.getResources().getColor(R.color.colorBlue));
 
         }
 
         holder.tvDate.setText(String.format("%s %s:",date, note));
         holder.tvName.setText(user);
-        holder.tvTotal.setText(String.format("%s %s đ",mData.get(position).getDouble("paid") <0.0? "+" : "-",
+        holder.tvTotal.setText(String.format("%s %s đ",mData.get(position).getDouble("paid") <0.0? "-" : "+",
                 mData.get(position).getDouble("paid") <0.0? Util.FormatMoney(mData.get(position).getDouble("paid") *-1) :Util.FormatMoney(mData.get(position).getDouble("paid"))));
 
 

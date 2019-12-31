@@ -78,20 +78,6 @@ public class Statistical_ViewpagerAdapter extends FragmentPagerAdapter {
         return tab;
     }
 
-//    public View getNotifyBaged(int count){
-//        View tab = LayoutInflater.from(mContext).inflate(R.layout.view_tabbar, null);
-//        CTextView tabTextTitle = (CTextView) tab.findViewById(R.id.tabTextIcon);
-//        CTextView tabText = (CTextView) tab.findViewById(R.id.tabText);
-//        CTextViewDefault tabNotify = (CTextViewDefault) tab.findViewById(R.id.tabNotify);
-//        tabTextTitle.setText(mFragmentIcons.get(2));
-//        tabText.setText(mFragmentText.get(2));
-//        tabNotify.setVisibility(count ==0?View.GONE: View.VISIBLE);
-//        tabNotify.setText(count +"");
-//
-//
-//        return tab;
-//
-//    }
 
 
 }

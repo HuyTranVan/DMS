@@ -28,15 +28,6 @@
         app:layout_anchor="@id/map_current_location"
         app:layout_anchorGravity="top|end">
 
-<!--        <com.github.clans.fab.FloatingActionButton-->
-<!--            android:id="@+id/map_new_fast"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:src="@drawable/baseline_flash_on_white_18"-->
-<!--            app:fab_label="Tạo nhanh"-->
-<!--            style="@style/MenuButtonsStyle"-->
-<!--            />-->
-
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/map_new_addphone"
             android:layout_width="wrap_content"
@@ -219,7 +210,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:layout_margin="@dimen/_10sdp">
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp">
 
                 <View
                     android:layout_width="@dimen/_25sdp"
@@ -295,24 +289,59 @@
                             android:textColor="@color/black_text_color_hint"
                             android:textSize="@dimen/_10sdp"/>
 
-                        <wolve.dms.customviews.CTextIcon
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:text="@string/icon_car"
-                            android:gravity="center_vertical"
-                            android:layout_marginLeft="@dimen/_10sdp"
-                            android:textSize="@dimen/_10sdp"
-                            android:textColor="@color/black_text_color_hint"
-                            />
-
-                        <TextView
-                            android:id="@+id/map_detail_distance"
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="cua hang sua xe"
-                            android:textColor="@color/black_text_color_hint"
-                            android:textSize="@dimen/_10sdp"
-                            android:layout_marginLeft="@dimen/_5sdp"/>
+                            android:orientation="horizontal">
+
+                            <wolve.dms.customviews.CTextIcon
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:text="@string/icon_car"
+                                android:gravity="center_vertical"
+                                android:layout_marginLeft="@dimen/_10sdp"
+                                android:textSize="@dimen/_10sdp"
+                                android:textColor="@color/black_text_color"
+                                />
+
+                            <TextView
+                                android:id="@+id/map_detail_distance"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="m"
+                                android:textColor="@color/black_text_color_hint"
+                                android:textSize="@dimen/_10sdp"
+                                android:layout_marginLeft="@dimen/_2sdp"/>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/map_detail_checkin_group"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginLeft="@dimen/_5sdp">
+
+                            <wolve.dms.customviews.CTextIcon
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:text="@string/calendar_check"
+                                android:gravity="center_vertical"
+                                android:layout_marginLeft="@dimen/_10sdp"
+                                android:textSize="@dimen/_10sdp"
+                                android:textColor="@color/black_text_color"
+                                />
+
+                            <TextView
+                                android:id="@+id/map_detail_checkin_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="m"
+                                android:textColor="@color/black_text_color_hint"
+                                android:textSize="@dimen/_10sdp"
+                                android:layout_marginLeft="@dimen/_2sdp"/>
+
+                        </LinearLayout>
 
                     </LinearLayout>
 
@@ -360,36 +389,36 @@
                         android:gravity="center_vertical">
 
 
-                        <LinearLayout
-                            android:id="@+id/map_detail_checkin"
-                            android:layout_width="wrap_content"
-                            android:layout_height="@dimen/_25sdp"
-                            android:orientation="horizontal"
-                            android:background="@drawable/btn_round_blue"
-                            android:layout_marginRight="@dimen/_10sdp"
-                            android:visibility="gone">
+<!--                        <LinearLayout-->
+<!--                            android:id="@+id/map_detail_checkin"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="@dimen/_25sdp"-->
+<!--                            android:orientation="horizontal"-->
+<!--                            android:background="@drawable/btn_round_blue"-->
+<!--                            android:layout_marginRight="@dimen/_10sdp"-->
+<!--                            android:visibility="visible">-->
 
-                            <wolve.dms.customviews.CTextIcon
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:text="@string/icon_district"
-                                android:gravity="center"
-                                android:paddingLeft="@dimen/_10sdp"
-                                android:textSize="@dimen/_14sdp"
-                                android:textColor="@color/colorWhite"/>
+<!--                            <wolve.dms.customviews.CTextIcon-->
+<!--                                android:layout_width="wrap_content"-->
+<!--                                android:layout_height="match_parent"-->
+<!--                                android:text="@string/icon_district"-->
+<!--                                android:gravity="center"-->
+<!--                                android:paddingLeft="@dimen/_10sdp"-->
+<!--                                android:textSize="@dimen/_14sdp"-->
+<!--                                android:textColor="@color/colorWhite"/>-->
 
-                            <TextView
-                                android:id="@+id/map_detail_checkin_text"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:text="Checkin"
-                                android:textColor="@color/colorWhite"
-                                android:gravity="center"
-                                android:textSize="@dimen/_14sdp"
-                                android:paddingLeft="@dimen/_5sdp"
-                                android:paddingRight="@dimen/_15sdp" />
+<!--                            <TextView-->
+<!--                                android:id="@+id/map_detail_checkin_text"-->
+<!--                                android:layout_width="wrap_content"-->
+<!--                                android:layout_height="match_parent"-->
+<!--                                android:text="Checkin"-->
+<!--                                android:textColor="@color/colorWhite"-->
+<!--                                android:gravity="center"-->
+<!--                                android:textSize="@dimen/_14sdp"-->
+<!--                                android:paddingLeft="@dimen/_5sdp"-->
+<!--                                android:paddingRight="@dimen/_15sdp" />-->
 
-                        </LinearLayout>
+<!--                        </LinearLayout>-->
 
 
 

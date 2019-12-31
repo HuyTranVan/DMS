@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,9 +14,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +27,12 @@ import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackDeleteAdapter;
-import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.libraries.MySwipeRefreshLayout;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Product;
-import wolve.dms.models.ProductGroup;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.DataUtil;
+import wolve.dms.utils.Util;
 
 /**
  * Created by macos on 9/16/17.
@@ -88,6 +84,8 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
         btnBack.setOnClickListener(this);
         swipeRefreshLayout.setOnRefreshListener(this);
         btnAddProduct.setOnClickListener(this);
+
+
     }
 
     @Override
@@ -147,14 +145,13 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
     }
 
     private void openFragmentNewProduct(String product){
-        AddProductFragment groupFragment = new AddProductFragment();
+        NewUpdateProductFragment groupFragment = new NewUpdateProductFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constants.PRODUCT, product);
         changeFragment(groupFragment, bundle, true );
     }
 
     private void setupViewPager(final List<BaseModel> listproductgroup, final List<BaseModel> listproduct){
-
         final List<RecyclerView.Adapter> listadapter = new ArrayList<>();
 
         for (int  i=0; i<listproductgroup.size(); i++){
@@ -199,6 +196,7 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
         for (int i=0; i<listproductgroup.size(); i++){
             TabLayout.Tab tab = tabLayout.getTabAt(i);
             View customView = LayoutInflater.from(this).inflate(R.layout.view_tab_product, null);
+            //LinearLayout tabParent =  customView.findViewById(R.id.tabParent);
             TextView tabTextTitle = (TextView) customView.findViewById(R.id.tabNotify);
             TextView textTitle = (TextView) customView.findViewById(R.id.tabTitle);
 
@@ -215,10 +213,25 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
 //
 
             tab.setCustomView(customView);
+
+
         }
 
         swipeRefreshLayout.setRefreshing(false);
 
+    }
+
+    private void setLongClickTabEvent(){
+        LinearLayout tabStrip = (LinearLayout) tabLayout.getChildAt(0);
+        for (int i = 0; i < tabStrip.getChildCount(); i++) {
+            tabStrip.getChildAt(i).setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Util.showToast("%d tab, i");
+                    return true;
+                }
+            });
+        }
     }
 
 

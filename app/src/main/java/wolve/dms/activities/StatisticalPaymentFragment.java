@@ -78,7 +78,6 @@ public class StatisticalPaymentFragment extends Fragment implements View.OnClick
     }
 
     private void createRVCash(String user, List<BaseModel> list) {
-
         adapter = new Statistica_PaymentAdapter(user, list, new CallbackString() {
             @Override
             public void Result(String s) {
@@ -88,7 +87,7 @@ public class StatisticalPaymentFragment extends Fragment implements View.OnClick
                         BaseModel customer = DataUtil.rebuiltCustomer(result);
                         CustomSQL.setBaseModel(Constants.CUSTOMER, customer);
 
-                        Transaction.gotoCustomerActivity( false);
+                        Transaction.gotoCustomerActivity();
                     }
 
                     @Override

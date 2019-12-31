@@ -34,9 +34,27 @@ public class Product extends BaseModel{
         return jsonObject;
     }
 
-    public static void saveProductList(JSONArray product){
-        CustomSQL.setString(Constants.PRODUCT_LIST, product.toString());
+    public static void saveProductList(JSONArray groups){
+//        CustomSQL.setString(Constants.PRODUCT_LIST, product.toString());
+
+        JSONArray result = new JSONArray();
+        try {
+            for (int i=0; i<groups.length(); i++){
+                JSONObject object = groups.getJSONObject(i);
+                JSONArray arrayProduct = object.getJSONArray("product");
+
+                for (int ii =0; ii<arrayProduct.length(); ii++){
+                    result.put(arrayProduct.getJSONObject(ii));
+                }
+
+            }
+            CustomSQL.setString(Constants.PRODUCT_LIST, result.toString());
+
+        } catch (JSONException e) {
+
+        }
         mListProducts = null;
+
     }
 
     public static List<BaseModel> getProductList(){

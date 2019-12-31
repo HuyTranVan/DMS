@@ -59,10 +59,11 @@ public class CustomDeleteListMethod extends AsyncTask<String, Void, List<String>
                 String inputLine;
                 response = new StringBuffer();
 
-                while ((inputLine = in.readLine()) != null) {
+                while ((inputLine = in.readLine()) != null){
                     response.append(inputLine);
                 }
                 in.close();
+                listResult.add(String.valueOf(response));
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();

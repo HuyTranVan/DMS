@@ -32,7 +32,7 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class AddProdGroupFragment extends Fragment implements View.OnClickListener {
+public class NewUpdateProductGroupFragment extends Fragment implements View.OnClickListener {
     private View view;
     private ImageView btnBack;
     private CInputForm edInput;

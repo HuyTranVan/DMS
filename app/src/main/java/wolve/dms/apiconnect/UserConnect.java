@@ -8,6 +8,7 @@ import java.util.List;
 import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
+import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.libraries.connectapi.CustomGetMethod;
 import wolve.dms.libraries.connectapi.CustomPostMethod;
@@ -16,6 +17,7 @@ import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
@@ -117,12 +119,16 @@ public class UserConnect {
         UserConnect.Login(params, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel object) {
-                Distributor distributor = new Distributor(object.getJsonObject("distributor"));
-
-                CustomSQL.setBaseModel(Constants.USER, object);
-                CustomSQL.setObject(Constants.DISTRIBUTOR, distributor);
+                CustomSQL.setString(Constants.DISTRIBUTOR, object.getString("distributor"));
+                CustomSQL.setString(Constants.DISTRICT_LIST, object.getString("district"));
                 CustomSQL.setString(Constants.USER_USERNAME, username);
                 CustomSQL.setString(Constants.USER_PASSWORD, pass);
+//                CustomSQL.setLong(Constants.LAST_PRODUCT_UPDATE, object.getBaseModel("distributor").getLong("lastProductUpdate"));
+
+                object.removeKey("distributor");
+                object.removeKey("district");
+                CustomSQL.setBaseModel(Constants.USER, object);
+
 
                 if (User.getRole().equals(Constants.ROLE_ADMIN)) {
                     CustomSQL.setBoolean(Constants.IS_ADMIN, true);
@@ -177,6 +183,36 @@ public class UserConnect {
 
         CustomSQL.setListBaseModel(Constants.USER_LIST, listUser);
 
+    }
+
+    public static void ListUser(final CallbackCustomList listener, final Boolean stopLoading){
+        Util.getInstance().showLoading();
+
+        String url = Api_link.USERS;
+
+        new CustomGetMethod(url, new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(stopLoading);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeArraySuccess(result));
+
+                }else {
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
+            }
+        }).execute();
     }
 
 
