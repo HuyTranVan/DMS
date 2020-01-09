@@ -16,6 +16,7 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.models.BaseModel;
+import wolve.dms.models.User;
 import wolve.dms.utils.Util;
 
 
@@ -158,12 +159,26 @@ public class DebtAdapter extends RecyclerView.Adapter<DebtAdapter.PrintBillViewH
     public List<BaseModel> getListBillPayment(){
         List<BaseModel> listResult = new ArrayList<>();
         for (int i=0; i<mData.size(); i++){
-            BaseModel object = new BaseModel();
             if (!mData.get(i).isNull("tempPaid") && mData.get(i).getDouble("tempPaid") !=0){
+                BaseModel object = new BaseModel();
                 object.put("billId", mData.get(i).getInt("id"));
                 object.put("paid", mData.get(i).getDouble("tempPaid"));
                 object.put("billTotal", mData.get(i).getDouble("total"));
+                object.put("user_id", mData.get(i).getInt("user_id"));
                 listResult.add(object);
+
+            }else if (mData.get(i).getInt("id") == 0){
+                if (mData.get(i).getDoubleValue("debt") == 0){
+                    BaseModel object = new BaseModel();
+                    object.put("billId", mData.get(i).getInt("id"));
+                    object.put("paid", 0.0);
+                    object.put("billTotal", 0.0);
+                    object.put("user_id", mData.get(i).getInt("user_id"));
+                    listResult.add(object);
+
+
+                }
+
             }
 
         }

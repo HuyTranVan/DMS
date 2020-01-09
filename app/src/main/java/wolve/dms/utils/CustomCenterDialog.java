@@ -520,7 +520,7 @@ public class CustomCenterDialog {
 
     }
 
-    public static void showReasonChoice(String title, String content, List<BaseModel> listStatus, final CallbackString mListener){
+    public static void showReasonChoice(String title, String hint,String text, boolean showListReason, final CallbackString mListener){
         //TYPE 0: NOT INTERESTED
         //TYPE 1: NORMAL
 
@@ -540,25 +540,28 @@ public class CustomCenterDialog {
         tvTitle.setText(title);
 
         tvContent.setVisibility(View.GONE);
+        Util.showKeyboardDelay(edNote);
 
-        edNote.setHint(content);
-
+        edNote.setHint(hint);
+        edNote.setText(text);
+        edNote.setSelection(text.length());
 
         List<BaseModel> listReason = CustomSQL.getListObject(Constants.STATUS);
+        if (showListReason){
+            final CartCheckinReasonAdapter adapter = new CartCheckinReasonAdapter(listReason, new CartCheckinReasonAdapter.ReasonCallback() {
+                @Override
+                public void onResult(BaseModel result, int position) {
+                    listReason.get(position).put("rate", listReason.get(position).getInt("rate") + 1);
+                    mListener.Result(result.getString("content"));
 
-        final CartCheckinReasonAdapter adapter = new CartCheckinReasonAdapter(listReason, new CartCheckinReasonAdapter.ReasonCallback() {
-            @Override
-            public void onResult(BaseModel result, int position) {
-                listReason.get(position).put("rate", listReason.get(position).getInt("rate") + 1);
-                mListener.Result(result.getString("content"));
+                    dialogResult.dismiss();
 
-                dialogResult.dismiss();
+                }
 
-            }
+            });
 
-        });
-
-        Util.createLinearRV(rvStatus, adapter);
+            Util.createLinearRV(rvStatus, adapter);
+        }
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -575,14 +578,16 @@ public class CustomCenterDialog {
                     Util.showToast("Vui lòng nhập nội dung để tiếp tục");
 
                 }else {
-                    BaseModel baseModel = new BaseModel();
-                    baseModel.put("type", 0);
-                    baseModel.put("content",edNote.getText().toString().trim() );
-                    baseModel.put("rate",1 );
+                    if (showListReason){
+                        BaseModel baseModel = new BaseModel();
+                        baseModel.put("type", 0);
+                        baseModel.put("content",edNote.getText().toString().trim() );
+                        baseModel.put("rate",1 );
 
-                    listReason.add(baseModel);
+                        listReason.add(baseModel);
 
-                    CustomSQL.setListBaseModel(Constants.STATUS, listReason);
+                        CustomSQL.setListBaseModel(Constants.STATUS, listReason);
+                    }
 
                     mListener.Result(edNote.getText().toString().trim() );
 

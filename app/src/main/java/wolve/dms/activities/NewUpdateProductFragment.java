@@ -101,7 +101,7 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
             @Override
             public void onClick(View view) {
 
-                CustomBottomDialog.choiceListObject("CHỌN NHÓM SẢN PHẨM", mActivity.listProductGroup, new CallbackBaseModel() {
+                CustomBottomDialog.choiceListObject("CHỌN NHÓM SẢN PHẨM", mActivity.listProductGroup, "text", new CallbackBaseModel() {
                     @Override
                     public void onResponse(BaseModel object) {
                         edGroup.setText(object.getString("text"));

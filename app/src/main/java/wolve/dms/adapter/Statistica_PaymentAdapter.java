@@ -75,7 +75,7 @@ public class Statistica_PaymentAdapter extends RecyclerView.Adapter<Statistica_P
         holder.tvTime.setText(time  );
 
         //double va = mData.get(position).getDouble("paid") * mData.get(position).getDouble("billProfit") /  mData.get(position).getDouble("billTotal");
-        holder.tvProfit.setText(String.format("(%s)",Util.FormatMoney(mData.get(position).getDouble("billProfit"))));
+        //holder.tvProfit.setText(String.format("(%s)",Util.FormatMoney(mData.get(position).getDouble("billProfit"))));
 
         holder.tvPaid.setText(Util.FormatMoney(mData.get(position).getDouble("paid")));
 
@@ -127,9 +127,9 @@ public class Statistica_PaymentAdapter extends RecyclerView.Adapter<Statistica_P
 
     public double sumProfit(){
         double totalProfit = 0.0;
-        for (BaseModel row : mData){
-            totalProfit += row.getDouble("billProfit");
-        }
+//        for (BaseModel row : mData){
+//            totalProfit += row.getDouble("billProfit");
+//        }
         return totalProfit;
     }
 

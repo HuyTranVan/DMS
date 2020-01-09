@@ -33,8 +33,8 @@ import wolve.dms.utils.Util;
 
 public abstract class BaseActivity extends AppCompatActivity {
     protected LocationManager mLocationManager;
-    protected FusedLocationProviderClient mFusedLocationClient;
-    private boolean doubleBackToExitPressedOnce = false;
+    public FusedLocationProviderClient mFusedLocationClient;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,24 +132,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         }else {
             switch (Util.getInstance().getCurrentActivity().getLocalClassName()){
-                case "activities.HomeActivity":
-                    if (doubleBackToExitPressedOnce) {
-                        finish();
-                    }
-
-                    this.doubleBackToExitPressedOnce = true;
-                    Util.showToast("Ấn Back để thoát khỏi ứng dụng");
-
-                    new Handler().postDelayed(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            doubleBackToExitPressedOnce = false;
-                        }
-                    }, 2000);
-
-                    break;
-
                 case "activities.StatisticalActivity":
                     finish();
                     Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);

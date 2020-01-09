@@ -20,6 +20,7 @@ import wolve.dms.libraries.connectapi.CustomGetMethod;
 import wolve.dms.libraries.connectapi.CustomPostListMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -75,7 +76,8 @@ public class TestActivity extends BaseActivity implements View.OnClickListener{
             case R.id.confirm:
 //                UpdateIsBillReturn();
 //                UpdateBillDelivered();
-                loadListBill();
+                //loadListBill();
+                UpdateCustomerDebt();
                 break;
 
         }
@@ -84,7 +86,8 @@ public class TestActivity extends BaseActivity implements View.OnClickListener{
     protected void loadListBill() {
 
         Util.getInstance().showLoading(true);
-        String url = Api_link.BASE_URL + "token/bills/have_note";
+        //String url = Api_link.BASE_URL + "token/bills/have_note";
+        String url = Api_link.BASE_URL + "token/temp/CustomerHaveBill";
 
         new CustomGetMethod(url, new CallbackCustom() {
             @Override
@@ -115,7 +118,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener{
     private void createRVTest(List<BaseModel> list){
 //        List<BaseModel> list1 = listBillIsReturn(list);
 //        List<BaseModel> list1 = listBillDeliver(list);
-        List<BaseModel> list1 = listBillHaveReturn(list);
+        List<BaseModel> list1 = listCustomer(list);
         adapter = new TestAdapter(list1);
         Util.createLinearRV(rvTest, adapter);
 
@@ -186,7 +189,20 @@ public class TestActivity extends BaseActivity implements View.OnClickListener{
         return listBill;
     }
 
+    private List<BaseModel> listCustomer(List<BaseModel> list){
+        List<BaseModel> listCustomer = new ArrayList<>();
 
+        for (BaseModel baseModel : list){
+            List<BaseModel> listOriginalBill= new ArrayList<>(DataUtil.array2ListObject(baseModel.getString("bills")));
+            List<BaseModel> listBill= new ArrayList<>(DataUtil.remakeBill(listOriginalBill, false));
+            baseModel.putList(Constants.BILLS, listBill);
+
+            listCustomer.add(baseModel);
+
+
+        }
+        return listCustomer;
+    }
 
 
     private void UpdateIsBillReturn(){
@@ -224,6 +240,39 @@ public class TestActivity extends BaseActivity implements View.OnClickListener{
         }
 
         String url = Api_link.BASE_URL + "token/temp/BillDelivered.php";
+
+        Util.getInstance().showLoading();
+        new CustomPostListMethod(url, params, false, new CallbackListCustom() {
+            @Override
+            public void onResponse(List result) {
+                Util.getInstance().stopLoading(true);
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+            }
+        }).execute();
+
+    }
+
+    private void UpdateCustomerDebt(){
+        List<BaseModel> list = adapter.getDebtData();
+        List<String> params = new ArrayList<>();
+        //String patern = "id=%d&deliverBy=%d";
+
+        //String param = String.format(Api_link.DEBT_PARAM, 25000, 7, 1325);
+
+        for (int i=0; i< list.size(); i++){
+            params.add(String.format(Api_link.DEBT_PARAM,
+                    list.get(i).getDouble("debt"),
+                    list.get(i).getInt("user_id"),
+                    list.get(i).getInt("id"),
+                    list.get(i).getInt("distributor_id")));
+
+        }
+
+        String url = Api_link.DEBT_NEW;
 
         Util.getInstance().showLoading();
         new CustomPostListMethod(url, params, false, new CallbackListCustom() {

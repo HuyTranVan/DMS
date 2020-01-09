@@ -33,10 +33,6 @@ public class Customer_SearchAdapter extends RecyclerView.Adapter<Customer_Search
     private CallbackBaseModel mListener;
     private CustomBottomDialog.FourMethodListener mListerner;
 
-    public interface CallbackObject {
-        void onResponse(JSONObject object);
-    }
-
     public Customer_SearchAdapter(List<BaseModel> data, CallbackBaseModel listener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mData = data;

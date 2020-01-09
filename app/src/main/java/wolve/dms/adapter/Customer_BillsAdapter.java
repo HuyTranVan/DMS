@@ -297,7 +297,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
                                     @Override
                                     public void onResponse(List result) {
 
-                                        Util.showToast("Thanh toán thành công");
+                                        //Util.showToast("Thanh toán thành công");
                                         BaseModel respone = new BaseModel();
                                         respone.put(Constants.TYPE, Constants.BILL_PAY);
                                         mListener.onResponse(respone);

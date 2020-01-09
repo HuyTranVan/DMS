@@ -61,30 +61,64 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.ProductGroupAd
 
     @Override
     public void onBindViewHolder(final ProductGroupAdapterViewHolder holder, final int position) {
-        holder.text.setText(mData.get(position).getString("id") + "   " + (mData.size() - position));
-        String note = Security.decrypt(mData.get(position).getString("note"));
+        holder.text.setText(String.format("%d %s (%s %s) _   %d",
+                mData.get(position).getInt("id"),
+                mData.get(position).getString("signBoard") ,
+                mData.get(position).getString("street"),
+                mData.get(position).getString("district"),
+                (mData.size() - position)));
 
-        if (!note.equals("")){
-            if (Util.isJSONObject(note)){
-                //mData.get(position).put("isReturn", );
-                holder.note.setText(DataUtil.formatString(note));
+        //BaseModel object = Util.getTotal(mData.get(position).getList(Constants.BILLS));
+
+        List<BaseModel> listBill = mData.get(position).getList(Constants.BILLS);
+        double debt =0.0;
+        String user = "";
+        for ( BaseModel baseModel : listBill){
+            if (baseModel.getDoubleValue("debt") > 0){
+                debt += baseModel.getDouble("debt");
+
+                user = user + " " + baseModel.getInt("user_id");
+
+
             }
 
-//            else {
-//                holder.note.setText(mData.get(position).getString("note"));
-//            }
+
 
         }
+
+//        mData.get(position).put("debt", debt);
+//        mData.get(position).put("user_id", listBill.get(listBill.size()-1).getInt("user_id"));
+
+        String note = String.format("Nợ %s\n%s", Util.FormatMoney(debt), user);
+        holder.note.setText(note);
+
+
+
+
+
+//        String note = Security.decrypt(mData.get(position).getString("note"));
+
+//        if (!note.equals("")){
+//            if (Util.isJSONObject(note)){
+//                //mData.get(position).put("isReturn", );
+//                holder.note.setText(DataUtil.formatString(note));
+//            }
+//
+////            else {
+////                holder.note.setText(mData.get(position).getString("note"));
+////            }
+//
+//        }
 
 
 
         holder.text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CustomerConnect.GetCustomerDetail(mData.get(position).getString("customer_id"), new CallbackCustom() {
+                CustomerConnect.GetCustomerDetail(mData.get(position).getString("id"), new CallbackCustom() {
                     @Override
                     public void onResponse(BaseModel result) {
-                        BaseModel customer = DataUtil.rebuiltCustomer(result);
+                        BaseModel customer = DataUtil.rebuiltCustomer(result, false);
                         CustomSQL.setBaseModel(Constants.CUSTOMER, customer);
 
                         Transaction.gotoCustomerActivity();
@@ -98,12 +132,6 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.ProductGroupAd
             }
         });
 
-        holder.note.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //payBill(mData.get(position));
-            }
-        });
     }
 
     @Override
@@ -176,5 +204,44 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.ProductGroupAd
 
 
     }
+
+    public List<BaseModel> getDebtData(){
+        List<BaseModel> list = new ArrayList<>();
+
+        for (int i=0; i<mData.size(); i++){
+            BaseModel newCus = new BaseModel();
+
+
+            List<BaseModel> listBill = new ArrayList<>(mData.get(i).getList(Constants.BILLS));
+            double debt =0.0;
+            String user = "";
+            for ( BaseModel baseModel : listBill){
+                if (baseModel.getDouble("debt") > 0.0){
+                    debt += baseModel.getDouble("debt");
+
+                    user = user + " " + baseModel.getInt("user_id");
+
+
+                }
+
+
+
+            }
+
+            newCus.put("id", mData.get(i).getInt("id"));
+            newCus.put("distributor_id", mData.get(i).getInt("distributor_id"));
+            newCus.put("debt", debt);
+            newCus.put("user_id", listBill.get(listBill.size()-1).getInt("user_id"));
+
+            list.add(newCus);
+
+        }
+
+
+        return list;
+
+    }
+
+
 
 }

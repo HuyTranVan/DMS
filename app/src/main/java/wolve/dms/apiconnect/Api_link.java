@@ -43,7 +43,7 @@ public class Api_link {
 
     public final static String DEFAULT_RANGE ="?page=%d&size=%d";
 
-    public final static String LOGIN = BASE_URL + "auth/login";
+    public final static String LOGIN = BASE_URL + "/login";
     public final static String LOGIN_PARAM ="phone=%s&password=%s";
     public final static String LOGOUT= BASE_URL + "auth/logout";
     public final static String LOGOUT_PARAM ="x-wolver-accesstoken=%s&x-wolver-accessid=%s";
@@ -73,22 +73,26 @@ public class Api_link {
 
     public final static String CUSTOMERS = BASE_URL + "token/customers";
     public final static String CUSTOMERS_NEAREST = BASE_URL + "token/customers/nearest";
+    public final static String CUSTOMERS_HAVEDEBT = BASE_URL + "token/customers/havedebt";
     public final static String CUSTOMER_NEW = BASE_URL + "token/customer/create_or_update";
     public final static String CUSTOMER_DELETE = BASE_URL + "token/customer/";
     public final static String CUSTOMER_GETDETAIL = BASE_URL + "token/customer/";
     public final static String CUSTOMER_NEAREST_PARAM ="&lat=%s&lng=%s";
     public final static String CUSTOMER_CHECKIN_RANGE_PARAM ="&checkinFrom=%s&checkinTo=%s";
     public final static String CUSTOMER_DEBT_PARAM ="debt=%d";
-    public final static String CUSTOMER_CREATE_PARAM ="%sname=%s&signBoard=%s&address=%s&phone=%s&street=%s&note=%s&district=%s&province=%s&lat=%s&lng=%s&volumeEstimate=%s&shopType=%s&status.id=%d&distributor.id=%s&currentDebt=%s";
+    public final static String CUSTOMER_CREATE_PARAM ="%sname=%s&signBoard=%s&address=%s&phone=%s&street=%s&note=%s&district=%s&province=%s&lat=%s&lng=%s&volumeEstimate=%s&shopType=%s&status_id=%d&distributor_id=%s&currentDebt=%s&checkinCount=%d";
 
     public final static String DISTRIBUTOR_DETAIL = BASE_URL + "token/distributor/";
     public final static String DISTRIBUTOR_NEW = BASE_URL + "token/distributor/create_or_update";
     public final static String DISTRIBUTOR_CREATE_PARAM ="%scompany=%s&address=%s&phone=%s&website=%s&thanks=%s&image=%s";
 
     public final static String CHECKIN_NEW = BASE_URL + "token/customer/checkin";
-    public final static String SCHECKIN_CREATE_PARAM ="customer.id=%d&status.id=%d&note=%s&user.id=%s";
+    public final static String SCHECKIN_CREATE_PARAM ="customer_id=%d&status_id=%d&note=%s&user_id=%d";
 
+    public final static String CHECK_LOGIN = BASE_URL + "token/checklogin";
     public final static String CATEGORIES = BASE_URL + "token/categories";
+    public final static String STATISTICALS = BASE_URL + "token/statistical";
+    public final static String STATISTICAL_PARAM ="?from=%s&to=%s";
 
     public final static String BILLS = BASE_URL + "token/bills";
     public final static String BILLS_HAVE_PAYMENT = BASE_URL + "token/bills/have_payment";
@@ -99,7 +103,12 @@ public class Api_link {
     public final static String BILL_HAVE_PAYMENT_RANGE_PARAM ="&paymentFrom=%s&paymentTo=%s";
     public final static String BILL_NOT_YET_PAID_RANGE_PARAM ="&fromTime=%s&toTime=%s";
     public final static String PAY_NEW = BASE_URL + "token/payment";
-    public final static String PAY_PARAM ="customerId=%d&paid=%s&billId=%d&userId=%d&note=%s&payByReturn=%d";
+    public final static String PAY_PARAM ="customerId=%d&paid=%s&billId=%d&userId=%d&note=%s&payByReturn=%d&user_collect=%d";
+
+    public final static String DEBT_NEW = BASE_URL + "token/debt/create_or_update";
+    public final static String DEBT_PARAM ="debt=%s&user_id=%d&customer_id=%d&distributor_id=%d";
+
+
 
     public final static String NOTE_PARAM = "http://lubsolution.com/";
 

@@ -2,6 +2,8 @@ package wolve.dms.callback;
 
 import org.json.JSONObject;
 
+import wolve.dms.models.BaseModel;
+
 public interface CallbackObject {
-    void onResponse(JSONObject object);
+    void onResponse(BaseModel object);
 }

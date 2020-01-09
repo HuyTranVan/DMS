@@ -350,7 +350,7 @@ public class CustomBottomDialog {
 //        dialog.show();
 //    }
 
-    public static void choiceListObject(String title, final List<BaseModel> list, final CallbackBaseModel mListener){
+    public static void choiceListObject(String title, final List<BaseModel> list,String key, final CallbackBaseModel mListener){
         int heigh = list.size()>5 ? Util.convertSdpToInt(R.dimen._300sdp):
                 (list.size()+1)*Util.convertSdpToInt(R.dimen._35sdp); //+Util.convertSdpToInt(R.dimen._30sdp);
         final DialogPlus dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
@@ -378,7 +378,7 @@ public class CustomBottomDialog {
         }
 
 
-        ItemAdapter adapter = new ItemAdapter(list, new PositionListener() {
+        ItemAdapter adapter = new ItemAdapter(list, key, new PositionListener() {
             @Override
             public void onResponse(int pos) {
                 dialog.dismiss();

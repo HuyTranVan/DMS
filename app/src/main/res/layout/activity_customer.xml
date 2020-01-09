@@ -124,6 +124,7 @@
 
 
         </RelativeLayout>
+
         <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
             android:id="@+id/customer_loading"
             android:layout_width="match_parent"

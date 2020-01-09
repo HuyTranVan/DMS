@@ -39,6 +39,8 @@ public class Constants {
     public final static String ROLE_ADMIN = "MANAGER";
     public final static String ROLE_WAREHOUSE = "WAREHOUSE";
     public final static String ROLE_SALE = "SALE";
+    public final static String ROLE_DELIVER = "DELIVER";
+
     public final static String IS_ADMIN = "is_admin";
     public final static String PRINTER_SIZE = "printer_size";
     public static final String CHECKIN_FLAG = "check_in";
@@ -126,7 +128,8 @@ public class Constants {
 
     public final static String PRINTER_57 = "57mm";
     public final static String PRINTER_80 = "80mm";
-    public final static String currentEmulatorDevice = "Google Android SDK built for x86";
+    public final static String currentEmulatorDevice1 = "Google Android SDK built for x86";
+    public final static String currentEmulatorDevice2 = "Google AOSP on IA Emulator";
 
     public final static String ONSTART = "on_start";
     public final static String ONFAIL = "on_fail";

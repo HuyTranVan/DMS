@@ -1,6 +1,7 @@
 package wolve.dms.activities;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,8 +42,8 @@ import wolve.dms.utils.Util;
 
 public class CustomerInfoFragment extends Fragment implements View.OnClickListener,  RadioGroup.OnCheckedChangeListener {
     private View view, swCover;
-    private CInputForm edAdress, edPhone, edName;
-    private EditText edShopName, edNote;
+    private CInputForm edAdress, edPhone, edName, edNote;
+    private EditText edShopName ;
     private CButtonVertical mDirection, mPrint, mCall;
     private TextView tvStatus, tvLastStatus, tvType;
     private CustomSwitchButton swStatus;
@@ -74,7 +75,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         mDirection = view.findViewById(R.id.customer_info_direction);
         mPrint = view.findViewById(R.id.customer_info_print);
         mCall = view.findViewById(R.id.customer_info_call);
-        edNote = view.findViewById(R.id.add_customer_note);
+        edNote = view.findViewById(R.id.customer_info_note);
         swStatus = view.findViewById(R.id.customer_info_switch);
         tvStatus = view.findViewById(R.id.customer_info_status);
         tvLastStatus = view.findViewById(R.id.customer_info_last_status);
@@ -100,12 +101,15 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 
     public void reloadInfo(){
         edAdress.setIconMoreText(mActivity.getResources().getString(R.string.icon_edit_pen));
+        edNote.setIconMoreText(mActivity.getResources().getString(R.string.icon_edit_pen));
+        edNote.setFocusable(false);
         reshowAddress(mActivity.currentCustomer);
 
         edPhone.setText(Util.FormatPhone(mActivity.currentCustomer.getString("phone")));
         edName.setText(mActivity.currentCustomer.getString("name"));
         edShopName.setText(mActivity.currentCustomer.getString("signBoard"));
-        setNoteText(mActivity.currentCustomer.getString("note"));
+        edNote.setText(getNoteText(mActivity.currentCustomer.getString("note")));
+        //setNoteText(mActivity.currentCustomer.getString("note"));
         tvType.setText(Constants.getShopName(mActivity.currentCustomer.getString("shopType")));
 
         if (mActivity.currentCustomer.getString("shopType").equals(Constants.shopType[0])){
@@ -130,7 +134,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         mPrint.setVisibility(mActivity.listDebtBill.size() > 0? View.VISIBLE : View.GONE);
         mCall.setVisibility(mActivity.currentCustomer.getString("phone").equals("")?View.GONE: View.VISIBLE);
         
-        updateStatus();
+        updateStatus(mActivity.currentCustomer.getBaseModel("status").getInt("id"));
 
 
 //todo addevent after setdata
@@ -155,12 +159,31 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 
             }
         });
+        edNote.setOnMoreClickView(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CustomCenterDialog.showReasonChoice("GHI CHÚ KHÁCH HÀNG",
+                        "Nhập nội dung ghi chú ",
+                        getNoteText(mActivity.currentCustomer.getString("note")),
+                        false,
+                        new CallbackString() {
+                            @Override
+                            public void Result(String s) {
+                                edNote.setText(s);
+                                mActivity.saveCustomerToLocal("note", s);
+
+                            }
+                        });
+
+            }
+        });
+
 
 
     }
 
-    private void updateStatus(){
-        if (mActivity.customerStatusID ==2){
+    private void updateStatus(int status){
+        if (status ==2){
             swStatus.setChecked(false);
             tvStatus.setText("Khách hàng không quan tâm");
             tvStatus.setTextColor(mActivity.getResources().getColor(R.color.black_text_color));
@@ -174,6 +197,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
             mDirection.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
             mPrint.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
             edAdress.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
+            edNote.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
             edName.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
             edPhone.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
 
@@ -191,6 +215,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
             mDirection.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
             mPrint.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
             edAdress.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
+            edNote.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
             edName.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
             edPhone.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
 
@@ -200,7 +225,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
             mActivity.btnShopCart.setBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_blue));
             mActivity.btnShopCart.setTextColor(mActivity.getResources().getColor(R.color.colorWhite));
 
-            if (mActivity.customerStatusID == 3){
+            if (status == 3){
                 swStatus.setCheckedColor(getResources().getColor(R.color.colorBlue));
                 tvStatus.setTextColor(mActivity.getResources().getColor(R.color.colorBlue));
                 if (mActivity.listBills.size() >0){
@@ -211,7 +236,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
                     tvStatus.setText("Khách đã mua hàng");
                 }
 
-            }else if (mActivity.customerStatusID ==1){
+            }else if (status ==1){
                 if (mActivity.listCheckins.size() >0){
                     swStatus.setCheckedColor(getResources().getColor(R.color.orange_dark));
                     tvStatus.setTextColor(mActivity.getResources().getColor(R.color.orange_dark));
@@ -225,9 +250,6 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
                 }
 
             }
-
-
-
 
         }
 
@@ -261,7 +283,9 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
                 if (swStatus.isChecked()){
                     CustomCenterDialog.showReasonChoice("CHỌN LÝ DO KHÔNG QUAN TÂM",
                             "Nhập lý do khác ",
-                            new ArrayList<>(), new CallbackString() {
+                            "",
+                            true,
+                            new CallbackString() {
                                 @Override
                                 public void Result(String s) {
                                     updateRessonNotInterted(s);
@@ -270,8 +294,8 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
                             });
 
                 }else {
-                    mActivity.customerStatusID = 1;
-                    updateStatus();
+                    mActivity.saveCustomerToLocal("status_id",1);
+                    updateStatus(1);
                 }
 
 
@@ -327,26 +351,30 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
     }
 
     private void noteEvent(){
-        Util.textEvent(edNote, new CallbackString() {
-            @Override
-            public void Result(String s) {
-                mActivity.saveCustomerToLocal("note", getCustomerNote(edNote.getText().toString()));
-            }
-        });
+//        Util.textEvent(edNote, new CallbackString() {
+//            @Override
+//            public void Result(String s) {
+//                mActivity.saveCustomerToLocal("note", getCustomerNote(edNote.getText().toString()));
+//            }
+//        });
     }
 
-    private void setNoteText(String note){
+    private String getNoteText(String note){
         if (!note.isEmpty()){
             try {
                 JSONObject object = new JSONObject(note.trim());
-                edNote.setText(object.getString("note"));
+                return object.getString("note");
+
 
             } catch (JSONException e) {
-                edNote.setText(note);
+                return note;
             }
+        }else {
+            return "";
         }
 
     }
+
 
     private void updateShopName(){
         mActivity.tvTitle.setText(String.format("%s %s",
@@ -356,29 +384,29 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 
     }
 
-    private String getCustomerNote(String text){
-        String result = "";
-        //Double total = Util.getTotal(listBills).getDouble("debt");
-        if (mActivity.currentDebt > 0.0){
-            try{
-                JSONObject object = new JSONObject();
-                //object.put("debt", total);
-                object.put("note", edNote.getText().toString());
-                object.put("userId", mActivity.listBills.get(mActivity.listBills.size()-1).getJsonObject("user").getInt("id"));
-                object.put("userName", mActivity.listBills.get(mActivity.listBills.size()-1).getJsonObject("user").getString("displayName"));
-                result = object.toString();
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        }else {
-            result = text;
-        }
-
-        //return result;
-        return  text;
-    }
+//    private String getCustomerNote(String text){
+//        String result = "";
+//        //Double total = Util.getTotal(listBills).getDouble("debt");
+//        if (mActivity.currentDebt > 0.0){
+//            try{
+//                JSONObject object = new JSONObject();
+//                //object.put("debt", total);
+//                object.put("note", edNote.getText().toString());
+//                object.put("userId", mActivity.listBills.get(mActivity.listBills.size()-1).getJsonObject("user").getInt("id"));
+//                object.put("userName", mActivity.listBills.get(mActivity.listBills.size()-1).getJsonObject("user").getString("displayName"));
+//                result = object.toString();
+//
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//
+//        }else {
+//            result = text;
+//        }
+//
+//        //return result;
+//        return  text;
+//    }
 
 
 
@@ -420,18 +448,17 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
     }
 
     private void updateRessonNotInterted(String content){
-        String note = String.format("CHUYỂN SANG KHÔNG QUAN TÂM VÌ: %s", content);
-        mActivity.customerStatusID = 2;
-
-        CustomerConnect.PostCheckin(createParamCheckin(mActivity.currentCustomer, mActivity.customerStatusID, note), new CallbackCustom() {
+        String note = String.format("Chuyển sang không quan tâm vì: %s", content);
+        CustomerConnect.PostCheckin(createParamCheckin(mActivity.currentCustomer, 2, note), new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
-                mActivity.saveCustomerToLocal("status.id",2);
+                mActivity.saveCustomerToLocal("status_id",2);
+                updateStatus(2);
+                Util.showToast("Đã chuyển sang không quan tâm");
+
                 //mActivity.currentCustomer.put("status.id", mActivity.customerStatusID);
                 //mActivity.submitCustomer();
-                updateStatus();
 
-                Util.showToast("Đã chuyển sang không quan tâm");
 
             }
 
@@ -446,9 +473,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         String params = String.format(Api_link.SCHECKIN_CREATE_PARAM, customer.getInt("id"),
                 statusId,
                 Util.encodeString(note),
-                User.getUserId());
-                //Util.encodeString(String.format("[%s] %s", Util.HourStringNatural(countTime), note)),
-
+                User.getId());
 
         return params;
     }

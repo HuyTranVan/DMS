@@ -180,7 +180,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     @Override
     public void initialData() {
-        checkLocationPermission();
+        //checkLocationPermission();
         Util.hideKeyboard(edSearch);
         Util.mapsActivity = this;
         MapUtil.customers = new ArrayList<>();
@@ -331,7 +331,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     }
 
     private void showListDistrict() {
-        CustomBottomDialog.choiceListObject("Chọn quận / huyện", District.getDistricts(), new CallbackBaseModel() {
+        CustomBottomDialog.choiceListObject("Chọn quận / huyện", District.getDistricts(),"text", new CallbackBaseModel() {
                     @Override
                     public void onResponse(BaseModel object) {
                         tvLocation.setTextColor(getResources().getColor(R.color.colorMain));
@@ -471,7 +471,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         BaseModel currentCustomer = customer;
         JSONArray arrayCheckIns = currentCustomer.getJSONArray("checkIns");
 
-        int customerStatus = currentCustomer.getBaseModel("status").getInt("id");
+        int customerStatus = currentCustomer.getInt("status_id");
         currentCustomer.put("statusID", customerStatus);
 
         if (customer.getInt("checkinCount") ==0 && customerStatus == 1){
@@ -484,21 +484,21 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
         }else if (customerStatus == 1) {
             currentCustomer.put("icon", R.drawable.ico_pin_red);
-            currentCustomer.put("checkincount", customer.getInt("checkinCount"));
+            currentCustomer.put("checkincount", customer.getInt("checkinCount") > 99? "99+" : customer.getInt("checkinCount"));
             currentCustomer.put("statusDetail", "Khách hàng có quan tâm");
             currentCustomer.put("statusColor", getResources().getColor(R.color.orange_dark));
             currentCustomer.put("statusInterested", true);
 
         } else if (customerStatus == 2) {
             currentCustomer.put("icon", R.drawable.ico_pin_grey);
-            currentCustomer.put("checkincount", customer.getInt("checkinCount"));
+            currentCustomer.put("checkincount", customer.getInt("checkinCount") > 99? "99+" : customer.getInt("checkinCount"));
             currentCustomer.put("statusDetail", "Khách hàng không quan tâm");
             currentCustomer.put("statusColor", getResources().getColor(R.color.black_text_color_hint));
             currentCustomer.put("statusInterested", false);
 
         } else {
             currentCustomer.put("icon", R.drawable.ico_pin_blue);
-            currentCustomer.put("checkincount", customer.getInt("checkinCount"));
+            currentCustomer.put("checkincount", customer.getInt("checkinCount") > 99? "99+" : customer.getInt("checkinCount"));
             currentCustomer.put("statusDetail", "Khách đã mua hàng" );
             currentCustomer.put("statusColor", getResources().getColor(R.color.colorBlue));
             currentCustomer.put("statusInterested", true);
@@ -527,9 +527,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                     mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
                 }else {
+                    reUpdateMarkerDetail(cust);
+
+
                     //updateBottomDetail();
 
-                    //reUpdateMarkerDetail(cust);
 
                 }
 
@@ -731,8 +733,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     }
 
-
-
     private void backPress(){
         if (rlSearchLayout.getVisibility() == View.VISIBLE){
             closeSearch();
@@ -927,12 +927,13 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         customer.put("volumeEstimate","10");
 
 //        customer.put("status.id",Status.getStatusList().get(0).getInt("id"));
-        customer.put("status.id",1); // quan tâm
+        customer.put("status_id",1); // quan tâm
         customer.put("address",objectAdress.getString("address"));
         customer.put("street",objectAdress.getString("street"));
         customer.put("district",objectAdress.getString("district"));
         customer.put("province",objectAdress.getString("province"));
         customer.put("currentDebt",0);
+        customer.put("checkinCount",0);
 
         CustomerConnect.CreateCustomer(CustomerConnect.createParamCustomer(customer), new CallbackCustom() {
             @Override
@@ -1045,15 +1046,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
         }
 
-//        if (distance < Constants.CHECKIN_DISTANCE){
-//            tvCheckin.setText("Checkin" );
-//            btnCheckin.setBackground(getResources().getDrawable(R.drawable.btn_round_blue));
-//
-//        }else {
-//            tvCheckin.setText("Xem chi tiết");
-//            btnCheckin.setBackground(getResources().getDrawable(R.drawable.btn_round_grey));
-//        }
-
         btnCall.setVisibility(currentPhone.equals("")?View.GONE : View.VISIBLE);
 
         progressLoadCustomer.setVisibility(View.VISIBLE);
@@ -1062,7 +1054,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             @Override
             public void onResponse(final BaseModel result) {
                 progressLoadCustomer.setVisibility(View.GONE);
-                BaseModel customer = DataUtil.rebuiltCustomer(result);
+                BaseModel customer = DataUtil.rebuiltCustomer(result, false);
                 CustomSQL.setBaseModel(Constants.CUSTOMER, customer);
 
                 List<BaseModel> listbill = DataUtil.array2ListObject(customer.getString(Constants.BILLS));
@@ -1139,14 +1131,14 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         btnDirection.setOnClickListener(null);
     }
 
-    @SuppressLint("WrongConstant")
-    private void checkLocationPermission(){
-        if (PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(Util.getInstance().getCurrentActivity(),
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_PERMISSION_LOCATION);
-            return;
-        }
-    }
+//    @SuppressLint("WrongConstant")
+//    private void checkLocationPermission(){
+//        if (PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && PermissionChecker.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(Util.getInstance().getCurrentActivity(),
+//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_PERMISSION_LOCATION);
+//            return;
+//        }
+//    }
 
 
     @Override

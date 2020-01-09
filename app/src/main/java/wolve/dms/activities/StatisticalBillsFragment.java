@@ -97,7 +97,7 @@ public class StatisticalBillsFragment extends Fragment implements View.OnClickLi
                 CustomerConnect.GetCustomerDetail(s, new CallbackCustom() {
                     @Override
                     public void onResponse(BaseModel result) {
-                        BaseModel customer = DataUtil.rebuiltCustomer(result);
+                        BaseModel customer = DataUtil.rebuiltCustomer(result, false);
                         CustomSQL.setBaseModel(Constants.CUSTOMER, customer);
 
                         Transaction.gotoCustomerActivity();

@@ -138,22 +138,6 @@ public class DataUtil {
             params.put("deliverBy", userid);
             params.put("isReturn", currentBill.getInt("isReturn"));
 
-            //params.put("billDetails", (Object) null);
-
-            //params.put("total", currentBill.getDouble("total"));
-            //params.put("paid", 0.0);
-            //params.put("debt", currentBill.getDouble("total") );
-
-            //params.put("customerId", customerId);
-            //params.put("distributorId", currentBill.getBaseModel("distributor").getInt("id"));
-            //params.put("userId", currentBill.getBaseModel("user").getInt("id"));
-
-
-
-//            params.put("note", createBillNote(currentBill.getString("note"), Constants.TEMPBILL, false));
-//            params.put("note", createBillNote(params.getString("note"), Constants.DELIVER_BY, user));
-
-
         } catch (JSONException e) {
 //            e.printStackTrace();
         }
@@ -161,6 +145,8 @@ public class DataUtil {
         return params.toString();
 
     }
+
+
 
 
     public static String createBillNote(String currentnote, String key, Object value){
@@ -194,16 +180,17 @@ public class DataUtil {
 
     }
 
-    public static List<String> createListPaymentParam(int customerId,List<BaseModel> list, boolean payByReturn){
+    public static List<String> createListPaymentParam(int customerId, List<BaseModel> list, boolean payByReturn){
         List<String> results = new ArrayList<>();
         for (int i=0; i<list.size(); i++){
             String s = String.format(Api_link.PAY_PARAM,
                     customerId,
                     String.valueOf(Math.round(list.get(i).getDouble("paid"))),
                     list.get(i).getInt("billId"),
-                    User.getId(),
+                    list.get(i).getInt("user_id"),
                     String.valueOf(Math.round(list.get(i).getDouble("billTotal"))),
-                    payByReturn?1:0);
+                    payByReturn?1:0,
+                    User.getId());
 
             results.add(s);
 
@@ -212,14 +199,15 @@ public class DataUtil {
         return results;
     }
 
-    public static String createPostPaymentParam(int customerId, double paid, int billId, double billTotal, boolean payByReturn){
+    public static String createPostPaymentParam(int customerId,int user_id, double paid, int billId, double billTotal, boolean payByReturn){
         String s = String.format(Api_link.PAY_PARAM,
                 customerId,
                 String.valueOf(Math.round(paid)),
                 billId,
-                User.getId(),
+                user_id,
                 String.valueOf(Math.round(billTotal)),
-                payByReturn?1:0);
+                payByReturn?1:0,
+                User.getId());
 
 
         return s;
@@ -375,10 +363,10 @@ public class DataUtil {
         return list;
     }
 
-    public static List<BaseModel> remakeBill(List<BaseModel> listbill){
+    public static List<BaseModel> listTempBill(List<BaseModel> list){
         List<BaseModel> listBillByUser = new ArrayList<>();
-        for (BaseModel model: listbill){
-            if (User.getRole().equals(Constants.ROLE_ADMIN)) {
+        for (BaseModel model: list){
+            if (User.getRole().equals(Constants.ROLE_ADMIN) || User.getRole().equals(Constants.ROLE_DELIVER) ) {
                 listBillByUser.add(model);
 
             } else if(User.getId() == model.getInt("user_id")){
@@ -389,9 +377,29 @@ public class DataUtil {
 
         return listBillByUser;
 
+
     }
 
-    public static BaseModel rebuiltCustomer(BaseModel customer){
+    public static List<BaseModel> remakeBill(List<BaseModel> listbill, boolean isDeliver){
+        List<BaseModel> listBillByUser = new ArrayList<>();
+        for (BaseModel model: listbill){
+            if (User.getRole().equals(Constants.ROLE_ADMIN)) {
+                listBillByUser.add(model);
+
+            }else if (User.getRole().equals(Constants.ROLE_DELIVER) && isDeliver){
+                listBillByUser.add(model);
+
+            }else if(User.getId() == model.getInt("user_id")){
+                listBillByUser.add(model);
+            }
+
+        }
+
+        return listBillByUser;
+
+    }
+
+    public static BaseModel rebuiltCustomer(BaseModel customer, boolean isDeliver){
         BaseModel customerResult = new BaseModel();
 
         customerResult.put("id", customer.getInt("id"));
@@ -414,16 +422,17 @@ public class DataUtil {
         customerResult.put("currentDebt", customer.getDouble("currentDebt"));
         customerResult.put("status", customer.getJsonObject("status"));
         customerResult.put("distributor_id", customer.getInt("distributor_id"));
+        customerResult.put("status_id", customer.getInt("status_id"));
 
         List<BaseModel> listOriginalBill= new ArrayList<>(DataUtil.array2ListObject(customer.getString("bills")));
         if (getTempBill(listOriginalBill) != null){
             customerResult.putBaseModel(Constants.TEMPBILL, getTempBill(listOriginalBill));
         }
 
-        List<BaseModel> listBill= new ArrayList<>(remakeBill(listOriginalBill));
+        List<BaseModel> listBill= new ArrayList<>(remakeBill(listOriginalBill, isDeliver));
         customerResult.putList(Constants.BILLS, listBill);
         customerResult.putList(Constants.DEBTS, getAllBillHaveDebt(listBill));
-        customerResult.putList(Constants.PAYMENTS, DataUtil.array2ListObject(customer.getString("payments")) );
+        customerResult.putList(Constants.PAYMENTS, DataUtil.array2ListObject(customer.getString("payments")));
         customerResult.putList(Constants.CHECKINS, DataUtil.array2ListObject(customer.getString("checkins")));
 
         return customerResult;
@@ -888,12 +897,23 @@ public class DataUtil {
 
     }
 
+//    public static BaseModel createDebtParam(){
+////        BaseModel payparam = new BaseModel();
+////        payparam.put("url", Api_link.CUSTOMERS+ String.format(Api_link.DEFAULT_RANGE, 1,500));
+////        payparam.put("method", "POST");
+////        payparam.put("isjson", false );
+////        payparam.put("param", String.format(Api_link.CUSTOMER_DEBT_PARAM, 0) );
+////
+////        return payparam;
+////
+////    }
+
     public static BaseModel createDebtParam(){
         BaseModel payparam = new BaseModel();
-        payparam.put("url", Api_link.CUSTOMERS+ String.format(Api_link.DEFAULT_RANGE, 1,500));
-        payparam.put("method", "POST");
+        payparam.put("url", Api_link.CUSTOMERS_HAVEDEBT);
+        payparam.put("method", "GET");
         payparam.put("isjson", false );
-        payparam.put("param", String.format(Api_link.CUSTOMER_DEBT_PARAM, 0) );
+        payparam.put("param", null );
 
         return payparam;
 
@@ -940,6 +960,17 @@ public class DataUtil {
         paramCheckin.put("param", param );
 
         return paramCheckin;
+
+    }
+
+    public static BaseModel postDebtParam(String param){
+        BaseModel paramDebt = new BaseModel();
+        paramDebt.put("url", Api_link.DEBT_NEW);
+        paramDebt.put("method", "POST");
+        paramDebt.put("isjson", true );
+        paramDebt.put("param", param );
+
+        return paramDebt;
 
     }
 

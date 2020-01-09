@@ -95,7 +95,7 @@
                         android:layout_width="@dimen/_50sdp"
                         android:layout_height="@dimen/_25sdp"
                         android:layout_gravity="center_vertical"
-                        app:sb_checked_color="@color/colorBlue"
+
                         app:sb_uncheckcircle_color="@color/black_text_color"
                         app:sb_checked="false"
                         app:sb_show_indicator="false"
@@ -271,35 +271,37 @@
                 app:textColor="@drawable/text_white_selected"
                 app:textHint="Địa chỉ"
                 app:iconColor="@color/black_text_color_hint"
-                app:isShowBottomLine="true"/>
+                />
 
-            <EditText
-                android:id="@+id/add_customer_note"
+            <wolve.dms.customviews.CInputForm
+                android:id="@+id/customer_info_note"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/_50sdp"
-                android:background="@drawable/bg_white_corner_stroke_grey"
-                android:contextClickable="false"
-                android:gravity="top"
-                android:imeOptions="actionNext"
-                android:padding="@dimen/_5sdp"
-                android:textColor="#3d3d3d"
-                android:textSize="@dimen/_12sdp"
-                android:hint="Nhập ghi chú cửa hàng"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:inputType="textCapSentences|textMultiLine"/>
+                app:background="?selectableItemBackground"
+                app:iconText="@string/icon_comment"
+                app:multiLine="true"
+                app:textColor="@drawable/text_white_selected"
+                app:textHint="Ghi chú quan trọng"
+                app:iconColor="@color/black_text_color_hint"
+                app:isShowBottomLine="false"/>
 
-            <TextView
-                android:id="@+id/customer_info_last_status"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:textColor="@color/black_text_color"
-                android:textStyle="italic"
-                android:textSize="@dimen/_12sdp"
-                android:paddingTop="@dimen/_5sdp"
-                android:paddingLeft="@dimen/_5sdp"
-                android:paddingRight="@dimen/_5sdp"/>
+<!--            <EditText-->
+<!--                android:id="@+id/add_customer_note"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:minHeight="@dimen/_50sdp"-->
+<!--                android:background="@drawable/bg_white_corner_stroke_grey"-->
+<!--                android:contextClickable="false"-->
+<!--                android:gravity="top"-->
+<!--                android:imeOptions="actionNext"-->
+<!--                android:padding="@dimen/_5sdp"-->
+<!--                android:textColor="#3d3d3d"-->
+<!--                android:textSize="@dimen/_12sdp"-->
+<!--                android:hint="Nhập ghi chú cửa hàng"-->
+<!--                android:layout_marginTop="@dimen/_5sdp"-->
+<!--                android:inputType="textCapSentences|textMultiLine"/>-->
+
+
 
             <LinearLayout
                 android:id="@+id/customer_history"
@@ -329,6 +331,18 @@
                     android:layout_marginTop="@dimen/_1sdp"/>
 
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/customer_info_last_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:textColor="@color/black_text_color"
+                android:textStyle="italic"
+                android:textSize="@dimen/_12sdp"
+                android:paddingTop="@dimen/_5sdp"
+                android:paddingLeft="@dimen/_5sdp"
+                android:paddingRight="@dimen/_5sdp"/>
 
 
         </LinearLayout>

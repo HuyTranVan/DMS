@@ -327,6 +327,7 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
 
 
                 payments.add(DataUtil.createPostPaymentParam(mActivity.currentCustomer.getInt("id"),
+                        currentBill.getInt("user_id"),
                         mActivity.currentDebt - sumreturn ,
                         currentBill.getInt("id"),
                         currentBill.getDouble("total"), false));
@@ -504,21 +505,21 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
     }
 
 
-    private void postPayment(int customerId, int billid, double paid,double billTotal, CallbackBoolean listener, boolean stoploadding){
-        CustomerConnect.PostPay(DataUtil.createPostPaymentParam(customerId, paid, billid, billTotal, false), new CallbackCustom() {
-            @Override
-            public void onResponse(BaseModel result) {
-                listener.onRespone(true);
-            }
-
-            @Override
-            public void onError(String error) {
-                listener.onRespone(false);
-            }
-
-        }, stoploadding);
-
-    }
+//    private void postPayment(int customerId, int billid, double paid,double billTotal, CallbackBoolean listener, boolean stoploadding){
+//        CustomerConnect.PostPay(DataUtil.createPostPaymentParam(customerId, paid, billid, billTotal, false), new CallbackCustom() {
+//            @Override
+//            public void onResponse(BaseModel result) {
+//                listener.onRespone(true);
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                listener.onRespone(false);
+//            }
+//
+//        }, stoploadding);
+//
+//    }
 
     private void postListPayment(List<String> listParam, CallbackListCustom listener){
         CustomerConnect.PostListPay(listParam, new CallbackListCustom() {

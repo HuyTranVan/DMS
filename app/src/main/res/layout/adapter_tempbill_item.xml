@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/tempbill_item_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/_5sdp">
+
+        <View
+            android:id="@+id/tempbill_item_upper"
+            android:layout_width="1dip"
+            android:layout_height="match_parent"
+            android:background="#e5e5e5"
+            android:layout_above="@+id/tempbill_item_number"
+            android:layout_centerHorizontal="true"/>
+
+        <TextView
+            android:id="@+id/tempbill_item_number"
+            android:layout_width="@dimen/_16sdp"
+            android:layout_height="@dimen/_16sdp"
+            android:background="@drawable/bg_greendark_rounded_button"
+            android:textColor="@color/colorWhite"
+            android:text="0"
+            android:textSize="@dimen/_8sdp"
+            android:gravity="center"
+            android:layout_centerVertical="true"/>
+
+        <View
+            android:id="@+id/tempbill_item_under"
+            android:layout_width="1dip"
+            android:layout_height="match_parent"
+            android:background="#e5e5e5"
+            android:layout_below="@+id/tempbill_item_number"
+            android:layout_centerHorizontal="true"/>
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/statistical_bills_item_line"
+        android:layout_width="@dimen/_10sdp"
+        android:layout_height="1dp"
+        android:layout_centerVertical="true"
+        android:background="#e5e5e5"
+        android:layout_gravity="center_vertical"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/colorwhite_bordergrey_corner"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_lightgrey_top_2corner"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tempbill_item_shopname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_weight="0.5"
+                    android:singleLine="true"
+                    android:text="a"
+                    android:textColor="@color/black_text_color"
+                    android:layout_marginLeft="@dimen/_5sdp"/>
+
+                <TextView
+                    android:id="@+id/tempbill_item_employee"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:gravity="center_vertical|right"
+                    android:paddingRight="@dimen/_5sdp"
+                    android:text="nhan vien"
+                    android:textColor="@color/black_text_color_hint"
+                    android:textSize="@dimen/_8sdp"
+                    android:textStyle="italic" />
+
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tempbill_item_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="a"
+                android:textSize="@dimen/_8sdp"
+                android:textColor="@color/black_text_color_hint"
+                android:layout_marginLeft="@dimen/_5sdp"/>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tempbill_item_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/_10sdp"
+                android:layout_weight="0.2"
+                android:padding="@dimen/_5sdp"/>
+
+            <TextView
+                android:id="@+id/tempbill_item_total"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.8"
+                android:gravity="right|center_vertical"
+                android:paddingRight="@dimen/_5sdp"/>
+
+        </LinearLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_centerVertical="true"
+            android:background="#e5e5e5" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/_2sdp"
+            android:paddingBottom="@dimen/_2sdp"
+            android:weightSum="2">
+
+            <LinearLayout
+                android:id="@+id/tempbill_item_direction"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="@dimen/_20sdp"
+                android:orientation="horizontal"
+                android:background="?selectableItemBackground"
+                android:gravity="center">
+
+                <wolve.dms.customviews.CTextIcon
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:paddingLeft="@dimen/_10sdp"
+                    android:text="@string/icon_direction"
+                    android:textColor="@color/colorBlue"
+                    android:textSize="@dimen/_10sdp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Chỉ đường"
+                    android:textColor="@color/colorBlue"
+                    android:gravity="center"
+                    android:textSize="@dimen/_10sdp"
+                    android:paddingLeft="@dimen/_5sdp"
+                    android:paddingRight="@dimen/_10sdp"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/tempbill_item_deliver"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="@dimen/_20sdp"
+                android:orientation="horizontal"
+                android:background="?selectableItemBackground"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:gravity="center">
+
+                <wolve.dms.customviews.CTextIcon
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:paddingLeft="@dimen/_10sdp"
+                    android:text="@string/icon_cart"
+                    android:textColor="@color/colorRed"
+                    android:textSize="@dimen/_10sdp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Giao hàng"
+                    android:textColor="@color/colorRed"
+                    android:gravity="center"
+                    android:textSize="@dimen/_10sdp"
+                    android:paddingLeft="@dimen/_5sdp"
+                    android:paddingRight="@dimen/_10sdp"
+                    />
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

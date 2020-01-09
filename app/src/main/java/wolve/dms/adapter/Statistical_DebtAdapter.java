@@ -46,12 +46,12 @@ public class Statistical_DebtAdapter extends RecyclerView.Adapter<Statistical_De
         }else {
             mData = new ArrayList<>();
             for (BaseModel row : data){
-                if (row.getString("userName").equals(user)){
+                if (row.getBaseModel("user").getString("displayName").equals(user)){
                     mData.add(row);
                 }
             }
         }
-        DataUtil.sortbyDoubleKey("currentDebt", mData, true);
+        DataUtil.sortbyDoubleKey("debt", mData, true);
 
     }
 
@@ -71,10 +71,9 @@ public class Statistical_DebtAdapter extends RecyclerView.Adapter<Statistical_De
         holder.tvNumber.setText(mData.size() >0? String.valueOf(mData.size() -position) : "");
         holder.tvsignBoard.setText(Constants.getShopName(mData.get(position).getString("shopType") ) + " " + mData.get(position).getString("signBoard"));
         holder.tvDistrict.setText(mData.get(position).getString("street") + " - " + mData.get(position).getString("district"));
-        String user = String.format("Nhân viên: %s",mData.get(position).getString("userName"));
-        holder.tvUser.setText(user);
+        holder.tvUser.setText(String.format("Nhân viên: %s",mData.get(position).getBaseModel("user").getString("displayName")));
 
-        holder.tvDebt.setText(Util.FormatMoney(mData.get(position).getDouble("currentDebt")));
+        holder.tvDebt.setText(Util.FormatMoney(mData.get(position).getDouble("debt")));
 
         holder.vLine.setVisibility(position == mData.size()-1? View.GONE:View.VISIBLE);
 
@@ -154,7 +153,7 @@ public class Statistical_DebtAdapter extends RecyclerView.Adapter<Statistical_De
     public double sumDebts(){
         double totalDebt = 0.0;
         for (BaseModel row : mData){
-            totalDebt += row.getDouble("currentDebt");
+            totalDebt += row.getDouble("debt");
         }
         return totalDebt;
     }

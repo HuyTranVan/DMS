@@ -7,14 +7,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.PermissionChecker;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
@@ -62,11 +65,15 @@ import static wolve.dms.utils.Constants.REQUEST_PERMISSION_LOCATION;
 public class HomeActivity extends BaseActivity implements View.OnClickListener, CallbackClickAdapter{
     private RecyclerView rvItems;
     private CTextIcon btnLogout, btnChangeUser;
-    private TextView tvFullname , tvCash, tvProfit, tvMonth, tvHaveNewProduct;
+    private TextView tvFullname , tvCash, tvProfit, tvMonth, tvHaveNewProduct, tvNumberTemp;
     private LinearLayout lnUser;
+    private RelativeLayout lnTempGroup;
     private View line;
 
     private List<BaseModel> listPayment = new ArrayList<>();
+    protected List<BaseModel> listTempBill = new ArrayList<>();
+    private boolean doubleBackToExitPressedOnce = false;
+    private Fragment mFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,13 +102,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         tvProfit = findViewById(R.id.home_profit);
         tvMonth = findViewById(R.id.home_month);
         tvHaveNewProduct = findViewById(R.id.home_new_product);
+        lnTempGroup = findViewById(R.id.home_tempbill_group);
+        tvNumberTemp = findViewById(R.id.home_tempbill_number);
 
     }
 
     @Override
     public void initialData() {
         checkPermission();
-
 
         tvFullname.setText(String.format("%s _ %s (%s)",User.getFullName(), User.getRole(), Distributor.getName()));
         btnChangeUser.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN) ? View.VISIBLE : View.GONE);
@@ -117,10 +125,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
         if (CustomSQL.getBoolean(Constants.LOGIN_SUCCESS)){
             loadCurrentData();
-            CustomSQL.setBoolean(Constants.LOGIN_SUCCESS, true);
-        }else {
-            checkNewProductUpdated();
+            CustomSQL.setBoolean(Constants.LOGIN_SUCCESS, false);
         }
+        checkNewProductUpdated();
         tvMonth.setText(String.format("***Tháng %s:", Util.CurrentMonthYear()));
 
     }
@@ -160,6 +167,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         btnChangeUser.setOnClickListener(this);
         lnUser.setOnClickListener(this);
         tvHaveNewProduct.setOnClickListener(this);
+        lnTempGroup.setOnClickListener(this);
     }
 
     @Override
@@ -190,6 +198,39 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             case R.id.home_new_product:
                 loadCurrentData();
                 break;
+
+            case R.id.home_tempbill_group:
+                changeFragment(new TempBillFragment() , true);
+                break;
+
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        mFragment = getSupportFragmentManager().findFragmentById(R.id.home_parent);
+
+        if(Util.getInstance().isLoading()){
+            Util.getInstance().stopLoading(true);
+
+        }else if(mFragment != null && mFragment instanceof TempBillFragment) {
+            getSupportFragmentManager().popBackStack();
+
+        }else {
+            if (doubleBackToExitPressedOnce) {
+                finish();
+            }
+
+            this.doubleBackToExitPressedOnce = true;
+            Util.showToast("Ấn Back để thoát khỏi ứng dụng");
+
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    doubleBackToExitPressedOnce = false;
+                }
+            }, 1500);
 
         }
     }
@@ -239,7 +280,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         newobject.put("displayName","");
         listUser.add(0, newobject);
 
-        CustomBottomDialog.choiceListObject("ĐỔI SANG TÀI KHOẢN", listUser, new CallbackBaseModel() {
+        CustomBottomDialog.choiceListObject("ĐỔI SANG TÀI KHOẢN", listUser,"text", new CallbackBaseModel() {
             @Override
             public void onResponse(BaseModel object) {
                 showReloginDialog(object);
@@ -315,8 +356,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
             case 2:
                 Util.showToast("Chưa hỗ trợ");
-                //CustomCenterDialog.showDialogSignature();
-
 
                 break;
 
@@ -412,12 +451,20 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        checkNewProductUpdated();
+
+        if(mFragment != null && mFragment instanceof TempBillFragment){
+            ((TempBillFragment) mFragment).reloadData();
+        }
+
+
     }
 
     private void checkNewProductUpdated(){
         SystemConnect.getLastestProductUpdated(new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
+                listTempBill = DataUtil.listTempBill(DataUtil.array2ListObject(result.getString("tempBills")));
                 if (result.getLong("lastProductUpdate") > CustomSQL.getLong(Constants.LAST_PRODUCT_UPDATE)){
                     tvHaveNewProduct.setVisibility(View.VISIBLE);
 
@@ -436,6 +483,16 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 }else {
                     tvHaveNewProduct.setVisibility(View.GONE);
                 }
+
+                if (listTempBill.size() >0){
+                    lnTempGroup.setVisibility(View.VISIBLE);
+                    tvNumberTemp.setText(String.valueOf(listTempBill.size()));
+                }else {
+                    lnTempGroup.setVisibility(View.GONE);
+                }
+
+
+
             }
 
             @Override
@@ -484,7 +541,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
         }else {
             createListItem();
-
         }
 
     }

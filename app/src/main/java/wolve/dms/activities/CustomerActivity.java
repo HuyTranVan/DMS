@@ -40,6 +40,7 @@ import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Customer;
+import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
@@ -70,7 +71,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     private RelativeLayout rlStatusGroup;
 
     protected BaseModel currentCustomer;
-    protected int customerStatusID;
+    //protected int customerStatusID;
     protected List<BaseModel> listCheckins = new ArrayList<>();
     protected List<BaseModel> listBills = new ArrayList<>();
     protected List<BaseModel> listBillDetail = new ArrayList<>();
@@ -93,7 +94,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FitScrollWithFullscreen.assistActivity(this, 1);
-
     }
 
     Thread threadShowTime = new Thread() {
@@ -148,7 +148,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         smLoading = findViewById(R.id.customer_loading);
         tvAddress = findViewById(R.id.customer_address);
 
-
     }
 
     @Override
@@ -166,13 +165,11 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         CustomSQL.removeKey(Constants.CURRENT_DISTANCE);
 
         tvTrash.setVisibility(User.getRole().equals("MANAGER") ? View.VISIBLE : View.GONE);
-        currentCustomer = CustomSQL.getBaseModel(Constants.CUSTOMER);
-        customerStatusID = currentCustomer.getBaseModel("status").getInt("id");
 
         setupViewPager(viewPager);
         setupTabLayout(tabLayout);
 
-        updateView(currentCustomer, customerStatusID);
+        updateView(CustomSQL.getBaseModel(Constants.CUSTOMER));
         checkLocation(new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
@@ -185,27 +182,25 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     }
 
-    private void updateView(BaseModel customer, int status){
-        tvTitle.setText(String.format("%s %s", Constants.getShopName(customer.getString("shopType")), customer.getString("signBoard")));
-
-        customerStatusID = status;
+    private void updateView(BaseModel customer){
+        currentCustomer = customer;
+        //customerStatusID = currentCustomer.getBaseModel("status").getInt("id");
+        tvTitle.setText(String.format("%s %s", Constants.getShopName(currentCustomer.getString("shopType")), currentCustomer.getString("signBoard")));
 
         if (currentCustomer.hasKey(Constants.TEMPBILL) ){
             tempBill = currentCustomer.getBaseModel(Constants.TEMPBILL);
             viewPager.setCurrentItem(1, true);
 
+        }else {
+            tempBill = null;
         }
 
-//        if (customer.hasKey(Constants.TEMPBILL) && CustomSQL.getLong(Constants.CHECKIN_TIME) != 0){
-//            tempBill = customer.getBaseModel(Constants.TEMPBILL);
-//            dialogTempBill(tempBill);
-//
-//        }
-
-        listDebtBill = new ArrayList<>(DataUtil.array2ListObject(customer.getString(Constants.DEBTS)));
-        listBills = new ArrayList<>(DataUtil.array2ListObject(customer.getString(Constants.BILLS)));
+        listDebtBill = new ArrayList<>(DataUtil.array2ListObject(currentCustomer.getString(Constants.DEBTS)));
+        listBills = new ArrayList<>(DataUtil.array2ListObject(currentCustomer.getString(Constants.BILLS)));
         listBillDetail = new ArrayList<>(DataUtil.getAllBillDetail(listBills));
-        listCheckins = new ArrayList<>(DataUtil.array2ListBaseModel(customer.getJSONArray(Constants.CHECKINS)));
+        listCheckins = new ArrayList<>(DataUtil.array2ListBaseModel(currentCustomer.getJSONArray(Constants.CHECKINS)));
+
+        updateBillTabNotify(tempBill != null?true : false , listBills.size());
 
         if (listBills.size() >0){
             BaseModel object = Util.getTotal(listBills);
@@ -215,30 +210,23 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
             tvPaid.setText(String.format("Trả: %s" ,Util.FormatMoney(object.getDouble("paid"))));
             tvBDF.setText(String.format("BDF:%s ", DataUtil.defineBDFPercent(listBillDetail)) +"%");
 
-        }else{
-            currentDebt = 0.0;
-            if (customerStatusID ==3){
-                saveCustomerToLocal("status.id", 1);
-                updateView(customer, 1);
-            }
         }
+
+//        else{
+//            currentDebt = 0.0;
+//            if (customerStatusID ==3){
+//                saveCustomerToLocal("status.id", 1);
+//                updateView(currentCustomer);
+//            }
+//        }
 
         billsFragment.updateList();
         infoFragment.reloadInfo();
         productFragment.updateList();
         paymentFragment.updateList();
 
-        updateBillTabNotify(tempBill != null?true : false , listBills.size());
-        editStatusCustomerWithOldData(customer, status);
 
-    }
 
-    private void editStatusCustomerWithOldData(BaseModel customer, int status){
-        if (!currentDebt.equals(customer.getDouble("currentDebt")) || status != customer.getBaseModel("status").getInt("id") ){
-            saveCustomerToLocal("currentDebt", currentDebt);
-            saveCustomerToLocal("status.id", status);
-            submitCustomer();
-        }
     }
 
     public void setupViewPager(ViewPager viewPager) {
@@ -318,8 +306,13 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 break;
 
             case R.id.customer_shopcart:
-                CustomSQL.setListBaseModel(Constants.BILL_DETAIL, listBillDetail);
-                openShopCartScreen();
+                if (tempBill != null){
+                    Util.showSnackbar("Có 1 đơn hàng chưa hoàn thành nên không thể tạo hóa đơn mới", null, null);
+
+                }else {
+                    CustomSQL.setListBaseModel(Constants.BILL_DETAIL, listBillDetail);
+                    openShopCartScreen();
+                }
 
                 break;
 
@@ -330,15 +323,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
                 break;
 
-//            case R.id.customer_newbill_text:
-//                printTempBill(tempBill);
-//
-//                break;
-
-//            case R.id.customer_newbill_delete:
-//                deleteTempBill(tempBill);
-//
-//                break;
 
         }
     }
@@ -353,7 +337,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     }
 
     protected void openShopCartScreen(){
-        Transaction.gotoShopCartActivity(DataUtil.convertListObject2Array(DataUtil.getAllBillHaveDebt(listBills)).toString());
+        Transaction.gotoShopCartActivity(DataUtil.convertListObject2Array(listDebtBill).toString());
 
     }
 
@@ -374,21 +358,21 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     }
 
-    private void submitCheckin(final BaseModel customer, String checkinNote){
-        CustomerConnect.PostCheckin(createParamCheckin(customer, checkinNote), new CallbackCustom() {
-
-            @Override
-            public void onResponse(BaseModel result) {
-                returnPreviousScreen(customer.BaseModelstoString());
-            }
-
-            @Override
-            public void onError(String error) {
-
-            }
-        }, true);
-
-    }
+//    private void submitCheckin(final BaseModel customer, String checkinNote){
+//        CustomerConnect.PostCheckin(createParamCheckin(customer, checkinNote), new CallbackCustom() {
+//
+//            @Override
+//            public void onResponse(BaseModel result) {
+//                returnPreviousScreen(customer.BaseModelstoString());
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        }, true);
+//
+//    }
 
     private void deleteCustomer(){
         CustomCenterDialog.alertWithCancelButton(null, String.format("Xóa khách hàng %s", tvTitle.getText().toString()) , "ĐỒNG Ý","HỦY", new CallbackBoolean() {
@@ -492,7 +476,9 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     protected void submitCustomer(){
         smLoading.setVisibility(View.VISIBLE);
-        String param = CustomerConnect.createParamCustomer(CustomSQL.getBaseModel(Constants.CUSTOMER));
+        BaseModel customer = CustomSQL.getBaseModel(Constants.CUSTOMER);
+        customer.put("checkinCount", listCheckins.size());
+        String param = CustomerConnect.createParamCustomer(customer);
 
         CustomerConnect.CreateCustomer(param , new CallbackCustom() {
             @Override
@@ -519,14 +505,14 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     }
 
-    private String createParamCheckin(BaseModel customer, String note){
-        String params = String.format(Api_link.SCHECKIN_CREATE_PARAM, customer.getInt("id"),
-                customerStatusID,
-                Util.encodeString(String.format("[%s] %s", Util.HourStringNatural(countTime), note)),
-                User.getUserId()
-        );
-        return params;
-    }
+//    private String createParamCheckin(BaseModel customer, String note){
+//        String params = String.format(Api_link.SCHECKIN_CREATE_PARAM, customer.getInt("id"),
+//                customerStatusID,
+//                Util.encodeString(String.format("[%s] %s", Util.HourStringNatural(countTime), note)),
+//                User.getUserId()
+//        );
+//        return params;
+//    }
 
     protected void openReturnFragment(BaseModel bill){
         currentBill = bill;
@@ -543,9 +529,12 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         CustomerConnect.GetCustomerDetail(id, new CallbackCustom() {
             @Override
             public void onResponse(final BaseModel result) {
-                BaseModel customer = DataUtil.rebuiltCustomer(result);
+                BaseModel customer = DataUtil.rebuiltCustomer(result, false);
                 CustomSQL.setBaseModel(Constants.CUSTOMER, customer);
-                updateView(customer, statusID);
+                updateView(customer);
+
+                updateCustomerDebt(customer);
+
 
             }
 
@@ -553,7 +542,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
             public void onError(String error) {
                 Util.showSnackbarError(error);
             }
-        }, true,true);
+        }, true,false);
 
     }
 
@@ -581,7 +570,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         CustomerConnect.PostListPay(listParam, new CallbackListCustom() {
             @Override
             public void onResponse(List result) {
-                Util.showToast("Thanh toán thành công");
+                //Util.showToast("Thanh toán thành công");
                 reloadCustomer(currentCustomer.getString("id"), 3);
 
             }
@@ -617,10 +606,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
                     }
                 }
-
         );
-
-
     }
 
     protected void printTempBill(BaseModel bill){
@@ -649,6 +635,66 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
             }
         });
+    }
+
+    private void updateCustomerDebt(BaseModel customer){
+        List<BaseModel> results = new ArrayList<>();
+        List<String> params = new ArrayList<>();
+
+        if (listDebtBill.size() >0){
+            for (int i=0; i<listDebtBill.size(); i++){
+                BaseModel item = new BaseModel();
+                item.put("user_id", listDebtBill.get(i).getInt("user_id"));
+                item.put("customer_id", listDebtBill.get(i).getInt("customer_id"));
+                item.put("distributor_id", listDebtBill.get(i).getInt("distributor_id"));
+                item.put("debt", listDebtBill.get(i).getDouble("debt"));
+
+                boolean check = false;
+                for (int ii=0; ii< results.size(); ii++){
+                    if (listDebtBill.get(i).getInt("user_id") == results.get(ii).getInt("user_id")){
+                        results.get(ii).put("debt", results.get(ii).getDouble("debt") + listDebtBill.get(i).getDouble("debt") );
+
+                        check = true;
+                        break;
+                    }
+                }
+
+                if (!check){
+                    results.add(item);
+                }
+
+            }
+
+            for (int a=0; a<results.size(); a++){
+                params.add(String.format(Api_link.DEBT_PARAM,
+                            results.get(a).getDouble("debt"),
+                            results.get(a).getInt("user_id"),
+                            results.get(a).getInt("customer_id"),
+                            results.get(a).getInt("distributor_id")));
+
+            }
+
+        }else if (listBills.size() >0){
+            params.add(String.format(Api_link.DEBT_PARAM,
+                    0.0,
+                    listBills.get(listBills.size() -1).getInt("user_id"),
+                    customer.getInt("id"),
+                    Distributor.getId()));
+        }
+
+        CustomerConnect.PostListDebt(params, new CallbackListCustom() {
+            @Override
+            public void onResponse(List result) {
+                Util.showSnackbarError("Cập nhật công nợ thành công");
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.showSnackbarError("Cập nhật công nợ thất bại");
+
+            }
+        }, true);
+
     }
 
 

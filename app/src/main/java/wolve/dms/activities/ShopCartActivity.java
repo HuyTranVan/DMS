@@ -98,7 +98,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         rlCover.setVisibility(View.VISIBLE);
         tvTitle.setText(String.format("%s %s",Constants.getShopName(currentCustomer.getString("shopType") ), currentCustomer.getString("signBoard").toUpperCase() ));
 
-        btnSubmit.setText(CustomSQL.getLong(Constants.CHECKIN_TIME) != 0 ? "in và thanh toán" : "lưu hóa đơn");
+        btnSubmit.setText(CustomSQL.getLong(Constants.CURRENT_DISTANCE) < Constants.CHECKIN_DISTANCE ? "in và thanh toán" : "lưu hóa đơn");
 
         tvAddress.setText(String.format(Constants.addressFormat,
                 currentCustomer.getString("address"),
@@ -106,12 +106,6 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 currentCustomer.getString("district"),
                 currentCustomer.getString("province")));
 
-//        if (!CustomSQL.getString("logo").equals("")){
-//            Glide.with(this).load(CustomSQL.getString("logo")).centerCrop().into(imgLogo);
-//
-//        }else {
-//            new DownloadImage(this, imgLogo, Api_link.LOGO_BILL).execute();
-//        }
         tvBDF.setVisibility(listInitialProduct.size() ==0? View.GONE :View.VISIBLE);
         loadListProduct();
         loadListProductGroup();
@@ -155,12 +149,11 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         switch (v.getId()){
             case R.id.icon_back:
                 onBackPressed();
-//                Transaction.returnCustomerActivity(currentCustomer);
 
                 break;
 
             case R.id.cart_submit:
-                if (CustomSQL.getLong(Constants.CHECKIN_TIME) != 0){
+                if (CustomSQL.getLong(Constants.CURRENT_DISTANCE) < Constants.CHECKIN_DISTANCE ){
                     gotoPrintBill();
 
                 }else {
@@ -168,12 +161,6 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 }
 
                 break;
-
-//            case R.id.cart_logo:
-//                imageChangeUri = Uri.fromFile(Util.getOutputMediaFile());
-//                gotoImageChooser();
-//                break;
-
 
             case R.id.add_product:
                 changeFragment(new ChoiceProductFragment() , true);
@@ -229,7 +216,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
             product.put("purchasePrice", list_product.get(i).getDouble("purchasePrice"));
             product.put("volume", list_product.get(i).getInt("volume"));
             product.put("image", list_product.get(i).getString("image"));
-            product.put("imageUrl", list_product.get(i).getString("imageUrl"));
+            //product.put("imageUrl", list_product.get(i).getString("imageUrl"));
             product.put("checked", list_product.get(i).getBoolean("checked"));
             product.put("isPromotion", false);
             product.put("quantity", 1);
@@ -305,18 +292,6 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         }, true);
 
 
-    }
-
-    private String createNoteTemp(){
-        JSONObject noteObject = new JSONObject();
-        try {
-            noteObject.put(Constants.TEMPBILL, true);
-
-        } catch (JSONException e) {
-            return "";
-        }
-
-        return Security.encrypt(noteObject.toString());
     }
 
     private void gotoPrintBill(){

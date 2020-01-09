@@ -83,12 +83,11 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     private PrintOldBillAdapter adapterOldBill;
     private DebtAdapter adapterDebt;
     private List<BaseModel> listDebts = new ArrayList<>();
-    private Uri imageChangeUri ;
+    private boolean rePrint; ;
     private Dialog dialogPayment;
-    private Boolean rePrint;
-    private Fragment mFragment;
-    private BluetoothListFragment bluFragment = null ;
+    private String orderPhone;
 
+    private BluetoothListFragment bluFragment = null ;
     protected BluetoothAdapter mBluetoothAdapter = null;
     protected BluetoothSocket btsocket;
     protected OutputStream outputStream;
@@ -162,9 +161,9 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         currentBill = new BaseModel(getIntent().getExtras().getString(Constants.BILL));
         listDebts = new ArrayList<>(DataUtil.array2ListObject(currentCustomer.getString(Constants.DEBTS)));
 
-
-        rePrint = getIntent().getExtras().getBoolean(Constants.RE_PRINT);
+        rePrint= getIntent().getExtras().getBoolean(Constants.RE_PRINT);
         if (rePrint){
+            orderPhone = User.getPhone();
             tvTitle.setText("CÔNG NỢ ");
             line1.setVisibility(View.GONE);
             line2.setVisibility(View.GONE);
@@ -182,6 +181,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
             tvTotal.setText(Util.FormatMoney(adapterOldBill.getDebtMoney()));
 
         }else {
+            orderPhone = currentBill.getBaseModel("user").getString("phone");
             tvTitle.setText("HÓA ĐƠN");
             line1.setVisibility(View.VISIBLE);
             line2.setVisibility(View.VISIBLE);
@@ -207,10 +207,6 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
         }
 
-//        tvCompany.setText(Constants.COMPANY_NAME);
-//        tvAdress.setText(Constants.COMPANY_ADDRESS);
-//        tvHotline.setText(Constants.COMPANY_HOTLINE);
-//        tvWebsite.setText(Constants.COMPANY_WEBSITE);
         BaseModel distributor = Distributor.getObject();
         tvCompany.setText(distributor.getString("company"));
         tvAdress.setText(distributor.getString("address"));
@@ -221,13 +217,15 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
         }
 
-//        else {
-//            Glide.with(this).load( R.drawable.lub_logo_red).centerCrop().into(imgLogo);
-//
-//        }
 
+        tvOrderPhone.setText(String.format("Đặt hàng: %s", Util.FormatPhone(orderPhone)));
+        try {
+            QRGEncoder qrgEncoder = new QRGEncoder(orderPhone, null, QRGContents.Type.PHONE, Util.convertDp2PxInt(100));
+            imgOrderPhone.setImageBitmap(qrgEncoder.encodeAsBitmap());
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
 
-        tvOrderPhone.setText(String.format("Đặt hàng: %s", Util.FormatPhone(User.getPhone())));
         tvThanks.setText(distributor.getString("thanks"));
         tvShopName.setText(String.format(": %s %s",Constants.getShopName(currentCustomer.getString("shopType")).toUpperCase() , currentCustomer.getString("signBoard").toUpperCase()));
 
@@ -239,8 +237,9 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
 
 
-        if (!Util.getDeviceName().equals(Constants.currentEmulatorDevice)){
+        if (!Util.getDeviceName().equals(Constants.currentEmulatorDevice2)){
             registerBluetooth();
+            
         }
 
         if (CustomSQL.getString(Constants.PRINTER_SIZE).equals("") || CustomSQL.getString(Constants.PRINTER_SIZE).equals(Constants.PRINTER_57)){
@@ -249,12 +248,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
             tvPrintSize.setText(Constants.PRINTER_80);
         }
 
-        try {
-            QRGEncoder qrgEncoder = new QRGEncoder(User.getPhone(), null, QRGContents.Type.PHONE, Util.convertDp2PxInt(100));
-            imgOrderPhone.setImageBitmap(qrgEncoder.encodeAsBitmap());
-        } catch (WriterException e) {
-            e.printStackTrace();
-        }
+
 
 
     }
@@ -304,8 +298,8 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
                 break;
 
             case R.id.print_bill_logo:
-                imageChangeUri = Uri.fromFile(Util.getOutputMediaFile());
-                gotoImageChooser();
+//                imageChangeUri = Uri.fromFile(Util.getOutputMediaFile());
+//                gotoImageChooser();
                 break;
         }
     }
@@ -337,6 +331,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         BaseModel currentdebt = new BaseModel();
         currentdebt.put("id", 0);
         currentdebt.put("debt", currentBill.getDouble("total"));
+        currentdebt.put("user_id", currentBill.getBaseModel("user").getInt("id"));
 
         list.add(0, currentdebt);
 

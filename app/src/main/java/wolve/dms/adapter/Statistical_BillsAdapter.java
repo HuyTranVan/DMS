@@ -128,18 +128,6 @@ public class Statistical_BillsAdapter extends RecyclerView.Adapter<Statistical_B
                 holder.tvIsTempBill.setVisibility(View.GONE);
             }
 
-//            if (mData.get(position).getString("payments")!= null){
-//                JSONArray arrayBillPayment = new JSONArray(mData.get(position).getString("payments"));
-//                final List<JSONObject> listPayment = new ArrayList<>();
-//                for (int j=0; j<arrayBillPayment.length(); j++){
-//                    JSONObject object = arrayBillPayment.getJSONObject(j);
-//                    listPayment.add(object);
-//                }
-//
-//                PaymentAdapter paymentAdapter = new PaymentAdapter(listPayment);
-//                Util.createLinearRV(holder.rvPayment, paymentAdapter);
-//            }
-
             if (mData.size()==1){
                 holder.vLineUpper.setVisibility(View.GONE);
                 holder.vLineUnder.setVisibility(View.GONE);

@@ -5,6 +5,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.utils.DataUtil;
@@ -76,6 +77,15 @@ public class BaseModel implements Serializable {
             jsonObject.put(key, DataUtil.convertListObject2Array(list));
         } catch (JSONException e) {
             Util.showToast(e.toString());
+        }
+
+    }
+
+    public List<BaseModel> getList(String key){
+        try {
+            return DataUtil.array2ListObject(jsonObject.getString(key));
+        } catch (JSONException e) {
+            return new ArrayList<>();
         }
 
     }

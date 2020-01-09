@@ -31,6 +31,7 @@ import wolve.dms.apiconnect.SystemConnect;
 import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 
+import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomListList;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CTextIcon;
@@ -210,10 +211,10 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                 break;
 
             case R.id.statistical_filter_by_employee:
-                CustomBottomDialog.choiceListObject("Chọn nhân viên", listUser, new CallbackBaseModel() {
+                CustomBottomDialog.choiceListObject("Chọn nhân viên", listUser, "displayName", new CallbackBaseModel() {
                     @Override
-                    public void onResponse(BaseModel object) {
-                        tvEmployeeName.setText(object.getString("text"));
+                    public void onResponse(BaseModel object){
+                        tvEmployeeName.setText(object.getString("displayName"));
                         updateAllFragmentData();
 
                     }
@@ -224,15 +225,6 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                     }
                 });
 
-//                new CustomBottomDialog.StringListener() {
-//                    @Override
-//                    public void onResponse(String content) {
-//                        tvEmployeeName.setText(content);
-//                        updateAllFragmentData();
-//
-//                    }
-//                });
-
                 break;
 
             case R.id.statistical_export:
@@ -241,7 +233,6 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
             case R.id.statistical_reload:
                 loadInitialData(getStartDay(), getEndDay(), false);
-//                changeFragment(new ChoiceProductFragment() , true);
                 break;
         }
     }
@@ -437,21 +428,45 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         //1. LoadBill
         //2. LoadPayment
         //3. LoadDebt
-        SystemConnect.loadListObject(createLoadParam(starDay, lastDay, loadDebt), new CallbackCustomListList() {
+//        SystemConnect.loadListObject(createLoadParam(starDay, lastDay, loadDebt), new CallbackCustomListList() {
+//            @Override
+//            public void onResponse(List<List<BaseModel>> results) {
+//                updatePaymentList(results.get(0), starDay, lastDay);
+//                updateDebtList(results.get(1));
+//                updateBillsList(results.get(2));
+//
+////                if (loadDebt){
+////                    updateDebtList(results.get(1));
+////                    updateBillsList(results.get(2));
+////
+////                }else {
+////                    updateBillsList(results.get(1));
+////
+////                }
+//                updateBillDetailList(listInitialBill);
+//
+//                updateAllFragmentData();
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        }, true);
+
+
+        SystemConnect.getStatisticals(String.format(Api_link.STATISTICAL_PARAM, starDay, lastDay), new CallbackCustom() {
             @Override
-            public void onResponse(List<List<BaseModel>> results) {
-                updatePaymentList(results.get(0), starDay, lastDay);
-                if (loadDebt){
-                    updateDebtList(results.get(1));
-                    updateBillsList(results.get(2));
-
-                }else {
-                    updateBillsList(results.get(1));
-
-                }
+            public void onResponse(BaseModel result) {
+                updatePaymentList(DataUtil.array2ListObject(result.getString(Constants.PAYMENTS)));
+                updateDebtList(DataUtil.array2ListObject(result.getString(Constants.DEBTS)));
+                updateBillsList(DataUtil.array2ListObject(result.getString(Constants.BILLS)));
                 updateBillDetailList(listInitialBill);
 
                 updateAllFragmentData();
+
+
 
             }
 
@@ -459,11 +474,15 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
             public void onError(String error) {
 
             }
-        }, true);
+        });
+
+
+
     }
 
     private void updateBillsList(List<BaseModel> list){
-        listInitialBill = list;
+        listInitialBill= new ArrayList<>(list);
+        updateListUser(listInitialBill);
 
     }
 
@@ -479,58 +498,67 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         }
     }
 
-    private void updatePaymentList(List<BaseModel> list, long starDay, long lastDay){
-        listInitialPayment = new ArrayList<>();
-        for (int i=0; i<list.size(); i++){
-            List<BaseModel> payments = DataUtil.array2ListBaseModel(list.get(i).getJSONArray("payments"));
+    private void updatePaymentList(List<BaseModel> list){
+        listInitialPayment = new ArrayList<>(list);
+        updateListUser(listInitialPayment);
 
-            if (payments.size() >0){
-                for (int a=0; a<payments.size(); a++){
-                    if (payments.get(a).getLong("createAt") - starDay >= 0 &&
-                            payments.get(a).getLong("createAt") - lastDay <= 0 &&
-                            payments.get(a).getInt("payByReturn") == 0){
 
-                        if (!DataUtil.checkDuplicate(listInitialPayment,"id", payments.get(a))){
-                            BaseModel newCash = new BaseModel();
-                            newCash.put("id", payments.get(a).getInt("id"));
-                            newCash.put("createAt", payments.get(a).getLong("createAt"));
-                            newCash.put("updateAt", payments.get(a).getLong("updateAt"));
-                            newCash.put("note", payments.get(a).getString("note"));
-                            newCash.put("paid", payments.get(a).getDouble("paid"));
-                            newCash.put("user", list.get(i).getJsonObject("user"));
-                            newCash.put("customer", list.get(i).getJsonObject("customer"));
-                            newCash.put("billTotal", list.get(i).getDouble("total"));
-                            newCash.put("billProfit", Util.getProfitByPayment(list.get(i), payments.get(a).getDouble("paid")));
 
-                            updateListUser(new BaseModel(list.get(i).getJsonObject("user")));
 
-                            listInitialPayment.add(newCash);
-
-                        }
-
-                    }
-                }
-            }
-
-        }
+//        for (int i=0; i<list.size(); i++){
+//            List<BaseModel> payments = DataUtil.array2ListBaseModel(list.get(i).getJSONArray("payments"));
+//
+//            if (payments.size() >0){
+//                for (int a=0; a<payments.size(); a++){
+//                    if (payments.get(a).getLong("createAt") - starDay >= 0 &&
+//                            payments.get(a).getLong("createAt") - lastDay <= 0 &&
+//                            payments.get(a).getInt("payByReturn") == 0){
+//
+//                        if (!DataUtil.checkDuplicate(listInitialPayment,"id", payments.get(a))){
+//                            BaseModel newCash = new BaseModel();
+//                            newCash.put("id", payments.get(a).getInt("id"));
+//                            newCash.put("createAt", payments.get(a).getLong("createAt"));
+//                            newCash.put("updateAt", payments.get(a).getLong("updateAt"));
+//                            newCash.put("note", payments.get(a).getString("note"));
+//                            newCash.put("paid", payments.get(a).getDouble("paid"));
+//                            newCash.put("user", list.get(i).getJsonObject("user"));
+//                            newCash.put("customer", list.get(i).getJsonObject("customer"));
+//                            newCash.put("billTotal", list.get(i).getDouble("total"));
+//                            newCash.put("billProfit", Util.getProfitByPayment(list.get(i), payments.get(a).getDouble("paid")));
+//
+//                            updateListUser(new BaseModel(list.get(i).getJsonObject("user")));
+//
+//                            listInitialPayment.add(newCash);
+//
+//                        }
+//
+//                    }
+//                }
+//            }
+//
+//        }
 
     }
 
     private void updateDebtList(List<BaseModel> list){
-        listInitialDebt = new ArrayList<>();
-        int distributorID = Distributor.getId();
-        for (int i=0; i<list.size(); i++){
-            BaseModel itemDebt = list.get(i);
-            if (!list.get(i).getString("note").isEmpty()  && Util.isJSONValid(list.get(i).getString("note"))){
-                itemDebt.put("userName", new BaseModel(itemDebt.getString("note")).getString("userName"));
+        listInitialDebt= new ArrayList<>(list);
+        updateListUser(listInitialDebt);
 
-                if (list.get(i).hasKey("distributor") && list.get(i).getBaseModel("distributor").getInt("id") == distributorID
-                        || list.get(i).getInt("distributor_id") == distributorID){
-                    listInitialDebt.add(list.get(i));
-                }
-            }
 
-        }
+//        listInitialDebt = new ArrayList<>();
+//        int distributorID = Distributor.getId();
+//        for (int i=0; i<list.size(); i++){
+//            BaseModel itemDebt = list.get(i);
+//            if (!list.get(i).getString("note").isEmpty()  && Util.isJSONValid(list.get(i).getString("note"))){
+//                itemDebt.put("userName", new BaseModel(itemDebt.getString("note")).getString("userName"));
+//
+//                if (list.get(i).hasKey("distributor") && list.get(i).getBaseModel("distributor").getInt("id") == distributorID
+//                        || list.get(i).getInt("distributor_id") == distributorID){
+//                    listInitialDebt.add(list.get(i));
+//                }
+//            }
+//
+//        }
 
     }
 
@@ -556,12 +584,15 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         List<BaseModel> listResult = new ArrayList<>();
 
         listResult.add(0,DataUtil.createPaymentParam(starDay, lastDay));
-        if (loadDebt){
-            listResult.add(1, DataUtil.createDebtParam());
-            listResult.add(2,DataUtil.createBillParam(starDay, lastDay));
-        }else {
-            listResult.add(1,DataUtil.createBillParam(starDay, lastDay));
-        }
+        listResult.add(1, DataUtil.createDebtParam());
+        listResult.add(2,DataUtil.createBillParam(starDay, lastDay));
+
+//        if (loadDebt){
+//            listResult.add(1, DataUtil.createDebtParam());
+//            listResult.add(2,DataUtil.createBillParam(starDay, lastDay));
+//        }else {
+//            listResult.add(1,DataUtil.createBillParam(starDay, lastDay));
+//        }
 
         return listResult;
     }
@@ -648,25 +679,34 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
     }
 
-    private void updateListUser(BaseModel user){
-        boolean check = false;
-        for (int i = 0; i< listUser.size(); i++){
-            if (listUser.get(i).getString("text").equals( user.getString("displayName"))){
-                check = true;
-                break;
+//    private void updateListUser(BaseModel user){
+//        boolean check = false;
+//        for (int i = 0; i< listUser.size(); i++){
+//            if (listUser.get(i).getString("displayName").equals( user.getString("displayName"))){
+//                check = true;
+//                break;
+//            }
+//        }
+//
+//        if (!check){
+//            user.put("text", user.getString("displayName"));
+//            listUser.add(user);
+//        }
+//
+//    }
+
+    private void updateListUser(List<BaseModel> list){
+        for (int i = 0; i< list.size(); i++){
+            if (!DataUtil.checkDuplicate(listUser, "displayName", list.get(i).getBaseModel("user"))){
+                listUser.add(list.get(i).getBaseModel("user"));
             }
-        }
 
-        if (!check){
-            user.put("text", user.getString("displayName"));
-            listUser.add(user);
         }
-
     }
 
     private BaseModel getAllFilterUser(){
         BaseModel model = new BaseModel();
-        model.put("text", Constants.ALL_FILTER);
+        model.put("displayName", Constants.ALL_FILTER);
 
         return model;
     }

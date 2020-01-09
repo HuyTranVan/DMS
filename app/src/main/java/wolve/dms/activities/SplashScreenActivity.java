@@ -15,8 +15,11 @@ import org.json.JSONObject;
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.apiconnect.Api_link;
+import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.apiconnect.SystemConnect;
 import wolve.dms.apiconnect.UserConnect;
 import wolve.dms.callback.CallbackBaseModel;
+import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.libraries.Security;
@@ -27,6 +30,7 @@ import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -35,7 +39,7 @@ import static wolve.dms.BuildConfig.SERVER_URL;
 public class SplashScreenActivity extends BaseActivity {
     private ProgressBar progressBar;
 
-    private int SPLASH_TIME_OUT = 1000;
+    private int SPLASH_TIME_OUT = 500;
 
     @Override
     public int getResourceLayout() {
@@ -54,41 +58,30 @@ public class SplashScreenActivity extends BaseActivity {
 
     @Override
     public void initialData() {
-        //openUri();
         progressBar.setVisibility(View.VISIBLE);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                progressBar.setVisibility(View.GONE);
-                if (CustomSQL.getString(Constants.USER_USERNAME).isEmpty() || User.getToken().equals("")){
-                    gotoLoginScreen();
+                if (!Util.isEmpty(CustomSQL.getString(Constants.USER_USERNAME)) && !Util.isEmpty(User.getToken())){
+                    checkLogin(new CallbackBoolean() {
+                        @Override
+                        public void onRespone(Boolean result) {
+                            progressBar.setVisibility(View.GONE);
+                            if (result){
+                                Transaction.gotoHomeActivity();
+
+                            }else {
+                                gotoLoginScreen();
+
+                            }
+                        }
+                    });
 
                 }else {
-                    Transaction.gotoHomeActivity();
+                    progressBar.setVisibility(View.GONE);
+                    gotoLoginScreen();
 
-//                    String params = String.format(Api_link.LOGIN_PARAM,CustomSQL.getString(Constants.USER_USERNAME), CustomSQL.getString(Constants.USER_PASSWORD));
-//                    progressBar.setVisibility(View.VISIBLE);
-//                    UserConnect.Login(params, new CallbackCustom() {
-//                        @Override public void onResponse(BaseModel object) {
-//                            progressBar.setVisibility(View.GONE);
-//                            Distributor distributor = new Distributor(object.getJsonObject("distributor"));
-//
-//                            CustomSQL.setBaseModel(Constants.USER, object);
-//                            CustomSQL.setObject(Constants.DISTRIBUTOR, distributor);
-//                            CustomSQL.setString(Constants.DISTRICT_LIST, object.getString("district"));
-//
-//                            Util.showToast("Đăng nhập thành công");
-//                            Transaction.gotoHomeActivity(true);
-//
-//                        }
-//
-//                        @Override
-//                        public void onError(String error) {
-//                            progressBar.setVisibility(View.GONE);
-//                            gotoLoginScreen();
-//                        }
-//
-//                    }, false,true);
+
                 }
 
             }
@@ -113,25 +106,59 @@ public class SplashScreenActivity extends BaseActivity {
         finish();
     }
 
-    private void openUri(){
-        Intent intent = getIntent();
-        Uri data = intent.getData();
-
-
-        if (data != null) {
-            if (data.getQuery().contains("id")){
-                String id = Security.decrypt(data.getQueryParameter("id"));
-                CustomSQL.setString(Constants.CUSTOMER_ID, id);
-
-                Log.e("idabc" , id);
+    private void checkLogin(CallbackBoolean listener){
+        SystemConnect.getCheckLogin(new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                if (result.getBoolean("success")){
+                    listener.onRespone(true);
+                }else {
+                    listener.onRespone(false);
+                }
             }
 
+            @Override
+            public void onError(String error) {
 
+            }
+        }, false);
 
-
-        }
 
 
     }
+
+//    private void openUri(){
+//        Intent intent = getIntent();
+//        Uri data = intent.getData();
+//
+//
+//        if (data != null) {
+//            if (data.getQuery().contains("id")){
+//                String id = Security.decrypt(data.getQueryParameter("id"));
+//                CustomSQL.setString(Constants.CUSTOMER_ID, id);
+//
+//                Log.e("idabc" , id);
+//            }
+//        }
+//
+//
+//    }
+
+//    private void updateDebt(){
+//        String param = String.format(Api_link.DEBT_PARAM, 25000, 7, 1325);
+//
+//        CustomerConnect.PostDebt(param, new CallbackCustom() {
+//            @Override
+//            public void onResponse(BaseModel result) {
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        }, true);
+//
+//    }
 
 }

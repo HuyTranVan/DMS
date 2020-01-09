@@ -263,6 +263,58 @@ public class CustomerConnect {
         }).execute();
     }
 
+    public static void PostDebt(String params, final CallbackCustom listener, final Boolean stopLoading) {
+        Util.getInstance().showLoading();
+
+        new CustomPostMethod(DataUtil.postDebtParam(params), new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(stopLoading);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
+
+                }else {
+                    Util.getInstance().stopLoading(true);
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
+            }
+
+        }).execute();
+    }
+
+    public static void PostListDebt(List<String> params, final CallbackListCustom listener, final Boolean stopLoading) {
+        Util.getInstance().showLoading();
+
+        String url = Api_link.DEBT_NEW;
+
+        new CustomPostListMethod(url, params, true, new CallbackListCustom() {
+            @Override
+            public void onResponse(List result) {
+                Util.getInstance().stopLoading(stopLoading);
+                listener.onResponse(result);
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+            }
+        }).execute();
+    }
+
+
     public static void PostListBill(List<String> listParams, final CallbackListCustom listener, final Boolean stopLoading) {
         Util.getInstance().showLoading();
 
@@ -814,8 +866,8 @@ public class CustomerConnect {
 
     public static String createParamCustomer(BaseModel customer){
         int status =0;
-        if (customer.hasKey("status.id")){
-            status = customer.getInt("status.id");
+        if (customer.hasKey("status_id")){
+            status = customer.getInt("status_id");
         }else {
             status = new BaseModel(customer.getJsonObject("status")).getInt("id");
         }
@@ -837,7 +889,9 @@ public class CustomerConnect {
                 Util.encodeString(customer.getString("shopType")), //shopType
                 status, //currentStatusId
                 Distributor.getDistributorId(),//DistributorId
-                customer.getDouble("currentDebt")
+                customer.getDouble("currentDebt"),
+                customer.getInt("checkinCount")
+
         );
 
         return param;

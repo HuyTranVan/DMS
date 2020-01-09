@@ -25,16 +25,18 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ChoiceMethodVi
     private Context mContext;
     private LayoutInflater mLayoutInflater;
     private CustomBottomDialog.PositionListener mListener;
+    private String mKey;
 
     public interface CountListener{
         void onRespone(int count);
     }
 
-    public ItemAdapter(List<BaseModel> data, CustomBottomDialog.PositionListener mListener) {
+    public ItemAdapter(List<BaseModel> data, String key, CustomBottomDialog.PositionListener mListener) {
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mLayoutInflater = LayoutInflater.from(mContext);
         this.mListener = mListener;
         this.mData = data;
+        this.mKey = key;
     }
 
     @Override
@@ -72,7 +74,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ChoiceMethodVi
 
     @Override
     public void onBindViewHolder(final ChoiceMethodViewHolder holder, final int position) {
-        holder.text.setText(mData.get(position).getString("text"));
+        holder.text.setText(mData.get(position).getString(mKey));
         holder.line.setVisibility(position == mData.size() -1?View.GONE:View.VISIBLE);
         if (mData.get(position).hasKey("icon")){
             holder.icon.setVisibility(View.VISIBLE);

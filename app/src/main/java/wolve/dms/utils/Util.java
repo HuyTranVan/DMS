@@ -1003,7 +1003,7 @@ public class Util {
         return money;
     }
 
-    public static Double getTotalDebt(List<BaseModel> list) {
+    public static double getTotalDebt(List<BaseModel> list) {
         Double money = 0.0;
         for (int i = 0; i < list.size(); i++) {
             money += list.get(i).getDouble("debt");
