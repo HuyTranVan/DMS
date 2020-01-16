@@ -113,6 +113,36 @@ public class UserConnect {
         }).execute();
     }
 
+    public static void CreateUser(String params,final CallbackCustom listener, final Boolean stopLoading){
+        Util.getInstance().showLoading();
+
+        new CustomPostMethod(DataUtil.createNewUserParam(params),new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(stopLoading);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
+
+                }else {
+                    Util.getInstance().stopLoading(true);
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
+            }
+
+        }).execute();
+    }
+
     public static void doLogin(final String username, final String pass, final CallbackBoolean mListener) {
         String params = String.format(Api_link.LOGIN_PARAM, username, pass);
 
@@ -123,20 +153,19 @@ public class UserConnect {
                 CustomSQL.setString(Constants.DISTRICT_LIST, object.getString("district"));
                 CustomSQL.setString(Constants.USER_USERNAME, username);
                 CustomSQL.setString(Constants.USER_PASSWORD, pass);
-//                CustomSQL.setLong(Constants.LAST_PRODUCT_UPDATE, object.getBaseModel("distributor").getLong("lastProductUpdate"));
+                object.removeKey("district");
+                saveUser(object);
 
                 object.removeKey("distributor");
-                object.removeKey("district");
+
                 CustomSQL.setBaseModel(Constants.USER, object);
-
-
-                if (User.getRole().equals(Constants.ROLE_ADMIN)) {
+                if (object.getInt("role")== Constants.ROLE_ADMIN) {
                     CustomSQL.setBoolean(Constants.IS_ADMIN, true);
                 } else {
                     CustomSQL.setBoolean(Constants.IS_ADMIN, false);
                 }
 
-                saveUser(object);
+
                 mListener.onRespone(true);
 
             }
@@ -169,15 +198,7 @@ public class UserConnect {
     private static void saveUser(BaseModel user){
         List<BaseModel> listUser = CustomSQL.getListObject(Constants.USER_LIST);
 
-        boolean dup = false;
-        for (int i=0; i< listUser.size(); i++){
-            if (listUser.get(i).getString("id").equals(user.getString("id"))){
-                dup = true;
-                break;
-            }
-        }
-
-        if (!dup){
+        if (!DataUtil.checkDuplicate(listUser, "id", user)){
             listUser.add(user);
         }
 

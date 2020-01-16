@@ -109,28 +109,29 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/tempbill_item_detail"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/_10sdp"
-                android:layout_weight="0.2"
                 android:padding="@dimen/_5sdp"/>
 
             <TextView
                 android:id="@+id/tempbill_item_total"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="0.8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:gravity="right|center_vertical"
-                android:paddingRight="@dimen/_5sdp"/>
+                android:singleLine="true"
+                android:paddingRight="@dimen/_5sdp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"/>
 
-        </LinearLayout>
+        </RelativeLayout>
 
 
         <View

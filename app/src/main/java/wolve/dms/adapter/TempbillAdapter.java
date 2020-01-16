@@ -69,7 +69,7 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
         String detail = "";
         for (int i=0; i<details.size(); i++){
             detail += String.format("%d  x  %s", details.get(i).getInt("quantity"), details.get(i).getString("productName") )
-                        + (i == details.size()-1? "" : "\n");
+                        + (i == (details.size()-1)? "" : "\n");
 
         }
         holder.tvDetail.setText(detail);

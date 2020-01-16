@@ -4,6 +4,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,8 +25,9 @@ import wolve.dms.utils.Util;
  * Created by tranhuy on 5/24/17.
  */
 
-public class Customer_PaymentAdapter extends RecyclerView.Adapter<Customer_PaymentAdapter.CustomerPaymentViewHolder> {
+public class Customer_PaymentAdapter extends RecyclerView.Adapter<Customer_PaymentAdapter.CustomerPaymentViewHolder> implements Filterable {
     private List<BaseModel> mData = new ArrayList<>();
+    private List<BaseModel> baseData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackListObject mListenerList;
@@ -35,7 +38,8 @@ public class Customer_PaymentAdapter extends RecyclerView.Adapter<Customer_Payme
 
     public Customer_PaymentAdapter(List<BaseModel> data) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
-        this.mData = data;
+        this.baseData = data;
+        this.mData = baseData;
         this.mContext = Util.getInstance().getCurrentActivity();
 
         Collections.sort(mData, new Comparator<BaseModel>(){
@@ -47,8 +51,43 @@ public class Customer_PaymentAdapter extends RecyclerView.Adapter<Customer_Payme
 
     }
 
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                String charString = charSequence.toString();
+                if (charString.isEmpty()) {
+                    mData = baseData;
+
+                } else {
+                    BaseModel contentObj = new BaseModel(charString);
+                    List<BaseModel> listTemp = new ArrayList<>();
+                    for (BaseModel row : baseData) {
+                        if (row.getLong("createAt") >= contentObj.getLong("from") &&  row.getLong("createAt") <= contentObj.getLong("to")){
+                            listTemp.add(row);
+                        }
+                    }
+
+                    mData = listTemp;
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = mData;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                mData = (ArrayList<BaseModel>) filterResults.values;
+                notifyDataSetChanged();
+            }
+        };
+    }
+
     public void updateData(List<BaseModel> data){
-        this.mData = data;
+        this.baseData = data;
+        this.mData = baseData;
         Collections.sort(mData, new Comparator<BaseModel>(){
             public int compare(BaseModel obj1, BaseModel obj2) {
                 return obj1.getString("createAt").compareToIgnoreCase(obj2.getString("createAt"));
@@ -80,7 +119,7 @@ public class Customer_PaymentAdapter extends RecyclerView.Adapter<Customer_Payme
 
                 case Constants.PAYMENT:
 
-                    if (mData.get(position).getDoubleValue("total")> 0.0){
+                    if (mData.get(position).getDoubleValue("total")>= 0.0){
                         if (mData.get(position).hasKey("payByReturn") && mData.get(position).getInt("payByReturn") != 1){
                             holder.tvTotal.setTextColor(mContext.getResources().getColor(R.color.colorBlue));
                             holder.tvText.setTextColor(mContext.getResources().getColor(R.color.black_text_color));
@@ -98,7 +137,8 @@ public class Customer_PaymentAdapter extends RecyclerView.Adapter<Customer_Payme
                     }else {
                         holder.tvTotal.setTextColor(mContext.getResources().getColor(R.color.orange_dark));
                         holder.tvText.setTextColor(mContext.getResources().getColor(R.color.black_text_color));
-                        holder.tvText.setText("Trả lại khách hàng ");
+                        holder.tvText.setText(String.format("Trả lại khách hàng %s",mData.get(position).getString("note").equals("")?
+                                "":  String.format("(%s)", mData.get(position).getString("note"))) );
                         holder.tvTotal.setText("- "+ Util.FormatMoney(mData.get(position).getDouble("total")*-1));
                     }
 

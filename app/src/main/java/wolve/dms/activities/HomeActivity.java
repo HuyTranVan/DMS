@@ -3,12 +3,10 @@ package wolve.dms.activities;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -20,14 +18,14 @@ import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
+import com.bumptech.glide.Glide;
+
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.HomeAdapter;
@@ -38,14 +36,10 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomListList;
-import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
-import wolve.dms.models.District;
-import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
-import wolve.dms.models.Province;
 import wolve.dms.models.Status;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
@@ -56,15 +50,14 @@ import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
-import static wolve.dms.utils.Constants.REQUEST_PERMISSION_LOCATION;
-
 /**
  * Created by macos on 9/15/17.
  */
 
 public class HomeActivity extends BaseActivity implements View.OnClickListener, CallbackClickAdapter{
     private RecyclerView rvItems;
-    private CTextIcon btnLogout, btnChangeUser;
+    private CTextIcon btnChangeUser;
+    private CircleImageView imgUser;
     private TextView tvFullname , tvCash, tvProfit, tvMonth, tvHaveNewProduct, tvNumberTemp;
     private LinearLayout lnUser;
     private RelativeLayout lnTempGroup;
@@ -93,7 +86,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     public void findViewById() {
         rvItems= (RecyclerView) findViewById(R.id.home_rvitems);
-        btnLogout = findViewById(R.id.home_logout);
+        imgUser = findViewById(R.id.home_icon);
         tvFullname = findViewById(R.id.home_fullname);
         lnUser = findViewById(R.id.home_user);
         btnChangeUser = findViewById(R.id.home_change_user);
@@ -111,10 +104,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     public void initialData() {
         checkPermission();
 
-        tvFullname.setText(String.format("%s _ %s (%s)",User.getFullName(), User.getRole(), Distributor.getName()));
-        btnChangeUser.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN) ? View.VISIBLE : View.GONE);
-        line.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN) ? View.VISIBLE : View.GONE);
-
+        updateUserInfo();
         if (CustomSQL.getBoolean(Constants.ON_MAP_SCREEN)) {
             Transaction.gotoMapsActivity();
         }
@@ -132,6 +122,15 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     }
 
+    private void updateUserInfo(){
+        tvFullname.setText(String.format("%s _ %s (%s)",User.getFullName(), User.getCurrentRoleString(), Distributor.getName()));
+        btnChangeUser.setVisibility(User.getCurrentRoleId()==Constants.ROLE_ADMIN ? View.VISIBLE : View.GONE);
+        line.setVisibility(User.getCurrentRoleId()==Constants.ROLE_ADMIN ? View.VISIBLE : View.GONE);
+        if (!Util.checkImageNull(User.getImage())){
+            Glide.with(this).load(User.getImage()).centerCrop().into(imgUser);
+        }
+    }
+
     private void createListItem() {
         HomeAdapter adapter = new HomeAdapter(HomeActivity.this);
         Util.createGridRV(rvItems, adapter, 3);
@@ -147,7 +146,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         SystemConnect.loadListObject(params, new CallbackCustomListList() {
             @Override
             public void onResponse(List<List<BaseModel>> results) {
-                String user = User.getRole().equals(Constants.ROLE_ADMIN)? Constants.ALL_FILTER: User.getFullName();
+                String user = User.getCurrentRoleId()==Constants.ROLE_ADMIN? Constants.ALL_FILTER: User.getFullName();
                 listPayment = DataUtil.groupCustomerPayment(DataUtil.convertPaymentList(user, results.get(0), start, end));
 
                 tvCash.setText(String.format(    "Tiền mặt:     %s đ", Util.FormatMoney(DataUtil.sumMoneyFromList(listPayment, "paid"))));
@@ -300,8 +299,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         CustomCenterDialog.showDialogRelogin(String.format("Đăng nhập vào tài khoản %s", user.getString("displayName")), user, new Callback() {
             @Override
             public void onResponse(JSONObject result) {
+                updateUserInfo();
                 loadCurrentData();
-
 
             }
 
@@ -317,8 +316,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             CustomCenterDialog.alertWithCancelButton(null, String.format("Đăng xuất tài khoản %s",User.getFullName()) , "ĐỒNG Ý","HỦY", new CallbackBoolean() {
                 @Override
                 public void onRespone(Boolean result) {
-//                CustomSQL.setString(Constants.USER_USERNAME,"");
-//                CustomSQL.setString(Constants.USER_PASSWORD,"");
                     if (result){
                         List<BaseModel> listUser = CustomSQL.getListObject(Constants.USER_LIST);
                         CustomSQL.clear();
@@ -422,7 +419,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
                     @Override
                     public void Method2(Boolean two) {
-                        if (User.getRole().equals(Constants.ROLE_ADMIN)){
+                        if (User.getCurrentRoleId()==Constants.ROLE_ADMIN){
                             Transaction.gotoProductGroupActivity();
                         }
 
@@ -432,15 +429,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                     public void Method3(Boolean three) {
                         Transaction.gotoProductActivity();
 
-//                        if (User.getRole().equals(Constants.ROLE_ADMIN)){
-//
-//                        }
-
                     }
 
                     @Override
                     public void Method4(Boolean four) {
-                        if (User.getRole().equals(Constants.ROLE_ADMIN)){
+                        if (User.getCurrentRoleId()==Constants.ROLE_ADMIN){
                             Transaction.gotoStatusActivity();
                         }
 
@@ -452,9 +445,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         checkNewProductUpdated();
-
         if(mFragment != null && mFragment instanceof TempBillFragment){
             ((TempBillFragment) mFragment).reloadData();
+
         }
 
 

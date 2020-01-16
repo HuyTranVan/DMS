@@ -69,6 +69,13 @@
             app:textHint="Số điện thoại"
             app:iconText="@string/icon_phone"/>
 
+        <wolve.dms.customviews.CInputForm
+            android:id="@+id/add_user_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            app:textHint="Email"
+            app:iconText="@string/icon_email"/>
 
         <wolve.dms.customviews.CInputForm
             android:id="@+id/add_user_gender"

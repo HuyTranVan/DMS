@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.ViewPager;
@@ -32,6 +33,7 @@ import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.DataUtil;
+import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
 /**
@@ -76,7 +78,7 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
     public void initialData() {
         loadProductGroup(true);
         tabLayout.setupWithViewPager(viewPager);
-        btnAddProduct.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN) ? View.VISIBLE : View.GONE);
+        btnAddProduct.setVisibility(User.getCurrentRoleId()==Constants.ROLE_ADMIN ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -92,13 +94,23 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.icon_back:
-                onBackPressed();
+                backEvent();
                 break;
 
             case R.id.product_add_new:
                 openFragmentNewProduct(null);
 
                 break;
+        }
+    }
+
+    protected void backEvent(){
+        Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.product_parent);
+        if(mFragment != null && mFragment instanceof NewUpdateUserFragment) {
+            getSupportFragmentManager().popBackStack();
+
+        }else {
+            Transaction.gotoHomeActivityRight(true);
         }
     }
 
@@ -221,18 +233,6 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
 
     }
 
-    private void setLongClickTabEvent(){
-        LinearLayout tabStrip = (LinearLayout) tabLayout.getChildAt(0);
-        for (int i = 0; i < tabStrip.getChildCount(); i++) {
-            tabStrip.getChildAt(i).setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    Util.showToast("%d tab, i");
-                    return true;
-                }
-            });
-        }
-    }
 
 
     @Override

@@ -2,11 +2,12 @@ package wolve.dms.adapter;
 
 import android.content.Context;
 import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -27,11 +28,9 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CTextIcon;
-import wolve.dms.libraries.Security;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomDropdow;
 import wolve.dms.utils.CustomSQL;
@@ -42,15 +41,17 @@ import wolve.dms.utils.Util;
  * Created by tranhuy on 5/24/17.
  */
 
-public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAdapter.CustomerBillsAdapterViewHolder> {
+public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAdapter.CustomerBillsAdapterViewHolder> implements Filterable {
     private List<BaseModel> mData = new ArrayList<>();
+    private List<BaseModel> baseData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackBaseModel mListener;
 
     public Customer_BillsAdapter(List<BaseModel> data, CallbackBaseModel listener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
-        this.mData = data;
+        this.baseData = data;
+        this.mData = baseData;
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mListener = listener;
 
@@ -58,19 +59,49 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
 
     }
 
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                String charString = charSequence.toString();
+                if (charString.isEmpty()) {
+                    mData = baseData;
+
+                } else {
+                    BaseModel contentObj = new BaseModel(charString);
+                    List<BaseModel> listTemp = new ArrayList<>();
+                    for (BaseModel row : baseData) {
+                        if (row.getLong("createAt") >= contentObj.getLong("from") &&  row.getLong("createAt") <= contentObj.getLong("to")){
+                            listTemp.add(row);
+                        }
+                    }
+
+                    mData = listTemp;
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = mData;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                mData = (ArrayList<BaseModel>) filterResults.values;
+                notifyDataSetChanged();
+            }
+        };
+    }
+
     public void updateData(List<BaseModel> data){
-        this.mData = data;
+        this.baseData = data;
+        this.mData = baseData;
         DataUtil.sortbyStringKey("createAt", mData, true);
         notifyDataSetChanged();
     }
 
     public void updateTempBill(){
         notifyDataSetChanged();
-//        for (int i=0; i<mData.size(); i++){
-//            if (mData.get(i).isNull(Constants.DELIVER_BY) && CustomSQL.getLong(Constants.CURRENT_DISTANCE) < 500){
-//                notifyItemChanged(i);
-//            }
-//        }
 
     }
 
@@ -84,7 +115,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
     @Override
     public void onBindViewHolder(final CustomerBillsAdapterViewHolder holder, final int position) {
         holder.lnCover.setVisibility(mData.get(position).isNull(Constants.DELIVER_BY)? View.VISIBLE: View.GONE);
-        holder.btnDelete.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN)||
+        holder.btnDelete.setVisibility(User.getCurrentRoleId() == Constants.ROLE_ADMIN||
                 User.getId() == mData.get(position).getInt("user_id")
                 ? View.VISIBLE:View.GONE);
 
@@ -166,7 +197,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
                 List<String> list = new ArrayList<>();
                 list.add("Trả hàng");
 
-                if (User.getRole().equals(Constants.ROLE_ADMIN)){
+                if (User.getCurrentRoleId()==Constants.ROLE_ADMIN){
                     list.add("Xóa hóa đơn");
                 }
 

@@ -105,8 +105,8 @@ public class StatisticalCustomerActivity extends BaseActivity implements  View.O
     public void initialData() {
         rdMonth.setText(Util.CurrentMonthYear());
         rdDate.setText(DATE_DEFAULT);
-        rlBottom.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN) ? View.VISIBLE :View.GONE);
-        tvEmployeeName.setText(User.getRole().equals(Constants.ROLE_ADMIN)? ALL_FILTER : User.getFullName());
+        rlBottom.setVisibility(User.getCurrentRoleId()==Constants.ROLE_ADMIN ? View.VISIBLE :View.GONE);
+        tvEmployeeName.setText(User.getCurrentRoleId()==Constants.ROLE_ADMIN? ALL_FILTER : User.getFullName());
 
         loadListCheckin(getStartDay(), getEndDay());
 

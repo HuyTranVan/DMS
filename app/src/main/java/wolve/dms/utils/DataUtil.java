@@ -1,7 +1,5 @@
 package wolve.dms.utils;
 
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,7 +35,7 @@ public class DataUtil {
             params.put("customerId", customerId);
             params.put("distributorId", Distributor.getDistributorId());
             params.put("userId", userId);
-            params.put("note", note);
+            params.put("note", Util.encodeString(note));
             params.put("deliverBy", deliverBy);
             params.put("isReturn", isreturnBill);
 
@@ -199,13 +197,13 @@ public class DataUtil {
         return results;
     }
 
-    public static String createPostPaymentParam(int customerId,int user_id, double paid, int billId, double billTotal, boolean payByReturn){
+    public static String createPostPaymentParam(int customerId,int user_id, double paid, int billId, String note, boolean payByReturn){
         String s = String.format(Api_link.PAY_PARAM,
                 customerId,
                 String.valueOf(Math.round(paid)),
                 billId,
                 user_id,
-                String.valueOf(Math.round(billTotal)),
+                Util.encodeString(note),
                 payByReturn?1:0,
                 User.getId());
 
@@ -366,7 +364,7 @@ public class DataUtil {
     public static List<BaseModel> listTempBill(List<BaseModel> list){
         List<BaseModel> listBillByUser = new ArrayList<>();
         for (BaseModel model: list){
-            if (User.getRole().equals(Constants.ROLE_ADMIN) || User.getRole().equals(Constants.ROLE_DELIVER) ) {
+            if (User.getCurrentRoleId()== Constants.ROLE_ADMIN || User.getCurrentRoleId()==Constants.ROLE_DELIVER ) {
                 listBillByUser.add(model);
 
             } else if(User.getId() == model.getInt("user_id")){
@@ -383,10 +381,10 @@ public class DataUtil {
     public static List<BaseModel> remakeBill(List<BaseModel> listbill, boolean isDeliver){
         List<BaseModel> listBillByUser = new ArrayList<>();
         for (BaseModel model: listbill){
-            if (User.getRole().equals(Constants.ROLE_ADMIN)) {
+            if (User.getCurrentRoleId()==Constants.ROLE_ADMIN) {
                 listBillByUser.add(model);
 
-            }else if (User.getRole().equals(Constants.ROLE_DELIVER) && isDeliver){
+            }else if (User.getCurrentRoleId()==Constants.ROLE_DELIVER && isDeliver){
                 listBillByUser.add(model);
 
             }else if(User.getId() == model.getInt("user_id")){
@@ -1037,6 +1035,17 @@ public class DataUtil {
         paramDistributor.put("param", param );
 
         return paramDistributor;
+
+    }
+
+    public static BaseModel createNewUserParam(String param){
+        BaseModel paramCustomer = new BaseModel();
+        paramCustomer.put("url", Api_link.USER_NEW );
+        paramCustomer.put("method", "POST");
+        paramCustomer.put("isjson", false );
+        paramCustomer.put("param", param );
+
+        return paramCustomer;
 
     }
 

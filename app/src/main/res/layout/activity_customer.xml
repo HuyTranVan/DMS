@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/tools"
     android:id="@+id/customer_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -277,54 +277,54 @@
 
     </LinearLayout>
 
-<!--    <LinearLayout-->
-<!--        android:id="@+id/customer_newbill_parent"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:orientation="vertical"-->
-<!--        android:layout_gravity="bottom"-->
-<!--        android:visibility="visible">-->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/_20sdp"
+        android:layout_marginBottom="@dimen/_20sdp"
+        android:layout_gravity="bottom|right"
+        android:gravity="right">
 
-<!--        <View-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="@dimen/_4sdp"-->
-<!--            android:background="@drawable/colorgrey_gradient"/>-->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/customer_filter_rv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_above="@+id/customer_filter"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:visibility="gone"/>
 
-<!--        <RelativeLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:background="@color/colorWhite">-->
+        <LinearLayout
+            android:id="@+id/customer_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/btn_round_blue"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true">
 
-<!--            <TextView-->
-<!--                android:id="@+id/customer_newbill_text"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:background="?selectableItemBackground"-->
-<!--                android:minHeight="@dimen/_35sdp"-->
-<!--                android:text="Hóa đơn ABC tạo lúc 11h00 23-9-2019"-->
-<!--                android:textColor="@color/colorBlueDark"-->
-<!--                android:gravity="center_vertical"-->
-<!--                android:paddingLeft="@dimen/_10sdp"-->
-<!--                android:textSize="@dimen/_12sdp"-->
-<!--                android:layout_centerVertical="true"-->
-<!--                android:layout_toLeftOf="@+id/customer_newbill_delete"/>-->
+            <TextView
+                android:id="@+id/customer_filter_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@color/white_text_color"
+                android:textSize="@dimen/_12sdp"/>
 
-<!--            <wolve.dms.customviews.CTextIcon-->
-<!--                android:id="@+id/customer_newbill_delete"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:background="?selectableItemBackgroundBorderless"-->
-<!--                android:text="@string/icon_close"-->
-<!--                android:textSize="@dimen/_14sdp"-->
-<!--                android:textColor="@color/black_text_color_hint"-->
-<!--                android:padding="@dimen/_10sdp"-->
-<!--                android:layout_alignParentRight="true"-->
-<!--                android:layout_centerVertical="true"/>-->
-<!--        </RelativeLayout>-->
+            <wolve.dms.customviews.CTextIcon
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:text="@string/icon_filter"
+                android:textColor="@color/colorWhite"
+                android:gravity="center"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
 
 
 
-<!--    </LinearLayout>-->
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

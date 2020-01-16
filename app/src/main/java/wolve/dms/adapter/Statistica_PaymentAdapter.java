@@ -38,11 +38,14 @@ public class Statistica_PaymentAdapter extends RecyclerView.Adapter<Statistica_P
         this.mListener = listener;
 
         if (user.equals(Constants.ALL_FILTER)){
-            this.mData = DataUtil.groupCustomerPayment(data);
+            this.mData = data;
+//            this.mData = DataUtil.groupCustomerPayment(data);
 
         }else {
             mData = new ArrayList<>();
-            List<BaseModel> listTemp = DataUtil.groupCustomerPayment(data);
+//            List<BaseModel> listTemp = DataUtil.groupCustomerPayment(data);
+            List<BaseModel> listTemp = data;
+
             for (BaseModel row : listTemp){
                 if (row.getBaseModel("user").getString("displayName").equals(user)){
                     mData.add(row);
@@ -74,8 +77,16 @@ public class Statistica_PaymentAdapter extends RecyclerView.Adapter<Statistica_P
         String time = Util.DateHourString(mData.get(position).getLong("createAt"));
         holder.tvTime.setText(time  );
 
-        //double va = mData.get(position).getDouble("paid") * mData.get(position).getDouble("billProfit") /  mData.get(position).getDouble("billTotal");
-        //holder.tvProfit.setText(String.format("(%s)",Util.FormatMoney(mData.get(position).getDouble("billProfit"))));
+//        double profit =0.0;
+//        if (mData.get(position).getDoubleValue("bill_total") ==0){
+//            profit = mData.get(position).getDouble("bill_profit");
+//        }else {
+//            profit = (mData.get(position).getDouble("paid") /  mData.get(position).getDouble("bill_total")) * mData.get(position).getDouble("bill_profit");
+//
+//        }
+
+//        holder.tvProfit.setText(String.format("(%s)",Util.FormatMoney((double) Math.round(mData.get(position).getDouble("bill_profit")))));
+        holder.tvProfit.setText(String.format("(%s)",Util.FormatMoney(mData.get(position).getDouble("bill_profit"))));
 
         holder.tvPaid.setText(Util.FormatMoney(mData.get(position).getDouble("paid")));
 
@@ -127,9 +138,9 @@ public class Statistica_PaymentAdapter extends RecyclerView.Adapter<Statistica_P
 
     public double sumProfit(){
         double totalProfit = 0.0;
-//        for (BaseModel row : mData){
-//            totalProfit += row.getDouble("billProfit");
-//        }
+        for (BaseModel row : mData){
+            totalProfit += row.getDouble("bill_profit");
+        }
         return totalProfit;
     }
 

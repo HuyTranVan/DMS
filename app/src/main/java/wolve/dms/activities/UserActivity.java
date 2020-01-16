@@ -1,5 +1,6 @@
 package wolve.dms.activities;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -34,6 +36,7 @@ import wolve.dms.libraries.MySwipeRefreshLayout;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
@@ -50,7 +53,6 @@ public class UserActivity extends BaseActivity implements View.OnClickListener{
 
     private UserAdapter adapter;
     private List<BaseModel> listUser ;
-    protected int currentUserId;
 
 
     @Override
@@ -73,8 +75,14 @@ public class UserActivity extends BaseActivity implements View.OnClickListener{
 
     @Override
     public void initialData() {
-        currentUserId = User.getId();
-        loadUser();
+        if (CustomSQL.getBoolean(Constants.IS_ADMIN)){
+            loadUser();
+
+        }else {
+            openFragment(User.getCurrentUser().BaseModelstoString());
+
+        }
+
     }
 
     @Override
@@ -88,12 +96,11 @@ public class UserActivity extends BaseActivity implements View.OnClickListener{
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.icon_back:
-                backEvent();
+                onBackPressed();
                 break;
 
             case R.id.user_add_new:
-                currentUserId = 0;
-                changeFragment(new NewUpdateUserFragment(), true);
+                openFragment(null);
                 break;
 
 
@@ -120,29 +127,37 @@ public class UserActivity extends BaseActivity implements View.OnClickListener{
         adapter = new UserAdapter(list, new CallbackClickAdapter() {
             @Override
             public void onRespone(String data, int position) {
-                currentUserId = position;
-                changeFragment(new NewUpdateUserFragment(), true);
+                openFragment(data);
 
             }
         });
         Util.createLinearRV(rvUser, adapter);
 
-
     }
 
-    protected void backEvent(){
-        Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.product_parent);
+    private void openFragment(String user){
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.USER, user);
+        changeFragment(new NewUpdateUserFragment(), bundle,true);
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.user_parent);
         if(Util.getInstance().isLoading()){
             Util.getInstance().stopLoading(true);
 
         }else if(mFragment != null && mFragment instanceof NewUpdateUserFragment) {
             getSupportFragmentManager().popBackStack();
+            if (!CustomSQL.getBoolean(Constants.IS_ADMIN)){
+                Transaction.gotoHomeActivityRight(true);
+            }
+
         }else {
             Transaction.gotoHomeActivityRight(true);
         }
+
     }
-
-
-
-
 }

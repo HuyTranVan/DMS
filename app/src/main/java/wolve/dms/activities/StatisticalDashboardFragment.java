@@ -213,7 +213,7 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
 //        setupBDFChart(total, bdf);
 
 //        float profit = 0.0f;
-//        if (User.getRole().equals(Constants.ROLE_ADMIN)){
+//        if (User.getCurrentRoleId().equals(Constants.ROLE_ADMIN)){
 //            profit =Util.getTotalProfit(list).floatValue();
 //        }
 //        float[] inputData = new float[]{total, income , debt , profit};

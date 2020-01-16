@@ -340,101 +340,6 @@ public class CustomCenterDialog {
             }
         });
 
-//        Util.textMoneyEvent(edDiscount, product.getDouble("unitPrice"),new CallbackDouble() {
-//            @Override
-//            public void Result(Double text) {
-//                edNetPrice.removeTextChangedListener();
-//
-//
-//                if (!text.equals("")){
-//                    if (text > product.getDouble("unitPrice")){
-//                        Util.showToast("Vui lòng nhập giá tiền nhỏ hơn giá niêm yết");
-//
-//                    }else {
-//                        if (text >0){
-//                            edNetPrice.setText(Util.FormatMoney(product.getDouble("unitPrice") - text));
-//                            tvTotal.setText(Util.FormatMoney(Double.parseDouble(edQuantity.getText().toString()) * (product.getDouble("unitPrice") - text)));
-//                        }
-//                    }
-//                }else {
-//                    edNetPrice.setText(Util.FormatMoney(product.getDouble("unitPrice")));
-//                    tvTotal.setText(Util.FormatMoney(Double.parseDouble(edQuantity.getText().toString()) * (product.getDouble("unitPrice"))));
-//
-//                }
-//            }
-//        });
-
-
-//        edNetPrice.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View v) {
-//                edNetPrice.setFocusable(true);
-//                edNetPrice.setFocusableInTouchMode(true);
-//                Util.showKeyboard(v);
-//
-//                edNetPrice.addTextChangedListener(new DoubleTextWatcher(edNetPrice, new CallbackString() {
-//                    @Override
-//                    public void Result(String text) {
-//                        if (!text.toString().equals("") && !text.equals("0")){
-//                            edDiscount.setText(Util.FormatMoney(product.getDouble("unitPrice") - Util.moneyValue(edNetPrice)));
-//                            tvTotal.setText(Util.FormatMoney(Double.parseDouble(text) *  Util.valueMoney(edQuantity)));
-//                            edNetPrice.setSelection(edNetPrice.getText().toString().length());
-//                        }else if (text.toString().equals("")){
-//                            tvTotal.setText("0");
-//                        }
-//                    }
-//                }));
-//
-//                return true;
-//            }
-//        });
-
-
-
-//        btnChangeToPromotion.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                BaseModel newProduct = product;
-//                newProduct.put("quantity", Integer.parseInt(edQuantity.getText().toString()));
-//                newProduct.put("discount", product.getDouble("unitPrice"));
-//                newProduct.put("totalMoney", "0");
-//
-//                callbackClickProduct.ProductChoice(newProduct);
-//                dialogResult.dismiss();
-//
-//
-//            }
-//        });
-//
-//        btnCopyToPromotion.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Product newProduct = new Product();
-//
-//                newProduct.put("id", product.getString("id"));
-//                newProduct.put("name", product.getString("name"));
-//                newProduct.put("productGroup", product.getString("productGroup"));
-//                newProduct.put("promotion", product.getBoolean("promotion"));
-//                newProduct.put("unitPrice", product.getDouble("unitPrice"));
-//                newProduct.put("purchasePrice", product.getDouble("purchasePrice"));
-//                newProduct.put("volume", product.getLong("volume"));
-//                newProduct.put("image", product.getString("image"));
-//                newProduct.put("imageUrl", product.getString("imageUrl"));
-//                newProduct.put("checked", product.getBoolean("checked"));
-//                newProduct.put("isPromotion", product.getBoolean("isPromotion"));
-//                newProduct.put("quantity", Integer.parseInt(edQuantity.getText().toString()));
-//                newProduct.put("discount", product.getDouble("unitPrice"));
-//                newProduct.put("totalMoney", "0");
-//
-//                callbackClickProduct.ProductAdded(newProduct);
-//                dialogResult.dismiss();
-//
-//            }
-//        });
-
-
-
-
     }
 
     public static void showDialogReturnProduct(List<BaseModel> listDebt, final BaseModel currentBill, final ProductReturnAdapter.CallbackReturn mListener){
@@ -675,6 +580,53 @@ public class CustomCenterDialog {
         return dialogResult;
     }
 
+    public static void showDialogDiscountPayment(String title, String text,Double limitMoney, final CallbackDouble mListener){
+        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_input_paid_discount);
+        TextView tvTitle = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_discount_title);
+        TextView tvText = dialogResult.findViewById(R.id.dialog_input_paid_discount_text);
+        final EditText edPaid = (EditText) dialogResult.findViewById(R.id.dialog_input_paid_discount_money);
+        final Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
+        final Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
+
+        dialogResult.setCanceledOnTouchOutside(true);
+        tvTitle.setText(title);
+        tvText.setText(text);
+
+        Util.showKeyboardDelay(edPaid);
+        Util.textMoneyEvent(edPaid,limitMoney, new CallbackDouble() {
+            @Override
+            public void Result(Double s) {
+
+            }
+
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogResult.dismiss();
+            }
+        });
+
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Util.isEmpty(edPaid)){
+                    Util.showToast("Vui lòng nhập số tiền >0");
+
+                }else {
+                    Util.hideKeyboard(v);
+                    mListener.Result(Util.moneyValue(edPaid));
+                    dialogResult.dismiss();
+                }
+
+
+            }
+        });
+
+
+    }
+
     public static void showDialogBillImage(Customer customer,String total,  List<Product> listProduct, final CallbackPayBill mListener){
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_bill);
         dialogResult.setCancelable(true);
@@ -764,7 +716,7 @@ public class CustomCenterDialog {
                                     if (result){
                                         Util.showToast("Đăng nhập thành công");
                                         mlistener.onResponse(user.BaseModelJSONObject());
-                                        //Transaction.gotoHomeActivity(true);
+
                                     }else {
                                         mlistener.onError("");
                                     }

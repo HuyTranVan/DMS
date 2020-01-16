@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.clans.fab.FloatingActionButton;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -24,15 +23,16 @@ import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.CartProductsAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackChangePrice;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.customviews.CInputForm;
-import wolve.dms.libraries.Security;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
@@ -154,10 +154,36 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
             case R.id.cart_submit:
                 if (CustomSQL.getLong(Constants.CURRENT_DISTANCE) < Constants.CHECKIN_DISTANCE ){
-                    gotoPrintBill();
+                    CustomCenterDialog.alertWithCancelButton2("",
+                            "In hóa đơn và tiếp tục giao hàng bấm 'TIẾP TỤC'\nLưu hóa đơn bấm 'LƯU'",
+                            "tiếp tục",
+                            "lưu",
+                            new CustomCenterDialog.ButtonCallback() {
+                                @Override
+                                public void Submit(Boolean boolSubmit) {
+                                    gotoPrintBill();
+                                }
+
+                                @Override
+                                public void Cancel(Boolean boolCancel) {
+                                    postBillAndSave();
+                                }
+                            });
+
+
 
                 }else {
-                    postBillAndSave();
+                    CustomCenterDialog.alertWithButton("Lưu hóa đơn",
+                            "Bạn đang ở ngoài khu vực cửa hàng.\nLưu hóa đơn để nhân viên giao hàng tiếp nhận đơn hàng này",
+                            "đồng ý", new CallbackBoolean() {
+                                @Override
+                                public void onRespone(Boolean result) {
+                                    if (result){
+                                        postBillAndSave();
+                                    }
+                                }
+                            });
+
                 }
 
                 break;
@@ -258,7 +284,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
     @Override
     public boolean onLongClick(View v) {
-        if (User.getRole().equals(Constants.ROLE_ADMIN)){
+        if (User.getCurrentRoleId()==Constants.ROLE_ADMIN){
             gotoPrintBill();
 
         }
@@ -272,7 +298,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 adapterProducts.totalPrice(),
                 0.0,
                 adapterProducts.getAllData(),
-                "",
+                tvNote.getText().toString(),
                 0,
                 0);
 
@@ -300,6 +326,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         bill.putBaseModel("user", User.getCurrentUser());
         bill.put("total", adapterProducts.totalPrice());
         bill.put("debt", adapterProducts.totalPrice());
+        bill.put("note", tvNote.getText().toString());
         bill.putList(Constants.BILL_DETAIL,adapterProducts.getAllData() );
 
         Transaction.gotoPrintBillActivity(bill, false);

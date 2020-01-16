@@ -3,6 +3,9 @@ package wolve.dms.models;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Util;
@@ -21,6 +24,69 @@ public class User extends BaseModel {
     //Role = 2 : WAREHOUSE
     //Role = 3 : DELIVER
     //Role = 4 : Sale
+    public static List< BaseModel> listRole(){
+        List<BaseModel> roles = new ArrayList<>();
+        roles.add(BaseModel.put2ValueToNewObject( "text", "QUẢN LÝ", "index", 1));
+        roles.add( BaseModel.put2ValueToNewObject( "text", "THỦ KHO", "index", 2));
+        roles.add(BaseModel.put2ValueToNewObject( "text", "GIAO HÀNG", "index", 3));
+        roles.add( BaseModel.put2ValueToNewObject( "text", "SALE", "index", 4));
+
+        return roles;
+    }
+
+    public static int getIndex(String role){
+        int index = 0;
+        for (BaseModel model: listRole()){
+            if (model.getString("text").equals(role)){
+                index =  model.getInt("index");
+
+                break;
+
+            }
+        }
+        return index;
+    }
+
+    public static int getCurrentRoleId(){
+        BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
+        return currentUser.getInt("role");
+    }
+
+    public static String getImage(){
+        BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
+
+        return currentUser.getString("image");
+    }
+
+
+    public static String getCurrentRoleString(){
+        String role = "";
+        BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
+
+        if (currentUser != null) {
+            for (BaseModel model: listRole()){
+                if (model.getInt("index") == currentUser.getInt("role")){
+                    role =  model.getString("text");
+                    break;
+                }
+            }
+
+        }
+        return role;
+    }
+
+    public static String getRoleString(int id){
+        String role = "";
+
+        for (BaseModel model: listRole()){
+            if (model.getInt("index") == id){
+                role =  model.getString("text");
+                break;
+            }
+
+        }
+        return role;
+    }
 
     public User() {
         jsonObject = null;
@@ -79,15 +145,7 @@ public class User extends BaseModel {
 
     }
 
-    public static String getRole(){
-        String role = "";
-        BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
 
-        if (currentUser != null) {
-            role = currentUser.getString("role");
-        }
-        return role;
-    }
 
     public static String getPhone(){
         String phone = "";
@@ -100,14 +158,15 @@ public class User extends BaseModel {
     }
 
     public static BaseModel getCurrentUser(){
-        BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
-        BaseModel user = new BaseModel();
-        user.put("id", currentUser.getInt("id"));
-        user.put("displayName", currentUser.getString("displayName"));
-        user.put("phone", currentUser.getString("phone"));
-        user.put("role", currentUser.getString("role"));
+//        BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
+//        BaseModel user = new BaseModel();
+//        user.put("id", currentUser.getInt("id"));
+//        user.put("displayName", currentUser.getString("displayName"));
+//        user.put("phone", currentUser.getString("phone"));
+//        user.put("role", currentUser.getString("role"));
 
-        return user;
+
+        return CustomSQL.getBaseModel(Constants.USER);
     }
 
     public static JSONObject getCurrentUserString(){

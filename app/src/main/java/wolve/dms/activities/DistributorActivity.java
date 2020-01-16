@@ -98,7 +98,6 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void initialData() {
-
         SystemConnect.GetDistributorDetail(Distributor.getDistributorId(), new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
@@ -243,8 +242,7 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
         }else if (requestCode == REQUEST_IMAGE_CAPTURE){
             Crop.of(imageChangeUri, imageChangeUri).asSquare().withMaxSize(512,512).start(this);
 
-        }
-        else if (data != null && requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
+        }else if (data != null && requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
             Glide.with(this).load(imageChangeUri).centerCrop().into(image);
 
         } else if (requestCode == Crop.REQUEST_CROP) {

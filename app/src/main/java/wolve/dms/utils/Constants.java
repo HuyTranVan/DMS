@@ -36,10 +36,10 @@ public class Constants {
     public final static String USER_PASSWORD = "password";
     public final static String IMAGES_DIRECTORY = "Lubsolution_DMS";
     public final static String APP_DIRECTORY = "Lubsolution_DMS";
-    public final static String ROLE_ADMIN = "MANAGER";
-    public final static String ROLE_WAREHOUSE = "WAREHOUSE";
-    public final static String ROLE_SALE = "SALE";
-    public final static String ROLE_DELIVER = "DELIVER";
+    public final static int ROLE_ADMIN = 1;
+    public final static int ROLE_WAREHOUSE = 2;
+    public final static int ROLE_SALE = 3;
+    public final static int ROLE_DELIVER = 4;
 
     public final static String IS_ADMIN = "is_admin";
     public final static String PRINTER_SIZE = "printer_size";
@@ -57,6 +57,10 @@ public class Constants {
     public static final String TEMPBILL = "temp_bill";
     public static final String LAST_PRODUCT_UPDATE = "last_product_update";
     public static final String addressFormat = "%s %s, %s, %s";
+
+    public static final String FILTER_BY_DATE = "Lọc theo ngày";
+    public static final String FILTER_BY_MONTH = "Lọc theo tháng";
+    public static final String FILTER_BY_YEAR = "Lọc theo năm";
 
     public static final String TYPE = "type";
     public static final String BILL_RETURN = "bill_return";

@@ -139,7 +139,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 //                    CustomSQL.setString(Constants.USER_USERNAME, edUsername.getText().toString().trim());
 //                    CustomSQL.setString(Constants.USER_PASSWORD, edPassword.getText().toString().trim());
 //
-//                    if (User.getRole().equals(Constants.ROLE_ADMIN)){
+//                    if (User.getCurrentRoleId().equals(Constants.ROLE_ADMIN)){
 //                        CustomSQL.setBoolean(Constants.IS_ADMIN , true);
 //                    }else {
 //                        CustomSQL.setBoolean(Constants.IS_ADMIN , false);

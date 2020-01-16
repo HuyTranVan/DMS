@@ -30,7 +30,7 @@ import wolve.dms.utils.Util;
 public class CustomerPaymentFragment extends Fragment implements View.OnClickListener{
     private View view;
     private RecyclerView rvPayment;
-    private Customer_PaymentAdapter adapter;
+    protected Customer_PaymentAdapter adapter;
 
     private CustomerActivity mActivity;
 
@@ -68,12 +68,10 @@ public class CustomerPaymentFragment extends Fragment implements View.OnClickLis
         switch (v.getId()){
 
 
-
         }
     }
 
     public void updateList(){
-        //adapter.updateData(convert2ListPayment(mActivity.listBills));
         adapter.updateData(createListPayment(mActivity.listBills, DataUtil.array2ListObject(mActivity.currentCustomer.getString("payments"))));
     }
 
@@ -90,6 +88,7 @@ public class CustomerPaymentFragment extends Fragment implements View.OnClickLis
             objectbill.put("createAt", listBill.get(i).getLong("createAt"));
             objectbill.put("type", Constants.BILL);
             objectbill.put("total", listBill.get(i).getDouble("total"));
+            objectbill.put("note", "");
 
             if (listBill.get(i).getDouble("total") !=0.0){
                 listResult.add(objectbill);
@@ -97,15 +96,15 @@ public class CustomerPaymentFragment extends Fragment implements View.OnClickLis
         }
 
         for (int ii=0; ii<listPayment.size(); ii++){
-            //if (listPayment.get(ii).getInt("payByReturn") != 1){
-                BaseModel objectPay = new BaseModel();
-                objectPay.put("createAt", listPayment.get(ii).getLong("createAt"));
-                objectPay.put("type", Constants.PAYMENT);
-                objectPay.put("total", listPayment.get(ii).getDouble("paid"));
-                objectPay.put("payByReturn", listPayment.get(ii).getInt("payByReturn"));
+            BaseModel objectPay = new BaseModel();
+            objectPay.put("createAt", listPayment.get(ii).getLong("createAt"));
+            objectPay.put("type", Constants.PAYMENT);
+            objectPay.put("total", listPayment.get(ii).getDouble("paid"));
+            objectPay.put("payByReturn", listPayment.get(ii).getInt("payByReturn"));
+            objectPay.put("note", listPayment.get(ii).getString("note"));
 
-                listResult.add(objectPay);
-            //}
+            listResult.add(objectPay);
+
         }
 
         return listResult;

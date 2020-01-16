@@ -1,6 +1,6 @@
 package wolve.dms.utils;
 
-import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -10,14 +10,10 @@ import android.os.Build;
 import android.provider.MediaStore;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.app.ShareCompat;
-import androidx.core.content.FileProvider;
 import androidx.core.content.PermissionChecker;
+import androidx.fragment.app.Fragment;
 
-import java.net.URI;
-
-import wolve.dms.BuildConfig;
 import wolve.dms.R;
 import wolve.dms.activities.CustomerActivity;
 import wolve.dms.activities.DistributorActivity;
@@ -37,7 +33,6 @@ import wolve.dms.activities.UserActivity;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.libraries.Security;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Customer;
 import wolve.dms.models.User;
 
 import static wolve.dms.utils.Constants.REQUEST_CHOOSE_IMAGE;
@@ -70,7 +65,7 @@ public class Transaction {
         Intent intent = new Intent(context, HomeActivity.class);
         context.startActivity(intent);
         ((AppCompatActivity) context).overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-        if (isFinnish){
+        if (isFinnish) {
             ((AppCompatActivity) context).finish();
         }
     }
@@ -126,7 +121,7 @@ public class Transaction {
     }
 
     public static void gotoCustomerActivity() {
-        if (!User.getRole().equals(Constants.ROLE_WAREHOUSE)){
+        if (User.getCurrentRoleId() != Constants.ROLE_WAREHOUSE) {
             Activity context = Util.getInstance().getCurrentActivity();
             Intent intent = new Intent(context, CustomerActivity.class);
             CustomSQL.setLong(Constants.CHECKIN_TIME, Util.CurrentTimeStamp());
@@ -145,10 +140,10 @@ public class Transaction {
 
     }
 
-    public static void returnCustomerActivity(String fromActivity, String data, int result){
+    public static void returnCustomerActivity(String fromActivity, String data, int result) {
         Intent returnIntent = Util.getInstance().getCurrentActivity().getIntent();
         returnIntent.putExtra(fromActivity, data);
-        Util.getInstance().getCurrentActivity().setResult(result,returnIntent);
+        Util.getInstance().getCurrentActivity().setResult(result, returnIntent);
 
         Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         Util.getInstance().getCurrentActivity().finish();
@@ -163,20 +158,20 @@ public class Transaction {
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
-    public static void returnShopCartActivity(String fromActivity, String data, int result){
+    public static void returnShopCartActivity(String fromActivity, String data, int result) {
         Intent returnIntent = Util.getInstance().getCurrentActivity().getIntent();
         returnIntent.putExtra(fromActivity, data);
-        Util.getInstance().getCurrentActivity().setResult(result,returnIntent);
+        Util.getInstance().getCurrentActivity().setResult(result, returnIntent);
 
         Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         Util.getInstance().getCurrentActivity().finish();
 
     }
 
-    public static void returnPreviousActivity(String fromActivity, BaseModel data, int result){
+    public static void returnPreviousActivity(String fromActivity, BaseModel data, int result) {
         Intent returnIntent = Util.getInstance().getCurrentActivity().getIntent();
         returnIntent.putExtra(fromActivity, data.BaseModelstoString());
-        Util.getInstance().getCurrentActivity().setResult(result,returnIntent);
+        Util.getInstance().getCurrentActivity().setResult(result, returnIntent);
         Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         Util.getInstance().getCurrentActivity().finish();
 
@@ -240,7 +235,7 @@ public class Transaction {
         }
     }
 
-    public static void sendEmailReport(String content){
+    public static void sendEmailReport(String content) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         Uri data = Uri.parse(String.format("mailto:%s?subject=%s&body=%s",
                 Constants.DMS_EMAIL,
@@ -251,7 +246,7 @@ public class Transaction {
 
     }
 
-    public static void shareViaZalo(String id){
+    public static void shareViaZalo(String id) {
         String param = String.format(Api_link.LUB_LINK_PARAM, Security.encrypt(id));
         //String param = String.format(Api_link.LUB_LINK_PARAM, id);
         ShareCompat.IntentBuilder.from(Util.getInstance().getCurrentActivity())
@@ -263,7 +258,7 @@ public class Transaction {
 
     }
 
-    public static void openGoogleMapRoute(double latitude, double longitude){
+    public static void openGoogleMapRoute(double latitude, double longitude) {
 //        String uriBegin = "geo:" + latitude + "," + longitude;
 //        String query = latitude + "," + longitude + "(" + label + ")";
 //        String encodedQuery = Uri.encode(query);
@@ -277,10 +272,10 @@ public class Transaction {
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
         mapIntent.setPackage("com.google.android.apps.maps");
 
-        if (mapIntent.resolveActivity(Util.getInstance().getCurrentActivity().getPackageManager()) != null){
+        if (mapIntent.resolveActivity(Util.getInstance().getCurrentActivity().getPackageManager()) != null) {
             Util.getInstance().getCurrentActivity().startActivity(mapIntent);
 
-        }else {
+        } else {
             Util.showToast("Couldn't open map!");
         }
 
@@ -295,20 +290,17 @@ public class Transaction {
     }
 
     public static void startImageChooser() {
-        //imageChangeUri = Uri.fromFile(Util.getOutputMediaFile());
-//        if (Build.VERSION.SDK_INT <= 19) {
-//            Intent i = new Intent();
-//            i.setType("image/*");
-//            i.setAction(Intent.ACTION_GET_CONTENT);
-//            i.addCategory(Intent.CATEGORY_OPENABLE);
-//            startActivityForResult(i, REQUEST_CHOOSE_IMAGE);
-//
-//        } else if (Build.VERSION.SDK_INT > 19) {
-
         Activity context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         context.startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
-//        }
+
+    }
+
+    public static void startImageChooser(Fragment fragment) {
+        //Activity context = Util.getInstance().getCurrentActivity();
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        fragment.startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
+
     }
 
     public static void startCamera(Uri uri) {
@@ -317,15 +309,26 @@ public class Transaction {
 
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT,uri );
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
         context.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
 
     }
 
-    public static void openCallScreen(String phone){
+    @SuppressLint("WrongConstant")
+    public static void openCallScreen(String phone) {
         Intent callIntent = new Intent(Intent.ACTION_CALL);
         callIntent.setData(Uri.parse("tel:" + Uri.encode(phone)));
         callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (PermissionChecker.checkSelfPermission(Util.getInstance().getCurrentActivity(), android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED ) {
+            // TODO: Consider calling
+            //    Activity#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for Activity#requestPermissions for more details.
+            return;
+        }
         Util.getInstance().getCurrentActivity().startActivity(callIntent);
 
 

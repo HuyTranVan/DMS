@@ -6,6 +6,7 @@
     android:orientation="vertical"
     android:background="@color/black_text_color_hint"
     android:clickable="true"
+    android:keepScreenOn="true"
     android:id="@+id/print_bill_parent">
 
     <androidx.core.widget.NestedScrollView

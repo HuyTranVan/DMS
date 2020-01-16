@@ -125,33 +125,6 @@ public class YearPicker {
         ArrayList<Integer> list = new ArrayList<>();
         list.add(1);
 
-//        calendarView.deactivateDates(list);
-//        ArrayList<Date> arrayList = new ArrayList<>();
-//        try {
-//
-//            String strdate = "22-2-2019";
-//            String strdate2 = "26-2-2019";
-//            Date newdate = dateformat.parse(strdate);
-//            Date newdate2 = dateformat.parse(strdate2);
-//            arrayList.add(newdate);
-//            arrayList.add(newdate2);
-//
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-
-//        Date newDate = new Date();
-//        newDate.setTime(Util.CurrentTimeStamp());
-
-//        try {
-//            SimpleDateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy");
-//            calendarView.scrollToDate(dateformat.parse("22-02-2019"));
-
-
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-
         calendarView.init(lastYear.getTime(), nextYear.getTime(),new SimpleDateFormat("MMMM, YYYY", Locale.getDefault()))
                 .inMode(CalendarPickerView.SelectionMode.RANGE)
 

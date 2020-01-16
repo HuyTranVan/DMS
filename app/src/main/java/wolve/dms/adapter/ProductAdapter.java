@@ -11,9 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +21,6 @@ import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDeleteAdapter;
-import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
@@ -92,7 +88,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
 
         }
 
-        if (User.getRole().equals(Constants.ROLE_ADMIN)){
+        if (User.getCurrentRoleId()==Constants.ROLE_ADMIN){
             holder.rlParent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

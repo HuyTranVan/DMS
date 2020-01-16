@@ -65,6 +65,7 @@ public class Api_link {
     public final static String USERS = BASE_URL + "token/users";
     public final static String USER_NEW = BASE_URL + "token/user/create_or_update";
     public final static String USER_DELETE = BASE_URL + "token/user/";
+    public final static String USER_CREATE_PARAM ="%sdisplayName=%s&gender=%d&email=%s&phone=%s&role=%d&image=%s";
 
     public final static String STATUS = BASE_URL + "token/status";
     public final static String STATUS_NEW = BASE_URL + "token/status/create_or_update";

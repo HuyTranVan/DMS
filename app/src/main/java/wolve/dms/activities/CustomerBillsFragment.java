@@ -29,7 +29,7 @@ import wolve.dms.utils.Util;
 public class CustomerBillsFragment extends Fragment implements View.OnClickListener {
     private View view;
     private RecyclerView rvBill;
-    private Customer_BillsAdapter adapter;
+    protected Customer_BillsAdapter adapter;
 
     private CustomerActivity mActivity;
 
@@ -89,11 +89,11 @@ public class CustomerBillsFragment extends Fragment implements View.OnClickListe
                         break;
 
                     case Constants.BILL_DELETE:
-                        mActivity.reloadCustomer(mActivity.currentCustomer.getString("id"), 3);
+                        mActivity.reloadCustomer(mActivity.currentCustomer.getString("id"));
                         break;
 
                     case Constants.BILL_PAY:
-                        mActivity.reloadCustomer(mActivity.currentCustomer.getString("id"), 3);
+                        mActivity.reloadCustomer(mActivity.currentCustomer.getString("id"));
                         break;
 
 

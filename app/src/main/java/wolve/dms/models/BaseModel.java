@@ -64,6 +64,19 @@ public class BaseModel implements Serializable {
         }
     }
 
+    public static BaseModel putValueToNewObject(String key, Object value){
+        BaseModel model = new BaseModel();
+        model.put(key, value);
+        return model;
+    }
+
+    public static BaseModel put2ValueToNewObject(String key, Object value, String key2, Object value2){
+        BaseModel model = new BaseModel();
+        model.put(key, value);
+        model.put(key2, value2);
+        return model;
+    }
+
     public void putBaseModel(String key, BaseModel value){
         try {
             jsonObject.put(key, value.BaseModelJSONObject());

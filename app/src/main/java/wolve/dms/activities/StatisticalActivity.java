@@ -32,7 +32,6 @@ import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 
 import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackCustomListList;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.customviews.CustomTabLayout;
@@ -42,7 +41,6 @@ import wolve.dms.libraries.calendarpicker.YearPicker;
 import wolve.dms.libraries.connectapi.sheetapi.GoogleSheetGetAllTab;
 import wolve.dms.libraries.connectapi.sheetapi.GoogleSheetGetData;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
@@ -131,8 +129,8 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         rdDate.setText(Constants.DATE_DEFAULT);
         rdYear.setText(YEAR_DEFAULT);
 
-        rlBottom.setVisibility(User.getRole().equals(Constants.ROLE_ADMIN)|| User.getRole().equals(Constants.ROLE_WAREHOUSE)? View.VISIBLE :View.GONE);
-        tvEmployeeName.setText(User.getRole().equals(Constants.ROLE_ADMIN)? Constants.ALL_FILTER : User.getFullName());
+        rlBottom.setVisibility(User.getCurrentRoleId()==Constants.ROLE_ADMIN|| User.getCurrentRoleId()==Constants.ROLE_WAREHOUSE? View.VISIBLE :View.GONE);
+        tvEmployeeName.setText(User.getCurrentRoleId()==Constants.ROLE_ADMIN? Constants.ALL_FILTER : User.getFullName());
 
         loadInitialData(getStartDay(), getEndDay(), true);
 
@@ -236,6 +234,15 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                 break;
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+        Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
+
 
     private long getStartDay(){
         long date = 0;
@@ -720,7 +727,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 //            if (distributor.getInt("id") == Distributor.getId()){
 //
 //                if (!DataUtil.checkDuplicate(listUser, "id" ,user)){
-//                    if (User.getRole().equals(Constants.ROLE_WAREHOUSE)){
+//                    if (User.getCurrentRoleId().equals(Constants.ROLE_WAREHOUSE)){
 //                        if (!user.getString("role").equals(Constants.ROLE_ADMIN)){
 //                            listUser.add(user);
 //                        }
@@ -781,7 +788,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 //
 //                                BaseModel user = new BaseModel(objectDetail.getJsonObject("user"));
 //                                if (!checkDuplicate(listUser, "id" ,user)){
-//                                    if (User.getRole().equals(Constants.ROLE_WAREHOUSE)){
+//                                    if (User.getCurrentRoleId().equals(Constants.ROLE_WAREHOUSE)){
 //                                        if (!user.getString("role").equals(Constants.ROLE_ADMIN)){
 //                                            listUser.add(user);
 //                                        }
@@ -834,7 +841,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 ////                        if (bill.getJsonObject("distributor").getInt("id") == Distributor.getId()){
 ////
 ////                            if (!DataUtil.checkDuplicate(listUser, "id" ,user)){
-////                                if (User.getRole().equals(Constants.ROLE_WAREHOUSE)){
+////                                if (User.getCurrentRoleId().equals(Constants.ROLE_WAREHOUSE)){
 ////                                    if (!user.getString("role").equals(Constants.ROLE_ADMIN)){
 ////                                        listUser.add(user);
 ////                                    }
@@ -867,7 +874,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 //                    if (distributor.getInt("id") == Distributor.getId()){
 //
 //                        if (!DataUtil.checkDuplicate(listUser, "id" ,user)){
-//                            if (User.getRole().equals(Constants.ROLE_WAREHOUSE)){
+//                            if (User.getCurrentRoleId().equals(Constants.ROLE_WAREHOUSE)){
 //                                if (!user.getString("role").equals(Constants.ROLE_ADMIN)){
 //                                    listUser.add(user);
 //                                }
@@ -1000,7 +1007,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 //
 //                                BaseModel user = new BaseModel(objectBill.getJSONObject("user"));
 //                                if (!DataUtil.checkDuplicate(listUser, "id" ,user)){
-//                                    if (User.getRole().equals(Constants.ROLE_WAREHOUSE)){
+//                                    if (User.getCurrentRoleId().equals(Constants.ROLE_WAREHOUSE)){
 //                                        if (!user.getString("role").equals(Constants.ROLE_ADMIN)){
 //                                            listUser.add(user);
 //                                        }

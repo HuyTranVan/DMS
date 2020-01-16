@@ -4,11 +4,11 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -22,8 +22,6 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.tabs.TabLayout;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,15 +29,17 @@ import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.Customer_ViewpagerAdapter;
+import wolve.dms.adapter.FilterChoiceAdapter;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackJSONObject;
+import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackListCustom;
+import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CTextIcon;
+import wolve.dms.libraries.calendarpicker.CalendarUtil;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Customer;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
@@ -55,23 +55,23 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class CustomerActivity extends BaseActivity implements View.OnClickListener {
+public class CustomerActivity extends BaseActivity implements View.OnClickListener, View.OnLongClickListener {
     private ImageView btnBack;
     private CTextIcon tvTrash, tvDeleteBill;
     protected Button btnSubmit;
     private TextView  tvCheckInStatus, tvTime;
-    protected TextView tvTitle,tvAddress, tvDebt, tvPaid, tvTotal, tvBDF, btnShopCart;
+    protected TextView tvTitle,tvAddress, tvDebt, tvPaid, tvTotal, tvBDF, btnShopCart, tvFilter;
     private ScrollView scContent;
     private CoordinatorLayout coParent;
-    private RecyclerView rvCheckin;
+    private RecyclerView rvFilterTitle;
     private ViewPager viewPager;
     private TabLayout tabLayout;
     private HorizontalScrollView scrollOverView;
     private SmoothProgressBar smLoading;
     private RelativeLayout rlStatusGroup;
+    private LinearLayout lnFilter;
 
     protected BaseModel currentCustomer;
-    //protected int customerStatusID;
     protected List<BaseModel> listCheckins = new ArrayList<>();
     protected List<BaseModel> listBills = new ArrayList<>();
     protected List<BaseModel> listBillDetail = new ArrayList<>();
@@ -147,6 +147,9 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         scrollOverView = findViewById(R.id.customer_overview);
         smLoading = findViewById(R.id.customer_loading);
         tvAddress = findViewById(R.id.customer_address);
+        lnFilter = findViewById(R.id.customer_filter);
+        tvFilter = findViewById(R.id.customer_filter_text);
+        rvFilterTitle = findViewById(R.id.customer_filter_rv);
 
     }
 
@@ -156,6 +159,20 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         tvTrash.setOnClickListener(this);
         btnShopCart.setOnClickListener(this);
         tvDebt.setOnClickListener(this);
+        tvPaid.setOnClickListener(this);
+        tvPaid.setOnLongClickListener(this);
+        lnFilter.setOnClickListener(this);
+        Util.textViewEvent(tvFilter, new CallbackString() {
+            @Override
+            public void Result(String s) {
+                if (!s.equals("")){
+                    tvFilter.setPadding( Util.convertSdpToInt(R.dimen._15sdp),0,0,0);
+                }else {
+                    tvFilter.setPadding( 0,0,0,0);
+                }
+            }
+        });
+
 
     }
 
@@ -164,7 +181,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         countTime = Util.CurrentTimeStamp()  - CustomSQL.getLong(Constants.CHECKIN_TIME);
         CustomSQL.removeKey(Constants.CURRENT_DISTANCE);
 
-        tvTrash.setVisibility(User.getRole().equals("MANAGER") ? View.VISIBLE : View.GONE);
+        tvTrash.setVisibility(User.getCurrentRoleId() == Constants.ROLE_ADMIN ? View.VISIBLE : View.GONE);
 
         setupViewPager(viewPager);
         setupTabLayout(tabLayout);
@@ -183,8 +200,8 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void updateView(BaseModel customer){
+        createRVFilter();
         currentCustomer = customer;
-        //customerStatusID = currentCustomer.getBaseModel("status").getInt("id");
         tvTitle.setText(String.format("%s %s", Constants.getShopName(currentCustomer.getString("shopType")), currentCustomer.getString("signBoard")));
 
         if (currentCustomer.hasKey(Constants.TEMPBILL) ){
@@ -209,19 +226,18 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
             tvDebt.setText(String.format("Nợ: %s" ,Util.FormatMoney(object.getDouble("debt"))));
             tvPaid.setText(String.format("Trả: %s" ,Util.FormatMoney(object.getDouble("paid"))));
             tvBDF.setText(String.format("BDF:%s ", DataUtil.defineBDFPercent(listBillDetail)) +"%");
+            lnFilter.setVisibility(View.VISIBLE);
 
+        }else {
+            tvTotal.setText("...");
+            tvDebt.setText("...");
+            tvPaid.setText("...");
+            tvBDF.setText("...");
+            lnFilter.setVisibility(View.GONE);
         }
-
-//        else{
-//            currentDebt = 0.0;
-//            if (customerStatusID ==3){
-//                saveCustomerToLocal("status.id", 1);
-//                updateView(currentCustomer);
-//            }
-//        }
+        infoFragment.reloadInfo();
 
         billsFragment.updateList();
-        infoFragment.reloadInfo();
         productFragment.updateList();
         paymentFragment.updateList();
 
@@ -323,6 +339,29 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
                 break;
 
+            case R.id.customer_paid:
+                if (listBills.size() >0){
+                    CustomCenterDialog.alert("Chiết khấu", "Nhấn giữ vào biểu tường này để nhập số tiền chiết khấu cho khách hàng", "đồng ý");
+
+                }
+
+                break;
+
+            case R.id.customer_filter:
+                if (rvFilterTitle.getVisibility() == View.VISIBLE){
+                    rvFilterTitle.setVisibility(View.GONE);
+
+                }else {
+                    rvFilterTitle.setVisibility(View.VISIBLE);
+                    new Handler().postDelayed (new Runnable() {
+                        @Override
+                        public void run() {
+                            rvFilterTitle.setVisibility(View.GONE);
+                        }}, 2000);
+                }
+
+
+                break;
 
         }
     }
@@ -438,14 +477,14 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         if (requestCode == Constants.RESULT_SHOPCART_ACTIVITY){
             BaseModel data = new BaseModel(intent.getStringExtra(Constants.SHOP_CART_ACTIVITY));
             if (data.hasKey(Constants.RELOAD_DATA) && data.getBoolean(Constants.RELOAD_DATA)) {
-                reloadCustomer(CustomSQL.getBaseModel(Constants.CUSTOMER).getString("id"), 3);
+                reloadCustomer(CustomSQL.getBaseModel(Constants.CUSTOMER).getString("id"));
 
             }
 
         }else if (requestCode == Constants.RESULT_PRINTBILL_ACTIVITY){
             BaseModel data = new BaseModel(intent.getStringExtra(Constants.PRINT_BILL_ACTIVITY));
             if (data.hasKey(Constants.RELOAD_DATA) && data.getBoolean(Constants.RELOAD_DATA)) {
-                reloadCustomer(CustomSQL.getBaseModel(Constants.CUSTOMER).getString("id"), 3);
+                reloadCustomer(CustomSQL.getBaseModel(Constants.CUSTOMER).getString("id"));
 
             }
 
@@ -525,7 +564,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     }
 
-    protected void reloadCustomer(String id, int statusID){
+    protected void reloadCustomer(String id){
         CustomerConnect.GetCustomerDetail(id, new CallbackCustom() {
             @Override
             public void onResponse(final BaseModel result) {
@@ -566,12 +605,39 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     }
 
+    private void showDiscountPayment(){
+        CustomCenterDialog.showDialogDiscountPayment("TRỪ TIỀN CHIẾT KHẤU KHÁCH HÀNG",
+                "Nhập số tiền chiết khấu",
+                currentCustomer.getDouble("paid"),
+                new CallbackDouble() {
+                    @Override
+                    public void Result(Double d) {
+                        String param = DataUtil.createPostPaymentParam(currentCustomer.getInt("id"),
+                                User.getId(),
+                                d *-1,
+                                0,
+                                "Trả chiết khấu",
+                                false) ;
+                        CustomerConnect.PostPay(param, new CallbackCustom() {
+                            @Override
+                            public void onResponse(BaseModel result) {
+                                reloadCustomer(currentCustomer.getString("id"));
+                            }
+
+                            @Override
+                            public void onError(String error) {
+
+                            }
+                        }, true);
+                    }
+                });
+    }
+
     private void postPayToServer(List<String> listParam){
         CustomerConnect.PostListPay(listParam, new CallbackListCustom() {
             @Override
             public void onResponse(List result) {
-                //Util.showToast("Thanh toán thành công");
-                reloadCustomer(currentCustomer.getString("id"), 3);
+                reloadCustomer(currentCustomer.getString("id"));
 
             }
 
@@ -677,7 +743,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         }else if (listBills.size() >0){
             params.add(String.format(Api_link.DEBT_PARAM,
                     0.0,
-                    listBills.get(listBills.size() -1).getInt("user_id"),
+                    listBills.get(0).getInt("user_id"),
                     customer.getInt("id"),
                     Distributor.getId()));
         }
@@ -697,5 +763,96 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     }
 
+
+    @Override
+    public boolean onLongClick(View view) {
+        switch (view.getId()){
+            case R.id.customer_paid:
+                showDiscountPayment();
+                break;
+        }
+        return true;
+    }
+
+    private void createRVFilter(){
+        FilterChoiceAdapter adapter = new FilterChoiceAdapter(new CallbackString() {
+            @Override
+            public void Result(String s) {
+                rvFilterTitle.setVisibility(View.GONE);
+                switch (s){
+                    case Constants.ALL_FILTER:
+                        tvFilter.setText("");
+                        filterBillByRange(0, 0);
+                        break;
+
+
+                    case Constants.FILTER_BY_DATE:
+                        CalendarUtil.datePicker(new CustomCenterDialog.CallbackRangeTime() {
+                            @Override
+                            public void onSelected(long start, long end) {
+                                filterBillByRange(start, end);
+                            }
+                        }, new CallbackString() {
+                            @Override
+                            public void Result(String s) {
+                                tvFilter.setText(s);
+
+                            }
+                        });
+
+                        break;
+
+                    case Constants.FILTER_BY_MONTH:
+                        CalendarUtil.monthPicker(new CustomCenterDialog.CallbackRangeTime() {
+                            @Override
+                            public void onSelected(long start, long end) {
+                                filterBillByRange(start, end);
+
+                            }
+                        },new CallbackString() {
+                            @Override
+                            public void Result(String s) {
+                                tvFilter.setText(s);
+
+                            }
+                        }).show(getSupportFragmentManager(), null);
+
+                        break;
+
+                    case Constants.FILTER_BY_YEAR:
+                        CalendarUtil.showDialogYearPicker(null, new CustomCenterDialog.CallbackRangeTime() {
+                            @Override
+                            public void onSelected(long start, long end) {
+                                filterBillByRange(start, end);
+                            }
+                        }, new CallbackString() {
+                            @Override
+                            public void Result(String s) {
+                                tvFilter.setText(s);
+
+                            }
+                        });
+                        break;
+                }
+
+            }
+        });
+        Util.createLinearRV(rvFilterTitle, adapter);
+
+    }
+
+    private void filterBillByRange(long start, long end){
+        if (start == 0 && end == 0){
+            billsFragment.adapter.getFilter().filter("");
+            paymentFragment.adapter.getFilter().filter("");
+            productFragment.updateListByRange("");
+        }else {
+            BaseModel model = BaseModel.put2ValueToNewObject("from", start, "to", end);
+            billsFragment.adapter.getFilter().filter(model.BaseModelstoString());
+            paymentFragment.adapter.getFilter().filter(model.BaseModelstoString());
+            productFragment.updateListByRange(model.BaseModelstoString());
+        }
+
+    }
 
 }

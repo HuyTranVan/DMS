@@ -91,6 +91,7 @@ import wolve.dms.activities.StatisticalDashboardFragment;
 import wolve.dms.activities.StatisticalProductFragment;
 import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackString;
+import wolve.dms.customviews.CInputForm;
 import wolve.dms.libraries.ItemDecorationGridSpace;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Bill;
@@ -1353,7 +1354,31 @@ public class Util {
         });
     }
 
+    public static void textViewEvent(final TextView tvText, final CallbackString mlistener) {
+        tvText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mlistener.Result(s.toString());
+
+            }
+        });
+    }
+
     public static String getPhoneValue(EditText edText){
+        return edText.getText().toString().replace(".", "");
+    }
+
+    public static String getPhoneValue(CInputForm edText){
         return edText.getText().toString().replace(".", "");
     }
 

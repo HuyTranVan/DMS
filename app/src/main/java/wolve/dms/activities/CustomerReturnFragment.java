@@ -117,7 +117,7 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
     }
 
     private void finish(){
-        mActivity.reloadCustomer(mActivity.currentCustomer.getString("id"), 3);
+        mActivity.reloadCustomer(mActivity.currentCustomer.getString("id"));
         mActivity.getSupportFragmentManager().popBackStack();
 
 
@@ -330,7 +330,7 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
                         currentBill.getInt("user_id"),
                         mActivity.currentDebt - sumreturn ,
                         currentBill.getInt("id"),
-                        currentBill.getDouble("total"), false));
+                        "", false));
 
 
                 postListPayment(payments, new CallbackListCustom() {

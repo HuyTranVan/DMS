@@ -242,10 +242,10 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
             
         }
 
-        if (CustomSQL.getString(Constants.PRINTER_SIZE).equals("") || CustomSQL.getString(Constants.PRINTER_SIZE).equals(Constants.PRINTER_57)){
-            tvPrintSize.setText(Constants.PRINTER_57);
-        }else {
+        if (CustomSQL.getString(Constants.PRINTER_SIZE).equals("") || CustomSQL.getString(Constants.PRINTER_SIZE).equals(Constants.PRINTER_80)){
             tvPrintSize.setText(Constants.PRINTER_80);
+        }else {
+            tvPrintSize.setText(Constants.PRINTER_57);
         }
 
 
@@ -553,7 +553,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
                     adapterBill.getTotalMoney(),
                     0.0,
                     DataUtil.array2ListObject(currentBill.getString(Constants.BILL_DETAIL)),
-                    "",
+                    currentCustomer.getString("note"),
                     User.getId(),
                     0);
         }

@@ -16,18 +16,10 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.R;
-import wolve.dms.apiconnect.ProductConnect;
-import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickAdapter;
-import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDeleteAdapter;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Product;
-import wolve.dms.models.ProductGroup;
 import wolve.dms.models.User;
-import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
 
 
@@ -61,7 +53,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserAdapterVie
     public void onBindViewHolder(final UserAdapterViewHolder holder, final int position) {
         holder.tvName.setText(mData.get(position).getString("displayName"));
         holder.tvPhone.setText(Util.FormatPhone(mData.get(position).getString("phone")));
-        holder.tvRole.setText(mData.get(position).getString("role"));
+        holder.tvRole.setText(User.getRoleString(mData.get(position).getInt("role")));
 
         holder.line.setVisibility(position == mData.size() -1?View.GONE : View.VISIBLE);
         if (!Util.checkImageNull(mData.get(position).getString("image"))){

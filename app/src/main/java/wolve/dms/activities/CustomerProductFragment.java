@@ -77,6 +77,23 @@ public class CustomerProductFragment extends Fragment implements View.OnClickLis
         adapter.updateData(mActivity.listBillDetail);
     }
 
+    public void updateListByRange(String range){
+        if (range.isEmpty()){
+            adapter.updateData(mActivity.listBillDetail);
+
+        }else {
+            BaseModel contentObj = new BaseModel(range);
+            List<BaseModel> listTemp = new ArrayList<>();
+            for (BaseModel row : mActivity.listBillDetail) {
+                if (row.getLong("createAt") >= contentObj.getLong("from") &&  row.getLong("createAt") <= contentObj.getLong("to")){
+                    listTemp.add(row);
+                }
+            }
+            adapter.updateData(listTemp);
+        }
+
+    }
+
     private void createRVProductGroup(List<BaseModel> listbilldetail) {
         adapter = new Statistical_ProductGroupAdapter( listbilldetail);
         Util.createLinearRV(rvProductGroup, adapter);
