@@ -11,7 +11,7 @@
         android:id="@+id/add_user_header"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_35sdp"
-        android:background="@drawable/bg_header_top">
+        android:background="@drawable/bg_img_header">
 
         <ImageView
             android:id="@+id/icon_back"
@@ -92,6 +92,15 @@
             android:layout_height="wrap_content"
             app:textHint="Vị trí"
             app:iconText="@string/icon_role"
+            app:isDropdown="true"
+            app:textColor="@color/colorBlue"/>
+
+        <wolve.dms.customviews.CInputForm
+            android:id="@+id/add_user_warehouse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:textHint="Kho hàng mặc định"
+            app:iconText="@string/icon_depot"
             app:isDropdown="true"
             app:textColor="@color/colorBlue"/>
 

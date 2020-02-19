@@ -4,13 +4,13 @@
     android:id="@+id/dialog_edit_product_parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/colorwhite_corner_large">
+    android:background="@drawable/bg_corner5_white">
 
     <TextView
         android:id="@+id/dialog_bluetooth_list_title"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_25sdp"
-        android:background="@drawable/bg_header_top"
+        android:background="@drawable/bg_img_header"
         android:text="DANH SÁCH THIẾT BỊ"
         android:textSize="@dimen/_12sdp"
         android:textColor="@color/black_text_color"

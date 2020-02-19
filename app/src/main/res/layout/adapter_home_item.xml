@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="@dimen/_100sdp"
-    android:background="@drawable/colorwhite_pressed">
+    android:background="@drawable/btn_none_white">
 
     <wolve.dms.customviews.CTextIcon
         android:id="@+id/item_home_icon"

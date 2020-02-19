@@ -14,10 +14,14 @@ import androidx.core.app.ShareCompat;
 import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.Fragment;
 
+import java.util.List;
+
 import wolve.dms.R;
 import wolve.dms.activities.CustomerActivity;
+import wolve.dms.activities.WarehouseActivity;
 import wolve.dms.activities.DistributorActivity;
 import wolve.dms.activities.HomeActivity;
+import wolve.dms.activities.ImportActivity;
 import wolve.dms.activities.LoginActivity;
 import wolve.dms.activities.MapsActivity;
 import wolve.dms.activities.PrintBillActivity;
@@ -31,6 +35,10 @@ import wolve.dms.activities.StatusActivity;
 import wolve.dms.activities.TestActivity;
 import wolve.dms.activities.UserActivity;
 import wolve.dms.apiconnect.Api_link;
+import wolve.dms.apiconnect.SystemConnect;
+import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackListCustom;
+import wolve.dms.callback.CallbackListObject;
 import wolve.dms.libraries.Security;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
@@ -88,6 +96,25 @@ public class Transaction {
 
     }
 
+    public static void gotoWarehouseActivity() {
+        Context context = Util.getInstance().getCurrentActivity();
+        Intent intent = new Intent(context, WarehouseActivity.class);
+        context.startActivity(intent);
+        ((AppCompatActivity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        ((AppCompatActivity) context).finish();
+    }
+
+    public static void gotoImportActivity(BaseModel curentwarehouse, boolean flag) {
+        Activity context = Util.getInstance().getCurrentActivity();
+        Intent intent = new Intent(context, ImportActivity.class);
+        intent.putExtra(Constants.WAREHOUSE, curentwarehouse.BaseModelstoString());
+        intent.putExtra(Constants.FLAG, flag);
+        context.startActivityForResult(intent, Constants.RESULT_IMPORT_ACTIVITY);
+        context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+
+
+    }
+
     public static void gotoProductActivity() {
         Context context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(context, ProductActivity.class);
@@ -127,14 +154,6 @@ public class Transaction {
             CustomSQL.setLong(Constants.CHECKIN_TIME, Util.CurrentTimeStamp());
             context.startActivityForResult(intent, Constants.RESULT_CUSTOMER_ACTIVITY);
             context.overridePendingTransition(R.anim.slide_up, R.anim.nothing);
-
-            //CustomSQL.setString(Constants.CUSTOMER, customer);
-            //CustomSQL.setLong(Constants.CHECKIN_FLAG, isCheckin);
-//            if (isCheckin){
-//            }else {
-//                CustomSQL.setLong(Constants.CHECKIN_TIME, 0 );
-//            }
-
 
         }
 
@@ -177,13 +196,43 @@ public class Transaction {
 
     }
 
+    public static void returnPreviousActivity() {
+        Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        Util.getInstance().getCurrentActivity().finish();
+
+    }
+
+    public static void checkInventoryBeforePrintBill(BaseModel bill, List<BaseModel> listproduct){
+        DataUtil.checkInventory(listproduct, User.getCurrentUser().getInt("warehouse_id"), new CallbackListObject() {
+            @Override
+            public void onResponse(List<BaseModel> list) {
+                if (list.size() >0){
+                    CustomCenterDialog.showListProductWithDifferenceQuantity( User.getCurrentUser().getBaseModel("warehouse").getString("name") +": KHÔNG ĐỦ TỒN KHO ",
+                            list,
+                            new CallbackBoolean() {
+                        @Override
+                        public void onRespone(Boolean result) {
+                            if (result){
+                                gotoImportActivity(User.getCurrentUser().getBaseModel("warehouse"), true);
+
+                            }
+
+                        }
+                    });
+
+                }else {
+                    gotoPrintBillActivity(bill, false);
+                }
+            }
+        });
+
+    }
+
     public static void gotoPrintBillActivity(BaseModel bill, Boolean rePrint) {
         Activity context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(context, PrintBillActivity.class);
         intent.putExtra(Constants.RE_PRINT, rePrint);
-        //intent.putExtra(Constants.CUSTOMER, customer);
         intent.putExtra(Constants.BILL, bill.BaseModelstoString());
-        //intent.putExtra(Constants.ALL_DEBT, debt);
         context.startActivityForResult(intent, Constants.RESULT_PRINTBILL_ACTIVITY);
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }

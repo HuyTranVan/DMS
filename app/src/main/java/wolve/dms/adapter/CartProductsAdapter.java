@@ -239,8 +239,9 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
 
                     mData.remove(pos);
                     mChangePrice.NewPrice(totalPrice());
-                    notifyItemRemoved(pos);
-                    notifyItemChanged(pos);
+                    notifyDataSetChanged();
+//                    notifyItemRemoved(pos);
+//                    notifyItemChanged(pos);
 
 
 

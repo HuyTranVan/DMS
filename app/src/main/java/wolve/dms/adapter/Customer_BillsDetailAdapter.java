@@ -42,7 +42,6 @@ public class Customer_BillsDetailAdapter extends RecyclerView.Adapter<Customer_B
         Double sumMoney = mData.get(position).getInt("quantity") * (mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount"));
         holder.tvName.setText(mData.get(position).getString("productName"));
         holder.tvQuantity.setText(netMoney ==0 ? String.format("SL: %s",mData.get(position).getInt("quantity")) :String.format("%sx%s", mData.get(position).getInt("quantity") ,  Util.FormatMoney(netMoney) ));
-        //holder.tvTotal.setText(sumMoney ==0 ? "--" : Util.FormatMoney(sumMoney));
 
     }
 

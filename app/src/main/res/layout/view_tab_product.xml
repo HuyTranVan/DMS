@@ -24,7 +24,7 @@
         android:id="@+id/tabNotify"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:background="@drawable/bg_blue_rounded_selected"
+        android:background="@drawable/btn_oval_greyblue"
         android:text=""
         android:textSize="@dimen/tiny"
         android:textColor="@color/colorWhite"

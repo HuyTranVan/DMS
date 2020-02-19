@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -20,6 +21,7 @@ import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
 /**
@@ -41,7 +43,7 @@ public class ProductGroupActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     public int setIdContainer() {
-        return R.id.product_parent;
+        return R.id.product_group_parent;
     }
 
     @Override
@@ -81,7 +83,18 @@ public class ProductGroupActivity extends BaseActivity implements View.OnClickLi
         }
     }
 
-//    @Override
+    @Override
+    public void onBackPressed() {
+        Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.product_group_parent);
+        if(mFragment != null && mFragment instanceof NewUpdateProductGroupFragment) {
+            getSupportFragmentManager().popBackStack();
+
+        }else {
+            Transaction.gotoHomeActivityRight(true);
+        }
+    }
+
+    //    @Override
 //    public boolean onKeyDown(int keyCode, KeyEvent event) {
 //        if (keyCode == KeyEvent.KEYCODE_BACK){
 //            Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.product_parent);
@@ -97,8 +110,6 @@ public class ProductGroupActivity extends BaseActivity implements View.OnClickLi
 //    }
 
     protected void loadProductGroup() {
-        listProductGroup = new ArrayList<>();
-
         ProductConnect.ListProductGroup(true, new CallbackCustomList() {
             @Override
             public void onResponse(List<BaseModel> results) {

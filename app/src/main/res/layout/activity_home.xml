@@ -7,193 +7,217 @@
     android:background="@color/colorGrey"
     android:id="@+id/home_parent">
 
-    <RelativeLayout
-        android:id="@+id/home_info"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/home_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/colorWhite"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/home_rvitems"
         android:layout_marginBottom="1dp">
 
         <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/_50sdp">
+            android:id="@+id/home_info"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorWhite"
+            >
 
-            <ImageView
-                android:id="@+id/home_image"
-                android:layout_width="@dimen/_100sdp"
-                android:layout_height="@dimen/_100sdp"
-                android:src="@drawable/lub_logo_red"
-                android:layout_centerInParent="true"
-                android:layout_marginBottom="@dimen/_30sdp"/>
-
-            <TextView
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Lubsolution DMS"
-                android:textSize="@dimen/_18sdp"
-                android:layout_below="@id/home_image"
-                android:textStyle="bold"
                 android:layout_centerHorizontal="true"
-                android:textColor="@color/colorRed"
-                android:padding="@dimen/_5sdp"/>
+                android:layout_marginTop="@dimen/_50sdp">
 
-        </RelativeLayout>
+                <ImageView
+                    android:id="@+id/home_image"
+                    android:layout_width="@dimen/_100sdp"
+                    android:layout_height="@dimen/_100sdp"
+                    android:src="@drawable/lub_logo_red"
+                    android:layout_centerInParent="true"
+                    android:layout_marginBottom="@dimen/_30sdp"/>
 
-        <LinearLayout
-            android:id="@+id/home_user"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/_35sdp"
-            android:orientation="horizontal"
-            android:background="?selectableItemBackground"
-            android:gravity="center_vertical"
-            android:layout_alignParentRight="true">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Lubsolution DMS"
+                    android:textSize="@dimen/_18sdp"
+                    android:layout_below="@id/home_image"
+                    android:textStyle="bold"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="@color/colorRed"
+                    android:padding="@dimen/_5sdp"/>
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/home_icon"
-                android:layout_width="@dimen/_16sdp"
-                android:layout_height="@dimen/_16sdp"
-                android:src="@drawable/ic_user"
-                android:layout_gravity="center"
-                android:layout_marginLeft="@dimen/_10sdp"
-                android:scaleType="centerCrop"
-                app:civ_border_width="1dip"
-                app:civ_border_overlay="false"
-                app:civ_fill_color="@color/colorWhite"
-                app:civ_border_color="@color/colorLightGrey"/>
+            </RelativeLayout>
 
-            <TextView
-                android:id="@+id/home_fullname"
+            <LinearLayout
+                android:id="@+id/home_user"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Huy Tran"
-                android:textColor="@color/black_text_color_hint"
-                android:textSize="@dimen/_10sdp"
-                android:layout_marginLeft="@dimen/_5sdp"
-                android:layout_marginRight="@dimen/_10sdp"/>
-
-            <View
-                android:id="@+id/home_change_line"
-                android:layout_width="1dip"
-                android:layout_height="@dimen/_15sdp"
-                android:background="@color/black_text_color_hint"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:layout_marginBottom="@dimen/_10sdp"
-
-                android:layout_toLeftOf="@id/home_change_user"/>
-
-            <wolve.dms.customviews.CTextIcon
-                android:id="@+id/home_change_user"
-                android:layout_width="@dimen/_35sdp"
                 android:layout_height="@dimen/_35sdp"
-                android:background="?selectableItemBackgroundBorderless"
-                android:text="@string/icon_users"
-                android:textColor="@color/black_text_color_hint"
-                android:textSize="@dimen/_14sdp"
-                android:gravity="center"/>
+                android:orientation="horizontal"
+                android:background="?selectableItemBackground"
+                android:gravity="center_vertical"
+                android:layout_alignParentRight="true">
 
-        </LinearLayout>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/home_icon"
+                    android:layout_width="@dimen/_16sdp"
+                    android:layout_height="@dimen/_16sdp"
+                    android:src="@drawable/ic_user"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:scaleType="centerCrop"
+                    app:civ_border_width="1dip"
+                    app:civ_border_overlay="false"
+                    app:civ_fill_color="@color/colorWhite"
+                    app:civ_border_color="@color/colorLightGrey"/>
 
-        <LinearLayout
-            android:id="@+id/home_relogin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:layout_margin="@dimen/_10sdp"
-            android:gravity="right">
+                <TextView
+                    android:id="@+id/home_fullname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Huy Tran"
+                    android:textColor="@color/black_text_color_hint"
+                    android:textSize="@dimen/_10sdp"
+                    android:layout_marginLeft="@dimen/_5sdp"
+                    android:layout_marginRight="@dimen/_10sdp"/>
 
-            <TextView
-                android:id="@+id/home_month"
+                <View
+                    android:id="@+id/home_change_line"
+                    android:layout_width="1dip"
+                    android:layout_height="@dimen/_15sdp"
+                    android:background="@color/black_text_color_hint"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginBottom="@dimen/_10sdp"
+
+                    android:layout_toLeftOf="@id/home_change_user"/>
+
+                <wolve.dms.customviews.CTextIcon
+                    android:id="@+id/home_change_user"
+                    android:layout_width="@dimen/_35sdp"
+                    android:layout_height="@dimen/_35sdp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:text="@string/icon_users"
+                    android:textColor="@color/black_text_color_hint"
+                    android:textSize="@dimen/_14sdp"
+                    android:gravity="center"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/home_relogin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tổng bán hàng:"
-                android:textSize="@dimen/_10sdp"
-                android:textStyle="italic"
-                android:textColor="@color/black_text_color_hint"
-                android:layout_marginBottom="@dimen/_5sdp"/>
+                android:orientation="vertical"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="@dimen/_10sdp"
+                android:gravity="right">
+
+                <TextView
+                    android:id="@+id/home_month"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tổng bán hàng:"
+                    android:textSize="@dimen/_10sdp"
+                    android:textStyle="italic"
+                    android:textColor="@color/black_text_color_hint"
+                    android:layout_marginBottom="@dimen/_5sdp"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <wolve.dms.customviews.CTextIcon
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/icon_usd"
+                        android:layout_marginRight="@dimen/_5sdp"
+                        android:textColor="@color/black_text_color_hint"/>
+
+                    <TextView
+                        android:id="@+id/home_cash"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="đ"
+                        android:textSize="@dimen/_10sdp"
+                        android:textColor="@color/colorBlue"/>
+                </LinearLayout>
+
+
+
+<!--                <TextView-->
+<!--                    android:id="@+id/home_profit"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="Chênh lệch:"-->
+<!--                    android:textSize="@dimen/_10sdp"-->
+<!--                    android:textColor="@color/colorRed"/>-->
+
+
+
+
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/home_cash"
+                android:id="@+id/home_new_product"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tiền mặt:"
-                android:textSize="@dimen/_10sdp"
-                android:textColor="@color/colorBlue"/>
+                android:background="@drawable/btn_round_blue"
+                android:text="Có sản phẩm mới"
+                android:textSize="@dimen/_8sdp"
+                android:textColor="@color/white_text_color"
+                android:paddingLeft="@dimen/_15sdp"
+                android:paddingRight="@dimen/_15sdp"
+                android:paddingTop="@dimen/_2sdp"
+                android:paddingBottom="@dimen/_2sdp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/home_user"
+                android:visibility="gone"/>
 
-            <TextView
-                android:id="@+id/home_profit"
+            <RelativeLayout
+                android:id="@+id/home_tempbill_group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Chênh lệch:"
-                android:textSize="@dimen/_10sdp"
-                android:textColor="@color/colorRed"/>
+                android:background="@drawable/btn_round_white_border_blue"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="@dimen/_10sdp"
+                android:paddingLeft="@dimen/_10sdp"
+                android:paddingRight="@dimen/_10sdp"
+                android:paddingTop="@dimen/_5sdp"
+                android:paddingBottom="@dimen/_5sdp"
+                android:visibility="gone">
 
 
+                <TextView
+                    android:id="@+id/home_tempbill_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_16sdp"
+                    android:minWidth="@dimen/_16sdp"
+                    android:background="@drawable/btn_oval_blue"
+                    android:textColor="@color/colorWhite"
+                    android:text="00"
+                    android:textSize="@dimen/_10sdp"
+                    android:gravity="center"
+                    android:layout_centerVertical="true"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hóa đơn chưa giao"
+                    android:layout_toRightOf="@+id/home_tempbill_number"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:textSize="@dimen/_12sdp"
+                    android:textColor="@color/black_text_color"
+                    android:textStyle="bold|italic"/>
 
 
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/home_new_product"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/btn_round_blue"
-            android:text="Có sản phẩm mới"
-            android:textSize="@dimen/_8sdp"
-            android:textColor="@color/white_text_color"
-            android:paddingLeft="@dimen/_15sdp"
-            android:paddingRight="@dimen/_15sdp"
-            android:paddingTop="@dimen/_2sdp"
-            android:paddingBottom="@dimen/_2sdp"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/home_user"
-            android:visibility="gone"/>
-
-        <RelativeLayout
-            android:id="@+id/home_tempbill_group"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/btn_round_border_blue"
-            android:layout_alignParentBottom="true"
-            android:layout_margin="@dimen/_10sdp"
-            android:paddingLeft="@dimen/_10sdp"
-            android:paddingRight="@dimen/_10sdp"
-            android:paddingTop="@dimen/_5sdp"
-            android:paddingBottom="@dimen/_5sdp"
-            android:visibility="gone">
-
-
-            <TextView
-                android:id="@+id/home_tempbill_number"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/_16sdp"
-                android:minWidth="@dimen/_16sdp"
-                android:background="@drawable/bg_blue_rounded_button"
-                android:textColor="@color/colorWhite"
-                android:text="00"
-                android:textSize="@dimen/_10sdp"
-                android:gravity="center"
-                android:layout_centerVertical="true"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Hóa đơn chưa giao"
-                android:layout_toRightOf="@+id/home_tempbill_number"
-                android:layout_marginLeft="@dimen/_10sdp"
-                android:textSize="@dimen/_12sdp"
-                android:textColor="@color/black_text_color"
-                android:textStyle="bold|italic"/>
+            </RelativeLayout>
 
 
         </RelativeLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
-    </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/home_rvitems"

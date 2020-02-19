@@ -11,10 +11,10 @@ import java.util.Comparator;
 import java.util.List;
 
 import wolve.dms.apiconnect.Api_link;
-import wolve.dms.libraries.Security;
+import wolve.dms.apiconnect.SystemConnect;
+import wolve.dms.callback.CallbackListCustom;
+import wolve.dms.callback.CallbackListObject;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Bill;
-import wolve.dms.models.Customer;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 
@@ -38,87 +38,20 @@ public class DataUtil {
             params.put("note", Util.encodeString(note));
             params.put("deliverBy", deliverBy);
             params.put("isReturn", isreturnBill);
-
+            if (User.getCurrentUser().hasKey("warehouse_id")){
+                params.put("warehouse_id", User.getCurrentUser().getInt("warehouse_id"));
+            }
 
             JSONArray array = new JSONArray();
             for (int i=0; i< listProduct.size(); i++){
                 JSONObject object = new JSONObject();
-                object.put("productId", listProduct.get(i).getInt("id"));
+                object.put("product_id", listProduct.get(i).getInt("id"));
                 object.put("discount", listProduct.get(i).getDouble("discount"));
-                object.put("quantity", listProduct.get(i).getDouble("quantity"));
+                object.put("quantity", listProduct.get(i).getInt("quantity"));
 
                 array.put(object);
             }
             params.put("billDetails", (Object) array);
-        } catch (JSONException e) {
-//            e.printStackTrace();
-        }
-
-        return params.toString();
-
-    }
-
-    public static String updateBillHaveReturnParam(int customerId, BaseModel currentBill, BaseModel billReturn, Double sumreturn){
-        JSONObject params = new JSONObject();
-        JSONObject objectNote = new JSONObject();
-        try {
-            params.put("billDetails", (Object) null);
-            params.put("id", currentBill.getInt("id"));
-            params.put("total", currentBill.getDouble("total"));
-            params.put("paid", 0.0);
-            params.put("debt", currentBill.getDouble("total") );
-
-            params.put("customerId", customerId);
-            params.put("distributorId", currentBill.getBaseModel("distributor").getInt("id"));
-            params.put("userId", currentBill.getBaseModel("user").getInt("id"));
-
-            JSONObject objReturn = new JSONObject();
-            objReturn.put("id", billReturn.getInt("id"));
-            objReturn.put("createAt", billReturn.getLong("createAt"));
-            objReturn.put("updateAt", billReturn.getLong("updateAt"));
-            objReturn.put("user", (billReturn.getJsonObject("user")));
-            objReturn.put("total",0.0 );
-            objReturn.put("paid", 0.0);
-            objReturn.put("debt", 0.0);
-            objReturn.put("billDetails", billReturn.getJSONArray("billDetails"));
-
-
-            String currentNote = Security.decrypt(currentBill.getString("note"));
-
-            JSONArray arrayReturnNote =new JSONArray();
-            JSONArray arrayPayNote =new JSONArray();
-
-            if (Util.isJSONObject(currentNote)){
-                objectNote = new JSONObject(currentNote);
-                BaseModel noteObject = new BaseModel(currentNote);
-
-                if (noteObject.hasKey(Constants.HAVEBILLRETURN)){
-                    JSONArray arrReturn = noteObject.getJSONArray(Constants.HAVEBILLRETURN);
-                    for (int i=0; i<arrReturn.length(); i++){
-                        arrayReturnNote.put(arrReturn.getJSONObject(i));
-                    }
-
-                }
-
-                if (noteObject.hasKey(Constants.PAYBYTRETURN)){
-                    JSONArray arrPay = noteObject.getJSONArray(Constants.PAYBYTRETURN);
-                    for (int j=0; j<arrPay.length(); j++){
-                        arrayPayNote.put(arrPay.getJSONObject(j));
-                    }
-                }
-
-            }
-
-            arrayReturnNote.put(objReturn);
-
-            //arrayReturnNote.put(objPay);
-            objectNote.put(Constants.HAVEBILLRETURN, arrayReturnNote);
-            objectNote.put(Constants.PAYBYTRETURN, arrayPayNote);
-
-
-            params.put("note", Security.encrypt(objectNote.toString()));
-
-
 
         } catch (JSONException e) {
 //            e.printStackTrace();
@@ -128,13 +61,29 @@ public class DataUtil {
 
     }
 
-    public static String updateBillDelivered(int customerId, BaseModel currentBill, int userid){
+
+    public static String updateBillDelivered(int customerId, BaseModel currentBill, int userid, List<BaseModel> listProduct){
         JSONObject params = new JSONObject();
         try {
             params.put("id", currentBill.getInt("id"));
             params.put("note", currentBill.getString("note"));
             params.put("deliverBy", userid);
             params.put("isReturn", currentBill.getInt("isReturn"));
+            params.put("customerId", customerId);
+            params.put("warehouse_id", User.getCurrentUser().getInt("warehouse_id"));
+
+            JSONArray array = new JSONArray();
+            for (int i=0; i< listProduct.size(); i++){
+                JSONObject object = new JSONObject();
+                object.put("product_id", listProduct.get(i).getInt("product_id"));
+                object.put("discount", listProduct.get(i).getDouble("discount"));
+                object.put("quantity", listProduct.get(i).getInt("quantity"));
+                object.put("productName", listProduct.get(i).getString("productName"));
+                object.put("purchasePrice", listProduct.get(i).getDouble("quantity"));
+
+                array.put(object);
+            }
+            params.put("billDetails", (Object) array);
 
         } catch (JSONException e) {
 //            e.printStackTrace();
@@ -144,38 +93,90 @@ public class DataUtil {
 
     }
 
-
-
-
-    public static String createBillNote(String currentnote, String key, Object value){
-        JSONObject jsonNote = new JSONObject();
-
+    public static String createPostImportParam(int warehouse_id,
+                                             int from_warehouse,
+                                             List<BaseModel> listProduct,
+                                             String note){
+        final JSONObject params = new JSONObject();
         try {
-            if (currentnote.equals("")){
-                jsonNote = new JSONObject();
-                jsonNote.put(key, value);
+            params.put("warehouse_id", warehouse_id);
+            params.put("from_warehouse", from_warehouse);
+            params.put("note", Util.encodeString(note));
 
-            }else {
-                String note = Security.decrypt(currentnote);
-                if (Util.isJSONObject(note)){
-                    jsonNote = new JSONObject(note);
-                    jsonNote.put(key, value);
 
+            JSONArray array = new JSONArray();
+            for (int i=0; i< listProduct.size(); i++){
+                JSONObject object = new JSONObject();
+                object.put("id", listProduct.get(i).hasKey("product_id")? listProduct.get(i).getInt("product_id"): listProduct.get(i).getInt("id"));
+                //object.put("name", listProduct.get(i).getString("name"));
+                object.put("quantity", listProduct.get(i).getInt("quantity"));
+                //object.put("purchasePrice", listProduct.get(i).getDouble("purchasePrice"));
+
+                array.put(object);
+            }
+            params.put("importDetails", (Object) array);
+        } catch (JSONException e) {
+//            e.printStackTrace();
+        }
+
+        return params.toString();
+
+    }
+
+    public static void checkInventory(List<BaseModel> listproduct, int warehouse_id, CallbackListObject listener){
+        SystemConnect.GetInventoryList(warehouse_id, new CallbackListCustom() {
+            @Override
+            public void onResponse(List result) {
+                List<BaseModel> listresult = compareBillAndInventory(DataUtil.mergeProductDetail(listproduct), result);
+                if (checkNegative(listresult, "differenceQuantity")){
+                    listener.onResponse(listresult);
                 }else {
-                    jsonNote = new JSONObject();
-                    jsonNote.put(key, value);
-
+                    listener.onResponse(new ArrayList<>());
                 }
-
 
             }
 
-        } catch (JSONException e) {
+            @Override
+            public void onError(String error) {
+
+            }
+        }, true);
+    }
+
+    public static List<BaseModel> compareBillAndInventory(List<BaseModel> listproduct, List<BaseModel> listinventory){
+        List<BaseModel> results = new ArrayList<>();
+
+        for (int i=0; i<listproduct.size(); i++){
+            BaseModel object = new BaseModel();
+            object.put("id", listproduct.get(i).getInt("id"));
+            //object.put("name", model.getString("name"));
+            object.put("productName", listproduct.get(i).hasKey("productName")? listproduct.get(i).getString("productName"): listproduct.get(i).getString("name"));
+            object.put("productQuantity", listproduct.get(i).getInt("quantity"));
+            object.put("inventoryQuantity", 0);
+
+            BaseModel modelDup = DataUtil.reuturnDuplicate(listinventory,"product_id", listproduct.get(i), listproduct.get(i).hasKey("product_id")?"product_id" :"id");
+            if (modelDup != null){
+                object.put("inventoryQuantity", modelDup.getInt("currentQuantity"));
+            }
+
+            object.put("differenceQuantity", object.getInt("inventoryQuantity") - object.getInt("productQuantity") );
+
+            results.add(object);
 
         }
+        return results;
+    }
 
-        return Security.encrypt(jsonNote.toString());
+    public static boolean checkNegative(List<BaseModel> list, String key){
+        boolean check = false;
+        for (int i=0; i<list.size(); i++){
+            if (list.get(i).getInt(key) < 0){
+                check = true;
+                break;
+            }
+        }
 
+        return check;
     }
 
     public static List<String> createListPaymentParam(int customerId, List<BaseModel> list, boolean payByReturn){
@@ -254,56 +255,7 @@ public class DataUtil {
     }
 
 
-    public static List<BaseModel> groupDebtByCustomer(final List<BaseModel> list){
-        final List<BaseModel> listResult = new ArrayList<>();
-            for (int i=0; i<list.size(); i++){
-                BaseModel customer1 = new BaseModel(list.get(i).getJsonObject("customer"));
 
-                boolean checkDup = false;
-                for (int j=0; j<listResult.size(); j++){
-                    BaseModel customer2 = new BaseModel(listResult.get(j).getJsonObject("customer"));
-                    if (customer1.getString("id").equals(customer2.getString("id"))){
-                        checkDup = true;
-                        break;
-                    }
-                }
-
-                if (!checkDup){
-                    double debt = 0.0;
-                    for (int a=0; a<list.size(); a++){
-                        BaseModel customer3 = new BaseModel(list.get(a).getJsonObject("customer"));
-                        if (customer1.getString("id").equals(customer3.getString("id"))){
-                            debt += list.get(a).getDouble("debt");
-
-                        }
-                    }
-
-                    if (debt > 0){
-                        BaseModel objectDetail = new BaseModel();
-                        objectDetail.put("id",list.get(i).getString("id") );
-                        objectDetail.put("createAt",list.get(i).getLong("createAt") );
-                        objectDetail.put("updateAt",list.get(i).getLong("updateAt") );
-                        objectDetail.put("user",list.get(i).getJsonObject("user") );
-                        objectDetail.put("customer",list.get(i).getJsonObject("customer") );
-                        objectDetail.put("distributor",list.get(i).getJsonObject("distributor") );
-                        objectDetail.put("payments",list.get(i).getString("payments") );
-                        objectDetail.put("total",list.get(i).getDouble("total") );
-                        objectDetail.put("debt",debt );
-                        objectDetail.put("paid",list.get(i).getDouble("paid") );
-                        objectDetail.put("note",list.get(i).getString("note") );
-
-                        listResult.add(objectDetail);
-                    }
-
-
-                }
-
-
-
-            }
-
-        return listResult;
-    }
 
     public static List<BaseModel> sortProductGroup(List<BaseModel> list, boolean reverse){
         Collections.sort(list, new Comparator<BaseModel>(){
@@ -376,6 +328,32 @@ public class DataUtil {
         return listBillByUser;
 
 
+    }
+
+    public static List<BaseModel> mergeProductDetail(List<BaseModel> list){
+        List<BaseModel> listResult = new ArrayList<>();
+
+        for (int i=0; i<list.size(); i++){
+            if (!DataUtil.checkDuplicate(listResult, "id", list.get(i))){
+                BaseModel newDetail = new BaseModel();
+                newDetail.put("product_id", list.get(i).hasKey("product_id")? list.get(i).getInt("product_id"): list.get(i).getInt("id"));
+                newDetail.put("productName", list.get(i).hasKey("productName")? list.get(i).getString("productName"): list.get(i).getString("name"));
+
+                int quantity = list.get(i).getInt("quantity");
+                for (int ii = i+1; ii< list.size(); ii++){
+                    if (list.get(ii).getInt("id") == list.get(i).getInt("id")){
+                        quantity += list.get(ii).getInt("quantity");
+                    }
+                }
+
+                newDetail.put("quantity", quantity);
+
+                listResult.add(newDetail);
+            }
+
+        }
+
+        return listResult;
     }
 
     public static List<BaseModel> remakeBill(List<BaseModel> listbill, boolean isDeliver){
@@ -520,34 +498,9 @@ public class DataUtil {
 
     }
 
-    public static double defineBDFPercentValue(List<BaseModel> listDetails){
-//        List<BaseModel> listDetails = getAllBillDetail(listbill);
 
-        double total = 0.0;
-        double bdf =0.0;
-
-        for (int i=0; i<listDetails.size(); i++){
-            if (listDetails.get(i).getBoolean("promotion")
-                    && listDetails.get(i).getDouble("unitPrice").equals(listDetails.get(i).getDouble("discount"))){
-                bdf += listDetails.get(i).getInt("quantity") * listDetails.get(i).getDouble("purchasePrice");
-            }else {
-                total += listDetails.get(i).getInt("quantity") * listDetails.get(i).getDouble("purchasePrice");
-
-            }
-        }
-
-        double percent = bdf *100 /total;
-
-        return percent;
-
-        //tvBDF.setText(String.format("BDF: %s ",new DecimalFormat("#.##").format(percent)) +"%");
-
-    }
 
     public static double defineBDFValue(List<BaseModel> listDetails){
-//        List<BaseModel> listDetails = getAllBillDetail(listbill);
-
-//        double total = 0.0;
         double bdf =0.0;
 
         for (int i=0; i<listDetails.size(); i++){
@@ -555,72 +508,12 @@ public class DataUtil {
                     && listDetails.get(i).getDouble("unitPrice").equals(listDetails.get(i).getDouble("discount"))){
                 bdf += listDetails.get(i).getInt("quantity") * listDetails.get(i).getDouble("purchasePrice");
             }
-//            else {
-//                total += listDetails.get(i).getInt("quantity") * listDetails.get(i).getDouble("purchasePrice");
-//
-//            }
-        }
 
-//        double percent = bdf *100 /total;
+        }
 
         return bdf;
 
-        //tvBDF.setText(String.format("BDF: %s ",new DecimalFormat("#.##").format(percent)) +"%");
-
     }
-
-    public static List<BaseModel> getCashByUser(List<BaseModel> listbill, List<BaseModel> listpayment, List<BaseModel> users){
-        for (BaseModel user: users){
-            double paid = 0.0;
-            user.put("paid", 0);
-
-            for (BaseModel bill: listpayment){
-                BaseModel us = new BaseModel(bill.getString("user"));
-                if (us.getString("name").equals(user.getString("name"))){
-                    paid += bill.getDouble("paid");
-                    user.put("paid", paid);
-                }
-            }
-        }
-
-        for (BaseModel user: users){
-            double paid = 0.0;
-            user.put("total", 0);
-
-            for (BaseModel bill: listbill){
-                BaseModel us = new BaseModel(bill.getString("user"));
-                if (us.getString("name").equals(user.getString("name"))){
-                    paid += bill.getDouble("total");
-                    user.put("total", paid);
-                }
-            }
-        }
-
-        return users;
-
-    }
-
-//    public static List<BaseModel> getRevenueByUser(List<BaseModel> listbill, List<BaseModel> users){
-//        try {
-//            for (BaseModel user: users){
-//                double paid = 0.0;
-//                user.put("total", 0);
-//
-//                for (BaseModel bill: listbill){
-//                    BaseModel us = new BaseModel(bill.getString("user"));
-//                    if (us.getString("name").equals(user.getString("name"))){
-//                        paid += bill.getDouble("total");
-//                        user.put("total", paid);
-//                    }
-//                }
-//            }
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return users;
-//
-//    }
 
     public static List<List<Object>> updateIncomeByUserToSheet(String startDate, String endDate,List<BaseModel> users,  List<BaseModel> listbill, List<BaseModel> listbilldetail, List<BaseModel> listpayment, List<BaseModel> listdebt){
         List<List<Object>> values = new ArrayList<>();
@@ -737,6 +630,20 @@ public class DataUtil {
         return check;
     }
 
+    public static BaseModel reuturnDuplicate(List<BaseModel> list, String key1, BaseModel object, String key2){
+        BaseModel result = null;
+        //boolean check = false;
+        for (int i=0; i<list.size(); i++){
+            if (list.get(i).getString(key1).equals( object.getString(key2))){
+                //check = true;
+                result = list.get(i);
+                break;
+            }
+        }
+
+        return result;
+    }
+
     public static boolean checkDuplicateDouble(List<Double> list, double value){
         boolean check = false;
         for (int i=0; i<list.size(); i++){
@@ -749,124 +656,15 @@ public class DataUtil {
         return check;
     }
 
-    private List<List<Object>> getListValueExportToSheet(List<Object> listSheetID, List<Bill> listbill){
-        List<List<Object>> values = new ArrayList<>();
-        try {
-            for (int i=0; i<listbill.size(); i++){
-                Bill bill = listbill.get(i);
-                if (!listSheetID.toString().contains(bill.getString("id"))){
-                    final Customer customer = new Customer(bill.getJsonObject("customer"));
-                    List<Object> data = new ArrayList<>();
-                    data.add(bill.getString("id"));
-                    data.add(Util.DateString(bill.getLong("createAt")));
-                    data.add(bill.getJsonObject("user").getString("displayName"));
-                    data.add(Constants.getShopName(customer.getString("shopType")) + " " + customer.getString("signBoard"));
-                    data.add(customer.getString("phone"));
-                    data.add(bill.getDouble("total"));
-                    data.add(bill.getDouble("paid"));
-                    data.add(bill.getDouble("debt"));
-                    data.add(bill.getString("note"));
-
-                    values.add(data);
-                }
-
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return values;
-    }
-
-    public static List<BaseModel> convertPaymentList(String user, List<BaseModel> list, long starDay, long lastDay){
-        List<BaseModel>  listInitialPayment = new ArrayList<>();
+    public static List<BaseModel> removeObjectFromList(List<BaseModel> list, BaseModel value, String key){
+        List<BaseModel> listResutl = new ArrayList<>();
         for (int i=0; i<list.size(); i++){
-            List<BaseModel> payments = DataUtil.array2ListBaseModel(list.get(i).getJSONArray("payments"));
-
-            if (payments.size() >0){
-                for (int a=0; a<payments.size(); a++){
-                    if (payments.get(a).getLong("createAt") - starDay >= 0 &&
-                            payments.get(a).getLong("createAt") - lastDay <= 0){
-
-                        if (!DataUtil.checkDuplicate(listInitialPayment,"id", payments.get(a))){
-                            BaseModel newCash = new BaseModel();
-                            newCash.put("id", payments.get(a).getInt("id"));
-                            newCash.put("createAt", payments.get(a).getLong("createAt"));
-                            newCash.put("updateAt", payments.get(a).getLong("updateAt"));
-                            newCash.put("note", payments.get(a).getString("note"));
-                            newCash.put("paid", payments.get(a).getDouble("paid"));
-                            newCash.put("user", list.get(i).getJsonObject("user"));
-                            newCash.put("customer", list.get(i).getJsonObject("customer"));
-                            newCash.put("billTotal", list.get(i).getDouble("total"));
-                            newCash.put("billProfit", Util.getProfitByPayment(list.get(i), payments.get(a).getDouble("paid")));
-
-                            //updateListUser(new BaseModel(list.get(i).getJsonObject("user")));
-                            if (user.equals(Constants.ALL_FILTER)){
-                                listInitialPayment.add(newCash);
-
-                            }else {
-                                if (payments.get(a).getBaseModel("user").getString("displayName").equals(user)){
-                                    listInitialPayment.add(newCash);
-                                }
-
-                            }
-
-                            //listInitialPayment.add(newCash);
-
-                        }
-
-                    }
-                }
-            }
-
-        }
-
-        return listInitialPayment;
-
-    }
-
-    public static List<BaseModel> groupCustomerPayment(List<BaseModel> list){
-        List<BaseModel> listResult = new ArrayList<>();
-        for ( int i=0; i<list.size(); i++ ){
-            boolean check = false;
-            for (int a=0; a<listResult.size(); a++){
-                if (Util.DateString(listResult.get(a).getLong("createAt")).equals(Util.DateString(list.get(i).getLong("createAt")))
-                        && listResult.get(a).getString("customer").equals(list.get(i).getString("customer"))){
-
-                    check = true;
-                    break;
-                }
-            }
-
-
-
-            if (!check){
-                BaseModel row = new BaseModel();
-                row.put("createAt", list.get(i).getLong("createAt"));
-                row.put("user", list.get(i).getJsonObject("user"));
-                row.put("customer", list.get(i).getJsonObject("customer"));
-
-                double paid = list.get(i).getDouble("paid");
-                for (int ii= i+1; ii<list.size(); ii++){
-                    if (Util.DateString(row.getLong("createAt")).equals(Util.DateString(list.get(ii).getLong("createAt")))
-                            && row.getString("customer").equals(list.get(ii).getString("customer"))){
-
-                        paid += list.get(ii).getDouble("paid");
-
-                    }
-                }
-                row.put("paid", paid);
-                row.put("billTotal", list.get(i).getDouble("billTotal"));
-                row.put("billProfit", list.get(i).getDouble("billProfit"));
-
-
-                listResult.add(row);
-
+            if (!list.get(i).getString(key).equals(value.getString(key)) ){
+                listResutl.add(list.get(i));
             }
         }
 
-
-        return listResult;
+        return listResutl;
     }
 
     public static BaseModel createBillParam(long starDay, long lastDay){
@@ -895,18 +693,29 @@ public class DataUtil {
 
     }
 
-//    public static BaseModel createDebtParam(){
-////        BaseModel payparam = new BaseModel();
-////        payparam.put("url", Api_link.CUSTOMERS+ String.format(Api_link.DEFAULT_RANGE, 1,500));
-////        payparam.put("method", "POST");
-////        payparam.put("isjson", false );
-////        payparam.put("param", String.format(Api_link.CUSTOMER_DEBT_PARAM, 0) );
-////
-////        return payparam;
-////
-////    }
-
     public static BaseModel createDebtParam(){
+        BaseModel payparam = new BaseModel();
+        payparam.put("url", Api_link.CUSTOMERS+ String.format(Api_link.DEFAULT_RANGE, 1,500));
+        payparam.put("method", "POST");
+        payparam.put("isjson", false );
+        payparam.put("param", String.format(Api_link.CUSTOMER_DEBT_PARAM, 0) );
+
+        return payparam;
+
+    }
+
+    public static BaseModel createListPaymentParam(long starDay, long lastDay){
+        BaseModel payparam = new BaseModel();
+        payparam.put("url", Api_link.PAYMENTS +  String.format(Api_link.PAYMENTS_PARAM, starDay, lastDay) );
+        payparam.put("method", "GET");
+        payparam.put("isjson", false );
+        payparam.put("param", null );
+
+        return payparam;
+
+    }
+
+    public static BaseModel getListCustomerParam(){
         BaseModel payparam = new BaseModel();
         payparam.put("url", Api_link.CUSTOMERS_HAVEDEBT);
         payparam.put("method", "GET");
@@ -961,6 +770,17 @@ public class DataUtil {
 
     }
 
+    public static BaseModel postImportParam(String param){
+        BaseModel paramCheckin = new BaseModel();
+        paramCheckin.put("url", Api_link.IMPORT_NEW);
+        paramCheckin.put("method", "POST");
+        paramCheckin.put("isjson", true );
+        paramCheckin.put("param", param );
+
+        return paramCheckin;
+
+    }
+
     public static BaseModel postDebtParam(String param){
         BaseModel paramDebt = new BaseModel();
         paramDebt.put("url", Api_link.DEBT_NEW);
@@ -991,6 +811,17 @@ public class DataUtil {
         paramCheckin.put("param", param );
 
         return paramCheckin;
+
+    }
+
+    public static BaseModel createNewDepotParam(String param){
+        BaseModel paramCustomer = new BaseModel();
+        paramCustomer.put("url", Api_link.WAREHOUSE_NEW);
+        paramCustomer.put("method", "POST");
+        paramCustomer.put("isjson", false );
+        paramCustomer.put("param", param );
+
+        return paramCustomer;
 
     }
 
@@ -1049,100 +880,7 @@ public class DataUtil {
 
     }
 
-    public static String formatString(String text){
 
-        StringBuilder json = new StringBuilder();
-        String indentString = "";
-
-        for (int i = 0; i < text.length(); i++) {
-            char letter = text.charAt(i);
-            switch (letter) {
-                case '{':
-                case '[':
-                    json.append("\n" + indentString + letter + "\n");
-                    indentString = indentString + "\t";
-                    json.append(indentString);
-                    break;
-                case '}':
-                case ']':
-                    indentString = indentString.replaceFirst("\t", "");
-                    json.append("\n" + indentString + letter);
-                    break;
-                case ',':
-                    json.append(letter + "\n" + indentString);
-                    break;
-
-                default:
-                    json.append(letter);
-                    break;
-            }
-        }
-
-        return json.toString();
-    }
-
-    public static String updateBillHavePaymentParam(int customerId, BaseModel currentBill, BaseModel billReturn, Double paid){
-        JSONObject params = new JSONObject();
-        JSONObject objectNote = new JSONObject();
-        try {
-            params.put("billDetails", (Object) null);
-            params.put("id", currentBill.getInt("id"));
-            params.put("total", currentBill.getDouble("total"));
-            params.put("paid", 0.0);
-            params.put("debt", currentBill.getDouble("total") );
-
-            params.put("customerId", customerId);
-            params.put("distributorId", currentBill.getBaseModel("distributor").getInt("id"));
-            params.put("userId", currentBill.getBaseModel("user").getInt("id"));
-
-            JSONObject objPay = new JSONObject();
-            objPay.put("createAt",billReturn.getLong("createAt") );
-            objPay.put("user", (billReturn.getJsonObject("user")));
-            objPay.put("paid", paid);
-            objPay.put("idbillreturn", billReturn.getInt("id"));
-            objPay.put("bill_date", billReturn.getLong("createAt"));
-
-
-            String currentNote = Security.decrypt(currentBill.getString("note"));
-
-            JSONArray arrayReturnNote =new JSONArray();
-            JSONArray arrayPayNote =new JSONArray();
-
-            if (Util.isJSONObject(currentNote)){
-                objectNote = new JSONObject(currentNote);
-                BaseModel noteObject = new BaseModel(currentNote);
-
-                if (noteObject.hasKey(Constants.HAVEBILLRETURN)){
-                    JSONArray arrReturn = noteObject.getJSONArray(Constants.HAVEBILLRETURN);
-                    for (int i=0; i<arrReturn.length(); i++){
-                        arrayReturnNote.put(arrReturn.getJSONObject(i));
-                    }
-
-                }
-
-                if (noteObject.hasKey(Constants.PAYBYTRETURN)){
-                    JSONArray arrPay = noteObject.getJSONArray(Constants.PAYBYTRETURN);
-                    for (int j=0; j<arrPay.length(); j++){
-                        arrayPayNote.put(arrPay.getJSONObject(j));
-                    }
-                }
-
-            }
-
-            arrayPayNote.put(objPay);
-
-            objectNote.put(Constants.HAVEBILLRETURN, arrayReturnNote);
-            objectNote.put(Constants.PAYBYTRETURN, arrayPayNote);
-
-            params.put("note", Security.encrypt(objectNote.toString()));
-
-        } catch (JSONException e) {
-//            e.printStackTrace();
-        }
-
-        return params.toString();
-
-    }
 
 
 }

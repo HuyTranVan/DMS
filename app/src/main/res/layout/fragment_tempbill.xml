@@ -11,7 +11,7 @@
         android:id="@+id/tempbill_header"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_35sdp"
-        android:background="@drawable/bg_header_top">
+        android:background="@drawable/bg_img_header">
 
         <ImageView
             android:id="@+id/icon_back"
@@ -30,17 +30,43 @@
             android:textSize="@dimen/_12sdp"
             android:textColor="@color/black_text_color"/>
 
-    </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/tempbill_select_group"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:visibility="gone">
 
-<!--    <TextView-->
-<!--        android:id="@+id/tempbill_location_check"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:background="@color/colorMainStroke"-->
-<!--        android:gravity="center"-->
-<!--        android:text="Đang kiểm tra vị trí..."-->
-<!--        android:padding="@dimen/_2sdp"-->
-<!--        android:visibility="gone"/>-->
+            <wolve.dms.customviews.CTextIcon
+                android:id="@+id/tempbill_select_close"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="match_parent"
+                android:text="@string/icon_x"
+                android:gravity="center"
+                android:textSize="@dimen/_14sdp"/>
+
+            <wolve.dms.customviews.CTextIcon
+                android:id="@+id/tempbill_select_check"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="CHỌN TẤT CẢ"
+                android:gravity="center"
+                android:paddingLeft="@dimen/_5sdp"
+                android:paddingRight="@dimen/_5sdp"
+                android:layout_toLeftOf="@+id/tempbill_select_list"/>
+
+            <wolve.dms.customviews.CTextIcon
+                android:id="@+id/tempbill_select_list"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:minWidth="@dimen/_35sdp"
+                android:text="@string/icon_bill"
+                android:gravity="center"
+                android:textSize="@dimen/_14sdp"
+                android:layout_alignParentRight="true"/>
+        </RelativeLayout>
+
+    </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tempbill_rvtempbill"

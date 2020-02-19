@@ -1,13 +1,11 @@
 package wolve.dms.activities;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -18,8 +16,6 @@ import androidx.fragment.app.Fragment;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
 import wolve.dms.R;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
@@ -28,7 +24,7 @@ import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CButtonVertical;
 import wolve.dms.customviews.CInputForm;
-import wolve.dms.libraries.CustomSwitchButton;
+import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
@@ -41,12 +37,13 @@ import wolve.dms.utils.Util;
  */
 
 public class CustomerInfoFragment extends Fragment implements View.OnClickListener,  RadioGroup.OnCheckedChangeListener {
-    private View view, swCover;
+    private View view;
     private CInputForm edAdress, edPhone, edName, edNote;
+    private CTextIcon tvStatus;
     private EditText edShopName ;
-    private CButtonVertical mDirection, mPrint, mCall;
-    private TextView tvStatus, tvLastStatus, tvType;
-    private CustomSwitchButton swStatus;
+    private CButtonVertical mDirection, mCall, mInterest;
+    private TextView tvLastCheckin, tvType;
+    //private CustomSwitchButton swStatus;
     private RadioGroup rgType;
     private LinearLayout lnHistory;
 
@@ -73,14 +70,15 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         edName = (CInputForm) view.findViewById(R.id.customer_info_name);
         edShopName = (EditText) view.findViewById(R.id.customer_info_shopname_name);
         mDirection = view.findViewById(R.id.customer_info_direction);
-        mPrint = view.findViewById(R.id.customer_info_print);
+        mInterest = view.findViewById(R.id.customer_info_interest);
         mCall = view.findViewById(R.id.customer_info_call);
         edNote = view.findViewById(R.id.customer_info_note);
-        swStatus = view.findViewById(R.id.customer_info_switch);
-        tvStatus = view.findViewById(R.id.customer_info_status);
-        tvLastStatus = view.findViewById(R.id.customer_info_last_status);
+        tvStatus = view.findViewById(R.id.customer_info_notinterested);
+        //swStatus = view.findViewById(R.id.customer_info_switch);
+        //tvStatus = view.findViewById(R.id.customer_info_status);
+        tvLastCheckin = view.findViewById(R.id.customer_info_last_status);
         rgType = view.findViewById(R.id.customer_info_shoptype);
-        swCover = view.findViewById(R.id.customer_info_switch_cover);
+        //swCover = view.findViewById(R.id.customer_info_switch_cover);
         tvType = view.findViewById(R.id.customer_info_type);
         lnHistory = view.findViewById(R.id.customer_history);
 
@@ -124,14 +122,12 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 
         if (mActivity.listCheckins.size() >0){
             String checkin = String.format("%s %s",Util.DateHourString(mActivity.listCheckins.get(mActivity.listCheckins.size()-1).getLong("createAt")), mActivity.listCheckins.get(mActivity.listCheckins.size()-1).getString("note") );
-            tvLastStatus.setText(checkin);
+            tvLastCheckin.setText(checkin);
             lnHistory.setVisibility(View.VISIBLE);
         }else {
             lnHistory.setVisibility(View.GONE);
 
         }
-
-        mPrint.setVisibility(mActivity.listDebtBill.size() > 0? View.VISIBLE : View.GONE);
         mCall.setVisibility(mActivity.currentCustomer.getString("phone").equals("")?View.GONE: View.VISIBLE);
         
         updateStatus(mActivity.currentCustomer.getBaseModel("status").getInt("id"));
@@ -149,8 +145,8 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         lnHistory.setOnClickListener(this);
         mDirection.setOnClickListener(this);
         mCall.setOnClickListener(this);
-        mPrint.setOnClickListener(this);
-        swCover.setOnClickListener(this);
+        mInterest.setOnClickListener(this);
+        tvStatus.setOnClickListener(this);
         edAdress.setOnMoreClickView(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -184,68 +180,90 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 
     private void updateStatus(int status){
         if (status ==2){
-            swStatus.setChecked(false);
-            tvStatus.setText("Khách hàng không quan tâm");
-            tvStatus.setTextColor(mActivity.getResources().getColor(R.color.black_text_color));
-            tvType.setBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_border_grey));
+            //swStatus.setChecked(false);
+            //tvStatus.setText("Khách hàng không quan tâm");
+            //tvStatus.setTextColor(mActivity.getResources().getColor(R.color.black_text_color));
+            tvStatus.setVisibility(View.GONE);
+            tvType.setBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_transparent_border_grey));
             tvType.setTextColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
 
-            //changeShopTypeBackground(false);
-            mCall.setIconBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_grey));
-            mCall.setIconColor(mActivity.getResources().getColor(R.color.colorWhite));
-            mCall.setTextColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
+            mInterest.setText("Không quan tâm");
+            mInterest.setIconBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_grey));
+            mInterest.setTextColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
+            mInterest.setIconText(mActivity.getResources().getString(R.string.icon_x));
             mDirection.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
-            mPrint.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
+            mCall.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
+
             edAdress.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
             edNote.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
             edName.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
             edPhone.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
 
 
-            mActivity.btnShopCart.setBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_border_blue));
+            mActivity.btnShopCart.setBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_white_border_blue));
             mActivity.btnShopCart.setTextColor(mActivity.getResources().getColor(R.color.colorBlue));
 
 
         }else {
-            swStatus.setChecked(true);
-            //changeShopTypeBackground(true);
-            mCall.setIconBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_blue));
-            mCall.setIconColor(mActivity.getResources().getColor(R.color.colorWhite));
-            mCall.setTextColor(mActivity.getResources().getColor(R.color.colorBlueTransparent));
+            tvStatus.setVisibility(View.VISIBLE);
+            tvType.setBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_transparent_border_grey));
+            tvType.setTextColor(mActivity.getResources().getColor(R.color.colorBlue));
+
             mDirection.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
-            mPrint.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
+            mCall.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
+
             edAdress.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
             edNote.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
             edName.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
             edPhone.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
 
-            tvType.setBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_border_grey));
-            tvType.setTextColor(mActivity.getResources().getColor(R.color.colorBlue));
+
 
             mActivity.btnShopCart.setBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_blue));
             mActivity.btnShopCart.setTextColor(mActivity.getResources().getColor(R.color.colorWhite));
 
             if (status == 3){
-                swStatus.setCheckedColor(getResources().getColor(R.color.colorBlue));
-                tvStatus.setTextColor(mActivity.getResources().getColor(R.color.colorBlue));
-                if (mActivity.listBills.size() >0){
-                    String text = String.format("Khách đã mua hàng - Cách %d ngày", Util.countDay(mActivity.listBills.get(0).getLong("createAt")));
-                    tvStatus.setText(text);
+                mInterest.setText("Đã mua hàng");
+                mInterest.setIconBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_blue));
+                mInterest.setTextColor(mActivity.getResources().getColor(R.color.colorBlue));
+                mInterest.setIconText(mActivity.getResources().getString(R.string.icon_check));
 
-                }else {
-                    tvStatus.setText("Khách đã mua hàng");
-                }
+
+
+                //swStatus.setCheckedColor(getResources().getColor(R.color.colorBlue));
+                //tvStatus.setTextColor(mActivity.getResources().getColor(R.color.colorBlue));
+//                if (mActivity.listBills.size() >0){
+//                    String text = String.format("Khách đã mua hàng - Cách %d ngày", Util.countDay(mActivity.listBills.get(mActivity.listBills.size()-1).getLong("createAt")));
+//                    tvStatus.setText(text);
+//
+//                }else {
+//                    tvStatus.setText("Khách đã mua hàng");
+//                }
 
             }else if (status ==1){
                 if (mActivity.listCheckins.size() >0){
-                    swStatus.setCheckedColor(getResources().getColor(R.color.orange_dark));
-                    tvStatus.setTextColor(mActivity.getResources().getColor(R.color.orange_dark));
-                    tvStatus.setText("Khách hàng có quan tâm");
+                    mInterest.setText("Có quan tâm");
+                    mInterest.setIconBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_orange));
+                    mInterest.setTextColor(mActivity.getResources().getColor(R.color.orange_dark));
+                    mInterest.setIconText(mActivity.getResources().getString(R.string.icon_heart));
+
+
+
+                    //swStatus.setCheckedColor(getResources().getColor(R.color.orange_dark));
+//                    tvStatus.setTextColor(mActivity.getResources().getColor(R.color.orange_dark));
+//                    tvStatus.setText("Khách hàng có quan tâm");
 
                 }else {
-                    swStatus.setCheckedColor(getResources().getColor(R.color.colorPink));
-                    tvStatus.setTextColor(mActivity.getResources().getColor(R.color.colorPink));
-                    tvStatus.setText("Khách hàng mới");
+                    mInterest.setText("Khách hàng mới");
+                    mInterest.setIconBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_pink));
+                    mInterest.setTextColor(mActivity.getResources().getColor(R.color.colorPink));
+                    mInterest.setIconText(mActivity.getResources().getString(R.string.icon_star));
+
+
+
+                    //swStatus.setCheckedColor(getResources().getColor(R.color.colorPink));
+//                    tvStatus.setTextColor(mActivity.getResources().getColor(R.color.colorPink));
+//                    tvStatus.setText("Khách hàng mới");
 
                 }
 
@@ -269,37 +287,64 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 
                 break;
 
-            case R.id.customer_info_print:
-                mActivity.printDebtBills();
+            case R.id.customer_info_notinterested:
+                if (mActivity.currentCustomer.getBaseModel("status").getInt("id")!= 2){
+                    CustomCenterDialog.alertWithCancelButton2(null,
+                            "Chuyển sang trạng thái không quan tâm",
+                            "tiếp tục",
+                            "quay lại", new CustomCenterDialog.ButtonCallback() {
+                                @Override
+                                public void Submit(Boolean boolSubmit) {
+                                    CustomCenterDialog.showReasonChoice("CHỌN LÝ DO KHÔNG QUAN TÂM",
+                                            "Nhập lý do khác ",
+                                            "",
+                                            true,
+                                            new CallbackString() {
+                                                @Override
+                                                public void Result(String s) {
+                                                    updateRessonNotInterted(s);
+
+                                                }
+                                            });
+                                }
+
+                                @Override
+                                public void Cancel(Boolean boolCancel) {
+
+                                }
+                            });
+
+                }
 
                 break;
+
 
             case R.id.customer_history:
                 mActivity.changeFragment(new CheckinFragment() , true);
 
                 break;
 
-            case R.id.customer_info_switch_cover:
-                if (swStatus.isChecked()){
-                    CustomCenterDialog.showReasonChoice("CHỌN LÝ DO KHÔNG QUAN TÂM",
-                            "Nhập lý do khác ",
-                            "",
-                            true,
-                            new CallbackString() {
-                                @Override
-                                public void Result(String s) {
-                                    updateRessonNotInterted(s);
+            //case R.id.customer_info_switch_cover:
+//                if (swStatus.isChecked()){
+//                    CustomCenterDialog.showReasonChoice("CHỌN LÝ DO KHÔNG QUAN TÂM",
+//                            "Nhập lý do khác ",
+//                            "",
+//                            true,
+//                            new CallbackString() {
+//                                @Override
+//                                public void Result(String s) {
+//                                    updateRessonNotInterted(s);
+//
+//                                }
+//                            });
+//
+//                }else {
+//                    mActivity.saveCustomerToLocal("status_id",1);
+//                    updateStatus(1);
+//                }
 
-                                }
-                            });
 
-                }else {
-                    mActivity.saveCustomerToLocal("status_id",1);
-                    updateStatus(1);
-                }
-
-
-                break;
+                //break;
 
         }
     }
@@ -413,7 +458,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 //    private void changeShopTypeBackground(boolean isEnable){
 //        for (int i = 0; i < rgType.getChildCount(); ++i) {
 //            RadioButton radioButton = (RadioButton) rgType.getChildAt(i);
-//            radioButton.setBackgroundResource(isEnable? R.drawable.btn_round_white_selected_grey : R.drawable.btn_round_white_selected_grey);
+//            radioButton.setBackgroundResource(isEnable? R.drawable.btn_round_white_border_grey : R.drawable.btn_round_white_border_grey);
 //            radioButton.setTextColor(isEnable? getResources().getColor(R.color.black_text_color) : getResources().getColor(R.color.black_text_color));
 //        }
 //
@@ -447,7 +492,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 
     }
 
-    private void updateRessonNotInterted(String content){
+    protected void updateRessonNotInterted(String content){
         String note = String.format("Chuyển sang không quan tâm vì: %s", content);
         CustomerConnect.PostCheckin(createParamCheckin(mActivity.currentCustomer, 2, note), new CallbackCustom() {
             @Override
@@ -455,9 +500,6 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
                 mActivity.saveCustomerToLocal("status_id",2);
                 updateStatus(2);
                 Util.showToast("Đã chuyển sang không quan tâm");
-
-                //mActivity.currentCustomer.put("status.id", mActivity.customerStatusID);
-                //mActivity.submitCustomer();
 
 
             }

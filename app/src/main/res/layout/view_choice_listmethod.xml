@@ -6,7 +6,7 @@
     android:id="@+id/view_list_method_parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/colorwhite_corner"
+    android:background="@drawable/bg_corner5_white"
     tools:ignore="WebViewLayout"
     android:orientation="vertical">
 

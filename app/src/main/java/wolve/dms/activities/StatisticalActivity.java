@@ -46,6 +46,7 @@ import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.DataUtil;
+import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
 import static wolve.dms.libraries.connectapi.sheetapi.GoogleSheetPostData.SHEET_COLUM;
@@ -132,7 +133,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         rlBottom.setVisibility(User.getCurrentRoleId()==Constants.ROLE_ADMIN|| User.getCurrentRoleId()==Constants.ROLE_WAREHOUSE? View.VISIBLE :View.GONE);
         tvEmployeeName.setText(User.getCurrentRoleId()==Constants.ROLE_ADMIN? Constants.ALL_FILTER : User.getFullName());
 
-        loadInitialData(getStartDay(), getEndDay(), true);
+        loadInitialData(getStartDay(), getEndDay());
 
         setupViewPager(viewPager);
         setupTabLayout(tabLayout);
@@ -193,7 +194,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                 rdYear.setText(Constants.YEAR_DEFAULT);
                 currentChecked = rdGroup.getCheckedRadioButtonId();
 
-                loadInitialData(startday, startday+86400000, false);
+                loadInitialData(startday, startday+86400000);
                 btnExport.setVisibility(View.GONE);
 
                 break;
@@ -230,16 +231,20 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                 break;
 
             case R.id.statistical_reload:
-                loadInitialData(getStartDay(), getEndDay(), false);
+                loadInitialData(getStartDay(), getEndDay());
                 break;
         }
     }
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        finish();
-        Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        if(Util.getInstance().isLoading()){
+            Util.getInstance().stopLoading(true);
+
+        }else {
+            Transaction.gotoHomeActivityRight(true);
+        }
+
     }
 
 
@@ -352,7 +357,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                 rdMonth.setText(Constants.MONTH_DEFAULT);
                 rdYear.setText(Constants.YEAR_DEFAULT);
                 currentChecked = rdGroup.getCheckedRadioButtonId();
-                loadInitialData(start, end, false);
+                loadInitialData(start, end);
                 btnExport.setVisibility(View.GONE);
             }
 
@@ -384,7 +389,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                 rdYear.setText(Constants.YEAR_DEFAULT);
                 currentChecked = rdGroup.getCheckedRadioButtonId();
 
-                loadInitialData(getStartDay(), getEndDay(), false);
+                loadInitialData(getStartDay(), getEndDay());
 
             }
         });
@@ -413,7 +418,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                 rdDate.setText(Constants.DATE_DEFAULT);
                 currentChecked = rdGroup.getCheckedRadioButtonId();
 
-                loadInitialData(getStartDay(), getEndDay(), false);
+                loadInitialData(getStartDay(), getEndDay());
 
             }
         }, new CallbackBoolean() {
@@ -431,38 +436,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         });
     }
 
-    private void loadInitialData(long starDay, long lastDay, boolean loadDebt){
-        //1. LoadBill
-        //2. LoadPayment
-        //3. LoadDebt
-//        SystemConnect.loadListObject(createLoadParam(starDay, lastDay, loadDebt), new CallbackCustomListList() {
-//            @Override
-//            public void onResponse(List<List<BaseModel>> results) {
-//                updatePaymentList(results.get(0), starDay, lastDay);
-//                updateDebtList(results.get(1));
-//                updateBillsList(results.get(2));
-//
-////                if (loadDebt){
-////                    updateDebtList(results.get(1));
-////                    updateBillsList(results.get(2));
-////
-////                }else {
-////                    updateBillsList(results.get(1));
-////
-////                }
-//                updateBillDetailList(listInitialBill);
-//
-//                updateAllFragmentData();
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }, true);
-
-
+    private void loadInitialData(long starDay, long lastDay){
         SystemConnect.getStatisticals(String.format(Api_link.STATISTICAL_PARAM, starDay, lastDay), new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
@@ -509,63 +483,12 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         listInitialPayment = new ArrayList<>(list);
         updateListUser(listInitialPayment);
 
-
-
-
-//        for (int i=0; i<list.size(); i++){
-//            List<BaseModel> payments = DataUtil.array2ListBaseModel(list.get(i).getJSONArray("payments"));
-//
-//            if (payments.size() >0){
-//                for (int a=0; a<payments.size(); a++){
-//                    if (payments.get(a).getLong("createAt") - starDay >= 0 &&
-//                            payments.get(a).getLong("createAt") - lastDay <= 0 &&
-//                            payments.get(a).getInt("payByReturn") == 0){
-//
-//                        if (!DataUtil.checkDuplicate(listInitialPayment,"id", payments.get(a))){
-//                            BaseModel newCash = new BaseModel();
-//                            newCash.put("id", payments.get(a).getInt("id"));
-//                            newCash.put("createAt", payments.get(a).getLong("createAt"));
-//                            newCash.put("updateAt", payments.get(a).getLong("updateAt"));
-//                            newCash.put("note", payments.get(a).getString("note"));
-//                            newCash.put("paid", payments.get(a).getDouble("paid"));
-//                            newCash.put("user", list.get(i).getJsonObject("user"));
-//                            newCash.put("customer", list.get(i).getJsonObject("customer"));
-//                            newCash.put("billTotal", list.get(i).getDouble("total"));
-//                            newCash.put("billProfit", Util.getProfitByPayment(list.get(i), payments.get(a).getDouble("paid")));
-//
-//                            updateListUser(new BaseModel(list.get(i).getJsonObject("user")));
-//
-//                            listInitialPayment.add(newCash);
-//
-//                        }
-//
-//                    }
-//                }
-//            }
-//
-//        }
-
     }
 
     private void updateDebtList(List<BaseModel> list){
         listInitialDebt= new ArrayList<>(list);
         updateListUser(listInitialDebt);
 
-
-//        listInitialDebt = new ArrayList<>();
-//        int distributorID = Distributor.getId();
-//        for (int i=0; i<list.size(); i++){
-//            BaseModel itemDebt = list.get(i);
-//            if (!list.get(i).getString("note").isEmpty()  && Util.isJSONValid(list.get(i).getString("note"))){
-//                itemDebt.put("userName", new BaseModel(itemDebt.getString("note")).getString("userName"));
-//
-//                if (list.get(i).hasKey("distributor") && list.get(i).getBaseModel("distributor").getInt("id") == distributorID
-//                        || list.get(i).getInt("distributor_id") == distributorID){
-//                    listInitialDebt.add(list.get(i));
-//                }
-//            }
-//
-//        }
 
     }
 
@@ -608,8 +531,11 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Util.getInstance().setCurrentActivity(this);
-        if (data.getStringExtra(Constants.CUSTOMER) != null && requestCode == Constants.RESULT_CUSTOMER_ACTIVITY){
-            loadInitialData(getStartDay(), getEndDay(), true);
+        if (data.hasExtra(Constants.RELOAD_DATA) && requestCode == Constants.RESULT_CUSTOMER_ACTIVITY){
+            if (data.getBooleanExtra(Constants.RELOAD_DATA, false)){
+                loadInitialData(getStartDay(), getEndDay());
+            }
+
         }
 
     }

@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:minWidth="@dimen/_30sdp"
         android:minHeight="@dimen/_30sdp"
-        android:background="@drawable/bg_blue_rounded_button"
+        android:background="@drawable/btn_oval_blue"
         android:text="@string/icon_product_group"
         android:textSize="@dimen/_10sdp"
         android:textColor="@color/colorWhite"

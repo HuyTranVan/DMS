@@ -17,6 +17,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 
@@ -36,6 +37,7 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomListList;
+import wolve.dms.callback.CallbackListObject;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
@@ -54,7 +56,7 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/15/17.
  */
 
-public class HomeActivity extends BaseActivity implements View.OnClickListener, CallbackClickAdapter{
+public class HomeActivity extends BaseActivity implements View.OnClickListener, CallbackClickAdapter, SwipeRefreshLayout.OnRefreshListener {
     private RecyclerView rvItems;
     private CTextIcon btnChangeUser;
     private CircleImageView imgUser;
@@ -62,8 +64,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     private LinearLayout lnUser;
     private RelativeLayout lnTempGroup;
     private View line;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
-    private List<BaseModel> listPayment = new ArrayList<>();
     protected List<BaseModel> listTempBill = new ArrayList<>();
     private boolean doubleBackToExitPressedOnce = false;
     private Fragment mFragment;
@@ -92,32 +94,40 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         btnChangeUser = findViewById(R.id.home_change_user);
         line = findViewById(R.id.home_change_line);
         tvCash = findViewById(R.id.home_cash);
-        tvProfit = findViewById(R.id.home_profit);
+        //tvProfit = findViewById(R.id.home_profit);
         tvMonth = findViewById(R.id.home_month);
         tvHaveNewProduct = findViewById(R.id.home_new_product);
         lnTempGroup = findViewById(R.id.home_tempbill_group);
         tvNumberTemp = findViewById(R.id.home_tempbill_number);
+        swipeRefreshLayout = findViewById(R.id.home_refresh);
 
     }
 
     @Override
     public void initialData() {
         checkPermission();
-
+        swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorBlueDark));
         updateUserInfo();
-        if (CustomSQL.getBoolean(Constants.ON_MAP_SCREEN)) {
-            Transaction.gotoMapsActivity();
-        }
 
-        if (!CustomSQL.getString(Constants.CUSTOMER_ID).equals("")){
-            Transaction.gotoMapsActivity();
+        if (CustomSQL.getBoolean(Constants.ON_MAP_SCREEN)) {
+            if (checkWarehouse())
+                Transaction.gotoMapsActivity();
+
         }
 
         if (CustomSQL.getBoolean(Constants.LOGIN_SUCCESS)){
             loadCurrentData();
             CustomSQL.setBoolean(Constants.LOGIN_SUCCESS, false);
+
         }
-        checkNewProductUpdated();
+        loadOverView();
+        checkNewProductUpdated(new CallbackListObject() {
+            @Override
+            public void onResponse(List<BaseModel> list) {
+                listTempBill = list;
+                updateTempBillVisibility(listTempBill);
+            }
+        });
         tvMonth.setText(String.format("***Tháng %s:", Util.CurrentMonthYear()));
 
     }
@@ -142,15 +152,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         long start = Util.TimeStamp1(Util.Current01MonthYear());
         long end = Util.TimeStamp1(Util.Next01MonthYear());
 
-        params.add(DataUtil.createPaymentParam(start,end ));
+        params.add(DataUtil.createListPaymentParam(start,end ));
         SystemConnect.loadListObject(params, new CallbackCustomListList() {
             @Override
             public void onResponse(List<List<BaseModel>> results) {
-                String user = User.getCurrentRoleId()==Constants.ROLE_ADMIN? Constants.ALL_FILTER: User.getFullName();
-                listPayment = DataUtil.groupCustomerPayment(DataUtil.convertPaymentList(user, results.get(0), start, end));
-
-                tvCash.setText(String.format(    "Tiền mặt:     %s đ", Util.FormatMoney(DataUtil.sumMoneyFromList(listPayment, "paid"))));
-                tvProfit.setText(String.format("Chênh lệch:     %s đ", Util.FormatMoney(DataUtil.sumMoneyFromList(listPayment, "billProfit"))));
+                double paid = DataUtil.sumMoneyFromList(results.get(0), "paid");
+                tvCash.setText(String.format(    "%s đ", Util.FormatMoney(paid)));
 
             }
 
@@ -167,6 +174,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         lnUser.setOnClickListener(this);
         tvHaveNewProduct.setOnClickListener(this);
         lnTempGroup.setOnClickListener(this);
+        swipeRefreshLayout.setOnRefreshListener(this);
     }
 
     @Override
@@ -212,8 +220,20 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         if(Util.getInstance().isLoading()){
             Util.getInstance().stopLoading(true);
 
+        }else if (swipeRefreshLayout.isRefreshing()) {
+            swipeRefreshLayout.setRefreshing(false);
+
         }else if(mFragment != null && mFragment instanceof TempBillFragment) {
-            getSupportFragmentManager().popBackStack();
+            TempBillFragment fragment = (TempBillFragment) mFragment;
+            if (((TempBillFragment) mFragment).checkSelected()){
+                ((TempBillFragment) mFragment).closeSelected();
+
+            }else {
+                getSupportFragmentManager().popBackStack();
+
+            }
+
+
 
         }else {
             if (doubleBackToExitPressedOnce) {
@@ -342,17 +362,19 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     public void onRespone(String data, int position) {
         switch (position){
             case 0:
-                Transaction.gotoMapsActivity();
+                if (checkWarehouse())
+                    Transaction.gotoMapsActivity();
 
                 break;
 
             case 1:
-                Transaction.gotoStatisticalActivity();
+                if (checkWarehouse())
+                    Transaction.gotoStatisticalActivity();
 
                 break;
 
             case 2:
-                Util.showToast("Chưa hỗ trợ");
+                Transaction.gotoWarehouseActivity();
 
                 break;
 
@@ -444,7 +466,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        checkNewProductUpdated();
+        checkNewProductUpdated(new CallbackListObject() {
+            @Override
+            public void onResponse(List<BaseModel> list) {
+                listTempBill = list;
+                updateTempBillVisibility(listTempBill);
+            }
+        });
         if(mFragment != null && mFragment instanceof TempBillFragment){
             ((TempBillFragment) mFragment).reloadData();
 
@@ -453,11 +481,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     }
 
-    private void checkNewProductUpdated(){
+    private void checkNewProductUpdated(CallbackListObject listener){
         SystemConnect.getLastestProductUpdated(new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
-                listTempBill = DataUtil.listTempBill(DataUtil.array2ListObject(result.getString("tempBills")));
+                swipeRefreshLayout.setRefreshing(false);
+                listener.onResponse(DataUtil.listTempBill(DataUtil.array2ListObject(result.getString("tempBills"))));
                 if (result.getLong("lastProductUpdate") > CustomSQL.getLong(Constants.LAST_PRODUCT_UPDATE)){
                     tvHaveNewProduct.setVisibility(View.VISIBLE);
 
@@ -477,12 +506,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                     tvHaveNewProduct.setVisibility(View.GONE);
                 }
 
-                if (listTempBill.size() >0){
-                    lnTempGroup.setVisibility(View.VISIBLE);
-                    tvNumberTemp.setText(String.valueOf(listTempBill.size()));
-                }else {
-                    lnTempGroup.setVisibility(View.GONE);
-                }
+
 
 
 
@@ -493,6 +517,15 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
             }
         }, false);
+    }
+
+    private void updateTempBillVisibility(List<BaseModel> list){
+        if (list.size() >0){
+            lnTempGroup.setVisibility(View.VISIBLE);
+            tvNumberTemp.setText(String.valueOf(list.size()));
+        }else {
+            lnTempGroup.setVisibility(View.GONE);
+        }
     }
 
     @SuppressLint("WrongConstant")
@@ -571,14 +604,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
                                     }
 
-
                                 }
 
                             });
 
-
                 }
-
 
             }
         }
@@ -586,4 +616,25 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     }
 
 
+    @Override
+    public void onRefresh() {
+        checkNewProductUpdated(new CallbackListObject() {
+            @Override
+            public void onResponse(List<BaseModel> list) {
+                listTempBill = list;
+                updateTempBillVisibility(listTempBill);
+            }
+        });
+        loadOverView();
+    }
+
+    protected boolean checkWarehouse(){
+        BaseModel user = User.getCurrentUser();
+        if (User.getCurrentUser().getInt("warehouse_id") == 0){
+            CustomCenterDialog.alert(null,"Cập nhật thông tin kho hàng nhân viên để tiếp tục thao tác", "đồng ý");
+            return false;
+        }else {
+            return true;
+        }
+    }
 }

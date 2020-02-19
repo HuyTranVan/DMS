@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:background="@drawable/colorwhite_pressed">
+    android:background="@drawable/btn_none_white">
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -25,7 +25,7 @@
             android:id="@+id/statistical_bills_item_number"
             android:layout_width="@dimen/_16sdp"
             android:layout_height="@dimen/_16sdp"
-            android:background="@drawable/bg_greendark_rounded_button"
+            android:background="@drawable/btn_oval_denim"
             android:textColor="@color/colorWhite"
             android:text="0"
             android:textSize="@dimen/_8sdp"
@@ -87,13 +87,13 @@
         android:layout_marginTop="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
-        android:background="@drawable/colorwhite_bordergrey_corner"
+        android:background="@drawable/bg_corner5_white_border_grey"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_lightgrey_top_2corner"
+            android:background="@drawable/bg_2topcorner5_lightgrey"
             android:orientation="vertical">
 
             <LinearLayout
@@ -236,7 +236,7 @@
             android:id="@+id/statistical_bills_item_payment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_grey_corner"
+            android:background="@drawable/bg_corner5_lighgrey"
             android:layout_marginLeft="@dimen/_2sdp"
             android:layout_marginRight="@dimen/_2sdp"
             android:layout_marginBottom="@dimen/_2sdp"/>

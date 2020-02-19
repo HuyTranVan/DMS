@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/colorwhite_pressed">
+    android:background="@drawable/btn_none_white">
 
     <TextView
         android:id="@+id/productgroup_item_name"

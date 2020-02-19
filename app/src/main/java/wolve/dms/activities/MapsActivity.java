@@ -1,9 +1,6 @@
 package wolve.dms.activities;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
@@ -29,18 +26,14 @@ import android.widget.TextView;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.PermissionChecker;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
-import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -48,7 +41,6 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import org.json.JSONArray;
@@ -74,7 +66,6 @@ import wolve.dms.callback.LatlngListener;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Customer;
-import wolve.dms.models.Distributor;
 import wolve.dms.models.District;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
@@ -86,7 +77,6 @@ import wolve.dms.utils.MapUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
-import static wolve.dms.utils.Constants.REQUEST_PERMISSION_LOCATION;
 import static wolve.dms.utils.MapUtil.removeMarker;
 
 /**
@@ -1036,13 +1026,13 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
         if (customer.getBoolean("statusInterested")){
             btnDirection.setBackground(getResources().getDrawable(R.drawable.btn_round_blue));
-            btnCall.setBackground(getResources().getDrawable(R.drawable.btn_round_border_blue));
-            btnShare.setBackground(getResources().getDrawable(R.drawable.btn_round_border_blue));
+            btnCall.setBackground(getResources().getDrawable(R.drawable.btn_round_white_border_blue));
+            btnShare.setBackground(getResources().getDrawable(R.drawable.btn_round_white_border_blue));
 
         }else {
             btnDirection.setBackground(getResources().getDrawable(R.drawable.btn_round_grey));
-            btnCall.setBackground(getResources().getDrawable(R.drawable.btn_round_border_grey));
-            btnShare.setBackground(getResources().getDrawable(R.drawable.btn_round_border_grey));
+            btnCall.setBackground(getResources().getDrawable(R.drawable.btn_round_transparent_border_grey));
+            btnShare.setBackground(getResources().getDrawable(R.drawable.btn_round_transparent_border_grey));
 
         }
 

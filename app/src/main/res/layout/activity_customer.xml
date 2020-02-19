@@ -19,7 +19,7 @@
             android:id="@+id/customer_header"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_35sdp"
-            android:background="@drawable/bg_header_top">
+            android:background="@drawable/bg_img_header">
 
             <ImageView
                 android:id="@+id/icon_back"
@@ -34,9 +34,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:gravity="center"
                 android:layout_toRightOf="@+id/icon_back"
-                android:layout_toLeftOf="@+id/icon_more">
+                android:layout_marginRight="@dimen/_35sdp"
+                android:gravity="center">
 
                 <TextView
                     android:id="@+id/customer_title"
@@ -59,30 +59,30 @@
                     android:gravity="center"
                     android:textStyle="italic"/>
 
-
             </LinearLayout>
 
-<!--            <TextView-->
-<!--                    android:id="@+id/add_customer_title"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="CỬA HÀNG"-->
-<!--                    android:textSize="@dimen/_14sdp"-->
-<!--                    android:textColor="@color/black_text_color"-->
-<!--                    android:layout_centerInParent="true"-->
-<!--                    android:textAllCaps="true"/>-->
+<!--            <wolve.dms.customviews.CTextIcon-->
+<!--                android:id="@+id/customer_switch_cover"-->
+<!--                android:layout_width="@dimen/_35sdp"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:text="@string/icon_x"-->
+<!--                android:textColor="@color/black_text_color_hint"-->
+<!--                android:textSize="@dimen/_16sdp"-->
+<!--                android:gravity="center"-->
+<!--                android:background="?selectableItemBackground"-->
+<!--                android:layout_toLeftOf="@+id/icon_more"-->
+<!--                android:visibility="gone"/>-->
 
-
-                <wolve.dms.customviews.CTextIcon
-                    android:id="@+id/icon_more"
-                    android:layout_width="@dimen/_35sdp"
-                    android:layout_height="match_parent"
-                    android:text="@string/icon_trash"
-                    android:textColor="@color/black_text_color_hint"
-                    android:textSize="@dimen/_14sdp"
-                    android:gravity="center"
-                    android:background="?selectableItemBackground"
-                    android:layout_alignParentRight="true" />
+            <wolve.dms.customviews.CTextIcon
+                android:id="@+id/icon_more"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="match_parent"
+                android:text="@string/icon_trash"
+                android:textColor="@color/black_text_color_hint"
+                android:textSize="@dimen/_14sdp"
+                android:gravity="center"
+                android:background="?selectableItemBackground"
+                android:layout_alignParentRight="true" />
 
 
             </RelativeLayout>
@@ -180,27 +180,11 @@
                     android:layout_height="match_parent"
                     android:minWidth="@dimen/_25sdp"
                     android:minHeight="@dimen/_25sdp"
-                    android:background="@drawable/btn_round_border_grey"
+                    android:background="@drawable/btn_round_transparent_border_grey"
                     android:textSize="@dimen/_10sdp"
                     android:gravity="center"
                     android:textColor="@color/colorRed"
                     android:text="..."
-                    android:paddingLeft="@dimen/_8sdp"
-                    android:paddingRight="@dimen/_8sdp"
-                    android:layout_margin="@dimen/_5sdp"
-                    android:singleLine="true"/>
-
-                <TextView
-                    android:id="@+id/customer_paid"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:minWidth="@dimen/_25sdp"
-                    android:minHeight="@dimen/_25sdp"
-                    android:background="@drawable/btn_round_border_grey"
-                    android:textSize="@dimen/_10sdp"
-                    android:text="..."
-                    android:gravity="center"
-                    android:textColor="@color/black_text_color"
                     android:paddingLeft="@dimen/_8sdp"
                     android:paddingRight="@dimen/_8sdp"
                     android:layout_margin="@dimen/_5sdp"
@@ -212,7 +196,7 @@
                     android:layout_height="match_parent"
                     android:minWidth="@dimen/_25sdp"
                     android:minHeight="@dimen/_25sdp"
-                    android:background="@drawable/btn_round_border_grey"
+                    android:background="@drawable/btn_round_transparent_border_grey"
                     android:textSize="@dimen/_10sdp"
                     android:text="..."
                     android:gravity="center"
@@ -223,12 +207,30 @@
                     android:singleLine="true"/>
 
                 <TextView
+                    android:id="@+id/customer_paid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:minWidth="@dimen/_25sdp"
+                    android:minHeight="@dimen/_25sdp"
+                    android:background="@drawable/btn_round_transparent_border_grey"
+                    android:textSize="@dimen/_10sdp"
+                    android:text="..."
+                    android:gravity="center"
+                    android:textColor="@color/black_text_color"
+                    android:paddingLeft="@dimen/_8sdp"
+                    android:paddingRight="@dimen/_8sdp"
+                    android:layout_margin="@dimen/_5sdp"
+                    android:singleLine="true"/>
+
+
+
+                <TextView
                     android:id="@+id/customer_bdf"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:minWidth="@dimen/_25sdp"
                     android:minHeight="@dimen/_25sdp"
-                    android:background="@drawable/btn_round_border_grey"
+                    android:background="@drawable/btn_round_transparent_border_grey"
                     android:textColor="@color/orange_dark"
                     android:textSize="@dimen/_10sdp"
                     android:text="..."
@@ -322,6 +324,18 @@
 
     </RelativeLayout>
 
+    <wolve.dms.customviews.CTextIcon
+        android:id="@+id/customer_print"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:background="@drawable/btn_round_grey"
+        android:text="@string/icon_print"
+        android:textColor="@color/colorWhite"
+        android:gravity="center"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="@dimen/_20sdp"
+        android:layout_marginBottom="@dimen/_20sdp"
+        android:visibility="gone"/>
 
 
 

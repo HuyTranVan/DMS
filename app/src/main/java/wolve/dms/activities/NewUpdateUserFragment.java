@@ -37,10 +37,12 @@ import wolve.dms.BuildConfig;
 import wolve.dms.R;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.ProductConnect;
+import wolve.dms.apiconnect.SystemConnect;
 import wolve.dms.apiconnect.UserConnect;
 import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
+import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CInputForm;
@@ -53,6 +55,7 @@ import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomSQL;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -69,7 +72,7 @@ import static wolve.dms.utils.Constants.REQUEST_IMAGE_CAPTURE;
 public class NewUpdateUserFragment extends Fragment implements View.OnClickListener {
     private View view;
     private ImageView btnBack;
-    private CInputForm edName, edPhone, edGender, edRole, edEmail;
+    private CInputForm edName, edPhone, edGender, edRole, edEmail, edWarehouse;
     private TextView tvTitle;
     private Button btnSubmit ;
     private CircleImageView imgUser;
@@ -78,6 +81,8 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
 
     private Uri imageChangeUri = null ;
     private BaseModel currentUser;
+    private List<BaseModel> listWarehouse;
+    private String displayWarehouseFormat = "Kho mặc định: %s";
 
 
     @Nullable
@@ -93,6 +98,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
     }
 
     private void intitialData() {
+        listWarehouse = new ArrayList<>();
         String bundle = getArguments().getString(Constants.USER);
         phoneEvent();
         if (bundle != null){
@@ -102,6 +108,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
             edRole.setText(User.getRoleString(currentUser.getInt("role")));
             edGender.setText(currentUser.getInt("gender") == 0? "NAM" : "NỮ");
             edEmail.setText(currentUser.getString("email"));
+            edWarehouse.setText(currentUser.hasKey("warehouse")?String.format(displayWarehouseFormat, currentUser.getBaseModel("warehouse").getString("name")): "");
 
             if (!Util.checkImageNull(currentUser.getString("image"))){
                 Glide.with(mActivity).load(currentUser.getString("image")).centerCrop().into(imgUser);
@@ -118,10 +125,13 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
         if (!CustomSQL.getBoolean(Constants.IS_ADMIN)){
             edPhone.setFocusable(false);
             edRole.setFocusable(false);
+            edWarehouse.setFocusable(false);
 
         }else {
             edPhone.setFocusable(true);
+            //edWarehouse.setFocusable(true);
             roleEvent();
+            warehouseEvent();
         }
 
     }
@@ -149,6 +159,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
         imgUser = view.findViewById(R.id.add_user_image);
         tvTitle = view.findViewById(R.id.add_user_title);
         edEmail = view.findViewById(R.id.add_user_email);
+        edWarehouse = view.findViewById(R.id.add_user_warehouse);
 
     }
 
@@ -253,12 +264,6 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
 
             }
         });
-//        if (CustomSQL.getBoolean(Constants.IS_ADMIN)){
-//
-//
-//        }else {
-//            edPhone.setFocusable(false);
-//        }
 
     }
     private void genderEvent(){
@@ -307,6 +312,55 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
         });
     }
 
+    private void warehouseEvent(){
+        edWarehouse.setDropdown(true, new CInputForm.ClickListener(){
+            @Override
+            public void onClick(View view) {
+                if (listWarehouse.size() ==0){
+                    SystemConnect.ListWarehouse(true, new CallbackCustomList() {
+                        @Override
+                        public void onResponse(List<BaseModel> results) {
+                            listWarehouse =  filterListWarehouse(results);
+                            choiceWarehouse(listWarehouse);
+
+                        }
+                        @Override
+                        public void onError(String error) {
+
+                        }
+                    }, true);
+
+
+                }else {
+                    choiceWarehouse(listWarehouse);
+                }
+
+            }
+        });
+    }
+
+    private void choiceWarehouse(List<BaseModel> list){
+        if (list.size()>0){
+            CustomBottomDialog.choiceListObject("CHỌN KHO HÀNG", list, "name", new CallbackBaseModel() {
+                @Override
+                public void onResponse(BaseModel object) {
+                    edWarehouse.setText(String.format(displayWarehouseFormat, object.getString("name")));
+                    currentUser.put("warehouse_id", object.getInt("id"));
+
+                }
+
+                @Override
+                public void onError() {
+
+                }
+            });
+
+        }else {
+            Util.showSnackbar("Chưa tạo kho hàng nhân viên này", null, null);
+        }
+
+    }
+
     private void submitUser(){
         if (edName.getText().toString().trim().equals("")
                 || edPhone.getText().toString().trim().equals("")
@@ -345,7 +399,8 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
                 edEmail.getText().toString(),
                 Util.getPhoneValue(edPhone),
                 User.getIndex(edRole.getText().toString()),
-                url);
+                url,
+                currentUser.hasKey("warehouse_id")&&!currentUser.isNull("warehouse_id")?"&warehouse_id="+ currentUser.getInt("warehouse_id"):"" );
 
         UserConnect.CreateUser(param, new CallbackCustom() {
             @Override
@@ -371,9 +426,17 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
 
         }, true);
 
+    }
 
+    private List<BaseModel> filterListWarehouse(List<BaseModel> list){
+        List<BaseModel> results = new ArrayList<>();
+        for (BaseModel baseModel : list){
+            if (baseModel.getInt("isMaster")==3){
+                results.add(baseModel);
 
-
+            }
+        }
+        return results;
     }
 
 

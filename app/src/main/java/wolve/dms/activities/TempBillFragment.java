@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -15,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
@@ -25,8 +28,12 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackObject;
+import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
+import wolve.dms.models.Checkin;
+import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.MapUtil;
@@ -40,7 +47,10 @@ import wolve.dms.utils.Util;
 public class TempBillFragment extends Fragment implements View.OnClickListener {
     private View view;
     private ImageView btnBack;
+    private CTextIcon tvCheck, tvList, tvClose;
+    private TextView tvTitle;
     private RecyclerView rvTempBill;
+    private RelativeLayout lnSelect;
 
     private HomeActivity mActivity;
     private TempbillAdapter adapter;
@@ -68,6 +78,9 @@ public class TempBillFragment extends Fragment implements View.OnClickListener {
 
     private void addEvent() {
         btnBack.setOnClickListener(this);
+        tvCheck.setOnClickListener(this);
+        tvList.setOnClickListener(this);
+        tvClose.setOnClickListener(this);
 
     }
 
@@ -75,7 +88,11 @@ public class TempBillFragment extends Fragment implements View.OnClickListener {
         mActivity = (HomeActivity) getActivity();
         rvTempBill = view.findViewById(R.id.tempbill_rvtempbill);
         btnBack = (ImageView) view.findViewById(R.id.icon_back);
-
+        lnSelect = view.findViewById(R.id.tempbill_select_group);
+        tvCheck = view.findViewById(R.id.tempbill_select_check);
+        tvList = view.findViewById(R.id.tempbill_select_list);
+        tvTitle = view.findViewById(R.id.tempbill_title);
+        tvClose = view.findViewById(R.id.tempbill_select_close);
 
     }
 
@@ -91,7 +108,45 @@ public class TempBillFragment extends Fragment implements View.OnClickListener {
                 mActivity.onBackPressed();
                 break;
 
+            case R.id.tempbill_select_check:
+                if(tvCheck.getText().toString().equals(Constants.CHECK_ALL)){
+                    adapter.checkAllData(true);
+                    tvCheck.setText(Constants.UNCHECK);
+
+                }else {
+                    adapter.checkAllData(false);
+                    tvCheck.setText(Constants.CHECK_ALL);
+                }
+                break;
+
+            case R.id.tempbill_select_close:
+                closeSelected();
+                break;
+
+            case R.id.tempbill_select_list:
+                List<BaseModel> listbill = getBillFromTemp(adapter.getCheckedData());
+                if (listbill.size() >0){
+                    CustomCenterDialog.showListProduct("DANH SÁCH SẢN PHẨM",sumProduct(listbill));
+
+                }else {
+                    Util.showToast("Vui lòng chọn hóa đơn đê thao tác tiếp");
+
+                }
+
+                break;
+
         }
+    }
+
+    public boolean checkSelected(){
+        return lnSelect.getVisibility() == View.VISIBLE;
+    }
+
+    public void closeSelected(){
+        lnSelect.setVisibility(View.GONE);
+        btnBack.setVisibility(View.VISIBLE);
+        tvTitle.setVisibility(View.VISIBLE);
+        adapter.checkAllData(false);
     }
 
     private void createRVBill(List<BaseModel> list){
@@ -106,19 +161,37 @@ public class TempBillFragment extends Fragment implements View.OnClickListener {
                                 object.getBaseModel("customer").getDouble("lat"),
                                 object.getBaseModel("customer").getDouble("lng"));
 
-                        if (distance < Constants.CHECKIN_DISTANCE){
+                        if (distance < Constants.CHECKIN_DISTANCE
+                                || User.getId() == object.getInt("user_id")
+                                || CustomSQL.getBoolean(Constants.IS_ADMIN)) {
                             gotoPrintBillScreen(object);
 
-                        }else {
-                            Util.getInstance().stopLoading(true);
+                        } else {
+
                             Util.showSnackbar("Không thể tiếp tục do ở bên ngoài của hàng ", null, null);
                         }
 
 
                     }
-                }, false);
+                }, true);
 
+            }
+        }, new CallbackBoolean() {
+            @Override
+            public void onRespone(Boolean result) {
+                if (result){
+                    if (adapter.getCheckedData().size() >0){
+                        lnSelect.setVisibility(View.VISIBLE);
+                        tvCheck.setText(Constants.CHECK_ALL);
+                        tvTitle.setVisibility(View.GONE);
+                        btnBack.setVisibility(View.GONE);
 
+                    }else {
+                        lnSelect.setVisibility(View.GONE);
+                        tvTitle.setVisibility(View.VISIBLE);
+                        btnBack.setVisibility(View.VISIBLE);
+                    }
+                }
             }
         });
         Util.createLinearRV(rvTempBill, adapter);
@@ -131,7 +204,9 @@ public class TempBillFragment extends Fragment implements View.OnClickListener {
                 BaseModel customer = DataUtil.rebuiltCustomer(result, true);
                 CustomSQL.setBaseModel(Constants.CUSTOMER, customer);
 
-                Transaction.gotoPrintBillActivity(customer.getBaseModel("temp_bill"), false);
+                if (mActivity.checkWarehouse())
+                    Transaction.checkInventoryBeforePrintBill(customer.getBaseModel("temp_bill"), DataUtil.array2ListObject(customer.getBaseModel("temp_bill").getString(Constants.BILL_DETAIL)));
+                    //Transaction.gotoPrintBillActivity(customer.getBaseModel("temp_bill"), false);
             }
 
             @Override
@@ -149,22 +224,41 @@ public class TempBillFragment extends Fragment implements View.OnClickListener {
                 Util.getInstance().stopLoading(stopLoading);
                 listener.onLocationChanged(location);
 
-
-
-//                CustomSQL.setLong(Constants.CURRENT_DISTANCE, (long) distance);
-//                mSuccess.onRespone(true);
-//
-//                if (distance < Constants.CHECKIN_DISTANCE){
-//                    tvCheckInStatus.setText(String.format("Đang trong phạm vi cửa hàng ~%sm", Math.round(distance)));
-//                    threadShowTime.start();
-//
-//                }else {
-//                    tvCheckInStatus.setText(String.format("Đang bên ngoài cửa hàng ~%s", distance >1000? Math.round(distance)/1000 +"km": Math.round(distance) + "m"));
-//
-//                }
-
             }
         });
+    }
+
+    private List<BaseModel> sumProduct(List<BaseModel> listbill){
+        List<BaseModel> listdetail = DataUtil.getAllBillDetail(listbill);
+        List<BaseModel> results = new ArrayList<>();
+
+        for (int i=0; i<listdetail.size(); i++){
+            boolean check = false;
+            for (int ii=0; ii<results.size(); ii++){
+                if (listdetail.get(i).getInt("productId") == results.get(ii).getInt("productId")){
+                    results.get(ii).put("quantity", results.get(ii).getInt("quantity") + listdetail.get(i).getInt("quantity"));
+                    check = true;
+                    break;
+                }
+
+            }
+            if (!check){
+                results.add(listdetail.get(i));
+            }
+
+
+        }
+
+        return results;
+    }
+
+    private List<BaseModel> getBillFromTemp(List<BaseModel> list){
+        List<BaseModel> results = new ArrayList<>();
+        for (BaseModel model: list){
+            results.add(model.getBaseModel("bill"));
+        }
+
+        return results;
     }
 
 

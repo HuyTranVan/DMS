@@ -7,40 +7,30 @@
     android:background="@color/colorWhite">
 
     <TextView
-        android:id="@+id/dialog_choice_product_title"
+        android:id="@+id/dialog_list_title"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_30sdp"
-        android:background="@drawable/bg_header_top"
+        android:background="@drawable/bg_img_header"
         android:text="CHỌN SẢN PHẨM"
         android:textSize="@dimen/_12sdp"
         android:textColor="@color/black_text_color"
         android:gravity="center"/>
 
-    <!--<RadioGroup-->
-        <!--android:id="@+id/dialog_choice_product_radiogroup"-->
-        <!--android:layout_below="@+id/dialog_choice_product_title"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:background="@color/colorGrey"-->
-        <!--android:orientation="horizontal"-->
-        <!--android:gravity="center"/>-->
-
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/dialog_choice_product_rvProduct"
-        android:layout_below="@+id/dialog_choice_product_title"
+        android:id="@+id/dialog_list_rv"
+        android:layout_below="@+id/dialog_list_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorWhite"
         android:clipToPadding="false"
         android:paddingTop="@dimen/_10sdp"
-        android:paddingBottom="@dimen/_5sdp"
-        android:layout_above="@+id/dialog_choice_product_bottom"/>
+        android:paddingBottom="@dimen/_5sdp"/>
 
     <include
-        android:id="@+id/dialog_choice_product_bottom"
+        android:id="@+id/dialog_list_bottom"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_alignParentBottom="true"
-        layout="@layout/view_bottom_dialog_button"/>
+        layout="@layout/view_bottom_dialog_button"
+        android:layout_below="@+id/dialog_list_rv"/>
 
 </RelativeLayout>

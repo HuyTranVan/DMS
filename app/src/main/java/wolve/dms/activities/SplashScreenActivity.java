@@ -9,6 +9,13 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -87,6 +94,7 @@ public class SplashScreenActivity extends BaseActivity {
             }
         }, SPLASH_TIME_OUT);
 
+        getFCMToken();
     }
 
     @Override
@@ -127,6 +135,29 @@ public class SplashScreenActivity extends BaseActivity {
 
     }
 
+    private void getFCMToken(){
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.e("tag", "getInstanceId failed", task.getException());
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+
+                        // Log and toast
+//                        String msg = getString(R.string.msg_token_fmt, token);
+                        Log.e("token", token);
+                        //Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+
+                });
+
+    }
+
 //    private void openUri(){
 //        Intent intent = getIntent();
 //        Uri data = intent.getData();
@@ -144,21 +175,5 @@ public class SplashScreenActivity extends BaseActivity {
 //
 //    }
 
-//    private void updateDebt(){
-//        String param = String.format(Api_link.DEBT_PARAM, 25000, 7, 1325);
-//
-//        CustomerConnect.PostDebt(param, new CallbackCustom() {
-//            @Override
-//            public void onResponse(BaseModel result) {
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }, true);
-//
-//    }
 
 }

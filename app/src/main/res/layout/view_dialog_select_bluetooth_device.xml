@@ -10,7 +10,7 @@
         android:id="@+id/dialog_select_bluetooth_title"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_30sdp"
-        android:background="@drawable/bg_header_top"
+        android:background="@drawable/bg_img_header"
         android:text="DANH SÁCH THIẾT BỊ"
         android:textSize="@dimen/_12sdp"
         android:textColor="@color/black_text_color"

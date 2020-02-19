@@ -25,6 +25,7 @@ import wolve.dms.R;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CTextIcon;
@@ -47,13 +48,15 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackBaseModel mListener;
+    private CallbackInt countListener;
 
-    public Customer_BillsAdapter(List<BaseModel> data, CallbackBaseModel listener) {
+    public Customer_BillsAdapter(List<BaseModel> data, CallbackBaseModel listener, CallbackInt numberlistener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.baseData = data;
         this.mData = baseData;
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mListener = listener;
+        this.countListener = numberlistener;
 
         DataUtil.sortbyStringKey("createAt", mData, true);
 
@@ -88,6 +91,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
                 mData = (ArrayList<BaseModel>) filterResults.values;
+                countListener.onResponse(mData.size());
                 notifyDataSetChanged();
             }
         };
@@ -125,7 +129,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
         holder.tvTotal.setText(Util.FormatMoney(mData.get(position).getDouble("total")) + " đ");
         holder.tvDebt.setText(Util.FormatMoney(mData.get(position).getDouble("debt")) + " đ");
         if ( mData.get(position).getDouble("debt") >0.0 ){
-            holder.tvDebt.setBackground(mContext.getDrawable(R.drawable.btn_round_border_red));
+            holder.tvDebt.setBackground(mContext.getDrawable(R.drawable.btn_round_transparent_border_red));
             holder.tvDebt.setTextColor(mContext.getResources().getColor(R.color.colorRed));
             holder.tvDebt.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -289,10 +293,15 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
                     CustomerConnect.DeleteListBill(listParams, new CallbackListCustom() {
                         @Override
                         public void onResponse(List result) {
-                            Util.showToast("Xóa thành công");
-                            BaseModel respone = new BaseModel();
-                            respone.put(Constants.TYPE, Constants.BILL_DELETE);
-                            mListener.onResponse(respone);
+                            if (result.size() >0){
+                                Util.showToast("Xóa thành công");
+                                BaseModel respone = new BaseModel();
+                                respone.put(Constants.TYPE, Constants.BILL_DELETE);
+                                mListener.onResponse(respone);
+
+                            }else {
+                                Util.showSnackbarError("Lỗi");
+                            }
 
                         }
 

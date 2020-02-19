@@ -216,4 +216,84 @@ public class CustomInputDialog {
 
     }
 
+    public static void inputNumber(View view,final CallbackString mListener){
+        dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
+                .setContentHolder(new ViewHolder(R.layout.view_input_number))
+                .setGravity(Gravity.BOTTOM)
+                .setBackgroundColorResId(R.drawable.transparent)
+                .setInAnimation(R.anim.slide_up)
+                .setOnBackPressListener(new OnBackPressListener() {
+                    @Override
+                    public void onBackPressed(DialogPlus dialogPlus) {
+                        dialogPlus.dismiss();
+                    }
+                })
+                .setOnCancelListener(new OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogPlus dialog) {
+                        //Util.hideKeyboard(btnNewCustomer);
+                    }
+                })
+                .create();
+
+
+        final CardView lnParent = (CardView) dialog.findViewById(R.id.input_number_parent);
+        final EditText edPhone = (EditText) dialog.findViewById(R.id.input_number_text);
+        CTextIcon btnSubmit = (CTextIcon) dialog.findViewById(R.id.input_number_submit);
+
+        Util.textPhoneEvent(edPhone, new CallbackString() {
+            @Override
+            public void Result(String s) {
+
+            }
+        });
+
+        edPhone.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    mListener.Result(edPhone.getText().toString());
+
+                }
+                return handled;
+            }
+        });
+
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.Result(edPhone.getText().toString());
+
+            }
+        });
+
+        view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+
+            @Override
+            public void onGlobalLayout() {
+                // TODO Auto-generated method stub
+                Rect r = new Rect();
+                lnParent.getWindowVisibleDisplayFrame(r);
+
+                int screenHeight = lnParent.getRootView().getHeight();
+                int heightDifference = screenHeight - (r.bottom - r.top) - Util.getInstance().getCurrentActivity().getResources().getDimensionPixelSize(R.dimen._34sdp);
+                int margin = Util.getInstance().getCurrentActivity().getResources().getDimensionPixelSize(R.dimen._2sdp);
+
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                params.setMargins(margin, 0, margin, heightDifference);
+                lnParent.setLayoutParams(params);
+
+
+            }
+        });
+
+
+
+        dialog.show();
+        edPhone.requestFocus();
+        Util.showKeyboard(edPhone);
+
+    }
+
 }

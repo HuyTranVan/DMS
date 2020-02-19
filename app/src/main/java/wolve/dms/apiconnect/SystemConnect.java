@@ -1,18 +1,12 @@
 package wolve.dms.apiconnect;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackCustomListList;
-import wolve.dms.callback.CallbackJSONArray;
 import wolve.dms.callback.CallbackListCustom;
-import wolve.dms.callback.CallbackListBaseModel;
 import wolve.dms.libraries.connectapi.CustomGetListMethod;
 import wolve.dms.libraries.connectapi.CustomGetMethod;
 import wolve.dms.libraries.connectapi.CustomGetPostListMethod;
@@ -305,6 +299,100 @@ public class SystemConnect {
         }).execute();
 
     }
+
+    public static void ListWarehouse(Boolean loading, final CallbackCustomList listener, final Boolean stopLoading){
+        if (loading)
+            Util.getInstance().showLoading();
+
+        String url = Api_link.WAREHOUSES;
+
+        new CustomGetMethod(url, new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(stopLoading);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeArraySuccess(result));
+
+                }else {
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+                    Util.getInstance().stopLoading(true);
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
+            }
+
+        }).execute();
+    }
+
+    public static void CreateDepot(String params,final CallbackCustom listener, final Boolean stopLoading){
+        Util.getInstance().showLoading();
+
+        new CustomPostMethod(DataUtil.createNewDepotParam(params),new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(stopLoading);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
+
+                }else {
+                    Util.getInstance().stopLoading(true);
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
+            }
+
+        }).execute();
+    }
+
+    public static void GetInventoryList(int warehouse_id, final CallbackListCustom listener, Boolean stopLoading){
+        Util.getInstance().showLoading(stopLoading);
+
+        String url = Api_link.INVENTORIES + String.format("?id=%d", warehouse_id);
+        new CustomGetMethod(url, new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(true);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeArraySuccess(result));
+
+                }else {
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
+            }
+
+
+        }).execute();
+    }
+
 
 
 }

@@ -1,20 +1,13 @@
 package wolve.dms.libraries.calendarpicker;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.FragmentManager;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Handler;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.NumberPicker;
-import android.widget.RadioButton;
 import android.widget.TextView;
-
-import androidx.fragment.app.FragmentActivity;
 
 import com.savvi.rangedatepicker.CalendarPickerView;
 
@@ -26,9 +19,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import wolve.dms.R;
-import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackString;
-import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
 
@@ -37,7 +28,7 @@ public class CalendarUtil {
     public static Dialog showCustomDialog(int resId) {
         AlertDialog.Builder adb = new AlertDialog.Builder(Util.getInstance().getCurrentActivity());
         final Dialog d = adb.setView(new View(Util.getInstance().getCurrentActivity())).create();
-        d.getWindow().setBackgroundDrawableResource(R.drawable.colorwhite_corner_large);
+        d.getWindow().setBackgroundDrawableResource(R.drawable.bg_corner5_white);
 
         d.setCanceledOnTouchOutside(false);
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();

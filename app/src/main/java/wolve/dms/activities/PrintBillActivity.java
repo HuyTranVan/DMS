@@ -8,30 +8,22 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.core.widget.NestedScrollView;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.zxing.WriterException;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import androidmads.library.qrgenearator.QRGContents;
@@ -51,7 +43,7 @@ import wolve.dms.libraries.printerdriver.BluetoothPrintBitmap;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
-import wolve.dms.utils.BitmapView;
+import wolve.dms.libraries.BitmapView;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
@@ -61,7 +53,6 @@ import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
 import static wolve.dms.utils.Constants.REQUEST_ENABLE_BT;
-import static wolve.dms.utils.Transaction.gotoImageChooser;
 
 /**
  * Created by macos on 9/15/17.
@@ -545,7 +536,8 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         if (currentBill.isNull(Constants.DELIVER_BY) && currentBill.getInt("id") != 0){
             params = DataUtil.updateBillDelivered(currentCustomer.getInt("id"),
                     currentBill,
-                    User.getId());
+                    User.getId(),
+                    DataUtil.array2ListObject(currentBill.getString(Constants.BILL_DETAIL)));
 
         }else {
             params = DataUtil.createPostBillParam(currentCustomer.getInt("id"),

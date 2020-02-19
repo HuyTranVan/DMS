@@ -1,4 +1,4 @@
-package wolve.dms.utils;
+package wolve.dms.libraries;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,6 +13,8 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import wolve.dms.utils.Util;
 
 /**
  * Created by tranhuy on 9/30/16.

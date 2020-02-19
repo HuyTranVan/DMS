@@ -73,8 +73,8 @@ public class Statistical_BillsAdapter extends RecyclerView.Adapter<Statistical_B
     @Override
     public void onBindViewHolder(final StatisticalBillsViewHolder holder, final int position) {
         try {
-//            holder.lnParent.setBackground(( position % 2 ) == 0 ?  mContext.getResources().getDrawable(R.drawable.colorgrey_corner):
-//                    mContext.getResources().getDrawable(R.drawable.colorwhite_bordergrey_corner));
+//            holder.lnParent.setBackground(( position % 2 ) == 0 ?  mContext.getResources().getDrawable(R.drawable.bg_corner5_lightgrey):
+//                    mContext.getResources().getDrawable(R.drawable.bg_corner5_white_border_grey));
 
             final Customer customer = new Customer(mData.get(position).getJsonObject("customer"));
 

@@ -1,12 +1,10 @@
 package wolve.dms.adapter;
 
 import android.content.Context;
-import android.location.Location;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,16 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackObject;
+import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Customer;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.DataUtil;
-import wolve.dms.utils.MapUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -37,12 +32,14 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackObject mListener;
+    private CallbackBoolean boListener;
 
-    public TempbillAdapter(List<BaseModel> list, CallbackObject listener) {
+    public TempbillAdapter(List<BaseModel> list, CallbackObject listener, CallbackBoolean boollistener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mData = list;
         this.mListener = listener;
+        this.boListener = boollistener;
 
         DataUtil.sortbyStringKey("create", mData, true);
 
@@ -56,7 +53,14 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
 
     @Override
     public void onBindViewHolder(final TempbillAdapterViewHolder holder, final int position) {
-        holder.tvNumber.setText(String.valueOf(mData.size()-position));
+        if (mData.get(position).hasKey("checked") && mData.get(position).getBoolean("checked")){
+            holder.tvNumber.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bg_oval_green));
+            holder.tvNumber.setText(mContext.getResources().getString(R.string.icon_check));
+
+        }else {
+            holder.tvNumber.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.btn_oval_denim));
+            holder.tvNumber.setText(String.valueOf(mData.size()-position));
+        }
 
         BaseModel customer = mData.get(position).getBaseModel("customer");
         holder.tvShopName.setText(Constants.getShopName(customer.getString("shopType")) + " " + customer.getString("signBoard"));
@@ -74,12 +78,29 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
         }
         holder.tvDetail.setText(detail);
 
+        holder.tvNumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mData.get(position).hasKey("checked") && mData.get(position).getBoolean("checked")){
+                    mData.get(position).put("checked", false);
+
+                }else {
+                    mData.get(position).put("checked", true);
+
+                }
+                boListener.onRespone(true);
+                notifyItemChanged(position);
+
+            }
+        });
         if (mData.size()==1){
             holder.vLineUpper.setVisibility(View.GONE);
             holder.vLineUnder.setVisibility(View.GONE);
         }else if(position ==0){
             holder.vLineUpper.setVisibility(View.GONE);
+            holder.vLineUnder.setVisibility(View.VISIBLE);
         }else if (position==mData.size()-1){
+            holder.vLineUpper.setVisibility(View.VISIBLE);
             holder.vLineUnder.setVisibility(View.GONE);
         }
 
@@ -123,8 +144,30 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
         notifyDataSetChanged();
     }
 
+    public List<BaseModel> getCheckedData(){
+        List<BaseModel> results = new ArrayList<>();
+        for (BaseModel model: mData){
+            if (model.hasKey("checked") && model.getBoolean("checked")){
+                results.add(model);
+            }
+        }
+        return results;
+    }
+
+
+    public void checkAllData(boolean check){
+        List<BaseModel> results = new ArrayList<>();
+        for (BaseModel model: mData){
+            model.put("checked", check);
+
+        }
+        notifyDataSetChanged();
+    }
+
+
     public class TempbillAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvNumber, tvEmployee, tvShopName, tvTotal, tvAddress, tvDetail;
+        private TextView tvEmployee, tvShopName, tvTotal, tvAddress, tvDetail;
+        private CTextIcon tvNumber;
         private LinearLayout lnParent, lnDirection, lnDeliver;
         private View vLineUpper, vLineUnder;
 
@@ -134,7 +177,7 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
             lnDirection = (LinearLayout) itemView.findViewById(R.id.tempbill_item_direction);
             lnDeliver = (LinearLayout) itemView.findViewById(R.id.tempbill_item_deliver);
             tvTotal = (TextView) itemView.findViewById(R.id.tempbill_item_total);
-            tvNumber = (TextView) itemView.findViewById(R.id.tempbill_item_number);
+            tvNumber = itemView.findViewById(R.id.tempbill_item_number);
             tvEmployee = (TextView) itemView.findViewById(R.id.tempbill_item_employee);
             tvShopName = (TextView) itemView.findViewById(R.id.tempbill_item_shopname);
             tvAddress = (TextView) itemView.findViewById(R.id.tempbill_item_address);

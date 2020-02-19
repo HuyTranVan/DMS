@@ -126,7 +126,7 @@ public class BaseModel implements Serializable {
             return jsonObject.getInt(key);
         } catch (JSONException e) {
             return 0;
-            //e.printStackTrace();
+
         }
 
     }

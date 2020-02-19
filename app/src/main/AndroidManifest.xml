@@ -48,6 +48,7 @@
         android:protectionLevel="signature" />
     <uses-permission android:name="wolve.dms.permission.C2D_MESSAGE" />
 
+
     <!--FINGER_PRINT-->
     <uses-feature android:name="android.hardware.fingerprint"
         android:required="false"/>
@@ -148,6 +149,20 @@
             android:windowSoftInputMode="adjustResize|stateHidden"/>
 
         <activity
+            android:name=".activities.WarehouseActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/FullScreen"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+
+        <activity
+            android:name=".activities.ImportActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/FullScreen"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+
+        <activity
             android:name=".activities.ProductActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
@@ -232,6 +247,30 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
 
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
+
+        <service
+            android:name=".libraries.firebase.MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <!-- Set custom default icon. This is used when no icon is set for incoming notification messages.
+     See README(https://goo.gl/l4GJaQ) for more. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_logo" />
+        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent" />
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/default_notification_channel_id" />
+
 
     </application>
 

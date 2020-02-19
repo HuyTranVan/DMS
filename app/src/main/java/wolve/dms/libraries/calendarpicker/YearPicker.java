@@ -14,22 +14,15 @@ import android.widget.TextView;
 import com.savvi.rangedatepicker.CalendarPickerView;
 
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import wolve.dms.R;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackPayBill;
 import wolve.dms.callback.CallbackString;
-import wolve.dms.models.Customer;
-import wolve.dms.models.Product;
-import wolve.dms.models.User;
-import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
 
@@ -38,7 +31,7 @@ public class YearPicker {
     public static Dialog showCustomDialog(int resId) {
         AlertDialog.Builder adb = new AlertDialog.Builder(Util.getInstance().getCurrentActivity());
         final Dialog d = adb.setView(new View(Util.getInstance().getCurrentActivity())).create();
-        d.getWindow().setBackgroundDrawableResource(R.drawable.colorwhite_corner_large);
+        d.getWindow().setBackgroundDrawableResource(R.drawable.bg_corner5_white);
 
         d.setCanceledOnTouchOutside(false);
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();

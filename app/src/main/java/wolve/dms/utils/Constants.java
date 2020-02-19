@@ -16,6 +16,7 @@ public class Constants {
     public final static String DMS_NAME = "DMS_NAME";
     public final static String DMS_LOGS = "DMS_LOGS";
     public final static String PRODUCTGROUP = "productgroup";
+    public final static String DEPOT = "depot";
     public final static String PRODUCT = "product";
     public final static String STATUS = "status";
     public final static String CUSTOMER = "customer";
@@ -24,12 +25,14 @@ public class Constants {
     public final static String BILLS = "bills";
     public final static String DEBTS = "debts";
     public final static String BILL = "bill";
+    public final static String WAREHOUSE = "warehouse";
     public final static String BILL_DETAIL = "billDetails";
     public final static String PAYMENT = "payment";
     public final static String PAYMENTS = "payments";
     public final static String CHECKINS = "checkins";
     public final static String SHOP_CART_ACTIVITY = "shopcart";
     public final static String PRINT_BILL_ACTIVITY = "printbill";
+    public final static String IMPORT_ACTIVITY = "import";
     public final static String USER = "user";
     public final static String DISTRIBUTOR = "distributor";
     public final static String USER_USERNAME = "username";
@@ -38,8 +41,8 @@ public class Constants {
     public final static String APP_DIRECTORY = "Lubsolution_DMS";
     public final static int ROLE_ADMIN = 1;
     public final static int ROLE_WAREHOUSE = 2;
-    public final static int ROLE_SALE = 3;
-    public final static int ROLE_DELIVER = 4;
+    public final static int ROLE_DELIVER = 3;
+    public final static int ROLE_SALE = 4;
 
     public final static String IS_ADMIN = "is_admin";
     public final static String PRINTER_SIZE = "printer_size";
@@ -57,6 +60,7 @@ public class Constants {
     public static final String TEMPBILL = "temp_bill";
     public static final String LAST_PRODUCT_UPDATE = "last_product_update";
     public static final String addressFormat = "%s %s, %s, %s";
+    public final static String FLAG = "flag";
 
     public static final String FILTER_BY_DATE = "Lọc theo ngày";
     public static final String FILTER_BY_MONTH = "Lọc theo tháng";
@@ -98,6 +102,7 @@ public class Constants {
     public final static int REQUEST_CAMERA_PERMISSION = 1008;
     public final static int REQUEST_PHONE_PERMISSION = 1009;
     public final static int REQUEST_PERMISSION = 1010;
+    public final static int RESULT_IMPORT_ACTIVITY = 1011;
     public final static String RESULT_ERROR_TITLE = "Có lỗi xảy ra";
     public final static String RESULT = "result";
     public final static boolean RESULT_FALSE = false;
@@ -145,16 +150,18 @@ public class Constants {
     public static final String ALL_TOTAL = "all total";
     public static final String ALL_DEBT = "all debt";
 
+    public static String CHECK_ALL = Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_check) + " CHỌN TẤT CẢ";
+    public static String UNCHECK = "BỎ CHỌN";
 
     //Home constant
     public static ArrayList<JSONObject> HomeItemList(){
         String[] icons = new String[]{
-                Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_edit_map),
-                Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_chart),
-                Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_import),
-                Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_barcode),
-                Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_product_group),
-                Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_setting)};
+                Util.getIcon(R.string.icon_edit_map),
+                Util.getIcon(R.string.icon_chart),
+                Util.getIcon(R.string.icon_depot),
+                Util.getIcon(R.string.icon_barcode),
+                Util.getIcon(R.string.icon_product_group),
+                Util.getIcon(R.string.icon_setting)};
         String[] texts = new String[]{
                 "Bán hàng",
                 "Thống kê",
@@ -247,38 +254,7 @@ public class Constants {
             "RỬA XE",
             "PHỤ TÙNG",
             "BẢO TRÌ"};
-//    public static String getShopName(String type, String name){
-//        String result ="";
-//        if (type == null && name != null){
-//            for (int i=0; i<shopName.length; i++){
-//                if (shopName[i].equals(name)){
-//                    result = shopType[i];
-//                    break;
-//                }
-//            }
-//        }else if (type != null && name == null){
-//            for (int i=0; i<shopType.length; i++){
-//                if (shopType[i].equals(type)){
-//                    result = shopName[i];
-//                    break;
-//                }
-//            }
-//        }
-//
-//        return result;
-//    }
-//
-//    public static String getShopType(String name){
-//        String result ="";
-//        for (int i=0; i<shopName.length; i++){
-//            if (shopName[i].equals(name)){
-//                result = shopType[i];
-//                break;
-//            }
-//        }
-//
-//        return result;
-//    }
+
 
     public static void throwError(String err) {
         Util.showSnackbarError(err);

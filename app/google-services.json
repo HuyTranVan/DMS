@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "410958525745",
+    "firebase_url": "https://lubdms-1505398428169.firebaseio.com",
+    "project_id": "lubdms-1505398428169",
+    "storage_bucket": "lubdms-1505398428169.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:410958525745:android:d9e420ff0769bff2b1ac10",
+        "android_client_info": {
+          "package_name": "wolve.dms"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "410958525745-jaa4kd61a62bgqd8d3skbh7ir064pvup.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "wolve.dms",
+            "certificate_hash": "72da1990e3b40d85413dd99254695087d88cc154"
+          }
+        },
+        {
+          "client_id": "410958525745-1grc4129l1onshv00qckvf36qa1takib.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJ-4zFtAI6ZVWSXY8E2xxM_EyLqXtwCXE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "410958525745-1grc4129l1onshv00qckvf36qa1takib.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

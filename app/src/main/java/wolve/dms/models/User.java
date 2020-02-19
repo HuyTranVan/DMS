@@ -158,14 +158,6 @@ public class User extends BaseModel {
     }
 
     public static BaseModel getCurrentUser(){
-//        BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
-//        BaseModel user = new BaseModel();
-//        user.put("id", currentUser.getInt("id"));
-//        user.put("displayName", currentUser.getString("displayName"));
-//        user.put("phone", currentUser.getString("phone"));
-//        user.put("role", currentUser.getString("role"));
-
-
         return CustomSQL.getBaseModel(Constants.USER);
     }
 

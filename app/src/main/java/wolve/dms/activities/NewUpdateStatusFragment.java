@@ -122,8 +122,9 @@ public class NewUpdateStatusFragment extends Fragment implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.icon_back:
-                getActivity().getSupportFragmentManager().popBackStack();
+//                getActivity().getSupportFragmentManager().popBackStack();
                 Util.hideKeyboard(v);
+                mActivity.onBackPressed();
                 break;
 
             case R.id.add_status_colorchoice:

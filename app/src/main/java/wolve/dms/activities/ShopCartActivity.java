@@ -26,6 +26,7 @@ import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackChangePrice;
 import wolve.dms.callback.CallbackCustom;
+import wolve.dms.callback.CallbackListObject;
 import wolve.dms.customviews.CInputForm;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
@@ -329,7 +330,31 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         bill.put("note", tvNote.getText().toString());
         bill.putList(Constants.BILL_DETAIL,adapterProducts.getAllData() );
 
-        Transaction.gotoPrintBillActivity(bill, false);
+        Transaction.checkInventoryBeforePrintBill(bill,adapterProducts.getAllData() );
+
+//        DataUtil.checkInventory(adapterProducts.getAllData(), User.getCurrentUser().getInt("warehouse_id"), new CallbackListObject() {
+//            @Override
+//            public void onResponse(List<BaseModel> list) {
+//                if (list.size() >0){
+//                    CustomCenterDialog.showListProductWithDifferenceQuantity("KHÔNG ĐỦ TỒN KHO", list, new CallbackBoolean() {
+//                        @Override
+//                        public void onRespone(Boolean result) {
+//                            if (result){
+//                                Transaction.gotoImportActivity(User.getCurrentUser().getBaseModel("warehouse"), true);
+//
+//                            }
+//
+//                        }
+//                    });
+//
+//
+//
+//                }else {
+//                    Transaction.gotoPrintBillActivity(bill, false);
+//                }
+//            }
+//        });
+
     }
 
 

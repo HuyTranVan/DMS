@@ -219,6 +219,7 @@ public class UserConnect {
                     listener.onResponse(Constants.getResponeArraySuccess(result));
 
                 }else {
+                    Util.getInstance().stopLoading(true);
                     Constants.throwError(result.getString("message"));
                     listener.onError(result.getString("message"));
 

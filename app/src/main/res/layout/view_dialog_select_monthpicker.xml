@@ -12,7 +12,7 @@
         android:id="@+id/dialog_month_picker_title"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_30sdp"
-        android:background="@drawable/bg_header_top"
+        android:background="@drawable/bg_img_header"
         android:text="CHỌN THÁNG"
         android:textSize="@dimen/_12sdp"
         android:textColor="@color/black_text_color"

@@ -26,7 +26,7 @@
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
                 android:src="@drawable/add_image"
-                android:background="@drawable/colorwhite_pressed"/>
+                android:background="@drawable/btn_none_white"/>
 
             <View
                 android:layout_width="@dimen/_150sdp"
@@ -234,7 +234,7 @@
                 android:id="@+id/dialog_bill_rvbill"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/colorwhite_strokegrey"
+                android:background="@drawable/bg_none_white_border_grey"
                 android:layout_marginTop="-4dp"
 
                 />
@@ -243,7 +243,7 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/colorwhite_strokegrey"
+                android:background="@drawable/bg_none_white_border_grey"
                 android:padding="4dp">
 
                 <TextView

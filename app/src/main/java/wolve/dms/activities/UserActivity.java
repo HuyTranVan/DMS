@@ -55,6 +55,7 @@ public class UserActivity extends BaseActivity implements View.OnClickListener{
     private List<BaseModel> listUser ;
 
 
+
     @Override
     public int getResourceLayout() {
         return R.layout.activity_user;

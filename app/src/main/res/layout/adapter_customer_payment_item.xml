@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:background="@drawable/colorwhite_pressed"
+    android:background="@drawable/btn_none_white"
     android:paddingLeft="@dimen/_10sdp"
     android:paddingRight="@dimen/_10sdp">
 

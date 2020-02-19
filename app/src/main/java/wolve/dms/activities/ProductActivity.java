@@ -94,7 +94,7 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.icon_back:
-                backEvent();
+                onBackPressed();
                 break;
 
             case R.id.product_add_new:
@@ -104,9 +104,10 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
         }
     }
 
-    protected void backEvent(){
+    @Override
+    public void onBackPressed() {
         Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.product_parent);
-        if(mFragment != null && mFragment instanceof NewUpdateUserFragment) {
+        if(mFragment != null && mFragment instanceof NewUpdateProductFragment) {
             getSupportFragmentManager().popBackStack();
 
         }else {

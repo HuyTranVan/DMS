@@ -37,7 +37,7 @@
             android:layout_height="@dimen/_12sdp"
             android:minWidth="@dimen/_12sdp"
             android:minHeight="@dimen/_12sdp"
-            android:background="@drawable/btn_round_grey_selected_blue"
+            android:background="@drawable/btn_round_greyblue"
             android:text="1"
             android:textSize="@dimen/_7sdp"
             android:textColor="@color/colorWhite"

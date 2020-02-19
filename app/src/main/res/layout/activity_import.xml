@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/import_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite">
+
+    <RelativeLayout
+        android:id="@+id/import_header"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_35sdp"
+        android:background="@drawable/bg_img_header">
+
+        <ImageView
+            android:id="@+id/icon_back"
+            android:layout_width="@dimen/_35sdp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_arrow_back_black_18dp"
+            android:padding="@dimen/_8sdp"
+            android:background="?selectableItemBackground"/>
+
+        <TextView
+            android:id="@+id/import_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="NHẬP KHO"
+            android:textAllCaps="true"
+            android:textSize="@dimen/_12sdp"
+            android:textColor="@color/black_text_color"/>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/colorGrey"
+        android:layout_below="@+id/import_header">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/_25sdp"
+            android:orientation="horizontal"
+            android:layout_margin="@dimen/_5sdp">
+
+            <wolve.dms.customviews.CTextIcon
+                android:id="@+id/import_fromwarehouse"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:background="@drawable/bg_round_white"
+                android:hint="Chọn kho nguồn   &#xf0d7;"
+                android:textSize="@dimen/_12sdp"
+                android:textColorHint="@color/black_text_color_hint"
+                android:textColor="@color/black_text_color"
+                android:gravity="center_vertical|right"
+                android:paddingRight="@dimen/_15sdp"
+                android:layout_marginLeft="@dimen/_5sdp"/>
+
+            <wolve.dms.customviews.CTextIcon
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/icon_forward"
+                android:textColor="@color/black_text_color_hint"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:textSize="@dimen/_14sdp"/>
+
+            <wolve.dms.customviews.CTextIcon
+                android:id="@+id/import_towarehouse"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:background="@drawable/bg_round_white"
+                android:textColor="@color/black_text_color"
+                android:textColorHint="@color/black_text_color_hint"
+                android:layout_marginRight="@dimen/_5sdp"
+                android:textSize="@dimen/_12sdp"
+                android:gravity="center_vertical|right"
+                android:paddingRight="@dimen/_15sdp"/>
+
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="1dp"
+            android:background="#75b9b3b3"
+            android:layout_marginBottom="@dimen/_2sdp"
+            android:layout_gravity="center"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_30sdp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/import_tabs"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:background="@color/colorGrey"
+                android:layout_gravity="center"
+                app:tabGravity="fill"
+                app:tabPaddingStart="@dimen/_5sdp"
+                app:tabPaddingEnd="@dimen/_5sdp"
+                app:tabIndicatorColor="@color/colorBlue"
+                app:tabIndicatorHeight="3dp"
+                app:tabMode="scrollable"
+                app:tabSelectedTextColor="@color/colorBlue"
+                app:tabTextAppearance="@style/NavigationTabTextAppeareance"
+                app:tabTextColor="@color/black_text_color_hint" />
+
+<!--            <RelativeLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:layout_weight="0.5"-->
+<!--                android:background="@drawable/bg_round_white"-->
+<!--                android:orientation="horizontal"-->
+<!--                android:layout_marginRight="@dimen/_5sdp"-->
+<!--                android:layout_marginTop="@dimen/_2sdp"-->
+<!--                android:layout_marginBottom="@dimen/_2sdp"-->
+<!--                android:gravity="bottom">-->
+
+<!--                <EditText-->
+<!--                    android:id="@+id/import_search_text"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:background="@null"-->
+<!--                    android:hint="Tìm sản phẩm"-->
+<!--                    android:textSize="@dimen/_12sdp"-->
+<!--                    android:gravity="center_vertical"-->
+<!--                    android:paddingLeft="@dimen/_10sdp"-->
+<!--                    android:layout_marginRight="@dimen/_30sdp"/>-->
+
+<!--                <wolve.dms.customviews.CTextIcon-->
+<!--                    android:id="@+id/import_search_icon"-->
+<!--                    android:layout_width="@dimen/_30sdp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:text="@string/icon_search"-->
+<!--                    android:gravity="center"-->
+<!--                    android:textSize="@dimen/_12sdp"-->
+<!--                    android:layout_alignParentRight="true"/>-->
+
+<!--            </RelativeLayout>-->
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:background="#75b9b3b3"/>
+
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/import_viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorWhite" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/import_submit"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/_30sdp"
+        android:minWidth="@dimen/_150sdp"
+        android:background="@drawable/btn_confirm_blue"
+        android:layout_margin="@dimen/_10sdp"
+        android:text="CẬP NHẬT"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_14sdp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"/>
+
+
+</RelativeLayout>

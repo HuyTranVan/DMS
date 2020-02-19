@@ -1567,4 +1567,18 @@ public class Util {
         return (double) tmp / factor;
     }
 
+    public static boolean isAdmin(){
+        return CustomSQL.getBoolean(Constants.IS_ADMIN);
+    }
+
+    public static String getIcon(int name){
+        return getInstance().getCurrentActivity().getResources().getString(name);
+
+    }
+
+    public static String getStringIcon(String text, int icon){
+        return text+ "   "+ getInstance().getCurrentActivity().getResources().getString(icon);
+
+    }
+
 }

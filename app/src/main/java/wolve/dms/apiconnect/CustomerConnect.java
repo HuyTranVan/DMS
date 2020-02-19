@@ -263,6 +263,36 @@ public class CustomerConnect {
         }).execute();
     }
 
+    public static void PostImport(String params, final CallbackCustom listener, final Boolean stopLoading) {
+        Util.getInstance().showLoading();
+
+        new CustomPostMethod(DataUtil.postImportParam(params), new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(stopLoading);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
+
+                }else {
+                    Util.getInstance().stopLoading(true);
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
+            }
+
+        }).execute();
+    }
+
     public static void PostDebt(String params, final CallbackCustom listener, final Boolean stopLoading) {
         Util.getInstance().showLoading();
 

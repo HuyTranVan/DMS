@@ -191,7 +191,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="10dp"
-            android:background="@drawable/colorgrey_gradient"
+            android:background="@drawable/bg_2topcorner8_gradientgrey"
             android:layout_marginLeft="@dimen/_4sdp"
             android:layout_marginRight="@dimen/_4sdp"
             android:layout_marginBottom="-4dp"/>
@@ -218,7 +218,7 @@
                 <View
                     android:layout_width="@dimen/_25sdp"
                     android:layout_height="@dimen/_2sdp"
-                    android:background="@drawable/bg_grey_corner"
+                    android:background="@drawable/bg_corner5_lighgrey"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginBottom="@dimen/_2sdp"/>
 
@@ -460,7 +460,7 @@
                             android:layout_height="wrap_content"
                             android:minHeight="@dimen/_25sdp"
                             android:orientation="horizontal"
-                            android:background="@drawable/btn_round_border_blue"
+                            android:background="@drawable/btn_round_white_border_blue"
                             android:layout_marginRight="@dimen/_10sdp"
                             android:layout_alignParentRight="true">
 
@@ -492,7 +492,7 @@
                             android:layout_height="wrap_content"
                             android:minHeight="@dimen/_25sdp"
                             android:orientation="horizontal"
-                            android:background="@drawable/btn_round_border_blue"
+                            android:background="@drawable/btn_round_white_border_blue"
                             android:layout_marginRight="@dimen/_10sdp">
 
                             <wolve.dms.customviews.CTextIcon

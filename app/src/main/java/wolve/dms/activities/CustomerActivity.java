@@ -57,7 +57,7 @@ import wolve.dms.utils.Util;
 
 public class CustomerActivity extends BaseActivity implements View.OnClickListener, View.OnLongClickListener {
     private ImageView btnBack;
-    private CTextIcon tvTrash, tvDeleteBill;
+    protected CTextIcon tvTrash, tvPrint;// tvStatus;
     protected Button btnSubmit;
     private TextView  tvCheckInStatus, tvTime;
     protected TextView tvTitle,tvAddress, tvDebt, tvPaid, tvTotal, tvBDF, btnShopCart, tvFilter;
@@ -83,6 +83,8 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     protected BaseModel currentBill, tempBill = null;
     protected Double currentDebt =0.0;
     private Handler mHandlerUpdateCustomer = new Handler();
+    private boolean haschange = false;
+    private int currentPosition =0;
 
     protected static CustomerBillsFragment billsFragment;
     protected static CustomerInfoFragment infoFragment;
@@ -150,6 +152,8 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         lnFilter = findViewById(R.id.customer_filter);
         tvFilter = findViewById(R.id.customer_filter_text);
         rvFilterTitle = findViewById(R.id.customer_filter_rv);
+        tvPrint = findViewById(R.id.customer_print);
+
 
     }
 
@@ -157,6 +161,8 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     public void addEvent() {
         btnBack.setOnClickListener(this);
         tvTrash.setOnClickListener(this);
+        tvPrint.setOnClickListener(this);
+
         btnShopCart.setOnClickListener(this);
         tvDebt.setOnClickListener(this);
         tvPaid.setOnClickListener(this);
@@ -219,30 +225,34 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
         updateBillTabNotify(tempBill != null?true : false , listBills.size());
 
-        if (listBills.size() >0){
-            BaseModel object = Util.getTotal(listBills);
-            currentDebt = object.getDouble("debt");
+        updateOverview(listBills);
+        lnFilter.setVisibility(listBills.size()>0 ? View.VISIBLE : View.GONE);
+        setPrintIconVisibility();
+
+        currentDebt = Util.getTotalDebt(listBills);
+
+        infoFragment.reloadInfo();
+        billsFragment.updateList();
+        productFragment.updateList();
+        paymentFragment.updateList();
+
+
+    }
+
+    protected void updateOverview(List<BaseModel> list){
+        if (list.size() >0){
+            BaseModel object = Util.getTotal(list);
             tvTotal.setText(String.format("Tổng: %s" ,Util.FormatMoney(object.getDouble("total"))));
             tvDebt.setText(String.format("Nợ: %s" ,Util.FormatMoney(object.getDouble("debt"))));
             tvPaid.setText(String.format("Trả: %s" ,Util.FormatMoney(object.getDouble("paid"))));
             tvBDF.setText(String.format("BDF:%s ", DataUtil.defineBDFPercent(listBillDetail)) +"%");
-            lnFilter.setVisibility(View.VISIBLE);
 
         }else {
             tvTotal.setText("...");
             tvDebt.setText("...");
             tvPaid.setText("...");
             tvBDF.setText("...");
-            lnFilter.setVisibility(View.GONE);
         }
-        infoFragment.reloadInfo();
-
-        billsFragment.updateList();
-        productFragment.updateList();
-        paymentFragment.updateList();
-
-
-
     }
 
     public void setupViewPager(ViewPager viewPager) {
@@ -273,6 +283,24 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
             }
         });
 
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                currentPosition = position;
+                setPrintIconVisibility();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
     }
 
     public void setupTabLayout(TabLayout tabLayout) {
@@ -285,7 +313,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         tabLayout.requestFocus();
     }
 
-    private void updateBillTabNotify(boolean hasTempBill, int billAmount){
+    protected void updateBillTabNotify(boolean hasTempBill, int billAmount){
         TabLayout.Tab tab = tabLayout.getTabAt(1);
         tab.setCustomView(null);
         tab.setCustomView(pageAdapter.getNotifyBaged(billAmount, hasTempBill));
@@ -359,9 +387,14 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                             rvFilterTitle.setVisibility(View.GONE);
                         }}, 2000);
                 }
+                break;
 
+            case R.id.customer_print:
+                printDebtBills();
 
                 break;
+
+
 
         }
     }
@@ -369,6 +402,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     private void returnPreviousScreen(String customer){
         Intent returnIntent = new Intent();
         returnIntent.putExtra(Constants.CUSTOMER, customer != null? customer : null);
+        returnIntent.putExtra(Constants.RELOAD_DATA, haschange);
         setResult(Constants.RESULT_CUSTOMER_ACTIVITY,returnIntent);
         Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.nothing, R.anim.slide_down);
         Util.getInstance().getCurrentActivity().finish();
@@ -565,6 +599,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     }
 
     protected void reloadCustomer(String id){
+        haschange = true;
         CustomerConnect.GetCustomerDetail(id, new CallbackCustom() {
             @Override
             public void onResponse(final BaseModel result) {
@@ -572,7 +607,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 CustomSQL.setBaseModel(Constants.CUSTOMER, customer);
                 updateView(customer);
 
-                updateCustomerDebt(customer);
+                //updateCustomerDebt(customer);
 
 
             }
@@ -676,7 +711,8 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     }
 
     protected void printTempBill(BaseModel bill){
-        Transaction.gotoPrintBillActivity(bill, false);
+        Transaction.checkInventoryBeforePrintBill(bill, DataUtil.array2ListObject(bill.getString(Constants.BILL_DETAIL)));
+        //Transaction.gotoPrintBillActivity(bill, false);
 
     }
 
@@ -779,6 +815,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
             @Override
             public void Result(String s) {
                 rvFilterTitle.setVisibility(View.GONE);
+
                 switch (s){
                     case Constants.ALL_FILTER:
                         tvFilter.setText("");
@@ -841,6 +878,13 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     }
 
+    private void setPrintIconVisibility(){
+        if (currentPosition ==1 && listDebtBill.size() >0){
+            tvPrint.setVisibility(View.VISIBLE);
+        }else {
+            tvPrint.setVisibility(View.GONE);
+        }
+    }
     private void filterBillByRange(long start, long end){
         if (start == 0 && end == 0){
             billsFragment.adapter.getFilter().filter("");
@@ -852,6 +896,9 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
             paymentFragment.adapter.getFilter().filter(model.BaseModelstoString());
             productFragment.updateListByRange(model.BaseModelstoString());
         }
+
+        viewPager.setCurrentItem(1, true);
+        updateOverview(billsFragment.adapter.getAllBill());
 
     }
 

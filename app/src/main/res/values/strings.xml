@@ -55,7 +55,7 @@
     <string name="icon_weight">&#xf019;</string>
     <string name="icon_adress">&#xf277;</string>
     <string name="icon_district">&#xf3c5;</string>
-<!--    <string name="icon_city">&#xf279;</string>-->
+    <string name="icon_detail">&#xf05a;</string>
     <string name="icon_flag">&#xf024;</string>
     <string name="icon_protect">&#xf132;</string>
     <string name="icon_bill">&#xf543;</string>
@@ -105,8 +105,15 @@
     <string name="icon_gender">&#xf228;</string>
     <string name="icon_role">&#xf507;</string>
     <string name="icon_calendar">&#xf272;</string>
-
-
+    <string name="icon_depot">&#xf480;</string>
+    <string name="icon_transfer">&#xf079;</string>
+    <string name="icon_inventory">&#xf4a1;</string>
+    <string name="icon_usd">&#xf2e8;</string>
+    <string name="icon_search">&#xf002;</string>
+    <string name="icon_check">&#xf00c;</string>
+    <string name="icon_x">&#xf00d;</string>
+    <string name="icon_star">&#xf005;</string>
+    <string name="icon_forward">&#xf04e;</string>
 
 
     <string name="login_username">Nhập tài khoản hoặc SĐT</string>
@@ -116,7 +123,8 @@
     <string name="day_month_year">day month year</string>
     <string name="first_day_selected">First day selected</string>
     <string name="last_day_selected">Last day selected</string>
-
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <string name="fcm_message">FCM Message</string>
 
 
 

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,6 +23,8 @@ import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Status;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.Transaction;
+import wolve.dms.utils.Util;
 
 /**
  * Created by macos on 9/16/17.
@@ -84,6 +87,22 @@ public class StatusActivity extends BaseActivity implements View.OnClickListener
 
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.status_parent);
+        if(Util.getInstance().isLoading()){
+            Util.getInstance().stopLoading(true);
+
+        }else if(mFragment != null && mFragment instanceof NewUpdateStatusFragment) {
+            getSupportFragmentManager().popBackStack();
+
+        }else {
+            Transaction.gotoHomeActivityRight(true);
+        }
+
+    }
+
 
 
     protected void loadStatus() {

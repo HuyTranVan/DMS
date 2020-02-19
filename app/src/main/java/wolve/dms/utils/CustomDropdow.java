@@ -57,7 +57,7 @@ public class CustomDropdow {
         });
         popup.setFocusable(true);
 
-        //popup.setBackgroundDrawable(Util.getInstance().getCurrentActivity().getResources().getDrawable(R.drawable.bg_grey_corner));
+        //popup.setBackgroundDrawable(Util.getInstance().getCurrentActivity().getResources().getDrawable(R.drawable.bg_corner5_lighgrey));
         popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
         popup.setWidth(Util.getInstance().getCurrentActivity().getResources().getDimensionPixelSize(R.dimen._100sdp));
         popup.setContentView(listViewDogs);

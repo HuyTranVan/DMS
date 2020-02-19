@@ -8,7 +8,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/colorwhite_corner_large"
+        android:background="@drawable/bg_corner5_white"
         android:orientation="vertical"
         android:layout_margin="@dimen/_4sdp">
 
@@ -45,7 +45,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:background="@drawable/btn_round_border_blue"
+                android:background="@drawable/btn_round_white_border_blue"
                 android:text="Gọi điện"
                 android:textColor="@color/black_text_color"
                 android:gravity="center"
@@ -57,7 +57,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:background="@drawable/btn_round_border_blue"
+                android:background="@drawable/btn_round_white_border_blue"
                 android:text="Chỉ đường"
                 android:textColor="@color/black_text_color"
                 android:gravity="center"

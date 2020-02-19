@@ -56,6 +56,14 @@ public class Api_link {
     public final static String PRODUCT_GROUP_DELETE = BASE_URL + "token/productGroup/";
     public final static String PRODUCTGROUP_CREATE_PARAM ="%sname=%s";
 
+    public final static String WAREHOUSES = BASE_URL + "token/warehouses";
+    public final static String WAREHOUSE_NEW = BASE_URL + "token/warehouse/create_or_update";
+    public final static String WAREHOUSE_CREATE_PARAM ="%sname=%s&user_id=%d&isMaster=%d";
+
+    public final static String INVENTORIES = BASE_URL + "token/inventories";
+
+    public final static String IMPORT_NEW = BASE_URL + "token/import/create_or_update";
+
     public final static String PRODUCTS = BASE_URL + "token/products";
     public final static String PRODUCT_NEW = BASE_URL + "token/product/create_or_update";
     public final static String PRODUCT_DELETE = BASE_URL + "token/product/";
@@ -65,7 +73,7 @@ public class Api_link {
     public final static String USERS = BASE_URL + "token/users";
     public final static String USER_NEW = BASE_URL + "token/user/create_or_update";
     public final static String USER_DELETE = BASE_URL + "token/user/";
-    public final static String USER_CREATE_PARAM ="%sdisplayName=%s&gender=%d&email=%s&phone=%s&role=%d&image=%s";
+    public final static String USER_CREATE_PARAM ="%sdisplayName=%s&gender=%d&email=%s&phone=%s&role=%d&image=%s%s";
 
     public final static String STATUS = BASE_URL + "token/status";
     public final static String STATUS_NEW = BASE_URL + "token/status/create_or_update";
@@ -103,8 +111,11 @@ public class Api_link {
     public final static String BILL_RANGE_PARAM ="&billingFrom=%s&billingTo=%s";
     public final static String BILL_HAVE_PAYMENT_RANGE_PARAM ="&paymentFrom=%s&paymentTo=%s";
     public final static String BILL_NOT_YET_PAID_RANGE_PARAM ="&fromTime=%s&toTime=%s";
+
     public final static String PAY_NEW = BASE_URL + "token/payment";
+    public final static String PAYMENTS = BASE_URL + "token/payments";
     public final static String PAY_PARAM ="customerId=%d&paid=%s&billId=%d&userId=%d&note=%s&payByReturn=%d&user_collect=%d";
+    public final static String PAYMENTS_PARAM ="?from=%s&to=%s";
 
     public final static String DEBT_NEW = BASE_URL + "token/debt/create_or_update";
     public final static String DEBT_PARAM ="debt=%s&user_id=%d&customer_id=%d&distributor_id=%d";

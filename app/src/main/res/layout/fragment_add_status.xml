@@ -11,7 +11,7 @@
         android:id="@+id/update_price_header"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_35sdp"
-        android:background="@drawable/bg_header_top">
+        android:background="@drawable/bg_img_header">
 
         <ImageView
             android:id="@+id/icon_back"
@@ -55,7 +55,7 @@
                 android:id="@+id/add_status_colorchoice"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_35sdp"
-                android:background="@drawable/colorwhite_pressed"
+                android:background="@drawable/btn_none_white"
                 android:focusableInTouchMode="true"
                 android:textSize="@dimen/_12sdp"
                 android:text="Chọn màu trạng thái"

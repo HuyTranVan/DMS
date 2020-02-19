@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/product_return_item_parent"
-    android:background="@drawable/colorwhite_pressed">
+    android:background="@drawable/btn_none_white">
 
     <RelativeLayout
             android:layout_width="match_parent"
@@ -62,7 +62,7 @@
                     android:id="@+id/product_return_item_sub"
                     android:layout_width="@dimen/_25sdp"
                     android:layout_height="@dimen/_25sdp"
-                    android:background="@drawable/bg_white_round_border_pressed"
+                    android:background="@drawable/btn_oval_white_border_grey"
                     android:text="@string/icon_minus"
                     android:textSize="@dimen/_10sdp"
                     android:textColor="@color/black_text_color_hint"
@@ -85,7 +85,7 @@
                     android:id="@+id/product_return_item_plus"
                     android:layout_width="@dimen/_25sdp"
                     android:layout_height="@dimen/_25sdp"
-                    android:background="@drawable/bg_white_round_border_pressed"
+                    android:background="@drawable/btn_oval_white_border_grey"
                     android:text="@string/icon_plus"
                     android:textSize="@dimen/_10sdp"
                     android:textColor="@color/black_text_color_hint"

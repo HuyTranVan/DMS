@@ -15,6 +15,7 @@ import java.util.List;
 import wolve.dms.R;
 import wolve.dms.adapter.Customer_BillsAdapter;
 import wolve.dms.callback.CallbackBaseModel;
+import wolve.dms.callback.CallbackInt;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
@@ -79,7 +80,7 @@ public class CustomerBillsFragment extends Fragment implements View.OnClickListe
         adapter = new Customer_BillsAdapter(new ArrayList<>(), new CallbackBaseModel() {
             @Override
             public void onResponse(BaseModel result) {
-                switch (result.getString(Constants.TYPE)){
+                switch (result.getString(Constants.TYPE)) {
                     case Constants.BILL_RETURN:
                         mActivity.openReturnFragment(result.getBaseModel(Constants.RESULT));
                         break;
@@ -105,6 +106,11 @@ public class CustomerBillsFragment extends Fragment implements View.OnClickListe
 
             }
 
+        }, new CallbackInt() {
+            @Override
+            public void onResponse(int value) {
+                mActivity.updateBillTabNotify(mActivity.tempBill != null?true : false , value);
+            }
         });
 
         Util.createLinearRV(rvBill, adapter);

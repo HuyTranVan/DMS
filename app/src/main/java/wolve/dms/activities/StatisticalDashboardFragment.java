@@ -163,7 +163,7 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
 
 
                 JSONObject district = new JSONObject();
-                district.put("name",listDistrict.get(i) );
+                district.put("name",listDistrict.get(i).getString("text") );
                 district.put("total", total);
                 listData.add(district);
 

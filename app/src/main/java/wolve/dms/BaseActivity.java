@@ -132,38 +132,33 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         }else {
             switch (Util.getInstance().getCurrentActivity().getLocalClassName()){
-                case "activities.StatisticalActivity":
-
-
-                    break;
-
                 case "activities.StatisticalCustomerActivity":
                     finish();
                     Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
 
                     break;
 
-                case "activities.ProductGroupActivity":
-                    Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.product_parent);
-                    if(mFragment != null && mFragment instanceof NewUpdateProductGroupFragment
-                            ||mFragment != null && mFragment instanceof NewUpdateProductFragment) {
-                        getSupportFragmentManager().popBackStack();
-                    }else {
-                        Transaction.gotoHomeActivityRight(true);
-                    }
+//                case "activities.ProductGroupActivity":
+//                    Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.product_parent);
+//                    if(mFragment != null && mFragment instanceof NewUpdateProductGroupFragment
+//                            ||mFragment != null && mFragment instanceof NewUpdateProductFragment) {
+//                        getSupportFragmentManager().popBackStack();
+//                    }else {
+//                        Transaction.gotoHomeActivityRight(true);
+//                    }
+//
+//                    break;
 
-                    break;
-
-                case "activities.StatusActivity":
-                    mFragment = getSupportFragmentManager().findFragmentById(R.id.product_parent);
-                    if(mFragment != null && mFragment instanceof NewUpdateProductGroupFragment
-                            ||mFragment != null && mFragment instanceof NewUpdateProductFragment) {
-                        getSupportFragmentManager().popBackStack();
-                    }else {
-                        Transaction.gotoHomeActivityRight(true);
-                    }
-
-                    break;
+//                case "activities.StatusActivity":
+//                    mFragment = getSupportFragmentManager().findFragmentById(R.id.product_parent);
+//                    if(mFragment != null && mFragment instanceof NewUpdateProductGroupFragment
+//                            ||mFragment != null && mFragment instanceof NewUpdateProductFragment) {
+//                        getSupportFragmentManager().popBackStack();
+//                    }else {
+//                        Transaction.gotoHomeActivityRight(true);
+//                    }
+//
+//                    break;
 
             }
         }
