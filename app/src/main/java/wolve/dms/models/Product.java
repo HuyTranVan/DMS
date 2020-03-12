@@ -5,6 +5,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import wolve.dms.utils.Constants;
@@ -74,6 +75,26 @@ public class Product extends BaseModel{
         }
 
         DataUtil.sortProduct(mProducts, false);
+
+        return mProducts;
+    }
+
+    public static List<String> getProductListString(){
+        List<String> mProducts = new ArrayList<>();
+
+        if (mListProducts == null){
+            try {
+                JSONArray array = new JSONArray(CustomSQL.getString(Constants.PRODUCT_LIST));
+                for (int i=0; i<array.length(); i++){
+                    BaseModel product = new BaseModel(array.getJSONObject(i));
+                    mProducts.add(product.getString("name"));
+                }
+
+            } catch (JSONException e) {
+                return mProducts;
+            }
+        }
+        Collections.sort(mProducts);
 
         return mProducts;
     }

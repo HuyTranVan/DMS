@@ -69,7 +69,8 @@
                 android:text="Kho tổng"
                 android:textSize="@dimen/_12sdp"
                 android:paddingLeft="@dimen/_10sdp"
-                android:layout_marginBottom="@dimen/_5sdp"/>
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:buttonTint="@color/colorBlue"/>
 
             <RadioButton
                 android:id="@+id/add_depot_rdtemp"
@@ -78,7 +79,8 @@
                 android:text="Kho tạm"
                 android:textSize="@dimen/_12sdp"
                 android:paddingLeft="@dimen/_10sdp"
-                android:layout_marginBottom="@dimen/_5sdp"/>
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:buttonTint="@color/colorBlue"/>
 
             <RadioButton
                 android:id="@+id/add_depot_rduser"
@@ -88,9 +90,11 @@
                 android:textSize="@dimen/_12sdp"
                 android:paddingLeft="@dimen/_10sdp"
                 android:layout_marginBottom="@dimen/_5sdp"
-                android:checked="true"/>
+                android:checked="true"
+                android:buttonTint="@color/colorBlue"/>
 
         </RadioGroup>
+
     </LinearLayout>
 
 

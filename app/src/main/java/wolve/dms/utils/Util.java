@@ -1576,8 +1576,13 @@ public class Util {
 
     }
 
-    public static String getStringIcon(String text, int icon){
+    public static String getStringIcon(String text,String blank, int icon){
         return text+ "   "+ getInstance().getCurrentActivity().getResources().getString(icon);
+
+    }
+
+    public static String getIconString( int icon, String text){
+        return  getInstance().getCurrentActivity().getResources().getString(icon)+ "   "+ text;
 
     }
 

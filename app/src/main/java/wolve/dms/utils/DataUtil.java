@@ -254,7 +254,17 @@ public class DataUtil {
         return list;
     }
 
+    public static String createCheckinNote(List<String> products, String note){
+        String result = "";
+        if (products.size()>0){
+            result = "SP giới thiệu: " + products.toString().replace("{","").replace("}","") +"\n";
+        }
+        if (!Util.isEmpty(note)){
+            result = result + note;
+        }
 
+        return result;
+    }
 
 
     public static List<BaseModel> sortProductGroup(List<BaseModel> list, boolean reverse){
@@ -399,6 +409,7 @@ public class DataUtil {
         customerResult.put("status", customer.getJsonObject("status"));
         customerResult.put("distributor_id", customer.getInt("distributor_id"));
         customerResult.put("status_id", customer.getInt("status_id"));
+        customerResult.put("waiting_list", customer.getBoolean("waiting_list"));
 
         List<BaseModel> listOriginalBill= new ArrayList<>(DataUtil.array2ListObject(customer.getString("bills")));
         if (getTempBill(listOriginalBill) != null){
@@ -737,6 +748,17 @@ public class DataUtil {
 
     }
 
+    public static BaseModel createCustomerWaitingParam(String param){
+        BaseModel paramCustomer = new BaseModel();
+        paramCustomer.put("url", Api_link.CUSTOMER_TEMP_NEW );
+        paramCustomer.put("method", "POST");
+        paramCustomer.put("isjson", false );
+        paramCustomer.put("param", param );
+
+        return paramCustomer;
+
+    }
+
     public static BaseModel getListCustomerParam(String param, int countinPage){
         BaseModel paramCustomer = new BaseModel();
         paramCustomer.put("url", Api_link.CUSTOMERS+ String.format(Api_link.DEFAULT_RANGE, 1,countinPage) );
@@ -811,6 +833,17 @@ public class DataUtil {
         paramCheckin.put("param", param );
 
         return paramCheckin;
+
+    }
+
+    public static BaseModel getLogoutParam(){
+        BaseModel paramLogout = new BaseModel();
+        paramLogout.put("url", Api_link.LOGOUT);
+        paramLogout.put("method", "GET");
+        paramLogout.put("isjson", null );
+        paramLogout.put("param", null );
+
+        return paramLogout;
 
     }
 

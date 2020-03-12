@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.adapter.Statistica_PaymentAdapter;
+import wolve.dms.adapter.Statistical_PaymentAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackString;
@@ -34,7 +34,7 @@ public class StatisticalPaymentFragment extends Fragment implements View.OnClick
     private TextView tvCount;
 
 
-    private Statistica_PaymentAdapter adapter;
+    private Statistical_PaymentAdapter adapter;
 
 
     @Nullable
@@ -78,7 +78,7 @@ public class StatisticalPaymentFragment extends Fragment implements View.OnClick
     }
 
     private void createRVCash(String user, List<BaseModel> list) {
-        adapter = new Statistica_PaymentAdapter(user, list, new CallbackString() {
+        adapter = new Statistical_PaymentAdapter(user, list, new CallbackString() {
             @Override
             public void Result(String s) {
                 CustomerConnect.GetCustomerDetail(s, new CallbackCustom() {

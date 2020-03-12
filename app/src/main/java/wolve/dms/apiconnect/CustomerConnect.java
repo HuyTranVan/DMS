@@ -72,6 +72,68 @@ public class CustomerConnect {
         }).execute();
     }
 
+    public static void CreateCustomerWaitingList(String params, final CallbackCustom listener, final Boolean showLoading){
+        if (showLoading){
+            Util.getInstance().showLoading();
+        }
+
+        new CustomPostMethod(DataUtil.createCustomerWaitingParam(params),new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(true);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
+
+                }else {
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
+            }
+
+        }).execute();
+    }
+
+    public static void getWaitingList(final CallbackCustomList listener, Boolean showloading){
+        if (showloading){
+            Util.getInstance().showLoading();
+        }
+
+        new CustomGetMethod(Api_link.CUSTOMER_WAITING_LIST,  new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(true);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeArraySuccess(result));
+
+                }else {
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
+            }
+
+        }).execute();
+    }
+
     public static void ListCustomer(String param,int numberItem, final CallbackCustomList listener, Boolean showloading, final Boolean stopLoading){
         if (showloading){
             Util.getInstance().showLoading();

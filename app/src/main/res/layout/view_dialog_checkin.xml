@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/dialog_choice_status_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/colorWhite"
+        android:layout_gravity="center">
+
+        <TextView
+            android:id="@+id/dialog_choice_status_title"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_30sdp"
+            android:background="@drawable/bg_img_header"
+            android:text="CHỌN SẢN PHẨM"
+            android:textSize="@dimen/_12sdp"
+            android:textColor="@color/black_text_color"
+            android:gravity="center"
+            android:textAllCaps="true"/>
+
+        <TextView
+            android:id="@+id/dialog_checkin_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_round_white_border_grey"
+            android:text="Khách hàng mới"
+            android:textSize="@dimen/_10sdp"
+            android:textColor="@color/white_text_color"
+            android:paddingLeft="@dimen/_10sdp"
+            android:paddingRight="@dimen/_10sdp"
+            android:paddingTop="@dimen/_2sdp"
+            android:paddingBottom="@dimen/_2sdp"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_5sdp"/>
+
+        <RadioGroup
+            android:id="@+id/dialog_checkin_rg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_vertical"
+            android:padding="@dimen/_5sdp">
+
+            <RadioButton
+                android:id="@+id/dialog_checkin_owner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Chủ có ở cửa hàng"
+                android:textSize="@dimen/_12sdp"
+                android:paddingLeft="@dimen/_10sdp"
+                android:buttonTint="@color/colorBlue"
+                android:checked="true"/>
+
+            <RadioButton
+                android:id="@+id/dialog_checkin_notowner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Không gặp chủ nhà"
+                android:textSize="@dimen/_12sdp"
+                android:paddingLeft="@dimen/_10sdp"
+                android:buttonTint="@color/colorBlue"/>
+
+            <RadioButton
+                android:id="@+id/dialog_checkin_notinterest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Chuyển sang không quan tâm"
+                android:textSize="@dimen/_12sdp"
+                android:paddingLeft="@dimen/_10sdp"
+                android:buttonTint="@color/colorBlue"/>
+
+            <RadioButton
+                android:id="@+id/dialog_checkin_interest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Khách hàng chuyển sang quan tâm"
+                android:textSize="@dimen/_12sdp"
+                android:paddingLeft="@dimen/_10sdp"
+                android:buttonTint="@color/colorBlue"/>
+
+        </RadioGroup>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:background="#0d000000"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_5sdp"/>
+
+        <LinearLayout
+            android:id="@+id/dialog_checkin_product_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chọn sản phẩm giới thiệu:"
+                android:textSize="@dimen/_10sdp"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:textStyle="italic"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/dialog_checkin_rvproduct"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:clipToPadding="false"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:paddingBottom="@dimen/_5sdp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/_30sdp"
+                android:background="@drawable/bg_corner5_white_border2_grey"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp">
+
+                <wolve.dms.customviews.CTextIcon
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.1"
+                    android:text="@string/icon_search"
+                    android:gravity="center"
+                    android:textSize="@dimen/_12sdp"
+                    android:textColor="@color/black_text_color_hint"/>
+
+                <AutoCompleteTextView
+                    android:id="@+id/dialog_checkin_search"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.8"
+                    android:background="@null"
+                    android:hint="Nhập tên sản phẩm"
+                    android:gravity="center_vertical"
+                    android:textSize="@dimen/_12sdp"
+                    android:ems="10"
+                    android:textCursorDrawable="@drawable/custom_cursor"/>
+
+                <wolve.dms.customviews.CTextIcon
+                    android:id="@+id/dialog_checkin_search_close"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/btn_oval_white"
+                    android:layout_weight="0.1"
+                    android:text="@string/icon_x"
+                    android:gravity="center"
+                    android:textSize="@dimen/_14sdp"
+                    android:visibility="gone"
+                    android:layout_margin="@dimen/_2sdp" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Đánh giá khách hàng"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:textSize="@dimen/_10sdp"
+            android:textStyle="italic"/>
+
+
+
+        <com.whinc.widget.ratingbar.RatingBar
+            android:id="@+id/dialog_checkin_ratingBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
+            app:rb_click_rating="true"
+            app:rb_empty="@drawable/ic_star_empty"
+            app:rb_fill="@drawable/ic_star_full"
+            app:rb_max_count="5"
+            app:rb_count ="1"
+            app:rb_touch_rating="true"/>
+
+        <LinearLayout
+            android:id="@+id/dialog_checkin_nextvisit_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <View
+                android:id="@+id/checkin_reason_line"
+                android:layout_width="match_parent"
+                android:layout_height="1dip"
+                android:background="#0d000000"
+                android:layout_margin="@dimen/_10sdp"/>
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Lần ghé cửa hàng kế tiếp"
+                    android:textSize="@dimen/_10sdp"
+                    android:textStyle="italic"/>
+
+                <EditText
+                    android:id="@+id/dialog_checkin_nextday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="@dimen/_40sdp"
+                    android:minHeight="@dimen/_20sdp"
+                    android:background="@drawable/bg_round_white_border_grey"
+                    android:text="15"
+                    android:gravity="center"
+                    android:layout_marginLeft="@dimen/_5sdp"
+                    android:textSize="@dimen/_12sdp"
+                    android:textCursorDrawable="@drawable/custom_cursor"
+                    android:inputType="number"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ngày"
+                    android:textSize="@dimen/_10sdp"
+                    android:textStyle="italic"
+                    android:layout_marginLeft="@dimen/_5sdp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_5sdp">
+
+            <EditText
+                android:id="@+id/dialog_checkin_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/_50sdp"
+                android:background="@drawable/bg_white_corner_stroke_grey"
+                android:contextClickable="false"
+                android:gravity="top"
+                android:imeOptions="actionNext"
+                android:paddingLeft="@dimen/_10sdp"
+                android:paddingRight="@dimen/_15sdp"
+                android:paddingTop="@dimen/_5sdp"
+                android:paddingBottom="@dimen/_5sdp"
+                android:textColor="@color/black_text_color"
+                android:textSize="@dimen/_12sdp"
+                android:hint="Nội dung cuộc gặp"
+                android:layout_margin="@dimen/_5sdp"
+                android:inputType="textCapSentences|textMultiLine"
+                android:textCursorDrawable="@drawable/custom_cursor"/>
+
+            <wolve.dms.customviews.CTextIcon
+                android:id="@+id/dialog_select_status_clear"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:background="@drawable/btn_oval_white"
+                android:layout_alignParentRight="true"
+                android:text="@string/icon_x"
+                android:gravity="center"
+                android:layout_margin="@dimen/_7sdp"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
+
+        <include android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            layout="@layout/view_bottom_dialog_button"/>
+
+    </LinearLayout>
+
+
+
+
+</FrameLayout>

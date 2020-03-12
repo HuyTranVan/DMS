@@ -303,7 +303,8 @@
             android:orientation="horizontal"
             android:background="@drawable/btn_round_blue"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true">
+            android:layout_alignParentRight="true"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/customer_filter_text"

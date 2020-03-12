@@ -44,6 +44,8 @@ public class CartCheckinReasonAdapter extends RecyclerView.Adapter<CartCheckinRe
         this.mListener = callback ;
         this.mData = list;
 
+
+
     }
 
     @Override

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/top_notify_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:minHeight="@dimen/_40sdp"
+    android:background="@drawable/bg_corner5_white"
+    tools:ignore="WebViewLayout"
+    android:gravity="center_vertical">
+
+        <wolve.dms.customviews.CTextIcon
+            android:id="@+id/top_notify_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="@string/icon_money"
+            android:textSize="@dimen/_10sdp"
+            android:textColor="@color/black_text_color"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/_20sdp"/>
+
+        <TextView
+            android:id="@+id/top_notify_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tiền mặt"
+            android:textColor="@color/black_text_color_hint"
+            android:textSize="@dimen/_10sdp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/_20sdp"/>
+
+</LinearLayout>
+

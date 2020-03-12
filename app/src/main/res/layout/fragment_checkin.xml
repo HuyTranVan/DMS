@@ -31,7 +31,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/checkin_header"
-        />
+        android:clipToPadding="false"
+        android:paddingTop="@dimen/_10sdp"
+        android:paddingBottom="@dimen/_10sdp"/>
 
 
 

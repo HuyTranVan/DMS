@@ -114,7 +114,9 @@
     <string name="icon_x">&#xf00d;</string>
     <string name="icon_star">&#xf005;</string>
     <string name="icon_forward">&#xf04e;</string>
-
+    <string name="icon_note">&#xf4a6;</string>
+    <string name="icon_history">&#xf1da;</string>
+    <string name="icon_list_check">&#xf0ca;</string>
 
     <string name="login_username">Nhập tài khoản hoặc SĐT</string>
     <string name="login_password">Nhập mật khẩu</string>

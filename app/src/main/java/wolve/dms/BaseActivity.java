@@ -19,14 +19,19 @@ import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.orhanobut.dialogplus.DialogPlus;
 
 import wolve.dms.activities.NewUpdateProductGroupFragment;
 import wolve.dms.activities.NewUpdateProductFragment;
+import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomCenterDialog;
+import wolve.dms.utils.CustomTopDialog;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -34,7 +39,6 @@ import wolve.dms.utils.Util;
 public abstract class BaseActivity extends AppCompatActivity {
     protected LocationManager mLocationManager;
     public FusedLocationProviderClient mFusedLocationClient;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,41 +134,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         if(Util.getInstance().isLoading()){
             Util.getInstance().stopLoading(true);
 
-        }else {
-            switch (Util.getInstance().getCurrentActivity().getLocalClassName()){
-                case "activities.StatisticalCustomerActivity":
-                    finish();
-                    Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-
-                    break;
-
-//                case "activities.ProductGroupActivity":
-//                    Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.product_parent);
-//                    if(mFragment != null && mFragment instanceof NewUpdateProductGroupFragment
-//                            ||mFragment != null && mFragment instanceof NewUpdateProductFragment) {
-//                        getSupportFragmentManager().popBackStack();
-//                    }else {
-//                        Transaction.gotoHomeActivityRight(true);
-//                    }
-//
-//                    break;
-
-//                case "activities.StatusActivity":
-//                    mFragment = getSupportFragmentManager().findFragmentById(R.id.product_parent);
-//                    if(mFragment != null && mFragment instanceof NewUpdateProductGroupFragment
-//                            ||mFragment != null && mFragment instanceof NewUpdateProductFragment) {
-//                        getSupportFragmentManager().popBackStack();
-//                    }else {
-//                        Transaction.gotoHomeActivityRight(true);
-//                    }
-//
-//                    break;
-
-            }
         }
 
     }
-
 
     public void getCurrentLocation(final LocationListener mListener) {
         mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
@@ -177,5 +149,30 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void receiveBundleFormFCM(String tag){
+        if (CustomTopDialog.dialog != null && CustomTopDialog.dialog.isShowing()){
+            CustomTopDialog.dialog.dismiss();
+
+        }else {
+            BaseModel content = new BaseModel(tag);
+            CustomTopDialog.showTextNotify(content.getString("title"), content.getString("message"));
+        }
+
+
+
+
+//        Intent intent = new Intent("LISTEN_FROM_GCM");
+//        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+
+//        String currentActivity = Util.getInstance().getCurrentActivity().getLocalClassName();
+//
+//            if (currentActivity.equals("Activities.HomeActivity")){
+//                Intent intent = new Intent("LISTEN_FROM_GCM");
+//    ////            intent.putExtra("message", bundle.getString("message"));
+//    ////            intent.putExtra("id", bundle.getString("id"));
+//                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+//            }
+        }
 
 }

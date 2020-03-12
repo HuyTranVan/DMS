@@ -44,8 +44,8 @@ public class Api_link {
     public final static String DEFAULT_RANGE ="?page=%d&size=%d";
 
     public final static String LOGIN = BASE_URL + "/login";
-    public final static String LOGIN_PARAM ="phone=%s&password=%s";
-    public final static String LOGOUT= BASE_URL + "auth/logout";
+    public final static String LOGIN_PARAM ="phone=%s&password=%s&fcm_token=%s";
+    public final static String LOGOUT= BASE_URL + "/logout";
     public final static String LOGOUT_PARAM ="x-wolver-accesstoken=%s&x-wolver-accessid=%s";
 
     public final static String USER = BASE_URL + "token/user/";
@@ -90,13 +90,16 @@ public class Api_link {
     public final static String CUSTOMER_CHECKIN_RANGE_PARAM ="&checkinFrom=%s&checkinTo=%s";
     public final static String CUSTOMER_DEBT_PARAM ="debt=%d";
     public final static String CUSTOMER_CREATE_PARAM ="%sname=%s&signBoard=%s&address=%s&phone=%s&street=%s&note=%s&district=%s&province=%s&lat=%s&lng=%s&volumeEstimate=%s&shopType=%s&status_id=%d&distributor_id=%s&currentDebt=%s&checkinCount=%d";
+    public final static String CUSTOMER_TEMP_NEW = BASE_URL + "token/customer/CustomerTempNew";
+    public final static String CUSTOMER_TEMP_NEW_PARAM ="customer_id=%d&user_id=%d";
+    public final static String CUSTOMER_WAITING_LIST = BASE_URL + "token/customer/WaitingList";
 
     public final static String DISTRIBUTOR_DETAIL = BASE_URL + "token/distributor/";
     public final static String DISTRIBUTOR_NEW = BASE_URL + "token/distributor/create_or_update";
     public final static String DISTRIBUTOR_CREATE_PARAM ="%scompany=%s&address=%s&phone=%s&website=%s&thanks=%s&image=%s";
 
     public final static String CHECKIN_NEW = BASE_URL + "token/customer/checkin";
-    public final static String SCHECKIN_CREATE_PARAM ="customer_id=%d&status_id=%d&note=%s&user_id=%d";
+    public final static String SCHECKIN_CREATE_PARAM ="customer_id=%d&rating=%d&note=%s&user_id=%d&nextVisit=%d&meetOwner=%d";
 
     public final static String CHECK_LOGIN = BASE_URL + "token/checklogin";
     public final static String CATEGORIES = BASE_URL + "token/categories";

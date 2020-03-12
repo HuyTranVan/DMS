@@ -7,6 +7,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.nispok.snackbar.Snackbar;
+import com.nispok.snackbar.listeners.ActionClickListener;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,9 +20,11 @@ import wolve.dms.BuildConfig;
 import wolve.dms.DMSApplication;
 import wolve.dms.R;
 import wolve.dms.apiconnect.Api_link;
+import wolve.dms.apiconnect.SystemConnect;
 import wolve.dms.apiconnect.UserConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackJSONObject;
+import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
@@ -68,9 +73,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @Override
     public void initialData() {
         edUsername.setInputType(InputType.TYPE_CLASS_NUMBER);
-
         edUsername.setText(CustomSQL.getString(Constants.USER_USERNAME));
-        //edPassword.setText(CustomSQL.getString(Constants.USER_PASSWORD));
 
         if (BuildConfig.DEBUG_FLAG ){
 //            if (!edUsername.getText().toString().trim().equals("") && !edPassword.getText().toString().trim().equals("")){
@@ -88,25 +91,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     @Override
     public void onClick(View view) {
+
         switch (view.getId()){
             case R.id.login_submit:
-                if (Util.isEmpty(edUsername) || Util.isEmpty(edPassword)){
-                    Util.showToast("Vui lòng nhập đủ thông tin");
-                }else {
-                    UserConnect.doLogin(edUsername.getText().toString().trim(),
-                            edPassword.getText().toString().trim(),
-                            new CallbackBoolean() {
-                                @Override
-                                public void onRespone(Boolean result) {
-                                    if (result){
-                                        Util.showToast("Đăng nhập thành công");
-                                        Transaction.gotoHomeActivity();
-                                        CustomSQL.setBoolean(Constants.LOGIN_SUCCESS, true);
-
-                                    }
-                                }
-                            });
-                }
+                submitLogin();
 
                 break;
 
@@ -122,6 +110,42 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 break;
         }
 
+    }
+
+    private void submitLogin(){
+        if (Util.isEmpty(edUsername) || Util.isEmpty(edPassword)){
+            Util.showToast("Vui lòng nhập đủ thông tin");
+        }else {
+            SystemConnect.getFCMToken(new CallbackString() {
+                @Override
+                public void Result(String s) {
+                    if (!s.equals("")){
+                        UserConnect.doLogin(edUsername.getText().toString().trim(),
+                                edPassword.getText().toString().trim(),
+                                s,
+                                new CallbackBoolean() {
+                                    @Override
+                                    public void onRespone(Boolean result) {
+                                        if (result){
+                                            Util.showToast("Đăng nhập thành công");
+                                            Transaction.gotoHomeActivity();
+                                            CustomSQL.setBoolean(Constants.LOGIN_SUCCESS, true);
+
+                                        }
+                                    }
+                                });
+                    }else {
+                        Util.showSnackbar("Đăng nhập thất bại", "Thử lại", new ActionClickListener() {
+                            @Override
+                            public void onActionClicked(Snackbar snackbar) {
+                                submitLogin();
+                            }
+                        });
+                    }
+                }
+            });
+
+        }
     }
 
 }

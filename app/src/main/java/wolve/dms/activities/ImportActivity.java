@@ -102,7 +102,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         toWarehouse = new BaseModel(getIntent().getStringExtra(Constants.WAREHOUSE));
 
         tvTitle.setText("nhập kho");
-        tvToWarehouse.setText(Util.getStringIcon(toWarehouse.getString("name"), R.string.icon_down));
+        tvToWarehouse.setText(Util.getStringIcon(toWarehouse.getString("name"), "   ", R.string.icon_down));
 
         tabLayout.setupWithViewPager(viewPager);
 
@@ -400,7 +400,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
                     public void onResponse(BaseModel object) {
                         viewPager.setCurrentItem(0, true);
                         fromWarehouse = object;
-                        tvFromWarehouse.setText(Util.getStringIcon(object.getString("name"), R.string.icon_down));
+                        tvFromWarehouse.setText(Util.getStringIcon(object.getString("name"),"   ",R.string.icon_down));
 
                         if (object.getInt("isMaster") ==1 ){
                             adapterProduct.updateData(Product.getProductList());
@@ -439,7 +439,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
                     @Override
                     public void onResponse(BaseModel object) {
                         toWarehouse = object;
-                        tvToWarehouse.setText(Util.getStringIcon(object.getString("name"), R.string.icon_down));
+                        tvToWarehouse.setText(Util.getStringIcon(object.getString("name"),"   ", R.string.icon_down));
 
                         reloadAllWarehouse();
 

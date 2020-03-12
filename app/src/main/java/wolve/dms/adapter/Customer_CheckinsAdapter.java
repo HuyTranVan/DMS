@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Checkin;
 import wolve.dms.utils.DataUtil;
@@ -49,14 +50,14 @@ public class Customer_CheckinsAdapter extends RecyclerView.Adapter<Customer_Chec
 
     @Override
     public void onBindViewHolder(final CheckinsAdapterViewHolder holder, final int position) {
-        BaseModel user = mData.get(position).getBaseModel("user");
+        String note = mData.get(position).getInt("meetOwner") == 0?
+                "Không gặp chủ nhà. " + mData.get(position).getString("note") : mData.get(position).getString("note");
+        holder.tvContent.setText(note);
+        holder.tvDate.setText(Util.getIconString(R.string.icon_district, Util.DateHourString(mData.get(position).getLong("createAt"))));
+        holder.tvEmployee.setText(Util.getIconString(R.string.icon_username, mData.get(position).getBaseModel("user").getString("displayName")));
 
-        holder.tvNumber.setText(String.valueOf(mData.size()-position));
-        holder.tvContent.setText(mData.get(position).getString("note"));
-        holder.tvDate.setText(Util.DateHourString(mData.get(position).getLong("createAt")));
-        holder.tvEmployee.setText(String.format("Nhân viên: %s", user.getString("displayName")));
-
-        holder.line.setVisibility(position == mData.size() -1 ? View.GONE : View.VISIBLE);
+        holder.line.setVisibility(mData.size() -1 == position ?View.GONE : View.VISIBLE );
+        holder.tvRating.setText( Util.getStringIcon(mData.get(position).getString("rating"),"", R.string.icon_star));
 
     }
 
@@ -66,18 +67,20 @@ public class Customer_CheckinsAdapter extends RecyclerView.Adapter<Customer_Chec
     }
 
     public class CheckinsAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvNumber, tvEmployee, tvContent, tvDate, tvTime;
+        private TextView tvNumber, tvContent, tvTime;
+        private CTextIcon tvEmployee, tvDate, tvRating;
         private LinearLayout lnParent;
-        private View line;
+        private View line, under;
 
         public CheckinsAdapterViewHolder(View itemView) {
             super(itemView);
-            lnParent = (LinearLayout) itemView.findViewById(R.id.checkins_item_content_parent);
-            tvDate = (TextView) itemView.findViewById(R.id.checkins_item_date);
-            tvNumber = (TextView) itemView.findViewById(R.id.checkins_item_number);
-            tvEmployee = (TextView) itemView.findViewById(R.id.checkins_item_employee);
+            //lnParent = (LinearLayout) itemView.findViewById(R.id.checkins_item_content_parent);
+            tvDate = (CTextIcon) itemView.findViewById(R.id.checkins_item_date);
+            tvRating = (CTextIcon) itemView.findViewById(R.id.checkins_item_rating);
+            tvEmployee = (CTextIcon) itemView.findViewById(R.id.checkins_item_employee);
             tvContent = (TextView) itemView.findViewById(R.id.checkins_item_content);
             line = (View) itemView.findViewById(R.id.checkins_item_line);
+            //under = (View) itemView.findViewById(R.id.checkins_item_under);
 
         }
 

@@ -50,31 +50,47 @@
             android:layout_marginLeft="@dimen/_10sdp"
             android:layout_marginRight="@dimen/_10sdp"/>
 
-
-        <EditText
-            android:id="@+id/dialog_choice_status_content"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="@dimen/_50sdp"
-            android:background="@drawable/bg_white_corner_stroke_grey"
-            android:contextClickable="false"
-            android:gravity="top"
-            android:imeOptions="actionNext"
-            android:paddingLeft="@dimen/_10sdp"
-            android:paddingRight="@dimen/_10sdp"
-            android:paddingTop="@dimen/_5sdp"
-            android:paddingBottom="@dimen/_5sdp"
-            android:textColor="@color/black_text_color"
-            android:textSize="@dimen/_12sdp"
-            android:hint="Nhập nội dung khác"
-            android:layout_margin="@dimen/_5sdp"
-            android:inputType="textCapSentences|textMultiLine"/>
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/dialog_choice_status_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/_50sdp"
+                android:background="@drawable/bg_white_corner_stroke_grey"
+                android:contextClickable="false"
+                android:gravity="top"
+                android:imeOptions="actionNext"
+                android:paddingLeft="@dimen/_10sdp"
+                android:paddingRight="@dimen/_15sdp"
+                android:paddingTop="@dimen/_5sdp"
+                android:paddingBottom="@dimen/_5sdp"
+                android:textColor="@color/black_text_color"
+                android:textSize="@dimen/_12sdp"
+                android:hint="Nhập nội dung khác"
+                android:layout_margin="@dimen/_5sdp"
+                android:inputType="textCapSentences|textMultiLine"/>
+
+            <wolve.dms.customviews.CTextIcon
+                android:id="@+id/dialog_select_status_clear"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_alignParentRight="true"
+                android:text="@string/icon_x"
+                android:gravity="center"
+                android:layout_margin="@dimen/_5sdp"
+                />
+
+        </RelativeLayout>
+
+
 
 
 
         <include android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:layout_below="@+id/dialog_choice_status_rvStatus"
             layout="@layout/view_bottom_dialog_button"/>
     </LinearLayout>
 

@@ -56,32 +56,32 @@ public class UserConnect {
         }).execute();
     }
 
-//    public static void Logout(String params, final CallbackJSONObject listener, final Boolean stopLoading){
-//        Util.getInstance().showLoading();
-//        new CustomGetMethod(Api_link.LOGOUT,  new Callback() {
-//            @Override
-//            public void onResponse(JSONObject result) {
-//                Util.getInstance().stopLoading(stopLoading);
-//                try {
-//                    if (result.getInt("status") == 200) {
-//                        listener.onResponse(result.getJSONObject("data"));
-//
-//                    } else {
-//                        listener.onError("Unknow error");
-//                    }
-//                } catch (JSONException e) {
-//                    listener.onError(e.toString());
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//                Util.getInstance().stopLoading(stopLoading);
-//                listener.onError(error);
-//            }
-//        }).execute();
-//    }
+    public static void Logout( final CallbackCustom listener, final Boolean stopLoading){
+        Util.getInstance().showLoading();
+        new CustomGetMethod(Api_link.LOGOUT,  new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(stopLoading);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
+
+                }else {
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(stopLoading);
+                Constants.throwError(error);
+                listener.onError(error);
+
+            }
+        }).execute();
+    }
 
     public static void UpdateUser(String params,final CallbackJSONObject listener, final Boolean stopLoading){
         Util.getInstance().showLoading();
@@ -143,8 +143,8 @@ public class UserConnect {
         }).execute();
     }
 
-    public static void doLogin(final String username, final String pass, final CallbackBoolean mListener) {
-        String params = String.format(Api_link.LOGIN_PARAM, username, pass);
+    public static void doLogin(final String username, final String pass, String fcm_token,final CallbackBoolean mListener) {
+        String params = String.format(Api_link.LOGIN_PARAM, username, pass, fcm_token);
 
         UserConnect.Login(params, new CallbackCustom() {
             @Override

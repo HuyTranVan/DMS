@@ -6,14 +6,22 @@ import android.graphics.drawable.ColorDrawable;
 import android.text.InputFilter;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.whinc.widget.ratingbar.RatingBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,16 +34,23 @@ import wolve.dms.adapter.DebtAdapter;
 import wolve.dms.adapter.PriceSuggestAdapter;
 import wolve.dms.adapter.ProductCompareInventoryAdapter;
 import wolve.dms.adapter.ProductQuantityAdapter;
+import wolve.dms.adapter.ProductSelectAdapter;
+import wolve.dms.adapter.WaitingListAdapter;
+import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.UserConnect;
 import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickProduct;
 import wolve.dms.callback.CallbackDouble;
+import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackListCustom;
+import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.libraries.DoubleTextWatcher;
 import wolve.dms.models.BaseModel;
+import wolve.dms.models.Product;
+import wolve.dms.models.User;
 
 /**
  * Created by macos on 9/28/17.
@@ -340,6 +355,7 @@ public class CustomCenterDialog {
         final TextView tvTitle = dialogResult.findViewById(R.id.dialog_choice_status_title);
         final TextView tvContent = dialogResult.findViewById(R.id.dialog_choice_status_text);
         final EditText edNote = dialogResult.findViewById(R.id.dialog_choice_status_content);
+        CTextIcon tvClose = dialogResult.findViewById(R.id.dialog_select_status_clear);
         final RecyclerView rvStatus = dialogResult.findViewById(R.id.dialog_choice_status_rvStatus);
         FrameLayout frParent = dialogResult.findViewById(R.id.dialog_choice_status_parent);
         Button btnCancel = dialogResult.findViewById(R.id.btn_cancel);
@@ -375,6 +391,12 @@ public class CustomCenterDialog {
             Util.createLinearRV(rvStatus, adapter);
         }
 
+        tvClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                edNote.setText("");
+            }
+        });
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -405,6 +427,260 @@ public class CustomCenterDialog {
 
                     dialogResult.dismiss();
                 }
+            }
+        });
+
+
+
+    }
+
+    public static void showCheckinDialog(String title, int customer_id, int status_id, int currentRating, CallbackObject listener){
+        //status_id 0: NEW
+        //status_id 1: INTERESTED
+        //status_id 2: NOT INTERESTED
+        //status_id 3: ALREADY BUY
+
+        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_checkin);
+        final TextView tvTitle = dialogResult.findViewById(R.id.dialog_choice_status_title);
+        TextView tvStatus = dialogResult.findViewById(R.id.dialog_checkin_status);
+        AutoCompleteTextView edProduct = dialogResult.findViewById(R.id.dialog_checkin_search);
+        final EditText edNote = dialogResult.findViewById(R.id.dialog_checkin_text);
+        EditText edNextDay = dialogResult.findViewById(R.id.dialog_checkin_nextday);
+        CTextIcon tvNoteClear = dialogResult.findViewById(R.id.dialog_select_status_clear);
+        CTextIcon tvSearchClear = dialogResult.findViewById(R.id.dialog_checkin_search_close);
+        final RecyclerView rvProduct = dialogResult.findViewById(R.id.dialog_checkin_rvproduct);
+        RatingBar ratingBar = dialogResult.findViewById(R.id.dialog_checkin_ratingBar);
+        RadioGroup radioGroup = dialogResult.findViewById(R.id.dialog_checkin_rg);
+        RadioButton radioNotInterest = dialogResult.findViewById(R.id.dialog_checkin_notinterest);
+        RadioButton radioInterest = dialogResult.findViewById(R.id.dialog_checkin_interest);
+        FrameLayout frParent = dialogResult.findViewById(R.id.dialog_choice_status_parent);
+        LinearLayout lnProductParent = dialogResult.findViewById(R.id.dialog_checkin_product_parent);
+        LinearLayout lnNextVisit = dialogResult.findViewById(R.id.dialog_checkin_nextvisit_parent);
+        Button btnCancel = dialogResult.findViewById(R.id.btn_cancel);
+        Button btnConfirm = dialogResult.findViewById(R.id.btn_submit);
+
+        dialogResult.setCanceledOnTouchOutside(false);
+
+        btnCancel.setText("QUAY LẠI");
+        btnConfirm.setText("TIẾP TỤC");
+        tvTitle.setText(title);
+        ratingBar.setCount(currentRating);
+
+        ProductSelectAdapter selectAdapter = new ProductSelectAdapter(new ArrayList<>());
+        Util.createGridRV(rvProduct, selectAdapter, 2);
+
+        List<String> products = Product.getProductListString();
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(Util.getInstance().getCurrentActivity(), android.R.layout.select_dialog_item, products);
+        edProduct.setThreshold(1);//will start working from first character
+        edProduct.setAdapter(adapter);//set
+        edProduct.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectAdapter.addItem(edProduct.getText().toString());
+                edProduct.setText("");
+            }
+        });
+        switch (status_id){
+            case 0:
+                radioNotInterest.setVisibility(View.VISIBLE);
+                radioInterest.setVisibility(View.GONE);
+                lnProductParent.setVisibility(View.VISIBLE);
+                tvStatus.setBackground(Util.getInstance().getCurrentActivity().getResources().getDrawable(R.drawable.bg_round_white_border_pink));
+                tvStatus.setTextColor(Util.getInstance().getCurrentActivity().getResources().getColor(R.color.colorPink));
+                tvStatus.setText("Khách hàng mới");
+
+                break;
+            case 1:
+                radioNotInterest.setVisibility(View.VISIBLE);
+                radioInterest.setVisibility(View.GONE);
+                lnProductParent.setVisibility(View.VISIBLE);
+                tvStatus.setBackground(Util.getInstance().getCurrentActivity().getResources().getDrawable(R.drawable.bg_round_white_border_orange));
+                tvStatus.setTextColor(Util.getInstance().getCurrentActivity().getResources().getColor(R.color.orange));
+                tvStatus.setText("Khách hàng có thiện chí");
+
+                break;
+            case 2:
+                radioNotInterest.setVisibility(View.GONE);
+                radioInterest.setVisibility(View.VISIBLE);
+                lnProductParent.setVisibility(View.VISIBLE);
+                tvStatus.setBackground(Util.getInstance().getCurrentActivity().getResources().getDrawable(R.drawable.bg_round_white_border_grey));
+                tvStatus.setTextColor(Util.getInstance().getCurrentActivity().getResources().getColor(R.color.black_text_color_hint));
+                tvStatus.setText("Khách hàng không quan tâm");
+
+                break;
+            case 3:
+                radioNotInterest.setVisibility(View.GONE);
+                radioInterest.setVisibility(View.GONE);
+                lnProductParent.setVisibility(View.GONE);
+                tvStatus.setBackground(Util.getInstance().getCurrentActivity().getResources().getDrawable(R.drawable.bg_round_white_border_blue));
+                tvStatus.setTextColor(Util.getInstance().getCurrentActivity().getResources().getColor(R.color.colorBlue));
+                tvStatus.setText("Khách đã mua hàng");
+
+                break;
+
+        }
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                switch (i){
+                    case R.id.dialog_checkin_owner:
+                        edNote.setHint("Nhập ghi chú khách hàng");
+                        lnProductParent.setVisibility(status_id != 3? View.VISIBLE: View.GONE);
+                        lnNextVisit.setVisibility(View.VISIBLE);
+                        ratingBar.setClickRating(true);
+                        ratingBar.setTouchRating(true);
+
+                        break;
+                    case R.id.dialog_checkin_notowner:
+                        edNote.setHint("Nhập ghi chú khách hàng");
+                        lnProductParent.setVisibility(View.GONE);
+                        lnNextVisit.setVisibility(View.VISIBLE);
+                        ratingBar.setClickRating(true);
+                        ratingBar.setTouchRating(true);
+
+                        break;
+                    case R.id.dialog_checkin_notinterest:
+                        edNote.setHint("Nhập lý do không quan tâm");
+                        lnProductParent.setVisibility(View.GONE);
+                        lnNextVisit.setVisibility(View.GONE);
+                        ratingBar.setCount(1);
+                        ratingBar.setClickRating(false);
+                        ratingBar.setTouchRating(false);
+
+                        break;
+
+                }
+            }
+        });
+
+        Util.textEvent(edNote, new CallbackString() {
+            @Override
+            public void Result(String s) {
+                tvNoteClear.setVisibility(s.equals("")? View.GONE : View.VISIBLE);
+
+            }
+        });
+        tvNoteClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                edNote.setText("");
+            }
+        });
+        Util.textEvent(edProduct, new CallbackString() {
+            @Override
+            public void Result(String s) {
+                tvSearchClear.setVisibility(s.equals("")? View.GONE : View.VISIBLE);
+            }
+        });
+        tvSearchClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                edProduct.setText("");
+            }
+        });
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogResult.dismiss();
+
+            }
+        });
+
+        btnConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.hideKeyboard(v);
+                String param;
+                BaseModel object = new BaseModel();
+                if (Util.isEmpty(edNextDay)){
+                    Util.showSnackbar("Nhập ngày ghé cửa hàng tiếp theo", null, null);
+
+                }else if (radioGroup.getCheckedRadioButtonId() == R.id.dialog_checkin_notinterest){
+                    if (Util.isEmpty(edNote)){
+                        Util.showSnackbar("Nhập lý do khách hàng không quan tâm để tiếp tục", null, null);
+
+                    }else {
+                        param = String.format(Api_link.SCHECKIN_CREATE_PARAM,
+                                customer_id,
+                                ratingBar.getCount(),
+                                Util.encodeString("Chuyển sang không quan tâm vì: "+ edNote.getText().toString()),
+                                User.getId(),
+                                Util.CurrentTimeStamp() + 365 * 86400000,
+                                1);
+
+                        object.put("updateStatus", true);
+                        object.put("status", 2);
+                        object.put("param", param);
+                        listener.onResponse(object);
+                        dialogResult.dismiss();
+
+                    }
+
+                }else if (radioGroup.getCheckedRadioButtonId() == R.id.dialog_checkin_interest){
+                    if (Util.isEmpty(edNote)){
+                        Util.showSnackbar("Nhập lý do khách hàng quan tâm để tiếp tục", null, null);
+
+                    }else if (selectAdapter.getData().size() <1){
+                        Util.showSnackbar("Chọn sản phẩm giới thiệu để tiếp tục", null, null);
+
+                    } else{
+                        param = String.format(Api_link.SCHECKIN_CREATE_PARAM,
+                                customer_id,
+                                ratingBar.getCount(),
+                                Util.encodeString(DataUtil.createCheckinNote(selectAdapter.getData(), "Chuyển sang quan tâm vì: "+ edNote.getText().toString())),
+                                User.getId(),
+                                Util.CurrentTimeStamp() + 365 * 86400000,
+                                1);
+
+                        object.put("updateStatus", true);
+                        object.put("status", 1);
+                        object.put("param", param);
+                        listener.onResponse(object);
+                        dialogResult.dismiss();
+
+                    }
+
+                }else if (radioGroup.getCheckedRadioButtonId() == R.id.dialog_checkin_owner){
+                    if (Util.isEmpty(edNote)){
+                        Util.showSnackbar("Nhập nội dung cuộc gặp để tiếp tục", null, null);
+
+                    }else if (selectAdapter.getData().size() <1 && lnProductParent.getVisibility() == View.VISIBLE){
+                        Util.showSnackbar("Chọn sản phẩm giới thiệu để tiếp tục", null, null);
+
+                    } else {
+                        param = String.format(Api_link.SCHECKIN_CREATE_PARAM,
+                                customer_id,
+                                ratingBar.getCount(),
+                                Util.encodeString(DataUtil.createCheckinNote(selectAdapter.getData(), edNote.getText().toString())),
+                                User.getId(),
+                                Util.CurrentTimeStamp() + Integer.parseInt(edNextDay.getText().toString()) * 86400000,
+                                1);
+
+                        object.put("updateStatus", false);
+                        object.put("param", param);
+                        listener.onResponse(object);
+                        dialogResult.dismiss();
+
+                    }
+
+                }else if (radioGroup.getCheckedRadioButtonId() == R.id.dialog_checkin_notowner){
+                    param = String.format(Api_link.SCHECKIN_CREATE_PARAM,
+                            customer_id,
+                            ratingBar.getCount(),
+                            Util.encodeString(DataUtil.createCheckinNote(selectAdapter.getData(), edNote.getText().toString())),
+                            User.getId(),
+                            Util.CurrentTimeStamp() + Integer.parseInt(edNextDay.getText().toString()) * 86400000,
+                            0);
+
+                    object.put("updateStatus", false);
+                    object.put("param", param);
+                    listener.onResponse(object);
+                    dialogResult.dismiss();
+
+                }
+
+
+
             }
         });
 
@@ -658,23 +934,24 @@ public class CustomCenterDialog {
         });
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                Util.hideKeyboard(edPass);
-                if (!edPhone.getText().toString().equals("") && !edPass.getText().toString().equals("")){
-                    UserConnect.doLogin(edPhone.getText().toString().trim(),
-                            edPass.getText().toString().trim(),
-                            new CallbackBoolean() {
-                                @Override
-                                public void onRespone(Boolean result) {
-                                    if (result){
-                                        Util.showToast("Đăng nhập thành công");
-                                        mlistener.onResponse(user.BaseModelJSONObject());
-
-                                    }else {
-                                        mlistener.onError("");
-                                    }
-                                }
-                            });
-                }
+//                Util.hideKeyboard(edPass);
+//                if (!edPhone.getText().toString().equals("") && !edPass.getText().toString().equals("")){
+//                    UserConnect.doLogin(edPhone.getText().toString().trim(),
+//                            edPass.getText().toString().trim(),
+//
+//                            new CallbackBoolean() {
+//                                @Override
+//                                public void onRespone(Boolean result) {
+//                                    if (result){
+//                                        Util.showToast("Đăng nhập thành công");
+//                                        mlistener.onResponse(user.BaseModelJSONObject());
+//
+//                                    }else {
+//                                        mlistener.onError("");
+//                                    }
+//                                }
+//                            });
+//                }
 
                 dialogResult.dismiss();
 
@@ -745,7 +1022,46 @@ public class CustomCenterDialog {
 
     }
 
+    public static void showWaitingList(String title, List<BaseModel> listCustomer, CallbackBoolean listener, CallbackInt listenerCount){
+        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_list);
 
+        final TextView tvTitle = dialogResult.findViewById(R.id.dialog_list_title);
+        final RecyclerView rvProduct = dialogResult.findViewById(R.id.dialog_list_rv);
+        final Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
+        final Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
+
+        dialogResult.setCanceledOnTouchOutside(true);
+        btnCancel.setText("QUAY LẠI");
+        btnSubmit.setText("CHỈ ĐƯỜNG");
+        tvTitle.setText(title);
+
+        final WaitingListAdapter adapter = new WaitingListAdapter(listCustomer, new CallbackInt() {
+            @Override
+            public void onResponse(int value) {
+                listenerCount.onResponse(value);
+                if (value ==0){
+                    dialogResult.dismiss();
+                }
+            }
+        });
+        Util.createLinearRV(rvProduct, adapter);
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogResult.dismiss();
+            }
+        });
+
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onRespone(true);
+                dialogResult.dismiss();
+            }
+        });
+
+    }
 
 
 }

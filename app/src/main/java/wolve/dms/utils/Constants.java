@@ -149,6 +149,7 @@ public class Constants {
 
     public static final String ALL_TOTAL = "all total";
     public static final String ALL_DEBT = "all debt";
+    public static final String FCM_TOKEN = "fcm_token";
 
     public static String CHECK_ALL = Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_check) + " CHỌN TẤT CẢ";
     public static String UNCHECK = "BỎ CHỌN";

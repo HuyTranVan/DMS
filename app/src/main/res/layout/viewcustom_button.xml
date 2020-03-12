@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/button_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/_25sdp"
+    android:orientation="horizontal"
+    android:background="@drawable/btn_round_white_border_blue"
+    android:layout_alignParentRight="true">
+
+    <wolve.dms.customviews.CTextIcon
+        android:id="@+id/button_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:paddingLeft="@dimen/_10sdp"
+        android:text="@string/icon_plus"
+        android:textColor="@color/colorBlue"
+        android:textSize="@dimen/_12sdp" />
+
+    <TextView
+        android:id="@+id/button_text"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="Button"
+        android:textColor="@color/black_text_color"
+        android:gravity="center"
+        android:textSize="@dimen/_12sdp"
+        android:paddingLeft="@dimen/_5sdp"
+        android:paddingRight="@dimen/_5sdp"
+        android:layout_marginRight="@dimen/_10sdp"
+        />
+</LinearLayout>

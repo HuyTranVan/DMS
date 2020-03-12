@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/product_select_parent"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_round_grey">
+
+    <TextView
+        android:id="@+id/product_select_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/_20sdp"
+        android:text="Bán hàng"
+        android:textColor="@color/black_text_color"
+        android:textSize="@dimen/_10sdp"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/_10sdp"
+        android:paddingRight="@dimen/_5sdp"
+        android:layout_toLeftOf="@+id/product_select_close"
+        android:singleLine="true"/>
+
+    <wolve.dms.customviews.CTextIcon
+        android:id="@+id/product_select_close"
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_20sdp"
+        android:background="?selectableItemBackground"
+        android:text="@string/icon_x"
+        android:layout_alignParentRight="true"
+        android:gravity="center"/>
+
+</RelativeLayout>

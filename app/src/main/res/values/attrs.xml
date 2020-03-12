@@ -20,6 +20,7 @@
         <attr name="isDropdown" format="boolean"/>
         <attr name="isShowBottomLine" format="boolean"/>
         <attr name="backgroundIcon" format="reference|color"/>
+        <attr name="backgroundLayout" format="reference|color"/>
     </declare-styleable>
 
 <!--    <declare-styleable name="CButtonVertical">-->

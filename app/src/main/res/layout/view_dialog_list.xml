@@ -16,21 +16,40 @@
         android:textColor="@color/black_text_color"
         android:gravity="center"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/dialog_list_rv"
-        android:layout_below="@+id/dialog_list_title"
+    <ScrollView
+        android:id="@+id/dialog_list_rv_body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorWhite"
-        android:clipToPadding="false"
-        android:paddingTop="@dimen/_10sdp"
-        android:paddingBottom="@dimen/_5sdp"/>
+        android:layout_below="@+id/dialog_list_title">
 
-    <include
-        android:id="@+id/dialog_list_bottom"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        layout="@layout/view_bottom_dialog_button"
-        android:layout_below="@+id/dialog_list_rv"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/dialog_list_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:clipToPadding="false"
+                android:paddingTop="@dimen/_10sdp"
+                android:paddingBottom="@dimen/_5sdp"/>
+
+            <include
+                android:id="@+id/dialog_list_bottom"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                layout="@layout/view_bottom_dialog_button"/>
+
+        </LinearLayout>
+
+
+
+    </ScrollView>
+
+
+
+
 
 </RelativeLayout>

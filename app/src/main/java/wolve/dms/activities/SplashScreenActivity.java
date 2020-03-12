@@ -29,6 +29,7 @@ import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackJSONObject;
+import wolve.dms.callback.CallbackString;
 import wolve.dms.libraries.Security;
 import wolve.dms.libraries.connectapi.CustomGetMethod;
 import wolve.dms.libraries.connectapi.CustomPostMethod;
@@ -69,32 +70,43 @@ public class SplashScreenActivity extends BaseActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (!Util.isEmpty(CustomSQL.getString(Constants.USER_USERNAME)) && !Util.isEmpty(User.getToken())){
-                    checkLogin(new CallbackBoolean() {
-                        @Override
-                        public void onRespone(Boolean result) {
-                            progressBar.setVisibility(View.GONE);
-                            if (result){
-                                Transaction.gotoHomeActivity();
+                SystemConnect.getFCMToken(new CallbackString() {
+                    @Override
+                    public void Result(String s) {
+                        if (!s.equals("")){
+                            //CustomSQL.setString(Constants.FCM_TOKEN, s);
+                            if (!Util.isEmpty(CustomSQL.getString(Constants.USER_USERNAME)) && !Util.isEmpty(User.getToken())){
+                                checkLogin(s, new CallbackBoolean() {
+                                    @Override
+                                    public void onRespone(Boolean result) {
+                                        progressBar.setVisibility(View.GONE);
+                                        if (result){
+                                            Transaction.gotoHomeActivity();
+
+                                        }else {
+                                            gotoLoginScreen();
+
+                                        }
+                                    }
+                                });
 
                             }else {
+                                progressBar.setVisibility(View.GONE);
                                 gotoLoginScreen();
 
                             }
+                        }else {
+                            progressBar.setVisibility(View.GONE);
+                            Util.showSnackbar("Lỗi kết nối tới servert", null, null);
+                            gotoLoginScreen();
                         }
-                    });
-
-                }else {
-                    progressBar.setVisibility(View.GONE);
-                    gotoLoginScreen();
-
-
-                }
-
+                    }
+                });
             }
+
         }, SPLASH_TIME_OUT);
 
-        getFCMToken();
+
     }
 
     @Override
@@ -114,8 +126,8 @@ public class SplashScreenActivity extends BaseActivity {
         finish();
     }
 
-    private void checkLogin(CallbackBoolean listener){
-        SystemConnect.getCheckLogin(new CallbackCustom() {
+    private void checkLogin(String token, CallbackBoolean listener){
+        SystemConnect.getCheckLogin(token, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
                 if (result.getBoolean("success")){
@@ -135,28 +147,6 @@ public class SplashScreenActivity extends BaseActivity {
 
     }
 
-    private void getFCMToken(){
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                        if (!task.isSuccessful()) {
-                            Log.e("tag", "getInstanceId failed", task.getException());
-                            return;
-                        }
-
-                        // Get new Instance ID token
-                        String token = task.getResult().getToken();
-
-                        // Log and toast
-//                        String msg = getString(R.string.msg_token_fmt, token);
-                        Log.e("token", token);
-                        //Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
-                    }
-
-                });
-
-    }
 
 //    private void openUri(){
 //        Intent intent = getIntent();

@@ -32,6 +32,7 @@ import wolve.dms.adapter.Customer_ViewpagerAdapter;
 import wolve.dms.adapter.FilterChoiceAdapter;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDouble;
@@ -57,11 +58,10 @@ import wolve.dms.utils.Util;
 
 public class CustomerActivity extends BaseActivity implements View.OnClickListener, View.OnLongClickListener {
     private ImageView btnBack;
-    protected CTextIcon tvTrash, tvPrint;// tvStatus;
+    protected CTextIcon tvTrash, tvPrint;
     protected Button btnSubmit;
     private TextView  tvCheckInStatus, tvTime;
     protected TextView tvTitle,tvAddress, tvDebt, tvPaid, tvTotal, tvBDF, btnShopCart, tvFilter;
-    private ScrollView scContent;
     private CoordinatorLayout coParent;
     private RecyclerView rvFilterTitle;
     private ViewPager viewPager;
@@ -136,7 +136,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         tvTrash = (CTextIcon) findViewById(R.id.icon_more);
         tvTitle = (TextView) findViewById(R.id.customer_title);
         tvDebt = (TextView) findViewById(R.id.customer_debt);
-        scContent = (ScrollView) findViewById(R.id.customer_scrollview);
         tvCheckInStatus = findViewById(R.id.customer_checkin_status);
         tvTime = findViewById(R.id.customer_checkin_time);
         rlStatusGroup = findViewById(R.id.customer_checkin_status_group);
@@ -226,8 +225,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         updateBillTabNotify(tempBill != null?true : false , listBills.size());
 
         updateOverview(listBills);
-        lnFilter.setVisibility(listBills.size()>0 ? View.VISIBLE : View.GONE);
-        setPrintIconVisibility();
 
         currentDebt = Util.getTotalDebt(listBills);
 
@@ -240,6 +237,8 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     }
 
     protected void updateOverview(List<BaseModel> list){
+        setFilterVisibility();
+        setPrintIconVisibility();
         if (list.size() >0){
             BaseModel object = Util.getTotal(list);
             tvTotal.setText(String.format("Tổng: %s" ,Util.FormatMoney(object.getDouble("total"))));
@@ -293,6 +292,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
             public void onPageSelected(int position) {
                 currentPosition = position;
                 setPrintIconVisibility();
+                setFilterVisibility();
             }
 
             @Override
@@ -399,7 +399,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         }
     }
 
-    private void returnPreviousScreen(String customer){
+    protected void returnPreviousScreen(String customer){
         Intent returnIntent = new Intent();
         returnIntent.putExtra(Constants.CUSTOMER, customer != null? customer : null);
         returnIntent.putExtra(Constants.RELOAD_DATA, haschange);
@@ -532,39 +532,47 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     protected void saveCustomerToLocal(String key, Object value){
         currentCustomer = CustomSQL.getBaseModel(Constants.CUSTOMER);
         currentCustomer.put(key, value);
-        CustomSQL.setBaseModel(Constants.CUSTOMER, currentCustomer);
 
         mHandlerUpdateCustomer.removeCallbacks(mUpdateTask);
-        mHandlerUpdateCustomer.postDelayed(mUpdateTask, 2000);
+        mHandlerUpdateCustomer.postDelayed(mUpdateTask, 1000);
 
     }
 
     private Runnable mUpdateTask = new Runnable(){
         @Override
         public void run() {
-            submitCustomer();
+            submitCustomer(CustomSQL.getBaseModel(Constants.CUSTOMER),listCheckins.size(),  new CallbackBoolean() {
+                @Override
+                public void onRespone(Boolean result) {
+                    CustomSQL.setBaseModel(Constants.CUSTOMER, currentCustomer);
+                }
+            });
 
         }
     };
 
-    protected void submitCustomer(){
+    protected void submitCustomer(BaseModel customer,int checkincount,  CallbackBoolean listener){
         smLoading.setVisibility(View.VISIBLE);
-        BaseModel customer = CustomSQL.getBaseModel(Constants.CUSTOMER);
-        customer.put("checkinCount", listCheckins.size());
+
+        if (customer.getInt("checkinCount") != checkincount){
+            customer.put("checkinCount", checkincount );
+        }
+
         String param = CustomerConnect.createParamCustomer(customer);
 
         CustomerConnect.CreateCustomer(param , new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
                 smLoading.setVisibility(View.INVISIBLE);
-
-
+                listener.onRespone(true);
 
             }
 
             @Override
             public void onError(String error) {
                 smLoading.setVisibility(View.INVISIBLE);
+                Util.showSnackbar("Không thể lưu thay đổi của khách hàng", null, null);
+
             }
         }, false);
     }
@@ -607,7 +615,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 CustomSQL.setBaseModel(Constants.CUSTOMER, customer);
                 updateView(customer);
 
-                //updateCustomerDebt(customer);
 
 
             }
@@ -729,10 +736,11 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 if (distance < Constants.CHECKIN_DISTANCE){
                     tvCheckInStatus.setText(String.format("Đang trong phạm vi cửa hàng ~%sm", Math.round(distance)));
                     threadShowTime.start();
+                    infoFragment.tvCheckin.setText(Util.getIconString(R.string.icon_district, "Checkin - Ghi chú" ));
 
                 }else {
                     tvCheckInStatus.setText(String.format("Đang bên ngoài cửa hàng ~%s", distance >1000? Math.round(distance)/1000 +"km": Math.round(distance) + "m"));
-
+                    infoFragment.tvCheckin.setText(Util.getIconString(R.string.icon_note, "Thêm ghi chú" ));
                 }
 
             }
@@ -885,6 +893,15 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
             tvPrint.setVisibility(View.GONE);
         }
     }
+
+    private void setFilterVisibility(){
+        if (currentPosition !=0 && listBills.size() >0){
+            lnFilter.setVisibility(View.VISIBLE);
+        }else {
+            lnFilter.setVisibility(View.GONE);
+        }
+    }
+
     private void filterBillByRange(long start, long end){
         if (start == 0 && end == 0){
             billsFragment.adapter.getFilter().filter("");

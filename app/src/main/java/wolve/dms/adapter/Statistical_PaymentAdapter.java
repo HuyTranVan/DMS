@@ -9,8 +9,6 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,13 +23,13 @@ import wolve.dms.utils.Util;
  * Created by tranhuy on 5/24/17.
  */
 
-public class Statistica_PaymentAdapter extends RecyclerView.Adapter<Statistica_PaymentAdapter.StatisticalBillsViewHolder> {
+public class Statistical_PaymentAdapter extends RecyclerView.Adapter<Statistical_PaymentAdapter.StatisticalBillsViewHolder> {
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackString mListener;
 
-    public Statistica_PaymentAdapter(String user, List<BaseModel> data, CallbackString listener) {
+    public Statistical_PaymentAdapter(String user, List<BaseModel> data, CallbackString listener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         //this.mData = data;
         this.mContext = Util.getInstance().getCurrentActivity();

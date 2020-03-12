@@ -98,6 +98,9 @@ public class TempBillFragment extends Fragment implements View.OnClickListener {
 
     public void reloadData(){
         adapter.reloadData(mActivity.listTempBill);
+        if (mActivity.listTempBill.size() ==0){
+            mActivity.onBackPressed();
+        }
 
     }
 

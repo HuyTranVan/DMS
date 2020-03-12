@@ -1,5 +1,14 @@
 package wolve.dms.apiconnect;
 
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +16,7 @@ import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackCustomListList;
 import wolve.dms.callback.CallbackListCustom;
+import wolve.dms.callback.CallbackString;
 import wolve.dms.libraries.connectapi.CustomGetListMethod;
 import wolve.dms.libraries.connectapi.CustomGetMethod;
 import wolve.dms.libraries.connectapi.CustomGetPostListMethod;
@@ -22,6 +32,26 @@ import wolve.dms.utils.Util;
  */
 
 public class SystemConnect {
+
+    public static void getFCMToken(CallbackString listener){
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            listener.Result("");
+                            Log.e("tag", "getInstanceId failed", task.getException());
+                            return;
+                        }
+
+                        listener.Result(task.getResult().getToken());
+
+
+                    }
+
+                });
+
+    }
 
     public static void getAllData(final CallbackListCustom listener, final Boolean stopLoading){
         Util.getInstance().showLoading();
@@ -79,10 +109,10 @@ public class SystemConnect {
 
     }
 
-    public static void getCheckLogin(final CallbackCustom listener, boolean showLoding){
+    public static void getCheckLogin(String param,final CallbackCustom listener, boolean showLoding){
         Util.getInstance().showLoading(showLoding);
 
-        String url = Api_link.CHECK_LOGIN;
+        String url = Api_link.CHECK_LOGIN + "?fcm_token=" + param;
         new CustomGetMethod(url, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {

@@ -30,7 +30,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.HomeAdapter;
+import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.SystemConnect;
+import wolve.dms.apiconnect.UserConnect;
 import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
@@ -39,6 +41,7 @@ import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomListList;
 import wolve.dms.callback.CallbackListObject;
 import wolve.dms.customviews.CTextIcon;
+import wolve.dms.libraries.connectapi.CustomGetMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.ProductGroup;
@@ -94,7 +97,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         btnChangeUser = findViewById(R.id.home_change_user);
         line = findViewById(R.id.home_change_line);
         tvCash = findViewById(R.id.home_cash);
-        //tvProfit = findViewById(R.id.home_profit);
         tvMonth = findViewById(R.id.home_month);
         tvHaveNewProduct = findViewById(R.id.home_new_product);
         lnTempGroup = findViewById(R.id.home_tempbill_group);
@@ -105,6 +107,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void initialData() {
+        Util.getInstance().setCurrentActivity(this);
         checkPermission();
         swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorBlueDark));
         updateUserInfo();
@@ -196,7 +199,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
                             @Override
                             public void Method2(Boolean two) {
-                                doLogout(true);
+                                showLogoutDialog(true);
                             }
                         });
 
@@ -232,8 +235,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 getSupportFragmentManager().popBackStack();
 
             }
-
-
 
         }else {
             if (doubleBackToExitPressedOnce) {
@@ -331,30 +332,47 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         });
     }
 
-    private void doLogout(boolean showAlert) {
+    private void showLogoutDialog(boolean showAlert) {
         if (showAlert){
             CustomCenterDialog.alertWithCancelButton(null, String.format("Đăng xuất tài khoản %s",User.getFullName()) , "ĐỒNG Ý","HỦY", new CallbackBoolean() {
                 @Override
                 public void onRespone(Boolean result) {
                     if (result){
-                        List<BaseModel> listUser = CustomSQL.getListObject(Constants.USER_LIST);
-                        CustomSQL.clear();
-                        CustomSQL.setListBaseModel(Constants.USER_LIST, listUser);
-
-                        Transaction.gotoLoginActivityRight();
+                        logout();
                     }
 
                 }
             });
 
         }else {
-            List<BaseModel> listUser = CustomSQL.getListObject(Constants.USER_LIST);
-            CustomSQL.clear();
-            CustomSQL.setListBaseModel(Constants.USER_LIST, listUser);
-
-            Transaction.gotoLoginActivityRight();
+            logout();
         }
 
+    }
+
+    private void logout(){
+        UserConnect.Logout(new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                if (result.getBoolean("success")){
+                    Util.showToast("Đăng xuât thành công");
+
+                    List<BaseModel> listUser = CustomSQL.getListObject(Constants.USER_LIST);
+                    CustomSQL.clear();
+                    CustomSQL.setListBaseModel(Constants.USER_LIST, listUser);
+
+                    Transaction.gotoLoginActivityRight();
+
+                }else {
+                    Util.showSnackbar("Đăng xuất thất bại", null, null);
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        }, true);
 
     }
 
@@ -379,11 +397,22 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 break;
 
             case 3:
-                if (CustomSQL.getBoolean(Constants.IS_ADMIN)){
-                    Transaction.gotoTestActivity();
-                }else {
-                    Util.showToast("Chưa hỗ trợ");
-                }
+                new CustomGetMethod(Api_link.BASE_URL + "util/test.php", new CallbackCustom() {
+                    @Override
+                    public void onResponse(BaseModel result) {
+
+                    }
+
+                    @Override
+                    public void onError(String error) {
+
+                    }
+                }).execute();
+//                if (CustomSQL.getBoolean(Constants.IS_ADMIN)){
+//                    Transaction.gotoTestActivity();
+//                }else {
+//                    Util.showToast("Chưa hỗ trợ");
+//                }
 
 
                 break;
@@ -558,7 +587,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                                 }, Constants.REQUEST_PERMISSION);
 
                             }else {
-                                doLogout(false);
+                                showLogoutDialog(false);
 
                             }
                     }
@@ -600,7 +629,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                                         checkPermission();
 
                                     }else {
-                                        doLogout(false);
+                                        showLogoutDialog(false);
 
                                     }
 

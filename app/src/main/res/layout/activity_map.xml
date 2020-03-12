@@ -167,16 +167,50 @@
             android:layout_marginRight="@dimen/_10sdp"
             android:layout_marginTop="-14dp"/>
 
-        <wolve.dms.customviews.CTextIcon
-            android:id="@+id/map_reload"
+        <RelativeLayout
+            android:id="@+id/map_waiting_list"
             android:layout_width="@dimen/_30sdp"
             android:layout_height="@dimen/_30sdp"
+            android:background="@drawable/btn_oval_white_border_grey"
+            android:layout_below="@+id/search_top_bar"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:visibility="gone">
+
+            <wolve.dms.customviews.CTextIcon
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/icon_list_check"
+                android:layout_centerInParent="true"
+                android:textSize="@dimen/_10sdp"/>
+
+            <TextView
+                android:id="@+id/map_waiting_list_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="77"
+                android:textSize="@dimen/_7sdp"
+                android:textColor="@color/colorBlue"
+                android:layout_alignParentRight="true"
+                android:visibility="visible"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginRight="@dimen/_5sdp"
+                android:textStyle="bold"/>
+
+
+        </RelativeLayout>
+
+
+
+        <wolve.dms.customviews.CTextIcon
+            android:id="@+id/map_reload"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
             android:text="@string/icon_reload"
             android:textSize="@dimen/_14sdp"
-            android:layout_below="@+id/map_loading"
+            android:layout_below="@+id/search_top_bar"
             android:gravity="center"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/_5sdp"/>
+            android:layout_centerHorizontal="true"/>
 
     </RelativeLayout>
 
@@ -227,8 +261,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:background="?selectableItemBackgroundBorderless"
-                    >
+                    android:background="?selectableItemBackgroundBorderless">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -277,17 +310,18 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
 
+                        android:orientation="horizontal"
                         android:layout_marginTop="@dimen/_2sdp">
 
                         <TextView
                             android:id="@+id/map_detail_address"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="cua hang sua xe"
+                            android:maxWidth="@dimen/_200sdp"
                             android:textColor="@color/black_text_color_hint"
-                            android:textSize="@dimen/_10sdp"/>
+                            android:textSize="@dimen/_10sdp"
+                            android:singleLine="true"/>
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -314,6 +348,36 @@
                                 android:layout_marginLeft="@dimen/_2sdp"/>
 
                         </LinearLayout>
+
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="@dimen/_2sdp"
+                        android:layout_marginBottom="@dimen/_10sdp">
+
+                        <wolve.dms.customviews.CTextIcon
+                            android:id="@+id/map_detail_status_dot"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="@string/icon_circle"
+                            android:gravity="center"
+                            android:textSize="@dimen/_8sdp"
+                            android:textColor="@color/black_text_color_hint"/>
+
+                        <TextView
+                            android:id="@+id/map_detail_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Cua hang sua xe"
+                            android:textColor="@color/black_text_color_hint"
+                            android:textSize="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_5sdp"
+                            android:gravity="center_vertical"/>
 
                         <LinearLayout
                             android:id="@+id/map_detail_checkin_group"
@@ -345,34 +409,6 @@
 
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="@dimen/_2sdp"
-                        android:layout_marginBottom="@dimen/_10sdp">
-
-                        <wolve.dms.customviews.CTextIcon
-                            android:id="@+id/map_detail_status_dot"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:text="@string/icon_circle"
-                            android:gravity="center"
-                            android:textSize="@dimen/_8sdp"
-                            android:textColor="@color/black_text_color_hint"/>
-
-                        <TextView
-                            android:id="@+id/map_detail_status"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Cua hang sua xe"
-                            android:textColor="@color/black_text_color_hint"
-                            android:textSize="@dimen/_10sdp"
-                            android:layout_marginLeft="@dimen/_5sdp"
-                            android:gravity="center_vertical"/>
-
-                    </LinearLayout>
-
 
                 </LinearLayout>
 
@@ -388,135 +424,151 @@
                         android:orientation="horizontal"
                         android:gravity="center_vertical">
 
+                        <wolve.dms.customviews.CButton
+                            android:id="@+id/map_detail_direction"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            app:iconText="@string/icon_direction"
+                            app:text="Chỉ đường"
+                            app:iconColor="@color/colorWhite"
+                            app:textColor="@color/colorWhite"
+                            app:backgroundLayout="@drawable/btn_round_blue"/>
+
+                        <wolve.dms.customviews.CButton
+                            android:id="@+id/map_detail_add"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            app:iconText="@string/icon_plus"
+                            app:text="DS Chờ"
+                            app:iconColor="@color/colorBlue"
+                            app:textColor="@color/black_text_color"
+                            app:backgroundLayout="@drawable/btn_round_white_border_blue"/>
+
+                        <wolve.dms.customviews.CButton
+                            android:id="@+id/map_detail_call"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            app:iconText="@string/icon_phone"
+                            app:text="Gọi"
+                            app:iconColor="@color/colorBlue"
+                            app:textColor="@color/black_text_color"
+                            app:backgroundLayout="@drawable/btn_round_white_border_blue"/>
+
+                        <wolve.dms.customviews.CButton
+                            android:id="@+id/map_detail_share"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            app:iconText="@string/icon_share"
+                            app:text="Chia sẻ"
+                            app:iconColor="@color/colorBlue"
+                            app:textColor="@color/black_text_color"
+                            app:backgroundLayout="@drawable/btn_round_white_border_blue"/>
 
 <!--                        <LinearLayout-->
-<!--                            android:id="@+id/map_detail_checkin"-->
+<!--                            android:id="@+id/map_detail_add"-->
 <!--                            android:layout_width="wrap_content"-->
-<!--                            android:layout_height="@dimen/_25sdp"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:minHeight="@dimen/_25sdp"-->
 <!--                            android:orientation="horizontal"-->
-<!--                            android:background="@drawable/btn_round_blue"-->
+<!--                            android:background="@drawable/btn_round_white_border_blue"-->
 <!--                            android:layout_marginRight="@dimen/_10sdp"-->
-<!--                            android:visibility="visible">-->
+<!--                            android:layout_alignParentRight="true">-->
 
 <!--                            <wolve.dms.customviews.CTextIcon-->
 <!--                                android:layout_width="wrap_content"-->
 <!--                                android:layout_height="match_parent"-->
-<!--                                android:text="@string/icon_district"-->
 <!--                                android:gravity="center"-->
 <!--                                android:paddingLeft="@dimen/_10sdp"-->
-<!--                                android:textSize="@dimen/_14sdp"-->
-<!--                                android:textColor="@color/colorWhite"/>-->
+<!--                                android:text="@string/icon_plus"-->
+<!--                                android:textColor="@color/colorBlue"-->
+<!--                                android:textSize="@dimen/_12sdp" />-->
 
 <!--                            <TextView-->
-<!--                                android:id="@+id/map_detail_checkin_text"-->
 <!--                                android:layout_width="wrap_content"-->
 <!--                                android:layout_height="match_parent"-->
-<!--                                android:text="Checkin"-->
-<!--                                android:textColor="@color/colorWhite"-->
+<!--                                android:text="DS Chờ"-->
+<!--                                android:textColor="@color/black_text_color"-->
 <!--                                android:gravity="center"-->
-<!--                                android:textSize="@dimen/_14sdp"-->
+<!--                                android:textSize="@dimen/_12sdp"-->
 <!--                                android:paddingLeft="@dimen/_5sdp"-->
-<!--                                android:paddingRight="@dimen/_15sdp" />-->
+<!--                                android:paddingRight="@dimen/_5sdp"-->
+<!--                                android:layout_marginRight="@dimen/_10sdp"-->
+<!--                                />-->
+<!--                        </LinearLayout>-->
 
+<!--                        <LinearLayout-->
+<!--                            android:id="@+id/map_detail_call"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:minHeight="@dimen/_25sdp"-->
+<!--                            android:orientation="horizontal"-->
+<!--                            android:background="@drawable/btn_round_white_border_blue"-->
+<!--                            android:layout_marginRight="@dimen/_10sdp"-->
+<!--                            android:layout_alignParentRight="true">-->
+
+<!--                            <wolve.dms.customviews.CTextIcon-->
+<!--                                android:layout_width="wrap_content"-->
+<!--                                android:layout_height="match_parent"-->
+<!--                                android:gravity="center"-->
+<!--                                android:paddingLeft="@dimen/_10sdp"-->
+<!--                                android:text="@string/icon_phone"-->
+<!--                                android:textColor="@color/colorBlue"-->
+<!--                                android:textSize="@dimen/_12sdp" />-->
+
+<!--                            <TextView-->
+<!--                                android:layout_width="wrap_content"-->
+<!--                                android:layout_height="match_parent"-->
+<!--                                android:text="Gọi"-->
+<!--                                android:textColor="@color/black_text_color"-->
+<!--                                android:gravity="center"-->
+<!--                                android:textSize="@dimen/_12sdp"-->
+<!--                                android:paddingLeft="@dimen/_5sdp"-->
+<!--                                android:paddingRight="@dimen/_5sdp"-->
+<!--                                android:layout_marginRight="@dimen/_10sdp"-->
+<!--                                />-->
 <!--                        </LinearLayout>-->
 
 
 
-                        <LinearLayout
-                            android:id="@+id/map_detail_direction"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:minHeight="@dimen/_25sdp"
-                            android:orientation="horizontal"
-                            android:background="@drawable/btn_round_blue"
-                            android:layout_marginRight="@dimen/_10sdp">
+<!--                        <LinearLayout-->
+<!--                            android:id="@+id/map_detail_share"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:minHeight="@dimen/_25sdp"-->
+<!--                            android:orientation="horizontal"-->
+<!--                            android:background="@drawable/btn_round_white_border_blue"-->
+<!--                            android:layout_marginRight="@dimen/_10sdp">-->
 
-                            <wolve.dms.customviews.CTextIcon
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:paddingLeft="@dimen/_10sdp"
-                                android:text="@string/icon_direction"
-                                android:textColor="@color/colorWhite"
-                                android:textSize="@dimen/_12sdp" />
+<!--                            <wolve.dms.customviews.CTextIcon-->
+<!--                                android:layout_width="wrap_content"-->
+<!--                                android:layout_height="match_parent"-->
+<!--                                android:gravity="center"-->
+<!--                                android:paddingLeft="@dimen/_10sdp"-->
+<!--                                android:text="@string/icon_share"-->
+<!--                                android:textColor="@color/colorBlue"-->
+<!--                                android:textSize="@dimen/_12sdp" />-->
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:text="Chỉ đường"
-                                android:textColor="@color/colorWhite"
-                                android:gravity="center"
-                                android:textSize="@dimen/_12sdp"
-                                android:paddingLeft="@dimen/_5sdp"
-                                android:paddingRight="@dimen/_10sdp"
-                                />
-
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/map_detail_call"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:minHeight="@dimen/_25sdp"
-                            android:orientation="horizontal"
-                            android:background="@drawable/btn_round_white_border_blue"
-                            android:layout_marginRight="@dimen/_10sdp"
-                            android:layout_alignParentRight="true">
-
-                            <wolve.dms.customviews.CTextIcon
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:paddingLeft="@dimen/_10sdp"
-                                android:text="@string/icon_phone"
-                                android:textColor="@color/colorBlue"
-                                android:textSize="@dimen/_12sdp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:text="Gọi"
-                                android:textColor="@color/black_text_color"
-                                android:gravity="center"
-                                android:textSize="@dimen/_12sdp"
-                                android:paddingLeft="@dimen/_5sdp"
-                                android:paddingRight="@dimen/_5sdp"
-                                android:layout_marginRight="@dimen/_10sdp"
-                                />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/map_detail_share"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:minHeight="@dimen/_25sdp"
-                            android:orientation="horizontal"
-                            android:background="@drawable/btn_round_white_border_blue"
-                            android:layout_marginRight="@dimen/_10sdp">
-
-                            <wolve.dms.customviews.CTextIcon
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:paddingLeft="@dimen/_10sdp"
-                                android:text="@string/icon_share"
-                                android:textColor="@color/colorBlue"
-                                android:textSize="@dimen/_12sdp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:text="Chia sẻ"
-                                android:textColor="@color/black_text_color"
-                                android:gravity="center"
-                                android:textSize="@dimen/_12sdp"
-                                android:paddingLeft="@dimen/_5sdp"
-                                android:paddingRight="@dimen/_10sdp"
-                                />
+<!--                            <TextView-->
+<!--                                android:layout_width="wrap_content"-->
+<!--                                android:layout_height="match_parent"-->
+<!--                                android:text="Chia sẻ"-->
+<!--                                android:textColor="@color/black_text_color"-->
+<!--                                android:gravity="center"-->
+<!--                                android:textSize="@dimen/_12sdp"-->
+<!--                                android:paddingLeft="@dimen/_5sdp"-->
+<!--                                android:paddingRight="@dimen/_10sdp"-->
+<!--                                />-->
 
 
-                        </LinearLayout>
+<!--                        </LinearLayout>-->
 
 
                     </LinearLayout>

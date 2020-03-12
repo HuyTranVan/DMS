@@ -9,17 +9,16 @@
     android:clickable="true"
     android:fitsSystemWindows="true">
 
-    <ScrollView
+    <RelativeLayout
         android:id="@+id/customer_scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        >
+        android:clipToPadding="false">
 
         <LinearLayout
             android:id="@+id/customer_main"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingLeft="@dimen/_10sdp"
             android:paddingRight="@dimen/_10sdp"
@@ -37,30 +36,6 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:paddingTop="@dimen/_5sdp">
-
-<!--                    <FrameLayout-->
-<!--                        android:layout_width="@dimen/_50sdp"-->
-<!--                        android:layout_height="match_parent">-->
-
-<!--                        <wolve.dms.libraries.CustomSwitchButton-->
-<!--                            android:id="@+id/customer_info_switch"-->
-<!--                            android:layout_width="@dimen/_50sdp"-->
-<!--                            android:layout_height="@dimen/_25sdp"-->
-<!--                            android:layout_gravity="center_vertical"-->
-<!--                            app:sb_uncheckcircle_color="@color/black_text_color"-->
-<!--                            app:sb_checked="false"-->
-<!--                            app:sb_show_indicator="false"-->
-<!--                            app:sb_background="@color/black_text_color_hint"-->
-<!--                            />-->
-
-<!--                        <View-->
-<!--                            android:id="@+id/customer_info_switch_cover"-->
-<!--                            android:layout_width="match_parent"-->
-<!--                            android:layout_height="match_parent"-->
-<!--                            android:clickable="true"-->
-<!--                            android:background="@color/float_transparent"/>-->
-
-<!--                    </FrameLayout>-->
 
                     <wolve.dms.customviews.CButtonVertical
                         android:id="@+id/customer_info_interest"
@@ -100,57 +75,6 @@
                 </LinearLayout>
 
             </HorizontalScrollView>
-
-<!--            <View-->
-<!--                android:id="@+id/input_data_underline"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="1dip"-->
-<!--                android:background="@color/colorGrey"/>-->
-
-<!--            <LinearLayout-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:minHeight="@dimen/_35sdp"-->
-<!--                android:orientation="horizontal"-->
-<!--                android:visibility="visible">-->
-
-<!--                <FrameLayout-->
-<!--                    android:layout_width="@dimen/_50sdp"-->
-<!--                    android:layout_height="match_parent">-->
-
-<!--                    <wolve.dms.libraries.CustomSwitchButton-->
-<!--                        android:id="@+id/customer_info_switch"-->
-<!--                        android:layout_width="@dimen/_50sdp"-->
-<!--                        android:layout_height="@dimen/_25sdp"-->
-<!--                        android:layout_gravity="center_vertical"-->
-
-<!--                        app:sb_uncheckcircle_color="@color/black_text_color"-->
-<!--                        app:sb_checked="false"-->
-<!--                        app:sb_show_indicator="false"-->
-<!--                        app:sb_background="@color/black_text_color_hint"-->
-<!--                        />-->
-
-<!--                    <View-->
-<!--                        android:id="@+id/customer_info_switch_cover"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="match_parent"-->
-<!--                        android:clickable="true"-->
-<!--                        android:background="@color/float_transparent"/>-->
-
-<!--                </FrameLayout>-->
-
-
-<!--                <TextView-->
-<!--                    android:id="@+id/customer_info_status"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="Khách hàng có thiện chí"-->
-<!--                    android:textSize="@dimen/_12sdp"-->
-<!--                    android:layout_marginLeft="@dimen/_10sdp"-->
-<!--                    android:layout_gravity="center_vertical" />-->
-
-
-<!--            </LinearLayout>-->
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -234,7 +158,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:minHeight="@dimen/_30sdp"
-                    android:background="@drawable/btn_round_white_border_grey">
+                    android:background="@drawable/bg_round_white_border_grey">
 
                     <TextView
                         android:id="@+id/customer_info_type"
@@ -242,7 +166,7 @@
                         android:layout_height="wrap_content"
                         android:minWidth="@dimen/_50sdp"
                         android:minHeight="@dimen/_20sdp"
-                        android:background="@drawable/btn_round_white_border_blue"
+                        android:background="@drawable/bg_round_white_border_grey"
                         android:textColor="@color/black_text_color_hint"
                         android:text="SỬA XE"
                         android:textSize="@dimen/_10sdp"
@@ -274,7 +198,6 @@
                 android:id="@+id/customer_info_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.5"
                 android:inputType="textCapWords"
                 app:textHint="Tên chủ tiệm"
                 app:iconColor="@color/black_text_color_hint"
@@ -330,35 +253,17 @@
 <!--                android:inputType="textCapSentences|textMultiLine"/>-->
 
 
-
-            <LinearLayout
+            <wolve.dms.customviews.CTextIcon
                 android:id="@+id/customer_history"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:background="?selectableItemBackground"
-                android:padding="@dimen/_5sdp"
-                android:gravity="center">
+                android:text="&#xf1da;     Lịch sử ghé cửa hàng"
+                android:textColor="@color/colorBlue"
+                android:textSize="@dimen/_12sdp"
+                android:padding="@dimen/_10sdp"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Lịch sử ghé cửa hàng"
-                    android:textColor="@color/colorBlue"
-                    android:textSize="@dimen/_12sdp"
-                    />
 
-                <wolve.dms.customviews.CTextIcon
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/icon_right"
-                    android:textColor="@color/colorBlue"
-                    android:textSize="@dimen/_14sdp"
-                    android:gravity="center"
-                    android:layout_marginLeft="@dimen/_5sdp"
-                    android:layout_marginTop="@dimen/_1sdp"/>
-
-            </LinearLayout>
 
             <TextView
                 android:id="@+id/customer_info_last_status"
@@ -373,26 +278,39 @@
                 android:paddingRight="@dimen/_5sdp"/>
 
             <wolve.dms.customviews.CTextIcon
-                android:id="@+id/customer_info_notinterested"
+                android:id="@+id/customer_checkin"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minHeight="@dimen/_25sdp"
-                android:background="@drawable/btn_round_white_border_grey"
-                android:text="&#xf00d;   Không quan tâm"
-                android:textColor="@color/black_text_color_hint"
+                android:layout_height="@dimen/_25sdp"
+                android:background="@drawable/btn_round_white_border_blue"
+                android:textColor="@color/colorBlue"
                 android:textSize="@dimen/_12sdp"
-                android:gravity="center"
-                android:paddingLeft="@dimen/_10sdp"
-                android:paddingRight="@dimen/_10sdp"
+                android:text="&#xf3c5;   Checkin - Ghi chú"
+                android:textAllCaps="true"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/_15sdp"
+                android:paddingRight="@dimen/_15sdp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/_100sdp"
-                />
-
+                android:layout_marginTop="@dimen/_20sdp"/>
 
         </LinearLayout>
 
+<!--        <wolve.dms.customviews.CTextIcon-->
+<!--            android:id="@+id/customer_info_notinterested"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:minHeight="@dimen/_20sdp"-->
+<!--            android:background="@drawable/btn_round_white_border_grey"-->
+<!--            android:text="&#xf00d;   Không quan tâm"-->
+<!--            android:textColor="@color/black_text_color_hint"-->
+<!--            android:textSize="@dimen/_10sdp"-->
+<!--            android:gravity="center"-->
+<!--            android:paddingLeft="@dimen/_10sdp"-->
+<!--            android:paddingRight="@dimen/_10sdp"-->
+<!--            android:layout_alignParentBottom="true"-->
+<!--            android:layout_centerHorizontal="true"-->
+<!--            android:layout_marginBottom="@dimen/_5sdp"/>-->
 
-    </ScrollView>
+    </RelativeLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
