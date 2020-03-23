@@ -40,7 +40,6 @@ public class CustomerBillsFragment extends Fragment implements View.OnClickListe
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_customer_bills,container,false);
-        CustomerActivity.billsFragment = this;
 
         initializeView();
 
@@ -60,6 +59,7 @@ public class CustomerBillsFragment extends Fragment implements View.OnClickListe
 
     private void initializeView() {
         mActivity = (CustomerActivity) getActivity();
+        mActivity.billsFragment = this;
         rvBill = (RecyclerView) view.findViewById(R.id.customer_rvbill);
     }
 

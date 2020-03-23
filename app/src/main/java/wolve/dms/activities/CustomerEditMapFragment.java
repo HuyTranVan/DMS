@@ -226,7 +226,7 @@ public class CustomerEditMapFragment extends Fragment implements View.OnClickLis
                 mActivity.saveCustomerToLocal("district", objectAdress.getString("district"));
                 mActivity.saveCustomerToLocal("province", objectAdress.getString("province"));
 
-                mActivity.reshowAdd(objectAdress);
+                mActivity.infoFragment.reshowAddress(objectAdress);
 
                 backEvent();
 

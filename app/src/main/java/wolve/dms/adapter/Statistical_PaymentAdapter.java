@@ -14,6 +14,7 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.callback.CallbackString;
+import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.DataUtil;
@@ -69,21 +70,14 @@ public class Statistical_PaymentAdapter extends RecyclerView.Adapter<Statistical
         holder.tvsignBoard.setText(Constants.getShopName(customer.getString("shopType") ) + " " + customer.getString("signBoard"));
         holder.tvDistrict.setText(customer.getString("street") + " - " + customer.getString("district"));
 
-        String user = String.format("Nhân viên: %s",mData.get(position).getBaseModel("user").getString("displayName"));
-        holder.tvUser.setText(user);
+        String user = Util.getIconString(R.string.icon_username,mData.get(position).getBaseModel("user").getString("displayName"));
+        String collect = mData.get(position).getInt("user_id") != mData.get(position).getInt("user_collect")?
+                        String.format(" (%s thu hộ)",mData.get(position).getBaseModel("collect_by").getString("displayName") ) : "";
+        holder.tvUser.setText(user + collect);
 
         String time = Util.DateHourString(mData.get(position).getLong("createAt"));
         holder.tvTime.setText(time  );
 
-//        double profit =0.0;
-//        if (mData.get(position).getDoubleValue("bill_total") ==0){
-//            profit = mData.get(position).getDouble("bill_profit");
-//        }else {
-//            profit = (mData.get(position).getDouble("paid") /  mData.get(position).getDouble("bill_total")) * mData.get(position).getDouble("bill_profit");
-//
-//        }
-
-//        holder.tvProfit.setText(String.format("(%s)",Util.FormatMoney((double) Math.round(mData.get(position).getDouble("bill_profit")))));
         holder.tvProfit.setText(String.format("(%s)",Util.FormatMoney(mData.get(position).getDouble("bill_profit"))));
 
         holder.tvPaid.setText(Util.FormatMoney(mData.get(position).getDouble("paid")));
@@ -107,8 +101,9 @@ public class Statistical_PaymentAdapter extends RecyclerView.Adapter<Statistical
     }
 
     public class StatisticalBillsViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvNumber, tvsignBoard, tvDistrict, tvUser, tvTime, tvPaid, tvProfit;
+        private TextView tvNumber, tvsignBoard, tvDistrict, tvTime, tvPaid, tvProfit;
         private View vLine;
+        private CTextIcon tvUser;
 //        private View vLineUpper, vLineUnder;
         private LinearLayout lnParent;
 

@@ -38,7 +38,7 @@ public class CustomerProductFragment extends Fragment implements View.OnClickLis
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_customer_product,container,false);
-        CustomerActivity.productFragment = this;
+
 
         initializeView();
 
@@ -59,6 +59,7 @@ public class CustomerProductFragment extends Fragment implements View.OnClickLis
 
     private void initializeView() {
         mActivity = (CustomerActivity) getActivity();
+        mActivity.productFragment = this;
         rvProductGroup = (RecyclerView) view.findViewById(R.id.customer_rvproduct);
 
 

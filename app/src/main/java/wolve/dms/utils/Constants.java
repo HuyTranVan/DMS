@@ -45,6 +45,7 @@ public class Constants {
     public final static int ROLE_SALE = 4;
 
     public final static String IS_ADMIN = "is_admin";
+    public final static String VERSION_CODE = "version_code";
     public final static String PRINTER_SIZE = "printer_size";
     public static final String CHECKIN_FLAG = "check_in";
     public static final long CHECKIN_DISTANCE = 500;

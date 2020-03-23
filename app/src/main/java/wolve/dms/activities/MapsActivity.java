@@ -43,7 +43,6 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -62,8 +61,6 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackInt;
-import wolve.dms.callback.CallbackListCustom;
-import wolve.dms.callback.CallbackListObject;
 import wolve.dms.callback.CallbackLong;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.LatlngListener;
@@ -83,7 +80,6 @@ import wolve.dms.utils.MapUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
-import static wolve.dms.utils.MapUtil.removeMarker;
 
 /**
  * Created by macos on 9/14/17.
@@ -124,6 +120,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     private BottomSheetBehavior mBottomSheetBehavior;
     private ProgressBar progressLoadCustomer;
     private List<BaseModel> listWaiting = new ArrayList<>();
+    private List<Marker> listMarker = new ArrayList<>();
 
     @Override
     public int getResourceLayout() {
@@ -287,7 +284,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 Util.hideKeyboard(view);
                 btnNewCustomer.close(true);
 
-                setCurrentMarkerToDefault();
+                unsetCurrentMarker();
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 setNullButton();
 
@@ -333,7 +330,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 loadCustomer = true;
                 tvReload.setVisibility(loadCustomer ? View.GONE : View.VISIBLE);
 
-                setCurrentMarkerToDefault();
+                unsetCurrentMarker();
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 setNullButton();
             }
@@ -425,9 +422,9 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             public void onResponse(List<BaseModel> results) {
                 List<BaseModel> tempCustomers = new ArrayList<>();
                 for (BaseModel model : results){
-                    tempCustomers.add(setCustomerMarker(model));
+                    tempCustomers.add(buildMarkerByCustomer(model));
                 }
-                addMarkertoMap(true, tempCustomers,false);
+                addListMarkertoMap(true, tempCustomers,false);
 
             }
 
@@ -447,9 +444,9 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 progressLoading.setVisibility(View.GONE);
                 List<BaseModel> tempCustomers = new ArrayList<>();
                 for (BaseModel model : results){
-                    tempCustomers.add(setCustomerMarker(model));
+                    tempCustomers.add(buildMarkerByCustomer(model));
                 }
-                addMarkertoMap(clearMap, tempCustomers,false);
+                addListMarkertoMap(clearMap, tempCustomers,false);
 
             }
 
@@ -461,7 +458,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         }, true);
     }
 
-    private BaseModel setCustomerMarker(BaseModel customer) {
+    private BaseModel buildMarkerByCustomer(BaseModel customer) {
         BaseModel currentCustomer = customer;
         int customerStatus = currentCustomer.getInt("status_id");
 
@@ -471,7 +468,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             currentCustomer.put("statusDetail", "Khách hàng mới");
             currentCustomer.put("statusColor", getResources().getColor(R.color.colorPink));
             currentCustomer.put("statusInterested", true);
-
 
         }else if (customerStatus == 1) {
             currentCustomer.put("icon", R.drawable.ico_pin_red);
@@ -499,22 +495,17 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         return currentCustomer;
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Util.getInstance().setCurrentActivity(this);
-
         if (mMap != null){
-            Util.getInstance().setCurrentActivity(this);
             mMap.setOnCameraMoveListener(MapsActivity.this);
             if (data.getStringExtra(Constants.CUSTOMER) != null && requestCode == Constants.RESULT_CUSTOMER_ACTIVITY) {
                 BaseModel cust = new BaseModel(data.getStringExtra(Constants.CUSTOMER));
 
                 if (cust.hasKey("deleted") && cust.getBoolean("deleted")) {
-                    removeMarker(cust.getString("id"));
-                    currentMarker =null;
-                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    removeCustomer(cust.getString("id"));
 
                 }else {
                     reUpdateMarkerDetail(cust);
@@ -531,9 +522,40 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     }
 
+    private void removeCustomer(String id){
+        currentMarker =null;
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        for (int i=0; i< listMarker.size(); i++){
+            if (listMarker.get(i).getTitle().equals(id)){
+                listMarker.get(i).remove();
+                listMarker.remove(i);
+                CustomSQL.removeKey(Constants.CUSTOMER);
+                break;
+            }
+        }
+    }
+
+    private void addMarkerToList(BaseModel  customer){
+        boolean isNewMarker = true;
+        for (int i=0; i< listMarker.size(); i++){
+            if (listMarker.get(i).getTitle().equals(customer.getString("id"))){
+                listMarker.get(i).setTag(buildMarkerByCustomer(customer).BaseModelstoString());
+                currentMarker = listMarker.get(i);
+                isNewMarker = false;
+                break;
+            }
+        }
+
+        if (isNewMarker){
+            currentMarker = MapUtil.addMarkerToMap(mMap, buildMarkerByCustomer(customer), Constants.MARKER_ALL);
+            listMarker.add(currentMarker);
+
+        }
+    }
+
     private void reUpdateMarkerDetail(BaseModel  customer){
-        setCurrentMarkerToDefault();
-        currentMarker = MapUtil.getCurrentMarker(mMap, setCustomerMarker(customer));
+        unsetCurrentMarker();
+        addMarkerToList(customer);
 
         if (currentMarker.getTag() != null) {
             getDistanceFromCurrent(customer.getDouble("lat"), customer.getDouble("lng"), new CallbackLong() {
@@ -542,39 +564,62 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                     Bitmap bitmap = MapUtil.GetBitmapMarker(MapsActivity.this, customer.getInt("icon"), customer.getString("checkincount"), R.color.pin_waiting);
                     currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()*2,bitmap.getHeight()*2, false)));
 
-
                     updateBottomDetail(customer, value);
                 }
             });
         }
-
     }
 
     @Override
     public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
         switch (checkedId) {
             case R.id.map_filter_all:
-                MapUtil.updateCustomerFilter(Constants.MARKER_ALL);
+                MapUtil.updateCustomerFilter(listMarker, Constants.MARKER_ALL);
 
                 break;
 
             case R.id.map_filter_interested:
-                MapUtil.updateCustomerFilter(Constants.MARKER_INTERESTED);
+                MapUtil.updateCustomerFilter(listMarker, Constants.MARKER_INTERESTED);
 
                 break;
 
             case R.id.map_filter_ordered:
-                MapUtil.updateCustomerFilter(Constants.MARKER_ORDERED);
+                MapUtil.updateCustomerFilter(listMarker, Constants.MARKER_ORDERED);
 
                 break;
         }
     }
 
-    private void addMarkertoMap(Boolean clearMap, List<BaseModel> list, Boolean isBound) {
-        MapUtil.addListMarkertoMap(clearMap, mMap,list, getCheckedFilter(), isBound);
-        rdAll.setText(MapUtil.countAll());
-        rdIntersted.setText(MapUtil.countInterested());
-        rdOrdered.setText(MapUtil.countOrdered());
+    private void addListMarkertoMap(Boolean clearMap, List<BaseModel> customers, Boolean isBound) {
+        if (clearMap){
+            listMarker = new ArrayList<>();
+            mMap.clear();
+            for (BaseModel maker: customers){
+                listMarker.add(MapUtil.addMarkerToMap(mMap, maker, getCheckedFilter()));
+
+            }
+
+        }else {
+            if (listMarker == null){
+                listMarker = new ArrayList<>();
+            }
+            for (BaseModel maker: customers){
+                if (!DataUtil.checkDuplicateMarker(listMarker, maker)){
+                    listMarker.add(MapUtil.addMarkerToMap(mMap, maker, getCheckedFilter()));
+
+                }
+            }
+
+        }
+        reupdateStatusCount();
+
+    }
+
+    private void reupdateStatusCount(){
+        BaseModel count = DataUtil.countMarkerStatus(listMarker);
+        rdAll.setText(count.getInt(Constants.MARKER_ALL)> 0? String.format("Tất cả: %d", count.getInt(Constants.MARKER_ALL)) : "Tất cả");
+        rdIntersted.setText(count.getInt(Constants.MARKER_INTERESTED)> 0? String.format("Quan tâm: %d", count.getInt(Constants.MARKER_INTERESTED)) : "Quan tâm");
+        rdOrdered.setText(count.getInt(Constants.MARKER_ORDERED)> 0? String.format("Đã mua: %d", count.getInt(Constants.MARKER_ORDERED)) : "Đã mua");
 
     }
 
@@ -621,23 +666,22 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     }
 
     private String getCheckedFilter() {
-        String s = Constants.MARKER_ALL;
         if (rdFilter.getCheckedRadioButtonId() == R.id.map_filter_all) {
-            s = Constants.MARKER_ALL;
+            return Constants.MARKER_ALL;
 
         } else if (rdFilter.getCheckedRadioButtonId() == R.id.map_filter_interested) {
-            s = Constants.MARKER_INTERESTED;
+            return Constants.MARKER_INTERESTED;
 
         } else {
-            s = Constants.MARKER_ORDERED;
+            return Constants.MARKER_ORDERED;
 
         }
-        return s;
+        //return s;
     }
 
-    private void setCurrentMarkerToDefault(){
+    private void unsetCurrentMarker(){
         if (currentMarker != null){
-            final BaseModel cust = new BaseModel((JSONObject) currentMarker.getTag());
+            final BaseModel cust = new BaseModel(currentMarker.getTag().toString());
             Bitmap bitmap = MapUtil.GetBitmapMarker(this, cust.getInt("icon"), cust.getString("checkincount"), R.color.pin_waiting);
             currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
         }
@@ -645,11 +689,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     @Override
     public boolean onMarkerClick(final Marker marker) {
-        setCurrentMarkerToDefault();
+        unsetCurrentMarker();
         currentMarker = marker;
 
         if (marker.getTag() != null) {
-            final BaseModel customer = new BaseModel((JSONObject) marker.getTag());
+            final BaseModel customer = new BaseModel(marker.getTag().toString());
 
             getDistanceFromCurrent(customer.getDouble("lat"), customer.getDouble("lng"), new CallbackLong() {
                 @Override
@@ -769,7 +813,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         tvLocation.setVisibility(View.GONE);
         tvReload.setVisibility(View.GONE);
 
-        setCurrentMarkerToDefault();
+        unsetCurrentMarker();
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         setNullButton();
 
@@ -833,20 +877,40 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         LatLng newLatLng = new LatLng(customer.getDouble("lat") , customer.getDouble("lng"));
         triggerCurrentLocation(newLatLng ,  false);
 
-        Marker mMarker = MapUtil.addMarkerToMap(mMap, setCustomerMarker(customer), Constants.MARKER_ALL);
-        currentMarker = mMarker;
-        if (mMarker.getTag() != null) {
-            getDistanceFromCurrent(customer.getDouble("lat"), customer.getDouble("lng"), new CallbackLong() {
-                @Override
-                public void onResponse(Long value) {
-                    Bitmap bitmap = MapUtil.GetBitmapMarker(MapsActivity.this, customer.getInt("icon"), customer.getString("checkincount"), R.color.pin_waiting);
-                    currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()*2,bitmap.getHeight()*2, false)));
+        reUpdateMarkerDetail(customer);
 
-                    updateBottomDetail(customer, value);
-                }
-            });
+//        unsetCurrentMarker();
+//        addMarkerToList(customer);
+//
+//        if (currentMarker.getTag() != null) {
+//            getDistanceFromCurrent(customer.getDouble("lat"), customer.getDouble("lng"), new CallbackLong() {
+//                @Override
+//                public void onResponse(Long value) {
+//                    Bitmap bitmap = MapUtil.GetBitmapMarker(MapsActivity.this, customer.getInt("icon"), customer.getString("checkincount"), R.color.pin_waiting);
+//                    currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()*2,bitmap.getHeight()*2, false)));
+//
+//                    updateBottomDetail(customer, value);
+//                }
+//            });
+//        }
 
-        }
+
+
+
+//        Marker mMarker = MapUtil.addMarkerToMap(mMap, buildMarkerByCustomer(customer), Constants.MARKER_ALL);
+//        currentMarker = mMarker;
+//        if (mMarker.getTag() != null) {
+//            getDistanceFromCurrent(customer.getDouble("lat"), customer.getDouble("lng"), new CallbackLong() {
+//                @Override
+//                public void onResponse(Long value) {
+//                    Bitmap bitmap = MapUtil.GetBitmapMarker(MapsActivity.this, customer.getInt("icon"), customer.getString("checkincount"), R.color.pin_waiting);
+//                    currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()*2,bitmap.getHeight()*2, false)));
+//
+//                    updateBottomDetail(customer, value);
+//                }
+//            });
+//
+//        }
 
     }
 
@@ -972,7 +1036,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
                     case BottomSheetBehavior.STATE_COLLAPSED:
                         setNullButton();
-                        setCurrentMarkerToDefault();
+                        unsetCurrentMarker();
                         btnNewCustomer.setVisibility(View.VISIBLE);
 
                         break;
@@ -1001,29 +1065,12 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 customer.getString("address"),
                 customer.getString("street"),
                 customer.getString("district"));
-        currentPhone = customer.getString("phone");
 
         tvShopname.setText(title);
         tvAddress.setText(add);
         tvDistance.setText(distance >1000? distance/1000 +" km" :distance +" m");
-
-        tvStatus.setText(customer.getString("statusDetail"));
-        tvStatusDot.setTextColor(customer.getInt("statusColor"));
-
-        if (customer.getBoolean("statusInterested")){
-            btnDirection.setBackground(getResources().getDrawable(R.drawable.btn_round_blue));
-            btnCall.setBackground(getResources().getDrawable(R.drawable.btn_round_white_border_blue));
-            btnShare.setBackground(getResources().getDrawable(R.drawable.btn_round_white_border_blue));
-
-        }else {
-            btnDirection.setBackground(getResources().getDrawable(R.drawable.btn_round_grey));
-            btnCall.setBackground(getResources().getDrawable(R.drawable.btn_round_transparent_border_grey));
-            btnShare.setBackground(getResources().getDrawable(R.drawable.btn_round_transparent_border_grey));
-
-        }
-
+        currentPhone = customer.getString("phone");
         btnCall.setVisibility(currentPhone.equals("")?View.GONE : View.VISIBLE);
-
 
         progressLoadCustomer.setVisibility(View.VISIBLE);
         lnSheetBody.setOnClickListener(null);
@@ -1031,12 +1078,26 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             @Override
             public void onResponse(final BaseModel result) {
                 progressLoadCustomer.setVisibility(View.GONE);
-                BaseModel customer = DataUtil.rebuiltCustomer(result, false);
-                CustomSQL.setBaseModel(Constants.CUSTOMER, customer);
+                BaseModel cust = DataUtil.rebuiltCustomer(result, false);
+                CustomSQL.setBaseModel(Constants.CUSTOMER, cust);
+                BaseModel customer = buildMarkerByCustomer(cust);
+
+                tvStatus.setText(customer.getString("statusDetail"));
+                tvStatusDot.setTextColor(customer.getInt("statusColor"));
+                if (customer.getBoolean("statusInterested")){
+                    btnDirection.setBackground(getResources().getDrawable(R.drawable.btn_round_blue));
+                    btnCall.setBackground(getResources().getDrawable(R.drawable.btn_round_white_border_blue));
+                    btnShare.setBackground(getResources().getDrawable(R.drawable.btn_round_white_border_blue));
+
+                }else {
+                    btnDirection.setBackground(getResources().getDrawable(R.drawable.btn_round_grey));
+                    btnCall.setBackground(getResources().getDrawable(R.drawable.btn_round_transparent_border_grey));
+                    btnShare.setBackground(getResources().getDrawable(R.drawable.btn_round_transparent_border_grey));
+
+                }
 
                 List<BaseModel> listbill = DataUtil.array2ListObject(customer.getString(Constants.BILLS));
                 List<BaseModel> listcheckin = DataUtil.array2ListObject(customer.getString(Constants.CHECKINS));
-
 
                 if (listbill.size() >0){
                     tvStatus.setText(String.format("Khách đã mua hàng - Cách %d ngày", Util.countDay(listbill.get(listbill.size() -1).getLong("createAt"))));

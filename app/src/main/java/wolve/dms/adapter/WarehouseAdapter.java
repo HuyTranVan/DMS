@@ -65,8 +65,10 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
 
     @Override
     public void onBindViewHolder(final WarehouseAdapterViewHolder holder, final int position) {
-        holder.tvGroupName.setText(mData.get(position).getString("name"));
-        holder.tvUsername.setText(mData.get(position).getBaseModel("user").getString("displayName"));
+        holder.tvGroupName.setText(String.format("%s (%d)",mData.get(position).getString("name"),
+                                                                    mData.get(position).getInt("quantity")));
+        holder.tvUsername.setText(Util.getIconString(R.string.icon_username, mData.get(position).getBaseModel("user").getString("displayName")));
+
         if (Util.isAdmin() || mData.get(position).getInt("user_id") == User.getId()){
             holder.tvInfo.setVisibility(View.VISIBLE);
         }else {
@@ -141,14 +143,14 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
 
 
     public class WarehouseAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvGroupName, tvUsername, tvType;
-        private CTextIcon tvInfo;
+        private TextView tvGroupName, tvType;
+        private CTextIcon tvInfo, tvUsername;
         private RelativeLayout lnParent;
 
         public WarehouseAdapterViewHolder(View itemView) {
             super(itemView);
             tvGroupName = (TextView) itemView.findViewById(R.id.depot_item_name);
-            tvUsername = (TextView) itemView.findViewById(R.id.depot_item_user);
+            tvUsername = (CTextIcon) itemView.findViewById(R.id.depot_item_user);
             tvType = (TextView) itemView.findViewById(R.id.depot_item_depottype);
             tvInfo = itemView.findViewById(R.id.depot_item_depotinfo);
             lnParent = (RelativeLayout) itemView.findViewById(R.id.depot_item_parent);

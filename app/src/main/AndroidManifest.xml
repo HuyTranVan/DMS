@@ -165,14 +165,14 @@
         <activity
             android:name=".activities.ProductActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
+            android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
 
         <activity
             android:name=".activities.UserActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
+            android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
 
@@ -195,7 +195,7 @@
             android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize|adjustUnspecified"/>
 
         <activity
             android:name=".activities.ShopCartActivity"

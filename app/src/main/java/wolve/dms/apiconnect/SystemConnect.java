@@ -109,10 +109,10 @@ public class SystemConnect {
 
     }
 
-    public static void getCheckLogin(String param,final CallbackCustom listener, boolean showLoding){
+    public static void getCheckLogin(final CallbackCustom listener, boolean showLoding){
         Util.getInstance().showLoading(showLoding);
 
-        String url = Api_link.CHECK_LOGIN + "?fcm_token=" + param;
+        String url = Api_link.CHECK_LOGIN ;
         new CustomGetMethod(url, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {

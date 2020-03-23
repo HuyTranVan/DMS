@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+import wolve.dms.BuildConfig;
 import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
@@ -153,6 +154,7 @@ public class UserConnect {
                 CustomSQL.setString(Constants.DISTRICT_LIST, object.getString("district"));
                 CustomSQL.setString(Constants.USER_USERNAME, username);
                 CustomSQL.setString(Constants.USER_PASSWORD, pass);
+                CustomSQL.setInt(Constants.VERSION_CODE, CustomSQL.getInt(Constants.VERSION_CODE));
                 object.removeKey("district");
                 saveUser(object);
 

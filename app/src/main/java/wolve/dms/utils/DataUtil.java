@@ -1,5 +1,9 @@
 package wolve.dms.utils;
 
+import android.util.Log;
+
+import com.google.android.gms.maps.model.Marker;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -70,6 +74,7 @@ public class DataUtil {
             params.put("deliverBy", userid);
             params.put("isReturn", currentBill.getInt("isReturn"));
             params.put("customerId", customerId);
+            params.put("user_id", currentBill.getInt("user_id"));
             params.put("warehouse_id", User.getCurrentUser().getInt("warehouse_id"));
 
             JSONArray array = new JSONArray();
@@ -266,7 +271,6 @@ public class DataUtil {
         return result;
     }
 
-
     public static List<BaseModel> sortProductGroup(List<BaseModel> list, boolean reverse){
         Collections.sort(list, new Comparator<BaseModel>(){
             public int compare(BaseModel obj1, BaseModel obj2) {
@@ -366,25 +370,6 @@ public class DataUtil {
         return listResult;
     }
 
-    public static List<BaseModel> remakeBill(List<BaseModel> listbill, boolean isDeliver){
-        List<BaseModel> listBillByUser = new ArrayList<>();
-        for (BaseModel model: listbill){
-            if (User.getCurrentRoleId()==Constants.ROLE_ADMIN) {
-                listBillByUser.add(model);
-
-            }else if (User.getCurrentRoleId()==Constants.ROLE_DELIVER && isDeliver){
-                listBillByUser.add(model);
-
-            }else if(User.getId() == model.getInt("user_id")){
-                listBillByUser.add(model);
-            }
-
-        }
-
-        return listBillByUser;
-
-    }
-
     public static BaseModel rebuiltCustomer(BaseModel customer, boolean isDeliver){
         BaseModel customerResult = new BaseModel();
 
@@ -419,10 +404,45 @@ public class DataUtil {
         List<BaseModel> listBill= new ArrayList<>(remakeBill(listOriginalBill, isDeliver));
         customerResult.putList(Constants.BILLS, listBill);
         customerResult.putList(Constants.DEBTS, getAllBillHaveDebt(listBill));
-        customerResult.putList(Constants.PAYMENTS, DataUtil.array2ListObject(customer.getString("payments")));
+        customerResult.putList(Constants.PAYMENTS, remakePayment(DataUtil.array2ListObject(customer.getString("payments"))));
         customerResult.putList(Constants.CHECKINS, DataUtil.array2ListObject(customer.getString("checkins")));
 
         return customerResult;
+    }
+
+    public static List<BaseModel> remakeBill(List<BaseModel> listbill, boolean isDeliver){
+        List<BaseModel> listBillByUser = new ArrayList<>();
+        for (BaseModel model: listbill){
+            if (User.getCurrentRoleId()==Constants.ROLE_ADMIN) {
+                listBillByUser.add(model);
+
+            }else if (User.getCurrentRoleId()==Constants.ROLE_DELIVER && isDeliver){
+                listBillByUser.add(model);
+
+            }else if(User.getId() == model.getInt("user_id")){
+                listBillByUser.add(model);
+            }
+
+        }
+
+        return listBillByUser;
+
+    }
+
+    public static List<BaseModel> remakePayment(List<BaseModel> listpayment){
+        List<BaseModel> listPaymentByUser = new ArrayList<>();
+        for (BaseModel model: listpayment){
+            if (User.getCurrentRoleId()==Constants.ROLE_ADMIN) {
+                listPaymentByUser.add(model);
+
+            }else if(User.getId() == model.getInt("user_id")){
+                listPaymentByUser.add(model);
+            }
+
+        }
+
+        return listPaymentByUser;
+
     }
 
     public static List<BaseModel> getAllBillDetail(List<BaseModel> listbill){
@@ -508,8 +528,6 @@ public class DataUtil {
         //tvBDF.setText(String.format("BDF: %s ",new DecimalFormat("#.##").format(percent)) +"%");
 
     }
-
-
 
     public static double defineBDFValue(List<BaseModel> listDetails){
         double bdf =0.0;
@@ -606,20 +624,6 @@ public class DataUtil {
         return values;
     }
 
-    public static List<BaseModel> converArray2List(JSONArray array){
-        List<BaseModel> listResult = new ArrayList<>();
-        try {
-            for (int i=0; i<array.length(); i++){
-                BaseModel billDetail = new BaseModel(array.getJSONObject(i));
-
-                listResult.add(billDetail);
-            }
-        } catch (JSONException e) {
-            return listResult;
-        }
-        return listResult;
-    }
-
     public static double sumMoneyFromList(List<BaseModel> list, String key){
         double result = 0.0;
         for (BaseModel item: list){
@@ -665,6 +669,50 @@ public class DataUtil {
         }
 
         return check;
+    }
+
+    public static boolean checkDuplicateMarker(List<Marker> list, BaseModel object){
+        boolean check = false;
+        for (int i=0; i<list.size(); i++){
+            if (list.get(i).getTitle().equals(object.getString("id"))){
+                check = true;
+                break;
+            }
+        }
+
+        return check;
+    }
+
+    public static BaseModel countMarkerStatus(List<Marker> list){
+        BaseModel model = new BaseModel();
+        int interest = 0;
+        int ordered = 0;
+        for (Marker item : list){
+            switch (item.getSnippet()){
+                case "0":
+                    interest += 1;
+                    break;
+
+                case "1":
+                    interest += 1;
+                    break;
+
+                case "2":
+
+                    break;
+
+                case "3":
+                    ordered += 1;
+                    break;
+            }
+
+        }
+
+        model.put(Constants.MARKER_ALL, list.size());
+        model.put(Constants.MARKER_INTERESTED, interest);
+        model.put(Constants.MARKER_ORDERED, ordered);
+
+        return model;
     }
 
     public static List<BaseModel> removeObjectFromList(List<BaseModel> list, BaseModel value, String key){

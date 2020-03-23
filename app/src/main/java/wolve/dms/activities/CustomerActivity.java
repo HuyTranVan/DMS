@@ -71,7 +71,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     private RelativeLayout rlStatusGroup;
     private LinearLayout lnFilter;
 
-    protected BaseModel currentCustomer;
+    protected BaseModel currentCustomer = null;
     protected List<BaseModel> listCheckins = new ArrayList<>();
     protected List<BaseModel> listBills = new ArrayList<>();
     protected List<BaseModel> listBillDetail = new ArrayList<>();
@@ -86,10 +86,10 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     private boolean haschange = false;
     private int currentPosition =0;
 
-    protected static CustomerBillsFragment billsFragment;
-    protected static CustomerInfoFragment infoFragment;
-    protected static CustomerProductFragment productFragment;
-    protected static CustomerPaymentFragment paymentFragment;
+    protected CustomerBillsFragment billsFragment;
+    protected CustomerInfoFragment infoFragment;
+    protected CustomerProductFragment productFragment;
+    protected CustomerPaymentFragment paymentFragment;
 
 
     @Override
@@ -205,8 +205,9 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void updateView(BaseModel customer){
-        createRVFilter();
         currentCustomer = customer;
+        createRVFilter();
+
         tvTitle.setText(String.format("%s %s", Constants.getShopName(currentCustomer.getString("shopType")), currentCustomer.getString("signBoard")));
 
         if (currentCustomer.hasKey(Constants.TEMPBILL) ){
@@ -232,7 +233,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         billsFragment.updateList();
         productFragment.updateList();
         paymentFragment.updateList();
-
 
     }
 
@@ -480,7 +480,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void onBackPressed() {
-
         mFragment = getSupportFragmentManager().findFragmentById(R.id.customer_parent);
         if (Util.getInstance().isLoading()){
             Util.getInstance().stopLoading(true);
@@ -530,7 +529,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     }
 
     protected void saveCustomerToLocal(String key, Object value){
-        currentCustomer = CustomSQL.getBaseModel(Constants.CUSTOMER);
         currentCustomer.put(key, value);
 
         mHandlerUpdateCustomer.removeCallbacks(mUpdateTask);
@@ -541,7 +539,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     private Runnable mUpdateTask = new Runnable(){
         @Override
         public void run() {
-            submitCustomer(CustomSQL.getBaseModel(Constants.CUSTOMER),listCheckins.size(),  new CallbackBoolean() {
+            submitCustomer(currentCustomer,listCheckins.size(),  new CallbackBoolean() {
                 @Override
                 public void onRespone(Boolean result) {
                     CustomSQL.setBaseModel(Constants.CUSTOMER, currentCustomer);
@@ -577,22 +575,15 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         }, false);
     }
 
-    protected void reshowAdd(BaseModel add){
-        tvAddress.setText(String.format(Constants.addressFormat,
-                add.getString("address"),
-                add.getString("street"),
-                add.getString("district"),
-                add.getString("province")));
-
-    }
-
-//    private String createParamCheckin(BaseModel customer, String note){
-//        String params = String.format(Api_link.SCHECKIN_CREATE_PARAM, customer.getInt("id"),
-//                customerStatusID,
-//                Util.encodeString(String.format("[%s] %s", Util.HourStringNatural(countTime), note)),
-//                User.getUserId()
-//        );
-//        return params;
+//    protected void reshowAdd(BaseModel add){
+//        infoFragment.reshowAddress(add);
+////        tvAddress.setText(String.format(Constants.addressFormat,
+////                add.getString("address"),
+////                add.getString("street"),
+////                add.getString("district"),
+////                add.getString("province")));
+//
+//
 //    }
 
     protected void openReturnFragment(BaseModel bill){

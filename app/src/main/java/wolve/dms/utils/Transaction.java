@@ -82,17 +82,9 @@ public class Transaction {
         Context context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(context, MapsActivity.class);
         CustomSQL.setBoolean(Constants.ON_MAP_SCREEN, true);
-//        if (customerid == null){
-//
-//
-//        }else if (!customerid.equals("")){
-//            intent.putExtra(Constants.CUSTOMER_ID, customerid);
-//            CustomSQL.setString(Constants.CUSTOMER_ID, "");
-//        }
-
         context.startActivity(intent);
         ((AppCompatActivity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-        //((AppCompatActivity) context).finish();
+        ((AppCompatActivity) context).finish();
 
     }
 
@@ -242,6 +234,7 @@ public class Transaction {
         Intent intent = new Intent(context, StatisticalActivity.class);
         context.startActivity(intent);
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        ((AppCompatActivity) context).finish();
     }
 
     public static void gotoScannerActivity() {
@@ -263,6 +256,7 @@ public class Transaction {
         Intent intent = new Intent(context, DistributorActivity.class);
         context.startActivity(intent);
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        ((AppCompatActivity) context).finish();
     }
 
 

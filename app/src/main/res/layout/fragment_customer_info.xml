@@ -9,7 +9,7 @@
     android:clickable="true"
     android:fitsSystemWindows="true">
 
-    <RelativeLayout
+    <ScrollView
         android:id="@+id/customer_scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -22,7 +22,7 @@
             android:orientation="vertical"
             android:paddingLeft="@dimen/_10sdp"
             android:paddingRight="@dimen/_10sdp"
-            android:paddingBottom="@dimen/_30sdp">
+            android:paddingBottom="@dimen/_20sdp">
 
             <HorizontalScrollView
                 android:id="@+id/customer_overview"
@@ -236,23 +236,6 @@
                 app:iconColor="@color/black_text_color_hint"
                 app:isShowBottomLine="false"/>
 
-<!--            <EditText-->
-<!--                android:id="@+id/add_customer_note"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:minHeight="@dimen/_50sdp"-->
-<!--                android:background="@drawable/bg_white_corner_stroke_grey"-->
-<!--                android:contextClickable="false"-->
-<!--                android:gravity="top"-->
-<!--                android:imeOptions="actionNext"-->
-<!--                android:padding="@dimen/_5sdp"-->
-<!--                android:textColor="#3d3d3d"-->
-<!--                android:textSize="@dimen/_12sdp"-->
-<!--                android:hint="Nhập ghi chú cửa hàng"-->
-<!--                android:layout_marginTop="@dimen/_5sdp"-->
-<!--                android:inputType="textCapSentences|textMultiLine"/>-->
-
-
             <wolve.dms.customviews.CTextIcon
                 android:id="@+id/customer_history"
                 android:layout_width="wrap_content"
@@ -294,23 +277,7 @@
 
         </LinearLayout>
 
-<!--        <wolve.dms.customviews.CTextIcon-->
-<!--            android:id="@+id/customer_info_notinterested"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:minHeight="@dimen/_20sdp"-->
-<!--            android:background="@drawable/btn_round_white_border_grey"-->
-<!--            android:text="&#xf00d;   Không quan tâm"-->
-<!--            android:textColor="@color/black_text_color_hint"-->
-<!--            android:textSize="@dimen/_10sdp"-->
-<!--            android:gravity="center"-->
-<!--            android:paddingLeft="@dimen/_10sdp"-->
-<!--            android:paddingRight="@dimen/_10sdp"-->
-<!--            android:layout_alignParentBottom="true"-->
-<!--            android:layout_centerHorizontal="true"-->
-<!--            android:layout_marginBottom="@dimen/_5sdp"/>-->
-
-    </RelativeLayout>
+    </ScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

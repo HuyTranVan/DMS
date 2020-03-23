@@ -19,7 +19,10 @@ import com.google.firebase.iid.InstanceIdResult;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 import wolve.dms.BaseActivity;
+import wolve.dms.BuildConfig;
 import wolve.dms.R;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
@@ -70,38 +73,34 @@ public class SplashScreenActivity extends BaseActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                SystemConnect.getFCMToken(new CallbackString() {
-                    @Override
-                    public void Result(String s) {
-                        if (!s.equals("")){
-                            //CustomSQL.setString(Constants.FCM_TOKEN, s);
-                            if (!Util.isEmpty(CustomSQL.getString(Constants.USER_USERNAME)) && !Util.isEmpty(User.getToken())){
-                                checkLogin(s, new CallbackBoolean() {
-                                    @Override
-                                    public void onRespone(Boolean result) {
-                                        progressBar.setVisibility(View.GONE);
-                                        if (result){
-                                            Transaction.gotoHomeActivity();
+                if (BuildConfig.VERSION_CODE > CustomSQL.getInt(Constants.VERSION_CODE)){
+                    CustomSQL.clear();
+                    CustomSQL.setInt(Constants.VERSION_CODE, BuildConfig.VERSION_CODE);
+                    gotoLoginScreen();
 
-                                        }else {
-                                            gotoLoginScreen();
-
-                                        }
-                                    }
-                                });
-
-                            }else {
+                }else {
+                    if (!Util.isEmpty(CustomSQL.getString(Constants.USER_USERNAME)) && !Util.isEmpty(User.getToken())){
+                        checkLogin(new CallbackBoolean() {
+                            @Override
+                            public void onRespone(Boolean result) {
                                 progressBar.setVisibility(View.GONE);
-                                gotoLoginScreen();
+                                if (result){
+                                    Transaction.gotoHomeActivity();
 
+                                }else {
+                                    gotoLoginScreen();
+
+                                }
                             }
-                        }else {
-                            progressBar.setVisibility(View.GONE);
-                            Util.showSnackbar("Lỗi kết nối tới servert", null, null);
-                            gotoLoginScreen();
-                        }
+                        });
+
+                    }else {
+                        progressBar.setVisibility(View.GONE);
+                        gotoLoginScreen();
+
                     }
-                });
+                }
+
             }
 
         }, SPLASH_TIME_OUT);
@@ -126,8 +125,8 @@ public class SplashScreenActivity extends BaseActivity {
         finish();
     }
 
-    private void checkLogin(String token, CallbackBoolean listener){
-        SystemConnect.getCheckLogin(token, new CallbackCustom() {
+    private void checkLogin(CallbackBoolean listener){
+        SystemConnect.getCheckLogin(new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
                 if (result.getBoolean("success")){
@@ -142,8 +141,6 @@ public class SplashScreenActivity extends BaseActivity {
 
             }
         }, false);
-
-
 
     }
 

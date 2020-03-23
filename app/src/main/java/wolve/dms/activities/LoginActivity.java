@@ -75,12 +75,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         edUsername.setInputType(InputType.TYPE_CLASS_NUMBER);
         edUsername.setText(CustomSQL.getString(Constants.USER_USERNAME));
 
-        if (BuildConfig.DEBUG_FLAG ){
-//            if (!edUsername.getText().toString().trim().equals("") && !edPassword.getText().toString().trim().equals("")){
-//                doLogin();
-//            }
-
-        }
     }
 
     @Override

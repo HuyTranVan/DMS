@@ -41,6 +41,7 @@ import wolve.dms.apiconnect.UserConnect;
 import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickProduct;
+import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackListCustom;
@@ -629,7 +630,7 @@ public class CustomCenterDialog {
                                 ratingBar.getCount(),
                                 Util.encodeString(DataUtil.createCheckinNote(selectAdapter.getData(), "Chuyển sang quan tâm vì: "+ edNote.getText().toString())),
                                 User.getId(),
-                                Util.CurrentTimeStamp() + 365 * 86400000,
+                                Util.CurrentTimeStamp() + Integer.parseInt(edNextDay.getText().toString()) * 86400000,
                                 1);
 
                         object.put("updateStatus", true);
@@ -656,7 +657,13 @@ public class CustomCenterDialog {
                                 Util.CurrentTimeStamp() + Integer.parseInt(edNextDay.getText().toString()) * 86400000,
                                 1);
 
-                        object.put("updateStatus", false);
+                        if (status_id ==0){
+                            object.put("updateStatus", true);
+                            object.put("status", 1);
+                        }else {
+                            object.put("updateStatus", false);
+                        }
+
                         object.put("param", param);
                         listener.onResponse(object);
                         dialogResult.dismiss();
@@ -934,26 +941,51 @@ public class CustomCenterDialog {
         });
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-//                Util.hideKeyboard(edPass);
-//                if (!edPhone.getText().toString().equals("") && !edPass.getText().toString().equals("")){
-//                    UserConnect.doLogin(edPhone.getText().toString().trim(),
-//                            edPass.getText().toString().trim(),
-//
-//                            new CallbackBoolean() {
-//                                @Override
-//                                public void onRespone(Boolean result) {
-//                                    if (result){
-//                                        Util.showToast("Đăng nhập thành công");
-//                                        mlistener.onResponse(user.BaseModelJSONObject());
-//
-//                                    }else {
-//                                        mlistener.onError("");
-//                                    }
-//                                }
-//                            });
-//                }
+                Util.hideKeyboard(edPass);
 
-                dialogResult.dismiss();
+
+
+                if (!edPhone.getText().toString().equals("") && !edPass.getText().toString().equals("")){
+                    dialogResult.dismiss();
+                    UserConnect.Logout(new CallbackCustom() {
+                        @Override
+                        public void onResponse(BaseModel result) {
+                            if (result.getBoolean("success")){
+                                UserConnect.doLogin(edPhone.getText().toString().trim(),
+                                        edPass.getText().toString().trim(),
+                                        User.getFCMToken(),
+                                        new CallbackBoolean() {
+                                            @Override
+                                            public void onRespone(Boolean result) {
+                                                if (result){
+                                                    Util.showToast("Đăng nhập thành công");
+                                                    mlistener.onResponse(user.BaseModelJSONObject());
+
+                                                }else {
+                                                    mlistener.onError("");
+                                                }
+                                            }
+                                        });
+
+                            }
+                        }
+
+                        @Override
+                        public void onError(String error) {
+
+                        }
+                    }, true);
+
+
+
+
+
+
+                }else {
+                    Util.showToast("Nhập đầy đủ username và password");
+                }
+
+
 
 
             }

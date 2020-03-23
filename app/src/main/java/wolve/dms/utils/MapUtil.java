@@ -83,7 +83,7 @@ public class MapUtil{
             }
             LatLngBounds bounds = builder.build();
 
-            int padding = 50; // offset from edges of the map in pixels
+            int padding = 100; // offset from edges of the map in pixels
             CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
             mMap.moveCamera(cu);
         }
@@ -197,7 +197,7 @@ public class MapUtil{
         if (clearMap){
             resetMarker();
             customers = listCustomer;
-            for (int i = 0; i < customers.size(); i++) {
+            for (int i = 0; i < customers.size(); i++){
                 addMarkerToMap(mMap, customers.get(i), filter);
 
 //                switch (filter){
@@ -358,9 +358,10 @@ public class MapUtil{
         Bitmap bitmap = GetBitmapMarker(Util.getInstance().getCurrentActivity(), customer.getInt("icon"), customer.getString("checkincount"), R.color.pin_waiting);
         currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
         currentMarker.setTag(customer.BaseModelJSONObject());
-        currentMarker.setSnippet(customer.getString("id"));
+        currentMarker.setTitle(customer.getString("id"));    //customer_id
+        currentMarker.setSnippet(customer.getString("status_id"));     //status_id
 
-        markers.add(currentMarker);
+        //markers.add(currentMarker);
 
         switch (filter){
             case Constants.MARKER_ALL:
@@ -368,10 +369,11 @@ public class MapUtil{
                 break;
 
             case Constants.MARKER_INTERESTED:
-                if (customer.getInt("status") == 1 || customer.getInt("status") == 3){
+                if (customer.getInt("status_id") == 0
+                        || customer.getInt("status_id") == 1
+                        || customer.getInt("status_id") == 3){
                     currentMarker.setVisible(true);
-                }else if (customer.getInt("status") == 3){
-                    currentMarker.setVisible(true);
+
                 }else {
                     currentMarker.setVisible(false);
                 }
@@ -384,13 +386,6 @@ public class MapUtil{
                     currentMarker.setVisible(false);
                 }
                 break;
-        }
-
-        if (customer.getInt("status") == 1 || customer.getInt("status") == 3){
-            interested +=1;
-        }
-        if (customer.getInt("status") == 3){
-            ordered +=1;
         }
 
         return currentMarker;
@@ -457,24 +452,19 @@ public class MapUtil{
         Boolean isNew = true;
         Marker currentmarker = null;
         for (int i = 0; i < markers.size(); i++) {
-            try {
-                if (markers.get(i).getTag() != null) {
-                    JSONObject object = new JSONObject(markers.get(i).getTag().toString());
-                    if (object.getString("id").equals(customer.getString("id"))) {
-                        markers.get(i).remove();
+            if (markers.get(i).getTag() != null) {
+                BaseModel object = new BaseModel(markers.get(i).getTag().toString());
+                if (object.getString("id").equals(customer.getString("id"))) {
+                    markers.get(i).remove();
 
-                        currentmarker = addMarkerToMap(mMap, customer, Constants.MARKER_ALL);
-
+                    currentmarker = addMarkerToMap(mMap, customer, Constants.MARKER_ALL);
 
 
-                        isNew = false;
-                        break;
-                    }
+                    isNew = false;
+                    break;
                 }
-
-            } catch (JSONException e) {
-//                e.printStackTrace();
             }
+
         }
 
         if (isNew) {
@@ -486,22 +476,18 @@ public class MapUtil{
         return currentmarker;
     }
 
-
     public static void removeMarker(String id){
         for (int i=0; i<markers.size(); i++){
-            try {
-                if (markers.get(i).getTag() != null){
-                    JSONObject object = new JSONObject(markers.get(i).getTag().toString());
-                    if (object.getString("id").equals(id)){
-                        markers.get(i).remove();
-                        CustomSQL.removeKey(Constants.CUSTOMER);
-                        break;
-                    }
+            if (markers.get(i).getTag() != null){
+                BaseModel object = new BaseModel(markers.get(i).getTag().toString());
+                if (object.getString("id").equals(id)){
+                    markers.get(i).remove();
+                    CustomSQL.removeKey(Constants.CUSTOMER);
+                    break;
                 }
-
-            } catch (JSONException e) {
-//                e.printStackTrace();
             }
+
+
         }
     }
 
@@ -511,72 +497,44 @@ public class MapUtil{
         fragment.getView().setLayoutParams(params);
     }
 
-    public static String updateCustomerFilter(String filter){
-        if (markers != null)
+    public static void updateCustomerFilter(List<Marker> list, String filter){
+        if (list.size() >0 )
             switch (filter){
                 case Constants.MARKER_ALL:
-                    for (int i=0; i<markers.size(); i++){
-                        if (!markers.get(i).isVisible()){
-                            markers.get(i).setVisible(true);
-                        }
+                    for (Marker marker: list){
+                        marker.setVisible(true);
                     }
-
                     break;
 
                 case Constants.MARKER_INTERESTED:
-                    for (int i=0; i<markers.size(); i++){
-                        try {
-                            if (markers.get(i).getTag() != null){
-                                JSONObject object = new JSONObject(markers.get(i).getTag().toString());
-                                if (object.getInt("status") !=1 && object.getInt("status") !=3){
-                                    markers.get(i).setVisible(false);
-                                    //interested -=1;
+                    for (Marker marker: list){
+                        if (marker.getSnippet().equals("0")|| marker.getSnippet().equals("1") || marker.getSnippet().equals("3")){
+                            marker.setVisible(true);
 
-                                }else if (!markers.get(i).isVisible()){
-                                    markers.get(i).setVisible(true);
-                                    //interested +=1;
-                                }
-                            }
+                        }else {
+                            marker.setVisible(false);
 
-                        } catch (JSONException e) {
-    //                e.printStackTrace();
                         }
+
                     }
 
                     break;
 
                 case Constants.MARKER_ORDERED:
-                    for (int i=0; i<markers.size(); i++){
-                        try {
-                            if (markers.get(i).getTag() != null){
-                                JSONObject object = new JSONObject(markers.get(i).getTag().toString());
-                                if (object.getInt("status") !=3){
-                                    markers.get(i).setVisible(false);
-                                    //interested -=1;
+                    for (Marker marker: list){
+                        if ( marker.getSnippet().equals("3")){
+                            marker.setVisible(true);
 
-                                }else if (!markers.get(i).isVisible()){
-                                    markers.get(i).setVisible(true);
-                                    //interested +=1;
-                                }
-                            }
+                        }else {
+                            marker.setVisible(false);
 
-                        } catch (JSONException e) {
-    //                e.printStackTrace();
                         }
+
                     }
 
                     break;
             }
-        interested =0;
-        if (markers != null){
-            for (int i=0; i<markers.size(); i++){
-                if (markers.get(i).isVisible()){
-                    interested +=1;
-                }
-            }
-        }
 
-        return String.format("%d/%d", interested, customers.size());
     }
 
 }

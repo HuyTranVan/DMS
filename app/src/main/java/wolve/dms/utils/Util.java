@@ -1586,4 +1586,12 @@ public class Util {
 
     }
 
+    public static void clearSQL(){
+        List<BaseModel> listUser = CustomSQL.getListObject(Constants.USER_LIST);
+        int versionCode = CustomSQL.getInt(Constants.VERSION_CODE);
+        CustomSQL.clear();
+        CustomSQL.setListBaseModel(Constants.USER_LIST, listUser);
+        CustomSQL.setInt(Constants.VERSION_CODE, versionCode);
+    }
+
 }

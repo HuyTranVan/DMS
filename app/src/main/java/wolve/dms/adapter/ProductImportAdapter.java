@@ -111,6 +111,25 @@ public class ProductImportAdapter extends RecyclerView.Adapter<ProductImportAdap
             }
         });
 
+        holder.lnParent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int quantity = mData.get(position).hasKey("quantity")? mData.get(position).getInt("quantity") : 0;
+
+                if (!mData.get(position).hasKey("currentQuantity") || mData.get(position).getInt("currentQuantity") > quantity ){
+                    mData.get(position).put("quantity", quantity +1);
+                    notifyItemChanged(position);
+                    mListener.onResponse(mData.get(position));
+
+                }else {
+                    Util.showToast("Sản phẩm hết tồn kho");
+                }
+
+
+            }
+        });
+
+
         holder.tvMinus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

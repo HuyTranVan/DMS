@@ -43,7 +43,6 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
     private EditText edShopName ;
     private CButtonVertical mDirection, mCall, mInterest;
     private TextView tvLastCheckin, tvType;
-    //private CustomSwitchButton swStatus;
     private RadioGroup rgType;
 
     private CustomerActivity mActivity;
@@ -53,7 +52,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_customer_info,container,false);
-        CustomerActivity.infoFragment = this;
+
 
         initializeView();
 
@@ -64,6 +63,8 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 
     private void initializeView() {
         mActivity = (CustomerActivity) getActivity();
+        mActivity.infoFragment = this;
+
         edAdress = (CInputForm) view.findViewById(R.id.customer_info_adress);
         edPhone = (CInputForm) view.findViewById(R.id.customer_info_phone);
         edName = (CInputForm) view.findViewById(R.id.customer_info_name);
@@ -87,10 +88,12 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
                 Util.isEmpty(address.getString("street")) ? "" : address.getString("street"),
                 address.getString("district"),
                 address.getString("province"));
-        edAdress.setText(add);
         edAdress.setFocusable(false);
+        edAdress.setText(add);
+        mActivity.tvAddress.setText(add);
 
-        mActivity.reshowAdd(address);
+
+        //mActivity.reshowAdd(address);
     }
 
     public void reloadInfo(){
@@ -146,7 +149,6 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         mDirection.setOnClickListener(this);
         mCall.setOnClickListener(this);
         mInterest.setOnClickListener(this);
-        //tvStatus.setOnClickListener(this);
         tvCheckin.setOnClickListener(this);
         edAdress.setOnMoreClickView(new View.OnClickListener() {
             @Override
@@ -268,17 +270,16 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
                                             if (result){
                                                 if (object.getBoolean("updateStatus")){
                                                     mActivity.currentCustomer.put("status_id", object.getInt("status"));
-
                                                     mActivity.submitCustomer(mActivity.currentCustomer,mActivity.listCheckins.size() +1,  new CallbackBoolean() {
                                                         @Override
                                                         public void onRespone(Boolean result) {
                                                             mActivity.returnPreviousScreen(mActivity.currentCustomer.BaseModelstoString());
-                                                            //mActivity.reloadCustomer(mActivity.currentCustomer.getString("id"));
+
                                                         }
                                                     });
 
                                                 }else {
-                                                    mActivity.reloadCustomer(mActivity.currentCustomer.getString("id"));
+                                                    mActivity.returnPreviousScreen(mActivity.currentCustomer.BaseModelstoString());
 
                                                 }
 
@@ -440,25 +441,6 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 
     }
 
-    protected void updateRessonNotInterted(String content){
-        String note = String.format("Chuyển sang không quan tâm vì: %s", content);
-        CustomerConnect.PostCheckin(createParamCheckin(mActivity.currentCustomer, 2, note), new CallbackCustom() {
-            @Override
-            public void onResponse(BaseModel result) {
-                mActivity.saveCustomerToLocal("status_id",2);
-                updateStatus(2);
-                Util.showToast("Đã chuyển sang không quan tâm");
-
-
-            }
-
-            @Override
-            public void onError(String error) {
-
-            }
-        }, true);
-    }
-
     private String createParamCheckin(BaseModel customer, int statusId, String note){
         String params = String.format(Api_link.SCHECKIN_CREATE_PARAM, customer.getInt("id"),
                 statusId,
@@ -473,11 +455,6 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
             @Override
             public void onResponse(BaseModel result) {
                 listener.onRespone(true);
-
-//                mActivity.saveCustomerToLocal("status_id",2);
-//                updateStatus(2);
-//                Util.showToast("Đã chuyển sang không quan tâm");
-
 
             }
 

@@ -39,7 +39,7 @@ public class CustomerPaymentFragment extends Fragment implements View.OnClickLis
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_customer_payment,container,false);
-        CustomerActivity.paymentFragment = this;
+
 
         initializeView();
 
@@ -59,6 +59,7 @@ public class CustomerPaymentFragment extends Fragment implements View.OnClickLis
 
     private void initializeView() {
         mActivity = (CustomerActivity) getActivity();
+        mActivity.paymentFragment = this;
         rvPayment = (RecyclerView) view.findViewById(R.id.customer_rvpayment);
 
     }

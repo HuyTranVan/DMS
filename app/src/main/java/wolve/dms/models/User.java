@@ -134,6 +134,16 @@ public class User extends BaseModel {
         return token;
     }
 
+    public static String getFCMToken(){
+        String token = "";
+        BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
+
+        if (currentUser != null) {
+            token = currentUser.getString("fcm_token");
+        }
+        return token;
+    }
+
     public static String getFullName(){
         String name = "";
         BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);

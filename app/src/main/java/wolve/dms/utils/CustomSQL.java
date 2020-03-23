@@ -31,7 +31,7 @@ public class CustomSQL {
 
     }
 
-    public void setInt(String title, int value){
+    public static void setInt(String title, int value){
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
         prefs.edit().putInt(title, value).commit();
     }

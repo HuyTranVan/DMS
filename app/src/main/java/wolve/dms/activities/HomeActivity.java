@@ -129,9 +129,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             public void onResponse(List<BaseModel> list) {
                 listTempBill = list;
                 updateTempBillVisibility(listTempBill);
+                updateTempBillFragment();
             }
         });
         tvMonth.setText(String.format("***Tháng %s:", Util.CurrentMonthYear()));
+
 
     }
 
@@ -238,7 +240,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
         }else {
             if (doubleBackToExitPressedOnce) {
-                finish();
+                this.finish();
             }
 
             this.doubleBackToExitPressedOnce = true;
@@ -287,7 +289,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         for (int i=0; i<listTemp.size(); i++){
             if (listTemp.get(i).getInt("id") !=  User.getId()){
                 listTemp.get(i).put("text", String.format("%s (%s)",listTemp.get(i).getString("displayName") ,
-                                                new BaseModel(listTemp.get(i).getJsonObject("distributor")).getString("name")) );
+                                                listTemp.get(i).getBaseModel("distributor").getString("name")) );
 
                 listUser.add(listTemp.get(i));
 
@@ -322,6 +324,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             public void onResponse(JSONObject result) {
                 updateUserInfo();
                 loadCurrentData();
+                loadOverView();
 
             }
 
@@ -492,23 +495,25 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        checkNewProductUpdated(new CallbackListObject() {
-            @Override
-            public void onResponse(List<BaseModel> list) {
-                listTempBill = list;
-                updateTempBillVisibility(listTempBill);
-            }
-        });
-        if(mFragment != null && mFragment instanceof TempBillFragment){
-            ((TempBillFragment) mFragment).reloadData();
-
-        }
-
-
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        checkNewProductUpdated(new CallbackListObject() {
+//            @Override
+//            public void onResponse(List<BaseModel> list) {
+//                listTempBill = list;
+//                updateTempBillVisibility(listTempBill);
+//
+//                if(mFragment != null && mFragment instanceof TempBillFragment){
+//                    ((TempBillFragment) mFragment).reloadData();
+//
+//                }
+//            }
+//        });
+//
+//
+//
+//    }
 
     private void checkNewProductUpdated(CallbackListObject listener){
         SystemConnect.getLastestProductUpdated(new CallbackCustom() {
@@ -665,5 +670,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         }else {
             return true;
         }
+    }
+
+    private void updateTempBillFragment(){
+
     }
 }

@@ -22,7 +22,7 @@
             android:paddingRight="@dimen/_5sdp"
             android:layout_marginTop="@dimen/_2sdp"/>
 
-        <TextView
+        <wolve.dms.customviews.CTextIcon
             android:id="@+id/payment_item_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
