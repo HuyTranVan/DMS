@@ -176,7 +176,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 }else {
                     CustomCenterDialog.alertWithButton("Lưu hóa đơn",
                             "Bạn đang ở ngoài khu vực cửa hàng.\nLưu hóa đơn để nhân viên giao hàng tiếp nhận đơn hàng này",
-                            "đồng ý", new CallbackBoolean() {
+                            "Lưu hóa đơn", new CallbackBoolean() {
                                 @Override
                                 public void onRespone(Boolean result) {
                                     if (result){
@@ -330,30 +330,9 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         bill.put("note", tvNote.getText().toString());
         bill.putList(Constants.BILL_DETAIL,adapterProducts.getAllData() );
 
-        Transaction.checkInventoryBeforePrintBill(bill,adapterProducts.getAllData() );
-
-//        DataUtil.checkInventory(adapterProducts.getAllData(), User.getCurrentUser().getInt("warehouse_id"), new CallbackListObject() {
-//            @Override
-//            public void onResponse(List<BaseModel> list) {
-//                if (list.size() >0){
-//                    CustomCenterDialog.showListProductWithDifferenceQuantity("KHÔNG ĐỦ TỒN KHO", list, new CallbackBoolean() {
-//                        @Override
-//                        public void onRespone(Boolean result) {
-//                            if (result){
-//                                Transaction.gotoImportActivity(User.getCurrentUser().getBaseModel("warehouse"), true);
-//
-//                            }
-//
-//                        }
-//                    });
-//
-//
-//
-//                }else {
-//                    Transaction.gotoPrintBillActivity(bill, false);
-//                }
-//            }
-//        });
+        Transaction.checkInventoryBeforePrintBill(bill,
+                adapterProducts.getAllData(),
+                User.getCurrentUser().getInt("warehouse_id"));
 
     }
 

@@ -26,8 +26,11 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.orhanobut.dialogplus.DialogPlus;
 
+import wolve.dms.activities.HomeActivity;
+import wolve.dms.activities.ImportActivity;
 import wolve.dms.activities.NewUpdateProductGroupFragment;
 import wolve.dms.activities.NewUpdateProductFragment;
+import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
@@ -155,8 +158,33 @@ public abstract class BaseActivity extends AppCompatActivity {
             CustomTopDialog.dialog.dismiss();
 
         }else {
-            BaseModel content = new BaseModel(tag);
-            CustomTopDialog.showTextNotify(content.getString("title"), content.getString("message"));
+            if (Util.isJSONObject(tag)){
+                BaseModel content = new BaseModel(tag);
+                CustomTopDialog.showTextNotify(Util.getIconString(R.string.icon_username," ", content.getString("title")),
+                        content.getString("message"), new CallbackBoolean() {
+                    @Override
+                    public void onRespone(Boolean result) {
+                        String currentActivity = Util.getInstance().getCurrentActivity().getLocalClassName();
+                        switch (currentActivity){
+                            case "activities.HomeActivity":
+                                HomeActivity activityHome = (HomeActivity) Util.getInstance().getCurrentActivity();
+                                activityHome.onRefresh();
+                                break;
+
+                            case "activities.ImportActivity":
+                                ImportActivity activityImport = (ImportActivity) Util.getInstance().getCurrentActivity();
+                                activityImport.reloadListImport(true);
+                                break;
+
+                        }
+
+                    }
+                });
+
+            }else {
+                CustomTopDialog.showTextNotify("Notify", tag, null);
+            }
+
         }
 
 

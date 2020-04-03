@@ -13,18 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.apiconnect.ProductConnect;
-import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackClickAdapter;
-import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.models.User;
-import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
@@ -52,7 +45,7 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
 
     @Override
     public WarehouseAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mLayoutInflater.inflate(R.layout.adapter_depot_item, parent, false);
+        View itemView = mLayoutInflater.inflate(R.layout.adapter_warehouse_item, parent, false);
         return new WarehouseAdapterViewHolder(itemView);
     }
 
@@ -67,12 +60,12 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
     public void onBindViewHolder(final WarehouseAdapterViewHolder holder, final int position) {
         holder.tvGroupName.setText(String.format("%s (%d)",mData.get(position).getString("name"),
                                                                     mData.get(position).getInt("quantity")));
-        holder.tvUsername.setText(Util.getIconString(R.string.icon_username, mData.get(position).getBaseModel("user").getString("displayName")));
+        holder.tvUsername.setText(Util.getIconString(R.string.icon_username, "   ", mData.get(position).getBaseModel("user").getString("displayName")));
 
         if (Util.isAdmin() || mData.get(position).getInt("user_id") == User.getId()){
             holder.tvInfo.setVisibility(View.VISIBLE);
         }else {
-            holder.tvInfo.setVisibility(View.INVISIBLE);
+            holder.tvInfo.setVisibility(View.GONE);
         }
 
         switch (mData.get(position).getInt("isMaster")){
@@ -103,6 +96,8 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
                 mListenerInfo.onResponse(mData.get(position));
             }
         });
+
+        holder.line.setVisibility(position == mData.size()-1? View.GONE: View.VISIBLE);
 
 //        holder.lnParent.setOnLongClickListener(new View.OnLongClickListener() {
 //            @Override
@@ -146,6 +141,7 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
         private TextView tvGroupName, tvType;
         private CTextIcon tvInfo, tvUsername;
         private RelativeLayout lnParent;
+        private View line;
 
         public WarehouseAdapterViewHolder(View itemView) {
             super(itemView);
@@ -154,6 +150,7 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
             tvType = (TextView) itemView.findViewById(R.id.depot_item_depottype);
             tvInfo = itemView.findViewById(R.id.depot_item_depotinfo);
             lnParent = (RelativeLayout) itemView.findViewById(R.id.depot_item_parent);
+            line = itemView.findViewById(R.id.depot_item_seperateline);
 
         }
 

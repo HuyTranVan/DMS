@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -22,8 +21,6 @@ import wolve.dms.R;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CTextIcon;
-import wolve.dms.models.ProductGroup;
-import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
 
 
@@ -35,17 +32,17 @@ public class ViewpagerMultiListAdapter extends PagerAdapter {
     private Context mContext;
     private LayoutInflater inflater;
     private List<RecyclerView.Adapter> listAdapter = new ArrayList<>();
-    private String[] listTitle;
-    private boolean[] listViewSearch;
-    private View view;
-    private CallbackClickAdapter mListner;
+    private List<String> listTitle;
+    private boolean[] showSearches;
+    private List<View> views = new ArrayList<>();
+    private CallbackClickAdapter mListener;
 
-    public ViewpagerMultiListAdapter(List<RecyclerView.Adapter> listAdapter, String[] listtitle, boolean[] viewsearch, CallbackClickAdapter listener){
+    public ViewpagerMultiListAdapter(List<RecyclerView.Adapter> listAdapter, List<String>  listtitle, boolean[] viewsearch, CallbackClickAdapter listener){
         this.mContext = Util.getInstance().getCurrentActivity();
         this.listAdapter = listAdapter;
         this.listTitle = listtitle;
-        this.listViewSearch = viewsearch;
-        this.mListner = listener;
+        this.showSearches = viewsearch;
+        this.mListener = listener;
 
     }
 
@@ -59,16 +56,27 @@ public class ViewpagerMultiListAdapter extends PagerAdapter {
         return (view ==(LinearLayout)object);
     }
 
+    public void showSearch(int position, boolean isShow){
+        showSearches[position]= isShow;
+
+
+    }
+
+    public View getView(int position) {
+        return views.get(position);
+    }
+
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         inflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        view = inflater.inflate(R.layout.adapter_customer_viewpager_item,container,false);
+        View view = inflater.inflate(R.layout.adapter_customer_viewpager_item,container,false);
+        views.add(view);
         RecyclerView rvList = (RecyclerView) view.findViewById(R.id.customer_viewpager_item_rv);
         RelativeLayout lnSearch = (RelativeLayout) view.findViewById(R.id.search_parent);
         EditText edSearch = view.findViewById(R.id.search_text);
         CTextIcon tvIconSearch = view.findViewById(R.id.search_icon);
 
-        lnSearch.setVisibility(listViewSearch[position]?View.VISIBLE : View.GONE);
+        lnSearch.setVisibility(showSearches[position]?View.VISIBLE : View.GONE);
         Util.createLinearRV(rvList, listAdapter.get(position));
 
         edSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -82,9 +90,8 @@ public class ViewpagerMultiListAdapter extends PagerAdapter {
         Util.textEvent(edSearch, new CallbackString() {
             @Override
             public void Result(String s) {
-                tvIconSearch.setText(Util.isEmpty(s)? mContext.getResources().getString(R.string.icon_search)
-                        : mContext.getResources().getString(R.string.icon_x));
-                mListner.onRespone(s, position);
+                tvIconSearch.setText(Util.isEmpty(s)? mContext.getResources().getString(R.string.icon_search) : mContext.getResources().getString(R.string.icon_x));
+                mListener.onRespone(s, position);
 
             }
         });
@@ -107,9 +114,11 @@ public class ViewpagerMultiListAdapter extends PagerAdapter {
         container.refreshDrawableState();
     }
 
+
+
     @Override
     public CharSequence getPageTitle(int position) {
-        return listTitle[position];
+        return listTitle.get(position);
     }
 
     //fix recyclerview scroll

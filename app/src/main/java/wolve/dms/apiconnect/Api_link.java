@@ -7,6 +7,7 @@ import java.util.Map;
 
 import wolve.dms.BuildConfig;
 import wolve.dms.R;
+import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
 
 /**
@@ -14,7 +15,9 @@ import wolve.dms.utils.Util;
  */
 
 public class Api_link {
-    public final static String BASE_URL = BuildConfig.SERVER_URL;
+    public final static String BASE_URL= BuildConfig.SERVER_URL;
+//    public final static String BASE_URL= "http://192.168.1.8/";
+
     public final static String BASE_PHOTO_URL = BuildConfig.UPLOAD_URL;
     public final static String MAP_API = "https://maps.googleapis.com/maps/api/";
     public final static String LUB_LINK = "http://dmslub.com?";
@@ -63,6 +66,8 @@ public class Api_link {
     public final static String INVENTORIES = BASE_URL + "token/inventories";
 
     public final static String IMPORT_NEW = BASE_URL + "token/import/create_or_update";
+    public final static String IMPORTS = BASE_URL + "token/warehouse/ImportList";
+    public final static String IMPORT_DELETE = BASE_URL + "token/warehouse/ImportDelete?id=";
 
     public final static String PRODUCTS = BASE_URL + "token/products";
     public final static String PRODUCT_NEW = BASE_URL + "token/product/create_or_update";
@@ -100,6 +105,7 @@ public class Api_link {
 
     public final static String CHECKIN_NEW = BASE_URL + "token/customer/checkin";
     public final static String SCHECKIN_CREATE_PARAM ="customer_id=%d&rating=%d&note=%s&user_id=%d&nextVisit=%d&meetOwner=%d";
+    public final static String CHECKIN_DELETE = BASE_URL + "token/customer/CheckinDelete?id=";
 
     public final static String CHECK_LOGIN = BASE_URL + "token/checklogin";
     public final static String CATEGORIES = BASE_URL + "token/categories";
@@ -119,6 +125,7 @@ public class Api_link {
     public final static String PAYMENTS = BASE_URL + "token/payments";
     public final static String PAY_PARAM ="customerId=%d&paid=%s&billId=%d&userId=%d&note=%s&payByReturn=%d&user_collect=%d";
     public final static String PAYMENTS_PARAM ="?from=%s&to=%s";
+    public final static String PAYMENT_DELETE = BASE_URL + "token/bill/PaymentDelete?id=";
 
     public final static String DEBT_NEW = BASE_URL + "token/debt/create_or_update";
     public final static String DEBT_PARAM ="debt=%s&user_id=%d&customer_id=%d&distributor_id=%d";

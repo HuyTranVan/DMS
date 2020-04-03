@@ -353,7 +353,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
                         @Override
                         public void onRespone(Boolean bool) {
                             if (bool){
-                                postBilltoServer(result);
+                                postBilltoServer(result, "");
                             }
 
 
@@ -463,7 +463,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
                             CustomCenterDialog.alertWithCancelButton2("TIẾP TỤC", "In thêm hoặc tiếp tục thanh toán", "TIẾP TỤC", "IN LẠI", new CustomCenterDialog.ButtonCallback() {
                                 @Override
                                 public void Submit(Boolean boolSubmit) {
-                                    postBilltoServer(listPayments);
+                                    postBilltoServer(listPayments, "");
 
                                 }
 
@@ -530,7 +530,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
     }
 
-    private void postBilltoServer(final List<BaseModel> listPayments) {
+    private void postBilltoServer(final List<BaseModel> listPayments, String note) {
         String params = "";
 
         if (currentBill.isNull(Constants.DELIVER_BY) && currentBill.getInt("id") != 0){
@@ -545,7 +545,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
                     adapterBill.getTotalMoney(),
                     0.0,
                     DataUtil.array2ListObject(currentBill.getString(Constants.BILL_DETAIL)),
-                    currentCustomer.getString("note"),
+                    note,
                     User.getId(),
                     0);
         }

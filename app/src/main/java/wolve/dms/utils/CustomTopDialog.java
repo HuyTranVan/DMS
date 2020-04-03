@@ -20,6 +20,7 @@ import wolve.dms.R;
 import wolve.dms.activities.HomeActivity;
 import wolve.dms.adapter.ItemAdapter;
 import wolve.dms.callback.CallbackBaseModel;
+import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 
@@ -30,23 +31,23 @@ import wolve.dms.models.BaseModel;
 public class CustomTopDialog {
     public static DialogPlus dialog;
 
-    public static void showTextNotify(String title, String text){
+    public static void showTextNotify(String title, String text, CallbackBoolean dissmis){
         Util.getInstance().getCurrentActivity().runOnUiThread(new Runnable() {
             public void run() {
                 dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
                         .setContentHolder(new ViewHolder(R.layout.view_top_notify))
                         .setGravity(Gravity.TOP)
                         .setBackgroundColorResId(R.drawable.bg_corner5_white)
-                        .setMargin(Util.convertSdpToInt(R.dimen._10sdp),//left
+                        .setMargin(Util.convertSdpToInt(R.dimen._5sdp),//left
                                 Util.convertSdpToInt(R.dimen._5sdp), //top
-                                Util.convertSdpToInt(R.dimen._10sdp), //right
+                                Util.convertSdpToInt(R.dimen._5sdp), //right
                                 Util.convertSdpToInt(R.dimen._5sdp)) //bottom
                         .setOverlayBackgroundResource(R.color.black_text_color_hint)
                         .setInAnimation(R.anim.slide_down)
                         .setOnDismissListener(new OnDismissListener() {
                             @Override
                             public void onDismiss(DialogPlus dialog) {
-                                Util.showToast("xong");
+                                dissmis.onRespone(true);
                             }
                         }).setOnBackPressListener(new OnBackPressListener() {
                             @Override

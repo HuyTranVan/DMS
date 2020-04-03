@@ -17,8 +17,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackCustom;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
+import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
@@ -31,11 +36,13 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.PrintBil
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
+    private CallbackBoolean mListener;
 
-    public PaymentAdapter(List<BaseModel> list) {
+    public PaymentAdapter(List<BaseModel> list, CallbackBoolean listener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mData = list;
+        this.mListener = listener;
 
         DataUtil.sortbyStringKey("createAt", mData, true);
 
@@ -70,13 +77,18 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.PrintBil
         holder.tvTotal.setText(String.format("%s %s đ",mData.get(position).getDouble("paid") <0.0? "-" : "+",
                 mData.get(position).getDouble("paid") <0.0? Util.FormatMoney(mData.get(position).getDouble("paid") *-1) :Util.FormatMoney(mData.get(position).getDouble("paid"))));
 
-//        String user = mData.get(position).getBaseModel("user").getString("displayName");
-//        holder.tvName.setText(user);
-
-        String user = Util.getIconString(R.string.icon_username,mData.get(position).getBaseModel("user").getString("displayName"));
+        String user = Util.getIconString(R.string.icon_username, "   ", mData.get(position).getBaseModel("user").getString("displayName"));
         String collect = mData.get(position).getInt("user_id") != mData.get(position).getInt("user_collect")?
                 String.format(" (%s thu hộ)",mData.get(position).getBaseModel("collect_by").getString("displayName") ) : "";
         holder.tvName.setText(user + collect);
+        holder.tvDelete.setVisibility(Util.isAdmin()? View.VISIBLE: View.GONE);
+        holder.tvDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                deletePayment(position);
+
+            }
+        });
     }
 
     @Override
@@ -99,15 +111,48 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.PrintBil
     public class PrintBillViewHolder extends RecyclerView.ViewHolder {
         private TextView tvDate, tvTotal  ;
         private View vLine;
-        private CTextIcon tvName;
+        private CTextIcon tvName, tvDelete;
 
         public PrintBillViewHolder(View itemView) {
             super(itemView);
             tvDate = (TextView) itemView.findViewById(R.id.payment_item_date);
             tvTotal = (TextView) itemView.findViewById(R.id.payment_item_total);
             tvName = (CTextIcon) itemView.findViewById(R.id.payment_item_name);
+            tvDelete = itemView.findViewById(R.id.payment_item_delete);
             vLine = itemView.findViewById(R.id.item_seperateline);
         }
+
+    }
+
+    private void deletePayment(int pos){
+        CustomCenterDialog.alertWithCancelButton(null, String.format("Xác nhận xóa thanh toán số tiền %s", Util.FormatMoney(mData.get(pos).getDouble("paid"))) ,
+                "ĐỒNG Ý","HỦY", new CallbackBoolean() {
+            @Override
+            public void onRespone(Boolean result) {
+                CustomerConnect.DeletePayment(mData.get(pos).getString("id"), new CallbackCustom() {
+                    @Override
+                    public void onResponse(BaseModel result) {
+                        if (result.getBoolean("deleted")){
+                            Util.getInstance().stopLoading(true);
+                            Util.showToast("Xóa thành công!");
+                            mListener.onRespone(true);
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        Util.getInstance().stopLoading(true);
+                        Constants.throwError(error);
+
+                    }
+
+
+                }, true);
+            }
+        });
+
 
     }
 

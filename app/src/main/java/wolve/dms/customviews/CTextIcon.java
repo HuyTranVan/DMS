@@ -50,6 +50,16 @@ public class CTextIcon extends AppCompatTextView {
         return true;
     }
 
+//    public void setFocusable(boolean value){
+//        if (value){
+//            edInput.setFocusable(true);
+//            edInput.setFocusableInTouchMode(true);
+//
+//        }else {
+//            edInput.setFocusable(false);
+//        }
+//    }
+
 
 
 //    private void setCustomTextColor(Context ctx, AttributeSet attrs) {

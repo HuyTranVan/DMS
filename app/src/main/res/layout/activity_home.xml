@@ -174,44 +174,90 @@
                 android:layout_below="@+id/home_user"
                 android:visibility="gone"/>
 
-            <RelativeLayout
-                android:id="@+id/home_tempbill_group"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/btn_round_white_border_blue"
+                android:orientation="vertical"
                 android:layout_alignParentBottom="true"
-                android:layout_margin="@dimen/_10sdp"
-                android:paddingLeft="@dimen/_10sdp"
-                android:paddingRight="@dimen/_10sdp"
-                android:paddingTop="@dimen/_5sdp"
-                android:paddingBottom="@dimen/_5sdp"
-                android:visibility="gone">
+                android:layout_margin="@dimen/_10sdp">
 
-
-                <TextView
-                    android:id="@+id/home_tempbill_number"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/_16sdp"
-                    android:minWidth="@dimen/_16sdp"
-                    android:background="@drawable/btn_oval_blue"
-                    android:textColor="@color/colorWhite"
-                    android:text="00"
-                    android:textSize="@dimen/_10sdp"
-                    android:gravity="center"
-                    android:layout_centerVertical="true"/>
-
-                <TextView
+                <RelativeLayout
+                    android:id="@+id/home_tempimport_group"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Hóa đơn chưa giao"
-                    android:layout_toRightOf="@+id/home_tempbill_number"
-                    android:layout_marginLeft="@dimen/_10sdp"
-                    android:textSize="@dimen/_12sdp"
-                    android:textColor="@color/black_text_color"
-                    android:textStyle="bold|italic"/>
+                    android:background="@drawable/btn_round_white_border_orange"
+                    android:paddingLeft="@dimen/_10sdp"
+                    android:paddingRight="@dimen/_10sdp"
+                    android:paddingTop="@dimen/_5sdp"
+                    android:paddingBottom="@dimen/_5sdp"
+                    android:visibility="gone">
 
 
-            </RelativeLayout>
+                    <TextView
+                        android:id="@+id/home_tempimport_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/_16sdp"
+                        android:minWidth="@dimen/_16sdp"
+                        android:background="@drawable/btn_oval_orange"
+                        android:textColor="@color/colorWhite"
+                        android:text="00"
+                        android:textSize="@dimen/_10sdp"
+                        android:gravity="center"
+                        android:layout_centerVertical="true"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Chờ nhập kho"
+                        android:layout_toRightOf="@+id/home_tempimport_number"
+                        android:layout_marginLeft="@dimen/_10sdp"
+                        android:textSize="@dimen/_12sdp"
+                        android:textColor="@color/black_text_color"
+                        android:textStyle="bold|italic"/>
+
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/home_tempbill_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/btn_round_white_border_blue"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:paddingLeft="@dimen/_10sdp"
+                    android:paddingRight="@dimen/_10sdp"
+                    android:paddingTop="@dimen/_5sdp"
+                    android:paddingBottom="@dimen/_5sdp"
+                    android:visibility="gone">
+
+
+                    <TextView
+                        android:id="@+id/home_tempbill_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/_16sdp"
+                        android:minWidth="@dimen/_16sdp"
+                        android:background="@drawable/btn_oval_blue"
+                        android:textColor="@color/colorWhite"
+                        android:text="00"
+                        android:textSize="@dimen/_10sdp"
+                        android:gravity="center"
+                        android:layout_centerVertical="true"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Hóa đơn chưa giao"
+                        android:layout_toRightOf="@+id/home_tempbill_number"
+                        android:layout_marginLeft="@dimen/_10sdp"
+                        android:textSize="@dimen/_12sdp"
+                        android:textColor="@color/black_text_color"
+                        android:textStyle="bold|italic"/>
+
+
+                </RelativeLayout>
+            </LinearLayout>
+
+
 
 
         </RelativeLayout>

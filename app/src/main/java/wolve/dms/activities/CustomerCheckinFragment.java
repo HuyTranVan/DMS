@@ -21,6 +21,7 @@ import wolve.dms.R;
 import wolve.dms.adapter.CartProductDialogAdapter;
 import wolve.dms.adapter.Customer_CheckinsAdapter;
 import wolve.dms.adapter.ViewpagerShopcartAdapter;
+import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Util;
@@ -29,7 +30,7 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class CheckinFragment extends Fragment implements View.OnClickListener {
+public class CustomerCheckinFragment extends Fragment implements View.OnClickListener {
     private View view;
     private RecyclerView rvCheckin;
 
@@ -75,12 +76,20 @@ public class CheckinFragment extends Fragment implements View.OnClickListener {
                 break;
 
 
-
         }
     }
 
     private void createRVCheckin(List<BaseModel> list){
-        adapter = new Customer_CheckinsAdapter(list);
+        adapter = new Customer_CheckinsAdapter(list, new CallbackBoolean() {
+            @Override
+            public void onRespone(Boolean result) {
+                if (result){
+                    mActivity.reloadCustomer(mActivity.currentCustomer.getString("id"));
+
+                }
+
+            }
+        });
         Util.createLinearRV(rvCheckin, adapter);
     }
 

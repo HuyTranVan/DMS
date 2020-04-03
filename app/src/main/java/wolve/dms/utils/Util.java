@@ -1581,8 +1581,8 @@ public class Util {
 
     }
 
-    public static String getIconString( int icon, String text){
-        return  getInstance().getCurrentActivity().getResources().getString(icon)+ "   "+ text;
+    public static String getIconString( int icon, String blank, String text){
+        return  getInstance().getCurrentActivity().getResources().getString(icon)+ blank+ text;
 
     }
 

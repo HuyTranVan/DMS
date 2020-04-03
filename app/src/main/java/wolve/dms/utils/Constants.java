@@ -70,6 +70,7 @@ public class Constants {
     public static final String TYPE = "type";
     public static final String BILL_RETURN = "bill_return";
     public static final String BILL_DELETE = "bill_delete";
+    public static final String PAYMENT_DELETE = "payment_delete";
     public static final String BILL_PAY = "bill_pay";
     public static final String BILL_DELIVER = "bill_deliver";
 
@@ -151,6 +152,7 @@ public class Constants {
     public static final String ALL_TOTAL = "all total";
     public static final String ALL_DEBT = "all debt";
     public static final String FCM_TOKEN = "fcm_token";
+    public static final String PRODUCT_POPULAR = "product_popular";
 
     public static String CHECK_ALL = Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_check) + " CHỌN TẤT CẢ";
     public static String UNCHECK = "BỎ CHỌN";

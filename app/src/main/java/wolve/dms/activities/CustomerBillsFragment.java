@@ -97,6 +97,10 @@ public class CustomerBillsFragment extends Fragment implements View.OnClickListe
                         mActivity.reloadCustomer(mActivity.currentCustomer.getString("id"));
                         break;
 
+                    case Constants.PAYMENT_DELETE:
+                        mActivity.reloadCustomer(mActivity.currentCustomer.getString("id"));
+                        break;
+
 
                 }
             }

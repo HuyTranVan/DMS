@@ -10,7 +10,6 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -32,7 +31,6 @@ import wolve.dms.adapter.Customer_ViewpagerAdapter;
 import wolve.dms.adapter.FilterChoiceAdapter;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
-import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDouble;
@@ -342,7 +340,10 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 if (listBills.size() > 0) {
                     Util.showToast("Không thể xóa khách hàng đã có hóa đơn");
 
-                } else {
+                } else if (listCheckins.size() >0){
+                    Util.showToast("Không thể xóa khách hàng có checkin");
+
+                } else{
                     deleteCustomer();
 
                 }
@@ -414,39 +415,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     }
 
-    private void submitCustomerAndCheckin(final String statusNote){
-//        if (checkInputField()){
-//            CustomerConnect.CreateCustomer(createParamCustomer(getCurrentCustomer()), new CallbackCustom() {
-//                @Override
-//                public void onResponse(BaseModel result) {
-//                    submitCheckin(result, statusNote);
-//                }
-//
-//                @Override
-//                public void onError(String error) {
-//
-//                }
-//            }, false);
-//        }
-
-    }
-
-//    private void submitCheckin(final BaseModel customer, String checkinNote){
-//        CustomerConnect.PostCheckin(createParamCheckin(customer, checkinNote), new CallbackCustom() {
-//
-//            @Override
-//            public void onResponse(BaseModel result) {
-//                returnPreviousScreen(customer.BaseModelstoString());
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }, true);
-//
-//    }
-
     private void deleteCustomer(){
         CustomCenterDialog.alertWithCancelButton(null, String.format("Xóa khách hàng %s", tvTitle.getText().toString()) , "ĐỒNG Ý","HỦY", new CallbackBoolean() {
             @Override
@@ -490,7 +458,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         } else if(mFragment != null && mFragment instanceof CustomerEditMapFragment) {
             getSupportFragmentManager().popBackStack();
 
-        }else if(mFragment != null && mFragment instanceof CheckinFragment) {
+        }else if(mFragment != null && mFragment instanceof CustomerCheckinFragment) {
             getSupportFragmentManager().popBackStack();
 
         } else if(tabLayout.getSelectedTabPosition() !=0){
@@ -574,17 +542,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
             }
         }, false);
     }
-
-//    protected void reshowAdd(BaseModel add){
-//        infoFragment.reshowAddress(add);
-////        tvAddress.setText(String.format(Constants.addressFormat,
-////                add.getString("address"),
-////                add.getString("street"),
-////                add.getString("district"),
-////                add.getString("province")));
-//
-//
-//    }
 
     protected void openReturnFragment(BaseModel bill){
         currentBill = bill;
@@ -709,8 +666,10 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     }
 
     protected void printTempBill(BaseModel bill){
-        Transaction.checkInventoryBeforePrintBill(bill, DataUtil.array2ListObject(bill.getString(Constants.BILL_DETAIL)));
-        //Transaction.gotoPrintBillActivity(bill, false);
+        Transaction.checkInventoryBeforePrintBill(bill,
+                DataUtil.array2ListObject(bill.getString(Constants.BILL_DETAIL)),
+                User.getCurrentUser().getInt("warehouse_id"));
+
 
     }
 
@@ -727,11 +686,11 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 if (distance < Constants.CHECKIN_DISTANCE){
                     tvCheckInStatus.setText(String.format("Đang trong phạm vi cửa hàng ~%sm", Math.round(distance)));
                     threadShowTime.start();
-                    infoFragment.tvCheckin.setText(Util.getIconString(R.string.icon_district, "Checkin - Ghi chú" ));
+                    infoFragment.tvCheckin.setText(Util.getIconString(R.string.icon_district, "   ", "Checkin - Ghi chú" ));
 
                 }else {
                     tvCheckInStatus.setText(String.format("Đang bên ngoài cửa hàng ~%s", distance >1000? Math.round(distance)/1000 +"km": Math.round(distance) + "m"));
-                    infoFragment.tvCheckin.setText(Util.getIconString(R.string.icon_note, "Thêm ghi chú" ));
+                    infoFragment.tvCheckin.setText(Util.getIconString(R.string.icon_note, "   ","Thêm ghi chú" ));
                 }
 
             }

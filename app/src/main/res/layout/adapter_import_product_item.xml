@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/import_product_item_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/_5sdp"
+    android:layout_marginLeft="@dimen/_5sdp"
+    android:layout_marginRight="@dimen/_5sdp"
+    app:cardElevation="@dimen/_2sdp"
+    app:cardCornerRadius="@dimen/_5sdp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:minHeight="@dimen/_20sdp"
+            android:background="@color/colorGrey"
+            android:paddingLeft="@dimen/_10sdp"
+            android:paddingRight="@dimen/_5sdp"
+            android:gravity="center_vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/import_product_item_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="a"
+                    android:textColor="@color/black_text_color_hint"
+                    android:textSize="@dimen/_10sdp"/>
+
+                <wolve.dms.customviews.CTextIcon
+                    android:id="@+id/import_product_item_user"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/import_product_item_title"
+                    android:layout_marginLeft="@dimen/_20sdp"
+                    android:layout_centerVertical="true"
+                    android:textSize="@dimen/_10sdp"
+                    android:textColor="@color/black_text_color_hint"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_alignParentRight="true">
+
+                    <wolve.dms.customviews.CTextIcon
+                        android:id="@+id/import_product_item_copy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?selectableItemBackgroundBorderless"
+                        android:layout_centerVertical="true"
+                        android:text="@string/icon_copy"
+                        android:textSize="@dimen/_10sdp"
+                        android:textColor="@color/black_text_color_hint"
+                        android:padding="@dimen/_5sdp"
+                        android:layout_marginRight="@dimen/_5sdp"/>
+
+                    <wolve.dms.customviews.CTextIcon
+                        android:id="@+id/import_product_item_delete"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?selectableItemBackgroundBorderless"
+                        android:layout_centerVertical="true"
+                        android:text="@string/icon_delete"
+                        android:textSize="@dimen/_10sdp"
+                        android:textColor="@color/black_text_color_hint"
+
+                        android:padding="@dimen/_5sdp"/>
+                </LinearLayout>
+
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="@dimen/_5sdp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/_10sdp"
+                    android:text="Chuyển từ kho: "/>
+
+                <wolve.dms.customviews.CTextIcon
+                    android:id="@+id/import_product_item_warehouse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black_text_color"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="@dimen/_10sdp"/>
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/import_product_item_rvproduct"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_2sdp"
+            android:clipToPadding="true"/>
+
+        <wolve.dms.customviews.CTextIcon
+            android:id="@+id/import_product_item_accept"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackground"
+            android:text="&#xf00d;  CHƯA DUYỆT"
+            android:textStyle="italic"
+            android:layout_gravity="center"
+            android:padding="@dimen/_5sdp"
+            android:textColor="@color/black_text_color_hint"
+            />
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
+
+
+

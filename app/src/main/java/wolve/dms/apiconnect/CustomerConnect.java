@@ -295,6 +295,105 @@ public class CustomerConnect {
         }).execute();
     }
 
+    public static void DeleteCheckin(String params,final CallbackCustom listener, Boolean showLoading){
+        if (showLoading){
+            Util.getInstance().showLoading();
+        }
+
+        String url = Api_link.CHECKIN_DELETE + params;
+
+        new CustomGetMethod(url, new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(true);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
+
+                }else {
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
+            }
+
+        }).execute();
+    }
+
+    public static void DeletePayment(String params,final CallbackCustom listener, Boolean showLoading){
+        if (showLoading){
+            Util.getInstance().showLoading();
+        }
+
+        String url = Api_link.PAYMENT_DELETE + params;
+
+        new CustomGetMethod(url, new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(true);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
+
+                }else {
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
+            }
+
+        }).execute();
+    }
+
+    public static void DeleteImport(String params,final CallbackCustom listener, Boolean showLoading){
+        if (showLoading){
+            Util.getInstance().showLoading();
+        }
+
+        String url = Api_link.IMPORT_DELETE + params;
+
+        new CustomGetMethod(url, new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(true);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
+
+                }else {
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
+            }
+
+        }).execute();
+    }
+
     public static void PostBill(String params, final CallbackCustom listener, final Boolean stopLoading) {
         Util.getInstance().showLoading();
 
@@ -478,37 +577,6 @@ public class CustomerConnect {
         }).execute();
     }
 
-//    public static void DeleteBill(String params,final CallbackCustom listener, final Boolean stopLoading){
-//        Util.getInstance().showLoading();
-//
-//        String url = Api_link.BILL_DELETE + params;
-//
-//        new CustomDeleteMethod(url, new Callback() {
-//
-//            @Override
-//            public void onResponse(JSONObject result) {
-//                Util.getInstance().stopLoading(stopLoading);
-//                try {
-//                    if (result.getInt("status") == 200) {
-//                        listener.onResponse(new BaseModel(result));
-//
-//                    } else {
-//                        listener.onError("Unknow error");
-//                    }
-//                } catch (JSONException e) {
-//                    listener.onError(e.toString());
-//                    Util.getInstance().stopLoading(true);
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//                listener.onError(error);
-//                Util.getInstance().stopLoading(true);
-//            }
-//        }).execute();
-//    }
 
     public static void DeleteListBill(List<String> listParams, final CallbackListCustom listener, final Boolean stopLoading) {
         Util.getInstance().showLoading();
@@ -563,28 +631,6 @@ public class CustomerConnect {
 
             }
 
-//            @Override
-//            public void onResponse(JSONObject result) {
-//                Util.getInstance().stopLoading(stopLoading);
-//                try {
-//                    if (result.getInt("status") == 200) {
-//                        listener.onResponse(result.getJSONArray("data"));
-//
-//                    } else {
-//                        listener.onError("Unknow error");
-//                    }
-//                } catch (JSONException e) {
-//                    listener.onError(e.toString());
-//                    Util.getInstance().stopLoading(true);
-//                }
-//            }
-//
-//
-//            @Override
-//            public void onError(String error) {
-//                listener.onError(error);
-//                Util.getInstance().stopLoading(true);
-//            }
         }).execute();
     }
 
@@ -618,26 +664,37 @@ public class CustomerConnect {
 
             }
 
-//            @Override
-//            public void onResponse(JSONObject result) {
-//                Util.getInstance().stopLoading(stopLoading);
-//                try {
-//                    if (result.getInt("status") == 200) {
-//                        listener.onResponse(result.getJSONArray("data"));
-//
-//                    } else {
-//                        listener.onError("Unknow error");
-//                    }
-//                } catch (JSONException e) {
-//                    listener.onError(e.toString());
-//                }
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//                listener.onError(error);
-//                Util.getInstance().stopLoading(stopLoading);
-//            }
+
+        }).execute();
+    }
+
+    public static void ListImport(String param, final CallbackCustomList listener, final Boolean loading){
+        if (loading){
+            Util.getInstance().showLoading();
+        }
+        new CustomGetMethod(Api_link.IMPORTS + param, new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(true);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeArraySuccess(result));
+
+                }else {
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
+            }
+
         }).execute();
     }
 

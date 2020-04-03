@@ -241,7 +241,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?selectableItemBackground"
-                android:text="&#xf1da;     Lịch sử ghé cửa hàng"
                 android:textColor="@color/colorBlue"
                 android:textSize="@dimen/_12sdp"
                 android:padding="@dimen/_10sdp"/>
@@ -256,7 +255,6 @@
                 android:textColor="@color/black_text_color"
                 android:textStyle="italic"
                 android:textSize="@dimen/_12sdp"
-                android:paddingTop="@dimen/_5sdp"
                 android:paddingLeft="@dimen/_5sdp"
                 android:paddingRight="@dimen/_5sdp"/>
 
@@ -273,7 +271,7 @@
                 android:paddingLeft="@dimen/_15sdp"
                 android:paddingRight="@dimen/_15sdp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/_20sdp"/>
+                android:layout_marginTop="@dimen/_10sdp"/>
 
         </LinearLayout>
 

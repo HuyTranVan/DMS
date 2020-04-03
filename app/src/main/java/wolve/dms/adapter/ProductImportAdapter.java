@@ -41,6 +41,8 @@ import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomInputDialog;
+import wolve.dms.utils.CustomSQL;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 
@@ -215,7 +217,7 @@ public class ProductImportAdapter extends RecyclerView.Adapter<ProductImportAdap
     }
 
     public void updateData(List<BaseModel> list){
-        baseData = list;
+        baseData = DataUtil.getProductPopular(list);
         mData = baseData;
         notifyDataSetChanged();
 

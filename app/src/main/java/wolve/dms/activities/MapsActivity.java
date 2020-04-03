@@ -80,7 +80,6 @@ import wolve.dms.utils.MapUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
-
 /**
  * Created by macos on 9/14/17.
  */
@@ -98,15 +97,15 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     private RadioGroup rdFilter;
     private RadioButton rdAll, rdIntersted, rdOrdered;
     private ImageView btnBack, btnClose;
-    private CTextIcon tvLocation, tvReload, tvStatusDot;
+    private CTextIcon tvLocation, tvReload, tvStatusDot, tvStatus, tvCheckin, tvDistance;
     private EditText edSearch;
     private CoordinatorLayout coParent;
     private SmoothProgressBar progressLoading;
     private RelativeLayout rlSearchLayout, btnListWating;
     private RecyclerView rvSearch;
-    private LinearLayout lnSheetBody, lnBottomSheet, lnCheckin ;
+    private LinearLayout lnSheetBody, lnBottomSheet ;
     private CButton btnDirection, btnCall, btnShare, btnAddList;
-    private TextView tvShopname, tvAddress, tvCheckin, tvDistance, tvStatus, tvTempBill, tvListWating;
+    private TextView tvShopname, tvAddress, tvTempBill, tvListWating;
 
     private Handler mHandlerMoveMap = new Handler();
     private Handler mHandlerSearch = new Handler();
@@ -156,7 +155,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         lnBottomSheet = (LinearLayout) findViewById(R.id.map_bottom_sheet);
         tvShopname = findViewById(R.id.map_detail_shopname);
         tvAddress = findViewById(R.id.map_detail_address);
-        lnCheckin = findViewById(R.id.map_detail_checkin_group);
         tvCheckin = findViewById(R.id.map_detail_checkin_text);
         btnCall = findViewById(R.id.map_detail_call);
         btnDirection = findViewById(R.id.map_detail_direction);
@@ -676,7 +674,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             return Constants.MARKER_ORDERED;
 
         }
-        //return s;
+
     }
 
     private void unsetCurrentMarker(){
@@ -879,39 +877,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
         reUpdateMarkerDetail(customer);
 
-//        unsetCurrentMarker();
-//        addMarkerToList(customer);
-//
-//        if (currentMarker.getTag() != null) {
-//            getDistanceFromCurrent(customer.getDouble("lat"), customer.getDouble("lng"), new CallbackLong() {
-//                @Override
-//                public void onResponse(Long value) {
-//                    Bitmap bitmap = MapUtil.GetBitmapMarker(MapsActivity.this, customer.getInt("icon"), customer.getString("checkincount"), R.color.pin_waiting);
-//                    currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()*2,bitmap.getHeight()*2, false)));
-//
-//                    updateBottomDetail(customer, value);
-//                }
-//            });
-//        }
-
-
-
-
-//        Marker mMarker = MapUtil.addMarkerToMap(mMap, buildMarkerByCustomer(customer), Constants.MARKER_ALL);
-//        currentMarker = mMarker;
-//        if (mMarker.getTag() != null) {
-//            getDistanceFromCurrent(customer.getDouble("lat"), customer.getDouble("lng"), new CallbackLong() {
-//                @Override
-//                public void onResponse(Long value) {
-//                    Bitmap bitmap = MapUtil.GetBitmapMarker(MapsActivity.this, customer.getInt("icon"), customer.getString("checkincount"), R.color.pin_waiting);
-//                    currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()*2,bitmap.getHeight()*2, false)));
-//
-//                    updateBottomDetail(customer, value);
-//                }
-//            });
-//
-//        }
-
     }
 
     private void createCustomerFast( String shoptype, String shopname, String phone, Double lat,  Double lng){
@@ -1068,7 +1033,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
         tvShopname.setText(title);
         tvAddress.setText(add);
-        tvDistance.setText(distance >1000? distance/1000 +" km" :distance +" m");
+        tvDistance.setText(Util.getIconString(R.string.icon_car, "  ", distance >1000? distance/1000 +" km" :distance +" m"));
         currentPhone = customer.getString("phone");
         btnCall.setVisibility(currentPhone.equals("")?View.GONE : View.VISIBLE);
 
@@ -1082,7 +1047,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 CustomSQL.setBaseModel(Constants.CUSTOMER, cust);
                 BaseModel customer = buildMarkerByCustomer(cust);
 
-                tvStatus.setText(customer.getString("statusDetail"));
+
                 tvStatusDot.setTextColor(customer.getInt("statusColor"));
                 if (customer.getBoolean("statusInterested")){
                     btnDirection.setBackground(getResources().getDrawable(R.drawable.btn_round_blue));
@@ -1096,18 +1061,23 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
                 }
 
-                List<BaseModel> listbill = DataUtil.array2ListObject(customer.getString(Constants.BILLS));
-                List<BaseModel> listcheckin = DataUtil.array2ListObject(customer.getString(Constants.CHECKINS));
+                if (customer.hasKey("last_time_order")){
+                    tvStatus.setText(String.format("Khách đã mua hàng     %s ngày   %s",
+                            Util.getIconString(R.string.icon_calendar,"  ", customer.getString("last_time_order")),
+                            Util.getIconString(R.string.icon_username, "  ", customer.getString("user_order"))));
 
-                if (listbill.size() >0){
-                    tvStatus.setText(String.format("Khách đã mua hàng - Cách %d ngày", Util.countDay(listbill.get(listbill.size() -1).getLong("createAt"))));
+                }else {
+                    tvStatus.setText(customer.getString("statusDetail"));
                 }
 
-                if (listcheckin.size() >0){
-                    lnCheckin.setVisibility(View.VISIBLE);
-                    tvCheckin.setText(String.format("Checkin %d lần",listcheckin.size()));
+                if (customer.hasKey("last_time_checkin")){
+                    tvCheckin.setVisibility(View.VISIBLE);
+                    tvCheckin.setText(String.format("%s ngày",
+                            Util.getIconString(R.string.icon_district,"  ", customer.getString("last_time_checkin"))));
+
+
                 }else {
-                    lnCheckin.setVisibility(View.GONE);
+                    tvCheckin.setVisibility(View.GONE);
                 }
 
                 tvTempBill.setVisibility (customer.hasKey(Constants.TEMPBILL) ? View.VISIBLE : View.GONE);

@@ -107,19 +107,31 @@ public class DataUtil {
             params.put("warehouse_id", warehouse_id);
             params.put("from_warehouse", from_warehouse);
             params.put("note", Util.encodeString(note));
-
+            params.put("acceptBy", Util.isAdmin()? User.getId(): 0);
 
             JSONArray array = new JSONArray();
             for (int i=0; i< listProduct.size(); i++){
                 JSONObject object = new JSONObject();
                 object.put("id", listProduct.get(i).hasKey("product_id")? listProduct.get(i).getInt("product_id"): listProduct.get(i).getInt("id"));
-                //object.put("name", listProduct.get(i).getString("name"));
                 object.put("quantity", listProduct.get(i).getInt("quantity"));
-                //object.put("purchasePrice", listProduct.get(i).getDouble("purchasePrice"));
 
                 array.put(object);
             }
             params.put("importDetails", (Object) array);
+        } catch (JSONException e) {
+//            e.printStackTrace();
+        }
+
+        return params.toString();
+
+    }
+
+    public static String createUpdateAcceptImportParam(int import_id, int user_id){
+        final JSONObject params = new JSONObject();
+        try {
+            params.put("id", import_id);
+            params.put("acceptBy", user_id);
+
         } catch (JSONException e) {
 //            e.printStackTrace();
         }
@@ -153,8 +165,7 @@ public class DataUtil {
 
         for (int i=0; i<listproduct.size(); i++){
             BaseModel object = new BaseModel();
-            object.put("id", listproduct.get(i).getInt("id"));
-            //object.put("name", model.getString("name"));
+            object.put("id", listproduct.get(i).hasKey("product_id")? listproduct.get(i).getInt("product_id"): listproduct.get(i).getInt("id"));
             object.put("productName", listproduct.get(i).hasKey("productName")? listproduct.get(i).getString("productName"): listproduct.get(i).getString("name"));
             object.put("productQuantity", listproduct.get(i).getInt("quantity"));
             object.put("inventoryQuantity", 0);
@@ -192,7 +203,8 @@ public class DataUtil {
                     String.valueOf(Math.round(list.get(i).getDouble("paid"))),
                     list.get(i).getInt("billId"),
                     list.get(i).getInt("user_id"),
-                    String.valueOf(Math.round(list.get(i).getDouble("billTotal"))),
+                    "",
+                    //String.valueOf(Math.round(list.get(i).getDouble("billTotal"))),
                     payByReturn?1:0,
                     User.getId());
 
@@ -269,6 +281,46 @@ public class DataUtil {
         }
 
         return result;
+    }
+
+    public static void saveProductPopular(List<BaseModel> list){
+        List<BaseModel> products = CustomSQL.getListObject(Constants.PRODUCT_POPULAR);
+        for (BaseModel model: list){
+            boolean check = false;
+            for (BaseModel mProduct: products){
+                if (model.getInt("id") == mProduct.getInt("id")){
+                    mProduct.put("value", mProduct.getInt("value") + 1);
+                    check = true;
+                    break;
+                }
+            }
+            if (!check){
+                BaseModel object = new BaseModel();
+                object.put("id", model.getInt("id"));
+                object.put("value", 1);
+                products.add(object);
+
+            }
+        }
+        CustomSQL.setListBaseModel(Constants.PRODUCT_POPULAR, products);
+
+    }
+
+    public static List<BaseModel> getProductPopular( List<BaseModel>  list){
+        List<BaseModel> products = CustomSQL.getListObject(Constants.PRODUCT_POPULAR);
+        for (BaseModel model: list){
+            model.put("value", 0);
+            for (BaseModel mProduct: products){
+                if (model.getInt("id") == mProduct.getInt("id")){
+                    model.put("value", mProduct.getInt("value"));
+                    break;
+                }
+            }
+
+        }
+        DataUtil.sortbyStringKey("value", list, true);
+        return list;
+
     }
 
     public static List<BaseModel> sortProductGroup(List<BaseModel> list, boolean reverse){
@@ -397,6 +449,21 @@ public class DataUtil {
         customerResult.put("waiting_list", customer.getBoolean("waiting_list"));
 
         List<BaseModel> listOriginalBill= new ArrayList<>(DataUtil.array2ListObject(customer.getString("bills")));
+        List<BaseModel> listCheckin= new ArrayList<>(DataUtil.array2ListObject(customer.getString("checkins")));
+
+        if (listOriginalBill.size()>0){
+            customerResult.put("last_time_order", Util.countDay(listOriginalBill.get(listOriginalBill.size() -1).getLong("createAt")));
+            customerResult.put("user_order", listOriginalBill.get(listOriginalBill.size() -1).getBaseModel("user").getString("displayName"));
+
+        }
+
+        if (listCheckin.size()>0){
+            customerResult.put("count_checkin", listCheckin.size());
+            customerResult.put("last_time_checkin", Util.countDay(listCheckin.get(listCheckin.size() -1).getLong("createAt")));
+            customerResult.put("user_checkin", listCheckin.get(listCheckin.size() -1).getBaseModel("user").getString("displayName"));
+
+        }
+
         if (getTempBill(listOriginalBill) != null){
             customerResult.putBaseModel(Constants.TEMPBILL, getTempBill(listOriginalBill));
         }
@@ -405,7 +472,7 @@ public class DataUtil {
         customerResult.putList(Constants.BILLS, listBill);
         customerResult.putList(Constants.DEBTS, getAllBillHaveDebt(listBill));
         customerResult.putList(Constants.PAYMENTS, remakePayment(DataUtil.array2ListObject(customer.getString("payments"))));
-        customerResult.putList(Constants.CHECKINS, DataUtil.array2ListObject(customer.getString("checkins")));
+        customerResult.putList(Constants.CHECKINS, listCheckin);
 
         return customerResult;
     }
@@ -427,6 +494,28 @@ public class DataUtil {
 
         return listBillByUser;
 
+    }
+
+    public static List<BaseModel> filterListImport(List<BaseModel> list, int id){
+        List<BaseModel> results = new ArrayList<>();
+        for (BaseModel model: list){
+            if (model.getInt("warehouse_id") == id){
+                results.add(model);
+            }
+        }
+        return results;
+    }
+
+    public static List<BaseModel> filterListTempImport(List<BaseModel> list){
+        List<BaseModel> results = new ArrayList<>();
+        for (BaseModel model: list){
+            if (Util.isAdmin()
+                    || User.getId() == model.getBaseModel("fr_warehouse").getInt("user_id")
+                    || User.getId() == model.getBaseModel("warehouse").getInt("user_id")){
+                results.add(model);
+            }
+        }
+        return results;
     }
 
     public static List<BaseModel> remakePayment(List<BaseModel> listpayment){
@@ -850,6 +939,18 @@ public class DataUtil {
         return paramCheckin;
 
     }
+
+    public static BaseModel getImportList(){
+        BaseModel param = new BaseModel();
+        param.put("url", Api_link.IMPORTS);
+        param.put("method", "GET");
+        param.put("isjson", null );
+        param.put("param", null );
+
+        return param;
+
+    }
+
 
     public static BaseModel postDebtParam(String param){
         BaseModel paramDebt = new BaseModel();

@@ -135,7 +135,7 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
                     }
 
                 }else {
-                    Util.showSnackbar("Không thể thực hiện", null, null);
+                    Util.showSnackbar("Chức năng này chỉ do admin thực thiện", null, null);
                 }
 
             }

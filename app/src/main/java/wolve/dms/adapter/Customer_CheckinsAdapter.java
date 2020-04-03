@@ -17,9 +17,15 @@ import java.util.Collections;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackCustom;
 import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Checkin;
+import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomCenterDialog;
+import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
@@ -32,11 +38,13 @@ public class Customer_CheckinsAdapter extends RecyclerView.Adapter<Customer_Chec
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
+    private CallbackBoolean mListener;
 
-    public Customer_CheckinsAdapter(List<BaseModel> list) {
+    public Customer_CheckinsAdapter(List<BaseModel> list, CallbackBoolean listener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mData = list;
+        this.mListener = listener;
 
         DataUtil.sortbyStringKey("create", mData, true);
 
@@ -53,11 +61,45 @@ public class Customer_CheckinsAdapter extends RecyclerView.Adapter<Customer_Chec
         String note = mData.get(position).getInt("meetOwner") == 0?
                 "Không gặp chủ nhà. " + mData.get(position).getString("note") : mData.get(position).getString("note");
         holder.tvContent.setText(note);
-        holder.tvDate.setText(Util.getIconString(R.string.icon_district, Util.DateHourString(mData.get(position).getLong("createAt"))));
-        holder.tvEmployee.setText(Util.getIconString(R.string.icon_username, mData.get(position).getBaseModel("user").getString("displayName")));
+        holder.tvDate.setText(Util.getIconString(R.string.icon_district, "   ",Util.DateHourString(mData.get(position).getLong("createAt"))));
+        holder.tvEmployee.setText(Util.getIconString(R.string.icon_username, "   ",mData.get(position).getBaseModel("user").getString("displayName")));
 
         holder.line.setVisibility(mData.size() -1 == position ?View.GONE : View.VISIBLE );
         holder.tvRating.setText( Util.getStringIcon(mData.get(position).getString("rating"),"", R.string.icon_star));
+        if (Util.isAdmin()){
+            holder.lnParent.setOnLongClickListener(new View.OnLongClickListener() {
+               @Override
+               public boolean onLongClick(View view) {
+                   CustomCenterDialog.alertWithCancelButton(null, String.format("Xác nhận xóa Checkin ngày %s", Util.DateHourString(mData.get(position).getLong("createAt"))) , "ĐỒNG Ý","HỦY", new CallbackBoolean() {
+                       @Override
+                       public void onRespone(Boolean result) {
+                           CustomerConnect.DeleteCheckin(mData.get(position).getString("id"), new CallbackCustom() {
+                               @Override
+                               public void onResponse(BaseModel result) {
+                                   Util.getInstance().stopLoading(true);
+                                   Util.showToast("Xóa thành công!");
+                                   mData.remove(position);
+                                   notifyDataSetChanged();
+                                   mListener.onRespone(true);
+
+                               }
+
+                               @Override
+                               public void onError(String error) {
+                                   Util.getInstance().stopLoading(true);
+                                   Constants.throwError(error);
+
+                               }
+
+
+                           }, true);
+                       }
+                   });
+
+                   return true;
+               }
+            });
+        }
 
     }
 
@@ -74,7 +116,7 @@ public class Customer_CheckinsAdapter extends RecyclerView.Adapter<Customer_Chec
 
         public CheckinsAdapterViewHolder(View itemView) {
             super(itemView);
-            //lnParent = (LinearLayout) itemView.findViewById(R.id.checkins_item_content_parent);
+            lnParent = (LinearLayout) itemView.findViewById(R.id.checkins_item_parent);
             tvDate = (CTextIcon) itemView.findViewById(R.id.checkins_item_date);
             tvRating = (CTextIcon) itemView.findViewById(R.id.checkins_item_rating);
             tvEmployee = (CTextIcon) itemView.findViewById(R.id.checkins_item_employee);

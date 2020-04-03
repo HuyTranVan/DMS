@@ -70,7 +70,7 @@ public class Statistical_PaymentAdapter extends RecyclerView.Adapter<Statistical
         holder.tvsignBoard.setText(Constants.getShopName(customer.getString("shopType") ) + " " + customer.getString("signBoard"));
         holder.tvDistrict.setText(customer.getString("street") + " - " + customer.getString("district"));
 
-        String user = Util.getIconString(R.string.icon_username,mData.get(position).getBaseModel("user").getString("displayName"));
+        String user = Util.getIconString(R.string.icon_username, "   ", mData.get(position).getBaseModel("user").getString("displayName"));
         String collect = mData.get(position).getInt("user_id") != mData.get(position).getInt("user_collect")?
                         String.format(" (%s thu hộ)",mData.get(position).getBaseModel("collect_by").getString("displayName") ) : "";
         holder.tvUser.setText(user + collect);

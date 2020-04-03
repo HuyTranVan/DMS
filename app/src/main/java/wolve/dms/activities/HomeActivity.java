@@ -63,13 +63,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     private RecyclerView rvItems;
     private CTextIcon btnChangeUser;
     private CircleImageView imgUser;
-    private TextView tvFullname , tvCash, tvProfit, tvMonth, tvHaveNewProduct, tvNumberTemp;
+    private TextView tvFullname , tvCash, tvProfit, tvMonth, tvHaveNewProduct, tvNumberTemp, tvNumberTempImport;
     private LinearLayout lnUser;
-    private RelativeLayout lnTempGroup;
+    private RelativeLayout lnTempGroup, lnTempImport;
     private View line;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     protected List<BaseModel> listTempBill = new ArrayList<>();
+    protected List<BaseModel> listTempImport = new ArrayList<>();
     private boolean doubleBackToExitPressedOnce = false;
     private Fragment mFragment;
 
@@ -102,6 +103,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         lnTempGroup = findViewById(R.id.home_tempbill_group);
         tvNumberTemp = findViewById(R.id.home_tempbill_number);
         swipeRefreshLayout = findViewById(R.id.home_refresh);
+        lnTempImport = findViewById(R.id.home_tempimport_group);
+        tvNumberTempImport = findViewById(R.id.home_tempimport_number);
 
     }
 
@@ -127,9 +130,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         checkNewProductUpdated(new CallbackListObject() {
             @Override
             public void onResponse(List<BaseModel> list) {
-                listTempBill = list;
-                updateTempBillVisibility(listTempBill);
-                updateTempBillFragment();
+                updateTempBillVisibility(list);
+                //updateTempBillFragment();
+            }
+        }, new CallbackListObject() {
+            @Override
+            public void onResponse(List<BaseModel> list) {
+                updateTempImportVisibility(list);
             }
         });
         tvMonth.setText(String.format("***Tháng %s:", Util.CurrentMonthYear()));
@@ -179,6 +186,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         lnUser.setOnClickListener(this);
         tvHaveNewProduct.setOnClickListener(this);
         lnTempGroup.setOnClickListener(this);
+        lnTempImport.setOnClickListener(this);
         swipeRefreshLayout.setOnRefreshListener(this);
     }
 
@@ -215,6 +223,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 changeFragment(new TempBillFragment() , true);
                 break;
 
+            case R.id.home_tempimport_group:
+                changeFragment(new TempImportFragment() , true);
+                break;
+
         }
     }
 
@@ -237,6 +249,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 getSupportFragmentManager().popBackStack();
 
             }
+
+        }else if(mFragment != null && mFragment instanceof TempImportFragment) {
+            getSupportFragmentManager().popBackStack();
 
         }else {
             if (doubleBackToExitPressedOnce) {
@@ -495,32 +510,40 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 });
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        checkNewProductUpdated(new CallbackListObject() {
-//            @Override
-//            public void onResponse(List<BaseModel> list) {
-//                listTempBill = list;
-//                updateTempBillVisibility(listTempBill);
-//
-//                if(mFragment != null && mFragment instanceof TempBillFragment){
-//                    ((TempBillFragment) mFragment).reloadData();
-//
-//                }
-//            }
-//        });
-//
-//
-//
-//    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Util.getInstance().setCurrentActivity(this);
+        mFragment = getSupportFragmentManager().findFragmentById(R.id.home_parent);
+        checkNewProductUpdated(new CallbackListObject() {
+            @Override
+            public void onResponse(List<BaseModel> list) {
+                updateTempBillVisibility(list);
 
-    private void checkNewProductUpdated(CallbackListObject listener){
+                if (mFragment != null && mFragment instanceof TempBillFragment) {
+                    ((TempBillFragment) mFragment).reloadData();
+
+                }
+            }
+        }, new CallbackListObject() {
+            @Override
+            public void onResponse(List<BaseModel> list) {
+                updateTempImportVisibility(list);
+            }
+        });
+
+
+
+    }
+
+    private void checkNewProductUpdated(CallbackListObject listenertempbill, CallbackListObject listenertempimport){
         SystemConnect.getLastestProductUpdated(new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
                 swipeRefreshLayout.setRefreshing(false);
-                listener.onResponse(DataUtil.listTempBill(DataUtil.array2ListObject(result.getString("tempBills"))));
+                listenertempbill.onResponse(DataUtil.listTempBill(DataUtil.array2ListObject(result.getString("tempBills"))));
+                listenertempimport.onResponse(DataUtil.filterListTempImport(DataUtil.array2ListObject(result.getString("tempImport"))));
+
                 if (result.getLong("lastProductUpdate") > CustomSQL.getLong(Constants.LAST_PRODUCT_UPDATE)){
                     tvHaveNewProduct.setVisibility(View.VISIBLE);
 
@@ -540,10 +563,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                     tvHaveNewProduct.setVisibility(View.GONE);
                 }
 
-
-
-
-
             }
 
             @Override
@@ -554,11 +573,40 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     private void updateTempBillVisibility(List<BaseModel> list){
+        listTempBill = list;
         if (list.size() >0){
             lnTempGroup.setVisibility(View.VISIBLE);
             tvNumberTemp.setText(String.valueOf(list.size()));
         }else {
             lnTempGroup.setVisibility(View.GONE);
+        }
+
+        mFragment = getSupportFragmentManager().findFragmentById(R.id.home_parent);
+        if(mFragment != null && mFragment instanceof TempBillFragment) {
+            if (((TempBillFragment) mFragment).checkSelected()){
+                ((TempBillFragment) mFragment).closeSelected();
+
+            }else {
+                ((TempBillFragment) mFragment).reloadData();
+
+            }
+
+        }
+
+    }
+
+    protected void updateTempImportVisibility(List<BaseModel> list){
+        listTempImport = list;
+        if (list.size() >0){
+            lnTempImport.setVisibility(View.VISIBLE);
+            tvNumberTempImport.setText(String.valueOf(list.size()));
+        }else {
+            lnTempImport.setVisibility(View.GONE);
+        }
+        mFragment = getSupportFragmentManager().findFragmentById(R.id.home_parent);
+        if(mFragment != null && mFragment instanceof TempImportFragment) {
+            ((TempImportFragment) mFragment).reloadData();
+
         }
     }
 
@@ -655,8 +703,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         checkNewProductUpdated(new CallbackListObject() {
             @Override
             public void onResponse(List<BaseModel> list) {
-                listTempBill = list;
-                updateTempBillVisibility(listTempBill);
+                updateTempBillVisibility(list);
+            }
+        }, new CallbackListObject() {
+            @Override
+            public void onResponse(List<BaseModel> list) {
+                updateTempImportVisibility(list);
             }
         });
         loadOverView();
@@ -672,7 +724,5 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         }
     }
 
-    private void updateTempBillFragment(){
 
-    }
 }

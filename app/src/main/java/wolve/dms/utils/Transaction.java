@@ -194,8 +194,8 @@ public class Transaction {
 
     }
 
-    public static void checkInventoryBeforePrintBill(BaseModel bill, List<BaseModel> listproduct){
-        DataUtil.checkInventory(listproduct, User.getCurrentUser().getInt("warehouse_id"), new CallbackListObject() {
+    public static void checkInventoryBeforePrintBill(BaseModel bill, List<BaseModel> listproduct, int warehouse_id){
+        DataUtil.checkInventory(listproduct, warehouse_id, new CallbackListObject() {
             @Override
             public void onResponse(List<BaseModel> list) {
                 if (list.size() >0){
@@ -289,13 +289,13 @@ public class Transaction {
 
     }
 
-    public static void shareViaZalo(String id) {
-        String param = String.format(Api_link.LUB_LINK_PARAM, Security.encrypt(id));
+    public static void shareViaZalo(String content) {
+        //String param = String.format(Api_link.LUB_LINK_PARAM, Security.encrypt(id));
         //String param = String.format(Api_link.LUB_LINK_PARAM, id);
         ShareCompat.IntentBuilder.from(Util.getInstance().getCurrentActivity())
                 .setType("text/plain")
                 .setChooserTitle("Chia sẻ thông qua")
-                .setText(Api_link.LUB_LINK + param)
+                .setText(content)
 //                .setText(String.format("www.google.com/maps/search/?api=1&query=%s,%s", lat, lng))
                 .startChooser();
 

@@ -208,8 +208,10 @@ public class TempBillFragment extends Fragment implements View.OnClickListener {
                 CustomSQL.setBaseModel(Constants.CUSTOMER, customer);
 
                 if (mActivity.checkWarehouse())
-                    Transaction.checkInventoryBeforePrintBill(customer.getBaseModel("temp_bill"), DataUtil.array2ListObject(customer.getBaseModel("temp_bill").getString(Constants.BILL_DETAIL)));
-                    //Transaction.gotoPrintBillActivity(customer.getBaseModel("temp_bill"), false);
+                    Transaction.checkInventoryBeforePrintBill(customer.getBaseModel("temp_bill"),
+                            DataUtil.array2ListObject(customer.getBaseModel("temp_bill").getString(Constants.BILL_DETAIL)),
+                            User.getCurrentUser().getInt("warehouse_id"));
+
             }
 
             @Override

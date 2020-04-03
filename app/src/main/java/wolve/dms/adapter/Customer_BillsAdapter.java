@@ -168,7 +168,18 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
         List<BaseModel> listPayment = new ArrayList<>(DataUtil.array2ListObject(mData.get(position).getString("payments")));
         if (listPayment.size() >0){
             holder.lnPayment.setVisibility(View.VISIBLE );
-            PaymentAdapter paymentAdapter = new PaymentAdapter(listPayment);
+            PaymentAdapter paymentAdapter = new PaymentAdapter(listPayment, new CallbackBoolean() {
+                @Override
+                public void onRespone(Boolean result) {
+                    if (result){
+                        BaseModel respone = new BaseModel();
+                        respone.put(Constants.TYPE, Constants.PAYMENT_DELETE);
+                        mListener.onResponse(respone);
+                    }else {
+                        Util.showToast("Không thể xóa, bị lỗi");
+                    }
+                }
+            });
             Util.createLinearRV(holder.rvPayment, paymentAdapter);
 
         }else {

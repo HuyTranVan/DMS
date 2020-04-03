@@ -36,27 +36,36 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/depot_item_depottype"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Default"
-        android:textColor="@color/colorBlue"
-        android:textSize="@dimen/_10sdp"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="@dimen/_10sdp"
-        android:layout_toLeftOf="@+id/depot_item_depotinfo"/>
-
-    <wolve.dms.customviews.CTextIcon
-        android:id="@+id/depot_item_depotinfo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="?selectableItemBackgroundBorderless"
-        android:text="@string/icon_info"
+        android:orientation="horizontal"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="@dimen/_5sdp"
-        android:padding="@dimen/_5sdp"/>
+        android:layout_marginRight="@dimen/_10sdp">
+
+        <TextView
+            android:id="@+id/depot_item_depottype"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Default"
+            android:textColor="@color/colorBlue"
+            android:textSize="@dimen/_10sdp"
+            android:layout_centerVertical="true"/>
+
+        <wolve.dms.customviews.CTextIcon
+            android:id="@+id/depot_item_depotinfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackgroundBorderless"
+            android:text="@string/icon_info"
+            android:layout_centerVertical="true"
+
+            android:padding="@dimen/_5sdp"/>
+
+    </LinearLayout>
+
+
 
 
 

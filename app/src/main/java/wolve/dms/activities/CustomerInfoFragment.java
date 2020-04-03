@@ -81,7 +81,6 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 
     }
 
-
     protected void reshowAddress(BaseModel address){
         String add= String.format("%s%s, %s, %s",
                 Util.isEmpty(address.getString("address")) ? "" : address.getString("address") + " ",
@@ -106,7 +105,6 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         edName.setText(mActivity.currentCustomer.getString("name"));
         edShopName.setText(mActivity.currentCustomer.getString("signBoard"));
         edNote.setText(getNoteText(mActivity.currentCustomer.getString("note")));
-        //setNoteText(mActivity.currentCustomer.getString("note"));
         tvType.setText(Constants.getShopName(mActivity.currentCustomer.getString("shopType")));
 
         if (mActivity.currentCustomer.getString("shopType").equals(Constants.shopType[0])){
@@ -125,16 +123,17 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
                     mActivity.listCheckins.get(mActivity.listCheckins.size()-1).getString("note");
 
             String checkin = String.format("%s %s",Util.DateHourString(mActivity.listCheckins.get(mActivity.listCheckins.size()-1).getLong("createAt")), note );
-            tvLastCheckin.setText(checkin);
             tvHistory.setVisibility(View.VISIBLE);
+            tvLastCheckin.setVisibility(View.VISIBLE);
+            tvLastCheckin.setText(checkin);
+            tvHistory.setText(Util.getIconString(R.string.icon_history, "   ", String.format("Lịch sử ghé cửa hàng (%d)", mActivity.listCheckins.size())));
         }else {
             tvHistory.setVisibility(View.GONE);
+            tvLastCheckin.setVisibility(View.GONE);
 
         }
         mCall.setVisibility(mActivity.currentCustomer.getString("phone").equals("")?View.GONE: View.VISIBLE);
-        
         updateStatus(mActivity.currentCustomer.getBaseModel("status").getInt("id"));
-
 
 //todo addevent after setdata
         phoneEvent();
@@ -245,7 +244,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
                 break;
 
             case R.id.customer_history:
-                mActivity.changeFragment(new CheckinFragment() , true);
+                mActivity.changeFragment(new CustomerCheckinFragment() , true);
 
                 break;
 

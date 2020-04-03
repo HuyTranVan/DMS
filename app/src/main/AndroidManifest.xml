@@ -59,8 +59,8 @@
         android:name=".DMSApplication"
         android:configChanges="layoutDirection|locale"
         android:icon="@drawable/lub_icon"
+        android:roundIcon="@drawable/lub_icon_round"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/lub_icon"
         android:supportsRtl="true"
         android:largeHeap="true"
         android:theme="@style/FullScreen"
@@ -260,7 +260,7 @@
      See README(https://goo.gl/l4GJaQ) for more. -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_lub_48x48" />
+            android:resource="@drawable/ic_lub_notify" />
         <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
              notification message. See README(https://goo.gl/6BKBk7) for more. -->
         <meta-data
