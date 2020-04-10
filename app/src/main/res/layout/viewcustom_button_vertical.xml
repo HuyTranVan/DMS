@@ -7,7 +7,8 @@
     android:background="?selectableItemBackgroundBorderless"
     android:padding="@dimen/_5sdp">
 
-    <wolve.dms.customviews.CTextIcon
+    <TextView
+        android:fontFamily="@font/font_awesome"
         android:id="@+id/button_vertical_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

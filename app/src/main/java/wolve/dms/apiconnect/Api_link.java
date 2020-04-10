@@ -15,8 +15,7 @@ import wolve.dms.utils.Util;
  */
 
 public class Api_link {
-    public final static String BASE_URL= BuildConfig.SERVER_URL;
-//    public final static String BASE_URL= "http://192.168.1.8/";
+    public final static String BASE_URL= BuildConfig.DEBUG_FLAG? "http://192.168.1.3/": BuildConfig.SERVER_URL;
 
     public final static String BASE_PHOTO_URL = BuildConfig.UPLOAD_URL;
     public final static String MAP_API = "https://maps.googleapis.com/maps/api/";
@@ -72,13 +71,13 @@ public class Api_link {
     public final static String PRODUCTS = BASE_URL + "token/products";
     public final static String PRODUCT_NEW = BASE_URL + "token/product/create_or_update";
     public final static String PRODUCT_DELETE = BASE_URL + "token/product/";
-    public final static String PRODUCT_CREATE_PARAM ="%sname=%s&promotion=%s&unitPrice=%s&purchasePrice=%s&volume=%s&productGroup.id=%d&image=%s";
+    public final static String PRODUCT_CREATE_PARAM ="%sname=%s&promotion=%s&unitPrice=%s&purchasePrice=%s&volume=%s&productGroup.id=%d&image=%s&basePrice=%s&unitInCarton=%s";
     public final static String PRODUCT_LASTEST = BASE_URL +"token/lastproduct";
 
     public final static String USERS = BASE_URL + "token/users";
     public final static String USER_NEW = BASE_URL + "token/user/create_or_update";
     public final static String USER_DELETE = BASE_URL + "token/user/";
-    public final static String USER_CREATE_PARAM ="%sdisplayName=%s&gender=%d&email=%s&phone=%s&role=%d&image=%s%s";
+    public final static String USER_CREATE_PARAM ="%sdisplayName=%s&gender=%d&email=%s&phone=%s&role=%d&image=%s&warehouse_id=%d&warehouse_name=%s";
 
     public final static String STATUS = BASE_URL + "token/status";
     public final static String STATUS_NEW = BASE_URL + "token/status/create_or_update";

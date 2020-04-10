@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
@@ -33,7 +34,7 @@ public class Statistical_DebtAdapter extends RecyclerView.Adapter<Statistical_De
     private CallbackString mListener;
     //protected double totalDebt;
 
-    public Statistical_DebtAdapter(String user, List<BaseModel> data, CallbackString listener) {
+    public Statistical_DebtAdapter(String user, List<BaseModel> data, CallbackString listener, CallbackInt number) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         //this.tvSum = tvsum;
         //this.baseData = data;
@@ -42,7 +43,6 @@ public class Statistical_DebtAdapter extends RecyclerView.Adapter<Statistical_De
 
         if (user.equals(Constants.ALL_FILTER)){
             this.mData = data;
-
         }else {
             mData = new ArrayList<>();
             for (BaseModel row : data){
@@ -51,6 +51,7 @@ public class Statistical_DebtAdapter extends RecyclerView.Adapter<Statistical_De
                 }
             }
         }
+        number.onResponse(mData.size());
         DataUtil.sortbyDoubleKey("debt", mData, true);
 
     }
@@ -71,9 +72,9 @@ public class Statistical_DebtAdapter extends RecyclerView.Adapter<Statistical_De
         holder.tvNumber.setText(mData.size() >0? String.valueOf(mData.size() -position) : "");
         holder.tvsignBoard.setText(Constants.getShopName(mData.get(position).getString("shopType") ) + " " + mData.get(position).getString("signBoard"));
         holder.tvDistrict.setText(mData.get(position).getString("street") + " - " + mData.get(position).getString("district"));
-        holder.tvUser.setText(String.format("Nhân viên: %s",mData.get(position).getBaseModel("user").getString("displayName")));
-
+        holder.tvUser.setText(Util.getIconString(R.string.icon_username, "  ",mData.get(position).getBaseModel("user").getString("displayName")));
         holder.tvDebt.setText(Util.FormatMoney(mData.get(position).getDouble("debt")));
+        holder.tvTime.setText(String.format("%d ngày", Util.countDay(mData.get(position).getLong("last_debt"))));
 
         holder.vLine.setVisibility(position == mData.size()-1? View.GONE:View.VISIBLE);
 
@@ -105,7 +106,7 @@ public class Statistical_DebtAdapter extends RecyclerView.Adapter<Statistical_De
             tvsignBoard = itemView.findViewById(R.id.statistical_debt_item_signboard);
             tvDistrict = itemView.findViewById(R.id.statistical_debt_item_district);
             tvUser = itemView.findViewById(R.id.statistical_debt_item_user);
-//            tvTime = itemView.findViewById(R.id.statistical_debt_item_time);
+            tvTime = itemView.findViewById(R.id.statistical_debt_item_last_debt);
             tvDebt = itemView.findViewById(R.id.statistical_debt_item_debt);
             vLine =itemView.findViewById(R.id.statistical_debt_item_line);
 //            vLineUnder = itemView.findViewById(R.id.statistical_cash_item_under);

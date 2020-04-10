@@ -31,7 +31,7 @@ import wolve.dms.utils.Util;
 
 public class CInputForm extends FrameLayout {
     private EditText edInput;
-    private CTextIcon tvIcon, tvMore;
+    private TextView tvIcon, tvMore;
     private Context mContext;
     private View mLayout, mLine;
     private ArrayList<String> listDropdown = new ArrayList<>();
@@ -59,8 +59,8 @@ public class CInputForm extends FrameLayout {
         mLayout = findViewById(R.id.input_data_parent);
 
         edInput = (EditText) mLayout.findViewById(R.id.input_data_content);
-        tvIcon = (CTextIcon) mLayout.findViewById(R.id.input_data_icon);
-        tvMore = (CTextIcon) mLayout.findViewById(R.id.input_data_dropdown);
+        tvIcon = (TextView) mLayout.findViewById(R.id.input_data_icon);
+        tvMore = (TextView) mLayout.findViewById(R.id.input_data_dropdown);
         mLine = (View) mLayout.findViewById(R.id.input_data_underline);
 
     }
@@ -77,8 +77,8 @@ public class CInputForm extends FrameLayout {
                 setIconColor(a.getColor(R.styleable.CInputForm_iconColor,0));
             }
 
-            if (a.hasValue(R.styleable.CInputForm_icon_Size)) {
-                setIconSize(a.getDimension(R.styleable.CInputForm_icon_Size, 0));
+            if (a.hasValue(R.styleable.CInputForm_iconSize)) {
+                setIconSize(a.getDimension(R.styleable.CInputForm_iconSize, 0));
             }
 
             if (a.hasValue(R.styleable.CInputForm_iconText)) {

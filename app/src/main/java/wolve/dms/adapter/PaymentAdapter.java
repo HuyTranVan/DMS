@@ -20,7 +20,6 @@ import wolve.dms.R;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
@@ -109,15 +108,14 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.PrintBil
     }
 
     public class PrintBillViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvDate, tvTotal  ;
+        private TextView tvDate, tvTotal  , tvName, tvDelete;
         private View vLine;
-        private CTextIcon tvName, tvDelete;
 
         public PrintBillViewHolder(View itemView) {
             super(itemView);
             tvDate = (TextView) itemView.findViewById(R.id.payment_item_date);
             tvTotal = (TextView) itemView.findViewById(R.id.payment_item_total);
-            tvName = (CTextIcon) itemView.findViewById(R.id.payment_item_name);
+            tvName = (TextView) itemView.findViewById(R.id.payment_item_name);
             tvDelete = itemView.findViewById(R.id.payment_item_delete);
             vLine = itemView.findViewById(R.id.item_seperateline);
         }

@@ -39,10 +39,11 @@
                     android:textColor="@color/black_text_color_hint"
                     android:textSize="@dimen/_10sdp"/>
 
-                <wolve.dms.customviews.CTextIcon
+                <TextView
                     android:id="@+id/import_product_item_user"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/font_awesome"
                     android:layout_toRightOf="@+id/import_product_item_title"
                     android:layout_marginLeft="@dimen/_20sdp"
                     android:layout_centerVertical="true"
@@ -55,8 +56,8 @@
                     android:orientation="horizontal"
                     android:layout_alignParentRight="true">
 
-                    <wolve.dms.customviews.CTextIcon
-                        android:id="@+id/import_product_item_copy"
+                    <TextView
+                        android:fontFamily="@font/font_awesome"                        android:id="@+id/import_product_item_copy"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="?selectableItemBackgroundBorderless"
@@ -67,8 +68,8 @@
                         android:padding="@dimen/_5sdp"
                         android:layout_marginRight="@dimen/_5sdp"/>
 
-                    <wolve.dms.customviews.CTextIcon
-                        android:id="@+id/import_product_item_delete"
+                    <TextView
+                        android:fontFamily="@font/font_awesome"                        android:id="@+id/import_product_item_delete"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="?selectableItemBackgroundBorderless"
@@ -95,8 +96,8 @@
                     android:textSize="@dimen/_10sdp"
                     android:text="Chuyển từ kho: "/>
 
-                <wolve.dms.customviews.CTextIcon
-                    android:id="@+id/import_product_item_warehouse"
+                <TextView
+                    android:fontFamily="@font/font_awesome"                    android:id="@+id/import_product_item_warehouse"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black_text_color"
@@ -116,7 +117,8 @@
             android:layout_margin="@dimen/_2sdp"
             android:clipToPadding="true"/>
 
-        <wolve.dms.customviews.CTextIcon
+        <TextView
+            android:fontFamily="@font/font_awesome"
             android:id="@+id/import_product_item_accept"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

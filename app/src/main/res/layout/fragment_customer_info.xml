@@ -236,10 +236,11 @@
                 app:iconColor="@color/black_text_color_hint"
                 app:isShowBottomLine="false"/>
 
-            <wolve.dms.customviews.CTextIcon
+            <TextView
                 android:id="@+id/customer_history"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/font_awesome"
                 android:background="?selectableItemBackground"
                 android:textColor="@color/colorBlue"
                 android:textSize="@dimen/_12sdp"
@@ -258,10 +259,11 @@
                 android:paddingLeft="@dimen/_5sdp"
                 android:paddingRight="@dimen/_5sdp"/>
 
-            <wolve.dms.customviews.CTextIcon
+            <TextView
                 android:id="@+id/customer_checkin"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/_25sdp"
+                android:fontFamily="@font/font_awesome"
                 android:background="@drawable/btn_round_white_border_blue"
                 android:textColor="@color/colorBlue"
                 android:textSize="@dimen/_12sdp"

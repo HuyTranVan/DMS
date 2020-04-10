@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 
 import androidx.annotation.Nullable;
@@ -29,6 +30,7 @@ import lecho.lib.hellocharts.util.ChartUtils;
 import lecho.lib.hellocharts.view.ColumnChartView;
 import lecho.lib.hellocharts.view.PieChartView;
 import wolve.dms.R;
+import wolve.dms.customviews.CVerticalView;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.District;
 import wolve.dms.utils.Constants;
@@ -43,6 +45,8 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
     private View view;
     private ColumnChartView chartIncome;
     private PieChartView chartDistrict, chartBDF;
+    private CVerticalView vRevenue, vCash, vDebt, vProfit, vInventory, vBaseProfit  ;
+    private LinearLayout lnInventory;
 
     private StatisticalActivity mActivity;
 
@@ -61,7 +65,7 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
     }
 
     private void intitialData() {
-
+        lnInventory.setVisibility(Util.isAdmin()?View.VISIBLE: View.GONE);
     }
 
     private void addEvent() {
@@ -83,8 +87,13 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         chartIncome = (ColumnChartView) view.findViewById(R.id.statistical_dashboard_income);
         chartDistrict = (PieChartView) view.findViewById(R.id.statistical_dashboard_district);
         chartBDF = view.findViewById(R.id.statistical_dashboard_bdf);
-
-
+        vRevenue = view.findViewById(R.id.statistical_dashboard_revenue);
+        vCash = view.findViewById(R.id.statistical_dashboard_cash);
+        vDebt = view.findViewById(R.id.statistical_dashboard_debt);
+        vProfit = view.findViewById(R.id.statistical_dashboard_profit);
+        vInventory = view.findViewById(R.id.statistical_dashboard_inventory);
+        vBaseProfit = view.findViewById(R.id.statistical_dashboard_base_profit);
+        lnInventory = view.findViewById(R.id.statistical_dashboard_inventory_group);
     }
 
     @Override
@@ -94,7 +103,15 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         }
     }
 
-    public void reloadData(String username, List<BaseModel> list, List<BaseModel> listDetail,double total, double paid, double debt, double profit){
+    public void reloadData(String username,
+                           List<BaseModel> list,
+                           List<BaseModel> listDetail,
+                           double total,
+                           double paid ,int countpayment,
+                           double debt,int countdebt,
+                           double profit,
+                           double base_profit,
+                           BaseModel temptWarehouse){
         List<BaseModel> mList = new ArrayList<>();
         List<BaseModel> mListDetail= new ArrayList<>();
         if (username.equals(Constants.ALL_FILTER)){
@@ -119,33 +136,38 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         }
         setupIncomeChart( mListDetail,total,  paid, debt, profit);
         setupDistrictChart(mList);
+        updateOverView(mList, paid, countpayment, total, debt, countdebt, profit, base_profit, temptWarehouse);
 
     }
 
-//    private void setupBDFChart(double total, double bdf) {
-//        PieChartData data;
-//        double percent =0.0;
-//
-//        percent = bdf *100 /total;
-//
-//        List<SliceValue> values = new ArrayList<SliceValue>();
-//
-//        SliceValue sliceValue1 = new SliceValue((float) total, ChartUtils.nextColor());
-//        sliceValue1.setLabel("Tổng");
-//        values.add(sliceValue1);
-//
-//        SliceValue sliceValue2 = new SliceValue((float) bdf, ChartUtils.nextColor());
-//        sliceValue2.setLabel("BDF" + " - " + new DecimalFormat("#.##").format(percent) + "%");
-//        values.add(sliceValue2);
-//
-//        data = new PieChartData(values);
-//        data.setHasLabels(true);
-//        data.setHasLabelsOutside(true);
-//
-//        chartBDF.setPieChartData(data);
-//        chartBDF.setCircleFillRatio(0.95f);
-//
-//    }
+    private void updateOverView(List<BaseModel> bills,
+                                double paid,int countpayment,
+                                double total,
+                                double debt, int countdebt,
+                                double profit,
+                                double baseprofit,
+                                BaseModel warehouse){
+
+        vRevenue.setTitleText(String.format("Tổng bán hàng (%d)", bills.size()));
+        vRevenue.setText(Util.FormatMoney(total));
+
+        vCash.setTitleText(String.format("Tiền thu (%d)", countpayment));
+        vCash.setText(Util.FormatMoney(paid));
+
+        vDebt.setTitleText(String.format("công nợ (%d)", countdebt));
+        vDebt.setText(Util.FormatMoney(debt));
+
+        vProfit.setTitleText("Chiết khấu bán hàng");
+        vProfit.setText(Util.FormatMoney(profit));
+
+        vInventory.setTitleText(String.format("Tồn kho %s (%d)", warehouse.getString("name"), warehouse.getInt("quantity")));
+        vInventory.setText(Util.FormatMoney(warehouse.getDouble("total")));
+
+        vBaseProfit.setTitleText("Chênh lệch giá NPP");
+        vBaseProfit.setText(Util.FormatMoney(baseprofit));
+
+    }
+
 
     private void setupDistrictChart(List<BaseModel> list) {
         //repair data for Chart
@@ -264,8 +286,6 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
 //        chartIncome.setCurrentViewport(v);
 //Optional step: disable viewport recalculations, thanks to this animations will not change viewport automatically.
         chartIncome.setViewportCalculationEnabled(true);
-
-
 
         chartIncome.setColumnChartData(data);
 

@@ -107,8 +107,17 @@ public class StatisticalPaymentFragment extends Fragment implements View.OnClick
         return adapter.sumPayments();
     }
 
+    public int getCoutList(){
+        return adapter.getItemCount();
+    }
+
     public double getSumProfit(){
         return adapter.sumProfit();
+
+    }
+
+    public double getSumBaseProfit() {
+        return adapter.sumBaseProfit();
 
     }
 }

@@ -70,7 +70,8 @@
                 android:textSize="@dimen/_12sdp"
                 android:paddingLeft="@dimen/_10sdp"
                 android:layout_marginBottom="@dimen/_5sdp"
-                android:buttonTint="@color/colorBlue"/>
+                android:buttonTint="@color/colorBlue"
+                android:enabled="false"/>
 
             <RadioButton
                 android:id="@+id/add_depot_rdtemp"
@@ -80,7 +81,8 @@
                 android:textSize="@dimen/_12sdp"
                 android:paddingLeft="@dimen/_10sdp"
                 android:layout_marginBottom="@dimen/_5sdp"
-                android:buttonTint="@color/colorBlue"/>
+                android:buttonTint="@color/colorBlue"
+                android:enabled="false"/>
 
             <RadioButton
                 android:id="@+id/add_depot_rduser"
@@ -91,7 +93,8 @@
                 android:paddingLeft="@dimen/_10sdp"
                 android:layout_marginBottom="@dimen/_5sdp"
                 android:checked="true"
-                android:buttonTint="@color/colorBlue"/>
+                android:buttonTint="@color/colorBlue"
+                android:enabled="false"/>
 
         </RadioGroup>
 

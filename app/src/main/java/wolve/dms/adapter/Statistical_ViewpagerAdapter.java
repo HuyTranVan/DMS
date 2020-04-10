@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.utils.Util;
 
 
@@ -67,7 +66,7 @@ public class Statistical_ViewpagerAdapter extends FragmentPagerAdapter {
     public View getTabView(int position) {
         View tab = LayoutInflater.from(mContext).inflate(R.layout.view_tab_statistical, null);
         TextView tvTitle = (TextView) tab.findViewById(R.id.statistical_tab_title);
-        CTextIcon tvIcon = (CTextIcon) tab.findViewById(R.id.statistical_tab_icon);
+        TextView tvIcon = (TextView) tab.findViewById(R.id.statistical_tab_icon);
 
         tvIcon.setText(mFragmentIcons.get(position));
         tvTitle.setText(mFragmentText.get(position));

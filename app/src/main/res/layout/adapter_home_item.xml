@@ -7,7 +7,8 @@
     android:layout_height="@dimen/_100sdp"
     android:background="@drawable/btn_none_white">
 
-    <wolve.dms.customviews.CTextIcon
+    <TextView
+        android:fontFamily="@font/font_awesome"
         android:id="@+id/item_home_icon"
         android:layout_width="wrap_content"
         android:layout_height="0dp"

@@ -5,6 +5,7 @@ import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nispok.snackbar.Snackbar;
@@ -25,7 +26,6 @@ import wolve.dms.apiconnect.UserConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackString;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
@@ -41,7 +41,7 @@ import wolve.dms.utils.Util;
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
     private EditText edUsername, edPassword;
     private Button btnSubmit;
-    private CTextIcon btnKeyboard;
+    private TextView btnKeyboard;
     private Boolean detectNumberKeyboard = true;
 
     @Override

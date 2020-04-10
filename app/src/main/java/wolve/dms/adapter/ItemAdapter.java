@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.Util;
@@ -51,8 +50,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ChoiceMethodVi
     }
 
     public class ChoiceMethodViewHolder extends RecyclerView.ViewHolder {
-        private TextView text, line;
-        private CTextIcon icon;
+        private TextView text, line,  icon;
 
         public ChoiceMethodViewHolder(View itemView) {
             super(itemView);

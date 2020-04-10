@@ -17,7 +17,6 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.callback.CallbackObject;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Util;
 
@@ -71,8 +70,7 @@ public class ProductInventoryAdapter extends RecyclerView.Adapter<ProductInvento
 
 
     public class ProductAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvName, tvGroup, tvQuantityLimit;
-        private CTextIcon tvPlus, tvMinus;
+        private TextView tvName, tvGroup, tvQuantityLimit, tvPlus, tvMinus;
         private EditText edQuantity;
         private LinearLayout lnParent;
 

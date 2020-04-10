@@ -23,7 +23,8 @@
             android:paddingRight="@dimen/_5sdp"
             android:layout_marginTop="@dimen/_2sdp"/>
 
-        <wolve.dms.customviews.CTextIcon
+        <TextView
+            android:fontFamily="@font/font_awesome"
             android:id="@+id/payment_item_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -34,28 +35,35 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/payment_item_total"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="0.3"
-        android:text="x6"
-        android:textColor="@color/colorBlue"
-        android:textSize="@dimen/_12sdp"
-        android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/payment_item_delete"
-        android:layout_centerInParent="true"/>
-
-    <wolve.dms.customviews.CTextIcon
-        android:id="@+id/payment_item_delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="?selectableItemBackgroundBorderless"
-        android:text="@string/icon_delete"
+        android:orientation="horizontal"
         android:layout_alignParentRight="true"
-        android:layout_centerInParent="true"
-        android:padding="@dimen/_5sdp"
-        android:textSize="@dimen/_10sdp"
-        android:textColor="@color/black_text_color_hint"/>
+        android:layout_centerInParent="true">
+
+        <TextView
+            android:id="@+id/payment_item_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:text="x6"
+            android:textColor="@color/colorBlue"
+            android:textSize="@dimen/_12sdp"
+            />
+
+        <TextView
+            android:fontFamily="@font/font_awesome"
+            android:id="@+id/payment_item_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackgroundBorderless"
+            android:text="@string/icon_delete"
+            android:padding="@dimen/_5sdp"
+            android:textSize="@dimen/_10sdp"
+            android:textColor="@color/black_text_color_hint"/>
+    </LinearLayout>
+
+
 
 </RelativeLayout>

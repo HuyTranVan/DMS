@@ -35,11 +35,8 @@ import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.callback.CallbackListObject;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Customer;
 import wolve.dms.models.Product;
-import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
@@ -55,8 +52,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
     private ImageView btnBack;
     private ViewPager viewPager;
     private TabLayout tabLayout;
-    private TextView tvTitle;
-    private CTextIcon  tvFromWarehouse,tvToWarehouse;
+    private TextView tvTitle, tvFromWarehouse,tvToWarehouse;
     private Button btnSubmit;
     private RelativeLayout coParent;
 
@@ -207,7 +203,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.import_parent);
         if (Util.getInstance().isLoading()){
             Util.getInstance().stopLoading(true);
-        }else if(mFragment != null && mFragment instanceof NewUpdateDepotFragment) {
+        }else if(mFragment != null && mFragment instanceof NewUpdateWarehouseFragment) {
 
         }else {
             Transaction.returnPreviousActivity();
@@ -363,7 +359,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
             public void onError() {
 
             }
-        });
+        }, null);
 
     }
 

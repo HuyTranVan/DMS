@@ -20,8 +20,7 @@ import wolve.dms.R;
 
 
 public class CButton extends LinearLayout {
-    private TextView tvText;
-    private CTextIcon tvIcon;
+    private TextView tvText, tvIcon;
     private Context mContext;
     private View mLayout;
     private ArrayList<String> listDropdown = new ArrayList<>();
@@ -49,7 +48,7 @@ public class CButton extends LinearLayout {
 
         mLayout = findViewById(R.id.button_parent);
         tvText = (TextView) mLayout.findViewById(R.id.button_text);
-        tvIcon = (CTextIcon) mLayout.findViewById(R.id.button_icon);
+        tvIcon = (TextView) mLayout.findViewById(R.id.button_icon);
 
     }
 
@@ -61,8 +60,8 @@ public class CButton extends LinearLayout {
                 setIconColor(a.getColor(R.styleable.CInputForm_iconColor,0));
             }
 
-            if (a.hasValue(R.styleable.CInputForm_icon_Size)) {
-                setIconSize(a.getDimension(R.styleable.CInputForm_icon_Size, 0));
+            if (a.hasValue(R.styleable.CInputForm_iconSize)) {
+                setIconSize(a.getDimension(R.styleable.CInputForm_iconSize, 0));
             }
 
             if (a.hasValue(R.styleable.CInputForm_iconText)) {

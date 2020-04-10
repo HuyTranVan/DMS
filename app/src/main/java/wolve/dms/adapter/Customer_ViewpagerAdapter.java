@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.utils.Util;
 
 

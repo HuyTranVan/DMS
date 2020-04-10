@@ -43,7 +43,7 @@ android {
         qc_test {
             debuggable true
             signingConfig signingConfigs.debug
-            buildConfigField "boolean", "DEBUG_FLAG", 'true'
+            buildConfigField "boolean", "DEBUG_FLAG", 'false'
             buildConfigField "Boolean", "FLAG",'false'
             buildConfigField "String", "SERVER_URL", '"http://lubsolution.com:8085/"'
             buildConfigField "String", "UPLOAD_URL", '"http://lubsolution.com:8085/"'

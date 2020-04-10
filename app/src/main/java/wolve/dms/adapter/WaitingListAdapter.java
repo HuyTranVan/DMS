@@ -19,7 +19,6 @@ import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackString;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
@@ -100,9 +99,8 @@ public class WaitingListAdapter extends RecyclerView.Adapter<WaitingListAdapter.
     }
 
     public class StatisticalBillsViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvNumber, tvsignBoard, tvAddress;
+        private TextView tvNumber, tvsignBoard, tvAddress, tvDelete;
         private View vLine;
-        private CTextIcon tvDelete;
         private LinearLayout lnParent;
 
         public StatisticalBillsViewHolder(View itemView) {

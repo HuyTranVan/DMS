@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import androidx.annotation.Nullable;
@@ -32,7 +33,7 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class NewUpdateDepotFragment extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
+public class NewUpdateWarehouseFragment extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
     private View view;
     private ImageView btnBack;
     private CInputForm edInput, edUser;
@@ -40,6 +41,7 @@ public class NewUpdateDepotFragment extends Fragment implements View.OnClickList
     private BaseModel currentDepot;
     private WarehouseActivity mActivity;
     private RadioGroup rdDepotType;
+    private RadioButton rdUser;
 
     private List<BaseModel> listUser = new ArrayList<>();
 
@@ -65,25 +67,21 @@ public class NewUpdateDepotFragment extends Fragment implements View.OnClickList
             switch (currentDepot.getInt("isMaster")){
                 case 1:
                     rdDepotType.check(R.id.add_depot_rdmain);
+                    rdUser.setVisibility(View.GONE);
                     break;
 
                 case 2:
                     rdDepotType.check(R.id.add_depot_rdtemp);
+                    rdUser.setVisibility(View.GONE);
                     break;
 
                 case 3:
                     rdDepotType.check(R.id.add_depot_rduser);
+                    rdUser.setVisibility(View.VISIBLE);
                     break;
-
-                default:
-                    currentDepot.put("isMaster", 3);
-                    rdDepotType.check(R.id.add_depot_rduser);
 
             }
 
-        }else {
-            currentDepot = new BaseModel();
-            rdDepotType.check(R.id.add_depot_rduser);
         }
 
         Util.showKeyboardEditTextDelay(edInput.getEdInput());
@@ -99,13 +97,14 @@ public class NewUpdateDepotFragment extends Fragment implements View.OnClickList
     }
 
     private void initializeView() {
+        mActivity = (WarehouseActivity) getActivity();
         edInput = (CInputForm) view.findViewById(R.id.add_depot_input);
         edUser = (CInputForm) view.findViewById(R.id.add_depot_user);
         btnSubmit = (Button) view.findViewById(R.id.add_depot_submit);
         btnBack = (ImageView) view.findViewById(R.id.icon_back);
         rdDepotType = view.findViewById(R.id.add_depot_rd);
+        rdUser = view.findViewById(R.id.add_depot_rduser);
 
-        mActivity = (WarehouseActivity) getActivity();
     }
 
     @Override
@@ -148,14 +147,14 @@ public class NewUpdateDepotFragment extends Fragment implements View.OnClickList
             @Override
             public void onClick(View view) {
                 if (listUser.size() >0){
-                    dialogChoiceUser(listUser);
+                    dialogChoiceUser(filterListBaseModel(listUser));
 
                 }else {
                     UserConnect.ListUser(new CallbackCustomList() {
                         @Override
                         public void onResponse(List<BaseModel> results) {
                             listUser = results;
-                            dialogChoiceUser(listUser);
+                            dialogChoiceUser(filterListBaseModel(listUser));
 
                         }
 
@@ -184,7 +183,7 @@ public class NewUpdateDepotFragment extends Fragment implements View.OnClickList
             public void onError() {
 
             }
-        });
+        }, null);
     }
 
     @Override
@@ -202,5 +201,21 @@ public class NewUpdateDepotFragment extends Fragment implements View.OnClickList
                 currentDepot.put("isMaster", 3);
                 break;
         }
+    }
+
+    private List<BaseModel> filterListBaseModel(List<BaseModel> list){
+        List<BaseModel> results = new ArrayList<>();
+        for (BaseModel model: list){
+            if (model.getInt("role") == 1){
+                results.add(model);
+            }
+
+        }
+//        BaseModel defaultUser = new BaseModel();
+//        defaultUser.put("id", 0);
+//        defaultUser.put("displayName", "Mặc định");
+//        results.add(0, defaultUser);
+
+        return  results;
     }
 }

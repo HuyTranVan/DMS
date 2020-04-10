@@ -8,13 +8,16 @@
 
     <declare-styleable name="CInputForm">
         <attr name="iconColor" format="integer" />
-        <attr name="icon_Size" format="integer" />
+        <attr name="iconSize" format="reference|dimension" />
         <attr name="iconText" format="string" />
-        <attr name="textSize" format="integer" />
+        <attr name="textSize" format="reference|dimension" />
         <attr name="textColor" format="integer" />
+        <attr name="text" format="string" />
+        <attr name="titleSize" format="reference|dimension" />
+        <attr name="titleColor" format="integer" />
+        <attr name="titleText" format="integer" />
         <attr name="multiLine" format="boolean" />
         <attr name="textColorHint" format="integer" />
-        <attr name="text" format="string" />
         <attr name="textHint" format="string" />
         <attr name="android:inputType"/>
         <attr name="isDropdown" format="boolean"/>
@@ -22,16 +25,6 @@
         <attr name="backgroundIcon" format="reference|color"/>
         <attr name="backgroundLayout" format="reference|color"/>
     </declare-styleable>
-
-<!--    <declare-styleable name="CButtonVertical">-->
-<!--        <attr name="iconColor" format="integer" />-->
-<!--        <attr name="iconSize" format="integer" />-->
-<!--        <attr name="iconText" format="string" />-->
-<!--        <attr name="textColor" format="integer" />-->
-<!--        <attr name="textSize" format="integer" />-->
-<!--        <attr name="text" format="string" />-->
-
-<!--    </declare-styleable>-->
 
     <declare-styleable name="MaterialSearchView">
         <attr name="searchBackground" format="integer" />

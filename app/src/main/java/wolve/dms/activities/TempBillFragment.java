@@ -28,7 +28,6 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackObject;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Checkin;
 import wolve.dms.models.User;
@@ -47,8 +46,7 @@ import wolve.dms.utils.Util;
 public class TempBillFragment extends Fragment implements View.OnClickListener {
     private View view;
     private ImageView btnBack;
-    private CTextIcon tvCheck, tvList, tvClose;
-    private TextView tvTitle;
+    private TextView tvTitle, tvCheck, tvList, tvClose;
     private RecyclerView rvTempBill;
     private RelativeLayout lnSelect;
 

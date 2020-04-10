@@ -73,7 +73,8 @@
 
         </LinearLayout>
 
-        <wolve.dms.customviews.CTextIcon
+        <TextView
+            android:fontFamily="@font/font_awesome"
             android:id="@+id/edit_map_edit"
             android:layout_width="@dimen/_35sdp"
             android:layout_height="match_parent"
@@ -225,7 +226,8 @@
 
 
 
-    <wolve.dms.customviews.CTextIcon
+    <TextView
+        android:fontFamily="@font/font_awesome"
         android:id="@+id/edit_map_location"
         android:layout_width="@dimen/_35sdp"
         android:layout_height="@dimen/_35sdp"

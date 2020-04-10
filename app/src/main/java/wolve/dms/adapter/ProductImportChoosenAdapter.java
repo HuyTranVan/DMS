@@ -23,7 +23,6 @@ import wolve.dms.R;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomInputDialog;
@@ -160,8 +159,7 @@ public class ProductImportChoosenAdapter extends RecyclerView.Adapter<ProductImp
 
 
     public class ProductAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvName, tvGroup, tvQuantityLimit;
-        private CTextIcon tvPlus, tvMinus;
+        private TextView tvName, tvGroup, tvQuantityLimit, tvPlus, tvMinus;
         private EditText edQuantity;
         private LinearLayout lnParent;
 

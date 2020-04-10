@@ -14,7 +14,6 @@ import org.json.JSONObject;
 
 import wolve.dms.R;
 import wolve.dms.callback.LatlngListener;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.Customer;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
@@ -39,7 +38,7 @@ public class CustomWindowAdapter implements GoogleMap.InfoWindowAdapter {
         TextView tvCount = myContentsView.findViewById(R.id.map_infowindow_checkin_count);
         TextView tvNote = myContentsView.findViewById(R.id.map_infowindow_note);
         TextView tvDistance = myContentsView.findViewById(R.id.map_infowindow_distance);
-        CTextIcon tvPhoneIcon = myContentsView.findViewById(R.id.map_infowindow_phone);
+        TextView tvPhoneIcon = myContentsView.findViewById(R.id.map_infowindow_phone);
         LinearLayout lnNoteGroup = myContentsView.findViewById(R.id.map_infowindow_note_group);
 
         final Customer customer = new Customer((JSONObject) marker.getTag());

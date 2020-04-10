@@ -65,7 +65,6 @@ import wolve.dms.callback.CallbackLong;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.LatlngListener;
 import wolve.dms.customviews.CButton;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Customer;
 import wolve.dms.models.District;
@@ -97,7 +96,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     private RadioGroup rdFilter;
     private RadioButton rdAll, rdIntersted, rdOrdered;
     private ImageView btnBack, btnClose;
-    private CTextIcon tvLocation, tvReload, tvStatusDot, tvStatus, tvCheckin, tvDistance;
     private EditText edSearch;
     private CoordinatorLayout coParent;
     private SmoothProgressBar progressLoading;
@@ -105,7 +103,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     private RecyclerView rvSearch;
     private LinearLayout lnSheetBody, lnBottomSheet ;
     private CButton btnDirection, btnCall, btnShare, btnAddList;
-    private TextView tvShopname, tvAddress, tvTempBill, tvListWating;
+    private TextView tvShopname, tvAddress, tvTempBill, tvListWating,
+            tvLocation, tvReload, tvStatusDot, tvStatus, tvCheckin, tvDistance;
 
     private Handler mHandlerMoveMap = new Handler();
     private Handler mHandlerSearch = new Handler();
@@ -364,7 +363,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             public void onError() {
 
             }
-        });
+        }, null);
 
     }
 

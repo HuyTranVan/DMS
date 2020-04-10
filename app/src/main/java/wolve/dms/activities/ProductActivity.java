@@ -28,6 +28,7 @@ import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackDeleteAdapter;
+import wolve.dms.libraries.FitScrollWithFullscreen;
 import wolve.dms.libraries.MySwipeRefreshLayout;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
@@ -53,6 +54,12 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
     private List<BaseModel> listProduct ;
     private ViewpagerProductAdapter viewpagerAdapter;
     public int currentPosition =0;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //FitScrollWithFullscreen.assistActivity(this, 1);
+    }
 
     @Override
     public int getResourceLayout() {

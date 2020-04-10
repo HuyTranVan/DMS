@@ -52,7 +52,7 @@
     <string name="icon_chart">&#xf080;</string>
     <string name="icon_status">&#xf27a;</string>
     <string name="icon_purchase">&#xf291;</string>
-    <string name="icon_weight">&#xf019;</string>
+    <string name="icon_weight">&#xf5cd;</string>
     <string name="icon_adress">&#xf277;</string>
     <string name="icon_district">&#xf3c5;</string>
     <string name="icon_detail">&#xf05a;</string>
@@ -117,6 +117,10 @@
     <string name="icon_note">&#xf4a6;</string>
     <string name="icon_history">&#xf1da;</string>
     <string name="icon_list_check">&#xf0ca;</string>
+    <string name="icon_container">&#xf49a;</string>
+    <string name="icon_briefcase">&#xf0b1;</string>
+    <string name="icon_truck">&#xf4de;</string>
+    <string name="icon_hand_on_money">&#xf4c0;</string>
 
     <string name="login_username">Nhập tài khoản hoặc SĐT</string>
     <string name="login_password">Nhập mật khẩu</string>

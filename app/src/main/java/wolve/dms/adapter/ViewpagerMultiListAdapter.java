@@ -20,7 +20,6 @@ import java.util.List;
 import wolve.dms.R;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackString;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.utils.Util;
 
 
@@ -74,7 +73,7 @@ public class ViewpagerMultiListAdapter extends PagerAdapter {
         RecyclerView rvList = (RecyclerView) view.findViewById(R.id.customer_viewpager_item_rv);
         RelativeLayout lnSearch = (RelativeLayout) view.findViewById(R.id.search_parent);
         EditText edSearch = view.findViewById(R.id.search_text);
-        CTextIcon tvIconSearch = view.findViewById(R.id.search_icon);
+        TextView tvIconSearch = view.findViewById(R.id.search_icon);
 
         lnSearch.setVisibility(showSearches[position]?View.VISIBLE : View.GONE);
         Util.createLinearRV(rvList, listAdapter.get(position));

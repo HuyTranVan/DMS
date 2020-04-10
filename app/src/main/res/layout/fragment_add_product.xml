@@ -32,117 +32,125 @@
 
     </RelativeLayout>
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/add_product_image"
-        android:layout_width="@dimen/_80sdp"
-        android:layout_height="@dimen/_80sdp"
-        app:civ_border_width="4dp"
-        app:civ_border_color="@color/colorLightGrey"
-        android:src="@drawable/ic_wolver"
-        android:layout_margin="@dimen/_10sdp"
-        android:layout_gravity="center"/>
-
-    <LinearLayout
+    <ScrollView
+        android:id="@+id/customer_scrollview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingLeft="@dimen/_10sdp"
-        android:paddingRight="@dimen/_10sdp">
+        android:layout_height="match_parent"
+        android:clipToPadding="false">
 
-
-        <wolve.dms.customviews.CInputForm
-            android:id="@+id/add_product_name"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textCapWords"
-            app:textHint="Nhập tên sản phẩm"
-            app:iconText="@string/icon_product"/>
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/_30sdp">
 
-        <wolve.dms.customviews.CInputForm
-            android:id="@+id/add_product_group"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:textHint="Nhóm sản phẩm"
-            app:iconText="@string/icon_product_group"
-            app:isDropdown="true"
-            app:textColor="@color/colorBlue"/>
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/add_product_image"
+                android:layout_width="@dimen/_80sdp"
+                android:layout_height="@dimen/_80sdp"
+                app:civ_border_width="4dp"
+                app:civ_border_color="@color/colorLightGrey"
+                android:src="@drawable/ic_wolver"
+                android:layout_margin="@dimen/_10sdp"
+                android:layout_gravity="center"/>
 
-        <wolve.dms.customviews.CInputForm
-            android:id="@+id/add_product_unit_price"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            app:textHint="Giá bán"
-            app:iconText="@string/icon_price"
-            />
-
-        <wolve.dms.customviews.CInputForm
-            android:id="@+id/add_product_purchase_price"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            app:textHint="Giá nhập hàng"
-            app:iconText="@string/icon_purchase"/>
-
-        <wolve.dms.customviews.CInputForm
-            android:id="@+id/add_product_volume"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
-            app:textHint="Khối lượng"
-            app:iconText="@string/icon_weight"/>
-
-        <wolve.dms.customviews.CInputForm
-            android:id="@+id/add_product_promotion"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:textHint=""
-            app:iconText="@string/icon_gift"
-            app:isDropdown="true"
-            app:textColor="@color/colorBlue"/>
-
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:orientation="horizontal">-->
-
-            <!---->
-
-            <!--<Button-->
-                <!--android:id="@+id/add_product_choiceimage"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="@dimen/_20sdp"-->
-                <!--android:minWidth="@dimen/_80sdp"-->
-                <!--android:background="@drawable/btn_confirm_orange"-->
-                <!--android:layout_marginLeft="@dimen/_20sdp"-->
-                <!--android:text="chọn ảnh"-->
-                <!--android:textAllCaps="true"-->
-                <!--android:textColor="@color/white"-->
-                <!--android:textSize="@dimen/_10sdp"-->
-                <!--android:layout_gravity="center_vertical"/>-->
-        <!--</LinearLayout>-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/_10sdp"
+                android:paddingRight="@dimen/_10sdp">
 
 
-    </LinearLayout>
+                <wolve.dms.customviews.CInputForm
+                    android:id="@+id/add_product_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapWords"
+                    app:textHint="Nhập tên sản phẩm"
+                    app:iconText="@string/icon_product"/>
 
-<!--    <View-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="1dip"-->
-<!--        android:background="@color/colorGrey"-->
-<!--        android:layout_gravity="bottom"/>-->
+                <wolve.dms.customviews.CInputForm
+                    android:id="@+id/add_product_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:textHint="Nhóm sản phẩm"
+                    app:iconText="@string/icon_product_group"
+                    app:isDropdown="true"
+                    app:textColor="@color/colorBlue"/>
 
-    <Button
-        android:id="@+id/add_product_submit"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/_30sdp"
-        android:minWidth="@dimen/_150sdp"
-        android:background="@drawable/btn_confirm_blue"
-        android:layout_margin="@dimen/_10sdp"
-        android:text="CẬP NHẬT"
-        android:textAllCaps="true"
-        android:textColor="@color/white"
-        android:textSize="@dimen/_14sdp"
-        android:layout_gravity="center_horizontal"/>
+                <wolve.dms.customviews.CInputForm
+                    android:id="@+id/add_product_unit_price"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    app:textHint="Giá bán"
+                    app:iconText="@string/icon_price"
+                    />
+
+                <wolve.dms.customviews.CInputForm
+                    android:id="@+id/add_product_purchase_price"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    app:textHint="Giá nhập hàng"
+                    app:iconText="@string/icon_purchase"/>
+
+                <wolve.dms.customviews.CInputForm
+                    android:id="@+id/add_product_distributor_price"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    app:textHint="Giá nhà phân phối"
+                    app:iconText="@string/icon_briefcase"/>
+
+                <wolve.dms.customviews.CInputForm
+                    android:id="@+id/add_product_unit_in_carton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    app:textHint="đơn vị/ thùng"
+                    app:iconText="@string/icon_container"/>
+
+                <wolve.dms.customviews.CInputForm
+                    android:id="@+id/add_product_volume"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    app:textHint="Khối lượng"
+                    app:iconText="@string/icon_weight"/>
+
+                <wolve.dms.customviews.CInputForm
+                    android:id="@+id/add_product_promotion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:textHint=""
+                    app:iconText="@string/icon_gift"
+                    app:isDropdown="true"
+                    app:textColor="@color/colorBlue"/>
+
+
+
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/add_product_submit"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_30sdp"
+                android:minWidth="@dimen/_150sdp"
+                android:background="@drawable/btn_confirm_blue"
+                android:layout_margin="@dimen/_10sdp"
+                android:text="CẬP NHẬT"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_14sdp"
+                android:layout_gravity="center_horizontal"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+
 
 
 </LinearLayout>

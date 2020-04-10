@@ -177,7 +177,8 @@
             android:layout_marginRight="@dimen/_10sdp"
             android:visibility="gone">
 
-            <wolve.dms.customviews.CTextIcon
+            <TextView
+                android:fontFamily="@font/font_awesome"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/icon_list_check"
@@ -202,7 +203,8 @@
 
 
 
-        <wolve.dms.customviews.CTextIcon
+        <TextView
+            android:fontFamily="@font/font_awesome"
             android:id="@+id/map_reload"
             android:layout_width="@dimen/_20sdp"
             android:layout_height="@dimen/_20sdp"
@@ -323,7 +325,8 @@
                             android:textSize="@dimen/_10sdp"
                             android:singleLine="true"/>
 
-                        <wolve.dms.customviews.CTextIcon
+                        <TextView
+                            android:fontFamily="@font/font_awesome"
                             android:id="@+id/map_detail_distance"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -335,7 +338,8 @@
 
                     </LinearLayout>
 
-                    <wolve.dms.customviews.CTextIcon
+                    <TextView
+                        android:fontFamily="@font/font_awesome"
                         android:id="@+id/map_detail_checkin_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -350,7 +354,8 @@
                         android:orientation="horizontal"
                         android:layout_marginTop="@dimen/_2sdp">
 
-                        <wolve.dms.customviews.CTextIcon
+                        <TextView
+                            android:fontFamily="@font/font_awesome"
                             android:id="@+id/map_detail_status_dot"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
@@ -359,7 +364,8 @@
                             android:textSize="@dimen/_8sdp"
                             android:textColor="@color/black_text_color_hint"/>
 
-                        <wolve.dms.customviews.CTextIcon
+                        <TextView
+                            android:fontFamily="@font/font_awesome"
                             android:id="@+id/map_detail_status"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

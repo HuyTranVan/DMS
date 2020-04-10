@@ -165,14 +165,14 @@ public class Constants {
                 Util.getIcon(R.string.icon_depot),
                 Util.getIcon(R.string.icon_barcode),
                 Util.getIcon(R.string.icon_product_group),
-                Util.getIcon(R.string.icon_setting)};
+                Util.getIcon(R.string.icon_info)};
         String[] texts = new String[]{
                 "Bán hàng",
                 "Thống kê",
                 "Xuất nhập tồn",
                 "Quét mã",
                 "Danh mục",
-                "Cài đặt"};
+                "Thông tin"};
         String[] colors = new String[]{
                 "Bán hàng",
                 "Thống kê",

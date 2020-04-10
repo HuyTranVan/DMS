@@ -44,6 +44,7 @@ import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CInputForm;
 //import wolve.dms.libraries.FileUploader;
+import wolve.dms.libraries.FitScrollWithFullscreen;
 import wolve.dms.libraries.connectapi.UploadCloudaryMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
@@ -63,13 +64,13 @@ import static wolve.dms.utils.Constants.REQUEST_IMAGE_CAPTURE;
 public class NewUpdateProductFragment extends Fragment implements View.OnClickListener {
     private View view;
     private ImageView btnBack;
-    private CInputForm edName, edUnitPrice, edPurchasePrice, edGroup, edVolume, edIsPromotion;
+    private CInputForm edName, edUnitPrice, edPurchasePrice, edGroup, edVolume,
+            edIsPromotion, edBasePrice, edUnitInCarton;
     private Button btnSubmit ;
     private CircleImageView imgProduct;
 
-    private Product product;
+    private BaseModel product;
     private ProductActivity mActivity;
-    //private List<String> listGroup = new ArrayList<>();
     private List<String> listBoolean = new ArrayList<>();
     private Uri imageChangeUri ;
 
@@ -78,6 +79,7 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_add_product,container,false);
+        FitScrollWithFullscreen.assistActivity(getActivity(), 1);
         initializeView();
 
         intitialData();
@@ -110,7 +112,7 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
                     public void onError() {
 
                     }
-                });
+                }, null);
 
             }
         });
@@ -137,65 +139,55 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
         });
 
         String bundle = getArguments().getString(Constants.PRODUCT);
-        try {
-            if (bundle != null){
+        if (bundle != null){
+            product = new BaseModel(bundle);
 
-                product = new Product(new JSONObject(bundle));
+            edName.setText(product.getString("name"));
+            edUnitPrice.setText(Util.FormatMoney(product.getDouble("unitPrice")));
+            edPurchasePrice.setText(Util.FormatMoney(product.getDouble("purchasePrice")));
+            edBasePrice.setText(Util.FormatMoney(product.getDouble("basePrice")));
 
-                edName.setText(product.getString("name"));
-                edUnitPrice.setText(Util.FormatMoney(product.getDouble("unitPrice")));
+            edGroup.setText(product.getBaseModel("productGroup").getString("name"));
+            edVolume.setText(product.getString("volume"));
+            edUnitInCarton.setText(product.getString("unitInCarton"));
+            edIsPromotion.setText(product.getBoolean("promotion")? Constants.IS_PROMOTION :Constants.NO_PROMOTION);
 
-                edPurchasePrice.setText(Util.FormatMoney(product.getDouble("purchasePrice")));
-
-                edGroup.setText(new JSONObject(product.getString("productGroup")).getString("name"));
-                edVolume.setText(product.getString("volume"));
-                edIsPromotion.setText(product.getBoolean("promotion")? Constants.IS_PROMOTION :Constants.NO_PROMOTION);
-
-                if (!Util.checkImageNull(product.getString("image"))){
-                    Glide.with(NewUpdateProductFragment.this).load(product.getString("image")).centerCrop().into(imgProduct);
-
-                }else {
-                    Glide.with(this).load( R.drawable.ic_wolver).centerCrop().into(imgProduct);
-
-                }
+            if (!Util.checkImageNull(product.getString("image"))){
+                Glide.with(NewUpdateProductFragment.this).load(product.getString("image")).centerCrop().into(imgProduct);
 
             }else {
-                product = new Product(new JSONObject());
-                product.put("id",0);
+                Glide.with(this).load( R.drawable.ic_wolver).centerCrop().into(imgProduct);
 
             }
 
-            edUnitPrice.textMoneyEvent(new CallbackDouble() {
-                @Override
-                public void Result(Double d) {
+        }else {
+            product = new Product(new JSONObject());
+            product.put("id",0);
 
-                }
-            });
-            edPurchasePrice.textMoneyEvent(new CallbackDouble() {
-                @Override
-                public void Result(Double d) {
-
-                }
-            });
-
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
 
-//        checkPermission();
+        edUnitPrice.textMoneyEvent(new CallbackDouble() {
+            @Override
+            public void Result(Double d) {
+
+            }
+        });
+        edPurchasePrice.textMoneyEvent(new CallbackDouble() {
+            @Override
+            public void Result(Double d) {
+
+            }
+        });
+        edBasePrice.textMoneyEvent(new CallbackDouble() {
+            @Override
+            public void Result(Double d) {
+
+            }
+        });
+
+        edBasePrice.setVisibility(Util.isAdmin()? View.VISIBLE: View.GONE);
 
     }
-
-//    @SuppressLint("WrongConstant")
-//    private void checkPermission(){
-//        if (PermissionChecker.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED
-//                || PermissionChecker.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-//                ||PermissionChecker.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
-//            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE ,Manifest.permission.READ_EXTERNAL_STORAGE ,Manifest.permission.CAMERA }, Constants.REQUEST_READ_PERMISSION);
-//
-//            return;
-//        }
-//    }
 
     private void addEvent() {
         btnBack.setOnClickListener(this);
@@ -213,6 +205,8 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
         edGroup = (CInputForm) view.findViewById(R.id.add_product_group);
         edVolume = (CInputForm) view.findViewById(R.id.add_product_volume);
         edIsPromotion = (CInputForm) view.findViewById(R.id.add_product_promotion);
+        edBasePrice = (CInputForm) view.findViewById(R.id.add_product_distributor_price);
+        edUnitInCarton = (CInputForm) view.findViewById(R.id.add_product_unit_in_carton);
         btnSubmit = (Button) view.findViewById(R.id.add_product_submit);
         btnBack = (ImageView) view.findViewById(R.id.icon_back);
         imgProduct = (CircleImageView) view.findViewById(R.id.add_product_image);
@@ -221,16 +215,14 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
+        Util.hideKeyboard(v);
         switch (v.getId()){
             case R.id.icon_back:
-//                getActivity().getSupportFragmentManager().popBackStack();
-                Util.hideKeyboard(v);
                 mActivity.onBackPressed();
                 break;
 
             case R.id.add_product_submit:
                 submitProduct();
-//                uploadImageNew();
                 break;
 
             case R.id.add_product_image:
@@ -301,7 +293,9 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
     private void submitProduct(){
         if (edName.getText().toString().trim().equals("")
                 || edUnitPrice.getText().toString().trim().equals("")
-                || edPurchasePrice.getText().toString().trim().equals("")){
+                || edPurchasePrice.getText().toString().trim().equals("")
+                || edBasePrice.getText().toString().trim().equals("")
+                || edUnitInCarton.getText().toString().trim().equals("")){
             CustomCenterDialog.alertWithCancelButton(null, "Vui lòng nhập đủ thông tin", "đồng ý", null, new CallbackBoolean() {
                 @Override
                 public void onRespone(Boolean result) {
@@ -344,7 +338,9 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
                 Util.valueMoney(edPurchasePrice.getText().toString()),
                 edVolume.getText().toString().trim().replace(",",""),
                 defineGroupId(edGroup.getText().toString().trim()),
-                urlImage);
+                urlImage,
+                Util.valueMoney(edBasePrice.getText().toString()),
+                edUnitInCarton.getText().toString().trim().replace(",",""));
 
         ProductConnect.CreateProduct(param, new CallbackCustom() {
             @Override

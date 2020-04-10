@@ -24,7 +24,8 @@
             android:textColor="@color/black_text_color"
             android:singleLine="true"/>
 
-        <wolve.dms.customviews.CTextIcon
+        <TextView
+            android:fontFamily="@font/font_awesome"
             android:id="@+id/map_infowindow_phone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

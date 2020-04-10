@@ -9,10 +9,6 @@ import android.widget.TextView;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,13 +16,9 @@ import wolve.dms.R;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackDeleteAdapter;
-import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.callback.CallbackListObject;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
-import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
@@ -187,8 +179,7 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<Import_ProductAd
     }
 
     public class Import_ProductViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvDate;
-        private CTextIcon tvDelete, tvUser, tvWarehouse, tvAccept, tvCopy;
+        private TextView tvDate,  tvDelete, tvUser, tvWarehouse, tvAccept, tvCopy;
         private RecyclerView rvProduct;
         private CardView lnParent;
 
@@ -231,18 +222,22 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<Import_ProductAd
     }
 
     private String createImportContentForShare(int position){
-        String patern = "Ngày %s\nNhập từ %s >>> %s\n\n%s";
+        String patern = "Ngày %s\nNhập từ %s >>> %s\n\n%s\n\n=>>> %s";
         String detail = "";
         List<BaseModel> details = DataUtil.array2ListObject(mData.get(position).getString("details"));
         for (int i=0; i<details.size(); i++){
-            detail += String.format("%s  x  %s", details.get(i).getInt("quantity"),
-                    details.get(i).getString("productName")) + (i == details.size()-1? "": "\n");
+            detail += String.format("%s x  %s (%s)",
+                    details.get(i).getInt("quantity"),
+                    details.get(i).getString("productName"),
+                    Util.FormatMoney(details.get(i).getDouble("basePrice")))
+                    + (i == details.size()-1? "": "\n");
         }
 
         return String.format(patern, Util.DateHourString(mData.get(position).getLong("createAt")),
                 mData.get(position).getBaseModel("fr_warehouse").getString("name"),
                 mData.get(position).getBaseModel("warehouse").getString("name"),
-                detail);
+                detail,
+                Util.FormatMoney(DataUtil.sumMoneyFromList(details, "basePrice", "quantity")));
 
     }
 

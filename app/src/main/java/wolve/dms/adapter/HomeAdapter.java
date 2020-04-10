@@ -16,7 +16,6 @@ import java.util.ArrayList;
 
 import wolve.dms.R;
 import wolve.dms.callback.CallbackClickAdapter;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
 
@@ -79,13 +78,12 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
 
 
     public class ItemAdapterViewHolder extends RecyclerView.ViewHolder {
-        private CTextIcon tvIcon;
-        private TextView tvTitle;
+        private TextView tvTitle, tvIcon;
         private LinearLayout rlParent;
 
         public ItemAdapterViewHolder(View itemView) {
             super(itemView);
-            tvIcon = (CTextIcon) itemView.findViewById(R.id.item_home_icon);
+            tvIcon = (TextView) itemView.findViewById(R.id.item_home_icon);
             tvTitle = (TextView) itemView.findViewById(R.id.item_home_text);
             rlParent = (LinearLayout) itemView.findViewById(R.id.item_home_parent);
         }

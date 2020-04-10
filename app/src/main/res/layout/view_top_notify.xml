@@ -11,7 +11,8 @@
     tools:ignore="WebViewLayout"
     android:gravity="center_vertical">
 
-        <wolve.dms.customviews.CTextIcon
+        <TextView
+            android:fontFamily="@font/font_awesome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/icon_info"
@@ -26,27 +27,28 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-        <wolve.dms.customviews.CTextIcon
-            android:id="@+id/top_notify_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:text="@string/icon_money"
-            android:textSize="@dimen/_11sdp"
-            android:textColor="@color/black_text_color"
-            android:layout_gravity="center_vertical"
-            android:singleLine="true"/>
+                <TextView
+                    android:fontFamily="@font/font_awesome"
+                    android:id="@+id/top_notify_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:text="@string/icon_money"
+                    android:textSize="@dimen/_11sdp"
+                    android:textColor="@color/black_text_color"
+                    android:layout_gravity="center_vertical"
+                    android:singleLine="true"/>
 
-        <TextView
-            android:id="@+id/top_notify_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tiền mặt"
-            android:textColor="@color/black_text_color_hint"
-            android:textSize="@dimen/_11sdp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginTop="@dimen/_2sdp"
-            android:singleLine="true"/>
+                <TextView
+                    android:id="@+id/top_notify_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tiền mặt"
+                    android:textColor="@color/black_text_color_hint"
+                    android:textSize="@dimen/_11sdp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:singleLine="true"/>
 
 
         </LinearLayout>

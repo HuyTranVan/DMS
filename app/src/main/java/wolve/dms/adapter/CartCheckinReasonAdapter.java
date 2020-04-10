@@ -16,7 +16,6 @@ import java.util.List;
 import wolve.dms.R;
 import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackString;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Status;
 import wolve.dms.utils.Constants;
@@ -88,15 +87,14 @@ public class CartCheckinReasonAdapter extends RecyclerView.Adapter<CartCheckinRe
 
 
     public class ReasonAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvName;
+        private TextView tvName, btnClose;
         private View line;
-        private CTextIcon btnClose;
         private RelativeLayout lnParent;
 
         public ReasonAdapterViewHolder(View itemView) {
             super(itemView);
             tvName = (TextView) itemView.findViewById(R.id.checkin_reason_name);
-            btnClose = (CTextIcon) itemView.findViewById(R.id.checkin_reason_close);
+            btnClose = (TextView) itemView.findViewById(R.id.checkin_reason_close);
             lnParent = (RelativeLayout) itemView.findViewById(R.id.checkin_reason_parent);
             line = itemView.findViewById(R.id.checkin_reason_line);
         }

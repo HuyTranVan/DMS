@@ -40,7 +40,6 @@ import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomListList;
 import wolve.dms.callback.CallbackListObject;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.libraries.connectapi.CustomGetMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
@@ -61,9 +60,8 @@ import wolve.dms.utils.Util;
 
 public class HomeActivity extends BaseActivity implements View.OnClickListener, CallbackClickAdapter, SwipeRefreshLayout.OnRefreshListener {
     private RecyclerView rvItems;
-    private CTextIcon btnChangeUser;
     private CircleImageView imgUser;
-    private TextView tvFullname , tvCash, tvProfit, tvMonth, tvHaveNewProduct, tvNumberTemp, tvNumberTempImport;
+    private TextView tvFullname , tvCash, tvProfit, tvMonth, tvHaveNewProduct, tvNumberTemp, tvNumberTempImport, btnChangeUser;
     private LinearLayout lnUser;
     private RelativeLayout lnTempGroup, lnTempImport;
     private View line;
@@ -168,7 +166,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         SystemConnect.loadListObject(params, new CallbackCustomListList() {
             @Override
             public void onResponse(List<List<BaseModel>> results) {
-                double paid = DataUtil.sumMoneyFromList(results.get(0), "paid");
+                double paid = DataUtil.sumValueFromList(results.get(0), "paid");
                 tvCash.setText(String.format(    "%s đ", Util.FormatMoney(paid)));
 
             }
@@ -329,7 +327,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
             }
 
-        });
+        }, null);
 
     }
 

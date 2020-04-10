@@ -38,7 +38,6 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.callback.CallbackProcess;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.libraries.printerdriver.BluetoothPrintBitmap;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
@@ -62,8 +61,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     private ImageView imgLogo, btnBack, imgOrderPhone;
     private TextView tvCompany, tvAdress, tvHotline, tvWebsite, tvTitle, tvShopName, tvCustomerName, tvCustomerAddress, tvDate, tvEmployee,
             tvSumCurrentBill, tvOrderPhone, tvThanks, tvPrintSize, tvPrinterMainText, tvPrinterName, tvTotal, tvPaid, tvRemain, tvTotalTitle,
-            tvEmployeeSign, tvDeliver, tvDeliverTitle;
-    private CTextIcon tvListPrinter;
+            tvEmployeeSign, tvDeliver, tvDeliverTitle, tvListPrinter;
     private RecyclerView rvBills, rvDebts;
     private LinearLayout lnMain, lnBottom, lnSubmit, lnTotalGroup, lnPaidGroup, lnRemainGroup, lnSignature;
     private View line1, line2, line3, line4;
@@ -436,7 +434,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     private void doPrintCurrentBill(final List<BaseModel> listPayments){
         Util.getInstance().showLoading("Đang in...");
         final Double total  = adapterBill.getTotalMoney() + adapterDebt.getTotalMoney();
-        Double paid = DataUtil.sumMoneyFromList(listPayments, "paid");
+        Double paid = DataUtil.sumValueFromList(listPayments, "paid");
         Double remain = total -paid;
         int printSize = tvPrintSize.getText().toString().equals(Constants.PRINTER_80)? Constants.PRINTER_80_WIDTH: Constants.PRINTER_57_WIDTH;
 

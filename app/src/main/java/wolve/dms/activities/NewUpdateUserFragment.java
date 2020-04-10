@@ -54,6 +54,7 @@ import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
+import wolve.dms.utils.CustomInputDialog;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
@@ -81,6 +82,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
 
     private Uri imageChangeUri = null ;
     private BaseModel currentUser;
+    private BaseModel currentWarehouse;
     private List<BaseModel> listWarehouse;
     private String displayWarehouseFormat = "Kho mặc định: %s";
 
@@ -103,6 +105,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
         phoneEvent();
         if (bundle != null){
             currentUser = new BaseModel(bundle);
+            currentWarehouse = currentUser.hasKey("warehouse")? currentUser.getBaseModel("warehouse") : new BaseModel();
             edName.setText(currentUser.getString("displayName"));
             edPhone.setText(currentUser.getString("phone"));
             edRole.setText(User.getRoleString(currentUser.getInt("role")));
@@ -117,6 +120,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
 
         }else {
             currentUser = new BaseModel();
+            currentWarehouse = new BaseModel();
             edRole.setText(User.getRoleString(4));
             edGender.setText("NAM");
 
@@ -129,7 +133,6 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
 
         }else {
             edPhone.setFocusable(true);
-            //edWarehouse.setFocusable(true);
             roleEvent();
             warehouseEvent();
         }
@@ -266,6 +269,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
         });
 
     }
+
     private void genderEvent(){
         edGender.setDropdown(true, new CInputForm.ClickListener() {
             @Override
@@ -285,7 +289,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
                     public void onError() {
 
                     }
-                });
+                }, null);
 
             }
         });
@@ -306,7 +310,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
                     public void onError() {
 
                     }
-                });
+                }, null);
 
             }
         });
@@ -320,8 +324,8 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
                     SystemConnect.ListWarehouse(true, new CallbackCustomList() {
                         @Override
                         public void onResponse(List<BaseModel> results) {
-                            listWarehouse =  filterListWarehouse(results);
-                            choiceWarehouse(listWarehouse);
+                            listWarehouse =  results;
+                            choiceWarehouse(filterListWarehouse(listWarehouse));
 
                         }
                         @Override
@@ -332,7 +336,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
 
 
                 }else {
-                    choiceWarehouse(listWarehouse);
+                    choiceWarehouse(filterListWarehouse(listWarehouse));
                 }
 
             }
@@ -340,12 +344,13 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
     }
 
     private void choiceWarehouse(List<BaseModel> list){
-        if (list.size()>0){
+        if (list.size() >0){
             CustomBottomDialog.choiceListObject("CHỌN KHO HÀNG", list, "name", new CallbackBaseModel() {
                 @Override
                 public void onResponse(BaseModel object) {
+                    currentWarehouse = object;
                     edWarehouse.setText(String.format(displayWarehouseFormat, object.getString("name")));
-                    currentUser.put("warehouse_id", object.getInt("id"));
+                    //currentUser.put("warehouse_id", object.getInt("id"));
 
                 }
 
@@ -353,11 +358,30 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
                 public void onError() {
 
                 }
-            });
-
+            }, null);
         }else {
-            Util.showSnackbar("Chưa tạo kho hàng nhân viên này", null, null);
+            CustomCenterDialog.alertWithCancelButton("",
+                    "Chưa tồn tại kho hàng của nhân viên này. Vui lòng tạo kho hàng!",
+                    "đồng ý",
+                    "quay lại", new CallbackBoolean() {
+                        @Override
+                        public void onRespone(Boolean result) {
+                            if (result){
+                                CustomInputDialog.inputWarehouse(view, new CallbackString() {
+                                    @Override
+                                    public void Result(String s) {
+                                        currentWarehouse.put("name", s);
+                                        edWarehouse.setText(String.format(displayWarehouseFormat, s));
+
+                                    }
+                                });
+                            }
+                        }
+                    });
+
         }
+
+
 
     }
 
@@ -369,6 +393,9 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
 
         }else if (!Util.isEmailValid(edEmail.getText().toString())){
             Util.showSnackbar("Sai định dạng email!", null, null);
+
+        }else if (!currentWarehouse.hasKey("name")){
+            Util.showSnackbar("Chưa chọn kho hàng cho nhân viên", null, null);
 
         }else if (imageChangeUri != null){
             uploadImage(new CallbackString() {
@@ -392,6 +419,14 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
     }
 
     private void updateUser(String url){
+        if (currentWarehouse.hasKey("id")){
+            currentUser.put("warehouse_id", currentWarehouse.getInt("id"));
+            currentUser.put("warehouse_name", currentWarehouse.getString("name"));
+        }else {
+            currentUser.put("warehouse_id", 0);
+            currentUser.put("warehouse_name", currentWarehouse.getString("name"));
+
+        }
         String param = String.format(Api_link.USER_CREATE_PARAM,
                 currentUser.getInt("id") == 0? "" : "id="+ currentUser.getString("id") +"&",
                 Util.encodeString(edName.getText().toString().trim()),
@@ -400,7 +435,8 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
                 Util.getPhoneValue(edPhone),
                 User.getIndex(edRole.getText().toString()),
                 url,
-                currentUser.hasKey("warehouse_id")&&!currentUser.isNull("warehouse_id")?"&warehouse_id="+ currentUser.getInt("warehouse_id"):"" );
+                currentUser.getInt("warehouse_id"),
+                Util.encodeString(currentUser.getString("warehouse_name")));
 
         UserConnect.CreateUser(param, new CallbackCustom() {
             @Override
@@ -413,7 +449,6 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
                     mActivity.loadUser();
 
                 }else {
-
                     Transaction.gotoHomeActivityRight(true);
 
                 }
@@ -431,12 +466,33 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
     private List<BaseModel> filterListWarehouse(List<BaseModel> list){
         List<BaseModel> results = new ArrayList<>();
         for (BaseModel baseModel : list){
-            if (baseModel.getInt("isMaster")==3){
+            if (baseModel.getInt("isMaster")==3 && baseModel.getInt("user_id") == currentUser.getInt("id")){
                 results.add(baseModel);
 
             }
         }
         return results;
+    }
+
+    private void postNewWarehouse(String name, int user_id){
+        String param = String.format(Api_link.WAREHOUSE_CREATE_PARAM,  "", Util.encodeString(name), user_id, 3);
+
+        SystemConnect.CreateDepot(param, new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+//                getActivity().getSupportFragmentManager().popBackStack();
+//                mActivity.loadDepot();
+
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        }, true);
+
+
+
     }
 
 

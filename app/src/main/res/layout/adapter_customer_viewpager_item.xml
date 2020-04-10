@@ -32,7 +32,8 @@
             android:imeOptions="actionDone"
             android:textCursorDrawable="@drawable/custom_cursor"/>
 
-        <wolve.dms.customviews.CTextIcon
+        <TextView
+            android:fontFamily="@font/font_awesome"
             android:id="@+id/search_icon"
             android:layout_width="@dimen/_30sdp"
             android:layout_height="match_parent"

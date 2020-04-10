@@ -14,7 +14,6 @@ import java.util.List;
 import wolve.dms.R;
 import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackString;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
@@ -58,8 +57,7 @@ public class FilterChoiceAdapter extends RecyclerView.Adapter<FilterChoiceAdapte
     }
 
     public class ChoiceMethodViewHolder extends RecyclerView.ViewHolder {
-        private TextView text;
-        private CTextIcon icon;
+        private TextView text, icon;
 
         public ChoiceMethodViewHolder(View itemView) {
             super(itemView);

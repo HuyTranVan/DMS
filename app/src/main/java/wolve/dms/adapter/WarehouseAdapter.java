@@ -14,7 +14,6 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.callback.CallbackObject;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.models.User;
@@ -40,7 +39,7 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
         this.mListener = listener;
         this.mListenerInfo = listenerinfo;
 
-        DataUtil.sortProductGroup(mData, false);
+        DataUtil.sortbyStringKey("isMaster",mData, false);
     }
 
     @Override
@@ -67,7 +66,13 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
         }else {
             holder.tvInfo.setVisibility(View.GONE);
         }
+        if (mData.get(position).getInt("number_temp_import") >0){
+            holder.tvTempImport.setVisibility(View.VISIBLE);
+            holder.tvTempImport.setText(String.format("(%d) Chờ nhập kho", mData.get(position).getInt("number_temp_import")));
 
+        }else {
+            holder.tvTempImport.setVisibility(View.GONE);
+        }
         switch (mData.get(position).getInt("isMaster")){
             case 1:
                 holder.tvType.setText("Kho tổng");
@@ -99,36 +104,6 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
 
         holder.line.setVisibility(position == mData.size()-1? View.GONE: View.VISIBLE);
 
-//        holder.lnParent.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View v) {
-//                CustomCenterDialog.alertWithCancelButton(null, "Bạn muốn xóa nhóm " + mData.get(position).getString("name"), "XÓA","HỦY", new CallbackBoolean() {
-//                    @Override
-//                    public void onRespone(Boolean result) {
-//                        String param = String.valueOf(mData.get(position).getInt("id"));
-//                        ProductConnect.DeleteProductGroup(param, new CallbackCustom() {
-//                            @Override
-//                            public void onResponse(BaseModel result) {
-//                                Util.getInstance().stopLoading(true);
-//                                mDeleteListener.onDelete(mData.get(position).BaseModelstoString(), position);
-//
-//                            }
-//
-//                            @Override
-//                            public void onError(String error) {
-//                                Util.getInstance().stopLoading(true);
-//                                Constants.throwError(error);
-//
-//                            }
-//
-//                        }, true);
-//                    }
-//                });
-//
-//                return true;
-//            }
-//        });
-
     }
 
     @Override
@@ -138,19 +113,19 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
 
 
     public class WarehouseAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvGroupName, tvType;
-        private CTextIcon tvInfo, tvUsername;
+        private TextView tvGroupName, tvType, tvTempImport,  tvInfo, tvUsername;
         private RelativeLayout lnParent;
         private View line;
 
         public WarehouseAdapterViewHolder(View itemView) {
             super(itemView);
             tvGroupName = (TextView) itemView.findViewById(R.id.depot_item_name);
-            tvUsername = (CTextIcon) itemView.findViewById(R.id.depot_item_user);
+            tvUsername = (TextView) itemView.findViewById(R.id.depot_item_user);
             tvType = (TextView) itemView.findViewById(R.id.depot_item_depottype);
             tvInfo = itemView.findViewById(R.id.depot_item_depotinfo);
             lnParent = (RelativeLayout) itemView.findViewById(R.id.depot_item_parent);
             line = itemView.findViewById(R.id.depot_item_seperateline);
+            tvTempImport = itemView.findViewById(R.id.depot_item_number_temp_import);
 
         }
 

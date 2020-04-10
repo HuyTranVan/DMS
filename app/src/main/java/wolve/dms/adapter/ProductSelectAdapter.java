@@ -16,7 +16,6 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.callback.CallbackDouble;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.utils.Util;
 
 
@@ -68,15 +67,14 @@ public class ProductSelectAdapter extends RecyclerView.Adapter<ProductSelectAdap
 
 
     public class StatusAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvText;
-        private CTextIcon tvClose;
+        private TextView tvText, tvClose;
         private RelativeLayout lnParent;
 
         public StatusAdapterViewHolder(View itemView) {
             super(itemView);
             lnParent = (RelativeLayout) itemView.findViewById(R.id.product_select_parent);
             tvText = (TextView) itemView.findViewById(R.id.product_select_text);
-            tvClose= (CTextIcon) itemView.findViewById(R.id.product_select_close);
+            tvClose= (TextView) itemView.findViewById(R.id.product_select_close);
 
         }
 

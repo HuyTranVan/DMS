@@ -14,6 +14,99 @@
         android:orientation="vertical"
         android:paddingBottom="@dimen/_50sdp">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/_5sdp"
+            android:paddingRight="@dimen/_5sdp"
+            android:paddingTop="@dimen/_5sdp">
+
+            <wolve.dms.customviews.CVerticalView
+                android:id="@+id/statistical_dashboard_revenue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                app:text="0"
+                app:iconText="@string/icon_truck"
+                app:backgroundLayout="@drawable/bg_corner5_white_border2_blue"
+                android:layout_marginRight="@dimen/_4sdp"/>
+
+            <wolve.dms.customviews.CVerticalView
+                android:id="@+id/statistical_dashboard_cash"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:layout_marginLeft="@dimen/_4sdp"
+                app:backgroundLayout="@drawable/bg_corner5_white_border2_orange"
+                app:textColor="@color/orange"
+                app:iconText="@string/icon_money"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/_5sdp"
+            android:paddingRight="@dimen/_5sdp"
+            android:paddingTop="@dimen/_8sdp">
+
+            <wolve.dms.customviews.CVerticalView
+                android:id="@+id/statistical_dashboard_debt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                app:text="0"
+                app:iconText="@string/icon_bomb"
+                app:backgroundLayout="@drawable/bg_corner5_white_border2_red"
+                app:textColor="@color/colorRed"
+                android:layout_marginRight="@dimen/_4sdp"/>
+
+            <wolve.dms.customviews.CVerticalView
+                android:id="@+id/statistical_dashboard_profit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:layout_marginLeft="@dimen/_4sdp"
+                app:backgroundLayout="@drawable/bg_corner5_white_border2_green"
+                app:textColor="@color/colorGreen"
+                app:iconText="@string/icon_hand_on_money"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/statistical_dashboard_inventory_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/_5sdp"
+            android:paddingRight="@dimen/_5sdp"
+            android:paddingTop="@dimen/_8sdp">
+
+            <wolve.dms.customviews.CVerticalView
+                android:id="@+id/statistical_dashboard_inventory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                app:text="0"
+                app:iconText="@string/icon_inventory"
+                app:backgroundLayout="@drawable/bg_corner5_white_border2_grape"
+                app:textColor="@color/colorGrape"
+                android:layout_marginRight="@dimen/_4sdp"/>
+
+            <wolve.dms.customviews.CVerticalView
+                android:id="@+id/statistical_dashboard_base_profit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:layout_marginLeft="@dimen/_4sdp"
+                app:backgroundLayout="@drawable/bg_corner5_white_border2_pink"
+                app:textColor="@color/colorAccent"
+                app:iconText="@string/icon_hand_on_money"/>
+
+        </LinearLayout>
+
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -21,7 +21,8 @@
         android:layout_toLeftOf="@+id/product_select_close"
         android:singleLine="true"/>
 
-    <wolve.dms.customviews.CTextIcon
+    <TextView
+        android:fontFamily="@font/font_awesome"
         android:id="@+id/product_select_close"
         android:layout_width="@dimen/_20sdp"
         android:layout_height="@dimen/_20sdp"

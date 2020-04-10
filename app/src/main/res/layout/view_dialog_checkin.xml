@@ -125,8 +125,8 @@
                 android:layout_marginLeft="@dimen/_10sdp"
                 android:layout_marginRight="@dimen/_10sdp">
 
-                <wolve.dms.customviews.CTextIcon
-                    android:layout_width="0dp"
+                <TextView
+                    android:fontFamily="@font/font_awesome"                    android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.1"
                     android:text="@string/icon_search"
@@ -146,7 +146,8 @@
                     android:ems="10"
                     android:textCursorDrawable="@drawable/custom_cursor"/>
 
-                <wolve.dms.customviews.CTextIcon
+                <TextView
+                    android:fontFamily="@font/font_awesome"
                     android:id="@+id/dialog_checkin_search_close"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"

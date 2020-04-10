@@ -84,7 +84,8 @@ public class DataUtil {
                 object.put("discount", listProduct.get(i).getDouble("discount"));
                 object.put("quantity", listProduct.get(i).getInt("quantity"));
                 object.put("productName", listProduct.get(i).getString("productName"));
-                object.put("purchasePrice", listProduct.get(i).getDouble("quantity"));
+                object.put("purchasePrice", listProduct.get(i).getDouble("purchasePrice"));
+                object.put("basePrice", listProduct.get(i).getDouble("basePrice"));
 
                 array.put(object);
             }
@@ -713,10 +714,29 @@ public class DataUtil {
         return values;
     }
 
-    public static double sumMoneyFromList(List<BaseModel> list, String key){
+    public static double sumValueFromList(List<BaseModel> list, String key){
         double result = 0.0;
         for (BaseModel item: list){
             result += item.getDouble(key);
+        }
+
+        return result;
+    }
+
+    public static double sumMoneyFromList(List<BaseModel> list, String key, String quantitykey){
+        double result = 0.0;
+        for (BaseModel item: list){
+            result += item.getDouble(key) * item.getInt(quantitykey);
+        }
+
+        return result;
+    }
+
+
+    public static int sumNumberFromList(List<BaseModel> list, String key){
+        int result = 0;
+        for (BaseModel item: list){
+            result += item.getInt(key);
         }
 
         return result;

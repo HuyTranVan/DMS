@@ -19,7 +19,6 @@ import wolve.dms.R;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackChangePrice;
 import wolve.dms.callback.CallbackClickProduct;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.utils.CustomCenterDialog;
@@ -177,12 +176,9 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
     }
 
     public class CartProductsViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvName, tvQuantity ,tvQuantityDisplay, tvRibbon, tvCount;
+        private TextView tvName, tvQuantity ,tvQuantityDisplay, tvRibbon, tvCount, btnSub, btnPlus, btnCopy, btnPromotion, btnDelete;
         private LinearLayout lnParent;
         private RelativeLayout coParent;
-        //private CircleImageView imgProduct;
-        private CTextIcon btnSub, btnPlus, btnCopy, btnPromotion, btnDelete;
-//        private SwipeRevealLayout swipeRevealLayout;
 
         public CartProductsViewHolder(View itemView) {
             super(itemView);
@@ -193,8 +189,8 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
             tvQuantityDisplay = itemView.findViewById(R.id.shopcart_products_item_quantity_display);
             tvQuantity = (TextView) itemView.findViewById(R.id.shopcart_products_item_quantity);
             tvRibbon = itemView.findViewById(R.id.shopcart_products_item_ribbon);
-            btnSub = (CTextIcon) itemView.findViewById(R.id.shopcart_products_item_sub);
-            btnPlus = (CTextIcon) itemView.findViewById(R.id.shopcart_products_item_plus);
+            btnSub = (TextView) itemView.findViewById(R.id.shopcart_products_item_sub);
+            btnPlus = (TextView) itemView.findViewById(R.id.shopcart_products_item_plus);
             btnCopy = itemView.findViewById(R.id.shopcart_products_item_copy);
             btnPromotion = itemView.findViewById(R.id.shopcart_products_item_promotion);
             btnDelete = itemView.findViewById(R.id.shopcart_products_item_delete);

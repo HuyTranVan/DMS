@@ -15,7 +15,6 @@ import java.util.List;
 import wolve.dms.R;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackObject;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
@@ -166,8 +165,7 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
 
 
     public class TempbillAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvEmployee, tvShopName, tvTotal, tvAddress, tvDetail;
-        private CTextIcon tvNumber;
+        private TextView tvEmployee, tvShopName, tvTotal, tvAddress, tvDetail, tvNumber;
         private LinearLayout lnParent, lnDirection, lnDeliver;
         private View vLineUpper, vLineUnder;
 

@@ -28,7 +28,6 @@ import wolve.dms.adapter.Statistical_ViewpagerAdapter;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackCustomList;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.customviews.CustomTabLayout;
 import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialog;
 import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialogFragment;
@@ -45,12 +44,11 @@ import wolve.dms.utils.Util;
 
 public class StatisticalCustomerActivity extends BaseActivity implements  View.OnClickListener {
     private ImageView btnBack;
-    private TextView tvTitle, tvEmployeeName;
+    private TextView tvTitle, tvEmployeeName, btnExport;
     private ViewPager viewPager;
     private CustomTabLayout tabLayout;
     private RadioGroup rdGroup;
     private RadioButton rdMonth, rdDate;
-    private CTextIcon  btnExport;
     private LinearLayout btnEmployeeFilter;
     private RelativeLayout rlBottom;
 

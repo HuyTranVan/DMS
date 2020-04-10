@@ -37,7 +37,8 @@
             android:layout_marginRight="@dimen/_10sdp"
             android:visibility="gone">
 
-            <wolve.dms.customviews.CTextIcon
+            <TextView
+                android:fontFamily="@font/font_awesome"
                 android:id="@+id/tempbill_select_close"
                 android:layout_width="@dimen/_35sdp"
                 android:layout_height="match_parent"
@@ -45,7 +46,8 @@
                 android:gravity="center"
                 android:textSize="@dimen/_14sdp"/>
 
-            <wolve.dms.customviews.CTextIcon
+            <TextView
+                android:fontFamily="@font/font_awesome"
                 android:id="@+id/tempbill_select_check"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -55,7 +57,8 @@
                 android:paddingRight="@dimen/_5sdp"
                 android:layout_toLeftOf="@+id/tempbill_select_list"/>
 
-            <wolve.dms.customviews.CTextIcon
+            <TextView
+                android:fontFamily="@font/font_awesome"
                 android:id="@+id/tempbill_select_list"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"

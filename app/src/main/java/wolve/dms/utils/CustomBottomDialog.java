@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.OnBackPressListener;
+import com.orhanobut.dialogplus.OnDismissListener;
 import com.orhanobut.dialogplus.ViewHolder;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import java.util.List;
 import wolve.dms.R;
 import wolve.dms.adapter.ItemAdapter;
 import wolve.dms.callback.CallbackBaseModel;
-import wolve.dms.customviews.CTextIcon;
+import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.models.BaseModel;
 
 /**
@@ -69,8 +70,8 @@ public class CustomBottomDialog {
 
         LinearLayout lnCash = (LinearLayout) dialog.findViewById(R.id.choice_2method_parent1);
         LinearLayout lnDebt = (LinearLayout) dialog.findViewById(R.id.choice_2method_parent2);
-        CTextIcon tvIcon1 = (CTextIcon) dialog.findViewById(R.id.choice_2method_icon1);
-        CTextIcon tvIcon2 = (CTextIcon) dialog.findViewById(R.id.choice_2method_icon2);
+        TextView tvIcon1 = (TextView) dialog.findViewById(R.id.choice_2method_icon1);
+        TextView tvIcon2 = (TextView) dialog.findViewById(R.id.choice_2method_icon2);
         TextView tvText1 = (TextView) dialog.findViewById(R.id.choice_2method_text1);
         TextView tvText2 = (TextView) dialog.findViewById(R.id.choice_2method_text2);
 
@@ -134,9 +135,9 @@ public class CustomBottomDialog {
         LinearLayout lnOne = (LinearLayout) dialog.findViewById(R.id.choice_3method_parent1);
         LinearLayout lnTwo = (LinearLayout) dialog.findViewById(R.id.choice_3method_parent2);
         LinearLayout lnThree = (LinearLayout) dialog.findViewById(R.id.choice_3method_parent3);
-        CTextIcon tvIcon1 = (CTextIcon) dialog.findViewById(R.id.choice_3method_icon1);
-        CTextIcon tvIcon2 = (CTextIcon) dialog.findViewById(R.id.choice_3method_icon2);
-        CTextIcon tvIcon3 = (CTextIcon) dialog.findViewById(R.id.choice_3method_icon3);
+        TextView tvIcon1 = (TextView) dialog.findViewById(R.id.choice_3method_icon1);
+        TextView tvIcon2 = (TextView) dialog.findViewById(R.id.choice_3method_icon2);
+        TextView tvIcon3 = (TextView) dialog.findViewById(R.id.choice_3method_icon3);
         TextView tvText1 = (TextView) dialog.findViewById(R.id.choice_3method_text1);
         TextView tvText2 = (TextView) dialog.findViewById(R.id.choice_3method_text2);
         TextView tvText3 = (TextView) dialog.findViewById(R.id.choice_3method_text3);
@@ -221,10 +222,10 @@ public class CustomBottomDialog {
         LinearLayout lnTwo = (LinearLayout) dialog.findViewById(R.id.choice_4method_parent2);
         LinearLayout lnThree = (LinearLayout) dialog.findViewById(R.id.choice_4method_parent3);
         LinearLayout lnFour = (LinearLayout) dialog.findViewById(R.id.choice_4method_parent4);
-        CTextIcon tvIcon1 = (CTextIcon) dialog.findViewById(R.id.choice_4method_icon1);
-        CTextIcon tvIcon2 = (CTextIcon) dialog.findViewById(R.id.choice_4method_icon2);
-        CTextIcon tvIcon3 = (CTextIcon) dialog.findViewById(R.id.choice_4method_icon3);
-        CTextIcon tvIcon4 = (CTextIcon) dialog.findViewById(R.id.choice_4method_icon4);
+        TextView tvIcon1 = (TextView) dialog.findViewById(R.id.choice_4method_icon1);
+        TextView tvIcon2 = (TextView) dialog.findViewById(R.id.choice_4method_icon2);
+        TextView tvIcon3 = (TextView) dialog.findViewById(R.id.choice_4method_icon3);
+        TextView tvIcon4 = (TextView) dialog.findViewById(R.id.choice_4method_icon4);
         TextView tvText1 = (TextView) dialog.findViewById(R.id.choice_4method_text1);
         TextView tvText2 = (TextView) dialog.findViewById(R.id.choice_4method_text2);
         TextView tvText3 = (TextView) dialog.findViewById(R.id.choice_4method_text3);
@@ -311,7 +312,7 @@ public class CustomBottomDialog {
         dialog.show();
     }
 
-    public static void choiceListObject(String title, final List<BaseModel> list,String key, final CallbackBaseModel mListener){
+    public static void choiceListObject(String title, final List<BaseModel> list, String key, final CallbackBaseModel mListener, CallbackBoolean dismiss){
         int heigh = list.size()>5 ? Util.convertSdpToInt(R.dimen._300sdp):
                 (list.size()+1)*Util.convertSdpToInt(R.dimen._35sdp)+ Util.convertSdpToInt(R.dimen._5sdp) ; //+Util.convertSdpToInt(R.dimen._30sdp);
         final DialogPlus dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
@@ -321,6 +322,15 @@ public class CustomBottomDialog {
                 .setMargin(20,20,20,20)
                 .setContentHeight(heigh)
                 .setInAnimation(R.anim.slide_up)
+                .setOnDismissListener(new OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogPlus dialog) {
+                        if (dismiss != null){
+                            dismiss.onRespone(true);
+
+                        }
+                    }
+                })
                 .setOnBackPressListener(new OnBackPressListener() {
                     @Override
                     public void onBackPressed(DialogPlus dialogPlus) {

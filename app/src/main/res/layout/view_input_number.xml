@@ -30,7 +30,8 @@
             />
 
 
-        <wolve.dms.customviews.CTextIcon
+        <TextView
+            android:fontFamily="@font/font_awesome"
             android:id="@+id/input_number_submit"
             android:layout_width="0dp"
             android:layout_height="match_parent"

@@ -232,7 +232,8 @@
         android:clickable="true"
         android:visibility="gone">
 
-        <wolve.dms.customviews.CTextIcon
+        <TextView
+            android:fontFamily="@font/font_awesome"
             android:id="@+id/cart_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

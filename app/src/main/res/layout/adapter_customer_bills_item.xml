@@ -85,10 +85,11 @@
                 android:layout_toLeftOf="@+id/bills_item_delete"
                 android:layout_centerVertical="true"/>
 
-            <wolve.dms.customviews.CTextIcon
+            <TextView
                 android:id="@+id/bills_item_delete"
                 android:layout_width="@dimen/_20sdp"
                 android:layout_height="match_parent"
+                android:fontFamily="@font/font_awesome"
                 android:text="@string/icon_menu"
                 android:textColor="@color/black_text_color_hint"
                 android:textSize="@dimen/_14sdp"
@@ -183,7 +184,8 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/_10sdp"/>
 
-        <wolve.dms.customviews.CTextIcon
+        <TextView
+            android:fontFamily="@font/font_awesome"
             android:id="@+id/btn_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

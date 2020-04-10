@@ -27,7 +27,6 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackObject;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
@@ -105,16 +104,14 @@ public class TempImportFragment extends Fragment implements View.OnClickListener
         }
     }
 
-
-
     private void createRVImport(List<BaseModel> list){
         adapter = new Import_ProductAdapter(list, new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
                 if (result){
                     reloadImportList();
-                }
 
+                }
             }
         });
         Util.createLinearRV(rvTempImport, adapter);

@@ -29,7 +29,6 @@ import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventList
 
 import wolve.dms.R;
 import wolve.dms.callback.CallbackString;
-import wolve.dms.customviews.CTextIcon;
 
 public class CustomInputDialog {
     private static DialogPlus dialog ;
@@ -60,7 +59,7 @@ public class CustomInputDialog {
         final CardView lnParent = (CardView) dialog.findViewById(R.id.input_shopnname_parent);
         final Spinner spShopType = (Spinner) dialog.findViewById(R.id.input_shopnname_shoptype);
         final EditText edName = (EditText) dialog.findViewById(R.id.input_shopnname_name);
-        CTextIcon btnSubmit = (CTextIcon) dialog.findViewById(R.id.input_shopnname_submit);
+        TextView btnSubmit = (TextView) dialog.findViewById(R.id.input_shopnname_submit);
 
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(Util.getInstance().getCurrentActivity(), R.layout.view_spinner_text, Constants.shopName);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -106,7 +105,7 @@ public class CustomInputDialog {
                 lnParent.getWindowVisibleDisplayFrame(r);
 
                 int screenHeight = lnParent.getRootView().getHeight();
-                int heightDifference = screenHeight - (r.bottom - r.top) - Util.getInstance().getCurrentActivity().getResources().getDimensionPixelSize(R.dimen._34sdp);
+                int heightDifference = screenHeight - (r.bottom - r.top) - Util.getInstance().getCurrentActivity().getResources().getDimensionPixelSize(R.dimen._32sdp);
                 int margin = Util.getInstance().getCurrentActivity().getResources().getDimensionPixelSize(R.dimen._2sdp);
 
                 FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -120,6 +119,83 @@ public class CustomInputDialog {
         dialog.show();
         edName.requestFocus();
         Util.showKeyboard(edName);
+    }
+
+    public static void inputWarehouse(View view, final CallbackString mListener){
+        dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
+                .setContentHolder(new ViewHolder(R.layout.view_input_warehouse))
+                .setGravity(Gravity.BOTTOM)
+                .setInAnimation(R.anim.slide_up)
+                .setBackgroundColorResId(R.drawable.transparent)
+                .setOnBackPressListener(new OnBackPressListener() {
+                    @Override
+                    public void onBackPressed(DialogPlus dialogPlus) {
+                        dialogPlus.dismiss();
+                    }
+                })
+                .create();
+
+        final CardView lnParent = (CardView) dialog.findViewById(R.id.input_warehouse_parent);
+        final EditText edName = (EditText) dialog.findViewById(R.id.input_warehouse_name);
+        TextView btnSubmit = (TextView) dialog.findViewById(R.id.input_warehouse_submit);
+
+        edName.requestFocus();
+        Util.showKeyboardDelay(edName);
+
+        edName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    if (!edName.getText().toString().trim().equals("")) {
+                        mListener.Result(edName.getText().toString().trim());
+                        handled = true;
+
+                    }else {
+                        Util.showToast("Nhập chưa đủ thông tin");
+                    }
+
+                }
+                return handled;
+            }
+        });
+
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!edName.getText().toString().trim().equals("")) {
+                    mListener.Result(edName.getText().toString().trim());
+                    dismissDialog();
+                    Util.hideKeyboard(v);
+
+                }else {
+                    Util.showToast("Nhập chưa đủ thông tin");
+                }
+            }
+        });
+
+        view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                // TODO Auto-generated method stub
+                Rect r = new Rect();
+                lnParent.getWindowVisibleDisplayFrame(r);
+
+                int screenHeight = lnParent.getRootView().getHeight();
+                int heightDifference = screenHeight - (r.bottom - r.top) - Util.getInstance().getCurrentActivity().getResources().getDimensionPixelSize(R.dimen._32sdp);
+                int margin = Util.getInstance().getCurrentActivity().getResources().getDimensionPixelSize(R.dimen._2sdp);
+
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                params.setMargins(margin, 0, margin, heightDifference);
+                lnParent.setLayoutParams(params);
+
+
+            }
+        });
+
+        dialog.show();
+
+
     }
 
     public static void inputPhoneNumber(View view, final CallbackString mListener){
@@ -145,7 +221,7 @@ public class CustomInputDialog {
 
         final CardView lnParent = (CardView) dialog.findViewById(R.id.input_phonenumber_parent);
         final EditText edPhone = (EditText) dialog.findViewById(R.id.input_phonenumber_phone);
-        CTextIcon btnSubmit = (CTextIcon) dialog.findViewById(R.id.input_phonenumber_submit);
+        TextView btnSubmit = (TextView) dialog.findViewById(R.id.input_phonenumber_submit);
 
         Util.textPhoneEvent(edPhone, new CallbackString() {
             @Override
@@ -197,7 +273,7 @@ public class CustomInputDialog {
                 lnParent.getWindowVisibleDisplayFrame(r);
 
                 int screenHeight = lnParent.getRootView().getHeight();
-                int heightDifference = screenHeight - (r.bottom - r.top) - Util.getInstance().getCurrentActivity().getResources().getDimensionPixelSize(R.dimen._34sdp);
+                int heightDifference = screenHeight - (r.bottom - r.top) - Util.getInstance().getCurrentActivity().getResources().getDimensionPixelSize(R.dimen._32sdp);
                 int margin = Util.getInstance().getCurrentActivity().getResources().getDimensionPixelSize(R.dimen._2sdp);
 
                 FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -239,7 +315,7 @@ public class CustomInputDialog {
 
         final CardView lnParent = (CardView) dialog.findViewById(R.id.input_number_parent);
         final EditText edPhone = (EditText) dialog.findViewById(R.id.input_number_text);
-        CTextIcon btnSubmit = (CTextIcon) dialog.findViewById(R.id.input_number_submit);
+        TextView btnSubmit = (TextView) dialog.findViewById(R.id.input_number_submit);
 
         Util.textPhoneEvent(edPhone, new CallbackString() {
             @Override
@@ -277,7 +353,7 @@ public class CustomInputDialog {
                 lnParent.getWindowVisibleDisplayFrame(r);
 
                 int screenHeight = lnParent.getRootView().getHeight();
-                int heightDifference = screenHeight - (r.bottom - r.top) - Util.getInstance().getCurrentActivity().getResources().getDimensionPixelSize(R.dimen._34sdp);
+                int heightDifference = screenHeight - (r.bottom - r.top) - Util.getInstance().getCurrentActivity().getResources().getDimensionPixelSize(R.dimen._32sdp);
                 int margin = Util.getInstance().getCurrentActivity().getResources().getDimensionPixelSize(R.dimen._2sdp);
 
                 FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);

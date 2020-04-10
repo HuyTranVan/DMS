@@ -18,7 +18,8 @@
             android:clickable="true"
             android:background="?selectableItemBackground">
 
-                <wolve.dms.customviews.CTextIcon
+                <TextView
+                    android:fontFamily="@font/font_awesome"
                     android:id="@+id/choice_3method_icon1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -52,7 +53,8 @@
             android:orientation="horizontal"
             android:background="?selectableItemBackground">
 
-                <wolve.dms.customviews.CTextIcon
+                <TextView
+                    android:fontFamily="@font/font_awesome"
                     android:id="@+id/choice_3method_icon2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -87,7 +89,8 @@
             android:orientation="horizontal"
             android:background="?selectableItemBackground">
 
-                <wolve.dms.customviews.CTextIcon
+                <TextView
+                    android:fontFamily="@font/font_awesome"
                     android:id="@+id/choice_3method_icon3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

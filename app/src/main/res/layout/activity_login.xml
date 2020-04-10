@@ -64,7 +64,8 @@
                         android:orientation="horizontal"
                         android:background="@drawable/bg_corner5_white_border2_red">
 
-                        <wolve.dms.customviews.CTextIcon
+                        <TextView
+                            android:fontFamily="@font/font_awesome"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="0.15"
@@ -72,8 +73,7 @@
                             android:text="@string/icon_username"
                             android:textAlignment="center"
                             android:textColor="@color/black_text_icon"
-                            android:textSize="@dimen/_16sdp"
-                            app:textWhite="false" />
+                            android:textSize="@dimen/_16sdp" />
 
                         <View
                             android:layout_width="1dip"
@@ -93,7 +93,8 @@
                             android:text=""
                             android:textSize="@dimen/_12sdp" />
 
-                        <wolve.dms.customviews.CTextIcon
+                        <TextView
+                            android:fontFamily="@font/font_awesome"
                             android:id="@+id/login_keyboard"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -113,7 +114,8 @@
                         android:background="@drawable/bg_corner5_white_border2_red"
                         android:layout_marginTop="@dimen/_5sdp">
 
-                        <wolve.dms.customviews.CTextIcon
+                        <TextView
+                            android:fontFamily="@font/font_awesome"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="0.15"
@@ -121,8 +123,7 @@
                             android:text="@string/icon_password"
                             android:textAlignment="center"
                             android:textColor="@color/black_text_icon"
-                            android:textSize="@dimen/_16sdp"
-                            app:textWhite="false" />
+                            android:textSize="@dimen/_16sdp" />
 
                         <View
                             android:layout_width="1dip"

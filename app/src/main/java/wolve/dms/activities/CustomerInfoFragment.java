@@ -24,7 +24,6 @@ import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CButtonVertical;
 import wolve.dms.customviews.CInputForm;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
@@ -39,10 +38,9 @@ import wolve.dms.utils.Util;
 public class CustomerInfoFragment extends Fragment implements View.OnClickListener,  RadioGroup.OnCheckedChangeListener {
     private View view;
     private CInputForm edAdress, edPhone, edName, edNote;
-    protected CTextIcon tvCheckin, tvHistory;
     private EditText edShopName ;
     private CButtonVertical mDirection, mCall, mInterest;
-    private TextView tvLastCheckin, tvType;
+    protected TextView tvLastCheckin, tvType, tvCheckin, tvHistory;
     private RadioGroup rgType;
 
     private CustomerActivity mActivity;

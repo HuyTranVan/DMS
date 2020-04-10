@@ -58,7 +58,8 @@
                     android:padding="@dimen/_10sdp"
                     android:layout_centerInParent="true"/>
 
-                <wolve.dms.customviews.CTextIcon
+                <TextView
+                    android:fontFamily="@font/font_awesome"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/icon_edit_pen"

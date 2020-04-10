@@ -22,7 +22,6 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackJSONObject;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Status;
 import wolve.dms.utils.Constants;
@@ -122,15 +121,14 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusAdap
 
 
     public class StatusAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvName, tvColor;
-        private CTextIcon tvIconDefault;
+        private TextView tvName, tvColor,  tvIconDefault;
         private LinearLayout lnParent;
 
         public StatusAdapterViewHolder(View itemView) {
             super(itemView);
             tvName = (TextView) itemView.findViewById(R.id.status_item_name);
             tvColor = (TextView) itemView.findViewById(R.id.status_item_color);
-            tvIconDefault = (CTextIcon) itemView.findViewById(R.id.status_item_icon_default);
+            tvIconDefault = (TextView) itemView.findViewById(R.id.status_item_icon_default);
             lnParent = (LinearLayout) itemView.findViewById(R.id.status_item_parent);
         }
 

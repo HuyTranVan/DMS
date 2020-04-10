@@ -89,7 +89,8 @@
             </com.google.android.material.textfield.TextInputLayout>
 
 
-            <wolve.dms.customviews.CTextIcon
+            <TextView
+                android:fontFamily="@font/font_awesome"
                 android:id="@+id/dialog_edit_product_netprice_clear"
                 android:layout_width="@dimen/_25sdp"
                 android:layout_height="@dimen/_25sdp"

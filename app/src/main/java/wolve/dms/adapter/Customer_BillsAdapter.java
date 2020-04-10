@@ -28,7 +28,6 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.callback.CallbackString;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
@@ -250,8 +249,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
     }
 
     public class CustomerBillsAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvDate, tvHour, tvPay, tvDebt, tvTotal, tvIcon, tvDeliver;
-        private CTextIcon btnMenu, btnDelete;
+        private TextView tvDate, tvHour, tvPay, tvDebt, tvTotal, tvIcon, tvDeliver,  btnMenu, btnDelete;
         private RecyclerView rvBillDetail, rvPayment, rvReturn;
         private LinearLayout lnPayment;
         private RelativeLayout lnTitle,lnCover ;

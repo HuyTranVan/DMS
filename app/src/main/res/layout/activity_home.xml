@@ -90,7 +90,8 @@
 
                     android:layout_toLeftOf="@id/home_change_user"/>
 
-                <wolve.dms.customviews.CTextIcon
+                <TextView
+                    android:fontFamily="@font/font_awesome"
                     android:id="@+id/home_change_user"
                     android:layout_width="@dimen/_35sdp"
                     android:layout_height="@dimen/_35sdp"
@@ -127,7 +128,8 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <wolve.dms.customviews.CTextIcon
+                    <TextView
+                        android:fontFamily="@font/font_awesome"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/icon_usd"

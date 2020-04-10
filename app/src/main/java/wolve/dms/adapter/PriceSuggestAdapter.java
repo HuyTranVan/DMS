@@ -23,7 +23,6 @@ import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackJSONObject;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Status;
 import wolve.dms.utils.CustomCenterDialog;
@@ -47,7 +46,7 @@ public class PriceSuggestAdapter extends RecyclerView.Adapter<PriceSuggestAdapte
         this.mData = list;
         this.mListener = listener;
 
-        Collections.reverse(mData);
+        Collections.sort(mData);
 
     }
 

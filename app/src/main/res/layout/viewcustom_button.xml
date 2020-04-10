@@ -10,7 +10,8 @@
     android:background="@drawable/btn_round_white_border_blue"
     android:layout_alignParentRight="true">
 
-    <wolve.dms.customviews.CTextIcon
+    <TextView
+        android:fontFamily="@font/font_awesome"
         android:id="@+id/button_icon"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"

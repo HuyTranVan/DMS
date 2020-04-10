@@ -14,7 +14,6 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.callback.CallbackString;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.DataUtil;
@@ -101,10 +100,8 @@ public class Statistical_PaymentAdapter extends RecyclerView.Adapter<Statistical
     }
 
     public class StatisticalBillsViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvNumber, tvsignBoard, tvDistrict, tvTime, tvPaid, tvProfit;
+        private TextView tvNumber, tvsignBoard, tvDistrict, tvTime, tvPaid, tvProfit, tvUser;
         private View vLine;
-        private CTextIcon tvUser;
-//        private View vLineUpper, vLineUnder;
         private LinearLayout lnParent;
 
         public StatisticalBillsViewHolder(View itemView) {
@@ -137,6 +134,12 @@ public class Statistical_PaymentAdapter extends RecyclerView.Adapter<Statistical
         return totalProfit;
     }
 
-
+    public double sumBaseProfit(){
+        double totalProfit = 0.0;
+        for (BaseModel row : mData){
+            totalProfit += row.getDouble("base_profit");
+        }
+        return totalProfit;
+    }
 
 }

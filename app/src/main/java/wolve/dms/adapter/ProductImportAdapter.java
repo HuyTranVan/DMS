@@ -32,7 +32,6 @@ import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.libraries.CounterHandler;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
@@ -151,8 +150,7 @@ public class ProductImportAdapter extends RecyclerView.Adapter<ProductImportAdap
 
 
     public class ProductAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvName, tvGroup, tvQuantityLimit;
-        private CTextIcon tvPlus, tvMinus;
+        private TextView tvName, tvGroup, tvQuantityLimit,  tvPlus, tvMinus;
         private EditText edQuantity;
         private LinearLayout lnParent;
 

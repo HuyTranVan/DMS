@@ -65,8 +65,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <wolve.dms.customviews.CTextIcon
-                    android:id="@+id/statistical_cash_item_user"
+                <TextView
+                    android:fontFamily="@font/font_awesome"                    android:id="@+id/statistical_cash_item_user"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"

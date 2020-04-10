@@ -73,7 +73,8 @@
                 android:layout_margin="@dimen/_5sdp"
                 android:inputType="textCapSentences|textMultiLine"/>
 
-            <wolve.dms.customviews.CTextIcon
+            <TextView
+                android:fontFamily="@font/font_awesome"
                 android:id="@+id/dialog_select_status_clear"
                 android:layout_width="@dimen/_20sdp"
                 android:layout_height="@dimen/_20sdp"

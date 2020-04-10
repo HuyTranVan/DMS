@@ -45,7 +45,6 @@ import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CInputForm;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Province;
 import wolve.dms.utils.Constants;
@@ -65,10 +64,8 @@ public class CustomerEditMapFragment extends Fragment implements View.OnClickLis
         OnMapReadyCallback,
         GoogleMap.OnCameraMoveListener{
     private View view, vCover;
-    private TextView tvAddress, tvTitle;
+    private TextView tvAddress, tvTitle,btnLocation,tvEdit;
     private ImageView btnBack, iconPin;
-    private CTextIcon btnLocation;
-    private CTextIcon tvEdit;
     private CardView lnEditDetail;
     private LinearLayout rlBottom;
     private EditText tvAdd, tvStreet, tvDistrict, tvCity;

@@ -47,7 +47,6 @@ import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.libraries.DoubleTextWatcher;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
@@ -254,7 +253,7 @@ public class CustomCenterDialog {
         final TextView tvTotal =  dialogResult.findViewById(R.id.dialog_edit_product_total);
         final EditText edDiscount =  dialogResult.findViewById(R.id.dialog_edit_product_discount);
         final EditText edQuantity = dialogResult.findViewById(R.id.dialog_edit_product_quantity);
-        CTextIcon tvClear = dialogResult.findViewById(R.id.dialog_edit_product_netprice_clear);
+        TextView tvClear = dialogResult.findViewById(R.id.dialog_edit_product_netprice_clear);
         RecyclerView rvPrice = dialogResult.findViewById(R.id.dialog_edit_product_rvprice);
 
         btnCancel.setText("HỦY");
@@ -356,7 +355,7 @@ public class CustomCenterDialog {
         final TextView tvTitle = dialogResult.findViewById(R.id.dialog_choice_status_title);
         final TextView tvContent = dialogResult.findViewById(R.id.dialog_choice_status_text);
         final EditText edNote = dialogResult.findViewById(R.id.dialog_choice_status_content);
-        CTextIcon tvClose = dialogResult.findViewById(R.id.dialog_select_status_clear);
+        TextView tvClose = dialogResult.findViewById(R.id.dialog_select_status_clear);
         final RecyclerView rvStatus = dialogResult.findViewById(R.id.dialog_choice_status_rvStatus);
         FrameLayout frParent = dialogResult.findViewById(R.id.dialog_choice_status_parent);
         Button btnCancel = dialogResult.findViewById(R.id.btn_cancel);
@@ -410,7 +409,9 @@ public class CustomCenterDialog {
             public void onClick(View v) {
                 Util.hideKeyboard(v);
                 if (Util.isEmpty(edNote)){
-                    Util.showToast("Vui lòng nhập nội dung để tiếp tục");
+//                    Util.showToast("Vui lòng nhập nội dung để tiếp tục");
+                    mListener.Result(edNote.getText().toString().trim() );
+                    dialogResult.dismiss();
 
                 }else {
                     if (showListReason){
@@ -425,7 +426,6 @@ public class CustomCenterDialog {
                     }
 
                     mListener.Result(edNote.getText().toString().trim() );
-
                     dialogResult.dismiss();
                 }
             }
@@ -447,8 +447,8 @@ public class CustomCenterDialog {
         AutoCompleteTextView edProduct = dialogResult.findViewById(R.id.dialog_checkin_search);
         final EditText edNote = dialogResult.findViewById(R.id.dialog_checkin_text);
         EditText edNextDay = dialogResult.findViewById(R.id.dialog_checkin_nextday);
-        CTextIcon tvNoteClear = dialogResult.findViewById(R.id.dialog_select_status_clear);
-        CTextIcon tvSearchClear = dialogResult.findViewById(R.id.dialog_checkin_search_close);
+        TextView tvNoteClear = dialogResult.findViewById(R.id.dialog_select_status_clear);
+        TextView tvSearchClear = dialogResult.findViewById(R.id.dialog_checkin_search_close);
         final RecyclerView rvProduct = dialogResult.findViewById(R.id.dialog_checkin_rvproduct);
         RatingBar ratingBar = dialogResult.findViewById(R.id.dialog_checkin_ratingBar);
         RadioGroup radioGroup = dialogResult.findViewById(R.id.dialog_checkin_rg);

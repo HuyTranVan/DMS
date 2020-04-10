@@ -36,7 +36,6 @@ import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.callback.CallbackString;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.libraries.calendarpicker.CalendarUtil;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
@@ -56,9 +55,8 @@ import wolve.dms.utils.Util;
 
 public class CustomerActivity extends BaseActivity implements View.OnClickListener, View.OnLongClickListener {
     private ImageView btnBack;
-    protected CTextIcon tvTrash, tvPrint;
     protected Button btnSubmit;
-    private TextView  tvCheckInStatus, tvTime;
+    private TextView  tvCheckInStatus, tvTime, tvTrash, tvPrint;
     protected TextView tvTitle,tvAddress, tvDebt, tvPaid, tvTotal, tvBDF, btnShopCart, tvFilter;
     private CoordinatorLayout coParent;
     private RecyclerView rvFilterTitle;
@@ -131,7 +129,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         coParent.setPadding(0, 0, 0, Util.getNavigationBarHeight());
         btnBack = (ImageView) findViewById(R.id.icon_back);
         btnShopCart = (TextView) findViewById(R.id.customer_shopcart);
-        tvTrash = (CTextIcon) findViewById(R.id.icon_more);
+        tvTrash = (TextView) findViewById(R.id.icon_more);
         tvTitle = (TextView) findViewById(R.id.customer_title);
         tvDebt = (TextView) findViewById(R.id.customer_debt);
         tvCheckInStatus = findViewById(R.id.customer_checkin_status);

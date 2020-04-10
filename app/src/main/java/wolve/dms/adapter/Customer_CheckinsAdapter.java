@@ -20,7 +20,6 @@ import wolve.dms.R;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Checkin;
 import wolve.dms.utils.Constants;
@@ -109,17 +108,16 @@ public class Customer_CheckinsAdapter extends RecyclerView.Adapter<Customer_Chec
     }
 
     public class CheckinsAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvNumber, tvContent, tvTime;
-        private CTextIcon tvEmployee, tvDate, tvRating;
+        private TextView tvNumber, tvContent, tvTime, tvEmployee, tvDate, tvRating;
         private LinearLayout lnParent;
         private View line, under;
 
         public CheckinsAdapterViewHolder(View itemView) {
             super(itemView);
             lnParent = (LinearLayout) itemView.findViewById(R.id.checkins_item_parent);
-            tvDate = (CTextIcon) itemView.findViewById(R.id.checkins_item_date);
-            tvRating = (CTextIcon) itemView.findViewById(R.id.checkins_item_rating);
-            tvEmployee = (CTextIcon) itemView.findViewById(R.id.checkins_item_employee);
+            tvDate = (TextView) itemView.findViewById(R.id.checkins_item_date);
+            tvRating = (TextView) itemView.findViewById(R.id.checkins_item_rating);
+            tvEmployee = (TextView) itemView.findViewById(R.id.checkins_item_employee);
             tvContent = (TextView) itemView.findViewById(R.id.checkins_item_content);
             line = (View) itemView.findViewById(R.id.checkins_item_line);
             //under = (View) itemView.findViewById(R.id.checkins_item_under);

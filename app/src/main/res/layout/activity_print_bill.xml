@@ -537,7 +537,8 @@
             android:background="@color/white_text_color_hint"
             android:layout_margin="@dimen/_2sdp"/>
 
-        <wolve.dms.customviews.CTextIcon
+        <TextView
+            android:fontFamily="@font/font_awesome"
             android:id="@+id/print_bill_bottom_printerselect"
             android:layout_width="0dp"
             android:layout_height="match_parent"

@@ -20,7 +20,8 @@
             android:layout_above="@+id/tempbill_item_number"
             android:layout_centerHorizontal="true"/>
 
-        <wolve.dms.customviews.CTextIcon
+        <TextView
+            android:fontFamily="@font/font_awesome"
             android:id="@+id/tempbill_item_number"
             android:layout_width="@dimen/_16sdp"
             android:layout_height="@dimen/_16sdp"
@@ -158,7 +159,8 @@
                 android:background="?selectableItemBackground"
                 android:gravity="center">
 
-                <wolve.dms.customviews.CTextIcon
+                <TextView
+                    android:fontFamily="@font/font_awesome"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -191,7 +193,8 @@
                 android:layout_marginLeft="@dimen/_10sdp"
                 android:gravity="center">
 
-                <wolve.dms.customviews.CTextIcon
+                <TextView
+                    android:fontFamily="@font/font_awesome"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"

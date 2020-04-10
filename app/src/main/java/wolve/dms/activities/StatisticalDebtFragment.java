@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -16,8 +17,8 @@ import wolve.dms.R;
 import wolve.dms.adapter.Statistical_DebtAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackCustom;
+import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackString;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
@@ -32,9 +33,9 @@ import wolve.dms.utils.Util;
 public class StatisticalDebtFragment extends Fragment implements View.OnClickListener {
     private View view;
     private RecyclerView rvDebts;
-    private TextView tvSum;
-    private CTextIcon tvSort ;
+    private TextView tvSum, tvSumDebt, tvSumOrder, tvSort ;
     private StatisticalActivity mActivity;
+    private LinearLayout lnSum;
 
     protected Statistical_DebtAdapter adapter;
 
@@ -60,13 +61,13 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
         tvSort.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (tvSort.getRotation() == 180){
-                    tvSort.setRotation(0);
-
-                }else {
-                    tvSort.setRotation(180);
-                }
-                adapter.sortUp();
+                sortDebt();
+            }
+        });
+        lnSum.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sortDebt();
             }
         });
     }
@@ -76,6 +77,10 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
         rvDebts = (RecyclerView) view.findViewById(R.id.statistical_debt_rvbill);
         tvSum = view.findViewById(R.id.statistical_debt_count);
         tvSort = view.findViewById(R.id.statistical_debt_sort);
+        tvSumDebt= view.findViewById(R.id.statistical_debt_number_customer_debt);
+        tvSumOrder= view.findViewById(R.id.statistical_debt_number_customer);
+        lnSum = view.findViewById(R.id.statistical_debt_count_parent);
+
     }
 
     @Override
@@ -83,6 +88,22 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
         switch (v.getId()){
 
         }
+    }
+
+    public void updateCustomerNumber(int user_id, List<BaseModel> list){
+        if (user_id ==0){
+            tvSumOrder.setText(String.valueOf(DataUtil.sumNumberFromList(list,"num_of_order")));
+
+        }else {
+            for (BaseModel model: list){
+                if (model.getInt("user_id") == user_id){
+                    tvSumOrder.setText(model.getString("num_of_order"));
+                    break;
+                }
+            }
+
+        }
+
     }
 
     public void reloadData(String user, List<BaseModel> listDebt){
@@ -110,9 +131,15 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
                 }, true, true);
 
             }
+        }, new CallbackInt() {
+            @Override
+            public void onResponse(int value) {
+                tvSumDebt.setText(String.valueOf(value));
+            }
         });
         Util.createLinearRV(rvDebts, adapter);
-        tvSum.setText(String.format("Tổng công nợ: %s", Util.FormatMoney(adapter.sumDebts())));
+        tvSum.setText(Util.FormatMoney(adapter.sumDebts()));
+
 
     }
 
@@ -120,5 +147,18 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
         return adapter.sumDebts();
     }
 
+    private void sortDebt(){
+        if (tvSort.getRotation() == 180){
+            tvSort.setRotation(0);
 
+        }else {
+            tvSort.setRotation(180);
+        }
+        adapter.sortUp();
+    }
+
+    public int CoutList() {
+        return adapter.getItemCount();
+
+    }
 }

@@ -14,8 +14,8 @@
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
-                <wolve.dms.customviews.CTextIcon
-                    android:id="@+id/list_method_icon"
+                <TextView
+                    android:fontFamily="@font/font_awesome"                    android:id="@+id/list_method_icon"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="0.9"

@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     android:background="@color/colorWhite">
 
-    <wolve.dms.customviews.CTextIcon
+    <TextView
+        android:fontFamily="@font/font_awesome"
         android:id="@+id/input_data_icon"
         android:layout_width="@dimen/_30sdp"
         android:layout_height="wrap_content"
@@ -16,6 +17,7 @@
         android:layout_gravity="center_vertical"
         android:layout_centerVertical="true"
         android:gravity="center"/>
+
 
     <EditText
         android:id="@+id/input_data_content"
@@ -38,12 +40,13 @@
 
 
 
-    <wolve.dms.customviews.CTextIcon
+    <TextView
         android:id="@+id/input_data_dropdown"
         android:layout_width="@dimen/_30sdp"
         android:layout_height="@dimen/_30sdp"
+        android:fontFamily="@font/font_awesome"
         android:background="?selectableItemBackgroundBorderless"
-        android:text="@string/icon_edit_pen"
+        android:text="@string/icon_down"
         android:textSize="@dimen/_12sdp"
         android:textColor="@color/black_text_color_hint"
         android:layout_gravity="center_vertical|right"

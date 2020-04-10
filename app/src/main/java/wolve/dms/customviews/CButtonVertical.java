@@ -33,7 +33,7 @@ import wolve.dms.utils.Util;
 
 public class CButtonVertical extends RelativeLayout {
     private TextView tvText;
-    private CTextIcon tvIcon;
+    private TextView tvIcon;
     private Context mContext;
     private View mLayout;
     private ArrayList<String> listDropdown = new ArrayList<>();
@@ -61,7 +61,7 @@ public class CButtonVertical extends RelativeLayout {
 
         mLayout = findViewById(R.id.button_vertical_parent);
         tvText = (TextView) mLayout.findViewById(R.id.button_vertical_content);
-        tvIcon = (CTextIcon) mLayout.findViewById(R.id.button_vertical_icon);
+        tvIcon = (TextView) mLayout.findViewById(R.id.button_vertical_icon);
 
     }
 
@@ -73,8 +73,8 @@ public class CButtonVertical extends RelativeLayout {
                 setIconColor(a.getColor(R.styleable.CInputForm_iconColor,0));
             }
 
-            if (a.hasValue(R.styleable.CInputForm_icon_Size)) {
-                setIconSize(a.getDimension(R.styleable.CInputForm_icon_Size, 0));
+            if (a.hasValue(R.styleable.CInputForm_iconSize)) {
+                setIconSize(a.getDimension(R.styleable.CInputForm_iconSize, 0));
             }
 
             if (a.hasValue(R.styleable.CInputForm_iconText)) {

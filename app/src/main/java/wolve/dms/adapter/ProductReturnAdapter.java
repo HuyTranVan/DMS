@@ -23,7 +23,6 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackChangePrice;
 import wolve.dms.callback.CallbackClickProduct;
 import wolve.dms.callback.CallbackDouble;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.BillDetail;
 import wolve.dms.models.Product;
@@ -128,17 +127,16 @@ public class ProductReturnAdapter extends RecyclerView.Adapter<ProductReturnAdap
     }
 
     public class CartProductsViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvName, tvQuantity , tvTotalQuantity, tvNote;
+        private TextView tvName, tvQuantity , tvTotalQuantity, tvNote, btnSub, btnPlus;
         private RelativeLayout lnParent;
-        private CTextIcon btnSub, btnPlus;
 
         public CartProductsViewHolder(View itemView) {
             super(itemView);
             lnParent = (RelativeLayout) itemView.findViewById(R.id.product_return_item_parent);
             tvName = (TextView) itemView.findViewById(R.id.product_return_item_name);
             tvQuantity = (TextView) itemView.findViewById(R.id.product_return_item_quantity);
-            btnSub = (CTextIcon) itemView.findViewById(R.id.product_return_item_sub);
-            btnPlus = (CTextIcon) itemView.findViewById(R.id.product_return_item_plus);
+            btnSub = (TextView) itemView.findViewById(R.id.product_return_item_sub);
+            btnPlus = (TextView) itemView.findViewById(R.id.product_return_item_plus);
             tvTotalQuantity = itemView.findViewById(R.id.product_return_item_totalquantity);
             tvNote = itemView.findViewById(R.id.product_return_item_note);
 

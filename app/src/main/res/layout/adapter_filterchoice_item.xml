@@ -26,7 +26,8 @@
             android:paddingRight="@dimen/_10sdp"/>
 
 
-        <wolve.dms.customviews.CTextIcon
+        <TextView
+            android:fontFamily="@font/font_awesome"
             android:id="@+id/filterchoice_icon"
             android:layout_width="@dimen/_25sdp"
             android:layout_height="@dimen/_25sdp"

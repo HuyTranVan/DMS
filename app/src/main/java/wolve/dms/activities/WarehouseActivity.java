@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,16 +15,14 @@ import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.WarehouseAdapter;
 import wolve.dms.apiconnect.SystemConnect;
-import wolve.dms.callback.CallbackClickAdapter;
+import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustomList;
-import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackObject;
-import wolve.dms.customviews.CTextIcon;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
-import wolve.dms.utils.CustomSQL;
+import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -35,7 +34,7 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
     private ImageView btnBack;
     private RecyclerView rvDepot;
     private WarehouseAdapter adapter;
-    private CTextIcon btnAddPDepot;
+    private TextView btnAddPDepot;
     private LinearLayout btnImport;
 
     public List<BaseModel> listDepot ;
@@ -82,7 +81,40 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
                 break;
 
             case R.id.depot_add_new:
-                openFragmentNewDepot(null);
+                 BaseModel baseModel = new BaseModel();
+
+                if (checkMasterWarehouseExist(listDepot)){
+                    CustomCenterDialog.alertWithButton("Tạo kho hàng",
+                            "Đã tồn tại kho tổng, bạn chỉ có thể tạo kho hàng tạm", "đồng ý", new CallbackBoolean() {
+                                @Override
+                                public void onRespone(Boolean result) {
+                                    if (result){
+                                        baseModel.put("isMaster", 2);
+                                        openFragmentNewDepot(baseModel.BaseModelstoString());
+
+                                    }
+                                }
+                            });
+
+
+                }else {
+                    CustomBottomDialog.choiceTwoOption(null, "Kho tổng", null, "Kho tạm", new CustomBottomDialog.TwoMethodListener() {
+                        @Override
+                        public void Method1(Boolean one) {
+                            baseModel.put("isMaster", 1);
+                            openFragmentNewDepot(baseModel.BaseModelstoString());
+                        }
+
+                        @Override
+                        public void Method2(Boolean two) {
+                            baseModel.put("isMaster", 2);
+                            openFragmentNewDepot(baseModel.BaseModelstoString());
+                        }
+                    });
+
+
+                }
+
 
                 break;
 
@@ -97,7 +129,7 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onBackPressed() {
         Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.depot_parent);
-        if(mFragment != null && mFragment instanceof NewUpdateDepotFragment) {
+        if(mFragment != null && mFragment instanceof NewUpdateWarehouseFragment) {
             getSupportFragmentManager().popBackStack();
 
         }else {
@@ -157,10 +189,24 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void openFragmentNewDepot(String depot){
-        NewUpdateDepotFragment depotFragment = new NewUpdateDepotFragment();
+        NewUpdateWarehouseFragment depotFragment = new NewUpdateWarehouseFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constants.DEPOT, depot);
         changeFragment(depotFragment, bundle, true );
+    }
+
+    private boolean checkMasterWarehouseExist(List<BaseModel> list){
+        boolean check = false;
+        for (BaseModel model: list){
+            if (model.getInt("isMaster") == 1){
+                check =  true;
+                break;
+            }
+
+        }
+
+        return check;
+
     }
 
 
