@@ -27,8 +27,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center"
-            android:layout_toRightOf="@+id/icon_back"
-            android:layout_toLeftOf="@+id/edit_map_edit">
+            android:layout_toRightOf="@+id/icon_back">
 
             <TextView
                 android:id="@+id/cart_title"

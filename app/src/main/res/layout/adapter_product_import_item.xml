@@ -66,8 +66,8 @@
                 android:id="@+id/product_import_item_minus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minWidth="@dimen/_20sdp"
-                android:minHeight="@dimen/_20sdp"
+                android:minWidth="@dimen/_25sdp"
+                android:minHeight="@dimen/_25sdp"
                 android:background="@drawable/btn_round_white_border_grey"
                 android:text="@string/icon_minus"
                 android:gravity="center"
@@ -92,11 +92,12 @@
                 android:id="@+id/product_import_item_plus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minWidth="@dimen/_25sdp"
-                android:minHeight="@dimen/_25sdp"
+                android:minWidth="@dimen/_30sdp"
+                android:minHeight="@dimen/_30sdp"
                 android:background="@drawable/btn_round_white_border_grey"
                 android:text="@string/icon_plus"
-                android:gravity="center"/>
+                android:gravity="center"
+                />
 
 
         </LinearLayout>

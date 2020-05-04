@@ -33,13 +33,13 @@
                 android:layout_marginRight="@dimen/_4sdp"/>
 
             <wolve.dms.customviews.CVerticalView
-                android:id="@+id/statistical_dashboard_cash"
+                android:id="@+id/statistical_dashboard_debt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:layout_marginLeft="@dimen/_4sdp"
-                app:backgroundLayout="@drawable/bg_corner5_white_border2_orange"
-                app:textColor="@color/orange"
+                app:backgroundLayout="@drawable/bg_corner5_white_border2_red"
+                app:textColor="@color/colorRed"
                 app:iconText="@string/icon_money"/>
 
         </LinearLayout>
@@ -53,14 +53,14 @@
             android:paddingTop="@dimen/_8sdp">
 
             <wolve.dms.customviews.CVerticalView
-                android:id="@+id/statistical_dashboard_debt"
+                android:id="@+id/statistical_dashboard_cash"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 app:text="0"
                 app:iconText="@string/icon_bomb"
-                app:backgroundLayout="@drawable/bg_corner5_white_border2_red"
-                app:textColor="@color/colorRed"
+                app:backgroundLayout="@drawable/bg_corner5_white_border2_orange"
+                app:textColor="@color/orange"
                 android:layout_marginRight="@dimen/_4sdp"/>
 
             <wolve.dms.customviews.CVerticalView
@@ -76,13 +76,49 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/statistical_dashboard_totalnet_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/_5sdp"
+            android:paddingRight="@dimen/_5sdp"
+            android:paddingTop="@dimen/_8sdp"
+            android:visibility="gone">
+
+            <wolve.dms.customviews.CVerticalView
+                android:id="@+id/statistical_dashboard_totalnet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                app:text="xxx"
+                app:iconText="@string/icon_dollar"
+                app:backgroundLayout="@drawable/bg_corner5_white_border2_accent"
+                app:textColor="@color/colorAccent"
+                android:layout_marginRight="@dimen/_4sdp"/>
+
+            <wolve.dms.customviews.CVerticalView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:layout_marginLeft="@dimen/_4sdp"
+                app:backgroundLayout="@drawable/bg_corner5_white_border2_grey"
+                app:textColor="@color/black_text_color_hint"
+                app:titleColor="@color/black_text_color_hint"
+                app:text="###"
+                app:titleText="###"
+                app:iconText="#"/>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/statistical_dashboard_inventory_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingLeft="@dimen/_5sdp"
             android:paddingRight="@dimen/_5sdp"
-            android:paddingTop="@dimen/_8sdp">
+            android:paddingTop="@dimen/_8sdp"
+            android:visibility="gone">
 
             <wolve.dms.customviews.CVerticalView
                 android:id="@+id/statistical_dashboard_inventory"

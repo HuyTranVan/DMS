@@ -291,16 +291,21 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
         notifyItemChanged(pos);
     }
 
-    private List<Double> listPriceSuggest(int productID){
-        List<Double> listResult = new ArrayList<>();
-
+    private List<BaseModel> listPriceSuggest(int productID){
+        List<BaseModel> listResult = new ArrayList<>();
+        DataUtil.sortbyStringKey("createAt", mBillDetail, true);
         for (BaseModel model : mBillDetail){
             if (model.getInt("productId") == productID){
                 if (model.getDoubleValue("discount") != model.getDoubleValue("unitPrice")){
                     double dou = model.getDoubleValue("unitPrice") - model.getDoubleValue("discount");
+                    model.put("value", dou);
 
-                    if (!DataUtil.checkDuplicateDouble(listResult, dou)) {
-                        listResult.add(dou);
+                    if (!DataUtil.checkDuplicate(listResult, "value", model)) {
+                        BaseModel newModel = new BaseModel();
+                        newModel.put("value", dou);
+                        newModel.put("createAt", model.getLong("createAt"));
+
+                        listResult.add(newModel);
                     }
 
                 }

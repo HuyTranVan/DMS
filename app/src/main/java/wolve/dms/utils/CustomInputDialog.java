@@ -8,6 +8,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -39,7 +40,7 @@ public class CustomInputDialog {
     }
 
     public interface ShopNameListener{
-        void onShopname(String shopname, String shoptype);
+        void onShopname(String shopname, int shoptype);
     }
 
     public static void inputShopName(View view, final ShopNameListener mListener){
@@ -61,9 +62,23 @@ public class CustomInputDialog {
         final EditText edName = (EditText) dialog.findViewById(R.id.input_shopnname_name);
         TextView btnSubmit = (TextView) dialog.findViewById(R.id.input_shopnname_submit);
 
+        final int[] shopType = {0};
+
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(Util.getInstance().getCurrentActivity(), R.layout.view_spinner_text, Constants.shopName);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spShopType.setAdapter(dataAdapter);
+
+        spShopType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                shopType[0] = i;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         edName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -71,7 +86,7 @@ public class CustomInputDialog {
                 boolean handled = false;
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     if (!edName.getText().toString().trim().equals("")) {
-                        mListener.onShopname(edName.getText().toString().trim(), Constants.getShopType(spShopType.getSelectedItem().toString()));
+                        mListener.onShopname(edName.getText().toString().trim(), shopType[0]);
                         handled = true;
 
                     }else {
@@ -88,7 +103,7 @@ public class CustomInputDialog {
             public void onClick(View v) {
 
                 if (!edName.getText().toString().trim().equals("")) {
-                    mListener.onShopname(edName.getText().toString().trim(), Constants.getShopType(spShopType.getSelectedItem().toString()));
+                    mListener.onShopname(edName.getText().toString().trim(), shopType[0]);
                     Util.hideKeyboard(v);
 
                 }else {

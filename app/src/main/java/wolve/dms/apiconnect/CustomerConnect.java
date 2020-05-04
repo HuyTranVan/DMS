@@ -134,6 +134,38 @@ public class CustomerConnect {
         }).execute();
     }
 
+    public static void getCustomerOrderedList(int offset, int user_id, final CallbackCustomList listener, Boolean showloading){
+        if (showloading){
+            Util.getInstance().showLoading();
+        }
+        String url = Api_link.CUSTOMER_ORDERED + String.format(Api_link.DEFAULT_RANGE, offset, 20)+"&user_id="+ user_id;
+
+        new CustomGetMethod(url,  new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(true);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeArraySuccess(result));
+
+                }else {
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
+            }
+
+        }).execute();
+    }
+
     public static void ListCustomer(String param,int numberItem, final CallbackCustomList listener, Boolean showloading, final Boolean stopLoading){
         if (showloading){
             Util.getInstance().showLoading();
@@ -668,14 +700,14 @@ public class CustomerConnect {
         }).execute();
     }
 
-    public static void ListImport(String param, final CallbackCustomList listener, final Boolean loading){
+    public static void ListImport(String param, final CallbackCustomList listener, final Boolean loading, boolean stoploading){
         if (loading){
             Util.getInstance().showLoading();
         }
         new CustomGetMethod(Api_link.IMPORTS + param, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
-                Util.getInstance().stopLoading(true);
+                Util.getInstance().stopLoading(stoploading);
                 if (Constants.responeIsSuccess(result)){
                     listener.onResponse(Constants.getResponeArraySuccess(result));
 
@@ -719,7 +751,7 @@ public class CustomerConnect {
             UtilPrinter.printCustomText(outputStream, "HÓA ĐƠN BÁN HÀNG",3,1);
             outputStream.write(PrinterCommands.FEED_LINE);
 
-            UtilPrinter.printCustomText(outputStream,"CH    : " + Constants.getShopName(currentCustomer.getString("shopType")) + " "+ currentCustomer.getString("signBoard") , 1,0);
+            UtilPrinter.printCustomText(outputStream,"CH    : " + Constants.shopName[currentCustomer.getInt("shopType")] + " "+ currentCustomer.getString("signBoard") , 1,0);
             UtilPrinter.printCustomText(outputStream,"KH    : " + currentCustomer.getString("name"), 1,0);
 
             String phone = currentCustomer.getString("phone").equals("")? "--" : Util.FormatPhone(currentCustomer.getString("phone"));
@@ -821,7 +853,7 @@ public class CustomerConnect {
             UtilPrinter.printCustomTextNew(outputStream, "HÓA ĐƠN BÁN HÀNG",33,1);
             outputStream.write(PrinterCommands.FEED_LINE);
 
-            UtilPrinter.printCustomTextNew(outputStream,"CH     : " + Constants.getShopName(currentCustomer.getString("shopType")) + " "+ currentCustomer.getString("signBoard") , 2,0);
+            UtilPrinter.printCustomTextNew(outputStream,"CH     : " + Constants.shopName[currentCustomer.getInt("shopType")] + " "+ currentCustomer.getString("signBoard") , 2,0);
             UtilPrinter.printCustomTextNew(outputStream,"KH     : " + currentCustomer.getString("name"), 2,0);
 
             String phone = currentCustomer.getString("phone").equals("")? "--" : Util.FormatPhone(currentCustomer.getString("phone"));
@@ -930,7 +962,7 @@ public class CustomerConnect {
             UtilPrinter.printCustomTextNew(outputStream, "HÓA ĐƠN (In lai)",33,1);
             outputStream.write(PrinterCommands.FEED_LINE);
 
-            UtilPrinter.printCustomTextNew(outputStream,"CH     : " + Constants.getShopName(currentCustomer.getString("shopType") ) + " "+ currentCustomer.getString("signBoard") , 2,0);
+            UtilPrinter.printCustomTextNew(outputStream,"CH     : " + Constants.shopName[currentCustomer.getInt("shopType")] + " "+ currentCustomer.getString("signBoard") , 2,0);
             UtilPrinter.printCustomTextNew(outputStream,"KH     : " + currentCustomer.getString("name"), 2,0);
 
             String phone = currentCustomer.getString("phone").equals("")? "--" : Util.FormatPhone(currentCustomer.getString("phone"));
@@ -1038,7 +1070,6 @@ public class CustomerConnect {
                 Util.encodeString(customer.getString("shopType")), //shopType
                 status, //currentStatusId
                 Distributor.getDistributorId(),//DistributorId
-                customer.getDouble("currentDebt"),
                 customer.getInt("checkinCount")
 
         );

@@ -130,7 +130,7 @@ public class TempImportFragment extends Fragment implements View.OnClickListener
             public void onError(String error) {
 
             }
-        }, true);
+        }, true, true);
     }
 
 

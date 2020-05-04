@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -49,6 +50,7 @@ import static wolve.dms.BuildConfig.SERVER_URL;
 
 public class SplashScreenActivity extends BaseActivity {
     private ProgressBar progressBar;
+    private TextView tvVersion;
 
     private int SPLASH_TIME_OUT = 500;
 
@@ -65,10 +67,12 @@ public class SplashScreenActivity extends BaseActivity {
     @Override
     public void findViewById() {
         progressBar = findViewById(R.id.splash_loading);
+        tvVersion = findViewById(R.id.splash_version);
     }
 
     @Override
     public void initialData() {
+        tvVersion.setText(String.format("Version %s", BuildConfig.VERSION_NAME));
         progressBar.setVisibility(View.VISIBLE);
         new Handler().postDelayed(new Runnable() {
             @Override

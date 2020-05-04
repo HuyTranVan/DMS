@@ -63,6 +63,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.InetAddress;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -729,6 +730,11 @@ public class Util {
         return new SimpleDateFormat("dd-MM-yyyy  HH:mm").format(Calendar.getInstance().getTime());
     }
 
+    public static String CurrentMonthYearHourNotBlank() {
+        return new SimpleDateFormat("dd_MM_yyyy_HH_mm").format(Calendar.getInstance().getTime());
+    }
+
+
     public static long TimeStamp1(String ddMMyyyy) {
 
         SimpleDateFormat dfm = new SimpleDateFormat("dd-MM-yyyy");
@@ -918,6 +924,16 @@ public class Util {
         String encoded = null;
         try {
             encoded = URLEncoder.encode(value, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            return value;
+        }
+        return encoded;
+    }
+
+    public static String decodeString(String value) {
+        String encoded = null;
+        try {
+            encoded = URLDecoder.decode(value, "utf-8");
         } catch (UnsupportedEncodingException e) {
             return value;
         }

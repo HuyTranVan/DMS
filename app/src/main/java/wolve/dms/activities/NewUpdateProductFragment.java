@@ -79,7 +79,7 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_add_product,container,false);
-        FitScrollWithFullscreen.assistActivity(getActivity(), 1);
+//        FitScrollWithFullscreen.assistActivity(getActivity(), 1);
         initializeView();
 
         intitialData();

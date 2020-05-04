@@ -21,23 +21,24 @@
                 <TextView
                     android:fontFamily="@font/font_awesome"
                     android:id="@+id/choice_4method_icon1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:text="@string/icon_money"
+                    android:layout_weight="0.85"
+                    android:gravity="center"
+                    android:text="@string/icon_product"
                     android:textSize="@dimen/_14sdp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="@dimen/_20sdp"/>
+                    />
 
                 <TextView
                     android:id="@+id/choice_4method_text1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Tiền mặt"
+                    android:layout_weight="0.15"
+                    android:text="Item 1"
                     android:textColor="@color/black_text_color"
                     android:textSize="@dimen/_14sdp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="@dimen/_20sdp"/>
+                    android:layout_gravity="center_vertical"/>
 
         </LinearLayout>
 
@@ -55,23 +56,23 @@
 
                 <TextView
                     android:fontFamily="@font/font_awesome"                    android:id="@+id/choice_4method_icon2"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:text="@string/icon_warning"
+                    android:layout_weight="0.85"
+                    android:gravity="center"
+                    android:text="@string/icon_product"
                     android:textSize="@dimen/_14sdp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="@dimen/_20sdp"/>
+                    android:layout_gravity="center_vertical"/>
 
                 <TextView
                     android:id="@+id/choice_4method_text2"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Nợ lại"
+                    android:layout_weight="0.15"
+                    android:text="Item 2"
                     android:textColor="@color/black_text_color"
                     android:textSize="@dimen/_14sdp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="@dimen/_20sdp"
                     android:clickable="false"/>
 
         </LinearLayout>
@@ -91,23 +92,23 @@
                 <TextView
                     android:fontFamily="@font/font_awesome"
                     android:id="@+id/choice_4method_icon3"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:text="@string/icon_warning"
+                    android:layout_weight="0.85"
+                    android:gravity="center"
+                    android:text="@string/icon_product"
                     android:textSize="@dimen/_14sdp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="@dimen/_20sdp"/>
+                    android:layout_gravity="center_vertical"/>
 
                 <TextView
                     android:id="@+id/choice_4method_text3"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Nợ lại"
+                    android:layout_weight="0.15"
+                    android:text="Item 3"
                     android:textColor="@color/black_text_color"
                     android:textSize="@dimen/_14sdp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="@dimen/_20sdp"
                     android:clickable="false"/>
 
         </LinearLayout>
@@ -127,23 +128,23 @@
                 <TextView
                     android:fontFamily="@font/font_awesome"
                     android:id="@+id/choice_4method_icon4"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:text="@string/icon_warning"
+                    android:layout_weight="0.85"
+                    android:gravity="center"
+                    android:text="@string/icon_product"
                     android:textSize="@dimen/_14sdp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="@dimen/_20sdp"/>
+                    android:layout_gravity="center_vertical"/>
 
                 <TextView
                     android:id="@+id/choice_4method_text4"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Nợ lại"
+                    android:layout_weight="0.15"
+                    android:text="Item 4"
                     android:textColor="@color/black_text_color"
                     android:textSize="@dimen/_14sdp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="@dimen/_20sdp"
                     android:clickable="false"/>
 
         </LinearLayout>

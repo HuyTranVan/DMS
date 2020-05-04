@@ -1,11 +1,13 @@
 package wolve.dms.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,6 +17,7 @@ import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.WarehouseAdapter;
 import wolve.dms.apiconnect.SystemConnect;
+import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackObject;
@@ -132,6 +135,9 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
         if(mFragment != null && mFragment instanceof NewUpdateWarehouseFragment) {
             getSupportFragmentManager().popBackStack();
 
+        }else if(mFragment != null && mFragment instanceof ImportReturnFragment) {
+            getSupportFragmentManager().popBackStack();
+
         }else {
             Transaction.gotoHomeActivityRight(true);
         }
@@ -157,16 +163,16 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
         adapter = new WarehouseAdapter(listDepot, new CallbackObject() {
             @Override
             public void onResponse(BaseModel object) {
-                if (Util.isAdmin() || User.getId() == object.getInt("user_id")){
-                    if (object.getInt("isMaster") == 1){
+                if (Util.isAdmin() || User.getId() == object.getInt("user_id")) {
+                    if (object.getInt("isMaster") == 1) {
                         Util.showSnackbar("Không thể nhập kho tổng", null, null);
 
-                    }else if (object.getInt("isMaster") == 2 || object.getInt("isMaster") == 3){
+                    } else if (object.getInt("isMaster") == 2 || object.getInt("isMaster") == 3) {
                         Transaction.gotoImportActivity(object, false);
 
                     }
 
-                }else {
+                } else {
                     Util.showSnackbar("Chức năng này chỉ do admin thực thiện", null, null);
                 }
 
@@ -175,14 +181,21 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
         }, new CallbackObject() {
             @Override
             public void onResponse(BaseModel object) {
-                if (Util.isAdmin()){
+                if (Util.isAdmin()) {
                     openFragmentNewDepot(object.BaseModelstoString());
 
-                }else {
+                } else {
                     Util.showSnackbar("Không thể sửa thông tin", null, null);
                 }
             }
 
+        }, new CallbackObject() {
+            @Override
+            public void onResponse(BaseModel object) {
+                selectTempWarehouseReturn(object);
+                //openFragmentImportReturn(object.BaseModelstoString());
+
+            }
         });
         Util.createLinearRV(rvDepot, adapter);
 
@@ -195,6 +208,14 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
         changeFragment(depotFragment, bundle, true );
     }
 
+    private void openFragmentImportReturn(BaseModel warehouse, BaseModel temptWarehouse){
+        ImportReturnFragment importReturnFragment = new ImportReturnFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.WAREHOUSE, warehouse.BaseModelstoString());
+        bundle.putString(Constants.TEMPWAREHOUSE, temptWarehouse.BaseModelstoString());
+        changeFragment(importReturnFragment, bundle, true );
+    }
+
     private boolean checkMasterWarehouseExist(List<BaseModel> list){
         boolean check = false;
         for (BaseModel model: list){
@@ -202,14 +223,40 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
                 check =  true;
                 break;
             }
-
         }
-
         return check;
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Util.getInstance().setCurrentActivity(this);
+        initialData();
 
+    }
 
+    private void selectTempWarehouseReturn(BaseModel objectWarehouse){
+        if (adapter.getAllTempWarehouse().size() == 1){
+            openFragmentImportReturn(objectWarehouse, adapter.getAllTempWarehouse().get(0));
 
+        }else {
+            CustomBottomDialog.choiceListObject("chọn kho nhận hàng trả về",
+                    adapter.getAllTempWarehouse(),
+                    "name",
+                    new CallbackBaseModel() {
+                        @Override
+                        public void onResponse(BaseModel object) {
+                            openFragmentImportReturn(objectWarehouse, object);
+                        }
+
+                        @Override
+                        public void onError() {
+
+                        }
+                    }, null);
+
+        }
+
+    }
 }

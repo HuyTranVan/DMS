@@ -97,15 +97,37 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/tempbill_item_address"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:text="a"
-                android:textSize="@dimen/_8sdp"
-                android:textColor="@color/black_text_color_hint"
-                android:layout_marginLeft="@dimen/_5sdp"/>
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tempbill_item_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="a"
+                    android:textSize="@dimen/_8sdp"
+                    android:textColor="@color/black_text_color_hint"
+                    android:layout_marginLeft="@dimen/_5sdp"
+                    android:layout_toLeftOf="@+id/tempbill_item_date"/>
+
+                <TextView
+                    android:id="@+id/tempbill_item_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:gravity="center_vertical|right"
+                    android:paddingRight="@dimen/_5sdp"
+                    android:text="nhan vien"
+                    android:textColor="@color/black_text_color_hint"
+                    android:textSize="@dimen/_8sdp"
+                    android:textStyle="italic"
+                    android:layout_alignParentRight="true"/>
+
+            </RelativeLayout>
+
+
 
 
         </LinearLayout>
@@ -134,12 +156,23 @@
 
         </RelativeLayout>
 
+        <TextView
+            android:id="@+id/tempbill_item_note"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/font_awesome"
+            android:paddingLeft="@dimen/_10sdp"
+            android:paddingRight="@dimen/_5sdp"
+            android:paddingBottom="@dimen/_5sdp"
+            android:textColor="@color/orange_dark"
+            android:textStyle="italic"
+            android:textSize="@dimen/_10sdp"/>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dip"
             android:layout_centerVertical="true"
-            android:background="#e5e5e5" />
+            android:background="@color/colorLightGrey" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -166,14 +199,14 @@
                     android:gravity="center"
                     android:paddingLeft="@dimen/_10sdp"
                     android:text="@string/icon_direction"
-                    android:textColor="@color/colorBlue"
+                    android:textColor="@color/black_text_color"
                     android:textSize="@dimen/_10sdp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="Chỉ đường"
-                    android:textColor="@color/colorBlue"
+                    android:textColor="@color/black_text_color"
                     android:gravity="center"
                     android:textSize="@dimen/_10sdp"
                     android:paddingLeft="@dimen/_5sdp"
@@ -200,14 +233,14 @@
                     android:gravity="center"
                     android:paddingLeft="@dimen/_10sdp"
                     android:text="@string/icon_cart"
-                    android:textColor="@color/colorRed"
+                    android:textColor="@color/colorBlue"
                     android:textSize="@dimen/_10sdp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="Giao hàng"
-                    android:textColor="@color/colorRed"
+                    android:textColor="@color/colorBlue"
                     android:gravity="center"
                     android:textSize="@dimen/_10sdp"
                     android:paddingLeft="@dimen/_5sdp"

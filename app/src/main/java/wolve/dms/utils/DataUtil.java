@@ -1,7 +1,5 @@
 package wolve.dms.utils;
 
-import android.util.Log;
-
 import com.google.android.gms.maps.model.Marker;
 
 import org.json.JSONArray;
@@ -23,14 +21,14 @@ import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 
 public class DataUtil {
-    public static String createPostBillParam(int customerId,
-                                             int userId,
-                                             final Double total,
-                                             final Double paid,
-                                             List<BaseModel> listProduct,
-                                             String note,
-                                             int deliverBy,
-                                             int isreturnBill){
+    public static String newBillParam(int customerId,
+                                      int userId,
+                                      final Double total,
+                                      final Double paid,
+                                      List<BaseModel> listProduct,
+                                      String note,
+                                      int deliverBy,
+                                      int isreturnBill){
         final JSONObject params = new JSONObject();
         try {
             params.put("debt", total - paid);
@@ -66,7 +64,7 @@ public class DataUtil {
     }
 
 
-    public static String updateBillDelivered(int customerId, BaseModel currentBill, int userid, List<BaseModel> listProduct){
+    public static String updateBillDeliveredParam(int customerId, BaseModel currentBill, int userid, List<BaseModel> listProduct){
         JSONObject params = new JSONObject();
         try {
             params.put("id", currentBill.getInt("id"));
@@ -83,7 +81,7 @@ public class DataUtil {
                 object.put("product_id", listProduct.get(i).getInt("product_id"));
                 object.put("discount", listProduct.get(i).getDouble("discount"));
                 object.put("quantity", listProduct.get(i).getInt("quantity"));
-                object.put("productName", listProduct.get(i).getString("productName"));
+                object.put("productName", Util.encodeString(listProduct.get(i).getString("productName")));
                 object.put("purchasePrice", listProduct.get(i).getDouble("purchasePrice"));
                 object.put("basePrice", listProduct.get(i).getDouble("basePrice"));
 
@@ -285,11 +283,11 @@ public class DataUtil {
     }
 
     public static void saveProductPopular(List<BaseModel> list){
-        List<BaseModel> products = CustomSQL.getListObject(Constants.PRODUCT_POPULAR);
+        List<BaseModel> products = CustomFixSQL.getListObject(Constants.PRODUCT_POPULAR);
         for (BaseModel model: list){
             boolean check = false;
             for (BaseModel mProduct: products){
-                if (model.getInt("id") == mProduct.getInt("id")){
+                if (model.getInt("product_id") == mProduct.getInt("product_id")){
                     mProduct.put("value", mProduct.getInt("value") + 1);
                     check = true;
                     break;
@@ -297,22 +295,23 @@ public class DataUtil {
             }
             if (!check){
                 BaseModel object = new BaseModel();
-                object.put("id", model.getInt("id"));
+                object.put("product_id", model.getInt("product_id"));
                 object.put("value", 1);
                 products.add(object);
 
             }
         }
-        CustomSQL.setListBaseModel(Constants.PRODUCT_POPULAR, products);
+        CustomFixSQL.setListBaseModel(Constants.PRODUCT_POPULAR, products);
 
     }
 
     public static List<BaseModel> getProductPopular( List<BaseModel>  list){
-        List<BaseModel> products = CustomSQL.getListObject(Constants.PRODUCT_POPULAR);
+        List<BaseModel> products = CustomFixSQL.getListObject(Constants.PRODUCT_POPULAR);
+        List<BaseModel> product_top = CustomSQL.getListObject(Constants.PRODUCT_SUGGEST_LIST);
         for (BaseModel model: list){
             model.put("value", 0);
             for (BaseModel mProduct: products){
-                if (model.getInt("id") == mProduct.getInt("id")){
+                if (model.getInt("product_id") == mProduct.getInt("product_id")){
                     model.put("value", mProduct.getInt("value"));
                     break;
                 }
@@ -320,6 +319,14 @@ public class DataUtil {
 
         }
         DataUtil.sortbyStringKey("value", list, true);
+
+        for (int i=0; i< list.size(); i++){
+            if (checkDuplicate(product_top, "product_id", list.get(i))){
+
+                list.add(0, list.remove(i));
+            }
+        }
+
         return list;
 
     }
@@ -472,7 +479,7 @@ public class DataUtil {
         List<BaseModel> listBill= new ArrayList<>(remakeBill(listOriginalBill, isDeliver));
         customerResult.putList(Constants.BILLS, listBill);
         customerResult.putList(Constants.DEBTS, getAllBillHaveDebt(listBill));
-        customerResult.putList(Constants.PAYMENTS, remakePayment(DataUtil.array2ListObject(customer.getString("payments"))));
+        customerResult.putList(Constants.PAYMENTS, filterPaymentByUser(DataUtil.array2ListObject(customer.getString("payments"))));
         customerResult.putList(Constants.CHECKINS, listCheckin);
 
         return customerResult;
@@ -519,7 +526,7 @@ public class DataUtil {
         return results;
     }
 
-    public static List<BaseModel> remakePayment(List<BaseModel> listpayment){
+    public static List<BaseModel> filterPaymentByUser(List<BaseModel> listpayment){
         List<BaseModel> listPaymentByUser = new ArrayList<>();
         for (BaseModel model: listpayment){
             if (User.getCurrentRoleId()==Constants.ROLE_ADMIN) {
@@ -532,6 +539,40 @@ public class DataUtil {
         }
 
         return listPaymentByUser;
+
+    }
+
+    public static List<BaseModel> remakePaymentByDate(List<BaseModel> listpayment){
+        List<BaseModel> mResults = new ArrayList<>();
+        for (int i=0; i<listpayment.size(); i++){
+            boolean check = false;
+
+            for (int ii=0; ii<mResults.size(); ii++){
+                if (listpayment.get(i).getLong("createAt")/1000 == mResults.get(ii).getLong("createAt")/1000){
+                    double paid = mResults.get(ii).getDouble("paid") + listpayment.get(i).getDouble("paid");
+                    mResults.get(ii).put("paid", paid);
+                    check = true;
+                    break;
+                }
+            }
+
+            if (!check){
+                BaseModel object = new BaseModel();
+                object.put("id", listpayment.get(i).getInt("id"));
+                object.put("createAt", listpayment.get(i).getLong("createAt"));
+                object.put("note", listpayment.get(i).getString("note"));
+                object.put("paid", listpayment.get(i).getDouble("paid"));
+                object.put("user_id", listpayment.get(i).getInt("user_id"));
+                object.put("customer_id", listpayment.get(i).getInt("customer_id"));
+                object.put("payByReturn", listpayment.get(i).getInt("payByReturn"));
+                object.put("user_collect", listpayment.get(i).getInt("user_collect"));
+
+                mResults.add(object);
+            }
+
+        }
+
+        return mResults;
 
     }
 
@@ -694,7 +735,7 @@ public class DataUtil {
                     deb += debt.getDouble("currentDebt");
 
                     String add = String.format("%s %s\n(%s - %s)",
-                            Constants.getShopName(debt.getString("shopType")).toUpperCase(),
+                            Constants.shopName[debt.getInt("shopType")].toUpperCase(),
                             debt.getString("signBoard").toUpperCase(),
                             debt.getString("street"),
                             debt.getString("district"));
@@ -746,6 +787,18 @@ public class DataUtil {
         boolean check = false;
         for (int i=0; i<list.size(); i++){
             if (list.get(i).getString(key).equals( object.getString(key))){
+                check = true;
+                break;
+            }
+        }
+
+        return check;
+    }
+
+    public static boolean checkDuplicate(List<BaseModel> list, String key_list, BaseModel object, String key_object){
+        boolean check = false;
+        for (int i=0; i<list.size(); i++){
+            if (list.get(i).getString(key_list).equals( object.getString(key_object))){
                 check = true;
                 break;
             }

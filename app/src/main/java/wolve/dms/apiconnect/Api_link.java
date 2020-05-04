@@ -15,7 +15,7 @@ import wolve.dms.utils.Util;
  */
 
 public class Api_link {
-    public final static String BASE_URL= BuildConfig.DEBUG_FLAG? "http://192.168.1.3/": BuildConfig.SERVER_URL;
+    public final static String BASE_URL= BuildConfig.DEBUG_FLAG? "http://192.168.1.9/": BuildConfig.SERVER_URL;
 
     public final static String BASE_PHOTO_URL = BuildConfig.UPLOAD_URL;
     public final static String MAP_API = "https://maps.googleapis.com/maps/api/";
@@ -33,10 +33,6 @@ public class Api_link {
     public final static String SCANNER_SHEET_KEY ="1sWcFlXG-7UZlrcBDFocIBlk3SxxRxplPsvELP0WWxzQ";
     public final static String SCANNER_DISTRIBUTOR_TAB ="DISTRIBUTOR!A1:z";
     public final static String SCANNER_CODE_TAB ="CODE!A%d:z";
-
-
-
-    public final static String LOGO_BILL = "http://res.cloudinary.com/lubsolution/image/upload/v1514902531/wolver_logo.jpg";
 
     public final static String PROVINCES = BASE_URL + "provinces";
     public final static String DISTRICTS = BASE_URL + "districts?provinceid=";
@@ -93,10 +89,11 @@ public class Api_link {
     public final static String CUSTOMER_NEAREST_PARAM ="&lat=%s&lng=%s";
     public final static String CUSTOMER_CHECKIN_RANGE_PARAM ="&checkinFrom=%s&checkinTo=%s";
     public final static String CUSTOMER_DEBT_PARAM ="debt=%d";
-    public final static String CUSTOMER_CREATE_PARAM ="%sname=%s&signBoard=%s&address=%s&phone=%s&street=%s&note=%s&district=%s&province=%s&lat=%s&lng=%s&volumeEstimate=%s&shopType=%s&status_id=%d&distributor_id=%s&currentDebt=%s&checkinCount=%d";
+    public final static String CUSTOMER_CREATE_PARAM ="%sname=%s&signBoard=%s&address=%s&phone=%s&street=%s&note=%s&district=%s&province=%s&lat=%s&lng=%s&volumeEstimate=%s&shopType=%s&status_id=%d&distributor_id=%s&checkinCount=%d";
     public final static String CUSTOMER_TEMP_NEW = BASE_URL + "token/customer/CustomerTempNew";
     public final static String CUSTOMER_TEMP_NEW_PARAM ="customer_id=%d&user_id=%d";
     public final static String CUSTOMER_WAITING_LIST = BASE_URL + "token/customer/WaitingList";
+    public final static String CUSTOMER_ORDERED = BASE_URL + "token/customer/CustomerOrderedList";
 
     public final static String DISTRIBUTOR_DETAIL = BASE_URL + "token/distributor/";
     public final static String DISTRIBUTOR_NEW = BASE_URL + "token/distributor/create_or_update";

@@ -136,7 +136,7 @@ public class Useless {
                     data.add(bill.getString("id"));
                     data.add(Util.DateString(bill.getLong("createAt")));
                     data.add(bill.getJsonObject("user").getString("displayName"));
-                    data.add(Constants.getShopName(customer.getString("shopType")) + " " + customer.getString("signBoard"));
+                    data.add(Constants.shopName[customer.getInt("shopType")] + " " + customer.getString("signBoard"));
                     data.add(customer.getString("phone"));
                     data.add(bill.getDouble("total"));
                     data.add(bill.getDouble("paid"));
@@ -453,7 +453,7 @@ public class Useless {
         RecyclerView rvBill = (RecyclerView) dialogResult.findViewById(R.id.dialog_bill_rvbill);
 
 
-        tvShopName.setText(Constants.getShopName(customer.getString("shopType")) + " "+ customer.getString("signBoard"));
+        tvShopName.setText(Constants.shopName[customer.getInt("shopType")]+ " "+ customer.getString("signBoard"));
         tvCustomerName.setText(customer.getString("name") == null? "" : customer.getString("name"));
         tvPhone.setText(customer.getString("phone") == null? "" : customer.getString("phone"));
         tvAddress.setText((customer.getString("address") == null? "" : customer.getString("address")) +" " +customer.getString("street") + " "+ customer.getString("district"));

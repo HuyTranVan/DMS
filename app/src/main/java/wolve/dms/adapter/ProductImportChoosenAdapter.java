@@ -18,9 +18,12 @@ import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventList
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import wolve.dms.R;
 import wolve.dms.callback.CallbackClickAdapter;
+import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.models.BaseModel;
@@ -37,17 +40,19 @@ public class ProductImportChoosenAdapter extends RecyclerView.Adapter<ProductImp
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
-    private CallbackString mListener;
+    private CallbackInt mListener;
     private CallbackObject mListenerObject;
-    private View mView;
+    private boolean flagRemove;
+    //private View mView;
+    private Timer mTimer;
 
-    public ProductImportChoosenAdapter(View parentView, List<BaseModel> list, CallbackString listener,  CallbackObject listenerOb) {
+    public ProductImportChoosenAdapter(List<BaseModel> list, boolean flag_remove, CallbackInt listener, CallbackObject listenerOb) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mData = list;
         this.mListener = listener;
         this.mListenerObject = listenerOb;
-        this.mView = parentView;
+        this.flagRemove = flag_remove;
 
     }
 
@@ -83,7 +88,6 @@ public class ProductImportChoosenAdapter extends RecyclerView.Adapter<ProductImp
             @Override
             public void onClick(View view) {
                 int quantity = mData.get(position).hasKey("quantity")? mData.get(position).getInt("quantity") : 0;
-
                 if (!mData.get(position).hasKey("currentQuantity") || mData.get(position).getInt("currentQuantity") > quantity ){
                     mData.get(position).put("quantity", quantity +1);
                     notifyItemChanged(position);
@@ -92,11 +96,8 @@ public class ProductImportChoosenAdapter extends RecyclerView.Adapter<ProductImp
                 }else {
                     Util.showToast("Sản phẩm hết tồn kho");
                 }
+                mListener.onResponse(mData.size());
 
-//                int quantity = mData.get(position).hasKey("quantity")? mData.get(position).getInt("quantity") : 0;
-//                mData.get(position).put("quantity", quantity +1);
-//                notifyItemChanged(position);
-//                mListenerObject.onResponse(mData.get(position));
             }
         });
 
@@ -113,10 +114,10 @@ public class ProductImportChoosenAdapter extends RecyclerView.Adapter<ProductImp
 
                                      mListenerObject.onResponse(mData.get(position));
                                      mData.remove(position);
-                                     mListener.Result(String.valueOf(mData.size()));
+                                     mListener.onResponse(mData.size());
 
                                  } else {
-                                     if (!mData.get(position).hasKey("currentQuantity") || mData.get(position).getInt("currentQuantity") > Integer.parseInt(s)){
+                                     if (!mData.get(position).hasKey("currentQuantity") || mData.get(position).getInt("currentQuantity") >= Integer.parseInt(s)){
                                          mListenerObject.onResponse(mData.get(position));
                                          mData.get(position).put("quantity", Integer.parseInt(s));
                                      }else {
@@ -138,11 +139,14 @@ public class ProductImportChoosenAdapter extends RecyclerView.Adapter<ProductImp
                 mData.get(position).put("quantity", mData.get(position).getInt("quantity") -1);
                 mListenerObject.onResponse(mData.get(position));
                 if (mData.get(position).getInt("quantity") ==0){
-                    mData.remove(position);
-                    mListener.Result(String.valueOf(mData.size()));
+                    if (flagRemove){
+                        mData.remove(position);
+
+                    }
+
                 }
                 notifyDataSetChanged();
-
+                mListener.onResponse(mData.size());
             }
         });
 
@@ -196,7 +200,7 @@ public class ProductImportChoosenAdapter extends RecyclerView.Adapter<ProductImp
 
         }
         notifyDataSetChanged();
-        mListener.Result(String.valueOf(mData.size()));
+        mListener.onResponse(mData.size());
     }
 
     public List<BaseModel> getmData(){
@@ -208,7 +212,54 @@ public class ProductImportChoosenAdapter extends RecyclerView.Adapter<ProductImp
         notifyDataSetChanged();
     }
 
+    public void selectAll(){
+        for (BaseModel model: mData){
+            model.put("quantity", model.getInt("currentQuantity"));
 
+        }
+        notifyDataSetChanged();
+        mListener.onResponse(mData.size());
+    }
+
+    public void noneSelect(){
+        for (BaseModel model: mData){
+            model.put("quantity", 0);
+
+        }
+        notifyDataSetChanged();
+        mListener.onResponse(mData.size());
+    }
+
+    public int getAllSelected(){
+        int quantity = 0;
+        int limit = 0;
+
+        for (BaseModel model: mData){
+            quantity += model.getInt("quantity");
+            limit += model.getInt("currentQuantity");
+
+        }
+
+        if (quantity  == 0){
+            return -1;
+        }else if (quantity <limit){
+            return 0;
+        }else {
+            return 1;
+        }
+
+    }
+
+    public List<BaseModel> getAllDataHaveQuantity(){
+        List<BaseModel> results = new ArrayList<>();
+        for (BaseModel model: mData){
+            if (model.getInt("quantity") >0){
+                results.add(model);
+            }
+
+        }
+        return  results;
+    }
 
 
 }

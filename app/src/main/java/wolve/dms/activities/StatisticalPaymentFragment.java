@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -28,11 +30,12 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class StatisticalPaymentFragment extends Fragment implements View.OnClickListener {
+public class StatisticalPaymentFragment extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
     private View view;
     private RecyclerView rvCash;
-    private TextView tvCount;
-
+    //private TextView tvCount;
+    private RadioGroup rdGroup;
+    private RadioButton rdTotal, rdCollect;
 
     private Statistical_PaymentAdapter adapter;
 
@@ -57,12 +60,14 @@ public class StatisticalPaymentFragment extends Fragment implements View.OnClick
 
 
     private void addEvent() {
-
+        rdGroup.setOnCheckedChangeListener(this);
     }
 
     private void initializeView() {
         rvCash = (RecyclerView) view.findViewById(R.id.statistical_cash_rvbill);
-        tvCount = view.findViewById(R.id.statistical_cash_count);
+        rdGroup = view.findViewById(R.id.statistical_cash_totalgroup);
+        rdTotal = view.findViewById(R.id.statistical_cash_total);
+        rdCollect = view.findViewById(R.id.statistical_cash_collect);
 
     }
 
@@ -99,8 +104,30 @@ public class StatisticalPaymentFragment extends Fragment implements View.OnClick
         });
         Util.createLinearRV(rvCash, adapter);
 
-        tvCount.setText(String.format("Tổng tiền thu:    %s",Util.FormatMoney(adapter.sumPayments())));
+        rdTotal.setText(String.format("Tổng: %s",Util.FormatMoney(adapter.sumPayments())));
 
+        if (adapter.sumCollect() == 0.0){
+            rdCollect.setVisibility(View.GONE);
+
+        }else {
+            rdCollect.setVisibility(View.VISIBLE);
+            rdCollect.setText(String.format("Thu hộ: %s",Util.FormatMoney(adapter.sumCollect())));
+        }
+
+
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        switch (checkedId){
+            case R.id.statistical_cash_total:
+                adapter.getFilter().filter(Constants.ALL_TOTAL);
+                break;
+
+            case R.id.statistical_cash_collect:
+                adapter.getFilter().filter(Constants.ALL_COLLECT);
+                break;
+        }
     }
 
     public double getSumPayment(){

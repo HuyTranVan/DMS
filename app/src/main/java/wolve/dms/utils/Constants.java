@@ -26,6 +26,7 @@ public class Constants {
     public final static String DEBTS = "debts";
     public final static String BILL = "bill";
     public final static String WAREHOUSE = "warehouse";
+    public static final String TEMPWAREHOUSE = "temp_warehouse";
     public final static String BILL_DETAIL = "billDetails";
     public final static String PAYMENT = "payment";
     public final static String PAYMENTS = "payments";
@@ -150,9 +151,11 @@ public class Constants {
     public static final String USER_LIST = "user_list";
 
     public static final String ALL_TOTAL = "all total";
+    public static final String ALL_COLLECT = "all collect";
     public static final String ALL_DEBT = "all debt";
     public static final String FCM_TOKEN = "fcm_token";
     public static final String PRODUCT_POPULAR = "product_popular";
+    public static final String PRODUCT_SUGGEST_LIST = "product_suggest_list";
 
     public static String CHECK_ALL = Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_check) + " CHỌN TẤT CẢ";
     public static String UNCHECK = "BỎ CHỌN";
@@ -163,15 +166,15 @@ public class Constants {
                 Util.getIcon(R.string.icon_edit_map),
                 Util.getIcon(R.string.icon_chart),
                 Util.getIcon(R.string.icon_depot),
-                Util.getIcon(R.string.icon_barcode),
+                Util.getIcon(R.string.icon_warning),
                 Util.getIcon(R.string.icon_product_group),
                 Util.getIcon(R.string.icon_info)};
         String[] texts = new String[]{
                 "Bán hàng",
                 "Thống kê",
-                "Xuất nhập tồn",
-                "Quét mã",
-                "Danh mục",
+                "Nhập - Tồn kho",
+                "Test4Admin",
+                "Cài đặt",
                 "Thông tin"};
         String[] colors = new String[]{
                 "Bán hàng",
@@ -208,56 +211,59 @@ public class Constants {
         return list;
     }
 
-    private  static List<BaseModel> shop(){
-        List<BaseModel> list = new ArrayList<>();
+//    private  static List<BaseModel> shop(){
+//        List<BaseModel> list = new ArrayList<>();
+//
+//        for (int i=0; i< shopType.length; i++){
+//            BaseModel baseModel = new BaseModel();
+//            baseModel.put("type", shopType[i]);
+//            baseModel.put("name", shopName[i]);
+//            list.add(baseModel);
+//        }
+//
+//        return list;
+//    }
 
-        for (int i=0; i< shopType.length; i++){
-            BaseModel baseModel = new BaseModel();
-            baseModel.put("type", shopType[i]);
-            baseModel.put("name", shopName[i]);
-            list.add(baseModel);
-        }
+//    public static String getShopName(String type){
+//        String result = null;
+//        for (BaseModel baseModel : shop()) {
+//            if (type.equals(baseModel.getString("type"))) {
+//                result =  baseModel.getString("name");
+//                break;
+//            }
+//
+//        }
+//
+//        return result;
+//    }
 
-        return list;
-    }
-
-    public static String getShopName(String type){
-        String result = null;
-        for (BaseModel baseModel : shop()) {
-            if (type.equals(baseModel.getString("type"))) {
-                result =  baseModel.getString("name");
-                break;
-            }
-
-        }
-
-        return result;
-    }
-
-    public static String getShopType(String name){
-        String result = null;
-        for (BaseModel baseModel : shop()) {
-            if (name.equals(baseModel.getString("name"))) {
-                result =  baseModel.getString("type");
-                break;
-            }
-
-        }
-
-        return result;
-    }
+//    public static String getShopType(String name){
+//        String result = null;
+//        for (BaseModel baseModel : shop()) {
+//            if (name.equals(baseModel.getString("name"))) {
+//                result =  baseModel.getString("type");
+//                break;
+//            }
+//
+//        }
+//
+//        return result;
+//    }
 
     //Shoptype constant
-    public static String[] shopType = new String[]{
-            "SUA_XE",
-            "RUA_XE",
-            "PHU_TUNG",
-            "BAO_TRI"};
+//    public static String[] shopType = new String[]{
+//            "SUA_XE",
+//            "RUA_XE",
+//            "PHU_TUNG",
+//            "BAO_TRI"};
     public static String[] shopName = new String[]{
             "SỬA XE",
             "RỬA XE",
             "PHỤ TÙNG",
-            "BẢO TRÌ"};
+            "BẢO TRÌ",
+            "GARAGE",
+            "SHOP",
+            "KHÁCH LẺ"};
 
 
     public static void throwError(String err) {

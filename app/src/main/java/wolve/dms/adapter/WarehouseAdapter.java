@@ -29,15 +29,16 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
-    private CallbackObject mListener, mListenerInfo;
+    private CallbackObject mListener, mListenerInfo, mListenerReturn;
     //private CallbackDeleteAdapter mDeleteListener;
 
-    public WarehouseAdapter(List<BaseModel> list, CallbackObject listener,  CallbackObject listenerinfo) {
+    public WarehouseAdapter(List<BaseModel> list, CallbackObject listener,  CallbackObject listenerinfo, CallbackObject listenerreturn) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mData = list;
         this.mListener = listener;
         this.mListenerInfo = listenerinfo;
+        this.mListenerReturn = listenerreturn;
 
         DataUtil.sortbyStringKey("isMaster",mData, false);
     }
@@ -52,8 +53,8 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
         mData = new ArrayList<>();
         mData.addAll(list);
         notifyDataSetChanged();
-    }
 
+    }
 
     @Override
     public void onBindViewHolder(final WarehouseAdapterViewHolder holder, final int position) {
@@ -75,15 +76,28 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
         }
         switch (mData.get(position).getInt("isMaster")){
             case 1:
-                holder.tvType.setText("Kho tổng");
+                holder.tvType.setVisibility(View.VISIBLE);
+                holder.tvType.setText(Util.getIcon(R.string.icon_home));
                 break;
 
             case 2:
-                holder.tvType.setText("Kho tạm");
+                holder.tvType.setVisibility(View.VISIBLE);
+                holder.tvType.setText(Util.getIcon(R.string.icon_depot));
                 break;
 
             case 3:
-                holder.tvType.setText("Kho nhân viên");
+                holder.tvType.setVisibility(View.GONE);
+                if (mData.get(position).getInt("quantity")>0){
+                    if (Util.isAdmin() || User.getId() == mData.get(position).getInt("user_id")){
+                        holder.tvReturn.setVisibility( View.VISIBLE);
+                    }else {
+                        holder.tvReturn.setVisibility(View.GONE);
+                    }
+
+                }else {
+                    holder.tvReturn.setVisibility(View.GONE);
+                }
+
                 break;
         }
 
@@ -92,6 +106,13 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
             public void onClick(View v) {
                 mListener.onResponse(mData.get(position));
 
+            }
+        });
+
+        holder.tvReturn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListenerReturn.onResponse(mData.get(position));
             }
         });
 
@@ -113,7 +134,7 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
 
 
     public class WarehouseAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvGroupName, tvType, tvTempImport,  tvInfo, tvUsername;
+        private TextView tvGroupName, tvType, tvTempImport,  tvInfo, tvUsername, tvReturn;
         private RelativeLayout lnParent;
         private View line;
 
@@ -122,13 +143,24 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
             tvGroupName = (TextView) itemView.findViewById(R.id.depot_item_name);
             tvUsername = (TextView) itemView.findViewById(R.id.depot_item_user);
             tvType = (TextView) itemView.findViewById(R.id.depot_item_depottype);
+            tvReturn = (TextView) itemView.findViewById(R.id.depot_item_depotreturn);
             tvInfo = itemView.findViewById(R.id.depot_item_depotinfo);
             lnParent = (RelativeLayout) itemView.findViewById(R.id.depot_item_parent);
             line = itemView.findViewById(R.id.depot_item_seperateline);
             tvTempImport = itemView.findViewById(R.id.depot_item_number_temp_import);
 
         }
+    }
 
+    public List<BaseModel> getAllTempWarehouse(){
+        List<BaseModel> results = new ArrayList<>();
+        for (BaseModel model: mData){
+            if (model.getInt("isMaster") == 2){
+                results.add(model);
+            }
+        }
+
+        return  results;
     }
 
 }

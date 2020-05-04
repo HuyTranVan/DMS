@@ -14,6 +14,7 @@ import androidx.core.app.ShareCompat;
 import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.Fragment;
 
+import java.io.File;
 import java.util.List;
 
 import wolve.dms.R;
@@ -205,6 +206,7 @@ public class Transaction {
                         @Override
                         public void onRespone(Boolean result) {
                             if (result){
+                                CustomSQL.setListBaseModel(Constants.PRODUCT_SUGGEST_LIST, listproduct);
                                 gotoImportActivity(User.getCurrentUser().getBaseModel("warehouse"), true);
 
                             }
@@ -290,14 +292,21 @@ public class Transaction {
     }
 
     public static void shareViaZalo(String content) {
-        //String param = String.format(Api_link.LUB_LINK_PARAM, Security.encrypt(id));
-        //String param = String.format(Api_link.LUB_LINK_PARAM, id);
         ShareCompat.IntentBuilder.from(Util.getInstance().getCurrentActivity())
                 .setType("text/plain")
                 .setChooserTitle("Chia sẻ thông qua")
                 .setText(content)
-//                .setText(String.format("www.google.com/maps/search/?api=1&query=%s,%s", lat, lng))
                 .startChooser();
+
+    }
+
+    public static void shareImageViaZalo(Uri uri) {
+//        File file = new File(path);
+//        Uri uri = Uri.fromFile(file);
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("image/*");
+        intent.putExtra(Intent.EXTRA_STREAM, uri);
+        Util.getInstance().getCurrentActivity().startActivity(Intent.createChooser(intent, "Chia sẻ thông qua") );
 
     }
 

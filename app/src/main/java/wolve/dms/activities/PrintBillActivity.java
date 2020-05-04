@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -61,7 +62,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     private ImageView imgLogo, btnBack, imgOrderPhone;
     private TextView tvCompany, tvAdress, tvHotline, tvWebsite, tvTitle, tvShopName, tvCustomerName, tvCustomerAddress, tvDate, tvEmployee,
             tvSumCurrentBill, tvOrderPhone, tvThanks, tvPrintSize, tvPrinterMainText, tvPrinterName, tvTotal, tvPaid, tvRemain, tvTotalTitle,
-            tvEmployeeSign, tvDeliver, tvDeliverTitle, tvListPrinter;
+            tvEmployeeSign, tvDeliver, tvDeliverTitle, tvListPrinter, tvShare;
     private RecyclerView rvBills, rvDebts;
     private LinearLayout lnMain, lnBottom, lnSubmit, lnTotalGroup, lnPaidGroup, lnRemainGroup, lnSignature;
     private View line1, line2, line3, line4;
@@ -75,6 +76,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     private boolean rePrint; ;
     private Dialog dialogPayment;
     private String orderPhone;
+    private Uri currentImagePath;
 
     private BluetoothListFragment bluFragment = null ;
     protected BluetoothAdapter mBluetoothAdapter = null;
@@ -126,6 +128,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         tvPrinterName = findViewById(R.id.print_bill_bottom_secondtext);
         tvPrintSize = findViewById(R.id.print_bill_bottom_printersize);
         tvListPrinter = findViewById(R.id.print_bill_bottom_printerselect);
+        tvShare = findViewById(R.id.print_bill_bottom_share);
         tvEmployeeSign = findViewById(R.id.print_bill_employee_sign);
         lnBottom = findViewById(R.id.print_bill_bottom);
         rvDebts = findViewById(R.id.print_bill_rvdebt);
@@ -216,7 +219,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         }
 
         tvThanks.setText(distributor.getString("thanks"));
-        tvShopName.setText(String.format(": %s %s",Constants.getShopName(currentCustomer.getString("shopType")).toUpperCase() , currentCustomer.getString("signBoard").toUpperCase()));
+        tvShopName.setText(String.format(": %s %s",Constants.shopName[currentCustomer.getInt("shopType")].toUpperCase() , currentCustomer.getString("signBoard").toUpperCase()));
 
         String phone = currentCustomer.getString("phone").equals("")? "--" : Util.FormatPhone(currentCustomer.getString("phone"));
         tvCustomerName.setText(String.format(": %s - %s",currentCustomer.getString("name"), phone ));
@@ -250,6 +253,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         tvPrintSize.setOnClickListener(this);
         lnSubmit.setOnClickListener(this);
         imgLogo.setOnClickListener(this);
+        tvShare.setOnClickListener(this);
 
     }
 
@@ -286,9 +290,30 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
                 break;
 
-            case R.id.print_bill_logo:
-//                imageChangeUri = Uri.fromFile(Util.getOutputMediaFile());
-//                gotoImageChooser();
+            case R.id.print_bill_bottom_share:
+                CustomCenterDialog.alertWithCancelButton2("Chia sẻ",
+                        "Gửi hình chụp hóa đơn qua ứng dụng khác",
+                        "Tiếp tục",
+                        "Hủy",
+                        new CustomCenterDialog.ButtonCallback() {
+                            @Override
+                            public void Submit(Boolean boolSubmit) {
+                                if (currentImagePath  == null){
+                                    currentImagePath = BitmapView.saveImageToSD("bill",
+                                            BitmapView.ResizeBitMapDependWidth(BitmapView.getBitmapFromView(scContentParent), 512));
+                                }
+
+                                Transaction.shareImageViaZalo(currentImagePath);
+                            }
+
+                            @Override
+                            public void Cancel(Boolean boolCancel) {
+
+                            }
+                        });
+
+
+
                 break;
         }
     }
@@ -532,13 +557,13 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         String params = "";
 
         if (currentBill.isNull(Constants.DELIVER_BY) && currentBill.getInt("id") != 0){
-            params = DataUtil.updateBillDelivered(currentCustomer.getInt("id"),
+            params = DataUtil.updateBillDeliveredParam(currentCustomer.getInt("id"),
                     currentBill,
                     User.getId(),
                     DataUtil.array2ListObject(currentBill.getString(Constants.BILL_DETAIL)));
 
         }else {
-            params = DataUtil.createPostBillParam(currentCustomer.getInt("id"),
+            params = DataUtil.newBillParam(currentCustomer.getInt("id"),
                     User.getId(),
                     adapterBill.getTotalMoney(),
                     0.0,

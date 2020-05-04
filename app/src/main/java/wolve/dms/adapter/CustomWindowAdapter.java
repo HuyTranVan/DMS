@@ -45,7 +45,7 @@ public class CustomWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
         JSONArray arrayCheckIns = customer.getJSONArray("checkIns");
 
-        String title = Constants.getShopName(customer.getString("shopType")) +" " + customer.getString("signBoard");
+        String title = Constants.shopName[customer.getInt("shopType")] +" " + customer.getString("signBoard");
         tvname.setText(title);
 
         tvPhoneIcon.setVisibility(customer.getString("phone").equals("")?View.GONE:View.VISIBLE);

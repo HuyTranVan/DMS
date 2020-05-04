@@ -40,7 +40,7 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
         this.mListener = listener;
         this.boListener = boollistener;
 
-        DataUtil.sortbyStringKey("create", mData, true);
+        //DataUtil.sortbyStringKey("createAt", mData, true);
 
     }
 
@@ -60,9 +60,10 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
             holder.tvNumber.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.btn_oval_denim));
             holder.tvNumber.setText(String.valueOf(mData.size()-position));
         }
+        holder.tvDate.setText(Util.DateHourString(mData.get(position).getLong("createAt")));
 
         BaseModel customer = mData.get(position).getBaseModel("customer");
-        holder.tvShopName.setText(Constants.getShopName(customer.getString("shopType")) + " " + customer.getString("signBoard"));
+        holder.tvShopName.setText(Constants.shopName[customer.getInt("shopType")] + " " + customer.getString("signBoard"));
         holder.tvAddress.setText(customer.getString("street") + " - " + customer.getString("district"));
 
         holder.tvTotal.setText(Util.FormatMoney(mData.get(position).getBaseModel("bill").getDouble("total")));
@@ -76,6 +77,9 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
 
         }
         holder.tvDetail.setText(detail);
+
+        holder.tvNote.setVisibility(mData.get(position).getString("note").equals("")? View.GONE: View.VISIBLE);
+        holder.tvNote.setText(String.format("** Ghi chú:  %s",Util.decodeString(mData.get(position).getString("note"))));
 
         holder.tvNumber.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,7 +169,7 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
 
 
     public class TempbillAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvEmployee, tvShopName, tvTotal, tvAddress, tvDetail, tvNumber;
+        private TextView tvEmployee, tvShopName, tvTotal, tvAddress, tvDetail, tvNumber, tvNote, tvDate;
         private LinearLayout lnParent, lnDirection, lnDeliver;
         private View vLineUpper, vLineUnder;
 
@@ -175,11 +179,13 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
             lnDirection = (LinearLayout) itemView.findViewById(R.id.tempbill_item_direction);
             lnDeliver = (LinearLayout) itemView.findViewById(R.id.tempbill_item_deliver);
             tvTotal = (TextView) itemView.findViewById(R.id.tempbill_item_total);
+            tvNote = (TextView) itemView.findViewById(R.id.tempbill_item_note);
             tvNumber = itemView.findViewById(R.id.tempbill_item_number);
             tvEmployee = (TextView) itemView.findViewById(R.id.tempbill_item_employee);
             tvShopName = (TextView) itemView.findViewById(R.id.tempbill_item_shopname);
             tvAddress = (TextView) itemView.findViewById(R.id.tempbill_item_address);
             tvDetail = itemView.findViewById(R.id.tempbill_item_detail);
+            tvDate = itemView.findViewById(R.id.tempbill_item_date);
             vLineUnder = (View) itemView.findViewById(R.id.tempbill_item_under);
             vLineUpper = (View) itemView.findViewById(R.id.tempbill_item_upper);
 

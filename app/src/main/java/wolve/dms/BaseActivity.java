@@ -173,7 +173,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                             case "activities.ImportActivity":
                                 ImportActivity activityImport = (ImportActivity) Util.getInstance().getCurrentActivity();
-                                activityImport.reloadListImport(true);
+                                activityImport.reloadListImport(true, true);
                                 break;
 
                         }

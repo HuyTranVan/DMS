@@ -271,10 +271,11 @@
                 android:inputType="textCapSentences|textMultiLine"
                 android:textCursorDrawable="@drawable/custom_cursor"/>
 
-            <wolve.dms.customviews.CTextIcon
+            <TextView
                 android:id="@+id/dialog_select_status_clear"
                 android:layout_width="@dimen/_20sdp"
                 android:layout_height="@dimen/_20sdp"
+                android:fontFamily="@font/font_awesome"
                 android:background="@drawable/btn_oval_white"
                 android:layout_alignParentRight="true"
                 android:text="@string/icon_x"

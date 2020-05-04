@@ -4,6 +4,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -23,33 +25,31 @@ import wolve.dms.utils.Util;
  * Created by tranhuy on 5/24/17.
  */
 
-public class Statistical_PaymentAdapter extends RecyclerView.Adapter<Statistical_PaymentAdapter.StatisticalBillsViewHolder> {
-    private List<BaseModel> mData = new ArrayList<>();
+public class Statistical_PaymentAdapter extends RecyclerView.Adapter<Statistical_PaymentAdapter.StatisticalBillsViewHolder> implements Filterable {
+    private List<BaseModel> baseData;
+    private List<BaseModel> mData ;
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackString mListener;
 
-    public Statistical_PaymentAdapter(String user, List<BaseModel> data, CallbackString listener) {
+    public Statistical_PaymentAdapter(String username, List<BaseModel> data, CallbackString listener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
-        //this.mData = data;
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mListener = listener;
 
-        if (user.equals(Constants.ALL_FILTER)){
-            this.mData = data;
-//            this.mData = DataUtil.groupCustomerPayment(data);
+        if (username.equals(Constants.ALL_FILTER)){
+            this.baseData = data;
 
         }else {
-            mData = new ArrayList<>();
-//            List<BaseModel> listTemp = DataUtil.groupCustomerPayment(data);
-            List<BaseModel> listTemp = data;
-
-            for (BaseModel row : listTemp){
-                if (row.getBaseModel("user").getString("displayName").equals(user)){
-                    mData.add(row);
+            baseData = new ArrayList<>();
+            for (BaseModel row : data){
+                if (row.getBaseModel("user").getString("displayName").equals(username)){
+                    baseData.add(row);
                 }
             }
         }
+
+        this.mData = baseData;
         DataUtil.sortbyStringKey("createAt", mData, true);
 
 
@@ -66,7 +66,7 @@ public class Statistical_PaymentAdapter extends RecyclerView.Adapter<Statistical
         holder.tvNumber.setText(String.valueOf(mData.size() -position));
 
         final BaseModel customer = new BaseModel(mData.get(position).getJsonObject("customer"));
-        holder.tvsignBoard.setText(Constants.getShopName(customer.getString("shopType") ) + " " + customer.getString("signBoard"));
+        holder.tvsignBoard.setText(Constants.shopName[customer.getInt("shopType")] + " " + customer.getString("signBoard"));
         holder.tvDistrict.setText(customer.getString("street") + " - " + customer.getString("district"));
 
         String user = Util.getIconString(R.string.icon_username, "   ", mData.get(position).getBaseModel("user").getString("displayName"));
@@ -126,6 +126,17 @@ public class Statistical_PaymentAdapter extends RecyclerView.Adapter<Statistical
         return totalPayment;
     }
 
+    public double sumCollect(){
+        double total = 0.0;
+        for (BaseModel row : mData){
+            if (row.getInt("user_id") != row.getInt("user_collect")){
+                total += row.getDouble("paid");
+            }
+
+        }
+        return total;
+    }
+
     public double sumProfit(){
         double totalProfit = 0.0;
         for (BaseModel row : mData){
@@ -140,6 +151,39 @@ public class Statistical_PaymentAdapter extends RecyclerView.Adapter<Statistical
             totalProfit += row.getDouble("base_profit");
         }
         return totalProfit;
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                String charString = charSequence.toString();
+                if (charString.equals(Constants.ALL_TOTAL)) {
+                    mData = baseData;
+
+                } else {
+                    List<BaseModel> listTemp = new ArrayList<>();
+                    for (BaseModel row : baseData) {
+                        if (row.getInt("user_id") != row.getInt("user_collect")){
+                            listTemp.add(row);
+                        }
+
+                    }
+
+                    mData = listTemp;
+                }
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = mData;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                mData = (ArrayList<BaseModel>) filterResults.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 
 }

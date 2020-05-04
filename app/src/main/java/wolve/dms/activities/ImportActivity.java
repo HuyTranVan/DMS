@@ -31,6 +31,7 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomList;
+import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.callback.CallbackListObject;
 import wolve.dms.callback.CallbackObject;
@@ -124,11 +125,12 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
                             viewPager.setCurrentItem(2, true);
                         }
 
-
+                        selectFromWarehouse(false);
                     }
                 });
             }
-        });
+        }, true, false);
+
 
 
 
@@ -156,13 +158,13 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
                 break;
 
             case R.id.import_fromwarehouse:
-                selectFromWarehouse();
+                selectFromWarehouse(true);
 
                 break;
 
             case R.id.import_towarehouse:
                 if (Util.isAdmin()){
-                    selectToWarehouse();
+                    selectToWarehouse(true);
 
                 }else {
                     Util.showSnackbar("Không thể chọn kho hàng khác", null, null);
@@ -183,7 +185,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         return titles;
     }
 
-    private void getListImport(CallbackListObject listener){
+    private void getListImport(CallbackListObject listener, boolean showloading, boolean stoploading){
         String param = String.format("?warehouse_id=%d", toWarehouse.getInt("id"));
         CustomerConnect.ListImport(param, new CallbackCustomList() {
             @Override
@@ -195,7 +197,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
             public void onError(String error) {
 
             }
-        }, true);
+        }, showloading, stoploading);
     }
 
     @Override
@@ -203,8 +205,6 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.import_parent);
         if (Util.getInstance().isLoading()){
             Util.getInstance().stopLoading(true);
-        }else if(mFragment != null && mFragment instanceof NewUpdateWarehouseFragment) {
-
         }else {
             Transaction.returnPreviousActivity();
         }
@@ -219,13 +219,13 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
             }
         });
 
-        adapterChoosen = new ProductImportChoosenAdapter(coParent, new ArrayList<>(), new CallbackString() {
+        adapterChoosen = new ProductImportChoosenAdapter(new ArrayList<>(), true, new CallbackInt() {
             @Override
-            public void Result(String s) {
-                updateChoosenTitle(Integer.parseInt(s));
-                btnSubmit.setVisibility(Integer.parseInt(s) > 0 && currentPosition == 1 ? View.VISIBLE : View.GONE);
-            }
-        }, new CallbackObject() {
+            public void onResponse(int value) {
+                updateChoosenTitle(value);
+                btnSubmit.setVisibility(value > 0 && currentPosition == 1 ? View.VISIBLE : View.GONE);
+
+            }}, new CallbackObject() {
             @Override
             public void onResponse(BaseModel object) {
                 adapterProduct.updateData(object);
@@ -235,7 +235,8 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         adapterImport = new Import_ProductAdapter(listImport, new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
-                reloadListImport(false);
+                reloadListImport(false, false);
+
             }
         });
 
@@ -317,11 +318,12 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
             public void onRespone(Boolean result) {
                 if (result){
                     DataUtil.saveProductPopular(adapterChoosen.getmData());
-
                     reloadAllWarehouse(new CallbackBoolean() {
                         @Override
                         public void onRespone(Boolean result) {
-                            reloadListImport(false);
+                            reloadListImport(false, false);
+                            returnPreviousActivity();
+
                         }
                     });
                     viewPager.setCurrentItem(Util.isAdmin()? 2: 3, true);
@@ -331,7 +333,22 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
 
     }
 
-    public void reloadListImport(boolean setActive){
+    private void returnPreviousActivity(){
+        CustomCenterDialog.alertWithCancelButton("Nhập kho thành công",
+                "Bạn muốn nhập kho tiếp hay trở về",
+                "Trở về",
+                "Nhập tiếp",
+                new CallbackBoolean() {
+                    @Override
+                    public void onRespone(Boolean result) {
+                        if (result){
+                            onBackPressed();
+                        }
+                    }
+                });
+    }
+
+    public void reloadListImport(boolean setActive, boolean reloadToWarehouse){
         getListImport(new CallbackListObject() {
             @Override
             public void onResponse(List<BaseModel> list) {
@@ -339,16 +356,25 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
                     updateImportTempTitle(list.size());
                 }
                 adapterImport.reloadData(list);
-                if (setActive)
+                if (setActive){
                     viewPager.setCurrentItem(3, true);
+                }
+                if (reloadToWarehouse){
+                    getInventory(toWarehouse.getInt("id"), new CallbackListObject() {
+                        @Override
+                        public void onResponse(List<BaseModel> list2) {
+                            updateInventoryTitle(list2);
 
+                        }
+                    });
+                }
             }
-        });
+        }, true, true);
 
     }
 
-    private void dialogSelectWarehouse(List<BaseModel> list, CallbackObject listener){
-        CustomBottomDialog.choiceListObject("CHỌN KHO HÀNG", list, "name", new CallbackBaseModel() {
+    private void dialogSelectWarehouse(String title, List<BaseModel> list, CallbackObject listener){
+        CustomBottomDialog.choiceListObject(title, list, "name", new CallbackBaseModel() {
             @Override
             public void onResponse(BaseModel object) {
                 listener.onResponse(object);
@@ -363,13 +389,13 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
 
     }
 
-    private void getListWarehouse(CallbackListObject listener ){
+    private void getListWarehouse(CallbackListObject listener , boolean showloading){
         if (listWarehouse.size() ==0){
-            SystemConnect.ListWarehouse(true, new CallbackCustomList() {
+            SystemConnect.ListWarehouse(showloading, new CallbackCustomList() {
                 @Override
                 public void onResponse(List<BaseModel> results) {
-                    listWarehouse = results;
-                    listener.onResponse(results);
+                    listWarehouse = filterWarehouseHaveQuantity(results);
+                    listener.onResponse(listWarehouse);
 
                 }
                 @Override
@@ -401,12 +427,12 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         }, true);
     }
 
-    private void selectFromWarehouse(){
+    private void selectFromWarehouse(boolean showloading){
         //todo: show all include Master Warehouse
         getListWarehouse(new CallbackListObject() {
             @Override
             public void onResponse(List<BaseModel> list) {
-                dialogSelectWarehouse(filterListFromWarehouse(list), new CallbackObject() {
+                dialogSelectWarehouse("CHỌN KHO XUẤT",filterListFromWarehouse(list), new CallbackObject() {
                     @Override
                     public void onResponse(BaseModel object) {
 
@@ -448,7 +474,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
 
 
             }
-        });
+        }, showloading);
 
     }
 
@@ -461,13 +487,13 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
 
     }
 
-    private void selectToWarehouse(){
+    private void selectToWarehouse(boolean showloading){
         //todo: show all include Master Warehouse
         getListWarehouse(new CallbackListObject() {
             @Override
             public void onResponse(List<BaseModel> list) {
 
-                dialogSelectWarehouse(filterListToWarehouse(list), new CallbackObject() {
+                dialogSelectWarehouse("CHỌN KHO NHẬP", filterListToWarehouse(list), new CallbackObject() {
                     @Override
                     public void onResponse(BaseModel object) {
                         toWarehouse = object;
@@ -479,7 +505,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
                 });
 
             }
-        });
+        }, showloading);
 
 
     }
@@ -498,7 +524,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
 
             }
         }
-
+        DataUtil.sortbyStringKey("isMaster", results, false);
         return results;
     }
 
@@ -525,18 +551,23 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
                 }
             }
         }
-
+        DataUtil.sortbyStringKey("isMaster", listResutl, false);
         return listResutl;
     }
 
-    private List<BaseModel> filterTempWarehouse(List<BaseModel> list){
+    private List<BaseModel> filterWarehouseHaveQuantity(List<BaseModel> list){
         List<BaseModel> results = new ArrayList<>();
         for (BaseModel model: list){
-            if (model.getInt("isMaster") ==2){
+            if (Util.isAdmin()){
                 results.add(model);
 
+            }else {
+                if (model.getInt("quantity") > 0 || model.getInt("isMaster") ==1 || model.getInt("isMaster") ==2){
+                    results.add(model);
 
+                }
             }
+
         }
 
         return results;

@@ -26,7 +26,7 @@ import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackChangePrice;
 import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackListObject;
+import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CInputForm;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
@@ -97,7 +97,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
         lnSubmitGroup.setVisibility(View.GONE);
         rlCover.setVisibility(View.VISIBLE);
-        tvTitle.setText(String.format("%s %s",Constants.getShopName(currentCustomer.getString("shopType") ), currentCustomer.getString("signBoard").toUpperCase() ));
+        tvTitle.setText(String.format("%s %s",Constants.shopName[currentCustomer.getInt("shopType")], currentCustomer.getString("signBoard").toUpperCase() ));
 
         btnSubmit.setText(CustomSQL.getLong(Constants.CURRENT_DISTANCE) < Constants.CHECKIN_DISTANCE ? "in và thanh toán" : "lưu hóa đơn");
 
@@ -236,6 +236,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         for (int i=0; i<list_product.size(); i++){
             Product product = new Product(new JSONObject()) ;
             product.put("id", list_product.get(i).getInt("id"));
+            product.put("product_id", list_product.get(i).getInt("product_id"));
             product.put("name", list_product.get(i).getString("name"));
             product.put("productGroup", list_product.get(i).getString("productGroup"));
             product.put("promotion", list_product.get(i).getBoolean("promotion"));
@@ -294,29 +295,46 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     }
 
     private void postBillAndSave(){
-        final String params = DataUtil.createPostBillParam(currentCustomer.getInt("id"),
-                User.getId(),
-                adapterProducts.totalPrice(),
-                0.0,
-                adapterProducts.getAllData(),
-                tvNote.getText().toString(),
-                0,
-                0);
+        CustomCenterDialog.showReasonChoice("GHI CHÚ ĐƠN HÀNG",
+                "Ghi chú để lưu ý cho nhân viên giao hàng",
+                "",
+                "Quay lại",
+                "Tiếp tục",
+                false,
+                false,
+                new CallbackString() {
+                    @Override
+                    public void Result(String s) {
+                        final String params = DataUtil.newBillParam(currentCustomer.getInt("id"),
+                                User.getId(),
+                                adapterProducts.totalPrice(),
+                                0.0,
+                                adapterProducts.getAllData(),
+                                s,
+                                0,
+                                0);
 
-        CustomerConnect.PostBill(params, new CallbackCustom() {
-            @Override
-            public void onResponse(BaseModel result) {
-                BaseModel modelResult = new BaseModel();
-                modelResult.put(Constants.RELOAD_DATA, true);
-                Transaction.returnPreviousActivity(Constants.SHOP_CART_ACTIVITY,modelResult,Constants.RESULT_SHOPCART_ACTIVITY);
-            }
+                        CustomerConnect.PostBill(params, new CallbackCustom() {
+                            @Override
+                            public void onResponse(BaseModel result) {
+                                BaseModel modelResult = new BaseModel();
+                                modelResult.put(Constants.RELOAD_DATA, true);
+                                Transaction.returnPreviousActivity(Constants.SHOP_CART_ACTIVITY,modelResult,Constants.RESULT_SHOPCART_ACTIVITY);
+                            }
 
-            @Override
-            public void onError(String error) {
-                Util.getInstance().stopLoading(true);
-            }
+                            @Override
+                            public void onError(String error) {
+                                Util.getInstance().stopLoading(true);
+                            }
 
-        }, true);
+                        }, true);
+
+                    }
+                });
+
+
+
+
 
 
     }

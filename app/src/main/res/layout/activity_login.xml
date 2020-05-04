@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorWhite">
+    android:background="@drawable/bg_home">
 
     <ScrollView
         android:id="@+id/login_scrollview"
@@ -25,8 +25,8 @@
 
                 <ImageView
                     android:id="@+id/login_lnImage"
-                    android:layout_width="@dimen/_70sdp"
-                    android:layout_height="@dimen/_70sdp"
+                    android:layout_width="@dimen/_100sdp"
+                    android:layout_height="@dimen/_100sdp"
                     android:scaleType="fitCenter"
                     android:src="@drawable/lub_logo_red"
                     android:layout_centerInParent="true"/>
@@ -34,14 +34,13 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="LUB SOLUTION DMS"
-                    android:textSize="@dimen/_16sdp"
+                    android:fontFamily="@font/bariol_regular"
+                    android:text="Lubsolution DMS"
+                    android:textSize="@dimen/_18sdp"
                     android:layout_below="@id/login_lnImage"
-                    android:textAllCaps="true"
                     android:textStyle="bold"
                     android:layout_centerHorizontal="true"
-                    android:textColor="@color/colorRed"
-                    android:layout_marginTop="@dimen/_5sdp"/>
+                    android:textColor="@color/colorRed"/>
 
             </RelativeLayout>
 
@@ -62,16 +61,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_35sdp"
                         android:orientation="horizontal"
-                        android:background="@drawable/bg_corner5_white_border2_red">
+                        android:background="@drawable/bg_corner5_transparent_border_red">
 
                         <TextView
                             android:fontFamily="@font/font_awesome"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="0.15"
-                            android:gravity="center_vertical"
+                            android:gravity="center"
                             android:text="@string/icon_username"
-                            android:textAlignment="center"
                             android:textColor="@color/black_text_icon"
                             android:textSize="@dimen/_16sdp" />
 
@@ -86,12 +84,12 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="0.7"
-                            android:background="@color/text_color_white_hint"
+                            android:background="@null"
                             android:hint="@string/login_username"
                             android:inputType="textEmailAddress"
-                            android:padding="10dp"
                             android:text=""
-                            android:textSize="@dimen/_12sdp" />
+                            android:textSize="@dimen/_12sdp"
+                            android:textCursorDrawable="@drawable/custom_cursor"/>
 
                         <TextView
                             android:fontFamily="@font/font_awesome"
@@ -111,7 +109,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_35sdp"
                         android:orientation="horizontal"
-                        android:background="@drawable/bg_corner5_white_border2_red"
+                        android:background="@drawable/bg_corner5_transparent_border_red"
                         android:layout_marginTop="@dimen/_5sdp">
 
                         <TextView
@@ -119,9 +117,8 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="0.15"
-                            android:gravity="center_vertical"
+                            android:gravity="center"
                             android:text="@string/icon_password"
-                            android:textAlignment="center"
                             android:textColor="@color/black_text_icon"
                             android:textSize="@dimen/_16sdp" />
 
@@ -144,13 +141,13 @@
                                 android:id="@+id/login_password"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:background="@color/text_color_white_hint"
+                                android:background="@null"
                                 android:hint="@string/login_password"
-                                android:padding="10dp"
                                 android:textSize="@dimen/_12sdp"
                                 android:imeOptions="actionDone"
                                 android:inputType="textPassword"
-                                android:gravity="center_vertical"/>
+                                android:gravity="center_vertical"
+                                android:textCursorDrawable="@drawable/custom_cursor"/>
 
                         </com.google.android.material.textfield.TextInputLayout>
 

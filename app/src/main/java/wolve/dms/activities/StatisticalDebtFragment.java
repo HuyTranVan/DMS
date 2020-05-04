@@ -35,7 +35,7 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
     private RecyclerView rvDebts;
     private TextView tvSum, tvSumDebt, tvSumOrder, tvSort ;
     private StatisticalActivity mActivity;
-    private LinearLayout lnSum;
+    private LinearLayout lnSum, lnOrdered;
 
     protected Statistical_DebtAdapter adapter;
 
@@ -70,6 +70,14 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
                 sortDebt();
             }
         });
+
+        lnOrdered.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mActivity.changeFragment(new StatisticalOrderedFragment(), true);
+            }
+        });
+
     }
 
     private void initializeView() {
@@ -80,6 +88,7 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
         tvSumDebt= view.findViewById(R.id.statistical_debt_number_customer_debt);
         tvSumOrder= view.findViewById(R.id.statistical_debt_number_customer);
         lnSum = view.findViewById(R.id.statistical_debt_count_parent);
+        lnOrdered = view.findViewById(R.id.statistical_ordered_count_parent);
 
     }
 

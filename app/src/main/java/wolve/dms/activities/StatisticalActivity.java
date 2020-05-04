@@ -65,6 +65,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     private CardView btnReload;
     private LinearLayout btnEmployeeFilter;
     private RelativeLayout rlBottom;
+    private Fragment mFragment;
 
     private Statistical_ViewpagerAdapter pageAdapter;
 
@@ -154,11 +155,11 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
     public void setupViewPager(ViewPager viewPager) {
         pageAdapter = new Statistical_ViewpagerAdapter(getSupportFragmentManager());
-        pageAdapter.addFragment(Fragment.instantiate(this, StatisticalDashboardFragment.class.getName()),  getResources().getString(icons[0]), "Dashboard");
-        pageAdapter.addFragment(Fragment.instantiate(this, StatisticalBillsFragment.class.getName()),  getResources().getString(icons[1]),"Hóa đơn");
-        pageAdapter.addFragment(Fragment.instantiate(this, StatisticalProductFragment.class.getName()),  getResources().getString(icons[2]), "Sản Phẩm");
+        pageAdapter.addFragment(Fragment.instantiate(this, StatisticalDashboardFragment.class.getName()),  getResources().getString(icons[0]), "Chung");
         pageAdapter.addFragment(Fragment.instantiate(this, StatisticalPaymentFragment.class.getName()),  getResources().getString(icons[3]), "Tiền thu");
-        pageAdapter.addFragment(Fragment.instantiate(this, StatisticalDebtFragment.class.getName()),  getResources().getString(icons[5]), "Đã mua");
+        pageAdapter.addFragment(Fragment.instantiate(this, StatisticalBillsFragment.class.getName()),  getResources().getString(icons[1]),"Hóa đơn");
+        pageAdapter.addFragment(Fragment.instantiate(this, StatisticalProductFragment.class.getName()),  getResources().getString(icons[2]), "S.Phẩm");
+        pageAdapter.addFragment(Fragment.instantiate(this, StatisticalDebtFragment.class.getName()),  getResources().getString(icons[5]), "Nợ");
 
         viewPager.setAdapter(pageAdapter);
         viewPager.setOffscreenPageLimit(5);
@@ -235,10 +236,14 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
     @Override
     public void onBackPressed() {
+        mFragment = getSupportFragmentManager().findFragmentById(R.id.statistical_parent);
         if(Util.getInstance().isLoading()){
             Util.getInstance().stopLoading(true);
 
-        }else {
+        }else if(mFragment != null && mFragment instanceof StatisticalOrderedFragment) {
+            getSupportFragmentManager().popBackStack();
+
+        } else {
             Transaction.gotoHomeActivityRight(true);
         }
 
@@ -481,12 +486,6 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
     }
 
-//    private void updateDebtList(List<BaseModel> list){
-//        listInitialDebt= new ArrayList<>(list);
-//        updateListUser(listInitialDebt);
-//
-//    }
-
     private void updateDebtList(BaseModel debt){
         listInitialDebt= DataUtil.array2ListObject(debt.getString("debtList"));
         listInitialCustomerByUser = DataUtil.array2ListObject(debt.getString("ordered"));
@@ -613,6 +612,19 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         model.put("displayName", Constants.ALL_FILTER);
 
         return model;
+    }
+
+    protected int getCurrentUserId(){
+        int user_id =0;
+        if (!tvEmployeeName.getText().toString().trim().equals(Constants.ALL_FILTER)){
+            for (BaseModel model: listUser){
+                if (model.getString("displayName").equals(tvEmployeeName.getText().toString().trim())){
+                    user_id = model.getInt("id");
+                    break;
+                }
+            }
+        }
+        return user_id;
     }
 
 }

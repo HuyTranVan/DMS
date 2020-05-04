@@ -79,7 +79,9 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<Import_ProductAd
         holder.tvDelete.setVisibility(mData.get(position).getInt("acceptBy") != 0? View.GONE: View.VISIBLE);
         holder.tvCopy.setVisibility(mData.get(position).getInt("acceptBy") != 0 && Util.isAdmin()? View.VISIBLE: View.GONE);
 
-        if (Util.isAdmin() || User.getId() == mData.get(position).getBaseModel("fr_warehouse").getInt("user_id")){
+        if (Util.isAdmin()
+                || User.getId() == mData.get(position).getBaseModel("fr_warehouse").getInt("user_id")
+                && mData.get(position).getBaseModel("warehouse").getInt("isMaster") != 2){
             holder.tvAccept.setText(Util.getIconString(R.string.icon_check, "  ", "DUYỆT NHẬP KHO"));
             holder.tvAccept.setTextColor(mContext.getResources().getColor(R.color.colorBlue));
             holder.tvAccept.setOnClickListener(new View.OnClickListener() {

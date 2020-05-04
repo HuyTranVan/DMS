@@ -22,6 +22,17 @@
             android:layout_marginRight="@dimen/_10sdp" >
 
             <TextView
+                android:id="@+id/depot_item_depottype"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/font_awesome"
+                android:text="@string/icon_home"
+                android:textColor="@color/colorBlue"
+                android:textSize="@dimen/_12sdp"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/_5sdp"/>
+
+            <TextView
                 android:id="@+id/depot_item_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -66,17 +77,20 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="@dimen/_10sdp">
+        android:layout_centerVertical="true">
 
         <TextView
-            android:id="@+id/depot_item_depottype"
+            android:fontFamily="@font/font_awesome"
+            android:id="@+id/depot_item_depotreturn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Default"
-            android:textColor="@color/colorBlue"
-            android:textSize="@dimen/_10sdp"
-            android:layout_centerVertical="true"/>
+            android:background="?selectableItemBackgroundBorderless"
+            android:text="@string/icon_logout"
+            android:layout_centerVertical="true"
+            android:padding="@dimen/_10sdp"
+            android:textSize="@dimen/_14sdp"
+            android:rotation="180"
+            android:visibility="gone"/>
 
         <TextView
             android:fontFamily="@font/font_awesome"
@@ -86,8 +100,8 @@
             android:background="?selectableItemBackgroundBorderless"
             android:text="@string/icon_info"
             android:layout_centerVertical="true"
-
-            android:padding="@dimen/_5sdp"/>
+            android:padding="@dimen/_10sdp"
+            android:textSize="@dimen/_14sdp"/>
 
     </LinearLayout>
 

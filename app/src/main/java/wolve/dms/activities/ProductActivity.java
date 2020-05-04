@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -47,6 +48,7 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
     private FloatingActionButton btnAddProduct;
     private ViewPager viewPager;
     private TabLayout tabLayout;
+    private RelativeLayout lnParent;
     private MySwipeRefreshLayout swipeRefreshLayout;
 
     private ProductAdapter productAdapter;
@@ -58,7 +60,7 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //FitScrollWithFullscreen.assistActivity(this, 1);
+        FitScrollWithFullscreen.assistActivity(this, 1);
     }
 
     @Override
@@ -73,6 +75,8 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
 
     @Override
     public void findViewById() {
+        lnParent = findViewById(R.id.product_parent);
+        lnParent.setPadding(0, 0, 0, Util.getNavigationBarHeight());
         btnBack = (ImageView) findViewById(R.id.icon_back);
         btnAddProduct = (FloatingActionButton) findViewById(R.id.product_add_new);
         viewPager = (ViewPager) findViewById(R.id.product_viewpager);

@@ -204,7 +204,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         currentCustomer = customer;
         createRVFilter();
 
-        tvTitle.setText(String.format("%s %s", Constants.getShopName(currentCustomer.getString("shopType")), currentCustomer.getString("signBoard")));
+        tvTitle.setText(String.format("%s %s", Constants.shopName[currentCustomer.getInt("shopType")], currentCustomer.getString("signBoard")));
 
         if (currentCustomer.hasKey(Constants.TEMPBILL) ){
             tempBill = currentCustomer.getBaseModel(Constants.TEMPBILL);

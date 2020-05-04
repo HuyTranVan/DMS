@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.location.Location;
 import android.os.Handler;
 import android.os.SystemClock;
 
@@ -36,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.libraries.DrawRoute;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Customer;
 
@@ -75,10 +77,10 @@ public class MapUtil{
         ordered =0;
     }
 
-    public static void reboundMap(GoogleMap mMap) {
-        if (markers.size() >= 1) {
+    public static void reboundMap(GoogleMap mMap, List<Marker> listMarker) {
+        if (listMarker.size() >= 1) {
             LatLngBounds.Builder builder = new LatLngBounds.Builder();
-            for (Marker marker : markers) {
+            for (Marker marker : listMarker) {
                 builder.include(marker.getPosition());
             }
             LatLngBounds bounds = builder.build();
@@ -200,36 +202,6 @@ public class MapUtil{
             for (int i = 0; i < customers.size(); i++){
                 addMarkerToMap(mMap, customers.get(i), filter);
 
-//                switch (filter){
-//                    case Constants.MARKER_ALL:
-//                        addMarkerToMap(mMap, customers.get(i), true);
-//                        if (customers.get(i).getInt("status") == 1 || customers.get(i).getInt("status") == 3){
-//                            addMarkerToMap(mMap, customers.get(i), true);
-//                            interested +=1;
-//                        }else if (customers.get(i).getInt("status") == 3){
-//                            addMarkerToMap(mMap, customers.get(i), true);
-//                            ordered +=1;
-//                        }
-//                        break;
-//
-//                    case Constants.MARKER_INTERESTED:
-//                        if (customers.get(i).getInt("status") == 1 || customers.get(i).getInt("status") == 3){
-//                            addMarkerToMap(mMap, customers.get(i), true);
-//                            interested +=1;
-//                        }else {
-//                            addMarkerToMap(mMap, listCustomer.get(i), false);
-//                        }
-//                        break;
-//
-//                    case Constants.MARKER_ORDERED:
-//                        if (customers.get(i).getInt("status") == 3){
-//                            addMarkerToMap(mMap, customers.get(i), true);
-//                            ordered +=1;
-//                        }else {
-//                            addMarkerToMap(mMap, listCustomer.get(i), false);
-//                        }
-//                        break;
-//                }
             }
 
         }else if (listCustomer.size() >0){
@@ -250,36 +222,6 @@ public class MapUtil{
                         customers.add(listCustomer.get(a));
                         addMarkerToMap(mMap, listCustomer.get(a), filter);
 
-//                        switch (filter){
-//                            case Constants.MARKER_ALL:
-//                                addMarkerToMap(mMap, listCustomer.get(a), true);
-//                                if (listCustomer.get(a).getInt("status") == 1 || listCustomer.get(a).getInt("status") == 3){
-//                                    addMarkerToMap(mMap, listCustomer.get(a), true);
-//                                    interested +=1;
-//                                }else if (listCustomer.get(a).getInt("status") == 3){
-//                                    addMarkerToMap(mMap, listCustomer.get(a), true);
-//                                    ordered +=1;
-//                                }
-//                                break;
-//
-//                            case Constants.MARKER_INTERESTED:
-//                                if (listCustomer.get(a).getInt("status") == 1 || listCustomer.get(a).getInt("status") == 3){
-//                                    addMarkerToMap(mMap, listCustomer.get(a), true);
-//                                    interested +=1;
-//                                }else {
-//                                    addMarkerToMap(mMap, listCustomer.get(a), false);
-//                                }
-//                                break;
-//
-//                            case Constants.MARKER_ORDERED:
-//                                if (listCustomer.get(a).getInt("status") == 3){
-//                                    addMarkerToMap(mMap, listCustomer.get(a), true);
-//                                    ordered +=1;
-//                                }else {
-//                                    addMarkerToMap(mMap, listCustomer.get(a), false);
-//                                }
-//                                break;
-//                        }
                     }
 
                 }
@@ -287,48 +229,16 @@ public class MapUtil{
                 customers = listCustomer;
                 for (int i=0; i<customers.size(); i++){
                     addMarkerToMap(mMap, customers.get(i), filter);
-//                    switch (filter){
-//                        case Constants.MARKER_ALL:
-//                            addMarkerToMap(mMap, customers.get(i), true);
-//                            if (customers.get(i).getInt("status") == 1 || customers.get(i).getInt("status") == 3){
-//                                addMarkerToMap(mMap, customers.get(i), true);
-//                                interested +=1;
-//                            }else if (customers.get(i).getInt("status") == 3){
-//                                addMarkerToMap(mMap, customers.get(i), true);
-//                                ordered +=1;
-//                            }
-//
-//                            break;
-//
-//                        case Constants.MARKER_INTERESTED:
-//                            if (customers.get(i).getInt("status") == 1 || customers.get(i).getInt("status") == 3){
-//                                addMarkerToMap(mMap, customers.get(i), true);
-//                                interested +=1;
-//                            }else {
-//                                addMarkerToMap(mMap, customers.get(i), false);
-//                            }
-//                            break;
-//
-//                        case Constants.MARKER_ORDERED:
-//                            if (customers.get(i).getInt("status") == 3){
-//                                addMarkerToMap(mMap, customers.get(i), true);
-//                                ordered +=1;
-//                            }else {
-//                                addMarkerToMap(mMap, customers.get(i), false);
-//                            }
-//                            break;
-//                    }
                 }
             }
 
 
         }
 
-        if (isBound){
-            reboundMap(mMap);
-        }
+//        if (isBound){
+//            reboundMap(mMap);
+//        }
 
-//        return String.format("%d/%d",interested, customers.size());
     }
 
     public static String countAll(){
@@ -348,7 +258,6 @@ public class MapUtil{
             return String.format("Đã mua: %d", ordered);
         return "Đã mua";
     }
-
 
     public static Marker addMarkerToMap(GoogleMap mMap, BaseModel customer ,String filter){
         Marker currentMarker = null;
@@ -515,7 +424,6 @@ public class MapUtil{
                             marker.setVisible(false);
 
                         }
-
                     }
 
                     break;
@@ -529,11 +437,66 @@ public class MapUtil{
                             marker.setVisible(false);
 
                         }
-
                     }
-
                     break;
             }
+
+    }
+
+    public static void drawRoute(GoogleMap mMap, Location currentLocation, List<Marker> markers){
+        LatLng lastMarkerPoint=  new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+        //lastMarkerPoint = markerPoint;
+
+        for (int i=0; i<markers.size(); i++){
+            DrawRoute drawRoute = DrawRoute.getInstance(Util.getInstance().getCurrentActivity());
+            drawRoute.setLoader(false);
+            drawRoute.callInterface = new DrawRoute.onDrawRoute() {
+                @Override
+                public void afterDraw(String result) {
+                    String s = result;
+//                try {
+//                    JSONObject listingPoint = relatedListingList.getJSONObject(count);
+//                    JSONObject resultObject = new JSONObject(result);
+//                    if (!resultObject.has("error_message")) {
+//                        JSONArray routes = resultObject.getJSONArray("routes");
+//                        JSONObject route = routes.getJSONObject(0);
+//
+//                        JSONArray newTempARr = route.getJSONArray("legs");
+//                        JSONObject newDisTimeOb = newTempARr.getJSONObject(0);
+//
+//                        JSONObject distOb = newDisTimeOb.getJSONObject("distance");
+//                        JSONObject timeOb = newDisTimeOb.getJSONObject("duration");
+//
+//                        int duration = timeOb.getInt("value") + delayTime;
+//
+//                        listingPoint.put("distance", distOb.getString("value"));
+//                        listingPoint.put("duration", String.valueOf(duration));
+//
+//                        totalDistance += distOb.getInt("value");  // In metres
+//                        totalDuration += duration;  // In seconds
+//
+//                    } else {
+//                        Util.alert("Lỗi", resultObject.getString("error_message"), "Đóng");
+//                    }
+//                    if (count == lastRunPoint) {
+//                        drawLastPointBack(context, mMap, lastMarkerPoint);
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+                }
+            };
+            BaseModel customer = new BaseModel(markers.get(i).getTag().toString());
+            LatLng currentPoint = new LatLng(customer.getDouble("lat"), customer.getDouble("lng"));
+            drawRoute.setFromLatLong(lastMarkerPoint.latitude, lastMarkerPoint.longitude);
+            drawRoute.setToLatLong(currentPoint.latitude, currentPoint.longitude);
+            drawRoute.setGmapAndKey("AIzaSyClpUZR00DRSHTaEFm09uyUSo3rCq1o9iU", mMap);
+            drawRoute.run();
+
+            lastMarkerPoint = currentPoint;
+
+        }
+
 
     }
 

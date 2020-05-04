@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/price_suggest_parent"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/btn_round_transparent_border_grey"
@@ -10,15 +10,25 @@
     android:layout_marginBottom="@dimen/_5sdp">
 
     <TextView
+        android:id="@+id/price_suggest_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="11/21"
+        android:textSize="@dimen/_8sdp"
+        android:textStyle="italic"
+        android:paddingLeft="@dimen/_10sdp"
+        android:textColor="@color/black_text_color_hint"
+        android:layout_gravity="center_vertical"/>
+    <TextView
         android:id="@+id/price_suggest_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:minHeight="@dimen/_20sdp"
-        android:text="Bán hàng"
+        android:text="12.000"
         android:textColor="@color/black_text_color"
         android:textSize="@dimen/_10sdp"
         android:gravity="center_vertical"
-        android:paddingLeft="@dimen/_10sdp"
+        android:paddingLeft="@dimen/_5sdp"
         android:paddingRight="@dimen/_10sdp"
         />
 

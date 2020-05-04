@@ -41,6 +41,7 @@ public class WaitingListAdapter extends RecyclerView.Adapter<WaitingListAdapter.
         this.mListener = listener;
         mData = data;
 
+        DataUtil.sortbyDoubleKey("distance", mData, false);
 
     }
 
@@ -52,20 +53,23 @@ public class WaitingListAdapter extends RecyclerView.Adapter<WaitingListAdapter.
 
     @Override
     public void onBindViewHolder(final StatisticalBillsViewHolder holder, final int position) {
-        holder.tvNumber.setText(mData.size() >0? String.valueOf(mData.size() -position) : "");
-        BaseModel customer = mData.get(position).getBaseModel("customer");
-        holder.tvsignBoard.setText(Constants.getShopName(customer.getString("shopType") ) + " " + customer.getString("signBoard"));
+        holder.tvNumber.setText(String.valueOf(position + 1));
+        holder.tvsignBoard.setText(Constants.shopName[mData.get(position).getInt("shopType")] + " " +mData.get(position) .getString("signBoard"));
         holder.tvAddress.setText(String.format("%s %s, %s",
-                customer.getString("address"),
-                customer.getString("street"),
-                customer.getString("district")));
+                mData.get(position).getString("address"),
+                mData.get(position).getString("street"),
+                mData.get(position).getString("district")));
+        String distance = mData.get(position).getDouble("distance")>1000?
+                Math.round(mData.get(position).getDouble("distance")/1000) +" km":
+                Math.round(mData.get(position).getDouble("distance")) +" m";
 
+        holder.tvDistance.setText(" ~ "  + distance);
 
         holder.vLine.setVisibility(position == mData.size()-1? View.GONE:View.VISIBLE);
         holder.tvDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String param = String.format(Api_link.CUSTOMER_TEMP_NEW_PARAM, customer.getInt("id"), User.getId());
+                String param = String.format(Api_link.CUSTOMER_TEMP_NEW_PARAM, mData.get(position).getInt("waiting_id"), User.getId());
                 CustomerConnect.CreateCustomerWaitingList(param, new CallbackCustom() {
                     @Override
                     public void onResponse(BaseModel result) {
@@ -99,7 +103,7 @@ public class WaitingListAdapter extends RecyclerView.Adapter<WaitingListAdapter.
     }
 
     public class StatisticalBillsViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvNumber, tvsignBoard, tvAddress, tvDelete;
+        private TextView tvNumber, tvsignBoard, tvAddress, tvDelete, tvDistance;
         private View vLine;
         private LinearLayout lnParent;
 
@@ -109,6 +113,7 @@ public class WaitingListAdapter extends RecyclerView.Adapter<WaitingListAdapter.
             tvsignBoard = itemView.findViewById(R.id.waiting_list_item_signboard);
             tvAddress = itemView.findViewById(R.id.waiting_list_item_address);
             tvDelete = itemView.findViewById(R.id.waiting_list_item_delete);
+            tvDistance = itemView.findViewById(R.id.waiting_list_item_distance);
             vLine =itemView.findViewById(R.id.waiting_list_item_line);
 
         }

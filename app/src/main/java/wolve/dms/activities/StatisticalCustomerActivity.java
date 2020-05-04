@@ -398,7 +398,7 @@ public class StatisticalCustomerActivity extends BaseActivity implements  View.O
                     data.add(bill.getString("id"));
                     data.add(Util.DateString(bill.getLong("createAt")));
                     data.add(bill.getJsonObject("user").getString("displayName"));
-                    data.add(Constants.getShopName(customer.getString("shopType") ) + " " + customer.getString("signBoard"));
+                    data.add(Constants.shopName[customer.getInt("shopType")]+ " " + customer.getString("signBoard"));
                     data.add(customer.getString("phone"));
                     data.add(bill.getDouble("total"));
                     data.add(bill.getDouble("paid"));

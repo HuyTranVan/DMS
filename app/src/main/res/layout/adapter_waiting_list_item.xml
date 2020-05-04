@@ -27,15 +27,31 @@
         android:layout_toRightOf="@+id/waiting_list_item_number"
         android:paddingTop="@dimen/_5sdp">
 
-        <TextView
-            android:id="@+id/waiting_list_item_signboard"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="a"
-            android:textSize="@dimen/_12sdp"
-            android:textColor="@color/black_text_color"
-            android:textAllCaps="true"/>
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/waiting_list_item_signboard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="a"
+                android:textSize="@dimen/_12sdp"
+                android:textColor="@color/black_text_color"
+                android:textAllCaps="true"/>
+
+            <TextView
+                android:id="@+id/waiting_list_item_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black_text_color_hint"
+                android:textStyle="italic"
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:textSize="@dimen/_10sdp"/>
+        </LinearLayout>
+
 
         <TextView
             android:id="@+id/waiting_list_item_address"

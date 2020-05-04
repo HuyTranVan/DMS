@@ -47,7 +47,7 @@ public class MapListCustomerAdapter extends RecyclerView.Adapter<MapListCustomer
     public void onBindViewHolder(final MapListCustomerViewHolder holder, final int position) {
 //        try {
 
-        holder.tvShopName.setText(Constants.getShopName(mData.get(position).getString("shopType") ) + " " + mData.get(position).getString("signBoard"));
+        holder.tvShopName.setText(Constants.shopName[mData.get(position).getInt("shopType")] + " " + mData.get(position).getString("signBoard"));
         holder.tvAddress.setText(mData.get(position).getString("street") + " - " + mData.get(position).getString("district"));
 
 //        } catch (JSONException e) {

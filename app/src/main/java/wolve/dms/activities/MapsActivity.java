@@ -1,7 +1,9 @@
 package wolve.dms.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Handler;
@@ -25,7 +27,9 @@ import android.widget.TextView;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -41,12 +45,16 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import wolve.dms.BaseActivity;
@@ -84,13 +92,13 @@ import wolve.dms.utils.Util;
  */
 
 public class MapsActivity extends BaseActivity implements OnMapReadyCallback, View.OnClickListener,
-        GoogleMap.OnCameraIdleListener, GoogleMap.OnMarkerClickListener,
+        GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, GoogleMap.OnCameraIdleListener,
         GoogleMap.OnMapLongClickListener, RadioGroup.OnCheckedChangeListener,
         GoogleMap.OnInfoWindowLongClickListener, GoogleMap.OnCameraMoveListener,
         ViewTreeObserver.OnGlobalLayoutListener{
     public GoogleMap mMap;
     private FloatingActionMenu btnNewCustomer;
-    private com.google.android.material.floatingactionbutton.FloatingActionButton btnLocation;
+    private CardView btnLocation;
     private FloatingActionButton  btnRepair, btnPhoneNumber;
     public SupportMapFragment mapFragment;
     private RadioGroup rdFilter;
@@ -99,7 +107,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     private EditText edSearch;
     private CoordinatorLayout coParent;
     private SmoothProgressBar progressLoading;
-    private RelativeLayout rlSearchLayout, btnListWating;
+    private RelativeLayout rlSearchLayout;
     private RecyclerView rvSearch;
     private LinearLayout lnSheetBody, lnBottomSheet ;
     private CButton btnDirection, btnCall, btnShare, btnAddList;
@@ -117,8 +125,9 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     private Marker currentMarker;
     private BottomSheetBehavior mBottomSheetBehavior;
     private ProgressBar progressLoadCustomer;
-    private List<BaseModel> listWaiting = new ArrayList<>();
+    protected List<BaseModel> listCustomerWaiting = new ArrayList<>();
     private List<Marker> listMarker = new ArrayList<>();
+    private Fragment mFragment;
 
     @Override
     public int getResourceLayout() {
@@ -165,14 +174,12 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         tvStatusDot = findViewById(R.id.map_detail_status_dot);
         tvTempBill = findViewById(R.id.map_detail_tempbill);
         tvListWating = findViewById(R.id.map_waiting_list_text);
-        btnListWating = findViewById(R.id.map_waiting_list);
 
 
     }
 
     @Override
     public void initialData() {
-        //checkLocationPermission();
         Util.hideKeyboard(edSearch);
         Util.mapsActivity = this;
         MapUtil.customers = new ArrayList<>();
@@ -193,7 +200,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         tvLocation.setOnClickListener(this);
         edSearch.setOnClickListener(this);
         btnClose.setOnClickListener(this);
-        btnListWating.setOnClickListener(this);
+        tvListWating.setOnClickListener(this);
         searchEvent();
 
         tvReload.setOnClickListener(this);
@@ -277,31 +284,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 loadCustomerAtCurrent();
                 break;
 
-            case R.id.map_waiting_list:
+            case R.id.map_waiting_list_text:
                 Util.hideKeyboard(view);
-                btnNewCustomer.close(true);
 
-                unsetCurrentMarker();
-                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                setNullButton();
+                showListWaiting();
 
-                CustomCenterDialog.showWaitingList("DANH SÁCH KHÁCH HÀNG CHỜ CHECKIN", listWaiting, new CallbackBoolean() {
-                    @Override
-                    public void onRespone(Boolean result) {
-
-                    }
-                }, new CallbackInt() {
-                    @Override
-                    public void onResponse(int value) {
-
-                        if (listWaiting.size() >0){
-                            btnListWating.setVisibility(View.VISIBLE);
-                            tvListWating.setText(String.valueOf(listWaiting.size()));
-                        }else {
-                            btnListWating.setVisibility(View.GONE);
-                        }
-                    }
-                });
 
                 break;
 
@@ -318,20 +305,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         mMap.setOnInfoWindowLongClickListener(this);
         mMap.setOnMapLongClickListener(this);
         mMap.setOnMarkerClickListener(this);
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                Util.hideKeyboard(btnNewCustomer);
-                btnNewCustomer.close(true);
-                mMap.setOnCameraMoveListener(MapsActivity.this);
-                loadCustomer = true;
-                tvReload.setVisibility(loadCustomer ? View.GONE : View.VISIBLE);
-
-                unsetCurrentMarker();
-                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                setNullButton();
-            }
-        });
+        mMap.setOnMapClickListener(this);
 
         adapterInfoMarker = new CustomWindowAdapter(new LatlngListener() {
             @Override
@@ -344,6 +318,18 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     }
 
+    @Override
+    public void onMapClick(LatLng latLng) {
+        Util.hideKeyboard(btnNewCustomer);
+        btnNewCustomer.close(true);
+        mMap.setOnCameraMoveListener(MapsActivity.this);
+        loadCustomer = true;
+        tvReload.setVisibility(loadCustomer ? View.GONE : View.VISIBLE);
+
+        unsetCurrentMarker();
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        setNullButton();
+    }
 
     @Override
     public void onCameraIdle() {
@@ -392,10 +378,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     private void inputShopName(double lat, double lng) {
         CustomInputDialog.inputShopName(coParent, new CustomInputDialog.ShopNameListener() {
             @Override
-            public void onShopname(String shopname, String shoptype) {
-                createCustomerFast(shoptype,shopname, "", lat, lng);
-
+            public void onShopname(String shopname, int shoptype) {
+                createCustomerFast(shoptype, shopname, "", lat, lng);
             }
+
+
 
         });
 
@@ -405,7 +392,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         CustomInputDialog.inputPhoneNumber(coParent,new CallbackString() {
             @Override
             public void Result(String s) {
-                createCustomerFast(Constants.shopType[1],"-", s, lat, lng);
+                createCustomerFast(0,"-", s, lat, lng);
 
             }
         });
@@ -421,7 +408,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 for (BaseModel model : results){
                     tempCustomers.add(buildMarkerByCustomer(model));
                 }
-                addListMarkertoMap(true, tempCustomers,false);
+                addListMarkertoMap(mMap,true, tempCustomers,true);
 
             }
 
@@ -443,7 +430,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 for (BaseModel model : results){
                     tempCustomers.add(buildMarkerByCustomer(model));
                 }
-                addListMarkertoMap(clearMap, tempCustomers,false);
+                addListMarkertoMap(mMap, clearMap, tempCustomers,false);
 
             }
 
@@ -587,12 +574,12 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         }
     }
 
-    private void addListMarkertoMap(Boolean clearMap, List<BaseModel> customers, Boolean isBound) {
+    protected void addListMarkertoMap(GoogleMap map, Boolean clearMap, List<BaseModel> customers, Boolean isBound) {
         if (clearMap){
             listMarker = new ArrayList<>();
-            mMap.clear();
+            map.clear();
             for (BaseModel maker: customers){
-                listMarker.add(MapUtil.addMarkerToMap(mMap, maker, getCheckedFilter()));
+                listMarker.add(MapUtil.addMarkerToMap(map, maker, getCheckedFilter()));
 
             }
 
@@ -602,13 +589,16 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             }
             for (BaseModel maker: customers){
                 if (!DataUtil.checkDuplicateMarker(listMarker, maker)){
-                    listMarker.add(MapUtil.addMarkerToMap(mMap, maker, getCheckedFilter()));
+                    listMarker.add(MapUtil.addMarkerToMap(map, maker, getCheckedFilter()));
 
                 }
             }
 
         }
         reupdateStatusCount();
+        if (isBound){
+            MapUtil.reboundMap(map, listMarker);
+        }
 
     }
 
@@ -696,6 +686,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 @Override
                 public void onResponse(Long value) {
                     Bitmap bitmap = MapUtil.GetBitmapMarker(MapsActivity.this, customer.getInt("icon"), customer.getString("checkincount"), R.color.pin_waiting);
+                    assert bitmap != null;
                     currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()*2,bitmap.getHeight()*2, false)));
 
 
@@ -715,6 +706,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         //Todo check GPS is enable?
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
+        assert mLocationManager != null;
         if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             CustomCenterDialog.alertWithButton("Xác thực quyền truy cập vị trí", "Bạn cần mở GPS truy cập vị trí để sử dụng toàn bộ tính năng phần mềm", "Bật GPS", new CallbackBoolean() {
                 @Override
@@ -731,24 +723,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             getCurrentLocation(new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
-                    if (!CustomSQL.getString(Constants.CUSTOMER_ID).equals("")) {
-                        CustomerConnect.GetCustomerDetail(CustomSQL.getString(Constants.CUSTOMER_ID), new CallbackCustom() {
-                            @Override
-                            public void onResponse(BaseModel result) {
-                                showMarker(result);
-                                CustomSQL.setString(Constants.CUSTOMER_ID, "");
-                            }
-
-                            @Override
-                            public void onError(String error) {
-                                CustomSQL.setString(Constants.CUSTOMER_ID, "");
-                            }
-                        }, true, true);
-
-                    } else if (location != null) {
+                    if (location != null) {
                         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                         triggerCurrentLocation(latLng, true);
                     }
+
                 }
             });
         }
@@ -757,7 +736,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     }
 
     private void backPress(){
-        if (rlSearchLayout.getVisibility() == View.VISIBLE){
+        mFragment = getSupportFragmentManager().findFragmentById(R.id.map_parent);
+        if (mFragment != null && mFragment instanceof MapWaitingListFragment) {
+            getSupportFragmentManager().popBackStack();
+
+        }  else if (rlSearchLayout.getVisibility() == View.VISIBLE){
             closeSearch();
 
         } else {
@@ -809,6 +792,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         Util.showKeyboard(edSearch);
         tvLocation.setVisibility(View.GONE);
         tvReload.setVisibility(View.GONE);
+        tvListWating.setVisibility(View.GONE);
 
         unsetCurrentMarker();
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -823,6 +807,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         edSearch.setFocusable(false);
         tvLocation.setVisibility(View.VISIBLE);
         tvReload.setVisibility(loadCustomer?View.VISIBLE:View.GONE);
+        tvListWating.setVisibility(View.VISIBLE);
+
     }
 
     private Runnable delayForSerch = new Runnable() {
@@ -878,7 +864,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     }
 
-    private void createCustomerFast( String shoptype, String shopname, String phone, Double lat,  Double lng){
+    private void createCustomerFast( int shoptype, String shopname, String phone, Double lat,  Double lng){
         getAddressFromLatlng(lat, lng, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result1) {
@@ -924,7 +910,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         }, stopLoading);
     }
 
-    private void postCustomerFast(String shoptype, String shopName, String phone , Double lat, Double lng, BaseModel objectAdress, final CallbackCustom mListener, Boolean stopLoading){
+    private void postCustomerFast(int shoptype, String shopName, String phone , Double lat, Double lng, BaseModel objectAdress, final CallbackCustom mListener, Boolean stopLoading){
         BaseModel customer = new BaseModel();
         customer.put("id","0");
         customer.put("shopType",shoptype);
@@ -940,8 +926,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         customer.put("street",objectAdress.getString("street"));
         customer.put("district",objectAdress.getString("district"));
         customer.put("province",objectAdress.getString("province"));
-        customer.put("currentDebt",0);
         customer.put("checkinCount",0);
+
         CustomerConnect.CreateCustomer(CustomerConnect.createParamCustomer(customer), new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
@@ -1024,7 +1010,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     private void updateBottomDetail(final BaseModel customer, long distance){
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
-        final String title = Constants.getShopName(customer.getString("shopType")) +" " + customer.getString("signBoard");
+        final String title = Constants.shopName[customer.getInt("shopType")] +" " + customer.getString("signBoard");
         String add = String.format("%s %s, %s",
                 customer.getString("address"),
                 customer.getString("street"),
@@ -1189,12 +1175,15 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         CustomerConnect.getWaitingList(new CallbackCustomList() {
             @Override
             public void onResponse(List<BaseModel> results) {
-                listWaiting = results;
-                if (listWaiting.size() >0){
-                    btnListWating.setVisibility(View.VISIBLE);
-                    tvListWating.setText(String.valueOf(listWaiting.size()));
+                for (BaseModel model: results){
+                    listCustomerWaiting.add(buildMarkerByCustomer(model));
+                }
+
+                if (listCustomerWaiting.size() >0){
+                    tvListWating.setVisibility(View.VISIBLE);
+                    tvListWating.setText(Util.getIconString(R.string.icon_thumbtack,"  ",String.valueOf(listCustomerWaiting.size())));
                 }else {
-                    btnListWating.setVisibility(View.GONE);
+                    tvListWating.setVisibility(View.GONE);
                 }
             }
             @Override
@@ -1204,6 +1193,80 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         }, false);
 
     }
+
+    private List<BaseModel> addLocationToListCustomer(List<BaseModel> list, double lat, double lng){
+        for(BaseModel model: list){
+            double distance = MapUtil.distance(lat, lng, model.getDouble("lat"), model.getDouble("lng"));
+            model.put("distance", distance);
+
+        }
+        return list;
+    }
+
+    private void showListWaiting(){
+        btnNewCustomer.close(true);
+        unsetCurrentMarker();
+        setNullButton();
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        getCurrentLocation(new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                CustomCenterDialog.showWaitingList("DANH SÁCH KHÁCH HÀNG CHỜ CHECKIN",
+                        addLocationToListCustomer(listCustomerWaiting, location.getLatitude(), location.getLongitude()),
+                        new CallbackBoolean() {
+                    @Override
+                    public void onRespone(Boolean result) {
+                        if (result){
+                            changeFragment(new MapWaitingListFragment(), true);
+                            btnLocation.setVisibility(View.GONE);
+
+                        }
+                    }
+                }, new CallbackInt() {
+                    @Override
+                    public void onResponse(int value) {
+                        if (listCustomerWaiting.size() >0){
+                            tvListWating.setVisibility(View.VISIBLE);
+                            tvListWating.setText(Util.getIconString(R.string.icon_thumbtack,"  ",String.valueOf(listCustomerWaiting.size())));
+                        }else {
+                            tvListWating.setVisibility(View.GONE);
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+
+
+//    private void setWatingListVisibilityScreen(boolean isShow){
+//        if (isShow){
+//            mMap.setOnCameraMoveListener(null);
+//            mMap.setOnMapClickListener(null);
+//            rlSearchLayout.setVisibility(View.GONE);
+//            btnNewCustomer.setVisibility(View.GONE);
+//            tvListWating.setText(Util.getIcon(R.string.icon_x));
+//
+//        }else {
+//            mMap.setOnCameraMoveListener(this);
+//            mMap.setOnMapClickListener(this);
+//            rlSearchLayout.setVisibility(View.VISIBLE);
+//            btnNewCustomer.setVisibility(View.VISIBLE);
+//            tvListWating.setText(Util.getIconString(R.string.icon_thumbtack,"  ",String.valueOf(listCustomerWaiting.size())));
+//            getCurrentLocation(new LocationListener() {
+//                @Override
+//                public void onLocationChanged(Location location) {
+//                    if (location != null) {
+//                        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+//                        triggerCurrentLocation(latLng, true);
+//                    }
+//                }
+//            });
+//
+//        }
+//    }
+
+
 }
 
 

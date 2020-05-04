@@ -242,7 +242,7 @@ public class CustomCenterDialog {
         });
     }
 
-    public static void showDialogEditProduct(final BaseModel product, List<Double> listBillDetail, final CallbackClickProduct callbackClickProduct){
+    public static void showDialogEditProduct(final BaseModel product, List<BaseModel> listBillDetail, final CallbackClickProduct callbackClickProduct){
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_edit_product);
 
         final Button btnCancel = dialogResult.findViewById(R.id.btn_cancel);
@@ -347,7 +347,14 @@ public class CustomCenterDialog {
 
     }
 
-    public static void showReasonChoice(String title, String hint,String text, boolean showListReason, final CallbackString mListener){
+    public static void showReasonChoice(String title,
+                                        String hint,
+                                        String text,
+                                        String cancel,
+                                        String submit,
+                                        boolean touchOutside,
+                                        boolean showListReason,
+                                        final CallbackString mListener){
         //TYPE 0: NOT INTERESTED
         //TYPE 1: NORMAL
 
@@ -361,7 +368,7 @@ public class CustomCenterDialog {
         Button btnCancel = dialogResult.findViewById(R.id.btn_cancel);
         Button btnConfirm = dialogResult.findViewById(R.id.btn_submit);
 
-        dialogResult.setCanceledOnTouchOutside(true);
+        dialogResult.setCanceledOnTouchOutside(touchOutside);
 
         btnCancel.setText("HỦY");
         btnConfirm.setText("HOÀN TẤT");
@@ -1064,7 +1071,7 @@ public class CustomCenterDialog {
 
         dialogResult.setCanceledOnTouchOutside(true);
         btnCancel.setText("QUAY LẠI");
-        btnSubmit.setText("CHỈ ĐƯỜNG");
+        btnSubmit.setText("VẼ ĐƯỜNG");
         tvTitle.setText(title);
 
         final WaitingListAdapter adapter = new WaitingListAdapter(listCustomer, new CallbackInt() {

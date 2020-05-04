@@ -63,18 +63,6 @@ public class StatisticalProductFragment extends Fragment implements View.OnClick
     }
 
     public void reloadData(String username, List<BaseModel> listDetail){
-//        List<BaseModel> detailList = new ArrayList<>();
-//        try {
-//            for (int i=0; i<list.size(); i++){
-//                JSONArray array = list.get(i).getJSONArray("billDetails");
-//                for (int j=0; j<array.length(); j++){
-//                    JSONObject object= array.getJSONObject(j);
-//                    detailList.add(new BaseModel(object));
-//                }
-//            }
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
         List<BaseModel> listTemp ;
         if (username.equals(Constants.ALL_FILTER)){
             listTemp = listDetail;

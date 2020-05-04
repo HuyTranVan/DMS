@@ -45,8 +45,8 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
     private View view;
     private ColumnChartView chartIncome;
     private PieChartView chartDistrict, chartBDF;
-    private CVerticalView vRevenue, vCash, vDebt, vProfit, vInventory, vBaseProfit  ;
-    private LinearLayout lnInventory;
+    private CVerticalView vRevenue, vCash, vDebt, vProfit, vInventory, vBaseProfit, vtotalNet  ;
+    private LinearLayout lnInventory, lnNetGroup;
 
     private StatisticalActivity mActivity;
 
@@ -65,7 +65,8 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
     }
 
     private void intitialData() {
-        lnInventory.setVisibility(Util.isAdmin()?View.VISIBLE: View.GONE);
+
+
     }
 
     private void addEvent() {
@@ -93,7 +94,9 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         vProfit = view.findViewById(R.id.statistical_dashboard_profit);
         vInventory = view.findViewById(R.id.statistical_dashboard_inventory);
         vBaseProfit = view.findViewById(R.id.statistical_dashboard_base_profit);
+        vtotalNet = view.findViewById(R.id.statistical_dashboard_totalnet);
         lnInventory = view.findViewById(R.id.statistical_dashboard_inventory_group);
+        lnNetGroup = view.findViewById(R.id.statistical_dashboard_totalnet_group);
     }
 
     @Override
@@ -136,11 +139,12 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         }
         setupIncomeChart( mListDetail,total,  paid, debt, profit);
         setupDistrictChart(mList);
-        updateOverView(mList, paid, countpayment, total, debt, countdebt, profit, base_profit, temptWarehouse);
+        updateOverView(username, mList, paid, countpayment, total, debt, countdebt, profit, base_profit, temptWarehouse);
 
     }
 
-    private void updateOverView(List<BaseModel> bills,
+    private void updateOverView(String username,
+                                List<BaseModel> bills,
                                 double paid,int countpayment,
                                 double total,
                                 double debt, int countdebt,
@@ -154,18 +158,23 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         vCash.setTitleText(String.format("Tiền thu (%d)", countpayment));
         vCash.setText(Util.FormatMoney(paid));
 
-        vDebt.setTitleText(String.format("công nợ (%d)", countdebt));
+        vDebt.setTitleText(String.format("Công nợ (%d)", countdebt));
         vDebt.setText(Util.FormatMoney(debt));
 
         vProfit.setTitleText("Chiết khấu bán hàng");
         vProfit.setText(Util.FormatMoney(profit));
 
-        vInventory.setTitleText(String.format("Tồn kho %s (%d)", warehouse.getString("name"), warehouse.getInt("quantity")));
+        vInventory.setTitleText(String.format("Tồn kho NPP (%d)",warehouse.getInt("quantity")));
         vInventory.setText(Util.FormatMoney(warehouse.getDouble("total")));
 
         vBaseProfit.setTitleText("Chênh lệch giá NPP");
         vBaseProfit.setText(Util.FormatMoney(baseprofit));
 
+        vtotalNet.setTitleText("Giá NET theo tiền thu");
+        vtotalNet.setText(Util.FormatMoney(paid - profit));
+
+        lnNetGroup.setVisibility(username.equals(Constants.ALL_FILTER)?View.GONE: View.VISIBLE);
+        lnInventory.setVisibility(Util.isAdmin()?View.VISIBLE: View.GONE);
     }
 
 

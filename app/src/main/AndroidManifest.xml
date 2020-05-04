@@ -52,8 +52,8 @@
     <!--FINGER_PRINT-->
     <uses-feature android:name="android.hardware.fingerprint"
         android:required="false"/>
-    <uses-permission
-        android:name="android.permission.USE_FINGERPRINT" />
+<!--    <uses-permission-->
+<!--        android:name="android.permission.FIN" />-->
 
     <application
         android:name=".DMSApplication"
@@ -65,6 +65,7 @@
         android:largeHeap="true"
         android:theme="@style/FullScreen"
         android:usesCleartextTraffic="true"
+        android:allowBackup="true"
         android:fullBackupContent="false"
         tools:replace="android:fullBackupContent">
 

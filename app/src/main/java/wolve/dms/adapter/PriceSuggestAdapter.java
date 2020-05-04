@@ -35,18 +35,18 @@ import wolve.dms.utils.Util;
  */
 
 public class PriceSuggestAdapter extends RecyclerView.Adapter<PriceSuggestAdapter.StatusAdapterViewHolder> {
-    private List<Double> mData = new ArrayList<>();
+    private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackDouble mListener;
 
-    public PriceSuggestAdapter(List<Double> list, CallbackDouble listener) {
+    public PriceSuggestAdapter(List<BaseModel> list, CallbackDouble listener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mData = list;
         this.mListener = listener;
 
-        Collections.sort(mData);
+        DataUtil.sortbyStringKey("createAt", mData, true);
 
     }
 
@@ -58,12 +58,13 @@ public class PriceSuggestAdapter extends RecyclerView.Adapter<PriceSuggestAdapte
 
     @Override
     public void onBindViewHolder(final StatusAdapterViewHolder holder, final int position) {
-        holder.tvText.setText(Util.FormatMoney(mData.get(position)));
+        holder.tvText.setText(Util.FormatMoney(mData.get(position).getDouble("value")));
+        holder.tvDate.setText(Util.DateString(mData.get(position).getLong("createAt")));
 
         holder.lnParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.Result(mData.get(position));
+                mListener.Result(mData.get(position).getDouble("value"));
 
             }
         });
@@ -77,13 +78,14 @@ public class PriceSuggestAdapter extends RecyclerView.Adapter<PriceSuggestAdapte
 
 
     public class StatusAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvText;
+        private TextView tvText, tvDate;
         private LinearLayout lnParent;
 
         public StatusAdapterViewHolder(View itemView) {
             super(itemView);
             lnParent = (LinearLayout) itemView.findViewById(R.id.price_suggest_parent);
             tvText = (TextView) itemView.findViewById(R.id.price_suggest_text);
+            tvDate = (TextView) itemView.findViewById(R.id.price_suggest_date);
         }
 
     }

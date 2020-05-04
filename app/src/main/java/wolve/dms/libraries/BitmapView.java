@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
@@ -37,7 +38,7 @@ public class BitmapView {
 //        }
 //    }
 
-    public static String saveImageToSD(String imageName,Bitmap outputImage){
+    public static Uri saveImageToSD(String imageName, Bitmap outputImage){
 //        File storagePath = new File(Environment.getExternalStorageDirectory() + "/Tinhtiendidong/");
 //        storagePath.mkdirs();
 
@@ -53,7 +54,8 @@ public class BitmapView {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return myImage.getAbsolutePath();
+//        return myImage.getAbsolutePath();
+        return Uri.parse(myImage.getPath());
     }
 
     public static Bitmap getBitmapFromView(View view) {

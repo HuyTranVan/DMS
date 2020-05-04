@@ -73,7 +73,8 @@ public class CustomerPaymentFragment extends Fragment implements View.OnClickLis
     }
 
     public void updateList(){
-        adapter.updateData(createListPayment(mActivity.listBills, DataUtil.array2ListObject(mActivity.currentCustomer.getString("payments"))));
+        List<BaseModel> listpayment = DataUtil.remakePaymentByDate(DataUtil.array2ListObject(mActivity.currentCustomer.getString("payments")));
+        adapter.updateData(createListPayment(mActivity.listBills, listpayment));
     }
 
     public void createRVPayment(List<BaseModel> list){

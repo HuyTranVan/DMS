@@ -66,6 +66,7 @@ public class Product extends BaseModel{
                 JSONArray array = new JSONArray(CustomSQL.getString(Constants.PRODUCT_LIST));
                 for (int i=0; i<array.length(); i++){
                     BaseModel product = new BaseModel(array.getJSONObject(i));
+                    product.put("product_id", product.getInt("id"));
                     mProducts.add(product);
                 }
 

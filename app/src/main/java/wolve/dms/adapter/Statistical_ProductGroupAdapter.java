@@ -72,14 +72,10 @@ public class Statistical_ProductGroupAdapter extends RecyclerView.Adapter<Statis
 
     @Override
     public void onBindViewHolder(final StatisticalProductGroupViewHolder holder, final int position) {
-
         holder.tvGroupName.setText(mData.get(position).getString("name"));
-            //mProduct = filterProductByGroup(mData.get(position).getInt("id"));
-
         holder.tvGroupSum.setText(mData.get(position).getString("count"));
 
-        List<Product> mProduct = new ArrayList<>();
-        Statistical_ProductAdapter adapter = new Statistical_ProductAdapter(mData.get(position).getJSONArray("products"), new CallbackString() {
+        Statistical_ProductAdapter adapter = new Statistical_ProductAdapter(mData.get(position).getList("products"), new CallbackString() {
             @Override
             public void Result(String s) {
                 if (!s.equals("0")){
@@ -118,42 +114,47 @@ public class Statistical_ProductGroupAdapter extends RecyclerView.Adapter<Statis
     }
 
     private BaseModel createGroupFromBill(BaseModel group, List<BaseModel> detailList){
-        List<BaseModel> products = Product.getProductList();
-        BaseModel groupResult = group;
+        List<BaseModel> mResults = new ArrayList<>();
+        for (BaseModel detail : detailList){
+            if (detail.getInt("productGroup_id") == group.getInt("id")){
+                boolean check = false;
+                for (BaseModel result : mResults){
+                    if (result.getInt("product_id") == detail.getInt("product_id")){
+                        int quantity = result.getInt("quantity") + detail.getInt("quantity");
+                        double total = result.getDouble("total")
+                                + (detail.getDouble("unitPrice") - detail.getDouble("discount")) * detail.getInt("quantity");
+                        result.put("quantity", quantity );
+                        result.put("total", total );
+                        check = true;
 
-        JSONArray productLists = new JSONArray();
+                        break;
 
-        try {
-            for(int i=0; i< products.size(); i++){
-                int groupid = new JSONObject(products.get(i).getString("productGroup")).getInt("id");
-
-                int sumQuantity =0;
-                if (group.getInt("id") == groupid){
-                    for (int j=0; j<detailList.size(); j++){
-                        if (detailList.get(j).getString("productId").equals(products.get(i).getString("id"))){
-                            sumQuantity += detailList.get(j).getInt("quantity");
-                        }
                     }
 
                 }
 
-                if (sumQuantity >0){
-                    Product product = new Product();
-                    product.put("name", products.get(i).getString("name"));
-                    product.put("sumquantity", sumQuantity);
+                if (!check){
+                    BaseModel newDetail = new BaseModel();
+                    newDetail.put("product_id", detail.getInt("product_id"));
+                    newDetail.put("productName", detail.getString("productName"));
+                    newDetail.put("quantity", detail.getInt("quantity"));
+                    newDetail.put("total", (detail.getDouble("unitPrice") - detail.getDouble("discount")) * detail.getInt("quantity"));
 
-                    productLists.put(product.ProductJSONObject());
+                    mResults.add(newDetail);
+
                 }
+
             }
 
-            groupResult.put("count",sumProductQuantity(productLists) );
-            groupResult.put("products", productLists);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
+        BaseModel groupResult = new BaseModel();
+
+        groupResult.put("count", Math.round(DataUtil.sumValueFromList(mResults, "quantity") ));
+        groupResult.put("name", group.getString("name"));
+        groupResult.putList("products", mResults);
 
         return groupResult;
+
     }
 
     private int sumProductQuantity(JSONArray array){

@@ -121,6 +121,10 @@
     <string name="icon_briefcase">&#xf0b1;</string>
     <string name="icon_truck">&#xf4de;</string>
     <string name="icon_hand_on_money">&#xf4c0;</string>
+    <string name="icon_thumbtack">&#xf08d;</string>
+    <string name="icon_location">&#xf601;</string>
+    <string name="icon_dollar">&#xf155;</string>
+    <string name="icon_previuos">&#xf34b;</string>
 
     <string name="login_username">Nhập tài khoản hoặc SĐT</string>
     <string name="login_password">Nhập mật khẩu</string>
@@ -131,9 +135,6 @@
     <string name="last_day_selected">Last day selected</string>
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <string name="fcm_message">FCM Message</string>
-
-
-
 
 
 </resources>
