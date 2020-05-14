@@ -26,7 +26,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="SẢN PHẨM"
+            android:text="thông tin nhân viên"
+            android:textAllCaps="true"
             android:textSize="@dimen/_14sdp"
             android:textColor="@color/black_text_color"/>
 
@@ -103,6 +104,18 @@
             app:iconText="@string/icon_depot"
             app:isDropdown="true"
             app:textColor="@color/colorBlue"/>
+
+        <TextView
+            android:id="@+id/add_user_password_default"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackground"
+            android:text="Mật khẩu mặc định?"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:padding="@dimen/_5sdp"
+            android:textStyle="italic"
+            android:textColor="@color/colorBlue"/>
 
         <Button
             android:id="@+id/add_user_submit"

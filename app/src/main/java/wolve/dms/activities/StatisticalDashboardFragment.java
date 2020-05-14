@@ -44,9 +44,8 @@ import wolve.dms.utils.Util;
 public class StatisticalDashboardFragment extends Fragment implements View.OnClickListener {
     private View view;
     private ColumnChartView chartIncome;
-    private PieChartView chartDistrict, chartBDF;
-    private CVerticalView vRevenue, vCash, vDebt, vProfit, vInventory, vBaseProfit, vtotalNet  ;
-    private LinearLayout lnInventory, lnNetGroup;
+    private PieChartView chartDistrict;
+    private CVerticalView vRevenue, vCash, vDebt, vProfit, vInventory, vBaseProfit, vtotalNet, vTemp ;
 
     private StatisticalActivity mActivity;
 
@@ -87,7 +86,7 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         mActivity = (StatisticalActivity) getActivity();
         chartIncome = (ColumnChartView) view.findViewById(R.id.statistical_dashboard_income);
         chartDistrict = (PieChartView) view.findViewById(R.id.statistical_dashboard_district);
-        chartBDF = view.findViewById(R.id.statistical_dashboard_bdf);
+        //chartBDF = view.findViewById(R.id.statistical_dashboard_bdf);
         vRevenue = view.findViewById(R.id.statistical_dashboard_revenue);
         vCash = view.findViewById(R.id.statistical_dashboard_cash);
         vDebt = view.findViewById(R.id.statistical_dashboard_debt);
@@ -95,8 +94,7 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         vInventory = view.findViewById(R.id.statistical_dashboard_inventory);
         vBaseProfit = view.findViewById(R.id.statistical_dashboard_base_profit);
         vtotalNet = view.findViewById(R.id.statistical_dashboard_totalnet);
-        lnInventory = view.findViewById(R.id.statistical_dashboard_inventory_group);
-        lnNetGroup = view.findViewById(R.id.statistical_dashboard_totalnet_group);
+        vTemp = view.findViewById(R.id.statistical_dashboard_temp);
     }
 
     @Override
@@ -164,17 +162,21 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         vProfit.setTitleText("Chiết khấu bán hàng");
         vProfit.setText(Util.FormatMoney(profit));
 
+        vtotalNet.setTitleText("Giá NET theo tiền thu");
+        vtotalNet.setText(Util.FormatMoney(paid - profit));
+
         vInventory.setTitleText(String.format("Tồn kho NPP (%d)",warehouse.getInt("quantity")));
         vInventory.setText(Util.FormatMoney(warehouse.getDouble("total")));
 
         vBaseProfit.setTitleText("Chênh lệch giá NPP");
         vBaseProfit.setText(Util.FormatMoney(baseprofit));
 
-        vtotalNet.setTitleText("Giá NET theo tiền thu");
-        vtotalNet.setText(Util.FormatMoney(paid - profit));
 
-        lnNetGroup.setVisibility(username.equals(Constants.ALL_FILTER)?View.GONE: View.VISIBLE);
-        lnInventory.setVisibility(Util.isAdmin()?View.VISIBLE: View.GONE);
+
+        vtotalNet.setVisibility(username.equals(Constants.ALL_FILTER)?View.GONE: View.VISIBLE);
+        vTemp.setVisibility(username.equals(Constants.ALL_FILTER)?View.GONE: View.VISIBLE);
+        vInventory.setVisibility(Util.isAdmin()?View.VISIBLE: View.GONE);
+        vBaseProfit.setVisibility(Util.isAdmin()?View.VISIBLE: View.GONE);
     }
 
 

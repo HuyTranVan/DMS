@@ -11,12 +11,16 @@ import android.provider.MediaStore;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ShareCompat;
+import androidx.core.content.FileProvider;
 import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.Fragment;
+
+import com.google.api.client.auth.oauth.OAuthCallbackUrl;
 
 import java.io.File;
 import java.util.List;
 
+import wolve.dms.BuildConfig;
 import wolve.dms.R;
 import wolve.dms.activities.CustomerActivity;
 import wolve.dms.activities.WarehouseActivity;
@@ -37,9 +41,11 @@ import wolve.dms.activities.TestActivity;
 import wolve.dms.activities.UserActivity;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.SystemConnect;
+import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.callback.CallbackListObject;
+import wolve.dms.callback.CallbackUri;
 import wolve.dms.libraries.Security;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
@@ -124,9 +130,10 @@ public class Transaction {
         ((AppCompatActivity) context).finish();
     }
 
-    public static void gotoUserActivity() {
+    public static void gotoUserActivity(boolean userdetail) {
         Context context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(context, UserActivity.class);
+        intent.putExtra(Constants.FLAG, userdetail);
         context.startActivity(intent);
         ((AppCompatActivity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         ((AppCompatActivity) context).finish();
@@ -355,16 +362,40 @@ public class Transaction {
 
     }
 
-    public static void startCamera(Uri uri) {
-//        imageChangeUri = Uri.fromFile(Util.getOutputMediaFile());
+    public static void startCamera() {
         Activity context = Util.getInstance().getCurrentActivity();
 
-
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-        context.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(context.getPackageManager()) != null) {
+            File photoFile = null;
+            photoFile = Util.createCustomImageFile();
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                context.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
 
     }
+
+    public static void startCamera(Fragment fragment, CallbackUri callbackUrl) {
+        Activity context = Util.getInstance().getCurrentActivity();
+
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(context.getPackageManager()) != null) {
+            File photoFile = null;
+            photoFile = Util.createCustomImageFile();
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                callbackUrl.uriRespone(photoURI);
+                fragment.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
+
+    }
+
+
 
     @SuppressLint("WrongConstant")
     public static void openCallScreen(String phone) {

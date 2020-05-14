@@ -37,7 +37,7 @@
             android:id="@+id/statistical_filter"
             android:layout_width="@dimen/_210sdp"
             android:layout_height="@dimen/_25sdp"
-            android:background="@drawable/pink_out_line"
+            android:background="@drawable/grey_out_line"
             android:orientation="horizontal"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
@@ -48,28 +48,28 @@
                 android:layout_marginTop="1dp"
                 android:layout_marginBottom="1dp"
                 android:layout_marginLeft="1dp"
-                android:background="@drawable/toggle_widget_background_left"
+                android:background="@drawable/toggle_background_grey_left"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:button="@null"
                 android:gravity="center"
                 android:text="Chọn ngày"
-                android:textColor="@drawable/text_white_selected"
+                android:textColor="@drawable/text_black_selected"
                 android:textSize="@dimen/_10sdp"
                 />
 
             <RadioButton
                 android:id="@+id/statistical_filter_month"
                 android:layout_margin="1dp"
-                android:background="@drawable/toggle_widget_background_center"
+                android:background="@drawable/toggle_background_grey_center"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:button="@null"
                 android:gravity="center"
                 android:text="Chọn tháng"
-                android:textColor="@drawable/text_white_selected"
+                android:textColor="@drawable/text_black_selected"
                 android:textSize="@dimen/_10sdp"
                 />
 
@@ -81,11 +81,11 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/toggle_widget_background_right"
+                android:background="@drawable/toggle_background_grey_right"
                 android:button="@null"
                 android:gravity="center"
                 android:text="Chọn năm"
-                android:textColor="@drawable/text_white_selected"
+                android:textColor="@drawable/text_black_selected"
                 android:textSize="@dimen/_10sdp"/>
 
         </RadioGroup>
@@ -151,19 +151,25 @@
             android:layout_marginTop="0dp"
             android:background="@color/colorWhite" />
 
+<!--        <View-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="1dp"-->
+<!--            android:background="@color/colorGrey"-->
+<!--            android:layout_above="@+id/statistical_bottom_group"/>-->
+
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="1dip"
             android:background="@color/colorGrey"
             android:layout_above="@+id/statistical_bottom_group"/>
 
         <RelativeLayout
             android:id="@+id/statistical_bottom_group"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_30sdp"
+            android:layout_height="@dimen/_25sdp"
             android:layout_alignParentBottom="true"
-            android:background="@color/colorGrey"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:background="#f1f1f1">
 
             <LinearLayout
                 android:id="@+id/statistical_filter_by_employee"
@@ -173,36 +179,48 @@
                 android:background="?selectableItemBackgroundBorderless">
 
                 <TextView
-                    android:fontFamily="@font/font_awesome"                    android:layout_width="@dimen/_30sdp"
-                    android:layout_height="@dimen/_30sdp"
+                    android:fontFamily="@font/font_awesome"
+                    android:layout_width="@dimen/_25sdp"
+                    android:layout_height="match_parent"
                     android:text="@string/icon_username"
                     android:textColor="@color/black_text_color_hint"
-                    android:textSize="@dimen/_16sdp"
-                    android:gravity="center"
-                    android:layout_marginLeft="@dimen/_5sdp"/>
+                    android:textSize="@dimen/_12sdp"
+                    android:gravity="center"/>
 
                 <TextView
                     android:id="@+id/statistical_filter_by_employee_name"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:text="Tat ca"
                     android:paddingRight="@dimen/_10sdp"
+                    android:gravity="center"
                     android:layout_gravity="center_vertical"/>
 
             </LinearLayout>
 
-
-
             <TextView
                 android:fontFamily="@font/font_awesome"
                 android:id="@+id/statistical_export"
-                android:layout_width="@dimen/_30sdp"
-                android:layout_height="@dimen/_30sdp"
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="match_parent"
                 android:background="?selectableItemBackgroundBorderless"
                 android:text="@string/icon_export"
                 android:textColor="@color/black_text_color_hint"
-                android:textSize="@dimen/_16sdp"
+                android:textSize="@dimen/_12sdp"
                 android:gravity="center"
+                android:layout_toLeftOf="@+id/statistical_reload"
+                android:layout_marginRight="@dimen/_5sdp"/>
+
+            <TextView
+                android:id="@+id/statistical_reload"
+                android:fontFamily="@font/font_awesome"
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="match_parent"
+                android:background="?selectableItemBackgroundBorderless"
+                android:text="@string/icon_reload"
+                android:gravity="center"
+                android:textSize="@dimen/_12sdp"
+                android:textColor="@color/black_text_color_hint"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="@dimen/_10sdp"/>
 
@@ -211,30 +229,26 @@
 
 
 
+
+
         </RelativeLayout>
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/statistical_reload"
-            android:layout_width="@dimen/_30sdp"
-            android:layout_height="@dimen/_30sdp"
-            android:background="?selectableItemBackgroundBorderless"
-            app:cardCornerRadius="@dimen/_15sdp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            app:cardElevation="@dimen/_5sdp"
-            app:cardMaxElevation="@dimen/_20sdp"
-            android:layout_marginRight="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_40sdp">
+<!--        <androidx.cardview.widget.CardView-->
+<!--            android:id="@+id/statistical_reload"-->
+<!--            android:layout_width="@dimen/_30sdp"-->
+<!--            android:layout_height="@dimen/_30sdp"-->
+<!--            android:background="?selectableItemBackgroundBorderless"-->
+<!--            app:cardCornerRadius="@dimen/_15sdp"-->
+<!--            android:layout_alignParentBottom="true"-->
+<!--            android:layout_alignParentRight="true"-->
+<!--            app:cardElevation="@dimen/_5sdp"-->
+<!--            app:cardMaxElevation="@dimen/_20sdp"-->
+<!--            android:layout_marginRight="@dimen/_10sdp"-->
+<!--            android:layout_marginBottom="@dimen/_40sdp">-->
 
-            <TextView
-                android:fontFamily="@font/font_awesome"                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="@string/icon_reload"
-                android:gravity="center"
-                android:textSize="@dimen/_12sdp"
-                android:textColor="@color/black_text_color_hint"/>
+<!--            -->
 
-        </androidx.cardview.widget.CardView>
+<!--        </androidx.cardview.widget.CardView>-->
 
 
 

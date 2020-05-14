@@ -15,7 +15,7 @@ import wolve.dms.utils.Util;
  */
 
 public class Api_link {
-    public final static String BASE_URL= BuildConfig.DEBUG_FLAG? "http://192.168.1.9/": BuildConfig.SERVER_URL;
+    public final static String BASE_URL= BuildConfig.DEBUG_FLAG? "http://192.168.1.13/": BuildConfig.SERVER_URL;
 
     public final static String BASE_PHOTO_URL = BuildConfig.UPLOAD_URL;
     public final static String MAP_API = "https://maps.googleapis.com/maps/api/";
@@ -47,7 +47,6 @@ public class Api_link {
     public final static String LOGOUT_PARAM ="x-wolver-accesstoken=%s&x-wolver-accessid=%s";
 
     public final static String USER = BASE_URL + "token/user/";
-    public final static String USER_PARAM = "password=%s&distributor.id=%d";
 
     public final static String PRODUCT_GROUPS = BASE_URL + "token/productGroups";
     public final static String PRODUCT_GROUP_NEW = BASE_URL + "token/productGroup/create_or_update";
@@ -73,7 +72,11 @@ public class Api_link {
     public final static String USERS = BASE_URL + "token/users";
     public final static String USER_NEW = BASE_URL + "token/user/create_or_update";
     public final static String USER_DELETE = BASE_URL + "token/user/";
+    public final static String USER_CHANGE_PASS= BASE_URL + "token/user/UserChangePassword";
+    public final static String USER_DEFAULT_PASS= BASE_URL + "token/user/UserDefaultPassword";
     public final static String USER_CREATE_PARAM ="%sdisplayName=%s&gender=%d&email=%s&phone=%s&role=%d&image=%s&warehouse_id=%d&warehouse_name=%s";
+    public final static String USER_CHANGE_PASS_PARAM ="id=%d&current_password=%s&new_password=%s";
+    public final static String USER_DEFAULT_PASS_PARAM ="user_id=%d";
 
     public final static String STATUS = BASE_URL + "token/status";
     public final static String STATUS_NEW = BASE_URL + "token/status/create_or_update";

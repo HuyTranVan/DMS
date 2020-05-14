@@ -31,6 +31,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 import wolve.dms.R;
 import wolve.dms.adapter.CartCheckinReasonAdapter;
 import wolve.dms.adapter.DebtAdapter;
+import wolve.dms.adapter.ListUserChangeAdapter;
 import wolve.dms.adapter.PriceSuggestAdapter;
 import wolve.dms.adapter.ProductCompareInventoryAdapter;
 import wolve.dms.adapter.ProductQuantityAdapter;
@@ -865,6 +866,9 @@ public class CustomCenterDialog {
 
     }
 
+
+
+
     public static void showListProduct(String title, List<BaseModel> listProduct){
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_list_product);
 
@@ -922,7 +926,7 @@ public class CustomCenterDialog {
 
     }
 
-    public static void showDialogRelogin(String title, final BaseModel user , final Callback mlistener){
+    public static void showDialogRelogin(String title, final BaseModel user , final CallbackBoolean mlistener){
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_relogin);
 
         final Button btnCancel = dialogResult.findViewById(R.id.btn_cancel);
@@ -935,9 +939,8 @@ public class CustomCenterDialog {
         btnSubmit.setText("ĐĂNG NHẬP");
         tvTitle.setText(title);
 
-        edPhone.setText(user.getString("phone"));
-
-        Util.showKeyboardDelay(user.getString("phone").equals("")? edPhone : edPass);
+        edPhone.setText(user == null? "" : user.getString("phone"));
+        Util.showKeyboardDelay(user == null || user.getString("phone").equals("")? edPhone : edPass);
 
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -950,26 +953,25 @@ public class CustomCenterDialog {
             @Override public void onClick(View v) {
                 Util.hideKeyboard(edPass);
 
-
-
                 if (!edPhone.getText().toString().equals("") && !edPass.getText().toString().equals("")){
                     dialogResult.dismiss();
+                    String fcm_token = User.getFCMToken();
                     UserConnect.Logout(new CallbackCustom() {
                         @Override
                         public void onResponse(BaseModel result) {
                             if (result.getBoolean("success")){
                                 UserConnect.doLogin(edPhone.getText().toString().trim(),
                                         edPass.getText().toString().trim(),
-                                        User.getFCMToken(),
+                                        fcm_token,
                                         new CallbackBoolean() {
                                             @Override
                                             public void onRespone(Boolean result) {
                                                 if (result){
                                                     Util.showToast("Đăng nhập thành công");
-                                                    mlistener.onResponse(user.BaseModelJSONObject());
+                                                    mlistener.onRespone(true);
 
                                                 }else {
-                                                    mlistener.onError("");
+                                                    mlistener.onRespone(false);
                                                 }
                                             }
                                         });
@@ -983,18 +985,9 @@ public class CustomCenterDialog {
                         }
                     }, true);
 
-
-
-
-
-
                 }else {
                     Util.showToast("Nhập đầy đủ username và password");
                 }
-
-
-
-
             }
         });
 
@@ -1011,7 +1004,7 @@ public class CustomCenterDialog {
         final EditText edNewPass1 = (EditText) dialogResult.findViewById(R.id.dialog_changepass_new1);
         final EditText edNewPass2 = (EditText) dialogResult.findViewById(R.id.dialog_changepass_new2);
 
-        btnCancel.setText("HỦY");
+        btnCancel.setText("QUAY LẠI");
         btnSubmit.setText("TIẾP TỤC");
         tvTitle.setText(title);
 
@@ -1026,26 +1019,28 @@ public class CustomCenterDialog {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
                 Util.hideKeyboard(edOldPass);
-
                 if (!Util.isEmpty(edOldPass) && !Util.isEmpty(edNewPass1) && !Util.isEmpty(edNewPass2)){
+                    if (edNewPass1.getText().toString().trim().equals(edNewPass2.getText().toString().trim())) {
 
-                    if (edOldPass.getText().toString().trim().equals(CustomSQL.getString(Constants.USER_PASSWORD))){
+                        UserConnect.doChangePass(edOldPass.getText().toString().trim(),
+                                edNewPass1.getText().toString().trim(),
+                                new CallbackCustom() {
+                                    @Override
+                                    public void onResponse(BaseModel result) {
+                                        mListener.onRespone(true);
+                                        dialogResult.dismiss();
+                                    }
 
-                        if (edNewPass1.getText().toString().trim().equals(edNewPass2.getText().toString().trim())) {
-                            dialogResult.dismiss();
-                            UserConnect.doChangePass(edNewPass1.getText().toString().trim(), new CallbackBoolean() {
-                                @Override
-                                public void onRespone(Boolean result) {
-                                    mListener.onRespone(result);
-                                }
-                            });
+                                    @Override
+                                    public void onError(String error) {
+                                        mListener.onRespone(false);
+                                    }
 
-                        }else {
-                            Util.showToast("Mật khẩu mới không khớp");
+                        }, true);
 
-                        }
                     }else {
-                        Util.showToast("Nhập sai mật khẩu cũ");
+                        Util.showToast("Mật khẩu mới không khớp");
+
                     }
 
                 }else {
@@ -1096,6 +1091,34 @@ public class CustomCenterDialog {
             @Override
             public void onClick(View view) {
                 listener.onRespone(true);
+                dialogResult.dismiss();
+            }
+        });
+
+    }
+
+    public static void dialogChangeUser(String title, List<BaseModel> users, CallbackObject mListener) {
+        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_list_user);
+        final TextView tvTitle = dialogResult.findViewById(R.id.dialog_list_user_title);
+        final RecyclerView rvUser = dialogResult.findViewById(R.id.dialog_list_user_rv);
+        Button btnCancel = dialogResult.findViewById(R.id.btn_cancel);
+
+        btnCancel.setText("QUAY LẠI");
+        tvTitle.setText(title);
+        dialogResult.setCanceledOnTouchOutside(true);
+
+        ListUserChangeAdapter adapter = new ListUserChangeAdapter(users, new CallbackObject() {
+            @Override
+            public void onResponse(BaseModel object) {
+                dialogResult.dismiss();
+                mListener.onResponse(object);
+            }
+        });
+        Util.createLinearRV(rvUser, adapter);
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 dialogResult.dismiss();
             }
         });

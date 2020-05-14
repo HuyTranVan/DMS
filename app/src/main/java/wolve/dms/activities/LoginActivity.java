@@ -29,6 +29,7 @@ import wolve.dms.callback.CallbackString;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.libraries.FitScrollWithFullscreen;
 import wolve.dms.utils.Transaction;
@@ -41,7 +42,7 @@ import wolve.dms.utils.Util;
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
     private EditText edUsername, edPassword;
     private Button btnSubmit;
-    private TextView btnKeyboard;
+    private TextView btnKeyboard, tvLostPassword;
     private Boolean detectNumberKeyboard = true;
 
     @Override
@@ -67,6 +68,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         edPassword = (EditText) findViewById(R.id.login_password);
         btnSubmit = (Button) findViewById(R.id.login_submit);
         btnKeyboard = findViewById(R.id.login_keyboard);
+        tvLostPassword = findViewById(R.id.login_lost_password);
 
     }
 
@@ -81,6 +83,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     public void addEvent() {
         btnSubmit.setOnClickListener(this);
         btnKeyboard.setOnClickListener(this);
+        tvLostPassword.setOnClickListener(this);
     }
 
     @Override
@@ -100,6 +103,18 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     edUsername.setInputType(InputType.TYPE_CLASS_TEXT);
                 }
                 detectNumberKeyboard = !detectNumberKeyboard;
+
+                break;
+
+            case R.id.login_lost_password:
+                CustomCenterDialog.alertWithButtonCanceled("Quên mật khẩu!",
+                        "Liên hệ Admin để cài đặt lại mật khẩu",
+                        "ĐỒNG Ý",false, new CallbackBoolean() {
+                    @Override
+                    public void onRespone(Boolean result) {
+
+                    }
+                });
 
                 break;
         }

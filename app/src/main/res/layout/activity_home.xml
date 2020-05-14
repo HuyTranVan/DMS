@@ -39,7 +39,6 @@
                     android:text="Lubsolution DMS"
                     android:textSize="@dimen/_18sdp"
                     android:layout_below="@id/home_image"
-                    android:textStyle="bold"
                     android:layout_centerHorizontal="true"
                     android:textColor="@color/colorRed"/>
 
@@ -65,7 +64,7 @@
                     app:civ_border_width="1dip"
                     app:civ_border_overlay="false"
                     app:civ_fill_color="@color/colorWhite"
-                    app:civ_border_color="@color/colorLightGrey"/>
+                    app:civ_border_color="@color/colorLightGrey" />
 
                 <TextView
                     android:id="@+id/home_fullname"
@@ -77,26 +76,26 @@
                     android:layout_marginLeft="@dimen/_5sdp"
                     android:layout_marginRight="@dimen/_10sdp"/>
 
-                <View
-                    android:id="@+id/home_change_line"
-                    android:layout_width="1dip"
-                    android:layout_height="@dimen/_15sdp"
-                    android:background="@color/black_text_color_hint"
-                    android:layout_marginTop="@dimen/_10sdp"
-                    android:layout_marginBottom="@dimen/_10sdp"
+<!--                <View-->
+<!--                    android:id="@+id/home_change_line"-->
+<!--                    android:layout_width="1dip"-->
+<!--                    android:layout_height="@dimen/_15sdp"-->
+<!--                    android:background="@color/black_text_color_hint"-->
+<!--                    android:layout_marginTop="@dimen/_10sdp"-->
+<!--                    android:layout_marginBottom="@dimen/_10sdp"-->
 
-                    android:layout_toLeftOf="@id/home_change_user"/>
+<!--                    android:layout_toLeftOf="@id/home_change_user"/>-->
 
-                <TextView
-                    android:fontFamily="@font/font_awesome"
-                    android:id="@+id/home_change_user"
-                    android:layout_width="@dimen/_35sdp"
-                    android:layout_height="@dimen/_35sdp"
-                    android:background="?selectableItemBackgroundBorderless"
-                    android:text="@string/icon_users"
-                    android:textColor="@color/black_text_color_hint"
-                    android:textSize="@dimen/_14sdp"
-                    android:gravity="center"/>
+<!--                <TextView-->
+<!--                    android:fontFamily="@font/font_awesome"-->
+<!--                    android:id="@+id/home_change_user"-->
+<!--                    android:layout_width="@dimen/_35sdp"-->
+<!--                    android:layout_height="@dimen/_35sdp"-->
+<!--                    android:background="?selectableItemBackgroundBorderless"-->
+<!--                    android:text="@string/icon_users"-->
+<!--                    android:textColor="@color/black_text_color_hint"-->
+<!--                    android:textSize="@dimen/_14sdp"-->
+<!--                    android:gravity="center"/>-->
 
             </LinearLayout>
 
@@ -111,12 +110,22 @@
                 android:gravity="right">
 
                 <TextView
+                    android:id="@+id/home_distributor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/font_awesome"
+                    android:text="xxx"
+                    android:textSize="@dimen/_10sdp"
+                    android:textColor="@color/black_text_color"
+                    android:layout_marginBottom="@dimen/_5sdp"/>
+
+                <TextView
                     android:id="@+id/home_month"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/font_awesome"
                     android:text="Tổng bán hàng:"
                     android:textSize="@dimen/_10sdp"
-                    android:textStyle="italic"
                     android:textColor="@color/black_text_color_hint"
                     android:layout_marginBottom="@dimen/_5sdp"/>
 
@@ -185,7 +194,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/btn_round_transparent_border_orange"
-                    android:paddingLeft="@dimen/_10sdp"
+                    android:paddingLeft="@dimen/_5sdp"
                     android:paddingRight="@dimen/_10sdp"
                     android:paddingTop="@dimen/_5sdp"
                     android:paddingBottom="@dimen/_5sdp"
@@ -197,8 +206,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/_16sdp"
                         android:minWidth="@dimen/_16sdp"
-                        android:background="@drawable/btn_oval_orange"
-                        android:textColor="@color/colorWhite"
+                        android:background="@drawable/bg_oval_transparent_stroke_orange"
+                        android:textColor="@color/black_text_color"
                         android:text="00"
                         android:textSize="@dimen/_10sdp"
                         android:gravity="center"
@@ -209,10 +218,10 @@
                         android:layout_height="wrap_content"
                         android:text="Chờ nhập kho"
                         android:layout_toRightOf="@+id/home_tempimport_number"
-                        android:layout_marginLeft="@dimen/_10sdp"
+                        android:layout_marginLeft="@dimen/_5sdp"
                         android:textSize="@dimen/_12sdp"
                         android:textColor="@color/black_text_color"
-                        android:textStyle="bold|italic"/>
+                        android:textStyle="italic"/>
 
 
                 </RelativeLayout>
@@ -223,7 +232,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/btn_round_transparent_border_blue"
                     android:layout_marginTop="@dimen/_10sdp"
-                    android:paddingLeft="@dimen/_10sdp"
+                    android:paddingLeft="@dimen/_5sdp"
                     android:paddingRight="@dimen/_10sdp"
                     android:paddingTop="@dimen/_5sdp"
                     android:paddingBottom="@dimen/_5sdp"
@@ -235,8 +244,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/_16sdp"
                         android:minWidth="@dimen/_16sdp"
-                        android:background="@drawable/btn_oval_blue"
-                        android:textColor="@color/colorWhite"
+                        android:background="@drawable/bg_oval_transparent_stroke_blue"
+                        android:textColor="@color/black_text_color"
                         android:text="00"
                         android:textSize="@dimen/_10sdp"
                         android:gravity="center"
@@ -247,10 +256,10 @@
                         android:layout_height="wrap_content"
                         android:text="Hóa đơn chưa giao"
                         android:layout_toRightOf="@+id/home_tempbill_number"
-                        android:layout_marginLeft="@dimen/_10sdp"
+                        android:layout_marginLeft="@dimen/_5sdp"
                         android:textSize="@dimen/_12sdp"
                         android:textColor="@color/black_text_color"
-                        android:textStyle="bold|italic"/>
+                        android:textStyle="italic"/>
 
 
                 </RelativeLayout>

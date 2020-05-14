@@ -166,25 +166,22 @@
                         android:textColor="@color/white"
                         android:textSize="@dimen/_14sdp"/>
 
-
+                    <TextView
+                        android:id="@+id/login_lost_password"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?selectableItemBackground"
+                        android:text="Quên mật khẩu?"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:padding="@dimen/_5sdp"
+                        android:textSize="@dimen/_10sdp"
+                        android:textStyle="italic"
+                        android:textColor="@color/black_text_color_hint"
+                        android:layout_gravity="center_horizontal"/>
 
                 </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="LubSolution_DMS"
-                    android:textSize="@dimen/_6sdp"
-                    android:padding="@dimen/_5sdp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentRight="true"/>
             </RelativeLayout>
-
-
-
-
-
-
 
         </LinearLayout>
 

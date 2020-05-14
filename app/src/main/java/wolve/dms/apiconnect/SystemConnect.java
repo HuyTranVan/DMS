@@ -1,5 +1,6 @@
 package wolve.dms.apiconnect;
 
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -21,6 +22,7 @@ import wolve.dms.libraries.connectapi.CustomGetListMethod;
 import wolve.dms.libraries.connectapi.CustomGetMethod;
 import wolve.dms.libraries.connectapi.CustomGetPostListMethod;
 import wolve.dms.libraries.connectapi.CustomPostMethod;
+import wolve.dms.libraries.connectapi.UploadCloudaryMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.utils.Constants;
@@ -423,6 +425,19 @@ public class SystemConnect {
         }).execute();
     }
 
+    public static void uploadImage(String uriPath, final CallbackString mListener){
+        Util.getInstance().showLoading();
+        new UploadCloudaryMethod(uriPath, new CallbackString() {
+            @Override
+            public void Result(String s) {
+                Util.getInstance().stopLoading(true);
+                if (s != null){
+                    mListener.Result(s);
+                }
+            }
 
+        }).execute();
+
+    }
 
 }

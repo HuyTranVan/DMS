@@ -19,6 +19,7 @@ import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
+import wolve.dms.utils.CustomFixSQL;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
@@ -119,7 +120,7 @@ public class UserConnect {
 
         new CustomPostMethod(DataUtil.createNewUserParam(params),new CallbackCustom() {
             @Override
-            public void onResponse(BaseModel result) {
+            public void onResponse(BaseModel result){
                 Util.getInstance().stopLoading(stopLoading);
                 if (Constants.responeIsSuccess(result)){
                     listener.onResponse(Constants.getResponeObjectSuccess(result));
@@ -181,30 +182,78 @@ public class UserConnect {
         }, true, true);
     }
 
-    public static void doChangePass(final String pass, final CallbackBoolean mListener){
-        String params = String.format(Api_link.USER_PARAM, pass, Distributor.getId());
+    public static void doChangePass(String current_pass, final String new_pass, final CallbackCustom listener, boolean showloading){
+        Util.getInstance().showLoading(showloading);
 
-        UserConnect.UpdateUser(params, new CallbackJSONObject() {
+        String params = String.format(Api_link.USER_CHANGE_PASS_PARAM, User.getId(), current_pass, new_pass);
+        new CustomPostMethod(DataUtil.createUserChangePassParam(params),new CallbackCustom() {
             @Override
-            public void onResponse(JSONObject result) {
-                mListener.onRespone(true);
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(true);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
+
+                }else {
+                    Util.getInstance().stopLoading(true);
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
             }
 
             @Override
             public void onError(String error) {
-                mListener.onRespone(false);
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
             }
-        }, true);
+
+        }).execute();
+
+    }
+
+    public static void setDefaultPassword(int user_id, final CallbackCustom listener, boolean showloading){
+        Util.getInstance().showLoading(showloading);
+
+        String params = String.format(Api_link.USER_DEFAULT_PASS_PARAM, user_id);
+        new CustomPostMethod(DataUtil.createUserDefaultPassParam(params),new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(true);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
+
+                }else {
+                    Util.getInstance().stopLoading(true);
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
+            }
+
+        }).execute();
+
     }
 
     private static void saveUser(BaseModel user){
-        List<BaseModel> listUser = CustomSQL.getListObject(Constants.USER_LIST);
+        List<BaseModel> listUser = CustomFixSQL.getListObject(Constants.USER_LIST);
 
         if (!DataUtil.checkDuplicate(listUser, "id", user)){
             listUser.add(user);
         }
 
-        CustomSQL.setListBaseModel(Constants.USER_LIST, listUser);
+        CustomFixSQL.setListBaseModel(Constants.USER_LIST, listUser);
 
     }
 

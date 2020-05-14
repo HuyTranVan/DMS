@@ -20,6 +20,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 
+import android.provider.OpenableColumns;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
@@ -605,7 +606,7 @@ public class Util {
         return new File(mediaStorageDir.getPath() + File.separator + name);
     }
 
-    public static File createCustomImageFile(String name) {
+    public static File createCustomImageFile() {
         File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), Constants.APP_DIRECTORY);
 
         if (!mediaStorageDir.exists()) {
@@ -621,8 +622,24 @@ public class Util {
         }
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
-        return new File(imageFile.getPath() + File.separator + String.format("IMG_%s_%s.png", name, timeStamp));
+        return new File(imageFile.getPath() + File.separator + String.format("IMG_%s.png", timeStamp));
     }
+
+//    private File createImageFile() throws IOException {
+//        // Create an image file name
+//        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+//        String imageFileName = "JPEG_" + timeStamp + "_";
+//        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+//        File image = File.createTempFile(
+//                imageFileName,  /* prefix */
+//                ".jpg",         /* suffix */
+//                storageDir      /* directory */
+//        );
+//
+//        // Save a file: path for use with ACTION_VIEW intents
+//        currentPhotoPath = image.getAbsolutePath();
+//        return image;
+//    }
 
     //using parse for local category
     public static File getOutputMediaFile() {
@@ -906,7 +923,7 @@ public class Util {
         }
     }
 
-    public static String getRealPathFromURI(Uri uri) {
+    public static String getRealPathFromImageURI(Uri uri) {
         if (uri == null) {
             return null;
         }
@@ -917,7 +934,45 @@ public class Util {
             cursor.moveToFirst();
             return cursor.getString(column_index);
         }
+        String s = uri.getPath();
         return uri.getPath();
+    }
+
+    public static String getRealPathFromCaptureURI(Uri uri) {
+        Uri returnUri = uri;
+        Context context = Util.getInstance().getCurrentActivity();
+        //Cursor returnCursor = context.getContentResolver().query(returnUri, null, null, null, null);
+
+
+        //int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+        //int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+        //returnCursor.moveToFirst();
+        //String name = (returnCursor.getString(nameIndex));
+        //String size = (Long.toString(returnCursor.getLong(sizeIndex)));
+        File file = new File(context.getFilesDir(), "temp");
+        try {
+            InputStream inputStream = context.getContentResolver().openInputStream(uri);
+            FileOutputStream outputStream = new FileOutputStream(file);
+            int read = 0;
+            int maxBufferSize = 1 * 1024 * 1024;
+            int bytesAvailable = inputStream.available();
+
+            //int bufferSize = 1024;
+            int bufferSize = Math.min(bytesAvailable, maxBufferSize);
+
+            final byte[] buffers = new byte[bufferSize];
+            while ((read = inputStream.read(buffers)) != -1) {
+                outputStream.write(buffers, 0, read);
+            }
+            Log.e("File Size", "Size " + file.length());
+            inputStream.close();
+            outputStream.close();
+            Log.e("File Path", "Path " + file.getPath());
+            Log.e("File Size", "Size " + file.length());
+        } catch (Exception e) {
+            Log.e("Exception", e.getMessage());
+        }
+        return file.getPath();
     }
 
     public static String encodeString(String value) {
@@ -938,6 +993,10 @@ public class Util {
             return value;
         }
         return encoded;
+    }
+
+    public static String remakeURL(String url){
+        return url.replace("\"", "");
     }
 
     public static String FormatMoney(Double money) {

@@ -24,8 +24,8 @@ import wolve.dms.R;
 import wolve.dms.adapter.CartProductsAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackChangePrice;
 import wolve.dms.callback.CallbackCustom;
+import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CInputForm;
 import wolve.dms.models.BaseModel;
@@ -214,9 +214,9 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     }
 
     private void createRVProduct(final List<BaseModel> list){
-        adapterProducts = new CartProductsAdapter(list, listBillDetail, new CallbackChangePrice() {
+        adapterProducts = new CartProductsAdapter(list, listBillDetail, new CallbackDouble() {
             @Override
-            public void NewPrice(Double price) {
+            public void Result(Double price) {
                 tvTotal.setText(Util.FormatMoney(price));
 
                 rvProducts.requestLayout();

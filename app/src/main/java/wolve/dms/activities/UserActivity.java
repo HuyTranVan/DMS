@@ -53,7 +53,7 @@ public class UserActivity extends BaseActivity implements View.OnClickListener{
 
     private UserAdapter adapter;
     private List<BaseModel> listUser ;
-
+    private boolean gotoUserDetail;
 
 
     @Override
@@ -76,7 +76,8 @@ public class UserActivity extends BaseActivity implements View.OnClickListener{
 
     @Override
     public void initialData() {
-        if (CustomSQL.getBoolean(Constants.IS_ADMIN)){
+        gotoUserDetail = getIntent().getExtras().getBoolean(Constants.FLAG);
+        if (!gotoUserDetail){
             loadUser();
 
         }else {
@@ -152,7 +153,7 @@ public class UserActivity extends BaseActivity implements View.OnClickListener{
 
         }else if(mFragment != null && mFragment instanceof NewUpdateUserFragment) {
             getSupportFragmentManager().popBackStack();
-            if (!CustomSQL.getBoolean(Constants.IS_ADMIN)){
+            if (gotoUserDetail){
                 Transaction.gotoHomeActivityRight(true);
             }
 

@@ -299,7 +299,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
                             @Override
                             public void Submit(Boolean boolSubmit) {
                                 if (currentImagePath  == null){
-                                    currentImagePath = BitmapView.saveImageToSD("bill",
+                                    currentImagePath = BitmapView.saveImageToSD(
                                             BitmapView.ResizeBitMapDependWidth(BitmapView.getBitmapFromView(scContentParent), 512));
                                 }
 

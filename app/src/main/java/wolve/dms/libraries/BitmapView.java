@@ -38,11 +38,11 @@ public class BitmapView {
 //        }
 //    }
 
-    public static Uri saveImageToSD(String imageName, Bitmap outputImage){
+    public static Uri saveImageToSD(Bitmap outputImage){
 //        File storagePath = new File(Environment.getExternalStorageDirectory() + "/Tinhtiendidong/");
 //        storagePath.mkdirs();
 
-        File myImage = Util.createCustomImageFile(imageName);
+        File myImage = Util.createCustomImageFile();
 
 
 

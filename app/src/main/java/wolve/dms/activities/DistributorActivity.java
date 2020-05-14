@@ -175,7 +175,7 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
 
                             @Override
                             public void Method2(Boolean two) {
-                                Transaction.startCamera(imageChangeUri);
+                                Transaction.startCamera();
                             }
 
                             @Override
@@ -194,7 +194,7 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
 
     private void submitDistributor(){
         if (imageChangeUri != null){
-            uploadImage(new CallbackString() {
+            SystemConnect.uploadImage(Util.getRealPathFromCaptureURI(imageChangeUri), new CallbackString() {
                 @Override
                 public void Result(String s) {
                     updateDistributor(s);
@@ -281,23 +281,7 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
 //
 //    }
 
-    private void uploadImage(final CallbackString mListener){
-        Util.getInstance().showLoading();
-        new UploadCloudaryMethod(imageChangeUri, new CallbackCustom() {
-            @Override
-            public void onResponse(BaseModel result) {
-                Util.getInstance().stopLoading(true);
-                mListener.Result(result.get("url").toString());
-            }
 
-            @Override
-            public void onError(String error) {
-                Util.getInstance().stopLoading(true);
-                Util.showSnackbarError(error);
-            }
-        }).execute();
-
-    }
 
     private void phoneEvent(){
         tvPhone.addTextChangePhone(new CallbackString() {

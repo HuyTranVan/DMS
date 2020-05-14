@@ -37,6 +37,7 @@ import wolve.dms.BuildConfig;
 import wolve.dms.R;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.ProductConnect;
+import wolve.dms.apiconnect.SystemConnect;
 import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
@@ -305,7 +306,7 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
 
         }else {
             if (imageChangeUri != null){
-                uploadImage(new CallbackString() {
+                SystemConnect.uploadImage(Util.getRealPathFromCaptureURI(imageChangeUri), new CallbackString() {
                     @Override
                     public void Result(String s) {
                         updateProduct(s);
@@ -383,23 +384,7 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
 
     }
 
-    private void uploadImage(final CallbackString mListener){
-        Util.getInstance().showLoading();
-        new UploadCloudaryMethod(imageChangeUri, new CallbackCustom() {
-            @Override
-            public void onResponse(BaseModel result) {
-                Util.getInstance().stopLoading(true);
-                mListener.Result(result.get("url").toString());
-            }
 
-            @Override
-            public void onError(String error) {
-                Util.getInstance().stopLoading(true);
-                Util.showSnackbarError(error);
-            }
-        }).execute();
-
-    }
 
 
 

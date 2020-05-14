@@ -130,7 +130,7 @@ public class SplashScreenActivity extends BaseActivity {
     }
 
     private void checkLogin(CallbackBoolean listener){
-        SystemConnect.getCheckLogin(new CallbackCustom() {
+        SystemConnect.getCheckLogin(new CallbackCustom(){
             @Override
             public void onResponse(BaseModel result) {
                 if (result.getBoolean("success")){

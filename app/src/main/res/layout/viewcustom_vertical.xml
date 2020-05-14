@@ -5,10 +5,12 @@
     android:id="@+id/button_parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/colorWhite"
     android:minHeight="@dimen/_35sdp"
-    android:orientation="horizontal"
-    android:background="@drawable/bg_corner5_white_border2_blue"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:padding="@dimen/_2sdp">
+
+
 
     <TextView
         android:id="@+id/button_icon"
@@ -48,5 +50,7 @@
             android:textColor="@color/colorBlue"/>
 
     </LinearLayout>
+
+
 
 </RelativeLayout>

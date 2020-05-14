@@ -40,6 +40,7 @@ import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomListList;
 import wolve.dms.callback.CallbackListObject;
+import wolve.dms.callback.CallbackObject;
 import wolve.dms.libraries.connectapi.CustomGetMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
@@ -49,6 +50,7 @@ import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
+import wolve.dms.utils.CustomFixSQL;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
@@ -61,10 +63,10 @@ import wolve.dms.utils.Util;
 public class HomeActivity extends BaseActivity implements View.OnClickListener, CallbackClickAdapter, SwipeRefreshLayout.OnRefreshListener {
     private RecyclerView rvItems;
     private CircleImageView imgUser;
-    private TextView tvFullname , tvCash, tvProfit, tvMonth, tvHaveNewProduct, tvNumberTemp, tvNumberTempImport, btnChangeUser;
+    private TextView tvFullname , tvCash, tvProfit, tvMonth, tvHaveNewProduct,
+            tvNumberTemp, tvNumberTempImport, tvDistributor;
     private LinearLayout lnUser;
     private RelativeLayout lnTempGroup, lnTempImport;
-    private View line;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     protected List<BaseModel> listTempBill = new ArrayList<>();
@@ -93,8 +95,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         imgUser = findViewById(R.id.home_icon);
         tvFullname = findViewById(R.id.home_fullname);
         lnUser = findViewById(R.id.home_user);
-        btnChangeUser = findViewById(R.id.home_change_user);
-        line = findViewById(R.id.home_change_line);
         tvCash = findViewById(R.id.home_cash);
         tvMonth = findViewById(R.id.home_month);
         tvHaveNewProduct = findViewById(R.id.home_new_product);
@@ -103,6 +103,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         swipeRefreshLayout = findViewById(R.id.home_refresh);
         lnTempImport = findViewById(R.id.home_tempimport_group);
         tvNumberTempImport = findViewById(R.id.home_tempimport_number);
+        tvDistributor = findViewById(R.id.home_distributor);
 
     }
 
@@ -111,7 +112,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         Util.getInstance().setCurrentActivity(this);
         checkPermission();
         swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorBlueDark));
-        updateUserInfo();
+        tvFullname.setText(String.format("%s _ %s",User.getFullName(), User.getCurrentRoleString()));
+        tvDistributor.setText(Util.getIconString(R.string.icon_home, "  ", Distributor.getName()));
+        tvMonth.setText(Util.getIconString(R.string.icon_calendar, "  ", Util.CurrentMonthYear()));
+
+        if (!Util.checkImageNull(User.getImage())){
+            Glide.with(this).load(User.getImage()).centerCrop().into(imgUser);
+        }
 
         if (CustomSQL.getBoolean(Constants.ON_MAP_SCREEN)) {
             if (checkWarehouse())
@@ -137,18 +144,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 updateTempImportVisibility(list);
             }
         });
-        tvMonth.setText(String.format("***Tháng %s:", Util.CurrentMonthYear()));
 
 
-    }
 
-    private void updateUserInfo(){
-        tvFullname.setText(String.format("%s _ %s (%s)",User.getFullName(), User.getCurrentRoleString(), Distributor.getName()));
-        btnChangeUser.setVisibility(User.getCurrentRoleId()==Constants.ROLE_ADMIN ? View.VISIBLE : View.GONE);
-        line.setVisibility(User.getCurrentRoleId()==Constants.ROLE_ADMIN ? View.VISIBLE : View.GONE);
-        if (!Util.checkImageNull(User.getImage())){
-            Glide.with(this).load(User.getImage()).centerCrop().into(imgUser);
-        }
     }
 
     private void createListItem() {
@@ -180,7 +178,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void addEvent() {
-        btnChangeUser.setOnClickListener(this);
         lnUser.setOnClickListener(this);
         tvHaveNewProduct.setOnClickListener(this);
         lnTempGroup.setOnClickListener(this);
@@ -191,25 +188,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.home_change_user:
-                changeUser();
-                break;
-
             case R.id.home_user:
-                CustomBottomDialog.choiceTwoOption(getString(R.string.icon_password),
-                        "Đổi mật khẩu",
-                        getString(R.string.icon_logout),
-                        "Đăng xuất", new CustomBottomDialog.TwoMethodListener() {
-                            @Override
-                            public void Method1(Boolean one) {
-                                changePassword();
-                            }
-
-                            @Override
-                            public void Method2(Boolean two) {
-                                showLogoutDialog(true);
-                            }
-                        });
+                changeFragment(new UserOptionFragment() , true);
 
                 break;
 
@@ -251,6 +231,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         }else if(mFragment != null && mFragment instanceof TempImportFragment) {
             getSupportFragmentManager().popBackStack();
 
+        }else if(mFragment != null && mFragment instanceof UserOptionFragment) {
+            getSupportFragmentManager().popBackStack();
+
         }else {
             if (doubleBackToExitPressedOnce) {
                 this.finish();
@@ -268,128 +251,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             }, 1500);
 
         }
-    }
-
-    private void changePassword() {
-        CustomCenterDialog.showDialogChangePass("Đổi mật khẩu", new CallbackBoolean() {
-            @Override
-            public void onRespone(Boolean result) {
-                if (result){
-                    CustomCenterDialog.alertWithButtonCanceled("", "Đổi mật khẩu thành công , vui lòng đăng nhập lại", "ĐỒNG Ý",false, new CallbackBoolean() {
-                        @Override
-                        public void onRespone(Boolean result) {
-                            if (result){
-                                List<BaseModel> listUser = CustomSQL.getListObject(Constants.USER_LIST);
-                                CustomSQL.clear();
-                                CustomSQL.setListBaseModel(Constants.USER_LIST, listUser);
-
-                                Transaction.gotoLoginActivityRight();
-                            }
-
-                        }
-                    });
-
-                }
-            }
-        });
-
-    }
-
-    private void changeUser(){
-        List<BaseModel> listTemp = CustomSQL.getListObject(Constants.USER_LIST);
-        List<BaseModel> listUser = new ArrayList<>();
-
-        for (int i=0; i<listTemp.size(); i++){
-            if (listTemp.get(i).getInt("id") !=  User.getId()){
-                listTemp.get(i).put("text", String.format("%s (%s)",listTemp.get(i).getString("displayName") ,
-                                                listTemp.get(i).getBaseModel("distributor").getString("name")) );
-
-                listUser.add(listTemp.get(i));
-
-            }
-        }
-
-        BaseModel newobject = new BaseModel();
-        newobject.put("text", "TÀI KHOẢN KHÁC ...");
-        newobject.put("phone","");
-        newobject.put("displayName","");
-        listUser.add(0, newobject);
-
-        CustomBottomDialog.choiceListObject("ĐỔI SANG TÀI KHOẢN", listUser,"text", new CallbackBaseModel() {
-            @Override
-            public void onResponse(BaseModel object) {
-                showReloginDialog(object);
-
-            }
-
-            @Override
-            public void onError() {
-
-            }
-
-        }, null);
-
-    }
-
-    private void showReloginDialog(BaseModel user){
-        CustomCenterDialog.showDialogRelogin(String.format("Đăng nhập vào tài khoản %s", user.getString("displayName")), user, new Callback() {
-            @Override
-            public void onResponse(JSONObject result) {
-                updateUserInfo();
-                loadCurrentData();
-                loadOverView();
-
-            }
-
-            @Override
-            public void onError(String error) {
-                Util.showToast("Đăng nhập thất bại!");
-            }
-        });
-    }
-
-    private void showLogoutDialog(boolean showAlert) {
-        if (showAlert){
-            CustomCenterDialog.alertWithCancelButton(null, String.format("Đăng xuất tài khoản %s",User.getFullName()) , "ĐỒNG Ý","HỦY", new CallbackBoolean() {
-                @Override
-                public void onRespone(Boolean result) {
-                    if (result){
-                        logout();
-                    }
-
-                }
-            });
-
-        }else {
-            logout();
-        }
-
-    }
-
-    private void logout(){
-        UserConnect.Logout(new CallbackCustom() {
-            @Override
-            public void onResponse(BaseModel result) {
-                if (result.getBoolean("success")){
-                    Util.showToast("Đăng xuât thành công");
-
-                    List<BaseModel> listUser = CustomSQL.getListObject(Constants.USER_LIST);
-                    CustomSQL.clear();
-                    CustomSQL.setListBaseModel(Constants.USER_LIST, listUser);
-
-                    Transaction.gotoLoginActivityRight();
-
-                }else {
-                    Util.showSnackbar("Đăng xuất thất bại", null, null);
-                }
-            }
-
-            @Override
-            public void onError(String error) {
-
-            }
-        }, true);
-
     }
 
     @Override
@@ -413,17 +274,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 break;
 
             case 3:
-                new CustomGetMethod(Api_link.BASE_URL + "util/test.php", new CallbackCustom() {
-                    @Override
-                    public void onResponse(BaseModel result) {
-
-                    }
-
-                    @Override
-                    public void onError(String error) {
-
-                    }
-                }).execute();
 //                if (CustomSQL.getBoolean(Constants.IS_ADMIN)){
 //                    Transaction.gotoTestActivity();
 //                }else {
@@ -480,7 +330,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 getString(R.string.icon_comment), "Trạng thái", new CustomBottomDialog.FourMethodListener() {
                     @Override
                     public void Method1(Boolean one) {
-                        Transaction.gotoUserActivity();
+                        if (User.getCurrentRoleId()==Constants.ROLE_ADMIN){
+                            Transaction.gotoUserActivity(false);
+                        }
+
 
                     }
 
@@ -506,6 +359,28 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
                     }
                 });
+    }
+
+    protected void logout(){
+        UserConnect.Logout(new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                if (result.getBoolean("success")){
+                    Util.showToast("Đăng xuất thành công");
+                    CustomSQL.clear();
+                    Transaction.gotoLoginActivityRight();
+
+                }else {
+                    Util.showSnackbar("Đăng xuất thất bại", null, null);
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        }, true);
+
     }
 
     @Override
@@ -638,7 +513,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                                 }, Constants.REQUEST_PERMISSION);
 
                             }else {
-                                showLogoutDialog(false);
+                                logout();
 
                             }
                     }
@@ -680,8 +555,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                                         checkPermission();
 
                                     }else {
-                                        showLogoutDialog(false);
-
+                                        logout();
                                     }
 
                                 }

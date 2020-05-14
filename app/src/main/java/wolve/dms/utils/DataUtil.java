@@ -1135,6 +1135,27 @@ public class DataUtil {
 
     }
 
+    public static BaseModel createUserChangePassParam(String param){
+        BaseModel paramCustomer = new BaseModel();
+        paramCustomer.put("url", Api_link.USER_CHANGE_PASS);
+        paramCustomer.put("method", "POST");
+        paramCustomer.put("isjson", false );
+        paramCustomer.put("param", param );
+
+        return paramCustomer;
+
+    }
+
+    public static BaseModel createUserDefaultPassParam(String param){
+        BaseModel paramCustomer = new BaseModel();
+        paramCustomer.put("url", Api_link.USER_DEFAULT_PASS);
+        paramCustomer.put("method", "POST");
+        paramCustomer.put("isjson", false );
+        paramCustomer.put("param", param );
+
+        return paramCustomer;
+
+    }
 
 
 

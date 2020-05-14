@@ -9,25 +9,14 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.R;
-import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackChangePrice;
-import wolve.dms.callback.CallbackClickProduct;
 import wolve.dms.callback.CallbackDouble;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.BillDetail;
 import wolve.dms.models.Product;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 

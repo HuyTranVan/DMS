@@ -25,15 +25,16 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.soundcloud.android.crop.Crop;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import wolve.dms.BuildConfig;
 import wolve.dms.R;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.ProductConnect;
@@ -45,6 +46,7 @@ import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackString;
+import wolve.dms.callback.CallbackUri;
 import wolve.dms.customviews.CInputForm;
 import wolve.dms.libraries.connectapi.UploadCloudaryMethod;
 import wolve.dms.models.BaseModel;
@@ -74,7 +76,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
     private View view;
     private ImageView btnBack;
     private CInputForm edName, edPhone, edGender, edRole, edEmail, edWarehouse;
-    private TextView tvTitle;
+    private TextView tvTitle,tvPasswordDefault;
     private Button btnSubmit ;
     private CircleImageView imgUser;
 
@@ -102,6 +104,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
     private void intitialData() {
         listWarehouse = new ArrayList<>();
         String bundle = getArguments().getString(Constants.USER);
+        tvPasswordDefault.setVisibility(Util.isAdmin()?View.VISIBLE: View.GONE);
         phoneEvent();
         if (bundle != null){
             currentUser = new BaseModel(bundle);
@@ -114,7 +117,10 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
             edWarehouse.setText(currentUser.hasKey("warehouse")?String.format(displayWarehouseFormat, currentUser.getBaseModel("warehouse").getString("name")): "");
 
             if (!Util.checkImageNull(currentUser.getString("image"))){
-                Glide.with(mActivity).load(currentUser.getString("image")).centerCrop().into(imgUser);
+                String url = Util.remakeURL(currentUser.getString("image"));
+                Glide.with(this).load(url).dontAnimate().centerCrop().into(imgUser);
+//                Picasso.get().load(url).into(imgUser);
+
 
             }
 
@@ -144,6 +150,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
         btnBack.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
         imgUser.setOnClickListener(this);
+        tvPasswordDefault.setOnClickListener(this);
         genderEvent();
 
 
@@ -152,7 +159,6 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
 
     private void initializeView() {
         mActivity = (UserActivity) getActivity();
-
         btnBack = (ImageView) view.findViewById(R.id.icon_back);
         edName = view.findViewById(R.id.add_user_name);
         edPhone = view.findViewById(R.id.add_user_phone);
@@ -163,6 +169,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
         tvTitle = view.findViewById(R.id.add_user_title);
         edEmail = view.findViewById(R.id.add_user_email);
         edWarehouse = view.findViewById(R.id.add_user_warehouse);
+        tvPasswordDefault = view.findViewById(R.id.add_user_password_default);
 
     }
 
@@ -177,6 +184,11 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
 
             case R.id.add_user_submit:
                 submitUser();
+
+                break;
+
+            case R.id.add_user_password_default:
+                submitPasswordDefault();
 
                 break;
 
@@ -196,8 +208,12 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
 
                             @Override
                             public void Method2(Boolean two) {
-                                imageChangeUri = FileProvider.getUriForFile(mActivity, BuildConfig.APPLICATION_ID + ".provider" , Util.getOutputMediaFile());
-                                Transaction.startCamera(imageChangeUri);
+                                Transaction.startCamera(NewUpdateUserFragment.this, new CallbackUri() {
+                                    @Override
+                                    public void uriRespone(Uri uri) {
+                                        imageChangeUri = uri;
+                                    }
+                                });
 
                             }
 
@@ -216,6 +232,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CHOOSE_IMAGE ){
             if (data != null){
                 Crop.of(Uri.parse(data.getData().toString()), imageChangeUri).asSquare().withMaxSize(512,512).start(mActivity, NewUpdateUserFragment.this);
@@ -223,16 +240,17 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
             }
 
         }else if (requestCode == REQUEST_IMAGE_CAPTURE){
-            Crop.of(imageChangeUri, imageChangeUri).asSquare().withMaxSize(512,512).start(mActivity);
+            //Uri tempUri = imageChangeUri;
+            Crop.of(imageChangeUri, imageChangeUri).asSquare().withMaxSize(512,512).start(mActivity, NewUpdateUserFragment.this);
 
         }else if (data != null && requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
             Glide.with(this).load(imageChangeUri).centerCrop().into(imgUser);
 
-        } else if (requestCode == Crop.REQUEST_CROP) {
+        } else if (requestCode == Crop.REQUEST_CROP){
             if (resultCode == RESULT_OK) {
                 Glide.with(this).load(imageChangeUri).centerCrop().into(imgUser);
 
-            } else if (resultCode == Crop.RESULT_ERROR) {
+            } else if (resultCode == Crop.RESULT_ERROR){
                 Util.showToast(Crop.getError(data).getMessage());
 
             }
@@ -240,24 +258,6 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
 
     }
 
-    private void uploadImage(final CallbackString mListener){
-        Util.getInstance().showLoading();
-        new UploadCloudaryMethod(imageChangeUri, new CallbackCustom() {
-            @Override
-            public void onResponse(BaseModel result) {
-                Util.getInstance().stopLoading(true);
-                mListener.Result(result.get("url").toString());
-            }
-
-            @Override
-            public void onError(String error) {
-                Util.getInstance().stopLoading(true);
-                Util.showSnackbarError(error);
-            }
-        }).execute();
-
-
-    }
 
     private void phoneEvent(){
         edPhone.addTextChangePhone(new CallbackString() {
@@ -350,7 +350,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
                 public void onResponse(BaseModel object) {
                     currentWarehouse = object;
                     edWarehouse.setText(String.format(displayWarehouseFormat, object.getString("name")));
-                    //currentUser.put("warehouse_id", object.getInt("id"));
+
 
                 }
 
@@ -398,10 +398,10 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
             Util.showSnackbar("Chưa chọn kho hàng cho nhân viên", null, null);
 
         }else if (imageChangeUri != null){
-            uploadImage(new CallbackString() {
+            SystemConnect.uploadImage(Util.getRealPathFromCaptureURI(imageChangeUri), new CallbackString() {
                 @Override
-                public void Result(String s) {
-                    updateUser(s);
+                public void Result(String url) {
+                    updateUser(url);
 
                 }
             });
@@ -438,7 +438,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
                 currentUser.getInt("warehouse_id"),
                 Util.encodeString(currentUser.getString("warehouse_name")));
 
-        UserConnect.CreateUser(param, new CallbackCustom() {
+        UserConnect.CreateUser(param, new CallbackCustom(){
             @Override
             public void onResponse(BaseModel result) {
                 if (CustomSQL.getBoolean(Constants.IS_ADMIN)){
@@ -490,8 +490,20 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
 
             }
         }, true);
+    }
 
+    private void submitPasswordDefault(){
+        UserConnect.setDefaultPassword(currentUser.getInt("id"), new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.showToast("Đặt mật khẩu về mặc định thành công");
+            }
 
+            @Override
+            public void onError(String error) {
+
+            }
+        }, true);
 
     }
 

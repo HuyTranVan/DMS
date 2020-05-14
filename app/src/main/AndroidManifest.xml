@@ -69,19 +69,15 @@
         android:fullBackupContent="false"
         tools:replace="android:fullBackupContent">
 
-<!--tools:replace="android:allowBackup"-->
-<!--        android:allowBackup="false"-->
-<!--        <provider-->
-<!--            android:name="android.support.v4.content.FileProvider"-->
-<!--            android:authorities="${applicationId}.provider"-->
-<!--            android:exported="false"-->
-<!--            android:grantUriPermissions="true">-->
-<!--            <meta-data-->
-<!--                android:name="android.support.FILE_PROVIDER_PATHS"-->
-<!--                android:resource="@xml/provider_paths"/>-->
-<!--        </provider>-->
-
-        <!--google map-->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -96,26 +92,10 @@
             android:name=".activities.SplashScreenActivity"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen">
-<!--            android:launchMode="singleTask">-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-
-            <!--<intent-filter>-->
-                <!--<action android:name="com.dms.wolve" />-->
-
-                <!--<category android:name="android.intent.category.DEFAULT" />-->
-                <!--<category android:name="android.intent.category.BROWSABLE" />-->
-            <!--</intent-filter>-->
-
-            <!--<intent-filter>-->
-                <!--<data android:scheme="my.special.scheme" />-->
-                <!--<action android:name="android.intent.action.VIEW" />-->
-                <!--<category android:name="android.intent.category.DEFAULT"/>-->
-                <!--<category android:name="android.intent.category.BROWSABLE"/>-->
-            <!--</intent-filter>-->
-
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
@@ -257,8 +237,6 @@
             </intent-filter>
         </service>
 
-        <!-- Set custom default icon. This is used when no icon is set for incoming notification messages.
-     See README(https://goo.gl/l4GJaQ) for more. -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_lub_notify" />
@@ -271,6 +249,8 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" />
+
+
 
 
     </application>

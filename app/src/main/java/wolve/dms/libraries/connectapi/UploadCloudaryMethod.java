@@ -3,6 +3,7 @@ package wolve.dms.libraries.connectapi;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.webkit.URLUtil;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
@@ -24,6 +25,7 @@ import java.util.Map;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackCustom;
+import wolve.dms.callback.CallbackString;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Util;
@@ -32,13 +34,13 @@ import wolve.dms.utils.Util;
  * Created by tranhuy on 7/22/16.
  */
 public class UploadCloudaryMethod extends AsyncTask<String, Void, String> {
-    private CallbackCustom mListener = null;
+    private CallbackString mListener = null;
     private Cloudinary mCloud;
-    private Uri mUri;
+    private String uriPath;
 
-    public UploadCloudaryMethod(Uri uri, CallbackCustom listener) {
+    public UploadCloudaryMethod(String path, CallbackString listener) {
         mListener = listener;
-        mUri = uri;
+        uriPath = path;
         Map config = new HashMap();
         config.put("cloud_name", "lubsolution");
         config.put("api_key", "482386522287271");
@@ -48,31 +50,26 @@ public class UploadCloudaryMethod extends AsyncTask<String, Void, String> {
     }
 
     @Override protected String doInBackground(String... params) {
-        JSONObject object = null;
         try {
-            Map map = mCloud.uploader().upload(Util.getRealPathFromURI(mUri), ObjectUtils.emptyMap());
-
-            object = new JSONObject();
-            object.put("url", map.get("url").toString());
+            Map map = mCloud.uploader().upload(uriPath, ObjectUtils.emptyMap());
+            return map.get("url").toString();
 
         } catch (IOException e) {
             return e.toString();
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
 
-
-        return object.toString();
     }
 
     @Override protected void onPostExecute(String response) {
-        if (Util.isJSONObject(response)){
-            mListener.onResponse(new BaseModel(response));
+        if (URLUtil.isValidUrl(response)){
+            mListener.Result(response);
 
         }else {
-            mListener.onError(response);
+            mListener.Result(null);
+
 
         }
+
 
     }
 }

@@ -57,12 +57,11 @@ import static wolve.dms.utils.Constants.YEAR_DEFAULT;
 
 public class StatisticalActivity extends BaseActivity implements  View.OnClickListener, View.OnLongClickListener {
     private ImageView btnBack;
-    protected TextView tvTitle, tvEmployeeName, btnExport;
+    protected TextView tvTitle, tvEmployeeName, btnExport, btnReload;
     protected ViewPager viewPager;
     private CustomTabLayout tabLayout;
     private RadioGroup rdGroup;
     private RadioButton rdYear, rdMonth, rdDate;
-    private CardView btnReload;
     private LinearLayout btnEmployeeFilter;
     private RelativeLayout rlBottom;
     private Fragment mFragment;
@@ -128,7 +127,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         rdDate.setText(Constants.DATE_DEFAULT);
         rdYear.setText(YEAR_DEFAULT);
 
-        rlBottom.setVisibility(User.getCurrentRoleId()==Constants.ROLE_ADMIN|| User.getCurrentRoleId()==Constants.ROLE_WAREHOUSE? View.VISIBLE :View.GONE);
+        //rlBottom.setVisibility(User.getCurrentRoleId()==Constants.ROLE_ADMIN|| User.getCurrentRoleId()==Constants.ROLE_WAREHOUSE? View.VISIBLE :View.GONE);
         tvEmployeeName.setText(User.getCurrentRoleId()==Constants.ROLE_ADMIN? Constants.ALL_FILTER : User.getFullName());
 
         loadInitialData(getStartDay(), getEndDay());
@@ -208,24 +207,28 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                 break;
 
             case R.id.statistical_filter_by_employee:
-                CustomBottomDialog.choiceListObject("Chọn nhân viên", listUser, "displayName", new CallbackBaseModel() {
-                    @Override
-                    public void onResponse(BaseModel object){
-                        tvEmployeeName.setText(object.getString("displayName"));
-                        updateAllFragmentData(object.getInt("id"));
+                if (Util.isAdmin()){
+                    CustomBottomDialog.choiceListObject("Chọn nhân viên", listUser, "displayName", new CallbackBaseModel() {
+                        @Override
+                        public void onResponse(BaseModel object){
+                            tvEmployeeName.setText(object.getString("displayName"));
+                            updateAllFragmentData(object.getInt("id"));
 
-                    }
+                        }
 
-                    @Override
-                    public void onError() {
+                        @Override
+                        public void onError() {
 
-                    }
-                }, null);
+                        }
+                    }, null);
+                }
+
 
                 break;
 
             case R.id.statistical_export:
-                updateSheetTab();
+                //updateSheetTab();
+
                 break;
 
             case R.id.statistical_reload:
