@@ -9,8 +9,8 @@ android {
         multiDexEnabled true
         minSdkVersion 23
 //        targetSdkVersion 27
-        versionCode 4
-        versionName "1.0"
+        versionCode 5
+        versionName "1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
@@ -31,30 +31,28 @@ android {
             buildConfigField "boolean", "DEBUG_FLAG", 'true'
             buildConfigField "Boolean", "FLAG",'false'
             buildConfigField "String", "SERVER_URL", '"http://10.0.2.2/"'
-//            buildConfigField "String", "SERVER_URL", '"http://192.168.1.7/"'
             buildConfigField "String", "UPLOAD_URL", '"http://10.0.2.2/"'
 
-
-            android.applicationVariants.all {
-                variant -> variant.outputs.all {
-                    outputFileName = "${variant.name}_${variant.versionName}.apk"
-                }
-            }
         }
 
         qc_test {
             debuggable true
+
             signingConfig signingConfigs.debug
             buildConfigField "boolean", "DEBUG_FLAG", 'false'
             buildConfigField "Boolean", "FLAG",'false'
             buildConfigField "String", "SERVER_URL", '"http://lubsolution.com:8085/"'
             buildConfigField "String", "UPLOAD_URL", '"http://lubsolution.com:8085/"'
 
-            android.applicationVariants.all {
-                variant -> variant.outputs.all {
-                    outputFileName = "${variant.outputs}_${variant.versionName}.apk"
+            def date = new Date().format('ddMMyy')
+            android.applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "DMSNEW_" + date + ".apk"
                 }
+
             }
+
+
         }
 
         release {
@@ -65,24 +63,25 @@ android {
             buildConfigField "String", "SERVER_URL", '"http://lubsolution.com:8085/"'
             buildConfigField "String", "UPLOAD_URL", '"http://lubsolution.com:8085/"'
 
+            def date = new Date().format('ddMMyy')
             android.applicationVariants.all { variant ->
                 variant.outputs.all {
-                    outputFileName = "${variant.name}-${variant.versionName}.apk"
+                    outputFileName = "DMSRELEASE_" + date + ".apk"
                 }
 
             }
+
         }
+
+
     }
+
+
 
     repositories {
         mavenCentral()
 
     }
-//    repositories {
-//        maven{url "https://dl.bintray.com/crysis21/Android"}
-//
-//    }
-
     dexOptions {
 //        incremental true
         javaMaxHeapSize "12g"
@@ -188,6 +187,5 @@ dependencies {
 
 
 }
-//apply plugin: 'com.google.gms.google-services'
 
 

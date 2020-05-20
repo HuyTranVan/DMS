@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
@@ -22,6 +23,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
@@ -35,6 +37,7 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackListCustom;
+import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.libraries.calendarpicker.CalendarUtil;
 import wolve.dms.models.BaseModel;
@@ -53,13 +56,13 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class CustomerActivity extends BaseActivity implements View.OnClickListener, View.OnLongClickListener {
+public class CustomerActivity extends BaseActivity implements View.OnClickListener, View.OnLongClickListener, CallbackObject {
     private ImageView btnBack;
     protected Button btnSubmit;
     private TextView  tvCheckInStatus, tvTime, tvTrash, tvPrint;
-    protected TextView tvTitle,tvAddress, tvDebt, tvPaid, tvTotal, tvBDF, btnShopCart, tvFilter;
+    protected TextView tvTitle,tvAddress, tvDebt, tvPaid, tvTotal, tvBDF, btnShopCart, tvFilter, tvFilterIcon;
     private CoordinatorLayout coParent;
-    private RecyclerView rvFilterTitle;
+    //private RecyclerView rvFilterTitle;
     private ViewPager viewPager;
     private TabLayout tabLayout;
     private HorizontalScrollView scrollOverView;
@@ -146,9 +149,9 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         tvAddress = findViewById(R.id.customer_address);
         lnFilter = findViewById(R.id.customer_filter);
         tvFilter = findViewById(R.id.customer_filter_text);
-        rvFilterTitle = findViewById(R.id.customer_filter_rv);
+        //rvFilterTitle = findViewById(R.id.customer_filter_rv);
         tvPrint = findViewById(R.id.customer_print);
-
+        tvFilterIcon = findViewById(R.id.customer_filter_icon_close);
 
     }
 
@@ -157,7 +160,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         btnBack.setOnClickListener(this);
         tvTrash.setOnClickListener(this);
         tvPrint.setOnClickListener(this);
-
+        tvFilterIcon.setOnClickListener(this);
         btnShopCart.setOnClickListener(this);
         tvDebt.setOnClickListener(this);
         tvPaid.setOnClickListener(this);
@@ -202,7 +205,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     private void updateView(BaseModel customer){
         currentCustomer = customer;
-        createRVFilter();
+        //createRVFilter();
 
         tvTitle.setText(String.format("%s %s", Constants.shopName[currentCustomer.getInt("shopType")], currentCustomer.getString("signBoard")));
 
@@ -375,17 +378,20 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 break;
 
             case R.id.customer_filter:
-                if (rvFilterTitle.getVisibility() == View.VISIBLE){
-                    rvFilterTitle.setVisibility(View.GONE);
+                changeFragment(new DatePickerFragment(), true);
+
+                break;
+
+            case R.id.customer_filter_icon_close:
+                if (tvFilter.getVisibility() == View.GONE){
+                    changeFragment(new DatePickerFragment(), true);
 
                 }else {
-                    rvFilterTitle.setVisibility(View.VISIBLE);
-                    new Handler().postDelayed (new Runnable() {
-                        @Override
-                        public void run() {
-                            rvFilterTitle.setVisibility(View.GONE);
-                        }}, 2000);
+                    tvFilterIcon.setText(Util.getIcon(R.string.icon_calendar));
+                    tvFilter.setVisibility(View.GONE);
+                    filterBillByRange(0, 0);
                 }
+
                 break;
 
             case R.id.customer_print:
@@ -457,6 +463,9 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
             getSupportFragmentManager().popBackStack();
 
         }else if(mFragment != null && mFragment instanceof CustomerCheckinFragment) {
+            getSupportFragmentManager().popBackStack();
+
+        }else if(mFragment != null && mFragment instanceof DatePickerFragment) {
             getSupportFragmentManager().popBackStack();
 
         } else if(tabLayout.getSelectedTabPosition() !=0){
@@ -766,74 +775,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         return true;
     }
 
-    private void createRVFilter(){
-        FilterChoiceAdapter adapter = new FilterChoiceAdapter(new CallbackString() {
-            @Override
-            public void Result(String s) {
-                rvFilterTitle.setVisibility(View.GONE);
-
-                switch (s){
-                    case Constants.ALL_FILTER:
-                        tvFilter.setText("");
-                        filterBillByRange(0, 0);
-                        break;
-
-
-                    case Constants.FILTER_BY_DATE:
-                        CalendarUtil.datePicker(new CustomCenterDialog.CallbackRangeTime() {
-                            @Override
-                            public void onSelected(long start, long end) {
-                                filterBillByRange(start, end);
-                            }
-                        }, new CallbackString() {
-                            @Override
-                            public void Result(String s) {
-                                tvFilter.setText(s);
-
-                            }
-                        });
-
-                        break;
-
-                    case Constants.FILTER_BY_MONTH:
-                        CalendarUtil.monthPicker(new CustomCenterDialog.CallbackRangeTime() {
-                            @Override
-                            public void onSelected(long start, long end) {
-                                filterBillByRange(start, end);
-
-                            }
-                        },new CallbackString() {
-                            @Override
-                            public void Result(String s) {
-                                tvFilter.setText(s);
-
-                            }
-                        }).show(getSupportFragmentManager(), null);
-
-                        break;
-
-                    case Constants.FILTER_BY_YEAR:
-                        CalendarUtil.showDialogYearPicker(null, new CustomCenterDialog.CallbackRangeTime() {
-                            @Override
-                            public void onSelected(long start, long end) {
-                                filterBillByRange(start, end);
-                            }
-                        }, new CallbackString() {
-                            @Override
-                            public void Result(String s) {
-                                tvFilter.setText(s);
-
-                            }
-                        });
-                        break;
-                }
-
-            }
-        });
-        Util.createLinearRV(rvFilterTitle, adapter);
-
-    }
-
     private void setPrintIconVisibility(){
         if (currentPosition ==1 && listDebtBill.size() >0){
             tvPrint.setVisibility(View.VISIBLE);
@@ -867,4 +808,14 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     }
 
+    //get date return from fragment
+    @Override
+    public void onResponse(BaseModel object) {
+        tvFilterIcon.setText(Util.getIcon(R.string.icon_x));
+        tvFilter.setVisibility(View.VISIBLE);
+        tvFilter.setText( object.getString("text"));
+
+        filterBillByRange(object.getLong("start"), object.getLong("end"));
+
+    }
 }

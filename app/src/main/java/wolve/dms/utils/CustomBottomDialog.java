@@ -19,6 +19,7 @@ import wolve.dms.R;
 import wolve.dms.adapter.ItemAdapter;
 import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackObject;
 import wolve.dms.models.BaseModel;
 
 /**
@@ -203,116 +204,8 @@ public class CustomBottomDialog {
         dialog.show();
     }
 
-    public static void choiceFourOption(String icon1, String text1, String icon2, String text2,String icon3, String text3, String icon4, String text4, final FourMethodListener mListener){
-        final DialogPlus dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
-                .setContentHolder(new ViewHolder(R.layout.view_choice_4method))
-                .setGravity(Gravity.BOTTOM)
-                .setBackgroundColorResId(R.drawable.bg_corner5_white)
-                .setMargin(10,10,10,10)
-//                .setPadding(20,30,20,20)
-                .setInAnimation(R.anim.slide_up)
-                .setOnBackPressListener(new OnBackPressListener() {
-                    @Override
-                    public void onBackPressed(DialogPlus dialogPlus) {
-                        dialogPlus.dismiss();
-                    }
-                }).create();
 
-        LinearLayout lnOne = (LinearLayout) dialog.findViewById(R.id.choice_4method_parent1);
-        LinearLayout lnTwo = (LinearLayout) dialog.findViewById(R.id.choice_4method_parent2);
-        LinearLayout lnThree = (LinearLayout) dialog.findViewById(R.id.choice_4method_parent3);
-        LinearLayout lnFour = (LinearLayout) dialog.findViewById(R.id.choice_4method_parent4);
-        TextView tvIcon1 = (TextView) dialog.findViewById(R.id.choice_4method_icon1);
-        TextView tvIcon2 = (TextView) dialog.findViewById(R.id.choice_4method_icon2);
-        TextView tvIcon3 = (TextView) dialog.findViewById(R.id.choice_4method_icon3);
-        TextView tvIcon4 = (TextView) dialog.findViewById(R.id.choice_4method_icon4);
-        TextView tvText1 = (TextView) dialog.findViewById(R.id.choice_4method_text1);
-        TextView tvText2 = (TextView) dialog.findViewById(R.id.choice_4method_text2);
-        TextView tvText3 = (TextView) dialog.findViewById(R.id.choice_4method_text3);
-        TextView tvText4 = (TextView) dialog.findViewById(R.id.choice_4method_text4);
-
-        tvIcon1.setText(icon1);
-        tvIcon2.setText(icon2);
-        tvIcon3.setText(icon3);
-        tvIcon4.setText(icon4);
-        tvText1.setText(text1);
-        tvText2.setText(text2);
-        tvText3.setText(text3);
-        tvText4.setText(text4);
-
-        lnOne.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                mListener.Method1(true);
-
-            }
-        });
-
-        tvText1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-                mListener.Method1(true);
-            }
-        });
-
-        lnTwo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                mListener.Method2(true);
-
-            }
-        });
-
-        tvText2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-                mListener.Method2(true);
-            }
-        });
-
-        lnThree.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                mListener.Method3(true);
-
-            }
-        });
-
-        tvText3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-                mListener.Method3(true);
-            }
-        });
-
-        lnFour.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                mListener.Method4(true);
-
-            }
-        });
-
-        tvText4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-                mListener.Method4(true);
-            }
-        });
-
-
-        dialog.show();
-    }
-
-    public static void choiceListObject(String title, final List<BaseModel> list, String key, final CallbackBaseModel mListener, CallbackBoolean dismiss){
+    public static void choiceListObject(String title, final List<BaseModel> list, String key, final CallbackObject mListener, CallbackBoolean dismiss){
         int heigh = list.size()>5 ? Util.convertSdpToInt(R.dimen._300sdp):
                 (list.size()+1)*Util.convertSdpToInt(R.dimen._35sdp)+ Util.convertSdpToInt(R.dimen._5sdp) ; //+Util.convertSdpToInt(R.dimen._30sdp);
         final DialogPlus dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())

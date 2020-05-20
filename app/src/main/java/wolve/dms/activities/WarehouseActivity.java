@@ -244,14 +244,10 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
             CustomBottomDialog.choiceListObject("chọn kho nhận hàng trả về",
                     adapter.getAllTempWarehouse(),
                     "name",
-                    new CallbackBaseModel() {
+                    new CallbackObject() {
                         @Override
                         public void onResponse(BaseModel object) {
                             openFragmentImportReturn(objectWarehouse, object);
-                        }
-
-                        @Override
-                        public void onError() {
 
                         }
                     }, null);

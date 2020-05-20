@@ -4,6 +4,7 @@
     android:id="@+id/product_parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:maxHeight="@dimen/_100sdp"
     android:background="@color/colorWhite">
 
     <TextView
@@ -20,7 +21,7 @@
     <com.savvi.rangedatepicker.CalendarPickerView
         android:id="@+id/calendar_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/_100sdp"
         android:layout_above="@+id/confirm"
         android:layout_below="@+id/title"
         android:paddingLeft="16dp"

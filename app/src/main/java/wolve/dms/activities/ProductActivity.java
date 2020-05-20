@@ -128,7 +128,6 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
 
     protected void loadProductGroup(Boolean loading) {
         listProductGroup = new ArrayList<>();
-
         ProductConnect.ListProductGroup(loading, new CallbackCustomList() {
             @Override
             public void onResponse(List<BaseModel> results) {
@@ -162,7 +161,7 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
             }
 
             @Override
-            public void onError(String error) {
+            public void onError(String error){
 
             }
         }, true);
@@ -244,8 +243,6 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
         swipeRefreshLayout.setRefreshing(false);
 
     }
-
-
 
     @Override
     public void onRefresh() {

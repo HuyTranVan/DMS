@@ -166,16 +166,16 @@ public class Constants {
                 Util.getIcon(R.string.icon_edit_map),
                 Util.getIcon(R.string.icon_chart),
                 Util.getIcon(R.string.icon_depot),
-                Util.getIcon(R.string.icon_warning),
-                Util.getIcon(R.string.icon_product_group),
-                Util.getIcon(R.string.icon_info)};
+                Util.getIcon(R.string.icon_setting),
+                Util.getIcon(R.string.icon_barcode),
+                ""};
         String[] texts = new String[]{
                 "Bán hàng",
                 "Thống kê",
                 "Nhập - Tồn kho",
-                "Test4Admin",
                 "Cài đặt",
-                "Thông tin"};
+                "Quét mã",
+                ""};
         String[] colors = new String[]{
                 "Bán hàng",
                 "Thống kê",
@@ -211,51 +211,7 @@ public class Constants {
         return list;
     }
 
-//    private  static List<BaseModel> shop(){
-//        List<BaseModel> list = new ArrayList<>();
-//
-//        for (int i=0; i< shopType.length; i++){
-//            BaseModel baseModel = new BaseModel();
-//            baseModel.put("type", shopType[i]);
-//            baseModel.put("name", shopName[i]);
-//            list.add(baseModel);
-//        }
-//
-//        return list;
-//    }
 
-//    public static String getShopName(String type){
-//        String result = null;
-//        for (BaseModel baseModel : shop()) {
-//            if (type.equals(baseModel.getString("type"))) {
-//                result =  baseModel.getString("name");
-//                break;
-//            }
-//
-//        }
-//
-//        return result;
-//    }
-
-//    public static String getShopType(String name){
-//        String result = null;
-//        for (BaseModel baseModel : shop()) {
-//            if (name.equals(baseModel.getString("name"))) {
-//                result =  baseModel.getString("type");
-//                break;
-//            }
-//
-//        }
-//
-//        return result;
-//    }
-
-    //Shoptype constant
-//    public static String[] shopType = new String[]{
-//            "SUA_XE",
-//            "RUA_XE",
-//            "PHU_TUNG",
-//            "BAO_TRI"};
     public static String[] shopName = new String[]{
             "SỬA XE",
             "RỬA XE",
@@ -300,5 +256,41 @@ public class Constants {
 
         return list;
 
+    }
+
+    public static List<BaseModel> homeSettingSetup(){
+        List<BaseModel> list = new ArrayList<>();
+
+        BaseModel item0 = new BaseModel();
+        item0.put("position", 0);
+        item0.put("icon", Util.getIcon(R.string.icon_info));
+        item0.put("text", "Thông tin nhà phân phối");
+        list.add(0, item0);
+
+        BaseModel item1 = new BaseModel();
+        item1.put("position", 1);
+        item1.put("icon", Util.getIcon(R.string.icon_group));
+        item1.put("text", "Nhân viên");
+        list.add(1, item1);
+
+        BaseModel item2 = new BaseModel();
+        item2.put("position", 2);
+        item2.put("icon", Util.getIcon(R.string.icon_product_group));
+        item2.put("text", "Nhóm sản phẩm");
+        list.add(2, item2);
+
+        BaseModel item3 = new BaseModel();
+        item3.put("position", 3);
+        item3.put("icon", Util.getIcon(R.string.icon_product));
+        item3.put("text", "Sản phẩm");
+        list.add(3, item3);
+
+        BaseModel item4 = new BaseModel();
+        item4.put("position", 4);
+        item4.put("icon", Util.getIcon(R.string.icon_status));
+        item4.put("text", "Trạng thái");
+        list.add(4, item4);
+
+        return list;
     }
 }

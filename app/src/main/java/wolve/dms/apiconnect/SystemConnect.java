@@ -142,18 +142,19 @@ public class SystemConnect {
 
     }
 
-    public static void getCategories(final CallbackCustom listener){
+    public static void getCategories(final CallbackCustom listener, boolean stoploading){
         Util.getInstance().showLoading();
 
         String url = Api_link.CATEGORIES;
         new CustomGetMethod(url, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
-                Util.getInstance().stopLoading(true);
                 if (Constants.responeIsSuccess(result)){
+                    Util.getInstance().stopLoading(stoploading);
                     listener.onResponse(Constants.getResponeObjectSuccess(result));
 
                 }else {
+                    Util.getInstance().stopLoading(true);
                     Constants.throwError(result.getString("message"));
                     listener.onError(result.getString("message"));
 
@@ -219,7 +220,7 @@ public class SystemConnect {
 
                     }else {
                         listResult.add(new ArrayList<>());
-                        Constants.throwError(String.format("list position at %d error",1));
+                        Constants.throwError(String.format("list position at %d error",i));
                         listener.onError("");
 
                     }

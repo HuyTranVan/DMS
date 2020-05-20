@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:gravity="center"
@@ -20,17 +19,6 @@
         android:textColor="@drawable/text_blue_selected"
         android:layout_marginRight="5dp"
         android:layout_marginLeft="5dp"/>
-
-    <TextView
-        android:id="@+id/tabNotify"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:background="@drawable/btn_oval_greyblue"
-        android:text=""
-        android:textSize="@dimen/tiny"
-        android:textColor="@color/colorWhite"
-        android:gravity="center"
-        android:layout_marginRight="5dp"/>
 
 
 

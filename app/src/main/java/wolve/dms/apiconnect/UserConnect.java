@@ -13,7 +13,6 @@ import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.libraries.connectapi.CustomGetMethod;
 import wolve.dms.libraries.connectapi.CustomPostMethod;
-import wolve.dms.libraries.connectapi.CustomPutMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
@@ -81,36 +80,6 @@ public class UserConnect {
                 Constants.throwError(error);
                 listener.onError(error);
 
-            }
-        }).execute();
-    }
-
-    public static void UpdateUser(String params,final CallbackJSONObject listener, final Boolean stopLoading){
-        Util.getInstance().showLoading();
-
-        String url = Api_link.USER + User.getUserId();
-
-        new CustomPutMethod(url,params,false, new Callback() {
-            @Override
-            public void onResponse(JSONObject result) {
-                Util.getInstance().stopLoading(stopLoading);
-                try {
-                    if (result.getInt("status") == 200) {
-                        listener.onResponse(null);
-
-                    } else {
-                        listener.onError("Unknow error");
-                    }
-                } catch (JSONException e) {
-                    listener.onError(e.toString());
-                }
-            }
-
-
-            @Override
-            public void onError(String error) {
-                listener.onError(error);
-                Util.getInstance().stopLoading(stopLoading);
             }
         }).execute();
     }

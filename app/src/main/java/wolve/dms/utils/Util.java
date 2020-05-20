@@ -3,6 +3,7 @@ package wolve.dms.utils;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -61,6 +62,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.InetAddress;
@@ -101,6 +103,7 @@ import wolve.dms.models.Product;
 import wolve.dms.models.Province;
 import wolve.dms.models.User;
 
+import static android.content.Context.MODE_PRIVATE;
 import static wolve.dms.utils.Constants.REQUEST_GOOGLE_PLAY_SERVICES;
 
 public class Util {
@@ -622,24 +625,46 @@ public class Util {
         }
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
-        return new File(imageFile.getPath() + File.separator + String.format("IMG_%s.png", timeStamp));
+        return new File(imageFile.getPath() + File.separator + String.format("IMG_%s.jpg", timeStamp));
     }
 
-//    private File createImageFile() throws IOException {
-//        // Create an image file name
-//        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-//        String imageFileName = "JPEG_" + timeStamp + "_";
-//        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-//        File image = File.createTempFile(
-//                imageFileName,  /* prefix */
-//                ".jpg",         /* suffix */
-//                storageDir      /* directory */
-//        );
-//
-//        // Save a file: path for use with ACTION_VIEW intents
-//        currentPhotoPath = image.getAbsolutePath();
-//        return image;
-//    }
+    public static File createCustomImageFile(String name) {
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), Constants.APP_DIRECTORY);
+
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                return null;
+            }
+        }
+        File imageFile = new File(mediaStorageDir.getPath() + File.separator + "Images");
+        if (!imageFile.exists()) {
+            if (!imageFile.mkdirs()) {
+                return null;
+            }
+        }
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
+        return new File(imageFile.getPath() + File.separator + String.format("IMG_%s.jpg", name));
+    }
+
+    public static String storeImage(Bitmap bitmap, String name) {
+        File file = createCustomImageFile(name);
+
+        try{
+            OutputStream stream = null;
+            stream = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream);
+            stream.flush();
+            stream.close();
+
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+        Uri savedImageURI = Uri.parse(file.getAbsolutePath());
+
+        return savedImageURI.getPath();
+
+    }
 
     //using parse for local category
     public static File getOutputMediaFile() {
@@ -748,7 +773,7 @@ public class Util {
     }
 
     public static String CurrentMonthYearHourNotBlank() {
-        return new SimpleDateFormat("dd_MM_yyyy_HH_mm").format(Calendar.getInstance().getTime());
+        return new SimpleDateFormat("ddMMyyyy_HHmm").format(Calendar.getInstance().getTime());
     }
 
 
@@ -912,6 +937,8 @@ public class Util {
 
         return date;
     }
+
+
 
     public static String getDeviceName() {
         String manufacturer = Build.MANUFACTURER;
@@ -1652,7 +1679,7 @@ public class Util {
     }
 
     public static String getStringIcon(String text,String blank, int icon){
-        return text+ "   "+ getInstance().getCurrentActivity().getResources().getString(icon);
+        return text+ blank + getInstance().getCurrentActivity().getResources().getString(icon);
 
     }
 

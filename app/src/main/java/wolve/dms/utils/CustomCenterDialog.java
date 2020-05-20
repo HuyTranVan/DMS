@@ -967,6 +967,7 @@ public class CustomCenterDialog {
                                             @Override
                                             public void onRespone(Boolean result) {
                                                 if (result){
+                                                    CustomSQL.setBoolean(Constants.LOGIN_SUCCESS, true);
                                                     Util.showToast("Đăng nhập thành công");
                                                     mlistener.onRespone(true);
 

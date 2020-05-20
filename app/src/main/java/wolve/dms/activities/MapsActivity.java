@@ -70,6 +70,7 @@ import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackLong;
+import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.LatlngListener;
 import wolve.dms.customviews.CButton;
@@ -337,16 +338,12 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     }
 
     private void showListDistrict() {
-        CustomBottomDialog.choiceListObject("Chọn quận / huyện", District.getDistricts(),"text", new CallbackBaseModel() {
+        CustomBottomDialog.choiceListObject("Chọn quận / huyện", District.getDistricts(),"text", new CallbackObject() {
             @Override
             public void onResponse(BaseModel object) {
                 tvLocation.setTextColor(getResources().getColor(R.color.colorMain));
                 loadCustomer = false;
                 loadCustomersByDistrict(object.getString("text"));
-
-            }
-            @Override
-            public void onError() {
 
             }
         }, null);

@@ -12,6 +12,7 @@
         android:id="@+id/tabTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/opensans_regular"
         android:text="Lịch hẹn sắp tới"
         android:textSize="@dimen/_10sdp"
         android:textColor="@drawable/text_blue_selected"

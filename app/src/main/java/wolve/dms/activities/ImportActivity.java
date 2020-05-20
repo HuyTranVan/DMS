@@ -374,17 +374,13 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void dialogSelectWarehouse(String title, List<BaseModel> list, CallbackObject listener){
-        CustomBottomDialog.choiceListObject(title, list, "name", new CallbackBaseModel() {
+        CustomBottomDialog.choiceListObject(title, list, "name", new CallbackObject() {
             @Override
             public void onResponse(BaseModel object) {
                 listener.onResponse(object);
 
             }
 
-            @Override
-            public void onError() {
-
-            }
         }, null);
 
     }

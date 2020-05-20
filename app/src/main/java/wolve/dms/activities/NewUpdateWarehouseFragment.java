@@ -22,6 +22,7 @@ import wolve.dms.apiconnect.UserConnect;
 import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomList;
+import wolve.dms.callback.CallbackObject;
 import wolve.dms.customviews.CInputForm;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
@@ -171,16 +172,11 @@ public class NewUpdateWarehouseFragment extends Fragment implements View.OnClick
     }
 
     private void dialogChoiceUser(List<BaseModel> list){
-        CustomBottomDialog.choiceListObject("CHỌN NHÂN VIÊN", list, "displayName", new CallbackBaseModel() {
+        CustomBottomDialog.choiceListObject("CHỌN NHÂN VIÊN", list, "displayName", new CallbackObject() {
             @Override
             public void onResponse(BaseModel object) {
                 edUser.setText(object.getString("displayName"));
                 currentDepot.put("user_id", object.getInt("id"));
-
-            }
-
-            @Override
-            public void onError() {
 
             }
         }, null);

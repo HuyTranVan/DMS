@@ -8,9 +8,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import wolve.dms.callback.CallbackListObject;
+import wolve.dms.libraries.connectapi.DownloadListImage;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
+import wolve.dms.utils.Util;
 
 /**
  * Created by macos on 9/16/17.
@@ -38,18 +41,26 @@ public class Product extends BaseModel{
     public static void saveProductList(JSONArray groups){
 //        CustomSQL.setString(Constants.PRODUCT_LIST, product.toString());
 
-        JSONArray result = new JSONArray();
+        List<BaseModel> mProducts = new ArrayList<>();
         try {
             for (int i=0; i<groups.length(); i++){
                 JSONObject object = groups.getJSONObject(i);
                 JSONArray arrayProduct = object.getJSONArray("product");
 
                 for (int ii =0; ii<arrayProduct.length(); ii++){
-                    result.put(arrayProduct.getJSONObject(ii));
+                    mProducts.add(new BaseModel(arrayProduct.getJSONObject(ii)));
                 }
 
             }
-            CustomSQL.setString(Constants.PRODUCT_LIST, result.toString());
+
+            new DownloadListImage(mProducts, "image", new CallbackListObject() {
+                @Override
+                public void onResponse(List<BaseModel> list) {
+                    Util.getInstance().stopLoading(true);
+                    CustomSQL.setListBaseModel(Constants.PRODUCT_LIST, list);
+                }
+            }).execute();
+
 
         } catch (JSONException e) {
 

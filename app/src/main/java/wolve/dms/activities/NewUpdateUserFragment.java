@@ -45,6 +45,7 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackDouble;
+import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.CallbackUri;
 import wolve.dms.customviews.CInputForm;
@@ -278,15 +279,10 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
                 listGender.add(BaseModel.putValueToNewObject("text", "NAM"));
                 listGender.add(BaseModel.putValueToNewObject("text", "NỮ"));
 
-                CustomBottomDialog.choiceListObject("CHỌN GIỚI TÍNH", listGender, "text", new CallbackBaseModel() {
+                CustomBottomDialog.choiceListObject("CHỌN GIỚI TÍNH", listGender, "text", new CallbackObject() {
                     @Override
                     public void onResponse(BaseModel object) {
                         edGender.setText(object.getString("text"));
-
-                    }
-
-                    @Override
-                    public void onError() {
 
                     }
                 }, null);
@@ -296,19 +292,14 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
     }
 
     private void roleEvent(){
-        edRole.setDropdown(true, new CInputForm.ClickListener() {
+        edRole.setDropdown(true, new CInputForm.ClickListener(){
             @Override
             public void onClick(View view) {
-                CustomBottomDialog.choiceListObject("CHỌN CHỨC VỤ", User.listRole(), "text", new CallbackBaseModel() {
+                CustomBottomDialog.choiceListObject("CHỌN CHỨC VỤ", User.listRole(), "text", new CallbackObject() {
                     @Override
                     public void onResponse(BaseModel object) {
                         edRole.setText(object.getString("text"));
                         currentUser.put("role", object.getInt("index"));
-                    }
-
-                    @Override
-                    public void onError() {
-
                     }
                 }, null);
 
@@ -345,17 +336,12 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
 
     private void choiceWarehouse(List<BaseModel> list){
         if (list.size() >0){
-            CustomBottomDialog.choiceListObject("CHỌN KHO HÀNG", list, "name", new CallbackBaseModel() {
+            CustomBottomDialog.choiceListObject("CHỌN KHO HÀNG", list, "name", new CallbackObject() {
                 @Override
                 public void onResponse(BaseModel object) {
                     currentWarehouse = object;
                     edWarehouse.setText(String.format(displayWarehouseFormat, object.getString("name")));
 
-
-                }
-
-                @Override
-                public void onError() {
 
                 }
             }, null);

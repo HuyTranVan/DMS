@@ -42,7 +42,6 @@ public class ProductGroup extends BaseModel{
     }
 
     public static void saveProductGroupList(JSONArray productgroup){
-        //CustomSQL.setString(Constants.PRODUCTGROUP_LIST, new Gson().toJson(productgroup.toString()));
         CustomSQL.setString(Constants.PRODUCTGROUP_LIST, productgroup.toString());
         Product.saveProductList(productgroup);
 

@@ -3,6 +3,8 @@ package wolve.dms.activities;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -41,7 +43,9 @@ import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomListList;
 import wolve.dms.callback.CallbackListObject;
 import wolve.dms.callback.CallbackObject;
+import wolve.dms.callback.CallbackString;
 import wolve.dms.libraries.connectapi.CustomGetMethod;
+import wolve.dms.libraries.connectapi.DownloadImage;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.ProductGroup;
@@ -113,8 +117,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         checkPermission();
         swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorBlueDark));
         tvFullname.setText(String.format("%s _ %s",User.getFullName(), User.getCurrentRoleString()));
-        tvDistributor.setText(Util.getIconString(R.string.icon_home, "  ", Distributor.getName()));
-        tvMonth.setText(Util.getIconString(R.string.icon_calendar, "  ", Util.CurrentMonthYear()));
+        tvDistributor.setText(Util.getStringIcon(Distributor.getName(), "    ",R.string.icon_home ));
+        tvMonth.setText(Util.getStringIcon( Util.CurrentMonthYear(),"     ", R.string.icon_calendar));
 
         if (!Util.checkImageNull(User.getImage())){
             Glide.with(this).load(User.getImage()).centerCrop().into(imgUser);
@@ -145,6 +149,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             }
         });
 
+        NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
 
 
     }
@@ -165,7 +171,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             @Override
             public void onResponse(List<List<BaseModel>> results) {
                 double paid = DataUtil.sumValueFromList(results.get(0), "paid");
-                tvCash.setText(String.format(    "%s đ", Util.FormatMoney(paid)));
+                tvCash.setText(Util.getStringIcon(Util.FormatMoney(paid) , "    ", R.string.icon_usd));
 
             }
 
@@ -274,27 +280,17 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 break;
 
             case 3:
-//                if (CustomSQL.getBoolean(Constants.IS_ADMIN)){
-//                    Transaction.gotoTestActivity();
-//                }else {
-//                    Util.showToast("Chưa hỗ trợ");
-//                }
-
-
-                break;
-
-            case 4:
                 choiceSetupItem();
 
                 break;
 
-            case 5:
-                if (CustomSQL.getBoolean(Constants.IS_ADMIN)){
-                    Transaction.gotoDistributorActivity();
-                }else {
-                    Util.showToast("Chưa hỗ trợ");
+            case 4:
+                Util.showToast("Chưa hỗ trợ");
 
-                }
+                break;
+
+            case 5:
+                Util.showToast("Chưa hỗ trợ");
 
                 break;
         }
@@ -316,49 +312,56 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             }
 
             @Override
-            public void onError(String error) {
+            public void onError(String error){
 
             }
-        });
+        }, false);
 
     }
 
     private void choiceSetupItem(){
-        CustomBottomDialog.choiceFourOption(getString(R.string.icon_group), "Nhân viên",
-                getString(R.string.icon_product_group), "Nhóm sản phẩm",
-                getString(R.string.icon_product), "Sản phẩm",
-                getString(R.string.icon_comment), "Trạng thái", new CustomBottomDialog.FourMethodListener() {
+        CustomBottomDialog.choiceListObject("cài đặt",
+                Constants.homeSettingSetup(),
+                "text",
+                new CallbackObject() {
                     @Override
-                    public void Method1(Boolean one) {
-                        if (User.getCurrentRoleId()==Constants.ROLE_ADMIN){
-                            Transaction.gotoUserActivity(false);
+                    public void onResponse(BaseModel object) {
+                        switch (object.getInt("position")){
+                            case 0:
+                                if (CustomSQL.getBoolean(Constants.IS_ADMIN)){
+                                    Transaction.gotoDistributorActivity();
+                                }
+                                break;
+
+                            case 1:
+                                if (User.getCurrentRoleId()==Constants.ROLE_ADMIN){
+                                    Transaction.gotoUserActivity(false);
+                                }
+                                break;
+
+                            case 2:
+                                if (User.getCurrentRoleId()==Constants.ROLE_ADMIN){
+                                    Transaction.gotoProductGroupActivity();
+                                }
+                                break;
+
+                            case 3:
+                                Transaction.gotoProductActivity();
+                                break;
+
+                            case 4:
+                                if (User.getCurrentRoleId()==Constants.ROLE_ADMIN){
+                                    Transaction.gotoStatusActivity();
+                                }
+
+                                break;
+
+
                         }
 
-
                     }
+                },null);
 
-                    @Override
-                    public void Method2(Boolean two) {
-                        if (User.getCurrentRoleId()==Constants.ROLE_ADMIN){
-                            Transaction.gotoProductGroupActivity();
-                        }
-
-                    }
-
-                    @Override
-                    public void Method3(Boolean three) {
-                        Transaction.gotoProductActivity();
-
-                    }
-
-                    @Override
-                    public void Method4(Boolean four) {
-                        if (User.getCurrentRoleId()==Constants.ROLE_ADMIN){
-                            Transaction.gotoStatusActivity();
-                        }
-
-                    }
-                });
     }
 
     protected void logout(){

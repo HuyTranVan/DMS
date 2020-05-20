@@ -20,6 +20,7 @@
         android:id="@+id/statistical_tab_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/opensans_regular"
         android:text="Dashboard"
         android:textSize="@dimen/_10sdp"
         android:textColor="@drawable/text_blue_selected"

@@ -32,6 +32,7 @@ import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 
 import wolve.dms.callback.CallbackCustom;
+import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CustomTabLayout;
 import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialog;
@@ -55,13 +56,11 @@ import static wolve.dms.utils.Constants.YEAR_DEFAULT;
  * Created by macos on 9/16/17.
  */
 
-public class StatisticalActivity extends BaseActivity implements  View.OnClickListener, View.OnLongClickListener {
+public class StatisticalActivity extends BaseActivity implements  View.OnClickListener, CallbackObject{
     private ImageView btnBack;
-    protected TextView tvTitle, tvEmployeeName, btnExport, btnReload;
+    protected TextView tvTitle, tvEmployeeName, btnExport, btnReload, tvCalendar;
     protected ViewPager viewPager;
     private CustomTabLayout tabLayout;
-    private RadioGroup rdGroup;
-    private RadioButton rdYear, rdMonth, rdDate;
     private LinearLayout btnEmployeeFilter;
     private RelativeLayout rlBottom;
     private Fragment mFragment;
@@ -86,7 +85,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     private int mDate = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
     private int mMonth = Calendar.getInstance().get(Calendar.MONTH);
     private int mYear = Calendar.getInstance().get(Calendar.YEAR);
-    private int currentChecked;
+    //private int currentChecked;
 
 
     @Override
@@ -105,50 +104,40 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         tvTitle = (TextView) findViewById(R.id.statistical_title);
         viewPager = (ViewPager) findViewById(R.id.statistical_viewpager);
         tabLayout = (CustomTabLayout) findViewById(R.id.statistical_tabs);
-        rdGroup = findViewById(R.id.statistical_filter);
-        rdMonth = findViewById(R.id.statistical_filter_month);
-        rdYear = findViewById(R.id.statistical_filter_year);
-        rdDate = findViewById(R.id.statistical_filter_date);
         btnEmployeeFilter = findViewById(R.id.statistical_filter_by_employee);
         btnExport = findViewById(R.id.statistical_export);
         btnReload = findViewById(R.id.statistical_reload);
         rlBottom = findViewById(R.id.statistical_bottom_group);
         tvEmployeeName = findViewById(R.id.statistical_filter_by_employee_name);
+        tvCalendar = findViewById(R.id.statistical_calendar);
 
     }
 
     @Override
     public void initialData() {
         listUser = new ArrayList<>();
-
         listUser.add(0, getAllFilterUser());
 
-        rdMonth.setText(Util.CurrentMonthYear());
-        rdDate.setText(Constants.DATE_DEFAULT);
-        rdYear.setText(YEAR_DEFAULT);
-
-        //rlBottom.setVisibility(User.getCurrentRoleId()==Constants.ROLE_ADMIN|| User.getCurrentRoleId()==Constants.ROLE_WAREHOUSE? View.VISIBLE :View.GONE);
         tvEmployeeName.setText(User.getCurrentRoleId()==Constants.ROLE_ADMIN? Constants.ALL_FILTER : User.getFullName());
+        tvCalendar.setText(Util.getIconString(R.string.icon_calendar, "   ", Util.CurrentMonthYear() ));
 
-        loadInitialData(getStartDay(), getEndDay());
+        loadInitialData(Util.TimeStamp1(Util.Current01MonthYear()),
+                Util.TimeStamp1(Util.Next01MonthYear()));
 
         setupViewPager(viewPager);
         setupTabLayout(tabLayout);
 
-        currentChecked = rdGroup.getCheckedRadioButtonId();
+        //currentChecked = rdGroup.getCheckedRadioButtonId();
 
     }
 
     @Override
     public void addEvent() {
         btnBack.setOnClickListener(this);
-        rdMonth.setOnClickListener(this);
-        rdDate.setOnClickListener(this);
-        rdDate.setOnLongClickListener(this);
-        rdYear.setOnClickListener(this);
         btnEmployeeFilter.setOnClickListener(this);
         btnExport.setOnClickListener(this);
         btnReload.setOnClickListener(this);
+        tvCalendar.setOnClickListener(this);
 
     }
 
@@ -184,31 +173,9 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
                 break;
 
-            case R.id.statistical_filter_date:
-                long startday = Util.TimeStamp2(String.format("%s 00:00:00",Util.CurrentDayMonthYear() ));
-                rdDate.setText(Util.CurrentDayMonthYear());
-                rdMonth.setText(Constants.MONTH_DEFAULT);
-                rdYear.setText(Constants.YEAR_DEFAULT);
-                currentChecked = rdGroup.getCheckedRadioButtonId();
-
-                loadInitialData(startday, startday+86400000);
-                btnExport.setVisibility(View.GONE);
-
-                break;
-
-            case R.id.statistical_filter_month:
-                monthPicker();
-
-                break;
-
-            case R.id.statistical_filter_year:
-                yearPicker();
-
-                break;
-
             case R.id.statistical_filter_by_employee:
                 if (Util.isAdmin()){
-                    CustomBottomDialog.choiceListObject("Chọn nhân viên", listUser, "displayName", new CallbackBaseModel() {
+                    CustomBottomDialog.choiceListObject("Chọn nhân viên", listUser, "displayName", new CallbackObject() {
                         @Override
                         public void onResponse(BaseModel object){
                             tvEmployeeName.setText(object.getString("displayName"));
@@ -216,10 +183,6 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
                         }
 
-                        @Override
-                        public void onError() {
-
-                        }
                     }, null);
                 }
 
@@ -232,8 +195,13 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                 break;
 
             case R.id.statistical_reload:
-                loadInitialData(getStartDay(), getEndDay());
+                //loadInitialData(getStartDay(), getEndDay());
                 break;
+
+            case R.id.statistical_calendar:
+                changeFragment(new DatePickerFragment(), true);
+                break;
+
         }
     }
 
@@ -246,199 +214,13 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         }else if(mFragment != null && mFragment instanceof StatisticalOrderedFragment) {
             getSupportFragmentManager().popBackStack();
 
-        } else {
+        } else if(mFragment != null && mFragment instanceof DatePickerFragment) {
+            getSupportFragmentManager().popBackStack();
+
+        }else {
             Transaction.gotoHomeActivityRight(true);
         }
 
-    }
-
-
-
-    private long getStartDay(){
-        long date = 0;
-        if (rdMonth.isChecked()){
-            String currentdate = rdMonth.getText().toString();
-            if (currentdate.split("-").length ==2){
-                String yearStart = currentdate.split("-")[1];
-                String yearNext = currentdate.split("-")[1];
-                String monthStart = currentdate.split("-")[0].length() ==1 ? "0"+currentdate.split("-")[0] : currentdate.split("-")[0];
-                String monthNext = null;
-                int next = Integer.parseInt(monthStart) + 1;
-
-                if (next == 13){
-                    monthNext = "01";
-                    yearNext = String.valueOf(Integer.parseInt(yearNext)+1);
-
-                }else if (String.valueOf(next).length() ==1){
-                    monthNext = "0" + String.valueOf(next);
-                }else {
-                    monthNext = String.valueOf(next);
-                }
-
-                date =Util.TimeStamp1(String.format("01-%s-%s",monthStart, yearStart));
-
-
-            }else {
-                date = Util.TimeStamp1(currentdate);
-
-            }
-
-            btnExport.setVisibility(View.VISIBLE);
-
-        }else if (rdDate.isChecked()){
-            String currentdate1 = rdDate.getText().toString();
-            if (currentdate1.contains("\n")){
-                date = Util.TimeStamp1(currentdate1.split("\n")[0]);
-            }else {
-                date = Util.TimeStamp1(currentdate1);
-            }
-
-            btnExport.setVisibility(View.GONE);
-
-        }else if (rdYear.isChecked()){
-            date = Util.TimeStamp1(String.format("01-01-%s", rdYear.getText().toString()));
-
-            btnExport.setVisibility(View.GONE);
-        }
-
-
-        return date;
-    }
-
-    private long getEndDay(){
-        long date = 0;
-
-        if (rdMonth.isChecked()){
-            String currentdate = rdMonth.getText().toString();
-            if (currentdate.split("-").length ==2){
-                String yearStart = currentdate.split("-")[1];
-                String yearNext = currentdate.split("-")[1];
-                String monthStart = currentdate.split("-")[0].length() ==1 ? "0"+currentdate.split("-")[0] : currentdate.split("-")[0];
-                String monthNext = null;
-                int next = Integer.parseInt(monthStart) + 1;
-
-                if (next == 13){
-                    monthNext = "01";
-                    yearNext = String.valueOf(Integer.parseInt(yearNext)+1);
-
-                }else if (String.valueOf(next).length() ==1){
-                    monthNext = "0" + String.valueOf(next);
-                }else {
-                    monthNext = String.valueOf(next);
-                }
-
-                date =Util.TimeStamp1(String.format("01-%s-%s", monthNext , yearNext));
-
-
-            }else {
-                date = Util.TimeStamp1(currentdate) + 86400000;
-
-            }
-
-        }else if (rdDate.isChecked()){
-            String currentdate1 = rdDate.getText().toString();
-            if (currentdate1.contains("\n")){
-                date = Util.TimeStamp1(currentdate1.split("\n")[1]) + 86400000 ;
-            }else {
-                date = Util.TimeStamp1(currentdate1)+ 86400000 ;
-            }
-
-        }else if (rdYear.isChecked()){
-
-            date = Util.TimeStamp1(String.format("01-01-%d", Integer.parseInt(rdYear.getText().toString()) +1));
-
-        }
-
-
-
-        return date;
-    }
-
-    private void datePicker() {
-        YearPicker.showDialogDatePicker(rdDate, new CustomCenterDialog.CallbackRangeTime() {
-            @Override
-            public void onSelected(long start, long end) {
-                rdDate.setChecked(true);
-                rdMonth.setText(Constants.MONTH_DEFAULT);
-                rdYear.setText(Constants.YEAR_DEFAULT);
-                currentChecked = rdGroup.getCheckedRadioButtonId();
-                loadInitialData(start, end);
-                btnExport.setVisibility(View.GONE);
-            }
-
-        }, new CallbackBoolean() {
-            @Override
-            public void onRespone(Boolean result) {
-                if (!result){
-                    rdGroup.check(currentChecked);
-                    if (currentChecked != rdDate.getId()){
-                        rdDate.setText(Constants.DATE_DEFAULT);
-                    }
-                }
-            }
-        });
-
-    }
-
-    private void monthPicker() {
-        SimpleDatePickerDialogFragment datePickerDialogFragment;
-        datePickerDialogFragment = SimpleDatePickerDialogFragment.getInstance(mYear, mMonth);
-        datePickerDialogFragment.setOnDateSetListener(new SimpleDatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(int year, int monthOfYear) {
-                mMonth = monthOfYear;
-                mYear =year;
-                rdMonth.setText(monthOfYear+1 +"-" + year);
-
-                rdDate.setText(Constants.DATE_DEFAULT);
-                rdYear.setText(Constants.YEAR_DEFAULT);
-                currentChecked = rdGroup.getCheckedRadioButtonId();
-
-                loadInitialData(getStartDay(), getEndDay());
-
-            }
-        });
-        datePickerDialogFragment.setOnDismissListener(new SimpleDatePickerDialog.OnDismissListener() {
-            @Override
-            public void onDismiss(boolean result) {
-                if (!result){
-                    rdGroup.check(currentChecked);
-                    if (currentChecked != rdMonth.getId()){
-                        rdMonth.setText(Constants.MONTH_DEFAULT);
-                    }
-
-                }
-            }
-        });
-
-        datePickerDialogFragment.show(getSupportFragmentManager(), null);
-    }
-
-    private void yearPicker() {
-        YearPicker.showDialogYearPicker(null, new CallbackString() {
-            @Override
-            public void Result(String s) {
-                rdYear.setText(s);
-                rdMonth.setText(Constants.MONTH_DEFAULT);
-                rdDate.setText(Constants.DATE_DEFAULT);
-                currentChecked = rdGroup.getCheckedRadioButtonId();
-
-                loadInitialData(getStartDay(), getEndDay());
-
-            }
-        }, new CallbackBoolean() {
-            @Override
-            public void onRespone(Boolean result) {
-                if (!result){
-                    rdGroup.check(currentChecked);
-                    if (currentChecked != rdYear.getId()){
-                        rdYear.setText(Constants.YEAR_DEFAULT);
-                    }
-
-
-                }
-            }
-        });
     }
 
     private void loadInitialData(long starDay, long lastDay){
@@ -522,68 +304,54 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         Util.getInstance().setCurrentActivity(this);
         if (data.hasExtra(Constants.RELOAD_DATA) && requestCode == Constants.RESULT_CUSTOMER_ACTIVITY){
             if (data.getBooleanExtra(Constants.RELOAD_DATA, false)){
-                loadInitialData(getStartDay(), getEndDay());
+                //loadInitialData(getStartDay(), getEndDay());
             }
 
         }
 
     }
 
-    @Override
-    public boolean onLongClick(View v) {
-        Util.hideKeyboard(v);
-        switch (v.getId()){
-            case R.id.statistical_filter_date:
-
-                datePicker();
-
-                break;
-
-        }
-        return true;
-    }
-
-    private void updateSheetTab(){
-        String startday = Util.DateString(getStartDay());
-        String endday = Util.DateString(Util.CurrentTimeStamp()< getEndDay() ? Util.CurrentTimeStamp() : getEndDay());
-        SheetConnect.getALlTab(Api_link.STATISTICAL_SHEET_KEY, new GoogleSheetGetAllTab.CallbackListSheet() {
-            @Override
-            public void onRespone(List<Sheet> results) {
-                boolean check = false;
-                for (Sheet sheet : results) {
-                    if (sheet.getProperties().getTitle().equals(rdMonth.getText().toString())){
-                        check = true;
-                        break;
-                    }
-
-                }
-
-                if (!check){
-
-                    SheetConnect.createNewTab(Api_link.STATISTICAL_SHEET_KEY, rdMonth.getText().toString(), new GoogleSheetGetData.CallbackListList() {
-                        @Override
-                        public void onRespone(List<List<Object>> results) {
-                            updateSheetIncomeData(rdMonth.getText().toString() ,
-                                            SHEET_COLUM,
-                                            DataUtil.updateIncomeByUserToSheet(startday, endday, listUser, listInitialBill, listInitialBillDetail, listInitialPayment, listInitialDebt));
-
-//                                            DataUtil.getCashByUser(listInitialBill, listInitialPayment, listUser)));
-
-                        }
-                    },false);
-
-                }else {
-                    updateSheetIncomeData(rdMonth.getText().toString(),
-                                    SHEET_COLUM,
-                                    DataUtil.updateIncomeByUserToSheet(startday, endday, listUser, listInitialBill, listInitialBillDetail, listInitialPayment, listInitialDebt));
-
-//                                    DataUtil.getCashByUser(listInitialBill, listInitialPayment, listUser)));
-
-                }
-
-            }
-        }, false);
-    }
+//    private void updateSheetTab(){
+//        String startday = Util.DateString(getStartDay());
+//        String endday = Util.DateString(Util.CurrentTimeStamp()< getEndDay() ? Util.CurrentTimeStamp() : getEndDay());
+//        SheetConnect.getALlTab(Api_link.STATISTICAL_SHEET_KEY, new GoogleSheetGetAllTab.CallbackListSheet() {
+//            @Override
+//            public void onRespone(List<Sheet> results) {
+//                boolean check = false;
+//                for (Sheet sheet : results) {
+//                    if (sheet.getProperties().getTitle().equals(rdMonth.getText().toString())){
+//                        check = true;
+//                        break;
+//                    }
+//
+//                }
+//
+//                if (!check){
+//
+//                    SheetConnect.createNewTab(Api_link.STATISTICAL_SHEET_KEY, rdMonth.getText().toString(), new GoogleSheetGetData.CallbackListList() {
+//                        @Override
+//                        public void onRespone(List<List<Object>> results) {
+//                            updateSheetIncomeData(rdMonth.getText().toString() ,
+//                                            SHEET_COLUM,
+//                                            DataUtil.updateIncomeByUserToSheet(startday, endday, listUser, listInitialBill, listInitialBillDetail, listInitialPayment, listInitialDebt));
+//
+////                                            DataUtil.getCashByUser(listInitialBill, listInitialPayment, listUser)));
+//
+//                        }
+//                    },false);
+//
+//                }else {
+//                    updateSheetIncomeData(rdMonth.getText().toString(),
+//                                    SHEET_COLUM,
+//                                    DataUtil.updateIncomeByUserToSheet(startday, endday, listUser, listInitialBill, listInitialBillDetail, listInitialPayment, listInitialDebt));
+//
+////                                    DataUtil.getCashByUser(listInitialBill, listInitialPayment, listUser)));
+//
+//                }
+//
+//            }
+//        }, false);
+//    }
 
     private void updateSheetIncomeData(final String tabtitle, String sheet_direction, final List<List<Object>> params){
         SheetConnect.postValue(Api_link.STATISTICAL_SHEET_KEY,
@@ -630,4 +398,10 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         return user_id;
     }
 
+    //data return from filter date fragment
+    @Override
+    public void onResponse(BaseModel object) {
+        tvCalendar.setText(Util.getIconString(R.string.icon_calendar, "   ", object.getString("text") ));
+        loadInitialData(object.getLong("start"), object.getLong("end"));
+    }
 }

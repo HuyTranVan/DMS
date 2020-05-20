@@ -15,7 +15,7 @@ import wolve.dms.utils.Util;
  */
 
 public class Api_link {
-    public final static String BASE_URL= BuildConfig.DEBUG_FLAG? "http://192.168.1.13/": BuildConfig.SERVER_URL;
+    public final static String BASE_URL= BuildConfig.DEBUG_FLAG? "http://192.168.1.9/": BuildConfig.SERVER_URL;
 
     public final static String BASE_PHOTO_URL = BuildConfig.UPLOAD_URL;
     public final static String MAP_API = "https://maps.googleapis.com/maps/api/";

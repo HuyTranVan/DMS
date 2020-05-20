@@ -42,6 +42,7 @@ import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDouble;
+import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CInputForm;
 //import wolve.dms.libraries.FileUploader;
@@ -103,14 +104,10 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
             @Override
             public void onClick(View view) {
 
-                CustomBottomDialog.choiceListObject("CHỌN NHÓM SẢN PHẨM", mActivity.listProductGroup, "text", new CallbackBaseModel() {
+                CustomBottomDialog.choiceListObject("CHỌN NHÓM SẢN PHẨM", mActivity.listProductGroup, "text", new CallbackObject() {
                     @Override
                     public void onResponse(BaseModel object) {
                         edGroup.setText(object.getString("text"));
-                    }
-
-                    @Override
-                    public void onError() {
 
                     }
                 }, null);
@@ -361,12 +358,12 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CHOOSE_IMAGE ){
             if (data != null){
-                Crop.of(Uri.parse(data.getData().toString()), imageChangeUri).asSquare().withMaxSize(200,200).start(getActivity(), NewUpdateProductFragment.this);
+                Crop.of(Uri.parse(data.getData().toString()), imageChangeUri).asSquare().withMaxSize(400,400).start(getActivity(), NewUpdateProductFragment.this);
 
             }
 
         }else if (requestCode == REQUEST_IMAGE_CAPTURE){
-            Crop.of(imageChangeUri, imageChangeUri).asSquare().withMaxSize(200,200).start(getActivity(), NewUpdateProductFragment.this);
+            Crop.of(imageChangeUri, imageChangeUri).asSquare().withMaxSize(400,400).start(getActivity(), NewUpdateProductFragment.this);
 
         }
         else if (data != null && requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {

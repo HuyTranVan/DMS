@@ -280,65 +280,77 @@
 
     </LinearLayout>
 
-    <RelativeLayout
+    <LinearLayout
+        android:id="@+id/customer_filter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/_20sdp"
-        android:layout_marginBottom="@dimen/_20sdp"
+        android:minWidth="@dimen/_30sdp"
+        android:minHeight="@dimen/_30sdp"
+        android:orientation="horizontal"
+        android:background="@drawable/btn_round_blue"
         android:layout_gravity="bottom|right"
-        android:gravity="right">
+        android:layout_marginRight="@dimen/_20sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:visibility="visible"
+        android:gravity="center">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/customer_filter_rv"
+        <TextView
+            android:id="@+id/customer_filter_text"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_above="@+id/customer_filter"
-            android:layout_marginBottom="@dimen/_5sdp"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/font_awesome"
+            android:text="@string/icon_calendar"
+            android:gravity="center"
+            android:textColor="@color/white_text_color"
+            android:textSize="@dimen/_12sdp"
             android:visibility="gone"/>
 
-        <LinearLayout
-            android:id="@+id/customer_filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@drawable/btn_round_blue"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:visibility="gone">
+        <TextView
+            android:id="@+id/customer_filter_icon_close"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:fontFamily="@font/font_awesome"
+            android:background="?selectableItemBackgroundBorderless"
+            android:text="@string/icon_calendar"
+            android:textSize="@dimen/_12sdp"
+            android:textColor="@color/colorWhite"
+            android:gravity="center"/>
 
-            <TextView
-                android:id="@+id/customer_filter_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textColor="@color/white_text_color"
-                android:textSize="@dimen/_12sdp"/>
+    </LinearLayout>
 
-            <TextView
-                android:layout_width="@dimen/_30sdp"
-                android:layout_height="@dimen/_30sdp"
-                android:fontFamily="@font/font_awesome"
-                android:text="@string/icon_filter"
-                android:textColor="@color/colorWhite"
-                android:gravity="center"/>
+<!--    <RelativeLayout-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginRight="@dimen/_20sdp"-->
+<!--        android:layout_marginBottom="@dimen/_20sdp"-->
+<!--        android:layout_gravity="bottom|right"-->
+<!--        android:gravity="right">-->
 
-        </LinearLayout>
+<!--        <androidx.recyclerview.widget.RecyclerView-->
+<!--            android:id="@+id/customer_filter_rv"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_alignParentRight="true"-->
+<!--            android:layout_above="@+id/customer_filter"-->
+<!--            android:layout_marginBottom="@dimen/_5sdp"-->
+<!--            android:visibility="gone"/>-->
 
-    </RelativeLayout>
+<!--        -->
+
+<!--    </RelativeLayout>-->
 
     <TextView
         android:id="@+id/customer_print"
         android:layout_width="@dimen/_30sdp"
         android:layout_height="@dimen/_30sdp"
         android:fontFamily="@font/font_awesome"
-        android:background="@drawable/btn_round_grey"
+        android:background="@drawable/btn_round_greyblue"
         android:text="@string/icon_print"
         android:textColor="@color/colorWhite"
         android:gravity="center"
         android:layout_gravity="bottom"
         android:layout_marginLeft="@dimen/_20sdp"
-        android:layout_marginBottom="@dimen/_20sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
         android:visibility="gone"/>
 
 
