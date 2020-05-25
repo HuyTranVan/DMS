@@ -3,18 +3,23 @@ package wolve.dms.activities;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.service.notification.StatusBarNotification;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.Fragment;
@@ -23,29 +28,20 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.HomeAdapter;
-import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.SystemConnect;
 import wolve.dms.apiconnect.UserConnect;
-import wolve.dms.callback.Callback;
-import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomListList;
 import wolve.dms.callback.CallbackListObject;
 import wolve.dms.callback.CallbackObject;
-import wolve.dms.callback.CallbackString;
-import wolve.dms.libraries.connectapi.CustomGetMethod;
-import wolve.dms.libraries.connectapi.DownloadImage;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.ProductGroup;
@@ -54,7 +50,6 @@ import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
-import wolve.dms.utils.CustomFixSQL;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
@@ -111,6 +106,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void initialData() {
         Util.getInstance().setCurrentActivity(this);
@@ -150,7 +146,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         });
 
         NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancelAll();
+        List<NotificationChannel> list = notificationManager.getNotificationChannels();
+        //notificationManager.
+
+//        for (NotificationChannel item: list){
+//            Log.e("nooooo", item.);
+//
+//        }
 
 
     }

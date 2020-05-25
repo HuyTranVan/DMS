@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -20,7 +19,6 @@ import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.ProductAdapter;
 import wolve.dms.adapter.ProductGroupAdapter;

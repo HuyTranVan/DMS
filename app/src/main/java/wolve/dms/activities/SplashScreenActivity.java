@@ -1,52 +1,22 @@
 package wolve.dms.activities;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Handler;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.List;
-
-import wolve.dms.BaseActivity;
 import wolve.dms.BuildConfig;
 import wolve.dms.R;
-import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.apiconnect.SystemConnect;
-import wolve.dms.apiconnect.UserConnect;
-import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackJSONObject;
-import wolve.dms.callback.CallbackString;
-import wolve.dms.libraries.Security;
-import wolve.dms.libraries.connectapi.CustomGetMethod;
-import wolve.dms.libraries.connectapi.CustomPostMethod;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
-import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
-
-import static wolve.dms.BuildConfig.SERVER_URL;
 
 public class SplashScreenActivity extends BaseActivity {
     private ProgressBar progressBar;

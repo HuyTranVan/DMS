@@ -1,43 +1,25 @@
 package wolve.dms.activities;
 
-import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.viewpager.widget.ViewPager;
 
 import com.github.clans.fab.FloatingActionButton;
-import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import wolve.dms.BaseActivity;
 import wolve.dms.R;
-import wolve.dms.adapter.ProductAdapter;
-import wolve.dms.adapter.ProductGroupAdapter;
 import wolve.dms.adapter.UserAdapter;
-import wolve.dms.adapter.ViewpagerProductAdapter;
-import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.apiconnect.UserConnect;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackCustomList;
-import wolve.dms.callback.CallbackDeleteAdapter;
-import wolve.dms.libraries.MySwipeRefreshLayout;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomSQL;
-import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 

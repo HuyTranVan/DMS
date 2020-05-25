@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.Statistical_ViewpagerAdapter;
 import wolve.dms.apiconnect.Api_link;

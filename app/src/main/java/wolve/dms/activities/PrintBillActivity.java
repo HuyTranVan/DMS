@@ -29,7 +29,6 @@ import java.util.UUID;
 
 import androidmads.library.qrgenearator.QRGContents;
 import androidmads.library.qrgenearator.QRGEncoder;
-import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.DebtAdapter;
 import wolve.dms.adapter.PrintBillAdapter;

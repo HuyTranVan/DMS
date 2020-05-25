@@ -6,28 +6,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.nispok.snackbar.Snackbar;
 import com.nispok.snackbar.listeners.ActionClickListener;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.List;
-
-import wolve.dms.BaseActivity;
-import wolve.dms.BuildConfig;
-import wolve.dms.DMSApplication;
 import wolve.dms.R;
-import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.SystemConnect;
 import wolve.dms.apiconnect.UserConnect;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.callback.CallbackString;
-import wolve.dms.models.Distributor;
-import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomSQL;

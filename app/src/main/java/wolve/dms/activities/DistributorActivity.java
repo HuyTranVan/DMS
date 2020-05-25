@@ -1,12 +1,7 @@
 package wolve.dms.activities;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.provider.MediaStore;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -14,41 +9,20 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.core.content.FileProvider;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
-import com.github.clans.fab.FloatingActionButton;
-import com.google.android.material.tabs.TabLayout;
 import com.soundcloud.android.crop.Crop;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import wolve.dms.BaseActivity;
 import wolve.dms.BuildConfig;
 import wolve.dms.R;
-import wolve.dms.adapter.ProductAdapter;
-import wolve.dms.adapter.ProductGroupAdapter;
-import wolve.dms.adapter.ViewpagerProductAdapter;
 import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.apiconnect.SystemConnect;
-import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackCustomList;
-import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CInputForm;
-import wolve.dms.libraries.MySwipeRefreshLayout;
-import wolve.dms.libraries.connectapi.UploadCloudaryMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
-import wolve.dms.models.User;
-import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
-import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 

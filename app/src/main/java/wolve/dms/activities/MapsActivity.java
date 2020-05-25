@@ -1,9 +1,7 @@
 package wolve.dms.activities;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Handler;
@@ -45,19 +43,14 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
-import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.CustomWindowAdapter;
 import wolve.dms.adapter.Customer_SearchAdapter;

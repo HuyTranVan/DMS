@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.ScannerCodeAdapter;
 import wolve.dms.apiconnect.Api_link;
@@ -31,7 +30,6 @@ import wolve.dms.apiconnect.SheetConnect;
 import wolve.dms.customviews.CInputForm;
 import wolve.dms.libraries.connectapi.sheetapi.GoogleSheetGetData;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;

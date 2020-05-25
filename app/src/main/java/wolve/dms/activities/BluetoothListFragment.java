@@ -1,11 +1,7 @@
 package wolve.dms.activities;
 
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,21 +13,15 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.BluetoothListAdapter;
-import wolve.dms.callback.CallbackProcess;
-import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
 
-import static android.app.Activity.RESULT_OK;
-//import static wolve.dms.BaseActivity.btsocket;
-//import static wolve.dms.BaseActivity.mBluetoothAdapter;
-import static wolve.dms.utils.Constants.REQUEST_ENABLE_BT;
+//import static wolve.dms.activities.BaseActivity.btsocket;
+//import static wolve.dms.activities.BaseActivity.mBluetoothAdapter;
+
 
 public class BluetoothListFragment extends DialogFragment implements View.OnClickListener {
     private Button btnCancel;

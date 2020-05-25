@@ -12,7 +12,6 @@ import com.github.clans.fab.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
-import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.ProductGroupAdapter;
 import wolve.dms.apiconnect.ProductConnect;

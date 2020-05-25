@@ -4,53 +4,35 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
-import com.google.api.services.sheets.v4.model.Sheet;
-
-import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import wolve.dms.BaseActivity;
 import wolve.dms.R;
 import wolve.dms.adapter.Statistical_ViewpagerAdapter;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.SheetConnect;
 import wolve.dms.apiconnect.SystemConnect;
-import wolve.dms.callback.CallbackBaseModel;
-import wolve.dms.callback.CallbackBoolean;
 
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackObject;
-import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CustomTabLayout;
-import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialog;
-import wolve.dms.libraries.calendarpicker.SimpleDatePickerDialogFragment;
-import wolve.dms.libraries.calendarpicker.YearPicker;
-import wolve.dms.libraries.connectapi.sheetapi.GoogleSheetGetAllTab;
 import wolve.dms.libraries.connectapi.sheetapi.GoogleSheetGetData;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
-import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
-
-import static wolve.dms.libraries.connectapi.sheetapi.GoogleSheetPostData.SHEET_COLUM;
-import static wolve.dms.utils.Constants.YEAR_DEFAULT;
 
 /**
  * Created by macos on 9/16/17.

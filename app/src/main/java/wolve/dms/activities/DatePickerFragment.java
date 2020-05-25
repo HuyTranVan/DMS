@@ -1,63 +1,23 @@
 package wolve.dms.activities;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.IdRes;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.ViewPager;
 
-import com.github.clans.fab.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
-import com.turkialkhateeb.materialcolorpicker.ColorChooserDialog;
-import com.turkialkhateeb.materialcolorpicker.ColorListener;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import wolve.dms.BaseActivity;
 import wolve.dms.R;
-import wolve.dms.adapter.ProductAdapter;
-import wolve.dms.adapter.ProductGroupAdapter;
 import wolve.dms.adapter.ViewpagerDatePickerAdapter;
-import wolve.dms.adapter.ViewpagerProductAdapter;
-import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.ProductConnect;
-import wolve.dms.apiconnect.StatusConnect;
-import wolve.dms.callback.Callback;
-import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackClickAdapter;
-import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackCustomList;
-import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackObject;
-import wolve.dms.customviews.CInputForm;
-import wolve.dms.libraries.FitScrollWithFullscreen;
-import wolve.dms.libraries.MySwipeRefreshLayout;
-import wolve.dms.models.BaseModel;
-import wolve.dms.models.Status;
-import wolve.dms.models.User;
-import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomCenterDialog;
-import wolve.dms.utils.DataUtil;
-import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
 /**
