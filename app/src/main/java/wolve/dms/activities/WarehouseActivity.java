@@ -136,6 +136,9 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
         }else if(mFragment != null && mFragment instanceof ImportReturnFragment) {
             getSupportFragmentManager().popBackStack();
 
+        } else if(mFragment != null && mFragment instanceof InventoryEditFragment) {
+            getSupportFragmentManager().popBackStack();
+
         }else {
             Transaction.gotoHomeActivityRight(true);
         }
@@ -191,8 +194,12 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onResponse(BaseModel object) {
                 selectTempWarehouseReturn(object);
-                //openFragmentImportReturn(object.BaseModelstoString());
 
+            }
+        }, new CallbackObject() {
+            @Override
+            public void onResponse(BaseModel object) {
+                openEditInventoryFragment(object);
             }
         });
         Util.createLinearRV(rvDepot, adapter);
@@ -210,6 +217,13 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
         ImportReturnFragment importReturnFragment = new ImportReturnFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constants.WAREHOUSE, warehouse.BaseModelstoString());
+        bundle.putString(Constants.TEMPWAREHOUSE, temptWarehouse.BaseModelstoString());
+        changeFragment(importReturnFragment, bundle, true );
+    }
+
+    private void openFragmentInventoryEdit(BaseModel temptWarehouse){
+        InventoryEditFragment importReturnFragment = new InventoryEditFragment();
+        Bundle bundle = new Bundle();
         bundle.putString(Constants.TEMPWAREHOUSE, temptWarehouse.BaseModelstoString());
         changeFragment(importReturnFragment, bundle, true );
     }
@@ -252,5 +266,22 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
 
         }
 
+    }
+
+    private void openEditInventoryFragment(BaseModel curentWarehouse){
+        CustomCenterDialog.alertWithCancelButton("Hiệu chỉnh  tồn kho",
+                "Mở trang điều chỉnh số lượng tồn kho tạm",
+                "tiếp tục",
+                "hủy",
+                new CallbackBoolean() {
+                    @Override
+                    public void onRespone(Boolean result) {
+                        if (result){
+                            openFragmentInventoryEdit(curentWarehouse);
+
+                        }
+
+                    }
+                });
     }
 }

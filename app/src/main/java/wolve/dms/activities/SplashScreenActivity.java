@@ -14,6 +14,7 @@ import wolve.dms.callback.CallbackCustom;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
@@ -47,33 +48,19 @@ public class SplashScreenActivity extends BaseActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (BuildConfig.VERSION_CODE > CustomSQL.getInt(Constants.VERSION_CODE)){
-                    CustomSQL.clear();
-                    CustomSQL.setInt(Constants.VERSION_CODE, BuildConfig.VERSION_CODE);
-                    gotoLoginScreen();
-
-                }else {
-                    if (!Util.isEmpty(CustomSQL.getString(Constants.USER_USERNAME)) && !Util.isEmpty(User.getToken())){
-                        checkLogin(new CallbackBoolean() {
-                            @Override
-                            public void onRespone(Boolean result) {
-                                progressBar.setVisibility(View.GONE);
-                                if (result){
-                                    Transaction.gotoHomeActivity();
-
-                                }else {
-                                    gotoLoginScreen();
-
-                                }
-                            }
-                        });
-
-                    }else {
+                checkLogin(new CallbackBoolean() {
+                    @Override
+                    public void onRespone(Boolean result) {
                         progressBar.setVisibility(View.GONE);
-                        gotoLoginScreen();
+                        if (result){
+                            Transaction.gotoHomeActivity();
 
+                        }else {
+                            gotoLoginScreen();
+
+                        }
                     }
-                }
+                });
 
             }
 
@@ -96,6 +83,10 @@ public class SplashScreenActivity extends BaseActivity {
         Intent intent = new Intent(SplashScreenActivity.this, LoginActivity.class);
         startActivity(intent);
         SplashScreenActivity.this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+
+        CustomSQL.clear();
+        CustomSQL.setInt(Constants.VERSION_CODE, BuildConfig.VERSION_CODE);
+
         finish();
     }
 
@@ -103,11 +94,35 @@ public class SplashScreenActivity extends BaseActivity {
         SystemConnect.getCheckLogin(new CallbackCustom(){
             @Override
             public void onResponse(BaseModel result) {
-                if (result.getBoolean("success")){
-                    listener.onRespone(true);
+                if (result.getInt("version") > BuildConfig.VERSION_CODE){
+                    progressBar.setVisibility(View.GONE);
+                    CustomCenterDialog.alertWithCancelButton("PHIÊN BẢN MỚI",
+                            "Có 1 bản cập nhật mới trên Store \nVui lòng cập nhật",
+                            "đồng ý",
+                            "không", new CallbackBoolean() {
+                                @Override
+                                public void onRespone(Boolean result) {
+                                    if (!result){
+                                        finish();
+
+                                    }else {
+                                        Transaction.openGooglePlay();
+
+
+                                    }
+                                }
+                            });
+
+
                 }else {
-                    listener.onRespone(false);
+                    if (result.getBoolean("success")){
+                        listener.onRespone(true);
+                    }else {
+                        listener.onRespone(false);
+                    }
+
                 }
+
             }
 
             @Override

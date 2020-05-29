@@ -644,28 +644,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     }
 
-    private void dialogTempBill(BaseModel tempBill){
-        CustomCenterDialog.alertWithCancelButton("Hóa đơn tạm",
-                String.format("Khách hàng có 1 hóa đơn do %s tạo vói số tiên %sđ nhưng chưa giao\n Bấm -giao hàng- nếu bạn là nhân viên giao hàng",
-                        tempBill.getBaseModel("user").getString("displayName"),
-                        Util.FormatMoney(tempBill.getDouble("total"))),
-                "Giao hàng",
-                "Không",
-                new CallbackBoolean() {
-                    @Override
-                    public void onRespone(Boolean result) {
-                        if (result){
-                            printTempBill(tempBill);
-
-                        }else {
-                            viewPager.setCurrentItem(1, true);
-                        }
-
-                    }
-                }
-        );
-    }
-
     protected void printTempBill(BaseModel bill){
         Transaction.checkInventoryBeforePrintBill(bill,
                 DataUtil.array2ListObject(bill.getString(Constants.BILL_DETAIL)),
@@ -697,67 +675,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
             }
         });
     }
-
-    private void updateCustomerDebt(BaseModel customer){
-        List<BaseModel> results = new ArrayList<>();
-        List<String> params = new ArrayList<>();
-
-        if (listDebtBill.size() >0){
-            for (int i=0; i<listDebtBill.size(); i++){
-                BaseModel item = new BaseModel();
-                item.put("user_id", listDebtBill.get(i).getInt("user_id"));
-                item.put("customer_id", listDebtBill.get(i).getInt("customer_id"));
-                item.put("distributor_id", listDebtBill.get(i).getInt("distributor_id"));
-                item.put("debt", listDebtBill.get(i).getDouble("debt"));
-
-                boolean check = false;
-                for (int ii=0; ii< results.size(); ii++){
-                    if (listDebtBill.get(i).getInt("user_id") == results.get(ii).getInt("user_id")){
-                        results.get(ii).put("debt", results.get(ii).getDouble("debt") + listDebtBill.get(i).getDouble("debt") );
-
-                        check = true;
-                        break;
-                    }
-                }
-
-                if (!check){
-                    results.add(item);
-                }
-
-            }
-
-            for (int a=0; a<results.size(); a++){
-                params.add(String.format(Api_link.DEBT_PARAM,
-                            results.get(a).getDouble("debt"),
-                            results.get(a).getInt("user_id"),
-                            results.get(a).getInt("customer_id"),
-                            results.get(a).getInt("distributor_id")));
-
-            }
-
-        }else if (listBills.size() >0){
-            params.add(String.format(Api_link.DEBT_PARAM,
-                    0.0,
-                    listBills.get(0).getInt("user_id"),
-                    customer.getInt("id"),
-                    Distributor.getId()));
-        }
-
-        CustomerConnect.PostListDebt(params, new CallbackListCustom() {
-            @Override
-            public void onResponse(List result) {
-                Util.showSnackbarError("Cập nhật công nợ thành công");
-            }
-
-            @Override
-            public void onError(String error) {
-                Util.showSnackbarError("Cập nhật công nợ thất bại");
-
-            }
-        }, true);
-
-    }
-
 
     @Override
     public boolean onLongClick(View view) {

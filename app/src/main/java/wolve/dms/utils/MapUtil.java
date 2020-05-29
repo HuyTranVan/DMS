@@ -490,7 +490,7 @@ public class MapUtil{
             LatLng currentPoint = new LatLng(customer.getDouble("lat"), customer.getDouble("lng"));
             drawRoute.setFromLatLong(lastMarkerPoint.latitude, lastMarkerPoint.longitude);
             drawRoute.setToLatLong(currentPoint.latitude, currentPoint.longitude);
-            drawRoute.setGmapAndKey("AIzaSyClpUZR00DRSHTaEFm09uyUSo3rCq1o9iU", mMap);
+            drawRoute.setGmapAndKey(Util.getInstance().getCurrentActivity().getResources().getString(R.string.map_route), mMap);
             drawRoute.run();
 
             lastMarkerPoint = currentPoint;

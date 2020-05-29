@@ -509,39 +509,45 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         }
     }
 
-    private void addMarkerToList(BaseModel  customer){
+    private Marker addMarkerToList(BaseModel  customer){
         boolean isNewMarker = true;
+        Marker marker = null;
         for (int i=0; i< listMarker.size(); i++){
             if (listMarker.get(i).getTitle().equals(customer.getString("id"))){
                 listMarker.get(i).setTag(buildMarkerByCustomer(customer).BaseModelstoString());
-                currentMarker = listMarker.get(i);
+                marker = listMarker.get(i);
                 isNewMarker = false;
                 break;
             }
         }
 
         if (isNewMarker){
-            currentMarker = MapUtil.addMarkerToMap(mMap, buildMarkerByCustomer(customer), Constants.MARKER_ALL);
-            listMarker.add(currentMarker);
+            marker = MapUtil.addMarkerToMap(mMap, buildMarkerByCustomer(customer), Constants.MARKER_ALL);
+            listMarker.add(marker);
 
         }
+
+        return marker;
     }
 
     private void reUpdateMarkerDetail(BaseModel  customer){
         unsetCurrentMarker();
-        addMarkerToList(customer);
+        setCurrentMarker(addMarkerToList(customer));
 
-        if (currentMarker.getTag() != null) {
-            getDistanceFromCurrent(customer.getDouble("lat"), customer.getDouble("lng"), new CallbackLong() {
-                @Override
-                public void onResponse(Long value) {
-                    Bitmap bitmap = MapUtil.GetBitmapMarker(MapsActivity.this, customer.getInt("icon"), customer.getString("checkincount"), R.color.pin_waiting);
-                    currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()*2,bitmap.getHeight()*2, false)));
 
-                    updateBottomDetail(customer, value);
-                }
-            });
-        }
+
+
+//        if (currentMarker.getTag() != null) {
+//            getDistanceFromCurrent(customer.getDouble("lat"), customer.getDouble("lng"), new CallbackLong() {
+//                @Override
+//                public void onResponse(Long value) {
+//                    Bitmap bitmap = MapUtil.GetBitmapMarker(MapsActivity.this, customer.getInt("icon"), customer.getString("checkincount"), R.color.pin_waiting);
+//                    currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()*2,bitmap.getHeight()*2, false)));
+//
+//                    updateBottomDetail(customer, value);
+//                }
+//            });
+//        }
     }
 
     @Override
@@ -656,19 +662,26 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     }
 
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+        unsetCurrentMarker();
+        setCurrentMarker(marker);
+
+
+        return true;
+    }
+
     private void unsetCurrentMarker(){
         if (currentMarker != null){
             final BaseModel cust = new BaseModel(currentMarker.getTag().toString());
             Bitmap bitmap = MapUtil.GetBitmapMarker(this, cust.getInt("icon"), cust.getString("checkincount"), R.color.pin_waiting);
             currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
+
+            currentMarker = null;
         }
     }
 
-    @Override
-    public boolean onMarkerClick(final Marker marker) {
-        unsetCurrentMarker();
-        currentMarker = marker;
-
+    private void setCurrentMarker(Marker marker){
         if (marker.getTag() != null) {
             final BaseModel customer = new BaseModel(marker.getTag().toString());
 
@@ -677,16 +690,16 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 public void onResponse(Long value) {
                     Bitmap bitmap = MapUtil.GetBitmapMarker(MapsActivity.this, customer.getInt("icon"), customer.getString("checkincount"), R.color.pin_waiting);
                     assert bitmap != null;
-                    currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()*2,bitmap.getHeight()*2, false)));
-
-
+                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(bitmap, bitmap.getWidth()*2,bitmap.getHeight()*2, false)));
                     updateBottomDetail(customer, value);
+
+                    currentMarker = marker;
                 }
             });
 
         }
 
-        return true;
+
     }
 
     public void checkGPS() {
@@ -1226,8 +1239,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             }
         });
     }
-
-
 
 //    private void setWatingListVisibilityScreen(boolean isShow){
 //        if (isShow){

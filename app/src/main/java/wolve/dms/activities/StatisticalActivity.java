@@ -1,6 +1,7 @@
 package wolve.dms.activities;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -44,7 +45,6 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     protected ViewPager viewPager;
     private CustomTabLayout tabLayout;
     private LinearLayout btnEmployeeFilter;
-    private RelativeLayout rlBottom;
     private Fragment mFragment;
 
     private Statistical_ViewpagerAdapter pageAdapter;
@@ -64,10 +64,8 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
             R.string.icon_money,
             R.string.icon_district,
             R.string.icon_bomb};
-    private int mDate = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-    private int mMonth = Calendar.getInstance().get(Calendar.MONTH);
-    private int mYear = Calendar.getInstance().get(Calendar.YEAR);
-    //private int currentChecked;
+    private long start, end;
+    private int currentCheckedTime;
 
 
     @Override
@@ -89,7 +87,6 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         btnEmployeeFilter = findViewById(R.id.statistical_filter_by_employee);
         btnExport = findViewById(R.id.statistical_export);
         btnReload = findViewById(R.id.statistical_reload);
-        rlBottom = findViewById(R.id.statistical_bottom_group);
         tvEmployeeName = findViewById(R.id.statistical_filter_by_employee_name);
         tvCalendar = findViewById(R.id.statistical_calendar);
 
@@ -103,13 +100,10 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         tvEmployeeName.setText(User.getCurrentRoleId()==Constants.ROLE_ADMIN? Constants.ALL_FILTER : User.getFullName());
         tvCalendar.setText(Util.getIconString(R.string.icon_calendar, "   ", Util.CurrentMonthYear() ));
 
-        loadInitialData(Util.TimeStamp1(Util.Current01MonthYear()),
-                Util.TimeStamp1(Util.Next01MonthYear()));
+        loadInitialData(Util.TimeStamp1(Util.Current01MonthYear()), Util.TimeStamp1(Util.Next01MonthYear()), 1);
 
         setupViewPager(viewPager);
         setupTabLayout(tabLayout);
-
-        //currentChecked = rdGroup.getCheckedRadioButtonId();
 
     }
 
@@ -177,11 +171,13 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
                 break;
 
             case R.id.statistical_reload:
-                //loadInitialData(getStartDay(), getEndDay());
+                loadInitialData(start, end, currentCheckedTime);
                 break;
 
             case R.id.statistical_calendar:
-                changeFragment(new DatePickerFragment(), true);
+                Bundle bundle = new Bundle();
+                bundle.putInt("position", currentCheckedTime);
+                changeFragment(new DatePickerFragment(), bundle, true);
                 break;
 
         }
@@ -205,7 +201,10 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
 
     }
 
-    private void loadInitialData(long starDay, long lastDay){
+    private void loadInitialData(long starDay, long lastDay, int currentcheckedtime){
+        start = starDay;
+        end = lastDay;
+        currentCheckedTime = currentcheckedtime;
         SystemConnect.getStatisticals(String.format(Api_link.STATISTICAL_PARAM, starDay, lastDay), new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
@@ -286,7 +285,7 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
         Util.getInstance().setCurrentActivity(this);
         if (data.hasExtra(Constants.RELOAD_DATA) && requestCode == Constants.RESULT_CUSTOMER_ACTIVITY){
             if (data.getBooleanExtra(Constants.RELOAD_DATA, false)){
-                //loadInitialData(getStartDay(), getEndDay());
+                loadInitialData(start, end, currentCheckedTime);
             }
 
         }
@@ -383,7 +382,8 @@ public class StatisticalActivity extends BaseActivity implements  View.OnClickLi
     //data return from filter date fragment
     @Override
     public void onResponse(BaseModel object) {
-        tvCalendar.setText(Util.getIconString(R.string.icon_calendar, "   ", object.getString("text") ));
-        loadInitialData(object.getLong("start"), object.getLong("end"));
+        tvCalendar.setText(Util.getIconString(R.string.icon_calendar, "   ", object.getString("text")));
+        loadInitialData(object.getLong("start"), object.getLong("end"), object.getInt("position"));
+
     }
 }

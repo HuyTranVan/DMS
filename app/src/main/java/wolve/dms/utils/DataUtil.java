@@ -450,7 +450,7 @@ public class DataUtil {
         customerResult.put("checkinCount", customer.getInt("checkinCount"));
         customerResult.put("shopType", customer.getString("shopType"));
         customerResult.put("checkIns", customer.getJsonObject("checkIns"));
-        customerResult.put("currentDebt", customer.getDouble("currentDebt"));
+        //customerResult.put("currentDebt", customer.getDouble("currentDebt"));
         customerResult.put("status", customer.getJsonObject("status"));
         customerResult.put("distributor_id", customer.getInt("distributor_id"));
         customerResult.put("status_id", customer.getInt("status_id"));
@@ -1005,6 +1005,17 @@ public class DataUtil {
     public static BaseModel postImportParam(String param){
         BaseModel paramCheckin = new BaseModel();
         paramCheckin.put("url", Api_link.IMPORT_NEW);
+        paramCheckin.put("method", "POST");
+        paramCheckin.put("isjson", true );
+        paramCheckin.put("param", param );
+
+        return paramCheckin;
+
+    }
+
+    public static BaseModel postInventoryQuantityParam(String param){
+        BaseModel paramCheckin = new BaseModel();
+        paramCheckin.put("url", Api_link.INVENTORY_EDIT_QUANTITY);
         paramCheckin.put("method", "POST");
         paramCheckin.put("isjson", true );
         paramCheckin.put("param", param );

@@ -22,8 +22,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorWhite"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_number_current_quantity_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/input_number_current_quantity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Số lượng hiện tại"
+                android:inputType="number"
+                app:backgroundTint="@color/colorBlueDark"
+                android:focusable="false"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
@@ -35,7 +52,7 @@
                 android:id="@+id/input_number_quantity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Số lượng"
+                android:hint="Số lượng hiệu chỉnh"
                 android:inputType="number"
                 app:backgroundTint="@color/colorBlueDark" />
 
@@ -47,11 +64,11 @@
 <!--            android:background="#0d000000"/>-->
 
         <include
-                android:id="@+id/bottom"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                layout="@layout/view_bottom_dialog_button"
-                android:layout_alignParentBottom="true"/>
+            android:id="@+id/bottom"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            layout="@layout/view_bottom_dialog_button"
+            android:layout_alignParentBottom="true"/>
 
         </LinearLayout>
 

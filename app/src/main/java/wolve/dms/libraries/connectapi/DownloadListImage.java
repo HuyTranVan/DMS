@@ -54,8 +54,11 @@ public class DownloadListImage extends AsyncTask<String, Void, List<BaseModel>> 
 
             }
 
-            bis.close();
-            is.close();
+            if (bis != null && is != null){
+                bis.close();
+                is.close();
+            }
+
 
         } catch (IOException e) {
             Log.e("Hub","Error getting the image from server : " + e.getMessage().toString());

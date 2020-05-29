@@ -29,16 +29,20 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
-    private CallbackObject mListener, mListenerInfo, mListenerReturn;
-    //private CallbackDeleteAdapter mDeleteListener;
+    private CallbackObject mListener, mListenerInfo, mListenerReturn, mListenerEdit;
 
-    public WarehouseAdapter(List<BaseModel> list, CallbackObject listener,  CallbackObject listenerinfo, CallbackObject listenerreturn) {
+    public WarehouseAdapter(List<BaseModel> list,
+                            CallbackObject listener,
+                            CallbackObject listenerinfo,
+                            CallbackObject listenerreturn,
+                            CallbackObject listeneredit) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mData = list;
         this.mListener = listener;
         this.mListenerInfo = listenerinfo;
         this.mListenerReturn = listenerreturn;
+        this.mListenerEdit = listeneredit;
 
         DataUtil.sortbyStringKey("isMaster",mData, false);
     }
@@ -78,11 +82,21 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
             case 1:
                 holder.tvType.setVisibility(View.VISIBLE);
                 holder.tvType.setText(Util.getIcon(R.string.icon_home));
+                holder.tvReturn.setVisibility( View.GONE);
                 break;
 
             case 2:
                 holder.tvType.setVisibility(View.VISIBLE);
                 holder.tvType.setText(Util.getIcon(R.string.icon_depot));
+                if (Util.isAdmin() && mData.get(position).getInt("quantity")>0){
+                    holder.tvReturn.setVisibility( View.VISIBLE);
+                    holder.tvReturn.setText(Util.getIcon(R.string.icon_edit_pen));
+                    holder.tvReturn.setRotation(0);
+
+                }else {
+                    holder.tvReturn.setVisibility(View.GONE);
+                }
+
                 break;
 
             case 3:
@@ -90,6 +104,7 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
                 if (mData.get(position).getInt("quantity")>0){
                     if (Util.isAdmin() || User.getId() == mData.get(position).getInt("user_id")){
                         holder.tvReturn.setVisibility( View.VISIBLE);
+                        holder.tvReturn.setText(Util.getIcon(R.string.icon_logout));
                     }else {
                         holder.tvReturn.setVisibility(View.GONE);
                     }
@@ -112,7 +127,13 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
         holder.tvReturn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mListenerReturn.onResponse(mData.get(position));
+                if (mData.get(position).getInt("isMaster") == 2){
+                    mListenerEdit.onResponse(mData.get(position));
+
+                }else {
+                    mListenerReturn.onResponse(mData.get(position));
+                }
+
             }
         });
 

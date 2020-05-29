@@ -106,6 +106,8 @@ public class ProductImportChoosenAdapter extends RecyclerView.Adapter<ProductImp
              public void onClick(View view) {
                  CustomCenterDialog.showDialogInputQuantity(mData.get(position).getString("name"),
                          mData.get(position).getString("quantity"),
+                         0,
+                         false,
                          new CallbackString() {
                              @Override
                              public void Result(String s) {

@@ -35,7 +35,6 @@ import wolve.dms.activities.ProductGroupActivity;
 import wolve.dms.activities.ScannerActivity;
 import wolve.dms.activities.ShopCartActivity;
 import wolve.dms.activities.StatisticalActivity;
-import wolve.dms.activities.StatisticalCustomerActivity;
 import wolve.dms.activities.StatusActivity;
 import wolve.dms.activities.TestActivity;
 import wolve.dms.activities.UserActivity;
@@ -55,6 +54,23 @@ import static wolve.dms.utils.Constants.REQUEST_IMAGE_CAPTURE;
 
 
 public class Transaction {
+
+    public static void openGooglePlay(){
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        Uri.Builder uriBuilder = Uri.parse("https://play.google.com/store/apps/details")
+                .buildUpon()
+                .appendQueryParameter("id", "wolve.dms")
+                .appendQueryParameter("launch", "false");
+
+// Optional parameters, such as referrer, are passed onto the launched
+// instant app. You can retrieve these parameters using
+// Activity.getIntent().getData().
+        //uriBuilder.appendQueryParameter("referrer", "exampleCampaignId");
+
+        intent.setData(uriBuilder.build());
+        //intent.setPackage("com.android.vending");
+        Util.getInstance().getCurrentActivity().startActivity(intent);
+    }
 
     public static void gotoLoginActivityRight() {
         Context context = Util.getInstance().getCurrentActivity();
@@ -253,13 +269,6 @@ public class Transaction {
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
-    public static void gotoStatisticalCustomerActivity() {
-        Activity context = Util.getInstance().getCurrentActivity();
-        Intent intent = new Intent(context, StatisticalCustomerActivity.class);
-        context.startActivity(intent);
-        context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-    }
-
     public static void gotoDistributorActivity() {
         Activity context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(context, DistributorActivity.class);
@@ -308,8 +317,6 @@ public class Transaction {
     }
 
     public static void shareImageViaZalo(Uri uri) {
-//        File file = new File(path);
-//        Uri uri = Uri.fromFile(file);
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("image/*");
         intent.putExtra(Intent.EXTRA_STREAM, uri);
@@ -318,14 +325,6 @@ public class Transaction {
     }
 
     public static void openGoogleMapRoute(double latitude, double longitude) {
-//        String uriBegin = "geo:" + latitude + "," + longitude;
-//        String query = latitude + "," + longitude + "(" + label + ")";
-//        String encodedQuery = Uri.encode(query);
-//        String uriString = uriBegin + "?q=" + encodedQuery + "&z=16";
-//        Uri uri = Uri.parse(uriString);
-//        Intent mapIntent = new Intent(android.content.Intent.ACTION_VIEW, uri);
-//        Util.getInstance().getCurrentActivity().startActivity(mapIntent);
-
         String uriBegin = String.format("google.navigation:q=%s,%s", String.valueOf(latitude), String.valueOf(longitude));
         Uri gmmIntentUri = Uri.parse(uriBegin);
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);

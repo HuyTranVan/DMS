@@ -167,6 +167,7 @@ public class ViewpagerDatePickerAdapter extends PagerAdapter {
         result.put("start", startDate);
         result.put("end", end);
         result.put("text", text);
+        result.put("position", 0);
 
         return result;
     }
@@ -188,8 +189,8 @@ public class ViewpagerDatePickerAdapter extends PagerAdapter {
         }
         result.put("start", Util.TimeStamp2(String.format("01-%s-%d 00:00:00", startMonth, year)));
         result.put("end", Util.TimeStamp2(String.format("01-%s-%d 00:00:00", endMonth, endYear)));
-
         result.put("text", month +"-" + year);
+        result.put("position", 1);
 
         return result;
     }
@@ -200,6 +201,7 @@ public class ViewpagerDatePickerAdapter extends PagerAdapter {
         result.put("start", Util.TimeStamp2(String.format("01-01-%d 00:00:00", value)));
         result.put("end", Util.TimeStamp2(String.format("01-01-%d 00:00:00", value+1)));
         result.put("text", String.valueOf(value));
+        result.put("position", 2);
 
         return result;
 

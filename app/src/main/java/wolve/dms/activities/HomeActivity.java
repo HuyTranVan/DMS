@@ -132,7 +132,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
         }
         loadOverView();
-        checkNewProductUpdated(new CallbackListObject() {
+        checkNewProductUpdated(new CallbackListObject(){
             @Override
             public void onResponse(List<BaseModel> list) {
                 updateTempBillVisibility(list);

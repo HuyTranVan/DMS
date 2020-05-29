@@ -50,6 +50,10 @@ public class DatePickerFragment extends Fragment implements View.OnClickListener
     }
 
     private void intitialData() {
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            currentPosition = bundle.getInt("position", 0);
+        }
         tabLayout.setupWithViewPager(viewPager);
         setupViewPager();
     }

@@ -439,7 +439,7 @@ public class Util {
             @Override
             public void run() {
                 Util.showKeyboard(view);
-            }}, 500);
+            }}, 200);
     }
 
     public static void showKeyboardEditTextDelay(EditText view){
@@ -448,12 +448,21 @@ public class Util {
             public void run() {
                 Util.showKeyboard(view);
                 view.setSelection(view.getText().toString().trim().length());
-            }}, 500);
+            }}, 200);
     }
 
     public static void hideKeyboard(View view) {
         InputMethodManager imm = (InputMethodManager) Util.getInstance().getCurrentActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public static void setTextEdDelay(final EditText editText, String text){
+        new Handler().postDelayed (new Runnable() {
+            @Override
+            public void run() {
+                editText.setText(text);
+                Util.showKeyboard(editText);
+            }}, 200);
     }
 
     public static boolean deleteDir(File dir) {

@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.whinc.widget.ratingbar.RatingBar;
 
 import java.util.ArrayList;
@@ -825,20 +826,27 @@ public class CustomCenterDialog {
 
     }
 
-    public static void showDialogInputQuantity(String title, String quantity, final CallbackString mListener){
+    public static void showDialogInputQuantity(String title, String quantity,
+                                               int currentQuantity,
+                                               boolean emptyQuantityValue,
+                                               final CallbackString mListener){
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_input_quantity);
         TextView tvTitle = (TextView) dialogResult.findViewById(R.id.input_number_title);
-        final EditText edPaid = (EditText) dialogResult.findViewById(R.id.input_number_quantity);
+        final EditText edQuantity = (EditText) dialogResult.findViewById(R.id.input_number_quantity);
+        TextInputLayout currentQuantityParent = dialogResult.findViewById(R.id.input_number_current_quantity_parent);
+        final EditText edCurrentQuantity = (EditText) dialogResult.findViewById(R.id.input_number_current_quantity);
         final Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
         final Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
 
         dialogResult.setCanceledOnTouchOutside(true);
         tvTitle.setText(title);
-        edPaid.setText(quantity);
+        currentQuantityParent.setVisibility(currentQuantity >0 ? View.VISIBLE: View.GONE);
+        edCurrentQuantity.setText(String.valueOf(currentQuantity));
+        edQuantity.setText(quantity);
         btnSubmit.setText("đồng ý");
         btnCancel.setText("hủy");
 
-        Util.showKeyboardEditTextDelay(edPaid);
+        Util.showKeyboardEditTextDelay(edQuantity);
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -850,12 +858,20 @@ public class CustomCenterDialog {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Util.isEmpty(edPaid) || edPaid.getText().toString().equals("0")){
-                    Util.showToast("Vui lòng nhập số lượng >0");
+                if (Util.isEmpty(edQuantity) || edQuantity.getText().toString().equals("0")){
+                    if (emptyQuantityValue ){
+                        Util.hideKeyboard(v);
+                        mListener.Result("0");
+                        dialogResult.dismiss();
+
+                    }else {
+                        Util.showToast("Vui lòng nhập số lượng >0");
+                    }
+
 
                 }else {
                     Util.hideKeyboard(v);
-                    mListener.Result(edPaid.getText().toString());
+                    mListener.Result(edQuantity.getText().toString());
                     dialogResult.dismiss();
                 }
 
@@ -956,7 +972,7 @@ public class CustomCenterDialog {
                 if (!edPhone.getText().toString().equals("") && !edPass.getText().toString().equals("")){
                     dialogResult.dismiss();
                     String fcm_token = User.getFCMToken();
-                    UserConnect.Logout(new CallbackCustom() {
+                    UserConnect.Logout(new CallbackCustom(){
                         @Override
                         public void onResponse(BaseModel result) {
                             if (result.getBoolean("success")){

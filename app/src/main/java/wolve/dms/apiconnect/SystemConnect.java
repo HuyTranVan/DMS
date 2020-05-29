@@ -426,6 +426,37 @@ public class SystemConnect {
         }).execute();
     }
 
+    public static void UpdateInventoryQuantity(String params, final CallbackCustom listener, final Boolean stopLoading){
+        Util.getInstance().showLoading();
+
+        new CustomPostMethod(DataUtil.postInventoryQuantityParam(params),new CallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result) {
+                Util.getInstance().stopLoading(stopLoading);
+                if (Constants.responeIsSuccess(result)){
+                    listener.onResponse(Constants.getResponeObjectSuccess(result));
+
+                }else {
+                    Util.getInstance().stopLoading(true);
+                    Constants.throwError(result.getString("message"));
+                    listener.onError(result.getString("message"));
+
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                Util.getInstance().stopLoading(true);
+                Constants.throwError(error);
+                listener.onError(error);
+
+            }
+
+        }).execute();
+    }
+
+
     public static void uploadImage(String uriPath, final CallbackString mListener){
         Util.getInstance().showLoading();
         new UploadCloudaryMethod(uriPath, new CallbackString() {

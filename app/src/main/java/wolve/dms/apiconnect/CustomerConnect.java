@@ -633,38 +633,6 @@ public class CustomerConnect {
         }).execute();
     }
 
-    public static void ListBillNotYetPaid(String param, final CallbackCustomList listener, final Boolean stopLoading){
-//        if (stopLoading){
-        Util.getInstance().showLoading();
-//        }
-
-        String url = Api_link.BILLS_NOT_YET_PAID+ String.format(Api_link.DEFAULT_RANGE, 1,1500) + param;
-
-        new CustomGetMethod(url, new CallbackCustom() {
-            @Override
-            public void onResponse(BaseModel result) {
-                Util.getInstance().stopLoading(stopLoading);
-                if (Constants.responeIsSuccess(result)){
-                    listener.onResponse(Constants.getResponeArraySuccess(result));
-
-                }else {
-                    Constants.throwError(result.getString("message"));
-                    listener.onError(result.getString("message"));
-
-                }
-
-            }
-
-            @Override
-            public void onError(String error) {
-                Util.getInstance().stopLoading(true);
-                Constants.throwError(error);
-                listener.onError(error);
-
-            }
-
-        }).execute();
-    }
 
     public static void ListBillHavePayment(String param, final CallbackCustomList listener, final Boolean stopLoading){
         if (stopLoading){
