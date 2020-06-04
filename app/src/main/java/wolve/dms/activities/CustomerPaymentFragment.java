@@ -27,7 +27,7 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class CustomerPaymentFragment extends Fragment implements View.OnClickListener{
+public class CustomerPaymentFragment extends Fragment implements View.OnClickListener {
     private View view;
     private RecyclerView rvPayment;
     protected Customer_PaymentAdapter adapter;
@@ -38,7 +38,7 @@ public class CustomerPaymentFragment extends Fragment implements View.OnClickLis
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_customer_payment,container,false);
+        view = inflater.inflate(R.layout.fragment_customer_payment, container, false);
 
 
         initializeView();
@@ -66,38 +66,38 @@ public class CustomerPaymentFragment extends Fragment implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
 
 
         }
     }
 
-    public void updateList(){
+    public void updateList() {
         List<BaseModel> listpayment = DataUtil.remakePaymentByDate(DataUtil.array2ListObject(mActivity.currentCustomer.getString("payments")));
         adapter.updateData(createListPayment(mActivity.listBills, listpayment));
     }
 
-    public void createRVPayment(List<BaseModel> list){
+    public void createRVPayment(List<BaseModel> list) {
         adapter = new Customer_PaymentAdapter(list);
         Util.createLinearRV(rvPayment, adapter);
 
     }
 
-    private List<BaseModel> createListPayment(List<BaseModel> listBill, List<BaseModel> listPayment){
+    private List<BaseModel> createListPayment(List<BaseModel> listBill, List<BaseModel> listPayment) {
         List<BaseModel> listResult = new ArrayList<>();
-        for (int i=0; i<listBill.size(); i++){
+        for (int i = 0; i < listBill.size(); i++) {
             BaseModel objectbill = new BaseModel();
             objectbill.put("createAt", listBill.get(i).getLong("createAt"));
             objectbill.put("type", Constants.BILL);
             objectbill.put("total", listBill.get(i).getDouble("total"));
             objectbill.put("note", "");
 
-            if (listBill.get(i).getDouble("total") !=0.0){
+            if (listBill.get(i).getDouble("total") != 0.0) {
                 listResult.add(objectbill);
             }
         }
 
-        for (int ii=0; ii<listPayment.size(); ii++){
+        for (int ii = 0; ii < listPayment.size(); ii++) {
             BaseModel objectPay = new BaseModel();
             objectPay.put("createAt", listPayment.get(ii).getLong("createAt"));
             objectPay.put("type", Constants.PAYMENT);
@@ -113,24 +113,24 @@ public class CustomerPaymentFragment extends Fragment implements View.OnClickLis
 
     }
 
-    private List<BaseModel> convert2ListPayment(List<BaseModel> listBill){
+    private List<BaseModel> convert2ListPayment(List<BaseModel> listBill) {
         List<BaseModel> listResult = new ArrayList<>();
 
         try {
-            for (int i=0; i<listBill.size(); i++){
+            for (int i = 0; i < listBill.size(); i++) {
                 BaseModel objectbill = new BaseModel();
                 objectbill.put("createAt", listBill.get(i).getLong("createAt"));
                 objectbill.put("type", Constants.BILL);
                 objectbill.put("total", listBill.get(i).getDouble("total"));
 
-                if (listBill.get(i).getDouble("total") !=0.0){
+                if (listBill.get(i).getDouble("total") != 0.0) {
                     listResult.add(objectbill);
                 }
 
 
                 JSONArray arrayPayment = listBill.get(i).getJSONArray("payments");
-                if (arrayPayment.length() ==0){
-                    if (listBill.get(i).getDouble("paid") >0 && listBill.get(i).getDouble("paid") <=listBill.get(i).getDouble("total")){
+                if (arrayPayment.length() == 0) {
+                    if (listBill.get(i).getDouble("paid") > 0 && listBill.get(i).getDouble("paid") <= listBill.get(i).getDouble("total")) {
                         BaseModel objectpayment1 = new BaseModel();
                         objectpayment1.put("createAt", listBill.get(i).getLong("createAt"));
                         objectpayment1.put("type", Constants.PAYMENT);
@@ -139,23 +139,23 @@ public class CustomerPaymentFragment extends Fragment implements View.OnClickLis
                         listResult.add(objectpayment1);
                     }
 
-                }else {
-                    for (int j=0; j<arrayPayment.length(); j++){
+                } else {
+                    for (int j = 0; j < arrayPayment.length(); j++) {
                         JSONObject object = arrayPayment.getJSONObject(j);
                         boolean check = false;
 
-                        for (int ii =0; ii<listResult.size(); ii++){
+                        for (int ii = 0; ii < listResult.size(); ii++) {
 //                            if (listResult.get(ii).getString("type").equals(Constants.PAYMENT) &&
 //                                    listResult.get(ii).getLong("createAt") == object.getLong("createAt") ){
                             if (listResult.get(ii).getString("type").equals(Constants.PAYMENT)
                                     && Util.DateString(listResult.get(ii).getLong("createAt")).equals(Util.DateString(object.getLong("createAt")))
-                                    && object.getInt("payByReturn") == 1){
+                                    && object.getInt("payByReturn") == 1) {
                                 check = true;
                                 listResult.get(ii).put("total", listResult.get(ii).getDouble("total") + object.getLong("paid"));
 
                                 break;
 
-                            }else {
+                            } else {
                                 check = false;
 
                             }

@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:gravity="center"
     android:layout_marginLeft="5dp"
@@ -17,8 +16,7 @@
         android:textSize="@dimen/_10sdp"
         android:textColor="@drawable/text_blue_selected"
         android:textAllCaps="true"
-        android:layout_gravity="center"
-        />
+        android:layout_gravity="center" />
 
     <FrameLayout
         android:layout_width="wrap_content"
@@ -30,7 +28,7 @@
             android:layout_width="@dimen/_8sdp"
             android:layout_height="@dimen/_8sdp"
             android:background="@drawable/btn_round_red"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/tabNotifyCount"
@@ -44,11 +42,9 @@
             android:textColor="@color/colorWhite"
             android:gravity="center"
             android:layout_gravity="center|right"
-            android:visibility="visible"
-            />
+            android:visibility="visible" />
 
     </FrameLayout>
-
 
 
 </LinearLayout>

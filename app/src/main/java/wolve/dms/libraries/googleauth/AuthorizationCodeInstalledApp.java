@@ -10,7 +10,6 @@ import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.extensions.java6.auth.oauth2.VerificationCodeReceiver;
 import com.google.api.client.util.Preconditions;
 
-
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,21 +24,18 @@ import wolve.dms.utils.Util;
  * Implementation is thread-safe.
  * </p>
  *
- * @since 1.11
  * @author Yaniv Inbar
  * @author Philipp Hanslovsky
+ * @since 1.11
  */
 public class AuthorizationCodeInstalledApp {
 
 
     /**
-     *
      * Helper interface to allow caller to browse.
-     *
      */
     public static interface Browser {
         /**
-         *
          * @param url url to browse
          * @throws IOException
          */
@@ -47,12 +43,10 @@ public class AuthorizationCodeInstalledApp {
     }
 
     /**
-     *
      * Default browser that just delegates to
      * {@link AuthorizationCodeInstalledApp#browse(String)}.
-     *
      */
-    public static class DefaultBrowser implements Browser{
+    public static class DefaultBrowser implements Browser {
 
         public void browse(String url) throws IOException {
 //            AuthorizationCodeInstalledApp.browse(url);
@@ -61,10 +55,14 @@ public class AuthorizationCodeInstalledApp {
 
     }
 
-    /** Authorization code flow. */
+    /**
+     * Authorization code flow.
+     */
     private final AuthorizationCodeFlow flow;
 
-    /** Verification code receiver. */
+    /**
+     * Verification code receiver.
+     */
     private final VerificationCodeReceiver receiver;
 
     private static final Logger LOGGER =
@@ -73,15 +71,15 @@ public class AuthorizationCodeInstalledApp {
     private final Browser browser;
 
     /**
-     * @param flow authorization code flow
+     * @param flow     authorization code flow
      * @param receiver verification code receiver
      */
     public AuthorizationCodeInstalledApp(AuthorizationCodeFlow flow, VerificationCodeReceiver receiver) {
-        this(flow, receiver,  new DefaultBrowser());
+        this(flow, receiver, new DefaultBrowser());
     }
 
     /**
-     * @param flow authorization code flow
+     * @param flow     authorization code flow
      * @param receiver verification code receiver
      */
     public AuthorizationCodeInstalledApp(AuthorizationCodeFlow flow, VerificationCodeReceiver receiver, Browser browser) {
@@ -130,11 +128,11 @@ public class AuthorizationCodeInstalledApp {
      * </p>
      *
      * <pre>
-     &#64;Override
-     protected void onAuthorization(AuthorizationCodeRequestUrl authorizationUrl) throws IOException {
-     authorizationUrl.setState("xyz");
-     super.onAuthorization(authorizationUrl);
-     }
+     * &#64;Override
+     * protected void onAuthorization(AuthorizationCodeRequestUrl authorizationUrl) throws IOException {
+     * authorizationUrl.setState("xyz");
+     * super.onAuthorization(authorizationUrl);
+     * }
      * </pre>
      *
      * @param authorizationUrl authorization URL
@@ -152,8 +150,6 @@ public class AuthorizationCodeInstalledApp {
 //     *
 //     * @param url URL to browse
 //     */
-
-
 
 
     public static void browse(String url) {
@@ -181,18 +177,22 @@ public class AuthorizationCodeInstalledApp {
         }
     }
 
-    /** Returns the authorization code flow. */
+    /**
+     * Returns the authorization code flow.
+     */
     public final AuthorizationCodeFlow getFlow() {
         return flow;
     }
 
-    /** Returns the verification code receiver. */
+    /**
+     * Returns the verification code receiver.
+     */
     public final VerificationCodeReceiver getReceiver() {
         return receiver;
     }
 
 
-    public static  void startOpenWebPage(String url) {
+    public static void startOpenWebPage(String url) {
         boolean result = false;
         if (!url.startsWith("http://") && !url.startsWith("https://"))
             url = "http://" + url;
@@ -201,11 +201,11 @@ public class AuthorizationCodeInstalledApp {
         Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
 
         try {
-            Util.getInstance().getCurrentActivity().startActivityForResult(intent,1);
+            Util.getInstance().getCurrentActivity().startActivityForResult(intent, 1);
             result = true;
-        }catch (Exception e){
-            if (url.startsWith("http://")){
-                startOpenWebPage(url.replace("http://","https://"));
+        } catch (Exception e) {
+            if (url.startsWith("http://")) {
+                startOpenWebPage(url.replace("http://", "https://"));
             }
         }
 //        return result;

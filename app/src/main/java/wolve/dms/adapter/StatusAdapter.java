@@ -10,18 +10,15 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.apiconnect.StatusConnect;
-import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDeleteAdapter;
-import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Status;
 import wolve.dms.utils.Constants;
@@ -54,7 +51,7 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusAdap
         return new StatusAdapterViewHolder(itemView);
     }
 
-    public void addItems(ArrayList<Status> list){
+    public void addItems(ArrayList<Status> list) {
         mData = new ArrayList<>();
         mData.addAll(list);
         notifyDataSetChanged();
@@ -72,7 +69,7 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusAdap
         holder.lnParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onRespone(mData.get(position).BaseModelstoString() , position);
+                mListener.onRespone(mData.get(position).BaseModelstoString(), position);
 
             }
         });
@@ -80,8 +77,8 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusAdap
         holder.lnParent.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (!mData.get(position).getBoolean("defaultStatus")){
-                    CustomCenterDialog.alertWithCancelButton(null, "Bạn muốn xóa trạng thái " + mData.get(position).getString("name"), "ĐỒNG Ý","HỦY", new CallbackBoolean() {
+                if (!mData.get(position).getBoolean("defaultStatus")) {
+                    CustomCenterDialog.alertWithCancelButton(null, "Bạn muốn xóa trạng thái " + mData.get(position).getString("name"), "ĐỒNG Ý", "HỦY", new CallbackBoolean() {
                         @Override
                         public void onRespone(Boolean result) {
                             String param = String.valueOf(mData.get(position).getInt("id"));
@@ -102,10 +99,9 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusAdap
                             }, true);
                         }
                     });
-                }else {
-                    Util.showSnackbar("Không thể xóa trạng thái này", null , null);
+                } else {
+                    Util.showSnackbar("Không thể xóa trạng thái này", null, null);
                 }
-
 
 
                 return true;
@@ -121,7 +117,7 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusAdap
 
 
     public class StatusAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvName, tvColor,  tvIconDefault;
+        private TextView tvName, tvColor, tvIconDefault;
         private LinearLayout lnParent;
 
         public StatusAdapterViewHolder(View itemView) {

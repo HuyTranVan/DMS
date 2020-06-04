@@ -4,28 +4,19 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
-
-import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
-import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.libraries.Security;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.ProductGroup;
-import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomSQL;
@@ -58,12 +49,11 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.ProductGroupAd
     }
 
 
-
     @Override
     public void onBindViewHolder(final ProductGroupAdapterViewHolder holder, final int position) {
         holder.text.setText(String.format("%d %s (%s %s) _   %d",
                 mData.get(position).getInt("id"),
-                mData.get(position).getString("signBoard") ,
+                mData.get(position).getString("signBoard"),
                 mData.get(position).getString("street"),
                 mData.get(position).getString("district"),
                 (mData.size() - position)));
@@ -71,17 +61,16 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.ProductGroupAd
         //BaseModel object = Util.getTotal(mData.get(position).getList(Constants.BILLS));
 
         List<BaseModel> listBill = mData.get(position).getList(Constants.BILLS);
-        double debt =0.0;
+        double debt = 0.0;
         String user = "";
-        for ( BaseModel baseModel : listBill){
-            if (baseModel.getDoubleValue("debt") > 0){
+        for (BaseModel baseModel : listBill) {
+            if (baseModel.getDoubleValue("debt") > 0) {
                 debt += baseModel.getDouble("debt");
 
                 user = user + " " + baseModel.getInt("user_id");
 
 
             }
-
 
 
         }
@@ -91,9 +80,6 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.ProductGroupAd
 
         String note = String.format("Nợ %s\n%s", Util.FormatMoney(debt), user);
         holder.note.setText(note);
-
-
-
 
 
 //        String note = Security.decrypt(mData.get(position).getString("note"));
@@ -109,7 +95,6 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.ProductGroupAd
 ////            }
 //
 //        }
-
 
 
         holder.text.setOnClickListener(new View.OnClickListener() {
@@ -128,7 +113,7 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.ProductGroupAd
                     public void onError(String error) {
 
                     }
-                }, true,true);
+                }, true, true);
             }
         });
 
@@ -153,11 +138,11 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.ProductGroupAd
 
     }
 
-    public List<BaseModel> getmData(){
+    public List<BaseModel> getmData() {
         return mData;
     }
 
-    private void payBill(BaseModel bill){
+    private void payBill(BaseModel bill) {
         BaseModel note = new BaseModel(Security.decrypt(bill.getString("note")));
         BaseModel objectPay = DataUtil.array2ListObject(note.getString("havePaymentReturn")).get(0);
         //BaseModel payXXX = new BaseModel(arrayPay.getJSONObject(0))
@@ -175,7 +160,7 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.ProductGroupAd
         CustomCenterDialog.alertWithCancelButton("Trả tiền", param, "yes", "cancel", new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
-                if (result){
+                if (result) {
 
 
                     CustomerConnect.PostPay(param, new CallbackCustom() {
@@ -194,7 +179,6 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.ProductGroupAd
                     }, true);
 
 
-
                 }
 
 
@@ -202,21 +186,20 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.ProductGroupAd
         });
 
 
-
     }
 
-    public List<BaseModel> getDebtData(){
+    public List<BaseModel> getDebtData() {
         List<BaseModel> list = new ArrayList<>();
 
-        for (int i=0; i<mData.size(); i++){
+        for (int i = 0; i < mData.size(); i++) {
             BaseModel newCus = new BaseModel();
 
 
             List<BaseModel> listBill = new ArrayList<>(mData.get(i).getList(Constants.BILLS));
-            double debt =0.0;
+            double debt = 0.0;
             String user = "";
-            for ( BaseModel baseModel : listBill){
-                if (baseModel.getDouble("debt") > 0.0){
+            for (BaseModel baseModel : listBill) {
+                if (baseModel.getDouble("debt") > 0.0) {
                     debt += baseModel.getDouble("debt");
 
                     user = user + " " + baseModel.getInt("user_id");
@@ -225,13 +208,12 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.ProductGroupAd
                 }
 
 
-
             }
 
             newCus.put("id", mData.get(i).getInt("id"));
             newCus.put("distributor_id", mData.get(i).getInt("distributor_id"));
             newCus.put("debt", debt);
-            newCus.put("user_id", listBill.get(listBill.size()-1).getInt("user_id"));
+            newCus.put("user_id", listBill.get(listBill.size() - 1).getInt("user_id"));
 
             list.add(newCus);
 
@@ -241,7 +223,6 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.ProductGroupAd
         return list;
 
     }
-
 
 
 }

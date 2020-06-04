@@ -5,7 +5,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.net.Uri;
-import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 
@@ -38,12 +37,11 @@ public class BitmapView {
 //        }
 //    }
 
-    public static Uri saveImageToSD(Bitmap outputImage){
+    public static Uri saveImageToSD(Bitmap outputImage) {
 //        File storagePath = new File(Environment.getExternalStorageDirectory() + "/Tinhtiendidong/");
 //        storagePath.mkdirs();
 
         File myImage = Util.createCustomImageFile();
-
 
 
         try {
@@ -69,7 +67,7 @@ public class BitmapView {
     }
 
 
-    public static Bitmap ResizeBitMapDependWidth(Bitmap bitmap, int w){
+    public static Bitmap ResizeBitMapDependWidth(Bitmap bitmap, int w) {
 
 //        float originalWidth = bitmap.getWidth();
 //        float originalHeight = bitmap.getHeight();
@@ -93,12 +91,12 @@ public class BitmapView {
         Bitmap resizedBitmap = null;
         int width = BitmapOrg.getWidth();
         int height = BitmapOrg.getHeight();
-        if (width<=w) {
+        if (width <= w) {
             return bitmap;
         }
         if (!ischecked) {
             int newWidth = w;
-            int newHeight = height*w/width;
+            int newHeight = height * w / width;
 
             float scaleWidth = ((float) newWidth) / width;
             float scaleHeight = ((float) newHeight) / height;
@@ -109,15 +107,15 @@ public class BitmapView {
             // matrix.postRotate(45);
             resizedBitmap = Bitmap.createBitmap(BitmapOrg, 0, 0, width,
                     height, matrix, true);
-        }else {
-            resizedBitmap=Bitmap.createBitmap(BitmapOrg, 0, 0, w, height);
+        } else {
+            resizedBitmap = Bitmap.createBitmap(BitmapOrg, 0, 0, w, height);
         }
 
         return resizedBitmap;
     }
 
 
-    public Bitmap getbmpfromURL(String surl){
+    public Bitmap getbmpfromURL(String surl) {
         try {
             URL url = new URL(surl);
             HttpURLConnection urlcon = (HttpURLConnection) url.openConnection();
@@ -125,7 +123,7 @@ public class BitmapView {
             urlcon.connect();
             InputStream in = urlcon.getInputStream();
             Bitmap mIcon = BitmapFactory.decodeStream(in);
-            return  mIcon;
+            return mIcon;
         } catch (Exception e) {
             Log.e("Error", e.getMessage());
             e.printStackTrace();

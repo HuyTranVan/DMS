@@ -19,7 +19,7 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class Product extends BaseModel{
+public class Product extends BaseModel {
     static List<Product> mListProducts = null;
 
     public Product() {
@@ -30,24 +30,24 @@ public class Product extends BaseModel{
         jsonObject = objOrder;
     }
 
-    public String ProducttoString(){
+    public String ProducttoString() {
         return jsonObject.toString();
     }
 
-    public JSONObject ProductJSONObject(){
+    public JSONObject ProductJSONObject() {
         return jsonObject;
     }
 
-    public static void saveProductList(JSONArray groups){
+    public static void saveProductList(JSONArray groups) {
 //        CustomSQL.setString(Constants.PRODUCT_LIST, product.toString());
 
         List<BaseModel> mProducts = new ArrayList<>();
         try {
-            for (int i=0; i<groups.length(); i++){
+            for (int i = 0; i < groups.length(); i++) {
                 JSONObject object = groups.getJSONObject(i);
                 JSONArray arrayProduct = object.getJSONArray("product");
 
-                for (int ii =0; ii<arrayProduct.length(); ii++){
+                for (int ii = 0; ii < arrayProduct.length(); ii++) {
                     mProducts.add(new BaseModel(arrayProduct.getJSONObject(ii)));
                 }
 
@@ -69,13 +69,13 @@ public class Product extends BaseModel{
 
     }
 
-    public static List<BaseModel> getProductList(){
+    public static List<BaseModel> getProductList() {
         List<BaseModel> mProducts = new ArrayList<>();
 
-        if (mListProducts == null){
+        if (mListProducts == null) {
             try {
                 JSONArray array = new JSONArray(CustomSQL.getString(Constants.PRODUCT_LIST));
-                for (int i=0; i<array.length(); i++){
+                for (int i = 0; i < array.length(); i++) {
                     BaseModel product = new BaseModel(array.getJSONObject(i));
                     product.put("product_id", product.getInt("id"));
                     mProducts.add(product);
@@ -91,13 +91,13 @@ public class Product extends BaseModel{
         return mProducts;
     }
 
-    public static List<String> getProductListString(){
+    public static List<String> getProductListString() {
         List<String> mProducts = new ArrayList<>();
 
-        if (mListProducts == null){
+        if (mListProducts == null) {
             try {
                 JSONArray array = new JSONArray(CustomSQL.getString(Constants.PRODUCT_LIST));
-                for (int i=0; i<array.length(); i++){
+                for (int i = 0; i < array.length(); i++) {
                     BaseModel product = new BaseModel(array.getJSONObject(i));
                     mProducts.add(product.getString("name"));
                 }

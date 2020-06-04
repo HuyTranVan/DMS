@@ -50,7 +50,7 @@ public class SwipeRefreshLayout extends ViewGroup {
     private boolean mReturningToStart;
     private final DecelerateInterpolator mDecelerateInterpolator;
     private final AccelerateInterpolator mAccelerateInterpolator;
-    private static final int[] LAYOUT_ATTRS = new int[] {
+    private static final int[] LAYOUT_ATTRS = new int[]{
             android.R.attr.enabled
     };
 
@@ -59,7 +59,7 @@ public class SwipeRefreshLayout extends ViewGroup {
         public void applyTransformation(float interpolatedTime, Transformation t) {
             int targetTop = 0;
             if (mFrom != mOriginalOffsetTop) {
-                targetTop = (mFrom + (int)((mOriginalOffsetTop - mFrom) * interpolatedTime));
+                targetTop = (mFrom + (int) ((mOriginalOffsetTop - mFrom) * interpolatedTime));
             }
             int offset = targetTop - mTarget.getTop();
             final int currentTop = mTarget.getTop();
@@ -129,6 +129,7 @@ public class SwipeRefreshLayout extends ViewGroup {
 
     /**
      * Simple constructor to use when creating a SwipeRefreshLayout from code.
+     *
      * @param context
      */
     public SwipeRefreshLayout(Context context) {
@@ -137,6 +138,7 @@ public class SwipeRefreshLayout extends ViewGroup {
 
     /**
      * Constructor that is called when inflating SwipeRefreshLayout from XML.
+     *
      * @param context
      * @param attrs
      */
@@ -238,12 +240,12 @@ public class SwipeRefreshLayout extends ViewGroup {
         final int color2 = res.getColor(colorRes2);
         final int color3 = res.getColor(colorRes3);
         final int color4 = res.getColor(colorRes4);
-        mProgressBar.setColorScheme(color1, color2, color3,color4);
+        mProgressBar.setColorScheme(color1, color2, color3, color4);
     }
 
     /**
      * @return Whether the SwipeRefreshWidget is actively showing refresh
-     *         progress.
+     * progress.
      */
     public boolean isRefreshing() {
         return mRefreshing;
@@ -260,10 +262,10 @@ public class SwipeRefreshLayout extends ViewGroup {
             mOriginalOffsetTop = mTarget.getTop() + getPaddingTop();
         }
         if (mDistanceToTriggerSync == -1) {
-            if (getParent() != null && ((View)getParent()).getHeight() > 0) {
+            if (getParent() != null && ((View) getParent()).getHeight() > 0) {
                 final DisplayMetrics metrics = getResources().getDisplayMetrics();
                 mDistanceToTriggerSync = (int) Math.min(
-                        ((View) getParent()) .getHeight() * MAX_SWIPE_DISTANCE_FACTOR,
+                        ((View) getParent()).getHeight() * MAX_SWIPE_DISTANCE_FACTOR,
                         REFRESH_TRIGGER_DISTANCE * metrics.density);
             }
         }
@@ -277,7 +279,7 @@ public class SwipeRefreshLayout extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        final int width =  getMeasuredWidth();
+        final int width = getMeasuredWidth();
         final int height = getMeasuredHeight();
         mProgressBar.setBounds(0, 0, width, mProgressBarHeight);
         if (getChildCount() == 0) {
@@ -310,7 +312,7 @@ public class SwipeRefreshLayout extends ViewGroup {
 
     /**
      * @return Whether it is possible for the child view of this layout to
-     *         scroll up. Override this if the child view is a custom view.
+     * scroll up. Override this if the child view is a custom view.
      */
     public boolean canChildScrollUp() {
         if (android.os.Build.VERSION.SDK_INT < 14) {

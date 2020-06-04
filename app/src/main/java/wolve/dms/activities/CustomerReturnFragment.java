@@ -47,18 +47,19 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
     private CustomerActivity mActivity;
     private String sum = "TẠM TÍNH TRẢ HÀNG:     %s đ";
     private String cash = "TRẢ LẠI KHÁCH TIỀN MẶT:     %s đ";
-    private double totalReturn =0.0;
+    private double totalReturn = 0.0;
     private List<BaseModel> listDebt = new ArrayList<>();
 
-    private interface callbackbill{
+    private interface callbackbill {
         void onRespone(BaseModel currentBill, BaseModel returnBill);
+
         void onError(String error);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_customer_return,container,false);
+        view = inflater.inflate(R.layout.fragment_customer_return, container, false);
 
         initializeView();
 
@@ -70,7 +71,7 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
 
     private void intitialData() {
         tvTitle.setText(String.format("Trả hàng hóa đơn %s", Util.DateHourString(mActivity.currentBill.getLong("createAt"))));
-        tvSum.setText(String.format(sum,"0"));
+        tvSum.setText(String.format(sum, "0"));
         listDebt = remakeDebtBill(mActivity.listDebtBill, mActivity.currentBill);
 
         createRVReturn(mActivity.currentBill);
@@ -100,7 +101,7 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.customer_return_submit:
                 submitEvent();
                 break;
@@ -109,25 +110,25 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
         }
     }
 
-    private void finish(){
+    private void finish() {
         mActivity.reloadCustomer(mActivity.currentCustomer.getString("id"));
         mActivity.getSupportFragmentManager().popBackStack();
 
 
     }
 
-    private void submitEvent(){
+    private void submitEvent() {
         //listselected >0
-        if (swPayDebt.isChecked()){
-            if (totalReturn > 0.0 ){
-                if (totalReturn <= mActivity.currentDebt){
+        if (swPayDebt.isChecked()) {
+            if (totalReturn > 0.0) {
+                if (totalReturn <= mActivity.currentDebt) {
                     postBillReturnUpdatePayment(adapterReturn.getListSelected(), totalReturn, mActivity.currentBill);
 
-                }else {
-                    postBillReturnUpdatePaymentAndCash(adapterReturn.getListSelected(),adapterDebt.getListBillPayment(), totalReturn, mActivity.currentBill);
+                } else {
+                    postBillReturnUpdatePaymentAndCash(adapterReturn.getListSelected(), adapterDebt.getListBillPayment(), totalReturn, mActivity.currentBill);
                 }
 
-            }else {
+            } else {
                 onlyPostUpdateBillReturn(adapterReturn.getListSelected(), 0.0, mActivity.currentBill);
             }
 
@@ -154,58 +155,57 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
 //        }
 
 
-
     }
 
     private void createRVReturn(BaseModel bill) {
         adapterReturn = new ProductReturnAdapter(bill, new CallbackDouble() {
             @Override
             public void Result(Double d) {
-                if (d<0.0){
+                if (d < 0.0) {
                     tvSum.setText("HÓA ĐƠN ĐÃ TRẢ HẾT HÀNG");
 
-                }else {
+                } else {
                     totalReturn = d;
-                    tvSum.setText(String.format(sum,Util.FormatMoney(d)));
+                    tvSum.setText(String.format(sum, Util.FormatMoney(d)));
 
-                    if (adapterReturn.getListSelected().size() >0){
+                    if (adapterReturn.getListSelected().size() > 0) {
                         btnSubmit.setVisibility(View.VISIBLE);
-                        if (d > 0.0){
+                        if (d > 0.0) {
                             rvDebt.setVisibility(View.VISIBLE);
 //                            lnOption.setVisibility(View.VISIBLE);
                             lnOption.setVisibility(View.GONE);
-                            if (swPayDebt.isChecked()){
+                            if (swPayDebt.isChecked()) {
                                 rvDebt.setVisibility(View.VISIBLE);
                                 tvCashReturn.setVisibility(View.GONE);
                                 adapterDebt.inputPaid(totalReturn, true);
 
-                                if (d> mActivity.currentDebt){
+                                if (d > mActivity.currentDebt) {
                                     tvCashReturn.setVisibility(View.VISIBLE);
                                     tvCashReturn.setText(String.format(cash, Util.FormatMoney(d - mActivity.currentDebt)));
 
-                                }else {
+                                } else {
                                     tvCashReturn.setVisibility(View.GONE);
                                 }
 
-                            }else {
+                            } else {
                                 rvDebt.setVisibility(View.GONE);
                                 tvCashReturn.setVisibility(View.VISIBLE);
                                 tvCashReturn.setText(String.format(cash, Util.FormatMoney(d)));
                             }
 
-                        }else {
+                        } else {
                             rvDebt.setVisibility(View.GONE);
                             lnOption.setVisibility(View.GONE);
                             tvCashReturn.setVisibility(View.GONE);
                         }
 
-                    }else {
+                    } else {
                         rvDebt.setVisibility(View.GONE);
                         btnSubmit.setVisibility(View.GONE);
                         lnOption.setVisibility(View.GONE);
                         tvCashReturn.setVisibility(View.GONE);
 
-                        if (d<0.0){
+                        if (d < 0.0) {
                             tvSum.setText("HÓA ĐƠN ĐÃ TRẢ HẾT HÀNG");
                         }
                     }
@@ -219,7 +219,7 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
         rvReturn.setHasFixedSize(true);
     }
 
-    private List<BaseModel> remakeDebtBill(List<BaseModel> listdebt, BaseModel currentdebt){
+    private List<BaseModel> remakeDebtBill(List<BaseModel> listdebt, BaseModel currentdebt) {
         List<BaseModel> list = DataUtil.getListDebtRemain(listdebt, currentdebt);
         Collections.reverse(list);
         list.add(0, currentdebt);
@@ -228,7 +228,7 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
 
     }
 
-    private void createRVDebt(List<BaseModel> listdebt){
+    private void createRVDebt(List<BaseModel> listdebt) {
         adapterDebt = new DebtAdapter(listdebt, true, true);
         Util.createLinearRV(rvDebt, adapterDebt);
         rvReturn.setNestedScrollingEnabled(true);
@@ -236,20 +236,20 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if (isChecked){
+        if (isChecked) {
             adapterDebt.inputPaid(totalReturn, true);
             rvDebt.setVisibility(View.VISIBLE);
             tvCashReturn.setVisibility(View.GONE);
 
-            if (totalReturn > mActivity.currentDebt){
+            if (totalReturn > mActivity.currentDebt) {
                 tvCashReturn.setVisibility(View.VISIBLE);
                 tvCashReturn.setText(String.format(cash, Util.FormatMoney(totalReturn - mActivity.currentDebt)));
 
-            }else {
+            } else {
                 tvCashReturn.setVisibility(View.GONE);
             }
 
-        }else {
+        } else {
             rvDebt.setVisibility(View.GONE);
             tvCashReturn.setVisibility(View.VISIBLE);
             tvCashReturn.setText(String.format(cash, Util.FormatMoney(totalReturn)));
@@ -257,7 +257,7 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
         }
     }
 
-    private void onlyPostUpdateBillReturn(List<BaseModel> listProductReturn, Double sumreturn, BaseModel currentBill){
+    private void onlyPostUpdateBillReturn(List<BaseModel> listProductReturn, Double sumreturn, BaseModel currentBill) {
         postUpdateBillReturn(listProductReturn, sumreturn, currentBill, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
@@ -274,7 +274,7 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
 
     }
 
-    private void postBillReturnUpdatePayment(List<BaseModel> listProductReturn,  Double sumreturn, BaseModel currentBill){
+    private void postBillReturnUpdatePayment(List<BaseModel> listProductReturn, Double sumreturn, BaseModel currentBill) {
         postUpdateBillReturn(listProductReturn, sumreturn, currentBill, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
@@ -303,13 +303,13 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
 
     }
 
-    private void postBillReturnUpdatePaymentAndCash(List<BaseModel> listProductReturn,List<BaseModel> listpay,  Double sumreturn, BaseModel currentBill){
+    private void postBillReturnUpdatePaymentAndCash(List<BaseModel> listProductReturn, List<BaseModel> listpay, Double sumreturn, BaseModel currentBill) {
         postUpdateBillReturn(listProductReturn, sumreturn, currentBill, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
                 List<BaseModel> listpayment = adapterDebt.getListBillPayment();
-                for (BaseModel model: listpayment){
-                    if (currentBill.getInt("id") == model.getInt("billId")){
+                for (BaseModel model : listpayment) {
+                    if (currentBill.getInt("id") == model.getInt("billId")) {
                         model.put("paid", sumreturn - mActivity.currentDebt + currentBill.getDouble("debt"));
                         break;
                     }
@@ -321,7 +321,7 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
 
                 payments.add(DataUtil.createPostPaymentParam(mActivity.currentCustomer.getInt("id"),
                         currentBill.getInt("user_id"),
-                        mActivity.currentDebt - sumreturn ,
+                        mActivity.currentDebt - sumreturn,
                         currentBill.getInt("id"),
                         "", false));
 
@@ -348,7 +348,6 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
 //
 //                if (listpayment.size() > 0){
 //                    listpayment.get(0).put("paid", sumreturn - mActivity.currentDebt + currentBill.getDouble("debt"));
-
 
 
 //                    updateListBill(listpayment, reBill, currBill, new CallbackBoolean() {
@@ -443,20 +442,21 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
 //
 //    }
 
-    private void postUpdateBillReturn(List<BaseModel> listProductReturn, Double sumreturn, BaseModel currentBill, CallbackCustom listener, boolean loading){
+    private void postUpdateBillReturn(List<BaseModel> listProductReturn, Double sumreturn, BaseModel currentBill, CallbackCustom listener, boolean loading) {
         String params = DataUtil.newBillParam(mActivity.currentCustomer.getInt("id"),
-                                                    User.getId(),
-                                                    0.0,
-                                                    0.0,
-                                                    listProductReturn,
-                                                    "",
-                                                    User.getId(),
-                                                    currentBill.getInt("id"));
+                User.getId(),
+                0.0,
+                0.0,
+                listProductReturn,
+                "",
+                User.getId(),
+                currentBill.getInt("id"));
         CustomerConnect.PostBill(params, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel billReturn) {
                 listener.onResponse(billReturn);
             }
+
             @Override
             public void onError(String error) {
                 Util.showSnackbarError(error);
@@ -514,7 +514,7 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
 //
 //    }
 
-    private void postListPayment(List<String> listParam, CallbackListCustom listener){
+    private void postListPayment(List<String> listParam, CallbackListCustom listener) {
         CustomerConnect.PostListPay(listParam, new CallbackListCustom() {
             @Override
             public void onResponse(List result) {

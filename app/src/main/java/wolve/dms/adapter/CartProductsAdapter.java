@@ -55,26 +55,26 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
     @Override
     public void onBindViewHolder(final CartProductsViewHolder holder, final int position) {
         holder.tvName.setText(mData.get(position).getString("name"));
-        holder.tvCount.setText(String.valueOf(position +1));
+        holder.tvCount.setText(String.valueOf(position + 1));
 
         Double discount = mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount");
-        holder.tvQuantityDisplay.setText(String.format("%s x %s",mData.get(position).getString("quantity"), Util.FormatMoney(discount) ));
+        holder.tvQuantityDisplay.setText(String.format("%s x %s", mData.get(position).getString("quantity"), Util.FormatMoney(discount)));
 
         holder.tvQuantity.setText(mData.get(position).getString("quantity"));
 
-        holder.coParent.setBackgroundColor(mData.get(position).getDouble("totalMoney") ==0?
+        holder.coParent.setBackgroundColor(mData.get(position).getDouble("totalMoney") == 0 ?
                 mContext.getResources().getColor(R.color.colorLightGrey) :
                 mContext.getResources().getColor(R.color.colorWhite));
 
-        if (mData.get(position).hasKey("hasDouble") && mData.get(position).getBoolean("hasDouble")){
+        if (mData.get(position).hasKey("hasDouble") && mData.get(position).getBoolean("hasDouble")) {
             holder.btnCopy.setVisibility(View.GONE);
-        }else {
+        } else {
             //holder.btnCopy.setVisibility(View.VISIBLE);
-            holder.btnCopy.setVisibility(mData.get(position).getDouble("totalMoney") ==0?View.GONE:View.VISIBLE);
+            holder.btnCopy.setVisibility(mData.get(position).getDouble("totalMoney") == 0 ? View.GONE : View.VISIBLE);
         }
 
-        holder.tvRibbon.setVisibility(mData.get(position).getDouble("totalMoney") ==0?View.VISIBLE:View.GONE);
-        holder.btnPromotion.setVisibility(mData.get(position).getDouble("totalMoney") ==0?View.GONE:View.VISIBLE);
+        holder.tvRibbon.setVisibility(mData.get(position).getDouble("totalMoney") == 0 ? View.VISIBLE : View.GONE);
+        holder.btnPromotion.setVisibility(mData.get(position).getDouble("totalMoney") == 0 ? View.GONE : View.VISIBLE);
 
         holder.lnParent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,12 +82,12 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
                 CustomCenterDialog.showDialogEditProduct(mData.get(position), listPriceSuggest(mData.get(position).getInt("id")), new CallbackClickProduct() {
                     @Override
                     public void ProductChoice(BaseModel product) {
-                            mData.get(position).put("quantity", product.getInt("quantity"));
-                            mData.get(position).put("discount", product.getDouble("discount"));
-                            mData.get(position).put("totalMoney", product.getDouble("totalMoney"));
+                        mData.get(position).put("quantity", product.getInt("quantity"));
+                        mData.get(position).put("discount", product.getDouble("discount"));
+                        mData.get(position).put("totalMoney", product.getDouble("totalMoney"));
 
-                            mChangePrice.Result(totalPrice());
-                            notifyItemChanged(position);
+                        mChangePrice.Result(totalPrice());
+                        notifyItemChanged(position);
 
                     }
 
@@ -105,14 +105,14 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
             @Override
             public void onClick(View v) {
                 int currentQuantity = mData.get(position).getInt("quantity");
-                if ( currentQuantity > 1){
-                    mData.get(position).put("quantity", currentQuantity -1);
+                if (currentQuantity > 1) {
+                    mData.get(position).put("quantity", currentQuantity - 1);
 
                     Double discount = mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount");
-                    mData.get(position).put("totalMoney", (currentQuantity -1)* discount);
+                    mData.get(position).put("totalMoney", (currentQuantity - 1) * discount);
                     mChangePrice.Result(totalPrice());
                     notifyItemChanged(position);
-                }else {
+                } else {
                     removeItem(position);
 
 
@@ -124,9 +124,9 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
             @Override
             public void onClick(View v) {
                 int currentQuantity = mData.get(position).getInt("quantity");
-                mData.get(position).put("quantity", currentQuantity +1);
+                mData.get(position).put("quantity", currentQuantity + 1);
                 Double discount = mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount");
-                mData.get(position).put("totalMoney", (currentQuantity + 1)* discount);
+                mData.get(position).put("totalMoney", (currentQuantity + 1) * discount);
                 mChangePrice.Result(totalPrice());
                 notifyItemChanged(position);
 
@@ -146,15 +146,16 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
                 mData.get(position).put("discount", mData.get(position).getDouble("unitPrice"));
                 mData.get(position).put("totalMoney", "0");
 
-                notifyItemMoved(position, mData.size()-1);
+                notifyItemMoved(position, mData.size() - 1);
                 mData.add(mData.get(position));
                 mData.remove(position);
-                new Handler().postDelayed (new Runnable() {
+                new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         notifyDataSetChanged();
 
-                    }}, 200);
+                    }
+                }, 200);
 
 
                 mChangePrice.Result(totalPrice());
@@ -176,7 +177,7 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
     }
 
     public class CartProductsViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvName, tvQuantity ,tvQuantityDisplay, tvRibbon, tvCount, btnSub, btnPlus, btnCopy, btnPromotion, btnDelete;
+        private TextView tvName, tvQuantity, tvQuantityDisplay, tvRibbon, tvCount, btnSub, btnPlus, btnCopy, btnPromotion, btnDelete;
         private LinearLayout lnParent;
         private RelativeLayout coParent;
 
@@ -200,32 +201,32 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
 
     }
 
-    public void addItemProduct(int pos,Product product){
+    public void addItemProduct(int pos, Product product) {
         mData.add(pos, product);
         notifyDataSetChanged();
 //        notifyItemInserted(mData.size());
         mChangePrice.Result(totalPrice());
     }
 
-    public void addItemProduct(Product product){
+    public void addItemProduct(Product product) {
         mData.add(product);
 //        notifyDataSetChanged();
         notifyItemInserted(mData.size());
         mChangePrice.Result(totalPrice());
     }
 
-    public List<BaseModel> getAllDataProduct(){
+    public List<BaseModel> getAllDataProduct() {
         return mData;
     }
 
-    public void removeItem(final int pos){
-        CustomCenterDialog.alertWithCancelButton(null, "Xóa " + mData.get(pos).getString("name") +" khỏi danh sách" , "ĐỒNG Ý","HỦY", new CallbackBoolean() {
+    public void removeItem(final int pos) {
+        CustomCenterDialog.alertWithCancelButton(null, "Xóa " + mData.get(pos).getString("name") + " khỏi danh sách", "ĐỒNG Ý", "HỦY", new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
-                if (result){
-                    if (mData.get(pos).getString("totalMoney").equals("0")){
-                        for (int i=0; i<mData.size(); i++){
-                            if (mData.get(i).getInt("id") == mData.get(pos).getInt("id")){
+                if (result) {
+                    if (mData.get(pos).getString("totalMoney").equals("0")) {
+                        for (int i = 0; i < mData.size(); i++) {
+                            if (mData.get(i).getInt("id") == mData.get(pos).getInt("id")) {
                                 mData.get(i).put("hasDouble", false);
                                 notifyItemChanged(i);
                                 break;
@@ -236,7 +237,6 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
                     mData.remove(pos);
                     mChangePrice.Result(totalPrice());
                     notifyDataSetChanged();
-
 
 
                 }
@@ -252,11 +252,11 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
         super.unregisterAdapterDataObserver(observer);
     }
 
-    public List<BaseModel> getAllData(){
+    public List<BaseModel> getAllData() {
         return mData;
     }
 
-    public double totalPrice(){
+    public double totalPrice() {
         Double sum = 0.0;
         for (int i = 0; i < mData.size(); i++) {
             sum += mData.get(i).getDouble("totalMoney");
@@ -264,7 +264,7 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
         return sum;
     }
 
-    private void copyNewProduct(int pos){
+    private void copyNewProduct(int pos) {
         BaseModel newProduct = new BaseModel();
 
         newProduct.put("id", mData.get(pos).getString("id"));
@@ -285,16 +285,16 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
         mData.get(pos).put("hasDouble", true);
         mData.add(newProduct);
         mChangePrice.Result(totalPrice());
-        notifyItemInserted(mData.size() -1);
+        notifyItemInserted(mData.size() - 1);
         notifyItemChanged(pos);
     }
 
-    private List<BaseModel> listPriceSuggest(int productID){
+    private List<BaseModel> listPriceSuggest(int productID) {
         List<BaseModel> listResult = new ArrayList<>();
         DataUtil.sortbyStringKey("createAt", mBillDetail, true);
-        for (BaseModel model : mBillDetail){
-            if (model.getInt("productId") == productID){
-                if (model.getDoubleValue("discount") != model.getDoubleValue("unitPrice")){
+        for (BaseModel model : mBillDetail) {
+            if (model.getInt("productId") == productID) {
+                if (model.getDoubleValue("discount") != model.getDoubleValue("unitPrice")) {
                     double dou = model.getDoubleValue("unitPrice") - model.getDoubleValue("discount");
                     model.put("value", dou);
 

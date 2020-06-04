@@ -9,7 +9,7 @@ import wolve.dms.utils.CustomSQL;
  * Created by macos on 9/16/17.
  */
 
-public class Distributor extends BaseModel{
+public class Distributor extends BaseModel {
 
     public Distributor() {
         jsonObject = null;
@@ -20,7 +20,7 @@ public class Distributor extends BaseModel{
     }
 
 
-    public static String getDistributorId(){
+    public static String getDistributorId() {
         String id_distributor = "";
         BaseModel currentDistributor = CustomSQL.getBaseModel(Constants.DISTRIBUTOR);
 
@@ -30,7 +30,7 @@ public class Distributor extends BaseModel{
         return id_distributor;
     }
 
-    public static int getId(){
+    public static int getId() {
         int id_distributor = 0;
         BaseModel currentDistributor = CustomSQL.getBaseModel(Constants.DISTRIBUTOR);
 
@@ -40,7 +40,7 @@ public class Distributor extends BaseModel{
         return id_distributor;
     }
 
-    public static String getName(){
+    public static String getName() {
         String name = "";
         BaseModel currentDistributor = CustomSQL.getBaseModel(Constants.DISTRIBUTOR);
 
@@ -51,7 +51,7 @@ public class Distributor extends BaseModel{
 
     }
 
-    public static int getLocationId(){
+    public static int getLocationId() {
         int location = 0;
         BaseModel currentDistributor = CustomSQL.getBaseModel(Constants.DISTRIBUTOR);
 
@@ -63,7 +63,7 @@ public class Distributor extends BaseModel{
 
     }
 
-    public static BaseModel getObject(){
+    public static BaseModel getObject() {
         String name = "";
         BaseModel currentDistributor = CustomSQL.getBaseModel(Constants.DISTRIBUTOR);
 

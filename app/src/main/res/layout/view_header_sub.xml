@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorRed"
-        android:titleTextColor="#000000"/>
+        android:titleTextColor="#000000" />
 
 
     <ImageView
@@ -17,5 +17,5 @@
         android:layout_height="match_parent"
         android:src="@drawable/ic_arrow_back_white"
         android:padding="@dimen/_8sdp"
-        android:background="?selectableItemBackground"/>
+        android:background="?selectableItemBackground" />
 </FrameLayout>

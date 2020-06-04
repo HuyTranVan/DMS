@@ -1,18 +1,13 @@
 package wolve.dms.adapter;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +55,7 @@ public class Import_ProductDetailAdapter extends RecyclerView.Adapter<Import_Pro
     }
 
     public class Import_ProductDetailViewHolder extends RecyclerView.ViewHolder {
-        private TextView  tvQuantity;
+        private TextView tvQuantity;
         private TextView tvName;
         private RelativeLayout lnParent;
 
@@ -74,16 +69,15 @@ public class Import_ProductDetailAdapter extends RecyclerView.Adapter<Import_Pro
 
     }
 
-    private int getSumProduct(){
-        int sum =0;
-        for (int i=0; i<mData.size(); i++){
-            if (mData.get(i).getBoolean("isChecked")){
+    private int getSumProduct() {
+        int sum = 0;
+        for (int i = 0; i < mData.size(); i++) {
+            if (mData.get(i).getBoolean("isChecked")) {
                 sum += mData.get(i).getInt("sumquantity");
             }
         }
         return sum;
     }
-
 
 
 }

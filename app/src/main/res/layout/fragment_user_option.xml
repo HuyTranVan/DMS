@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/user_option_parent"
     android:orientation="vertical"
@@ -8,7 +7,6 @@
     android:layout_height="match_parent"
     android:background="@color/colorWhite"
     android:clickable="true">
-
 
 
     <RelativeLayout
@@ -23,7 +21,7 @@
             android:layout_height="match_parent"
             android:src="@drawable/ic_arrow_back_black_18dp"
             android:padding="@dimen/_8sdp"
-            android:background="?selectableItemBackground"/>
+            android:background="?selectableItemBackground" />
 
         <TextView
             android:id="@+id/user_option_title"
@@ -33,7 +31,7 @@
             android:text="Thông tin tài khoản"
             android:textSize="@dimen/_12sdp"
             android:textAllCaps="true"
-            android:textColor="@color/black_text_color"/>
+            android:textColor="@color/black_text_color" />
 
     </RelativeLayout>
 
@@ -62,7 +60,7 @@
                 app:civ_border_width="5dip"
                 app:civ_border_overlay="true"
                 app:civ_fill_color="@color/colorWhite"
-                app:civ_border_color="@color/colorLightGrey"/>
+                app:civ_border_color="@color/colorLightGrey" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -77,18 +75,17 @@
                     android:layout_height="wrap_content"
                     android:text="xxx"
                     android:textColor="@color/black_text_color"
-                    android:textSize="@dimen/_12sdp"/>
+                    android:textSize="@dimen/_12sdp" />
 
                 <TextView
                     android:id="@+id/user_option_role"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="xxx"
-                    android:textSize="@dimen/_8sdp"/>
+                    android:textSize="@dimen/_8sdp" />
 
 
             </LinearLayout>
-
 
 
             <TextView
@@ -98,10 +95,9 @@
                 android:text="@string/icon_next"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/_5sdp"/>
+                android:layout_marginRight="@dimen/_5sdp" />
 
         </RelativeLayout>
-
 
 
         <TextView
@@ -114,13 +110,13 @@
             android:textSize="@dimen/_12sdp"
             android:minHeight="@dimen/_40sdp"
             android:gravity="center_vertical"
-            android:paddingLeft="@dimen/_20sdp"/>
+            android:paddingLeft="@dimen/_20sdp" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dip"
             android:background="@color/colorLightGrey"
-            android:layout_marginLeft="@dimen/_10sdp"/>
+            android:layout_marginLeft="@dimen/_10sdp" />
 
 
         <TextView
@@ -133,13 +129,13 @@
             android:textSize="@dimen/_12sdp"
             android:minHeight="@dimen/_40sdp"
             android:gravity="center_vertical"
-            android:paddingLeft="@dimen/_20sdp"/>
+            android:paddingLeft="@dimen/_20sdp" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dip"
             android:background="@color/colorLightGrey"
-            android:layout_marginLeft="@dimen/_10sdp"/>
+            android:layout_marginLeft="@dimen/_10sdp" />
 
         <TextView
             android:id="@+id/user_option_logout"
@@ -152,7 +148,7 @@
             android:textColor="@color/colorRedTransparent"
             android:minHeight="@dimen/_40sdp"
             android:gravity="center_vertical"
-            android:paddingLeft="@dimen/_20sdp"/>
+            android:paddingLeft="@dimen/_20sdp" />
     </LinearLayout>
 
 

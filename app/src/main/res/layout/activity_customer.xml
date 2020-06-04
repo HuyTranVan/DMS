@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fab="http://schemas.android.com/tools"
     android:id="@+id/customer_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -27,7 +26,7 @@
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_arrow_back_black_18dp"
                 android:padding="@dimen/_8sdp"
-                android:background="?selectableItemBackgroundBorderless"/>
+                android:background="?selectableItemBackgroundBorderless" />
 
 
             <LinearLayout
@@ -47,7 +46,7 @@
                     android:textSize="@dimen/_12sdp"
                     android:textColor="@color/black_text_color"
                     android:gravity="center"
-                    android:textAllCaps="true"/>
+                    android:textAllCaps="true" />
 
                 <TextView
                     android:id="@+id/customer_address"
@@ -57,21 +56,21 @@
                     android:text="dia chi"
                     android:textSize="@dimen/_8sdp"
                     android:gravity="center"
-                    android:textStyle="italic"/>
+                    android:textStyle="italic" />
 
             </LinearLayout>
 
-<!--            <wolve.dms.customviews.CTextIcon-->
-<!--                android:id="@+id/customer_switch_cover"-->
-<!--                android:layout_width="@dimen/_35sdp"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:text="@string/icon_x"-->
-<!--                android:textColor="@color/black_text_color_hint"-->
-<!--                android:textSize="@dimen/_16sdp"-->
-<!--                android:gravity="center"-->
-<!--                android:background="?selectableItemBackground"-->
-<!--                android:layout_toLeftOf="@+id/icon_more"-->
-<!--                android:visibility="gone"/>-->
+            <!--            <wolve.dms.customviews.CTextIcon-->
+            <!--                android:id="@+id/customer_switch_cover"-->
+            <!--                android:layout_width="@dimen/_35sdp"-->
+            <!--                android:layout_height="match_parent"-->
+            <!--                android:text="@string/icon_x"-->
+            <!--                android:textColor="@color/black_text_color_hint"-->
+            <!--                android:textSize="@dimen/_16sdp"-->
+            <!--                android:gravity="center"-->
+            <!--                android:background="?selectableItemBackground"-->
+            <!--                android:layout_toLeftOf="@+id/icon_more"-->
+            <!--                android:visibility="gone"/>-->
 
             <TextView
                 android:fontFamily="@font/font_awesome"
@@ -86,9 +85,7 @@
                 android:layout_alignParentRight="true" />
 
 
-            </RelativeLayout>
-
-
+        </RelativeLayout>
 
 
         <RelativeLayout
@@ -107,7 +104,7 @@
                 android:textSize="@dimen/_10sdp"
                 android:textColor="@color/colorBlueDark"
                 android:visibility="visible"
-                android:layout_centerVertical="true"/>
+                android:layout_centerVertical="true" />
 
             <TextView
                 android:id="@+id/customer_checkin_status"
@@ -120,8 +117,7 @@
                 android:layout_centerInParent="true"
                 android:textStyle="italic"
                 android:layout_toRightOf="@+id/customer_checkin_time"
-                android:layout_marginLeft="@dimen/_10sdp"/>
-
+                android:layout_marginLeft="@dimen/_10sdp" />
 
 
         </RelativeLayout>
@@ -142,7 +138,7 @@
             app:spb_progressiveStart_activated="false"
             app:spb_progressiveStart_speed="1.5"
             app:spb_progressiveStop_speed="3.4"
-            android:visibility="invisible"/>
+            android:visibility="invisible" />
 
         <HorizontalScrollView
             android:id="@+id/customer_overview"
@@ -171,8 +167,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="@dimen/_5sdp"
                     android:layout_marginRight="@dimen/_5sdp"
-                    android:singleLine="true"/>
-
+                    android:singleLine="true" />
 
 
                 <TextView
@@ -189,7 +184,7 @@
                     android:paddingLeft="@dimen/_8sdp"
                     android:paddingRight="@dimen/_8sdp"
                     android:layout_margin="@dimen/_5sdp"
-                    android:singleLine="true"/>
+                    android:singleLine="true" />
 
                 <TextView
                     android:id="@+id/customer_total"
@@ -205,7 +200,7 @@
                     android:paddingLeft="@dimen/_8sdp"
                     android:paddingRight="@dimen/_8sdp"
                     android:layout_margin="@dimen/_5sdp"
-                    android:singleLine="true"/>
+                    android:singleLine="true" />
 
                 <TextView
                     android:id="@+id/customer_paid"
@@ -221,8 +216,7 @@
                     android:paddingLeft="@dimen/_8sdp"
                     android:paddingRight="@dimen/_8sdp"
                     android:layout_margin="@dimen/_5sdp"
-                    android:singleLine="true"/>
-
+                    android:singleLine="true" />
 
 
                 <TextView
@@ -239,7 +233,7 @@
                     android:paddingLeft="@dimen/_8sdp"
                     android:paddingRight="@dimen/_8sdp"
                     android:layout_margin="@dimen/_5sdp"
-                    android:singleLine="true"/>
+                    android:singleLine="true" />
 
             </LinearLayout>
 
@@ -268,7 +262,7 @@
             <View
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
-                android:background="#75b9b3b3"/>
+                android:background="#75b9b3b3" />
 
             <androidx.viewpager.widget.ViewPager
                 android:id="@+id/customer_viewpager"
@@ -303,7 +297,7 @@
             android:gravity="center"
             android:textColor="@color/white_text_color"
             android:textSize="@dimen/_12sdp"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/customer_filter_icon_close"
@@ -314,30 +308,30 @@
             android:text="@string/icon_calendar"
             android:textSize="@dimen/_12sdp"
             android:textColor="@color/colorWhite"
-            android:gravity="center"/>
+            android:gravity="center" />
 
     </LinearLayout>
 
-<!--    <RelativeLayout-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginRight="@dimen/_20sdp"-->
-<!--        android:layout_marginBottom="@dimen/_20sdp"-->
-<!--        android:layout_gravity="bottom|right"-->
-<!--        android:gravity="right">-->
+    <!--    <RelativeLayout-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginRight="@dimen/_20sdp"-->
+    <!--        android:layout_marginBottom="@dimen/_20sdp"-->
+    <!--        android:layout_gravity="bottom|right"-->
+    <!--        android:gravity="right">-->
 
-<!--        <androidx.recyclerview.widget.RecyclerView-->
-<!--            android:id="@+id/customer_filter_rv"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_alignParentRight="true"-->
-<!--            android:layout_above="@+id/customer_filter"-->
-<!--            android:layout_marginBottom="@dimen/_5sdp"-->
-<!--            android:visibility="gone"/>-->
+    <!--        <androidx.recyclerview.widget.RecyclerView-->
+    <!--            android:id="@+id/customer_filter_rv"-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_alignParentRight="true"-->
+    <!--            android:layout_above="@+id/customer_filter"-->
+    <!--            android:layout_marginBottom="@dimen/_5sdp"-->
+    <!--            android:visibility="gone"/>-->
 
-<!--        -->
+    <!--        -->
 
-<!--    </RelativeLayout>-->
+    <!--    </RelativeLayout>-->
 
     <TextView
         android:id="@+id/customer_print"
@@ -351,9 +345,7 @@
         android:layout_gravity="bottom"
         android:layout_marginLeft="@dimen/_20sdp"
         android:layout_marginBottom="@dimen/_10sdp"
-        android:visibility="gone"/>
-
-
+        android:visibility="gone" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

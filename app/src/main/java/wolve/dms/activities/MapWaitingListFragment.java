@@ -8,14 +8,11 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
@@ -30,16 +27,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
-import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
-
 import wolve.dms.R;
-import wolve.dms.apiconnect.LocationConnect;
-import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackString;
 import wolve.dms.models.BaseModel;
-import wolve.dms.utils.Constants;
-import wolve.dms.utils.MapUtil;
 import wolve.dms.utils.Util;
 
 /**
@@ -48,7 +37,7 @@ import wolve.dms.utils.Util;
 
 public class MapWaitingListFragment extends Fragment implements View.OnClickListener,
         OnMapReadyCallback,
-        GoogleMap.OnCameraMoveListener{
+        GoogleMap.OnCameraMoveListener {
     private View view;
     private TextView tvTitle, btnLocation;
     private ImageView btnBack;
@@ -66,7 +55,7 @@ public class MapWaitingListFragment extends Fragment implements View.OnClickList
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_show_waitinglist_map,container,false);
+        view = inflater.inflate(R.layout.fragment_show_waitinglist_map, container, false);
 
         initializeView();
 
@@ -77,7 +66,6 @@ public class MapWaitingListFragment extends Fragment implements View.OnClickList
     }
 
     public void intitialData() {
-
 
 
     }
@@ -100,9 +88,8 @@ public class MapWaitingListFragment extends Fragment implements View.OnClickList
 
     }
 
-    private void backEvent(){
+    private void backEvent() {
         mActivity.onBackPressed();
-
 
 
     }
@@ -111,7 +98,7 @@ public class MapWaitingListFragment extends Fragment implements View.OnClickList
     @Override
     public void onClick(View v) {
         Util.hideKeyboard(v);
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.icon_back:
                 backEvent();
 
@@ -141,7 +128,7 @@ public class MapWaitingListFragment extends Fragment implements View.OnClickList
 
     }
 
-    private void animateToCurrentLocation(){
+    private void animateToCurrentLocation() {
         getCurrentLocation(new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -153,8 +140,8 @@ public class MapWaitingListFragment extends Fragment implements View.OnClickList
 
     }
 
-    private void showPinDelay(int milisec){
-        new Handler().postDelayed (new Runnable() {
+    private void showPinDelay(int milisec) {
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
 
@@ -179,7 +166,8 @@ public class MapWaitingListFragment extends Fragment implements View.OnClickList
 //                    }
 //                });
 
-            }}, milisec);
+            }
+        }, milisec);
     }
 
 

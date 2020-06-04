@@ -18,7 +18,7 @@ import wolve.dms.models.Printer;
 /**
  * Created by tranhuy on 2/14/17.
  */
-public class PosPrintBitmap extends AsyncTask<Printer,Void,Boolean> {
+public class PosPrintBitmap extends AsyncTask<Printer, Void, Boolean> {
     public CallbackBoolean delegate = null;
     Context context;
     Bitmap bitmap;

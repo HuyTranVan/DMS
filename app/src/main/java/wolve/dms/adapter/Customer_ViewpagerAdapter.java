@@ -33,19 +33,19 @@ public class Customer_ViewpagerAdapter extends FragmentPagerAdapter {
         this.mContext = Util.getInstance().getCurrentActivity();
     }
 
-    public void addFragment(Fragment fragment, String  text, int count) {
+    public void addFragment(Fragment fragment, String text, int count) {
         mFragments.add(fragment);
         mFragmentCount.add(count);
         mFragmentText.add(text);
     }
 
-    public void addCountNotify(int count, int position){
+    public void addCountNotify(int count, int position) {
         //mFragmentNotify.remove(position);
         //mFragmentNotify.add(position, count);
         //notifyDataSetChanged();
     }
 
-    public void replaceFragment(Fragment fragment, String title, String  text, int count, int position) {
+    public void replaceFragment(Fragment fragment, String title, String text, int count, int position) {
         mFragments.remove(position);
         mFragments.add(position, fragment);
 
@@ -70,10 +70,10 @@ public class Customer_ViewpagerAdapter extends FragmentPagerAdapter {
         TextView tvNotify = (TextView) tab.findViewById(R.id.tabNotify);
 
         tvTitle.setText(mFragmentText.get(position));
-        if (mFragmentCount.get(position) !=0){
+        if (mFragmentCount.get(position) != 0) {
             tvNotifyCount.setVisibility(View.VISIBLE);
             tvNotifyCount.setText(String.valueOf(mFragmentCount.get(position)));
-        }else {
+        } else {
             tvNotifyCount.setVisibility(View.GONE);
         }
 
@@ -83,7 +83,7 @@ public class Customer_ViewpagerAdapter extends FragmentPagerAdapter {
         return tab;
     }
 
-    public View getNotifyBaged(int count, boolean highlight){
+    public View getNotifyBaged(int count, boolean highlight) {
         View tab = LayoutInflater.from(mContext).inflate(R.layout.view_tab_customer, null);
         TextView tvTitle = (TextView) tab.findViewById(R.id.tabTitle);
         TextView tvNotifyCount = (TextView) tab.findViewById(R.id.tabNotifyCount);
@@ -91,12 +91,12 @@ public class Customer_ViewpagerAdapter extends FragmentPagerAdapter {
 
         tvTitle.setText(mFragmentText.get(1));
 
-        if (highlight){
+        if (highlight) {
             tvNotifyCount.setVisibility(View.GONE);
             tvNotify.setVisibility(View.VISIBLE);
 
-        }else {
-            tvNotifyCount.setVisibility(count ==0?View.GONE: View.VISIBLE);
+        } else {
+            tvNotifyCount.setVisibility(count == 0 ? View.GONE : View.VISIBLE);
             tvNotifyCount.setText(String.valueOf(count));
             tvNotify.setVisibility(View.GONE);
         }

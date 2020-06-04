@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,20 +37,20 @@ public class Statistical_BillsAdapter extends RecyclerView.Adapter<Statistical_B
     private Context mContext;
     private CallbackString mListener;
 
-    public Statistical_BillsAdapter(String username, List<BaseModel> data , CallbackString callbackString) {
+    public Statistical_BillsAdapter(String username, List<BaseModel> data, CallbackString callbackString) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
 //        this.mData = data;
         //this.baseData = data;
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mListener = callbackString;
 
-        if (username.equals(Constants.ALL_FILTER)){
+        if (username.equals(Constants.ALL_FILTER)) {
             this.baseData = data;
 
-        }else {
+        } else {
             baseData = new ArrayList<>();
-            for (BaseModel row : data){
-                if (row.getBaseModel("user").getString("displayName").equals(username)){
+            for (BaseModel row : data) {
+                if (row.getBaseModel("user").getString("displayName").equals(username)) {
                     baseData.add(row);
                 }
             }
@@ -78,16 +77,16 @@ public class Statistical_BillsAdapter extends RecyclerView.Adapter<Statistical_B
 
 //            holder.tvDate.setText(Util.DateString(mData.get(position).getLong("createAt")));
 //            holder.tvHour.setText(Util.HourString(mData.get(position).getLong("createAt")));
-            holder.tvTotal.setText("Tổng: "+ Util.FormatMoney(mData.get(position).getDouble("total")));
-            holder.tvPay.setText("Trả: "+ Util.FormatMoney(mData.get(position).getDouble("paid")));
-            holder.tvDebt.setText("Nợ: "+ Util.FormatMoney(mData.get(position).getDouble("debt")));
-            holder.tvNumber.setText(String.valueOf(mData.size() -position));
+            holder.tvTotal.setText("Tổng: " + Util.FormatMoney(mData.get(position).getDouble("total")));
+            holder.tvPay.setText("Trả: " + Util.FormatMoney(mData.get(position).getDouble("paid")));
+            holder.tvDebt.setText("Nợ: " + Util.FormatMoney(mData.get(position).getDouble("debt")));
+            holder.tvNumber.setText(String.valueOf(mData.size() - position));
 
 
-            if (!customer.getString("note").isEmpty()  && Util.isJSONValid(customer.getString("note"))){
+            if (!customer.getString("note").isEmpty() && Util.isJSONValid(customer.getString("note"))) {
                 holder.tvNumber.setTextColor(mContext.getResources().getColor(R.color.color_red));
 
-            }else {
+            } else {
                 holder.tvNumber.setTextColor(mContext.getResources().getColor(R.color.white_text_color));
 
             }
@@ -95,43 +94,43 @@ public class Statistical_BillsAdapter extends RecyclerView.Adapter<Statistical_B
 
             holder.tvsignBoard.setText(Constants.shopName[customer.getInt("shopType")] + " " + customer.getString("signBoard"));
             holder.tvDistrict.setText(customer.getString("street") + " - " + customer.getString("district"));
-            String user = String.format("Nhân viên: %s",mData.get(position).getJsonObject("user").getString("displayName"));
+            String user = String.format("Nhân viên: %s", mData.get(position).getJsonObject("user").getString("displayName"));
             String hour = Util.DateHourString(mData.get(position).getLong("createAt"));
             holder.tvUser.setText(String.format("%s         %s", user, hour));
 
             JSONArray arrayBillDetail = new JSONArray(mData.get(position).getString("billDetails"));
             List<BaseModel> listBillDetail = new ArrayList<>();
-            for (int i=0; i<arrayBillDetail.length(); i++){
+            for (int i = 0; i < arrayBillDetail.length(); i++) {
                 BaseModel billDetail = new BaseModel(arrayBillDetail.getJSONObject(i));
                 listBillDetail.add(billDetail);
             }
             Customer_BillsDetailAdapter adapter = new Customer_BillsDetailAdapter(listBillDetail);
             Util.createLinearRV(holder.rvBillDetail, adapter);
-            if (!mData.get(position).getString("note").equals("")){
+            if (!mData.get(position).getString("note").equals("")) {
                 String note = Security.decrypt(mData.get(position).getString("note"));
-                if (Util.isJSONObject(note)){
+                if (Util.isJSONObject(note)) {
                     BaseModel object = new BaseModel(note);
-                    if (object.hasKey(Constants.TEMPBILL) && object.getBoolean(Constants.TEMPBILL)){
+                    if (object.hasKey(Constants.TEMPBILL) && object.getBoolean(Constants.TEMPBILL)) {
                         holder.tvIsTempBill.setVisibility(View.VISIBLE);
-                    }else {
+                    } else {
                         holder.tvIsTempBill.setVisibility(View.GONE);
                     }
 
 
-                }else {
+                } else {
                     holder.tvIsTempBill.setVisibility(View.GONE);
                 }
 
-            }else {
+            } else {
                 holder.tvIsTempBill.setVisibility(View.GONE);
             }
 
-            if (mData.size()==1){
+            if (mData.size() == 1) {
                 holder.vLineUpper.setVisibility(View.GONE);
                 holder.vLineUnder.setVisibility(View.GONE);
-            }else if(position ==0){
+            } else if (position == 0) {
                 holder.vLineUpper.setVisibility(View.GONE);
-            }else if (position==mData.size()-1){
+            } else if (position == mData.size() - 1) {
                 holder.vLineUnder.setVisibility(View.GONE);
             }
 
@@ -180,7 +179,7 @@ public class Statistical_BillsAdapter extends RecyclerView.Adapter<Statistical_B
 
     }
 
-    public List<BaseModel> getAllBill(){
+    public List<BaseModel> getAllBill() {
         return mData;
     }
 
@@ -196,7 +195,7 @@ public class Statistical_BillsAdapter extends RecyclerView.Adapter<Statistical_B
                 } else {
                     List<BaseModel> listTemp = new ArrayList<>();
                     for (BaseModel row : baseData) {
-                        if (row.getDouble("debt") > 0){
+                        if (row.getDouble("debt") > 0) {
                             listTemp.add(row);
                         }
 
@@ -217,12 +216,12 @@ public class Statistical_BillsAdapter extends RecyclerView.Adapter<Statistical_B
         };
     }
 
-    public BaseModel sumBill(){
+    public BaseModel sumBill() {
         BaseModel bill = new BaseModel();
         double total = 0.0;
         double debt = 0.0;
-        for (int i=0; i<mData.size(); i++){
-            total +=mData.get(i).getDouble("total");
+        for (int i = 0; i < mData.size(); i++) {
+            total += mData.get(i).getDouble("total");
             debt += mData.get(i).getDouble("debt");
 
         }
@@ -231,10 +230,10 @@ public class Statistical_BillsAdapter extends RecyclerView.Adapter<Statistical_B
         return bill;
     }
 
-    public double sumBillTotal(){
+    public double sumBillTotal() {
         double total = 0.0;
-        for (int i=0; i<mData.size(); i++){
-            total +=mData.get(i).getDouble("total");
+        for (int i = 0; i < mData.size(); i++) {
+            total += mData.get(i).getDouble("total");
 
         }
 

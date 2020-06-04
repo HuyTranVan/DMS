@@ -55,15 +55,15 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserAdapterVie
         holder.tvPhone.setText(Util.FormatPhone(mData.get(position).getString("phone")));
         holder.tvRole.setText(User.getRoleString(mData.get(position).getInt("role")));
 
-        holder.line.setVisibility(position == mData.size() -1?View.GONE : View.VISIBLE);
-        if (!Util.checkImageNull(mData.get(position).getString("image"))){
+        holder.line.setVisibility(position == mData.size() - 1 ? View.GONE : View.VISIBLE);
+        if (!Util.checkImageNull(mData.get(position).getString("image"))) {
             Glide.with(mContext).load(mData.get(position).getString("image")).centerCrop().into(holder.imageUser);
 
         }
         holder.rlParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mListener.onRespone(mData.get(position).BaseModelstoString() , mData.get(position).getInt("id"));
+                mListener.onRespone(mData.get(position).BaseModelstoString(), mData.get(position).getInt("id"));
             }
         });
 

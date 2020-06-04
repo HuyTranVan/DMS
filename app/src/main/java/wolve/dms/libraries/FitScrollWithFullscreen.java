@@ -14,7 +14,7 @@ import wolve.dms.utils.Util;
  */
 
 public class FitScrollWithFullscreen {
-    public static void assistActivity (Activity activity, double fixNumber) {
+    public static void assistActivity(Activity activity, double fixNumber) {
         new FitScrollWithFullscreen(activity, fixNumber);
 
     }
@@ -40,9 +40,9 @@ public class FitScrollWithFullscreen {
         if (usableHeightNow != usableHeightPrevious) {
             int usableHeightSansKeyboard = mChildOfContent.getRootView().getHeight();
             int heightDifference = usableHeightSansKeyboard - usableHeightNow;
-            if (heightDifference > (usableHeightSansKeyboard/4)) {
+            if (heightDifference > (usableHeightSansKeyboard / 4)) {
                 // keyboard probably just became visible
-                frameLayoutParams.height = (int) (usableHeightSansKeyboard - heightDifference/fixNumber + Util.convertSdpToInt(R.dimen._35sdp));
+                frameLayoutParams.height = (int) (usableHeightSansKeyboard - heightDifference / fixNumber + Util.convertSdpToInt(R.dimen._35sdp));
             } else {
                 // keyboard probably just became hidden
                 frameLayoutParams.height = usableHeightSansKeyboard;

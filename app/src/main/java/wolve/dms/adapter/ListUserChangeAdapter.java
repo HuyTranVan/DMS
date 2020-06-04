@@ -1,12 +1,9 @@
 package wolve.dms.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -14,9 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +20,6 @@ import wolve.dms.R;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
-import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
 
 
@@ -89,7 +82,7 @@ public class ListUserChangeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         holder.tvPhone.setText(mData.get(position).getString("phone"));
         holder.tvRole.setText(User.getRoleString(mData.get(position).getInt("role")));
 
-        if (!Util.checkImageNull(mData.get(position).getString("image"))){
+        if (!Util.checkImageNull(mData.get(position).getString("image"))) {
             Glide.with(mContext).load(mData.get(position).getString("image")).centerCrop().into(holder.imgUser);
         }
 
@@ -101,7 +94,6 @@ public class ListUserChangeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         });
 
     }
-
 
 
     @Override
@@ -122,7 +114,7 @@ public class ListUserChangeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             tvPhone = itemView.findViewById(R.id.list_user_change_item_phone);
             tvRole = itemView.findViewById(R.id.list_user_change_item_role);
             imgUser = itemView.findViewById(R.id.list_user_change_item_image);
-            vLine =itemView.findViewById(R.id.seperateline);
+            vLine = itemView.findViewById(R.id.seperateline);
 
 
         }
@@ -137,7 +129,7 @@ public class ListUserChangeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
     }
 
-    private void setNewItem(ListUserChangeAdapter.SetNewViewHolder holder, int position){
+    private void setNewItem(ListUserChangeAdapter.SetNewViewHolder holder, int position) {
         holder.lnParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

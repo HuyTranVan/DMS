@@ -48,7 +48,7 @@ public class Customer_BillsReturnAdapter extends RecyclerView.Adapter<Customer_B
     public void onBindViewHolder(final CustomerBillsReturnAdapterViewHolder holder, final int position) {
         try {
             holder.tvTitle.setText(String.format("Trả hàng %s", Util.DateHourString(mData.get(position).getLong("createAt"))));
-            holder.tvTotal.setText(String.format("%s đ",Util.FormatMoney(mData.get(position).getDouble("total"))));
+            holder.tvTotal.setText(String.format("%s đ", Util.FormatMoney(mData.get(position).getDouble("total"))));
 
             final List<BaseModel> listBillDetail = new ArrayList<>(DataUtil.array2ListBaseModel(new JSONArray(mData.get(position).getString("billDetails"))));
 
@@ -66,7 +66,7 @@ public class Customer_BillsReturnAdapter extends RecyclerView.Adapter<Customer_B
     }
 
     public class CustomerBillsReturnAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvTitle , tvTotal;
+        private TextView tvTitle, tvTotal;
         private RecyclerView rvReturn;
         private LinearLayout lnParent;
 

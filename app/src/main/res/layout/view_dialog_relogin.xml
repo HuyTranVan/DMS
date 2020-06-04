@@ -15,7 +15,7 @@
         android:textSize="@dimen/_12sdp"
         android:textColor="@color/black_text_color"
         android:gravity="center"
-        android:textAllCaps="true"/>
+        android:textAllCaps="true" />
 
     <LinearLayout
         android:id="@+id/dialog_relogin_body"
@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:hint="Số điện thoại"
                 android:inputType="number"
-                app:backgroundTint="@color/colorBlueDark"/>
+                app:backgroundTint="@color/colorBlueDark" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -57,9 +57,10 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <include android:layout_height="wrap_content"
+        <include
+            android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            layout="@layout/view_bottom_dialog_button"/>
+            layout="@layout/view_bottom_dialog_button" />
 
     </LinearLayout>
 

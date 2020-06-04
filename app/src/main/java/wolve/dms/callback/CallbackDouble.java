@@ -1,5 +1,5 @@
 package wolve.dms.callback;
 
-public interface CallbackDouble{
+public interface CallbackDouble {
     void Result(Double d);
 }

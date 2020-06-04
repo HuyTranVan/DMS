@@ -19,7 +19,7 @@ public class FirebaseDataReceiver extends WakefulBroadcastReceiver {
         Boolean bundle = intent.hasExtra("data");
         Boolean isTag = intent.hasExtra("tag");
 
-        if(isTag) {
+        if (isTag) {
             try {
                 JSONObject tagObject = new JSONObject(intent.getExtras().getString("tag"));
                 //Util.setBadge(tagObject.getInt(Constants.BADGE));

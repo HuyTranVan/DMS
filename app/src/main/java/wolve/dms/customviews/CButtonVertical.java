@@ -3,29 +3,15 @@ package wolve.dms.customviews;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ListView;
-import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import wolve.dms.R;
-import wolve.dms.callback.CallbackDouble;
-import wolve.dms.callback.CallbackString;
-import wolve.dms.utils.Util;
 
 /**
  * Created by macos on 9/17/17.
@@ -70,7 +56,7 @@ public class CButtonVertical extends RelativeLayout {
 
         if (a != null) {
             if (a.hasValue(R.styleable.CInputForm_iconColor)) {
-                setIconColor(a.getColor(R.styleable.CInputForm_iconColor,0));
+                setIconColor(a.getColor(R.styleable.CInputForm_iconColor, 0));
             }
 
             if (a.hasValue(R.styleable.CInputForm_iconSize)) {
@@ -82,7 +68,7 @@ public class CButtonVertical extends RelativeLayout {
             }
 
             if (a.hasValue(R.styleable.CInputForm_textColor)) {
-                setTextColor(a.getColor(R.styleable.CInputForm_textColor,0));
+                setTextColor(a.getColor(R.styleable.CInputForm_textColor, 0));
             }
 
             if (a.hasValue(R.styleable.CInputForm_textSize)) {
@@ -114,7 +100,6 @@ public class CButtonVertical extends RelativeLayout {
     public void setTextColor(int color) {
         tvText.setTextColor(color);
     }
-
 
 
     public void setTextSize(float dimension) {

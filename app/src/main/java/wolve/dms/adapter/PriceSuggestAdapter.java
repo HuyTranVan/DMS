@@ -1,7 +1,6 @@
 package wolve.dms.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,22 +9,12 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.apiconnect.StatusConnect;
-import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackClickAdapter;
-import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackDouble;
-import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Status;
-import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 

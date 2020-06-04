@@ -27,7 +27,7 @@ import wolve.dms.utils.Util;
 
 public class Statistical_PaymentAdapter extends RecyclerView.Adapter<Statistical_PaymentAdapter.StatisticalBillsViewHolder> implements Filterable {
     private List<BaseModel> baseData;
-    private List<BaseModel> mData ;
+    private List<BaseModel> mData;
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackString mListener;
@@ -37,13 +37,13 @@ public class Statistical_PaymentAdapter extends RecyclerView.Adapter<Statistical
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mListener = listener;
 
-        if (username.equals(Constants.ALL_FILTER)){
+        if (username.equals(Constants.ALL_FILTER)) {
             this.baseData = data;
 
-        }else {
+        } else {
             baseData = new ArrayList<>();
-            for (BaseModel row : data){
-                if (row.getBaseModel("user").getString("displayName").equals(username)){
+            for (BaseModel row : data) {
+                if (row.getBaseModel("user").getString("displayName").equals(username)) {
                     baseData.add(row);
                 }
             }
@@ -63,25 +63,25 @@ public class Statistical_PaymentAdapter extends RecyclerView.Adapter<Statistical
 
     @Override
     public void onBindViewHolder(final StatisticalBillsViewHolder holder, final int position) {
-        holder.tvNumber.setText(String.valueOf(mData.size() -position));
+        holder.tvNumber.setText(String.valueOf(mData.size() - position));
 
         final BaseModel customer = new BaseModel(mData.get(position).getJsonObject("customer"));
         holder.tvsignBoard.setText(Constants.shopName[customer.getInt("shopType")] + " " + customer.getString("signBoard"));
         holder.tvDistrict.setText(customer.getString("street") + " - " + customer.getString("district"));
 
         String user = Util.getIconString(R.string.icon_username, "   ", mData.get(position).getBaseModel("user").getString("displayName"));
-        String collect = mData.get(position).getInt("user_id") != mData.get(position).getInt("user_collect")?
-                        String.format(" (%s thu hộ)",mData.get(position).getBaseModel("collect_by").getString("displayName") ) : "";
+        String collect = mData.get(position).getInt("user_id") != mData.get(position).getInt("user_collect") ?
+                String.format(" (%s thu hộ)", mData.get(position).getBaseModel("collect_by").getString("displayName")) : "";
         holder.tvUser.setText(user + collect);
 
         String time = Util.DateHourString(mData.get(position).getLong("createAt"));
-        holder.tvTime.setText(time  );
+        holder.tvTime.setText(time);
 
-        holder.tvProfit.setText(String.format("(%s)",Util.FormatMoney(mData.get(position).getDouble("bill_profit"))));
+        holder.tvProfit.setText(String.format("(%s)", Util.FormatMoney(mData.get(position).getDouble("bill_profit"))));
 
         holder.tvPaid.setText(Util.FormatMoney(mData.get(position).getDouble("paid")));
 
-        holder.vLine.setVisibility(position == mData.size()-1? View.GONE:View.VISIBLE);
+        holder.vLine.setVisibility(position == mData.size() - 1 ? View.GONE : View.VISIBLE);
 
         holder.tvNumber.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,23 +113,23 @@ public class Statistical_PaymentAdapter extends RecyclerView.Adapter<Statistical
             tvTime = itemView.findViewById(R.id.statistical_cash_item_time);
             tvPaid = itemView.findViewById(R.id.statistical_cash_item_paid);
             tvProfit = itemView.findViewById(R.id.statistical_cash_item_profit);
-            vLine =itemView.findViewById(R.id.statistical_cash_item_line);
+            vLine = itemView.findViewById(R.id.statistical_cash_item_line);
 
         }
     }
 
-    public double sumPayments(){
+    public double sumPayments() {
         double totalPayment = 0.0;
-        for (BaseModel row : mData){
+        for (BaseModel row : mData) {
             totalPayment += row.getDouble("paid");
         }
         return totalPayment;
     }
 
-    public double sumCollect(){
+    public double sumCollect() {
         double total = 0.0;
-        for (BaseModel row : mData){
-            if (row.getInt("user_id") != row.getInt("user_collect")){
+        for (BaseModel row : mData) {
+            if (row.getInt("user_id") != row.getInt("user_collect")) {
                 total += row.getDouble("paid");
             }
 
@@ -137,17 +137,17 @@ public class Statistical_PaymentAdapter extends RecyclerView.Adapter<Statistical
         return total;
     }
 
-    public double sumProfit(){
+    public double sumProfit() {
         double totalProfit = 0.0;
-        for (BaseModel row : mData){
+        for (BaseModel row : mData) {
             totalProfit += row.getDouble("bill_profit");
         }
         return totalProfit;
     }
 
-    public double sumBaseProfit(){
+    public double sumBaseProfit() {
         double totalProfit = 0.0;
-        for (BaseModel row : mData){
+        for (BaseModel row : mData) {
             totalProfit += row.getDouble("base_profit");
         }
         return totalProfit;
@@ -165,7 +165,7 @@ public class Statistical_PaymentAdapter extends RecyclerView.Adapter<Statistical
                 } else {
                     List<BaseModel> listTemp = new ArrayList<>();
                     for (BaseModel row : baseData) {
-                        if (row.getInt("user_id") != row.getInt("user_collect")){
+                        if (row.getInt("user_id") != row.getInt("user_collect")) {
                             listTemp.add(row);
                         }
 

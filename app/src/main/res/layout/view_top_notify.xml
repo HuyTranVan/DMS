@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/top_notify_parent"
     android:layout_width="match_parent"
@@ -11,48 +10,47 @@
     tools:ignore="WebViewLayout"
     android:gravity="center_vertical">
 
+    <TextView
+        android:fontFamily="@font/font_awesome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/icon_info"
+        android:textSize="@dimen/_12sdp"
+        android:textColor="@color/black_text_color_hint"
+        android:layout_marginLeft="@dimen/_10sdp"
+        android:layout_marginRight="@dimen/_15sdp"
+        android:layout_gravity="center_vertical" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
         <TextView
             android:fontFamily="@font/font_awesome"
+            android:id="@+id/top_notify_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/icon_info"
-            android:textSize="@dimen/_12sdp"
-            android:textColor="@color/black_text_color_hint"
-            android:layout_marginLeft="@dimen/_10sdp"
-            android:layout_marginRight="@dimen/_15sdp"
-            android:layout_gravity="center_vertical"/>
+            android:gravity="right"
+            android:text="@string/icon_money"
+            android:textSize="@dimen/_11sdp"
+            android:textColor="@color/black_text_color"
+            android:layout_gravity="center_vertical"
+            android:singleLine="true" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/top_notify_text"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-                <TextView
-                    android:fontFamily="@font/font_awesome"
-                    android:id="@+id/top_notify_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:text="@string/icon_money"
-                    android:textSize="@dimen/_11sdp"
-                    android:textColor="@color/black_text_color"
-                    android:layout_gravity="center_vertical"
-                    android:singleLine="true"/>
-
-                <TextView
-                    android:id="@+id/top_notify_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Tiền mặt"
-                    android:textColor="@color/black_text_color_hint"
-                    android:textSize="@dimen/_11sdp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginTop="@dimen/_2sdp"
-                    android:singleLine="true"/>
+            android:text="Tiền mặt"
+            android:textColor="@color/black_text_color_hint"
+            android:textSize="@dimen/_11sdp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:singleLine="true" />
 
 
-        </LinearLayout>
-
+    </LinearLayout>
 
 
 </LinearLayout>

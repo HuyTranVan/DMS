@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:gravity="center">
 
@@ -14,7 +13,7 @@
         android:text="@string/icon_dashboard"
         android:textSize="@dimen/_12sdp"
         android:textColor="@drawable/text_blue_selected"
-        android:gravity="center"/>
+        android:gravity="center" />
 
     <TextView
         android:id="@+id/statistical_tab_title"
@@ -25,8 +24,7 @@
         android:textSize="@dimen/_10sdp"
         android:textColor="@drawable/text_blue_selected"
         android:singleLine="true"
-        android:layout_gravity="center_horizontal"/>
-
+        android:layout_gravity="center_horizontal" />
 
 
 </LinearLayout>

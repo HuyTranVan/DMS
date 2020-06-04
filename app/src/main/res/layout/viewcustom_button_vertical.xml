@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/button_vertical_parent"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -20,7 +19,7 @@
         android:textColor="@color/colorWhite"
         android:layout_gravity="center_vertical"
         android:layout_centerHorizontal="true"
-        android:gravity="center"/>
+        android:gravity="center" />
 
     <TextView
         android:id="@+id/button_vertical_content"
@@ -33,6 +32,6 @@
         android:textColorHint="@color/black_text_color_hint"
         android:gravity="center_vertical"
         android:layout_below="@+id/button_vertical_icon"
-        android:layout_marginTop="@dimen/_5sdp"/>
+        android:layout_marginTop="@dimen/_5sdp" />
 
 </RelativeLayout>

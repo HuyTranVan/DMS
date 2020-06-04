@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fab="http://schemas.android.com/tools"
     android:id="@+id/map_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorWhite"
-    >
+    android:background="@color/colorWhite">
 
 
     <fragment
         android:id="@+id/edit_map_map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
     <ImageView
         android:id="@+id/edit_map_pin"
@@ -23,7 +20,7 @@
         android:src="@drawable/ic_pin"
         android:layout_gravity="center"
         android:visibility="visible"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true" />
 
 
     <RelativeLayout
@@ -40,7 +37,7 @@
             android:layout_height="match_parent"
             android:src="@drawable/ic_arrow_back_black_18dp"
             android:padding="@dimen/_8sdp"
-            android:background="?selectableItemBackground"/>
+            android:background="?selectableItemBackground" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -58,7 +55,7 @@
                 android:text="SẢN PHẨM"
                 android:textSize="@dimen/_12sdp"
                 android:textColor="@color/black_text_color"
-                android:gravity="center"/>
+                android:gravity="center" />
 
             <TextView
                 android:id="@+id/edit_map_address"
@@ -68,7 +65,7 @@
                 android:text="dia chi"
                 android:textSize="@dimen/_8sdp"
                 android:gravity="center"
-                android:textStyle="italic"/>
+                android:textStyle="italic" />
 
 
         </LinearLayout>
@@ -83,7 +80,7 @@
             android:text="@string/icon_up"
             android:rotation="180"
             android:textSize="@dimen/_16sdp"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentRight="true" />
 
     </RelativeLayout>
 
@@ -114,7 +111,7 @@
                     android:layout_weight="0.7"
                     android:text="Địa chỉ"
                     android:gravity="center_vertical|right"
-                    android:paddingRight="@dimen/_5sdp"/>
+                    android:paddingRight="@dimen/_5sdp" />
 
                 <EditText
                     android:id="@+id/edit_map_add"
@@ -126,7 +123,7 @@
                     android:textSize="@dimen/_12sdp"
                     android:layout_margin="@dimen/_5sdp"
                     android:paddingLeft="@dimen/_10sdp"
-                    android:inputType="textCapWords"/>
+                    android:inputType="textCapWords" />
 
 
             </LinearLayout>
@@ -134,8 +131,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                >
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -143,7 +139,7 @@
                     android:layout_weight="0.7"
                     android:text="Tên đường"
                     android:gravity="center_vertical|right"
-                    android:paddingRight="@dimen/_5sdp"/>
+                    android:paddingRight="@dimen/_5sdp" />
 
                 <EditText
                     android:id="@+id/edit_map_street"
@@ -155,7 +151,7 @@
                     android:layout_margin="@dimen/_5sdp"
                     android:paddingLeft="@dimen/_10sdp"
                     android:textSize="@dimen/_12sdp"
-                    android:inputType="textCapWords"/>
+                    android:inputType="textCapWords" />
 
 
             </LinearLayout>
@@ -163,8 +159,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                >
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -172,7 +167,7 @@
                     android:layout_weight="0.7"
                     android:text="Quận/ Huyện"
                     android:gravity="center_vertical|right"
-                    android:paddingRight="@dimen/_5sdp"/>
+                    android:paddingRight="@dimen/_5sdp" />
 
                 <EditText
                     android:id="@+id/edit_map_district"
@@ -185,7 +180,7 @@
                     android:paddingLeft="@dimen/_10sdp"
                     android:focusable="false"
                     android:textSize="@dimen/_12sdp"
-                    android:inputType="textCapWords"/>
+                    android:inputType="textCapWords" />
 
 
             </LinearLayout>
@@ -193,8 +188,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                >
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -202,7 +196,7 @@
                     android:layout_weight="0.7"
                     android:text="Tỉnh/ Thành phố"
                     android:gravity="center_vertical|right"
-                    android:paddingRight="@dimen/_5sdp"/>
+                    android:paddingRight="@dimen/_5sdp" />
 
                 <EditText
                     android:id="@+id/edit_map_city"
@@ -215,7 +209,7 @@
                     android:paddingLeft="@dimen/_10sdp"
                     android:focusable="false"
                     android:textSize="@dimen/_12sdp"
-                    android:inputType="textCapWords"/>
+                    android:inputType="textCapWords" />
 
 
             </LinearLayout>
@@ -224,8 +218,6 @@
 
 
     </androidx.cardview.widget.CardView>
-
-
 
 
     <TextView
@@ -241,8 +233,7 @@
         android:layout_marginBottom="@dimen/_85sdp"
         android:layout_gravity="bottom|right"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"/>
-
+        android:layout_alignParentRight="true" />
 
 
     <LinearLayout
@@ -264,7 +255,7 @@
             android:text="Di chuyển Pin đến vị trí chính xác"
             android:gravity="center"
             android:textStyle="italic"
-            android:textSize="@dimen/_10sdp"/>
+            android:textSize="@dimen/_10sdp" />
 
 
         <Button
@@ -278,7 +269,7 @@
             android:textColor="@color/colorWhite"
             android:textSize="@dimen/_12sdp"
             android:layout_gravity="center_horizontal|bottom"
-            android:layout_marginTop="@dimen/_2sdp"/>
+            android:layout_marginTop="@dimen/_2sdp" />
 
 
     </LinearLayout>
@@ -290,6 +281,6 @@
         android:background="@color/black_text_color_hint"
         android:clickable="true"
         android:layout_below="@+id/edit_map_header"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </RelativeLayout>

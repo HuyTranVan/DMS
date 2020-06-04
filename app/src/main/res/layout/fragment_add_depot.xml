@@ -19,7 +19,7 @@
             android:layout_height="match_parent"
             android:src="@drawable/ic_arrow_back_black_18dp"
             android:padding="@dimen/_8sdp"
-            android:background="?selectableItemBackground"/>
+            android:background="?selectableItemBackground" />
 
         <TextView
             android:id="@+id/add_depot_title"
@@ -28,7 +28,7 @@
             android:layout_centerInParent="true"
             android:text="KHO HÀNG"
             android:textSize="@dimen/_12sdp"
-            android:textColor="@color/black_text_color"/>
+            android:textColor="@color/black_text_color" />
 
     </RelativeLayout>
 
@@ -43,7 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:iconText="@string/icon_depot"
-            android:inputType="textCapCharacters"/>
+            android:inputType="textCapCharacters" />
 
         <wolve.dms.customviews.CInputForm
             android:id="@+id/add_depot_user"
@@ -52,7 +52,7 @@
             app:textHint="Nhân viên"
             app:iconText="@string/icon_role"
             app:isDropdown="true"
-            app:textColor="@color/colorBlue"/>
+            app:textColor="@color/colorBlue" />
 
         <RadioGroup
             android:id="@+id/add_depot_rd"
@@ -71,7 +71,7 @@
                 android:paddingLeft="@dimen/_10sdp"
                 android:layout_marginBottom="@dimen/_5sdp"
                 android:buttonTint="@color/colorBlue"
-                android:enabled="false"/>
+                android:enabled="false" />
 
             <RadioButton
                 android:id="@+id/add_depot_rdtemp"
@@ -82,7 +82,7 @@
                 android:paddingLeft="@dimen/_10sdp"
                 android:layout_marginBottom="@dimen/_5sdp"
                 android:buttonTint="@color/colorBlue"
-                android:enabled="false"/>
+                android:enabled="false" />
 
             <RadioButton
                 android:id="@+id/add_depot_rduser"
@@ -94,12 +94,11 @@
                 android:layout_marginBottom="@dimen/_5sdp"
                 android:checked="true"
                 android:buttonTint="@color/colorBlue"
-                android:enabled="false"/>
+                android:enabled="false" />
 
         </RadioGroup>
 
     </LinearLayout>
-
 
 
     <Button
@@ -113,7 +112,7 @@
         android:textAllCaps="true"
         android:textColor="@color/white"
         android:textSize="@dimen/_14sdp"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_gravity="center_horizontal" />
 
 
 </LinearLayout>

@@ -2,7 +2,6 @@ package wolve.dms.customviews;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.view.ViewGroup;
 
 import com.google.android.material.tabs.TabLayout;
@@ -29,7 +28,7 @@ public class CustomTabLayout extends TabLayout {
         if (getTabCount() == 0)
             return;
         try {
-            ViewGroup tabLayout = (ViewGroup)getChildAt(0);
+            ViewGroup tabLayout = (ViewGroup) getChildAt(0);
             int widthOfAllTabs = 0;
             for (int i = 0; i < tabLayout.getChildCount(); i++) {
                 widthOfAllTabs += tabLayout.getChildAt(i).getMeasuredWidth();

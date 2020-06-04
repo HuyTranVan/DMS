@@ -27,7 +27,7 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class TestActivity extends BaseActivity implements View.OnClickListener{
+public class TestActivity extends BaseActivity implements View.OnClickListener {
     private ImageView btnBack;
     private RecyclerView rvTest;
     private TestAdapter adapter;
@@ -47,7 +47,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener{
     public void findViewById() {
         btnBack = (ImageView) findViewById(R.id.icon_back);
         rvTest = (RecyclerView) findViewById(R.id.rvtest);
-        btnConfirm =  findViewById(R.id.confirm);
+        btnConfirm = findViewById(R.id.confirm);
 
     }
 
@@ -66,7 +66,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.icon_back:
                 Transaction.gotoHomeActivityRight(true);
                 onBackPressed();
@@ -92,10 +92,10 @@ public class TestActivity extends BaseActivity implements View.OnClickListener{
             @Override
             public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(true);
-                if (Constants.responeIsSuccess(result)){
+                if (Constants.responeIsSuccess(result)) {
                     createRVTest(Constants.getResponeArraySuccess(result));
 
-                }else {
+                } else {
                     Constants.throwError(result.getString("message"));
                     //listener.onError(result.getString("message"));
                     Util.getInstance().stopLoading(true);
@@ -114,7 +114,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener{
     }
 
 
-    private void createRVTest(List<BaseModel> list){
+    private void createRVTest(List<BaseModel> list) {
 //        List<BaseModel> list1 = listBillIsReturn(list);
 //        List<BaseModel> list1 = listBillDeliver(list);
         List<BaseModel> list1 = listCustomer(list);
@@ -123,17 +123,17 @@ public class TestActivity extends BaseActivity implements View.OnClickListener{
 
     }
 
-    private List<BaseModel> listBillIsReturn(List<BaseModel> list){
+    private List<BaseModel> listBillIsReturn(List<BaseModel> list) {
         List<BaseModel> listBill = new ArrayList<>();
 
-        for (int i=0; i<list.size(); i++){
+        for (int i = 0; i < list.size(); i++) {
             String note = Security.decrypt(list.get(i).getString("note"));
 
             if (!note.equals("")) {
                 if (Util.isJSONObject(note)) {
                     BaseModel notttt = new BaseModel(note);
 //                    if (notttt.hasKey("haveBillReturn")){
-                    if (notttt.hasKey("isBillReturn")){
+                    if (notttt.hasKey("isBillReturn")) {
                         list.get(i).put("isReturnId", notttt.getBaseModel("isBillReturn").getInt("id"));
                         listBill.add(list.get(i));
                     }
@@ -144,17 +144,18 @@ public class TestActivity extends BaseActivity implements View.OnClickListener{
         }
         return listBill;
     }
-    private List<BaseModel> listBillDeliver(List<BaseModel> list){
+
+    private List<BaseModel> listBillDeliver(List<BaseModel> list) {
         List<BaseModel> listBill = new ArrayList<>();
 
-        for (int i=0; i<list.size(); i++){
+        for (int i = 0; i < list.size(); i++) {
             String note = Security.decrypt(list.get(i).getString("note"));
 
             if (!note.equals("")) {
                 if (Util.isJSONObject(note)) {
                     BaseModel notttt = new BaseModel(note);
                     if (!notttt.hasKey("isBillReturn") && !notttt.hasKey("haveBillReturn")
-                            && notttt.hasKey("temp_bill") && !notttt.getBoolean("temp_bill")){
+                            && notttt.hasKey("temp_bill") && !notttt.getBoolean("temp_bill")) {
                         list.get(i).put("deliverId", notttt.getBaseModel("deliverBy").getInt("id"));
                         listBill.add(list.get(i));
                     }
@@ -165,10 +166,11 @@ public class TestActivity extends BaseActivity implements View.OnClickListener{
         }
         return listBill;
     }
-    private List<BaseModel> listBillHaveReturn(List<BaseModel> list){
+
+    private List<BaseModel> listBillHaveReturn(List<BaseModel> list) {
         List<BaseModel> listBill = new ArrayList<>();
 
-        for (int i=0; i<list.size(); i++){
+        for (int i = 0; i < list.size(); i++) {
             String note = Security.decrypt(list.get(i).getString("note"));
 
             if (!note.equals("")) {
@@ -188,12 +190,12 @@ public class TestActivity extends BaseActivity implements View.OnClickListener{
         return listBill;
     }
 
-    private List<BaseModel> listCustomer(List<BaseModel> list){
+    private List<BaseModel> listCustomer(List<BaseModel> list) {
         List<BaseModel> listCustomer = new ArrayList<>();
 
-        for (BaseModel baseModel : list){
-            List<BaseModel> listOriginalBill= new ArrayList<>(DataUtil.array2ListObject(baseModel.getString("bills")));
-            List<BaseModel> listBill= new ArrayList<>(DataUtil.remakeBill(listOriginalBill, false));
+        for (BaseModel baseModel : list) {
+            List<BaseModel> listOriginalBill = new ArrayList<>(DataUtil.array2ListObject(baseModel.getString("bills")));
+            List<BaseModel> listBill = new ArrayList<>(DataUtil.remakeBill(listOriginalBill, false));
             baseModel.putList(Constants.BILLS, listBill);
 
             listCustomer.add(baseModel);
@@ -204,11 +206,11 @@ public class TestActivity extends BaseActivity implements View.OnClickListener{
     }
 
 
-    private void UpdateIsBillReturn(){
+    private void UpdateIsBillReturn() {
         List<BaseModel> list = adapter.getmData();
         List<String> params = new ArrayList<>();
         String patern = "id=%d&isReturn=%d";
-        for (BaseModel baseModel: list){
+        for (BaseModel baseModel : list) {
             params.add(String.format(patern, baseModel.getInt("id"), baseModel.getInt("isReturnId")));
 
         }
@@ -229,11 +231,12 @@ public class TestActivity extends BaseActivity implements View.OnClickListener{
         }).execute();
 
     }
-    private void UpdateBillDelivered(){
+
+    private void UpdateBillDelivered() {
         List<BaseModel> list = adapter.getmData();
         List<String> params = new ArrayList<>();
         String patern = "id=%d&deliverBy=%d";
-        for (BaseModel baseModel: list){
+        for (BaseModel baseModel : list) {
             params.add(String.format(patern, baseModel.getInt("id"), baseModel.getInt("deliverId")));
 
         }
@@ -255,14 +258,14 @@ public class TestActivity extends BaseActivity implements View.OnClickListener{
 
     }
 
-    private void UpdateCustomerDebt(){
+    private void UpdateCustomerDebt() {
         List<BaseModel> list = adapter.getDebtData();
         List<String> params = new ArrayList<>();
         //String patern = "id=%d&deliverBy=%d";
 
         //String param = String.format(Api_link.DEBT_PARAM, 25000, 7, 1325);
 
-        for (int i=0; i< list.size(); i++){
+        for (int i = 0; i < list.size(); i++) {
             params.add(String.format(Api_link.DEBT_PARAM,
                     list.get(i).getDouble("debt"),
                     list.get(i).getInt("user_id"),
@@ -287,7 +290,6 @@ public class TestActivity extends BaseActivity implements View.OnClickListener{
         }).execute();
 
     }
-
 
 
 }

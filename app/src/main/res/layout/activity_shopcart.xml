@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cart_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/colorWhite" >
+    android:background="@color/colorWhite">
 
     <RelativeLayout
         android:id="@+id/cart_header"
@@ -20,7 +19,7 @@
             android:layout_height="match_parent"
             android:src="@drawable/ic_arrow_back_black_18dp"
             android:padding="@dimen/_8sdp"
-            android:background="?selectableItemBackground"/>
+            android:background="?selectableItemBackground" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -38,7 +37,7 @@
                 android:textSize="@dimen/_12sdp"
                 android:textColor="@color/black_text_color"
                 android:gravity="center"
-                android:textAllCaps="true"/>
+                android:textAllCaps="true" />
 
             <TextView
                 android:id="@+id/cart_address"
@@ -48,33 +47,33 @@
                 android:text="dia chi"
                 android:textSize="@dimen/_8sdp"
                 android:gravity="center"
-                android:textStyle="italic"/>
+                android:textStyle="italic" />
 
 
         </LinearLayout>
 
 
         <!--<ImageView-->
-            <!--android:id="@+id/cart_logo"-->
-            <!--android:layout_width="@dimen/_35sdp"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:background="?selectableItemBackground"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--android:gravity="center"-->
-            <!--android:src="@drawable/ic_logo_print"-->
-            <!--android:layout_margin="@dimen/_5sdp"-->
-            <!--android:visibility="gone"/>-->
+        <!--android:id="@+id/cart_logo"-->
+        <!--android:layout_width="@dimen/_35sdp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:background="?selectableItemBackground"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:gravity="center"-->
+        <!--android:src="@drawable/ic_logo_print"-->
+        <!--android:layout_margin="@dimen/_5sdp"-->
+        <!--android:visibility="gone"/>-->
 
         <!--<wolve.dms.customviews.CTextIcon-->
-            <!--android:id="@+id/cart_bluetooth"-->
-            <!--android:layout_width="@dimen/_35sdp"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--android:text="@string/icon_bluetooth"-->
-            <!--android:textSize="@dimen/_16sdp"-->
-            <!--android:textColor="@color/black_text_color_hint"-->
-            <!--android:gravity="center"-->
-            <!--android:background="?selectableItemBackground"/>-->
+        <!--android:id="@+id/cart_bluetooth"-->
+        <!--android:layout_width="@dimen/_35sdp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:text="@string/icon_bluetooth"-->
+        <!--android:textSize="@dimen/_16sdp"-->
+        <!--android:textColor="@color/black_text_color_hint"-->
+        <!--android:gravity="center"-->
+        <!--android:background="?selectableItemBackground"/>-->
 
 
     </RelativeLayout>
@@ -103,20 +102,20 @@
                     android:background="@color/colorMainStroke"
                     android:textColor="@color/black_text_color_hint"
                     android:text="BDF"
-                    android:gravity="center"/>
+                    android:gravity="center" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/cart_rvproduct"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/colorWhite"
-                    android:layout_below="@+id/cart_bdf"/>
+                    android:layout_below="@+id/cart_bdf" />
 
                 <!--<android.support.v7.widget.RecyclerView-->
-                    <!--android:id="@+id/cart_rvpromotion"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_below="@+id/cart_rvproduct"/>-->
+                <!--android:id="@+id/cart_rvpromotion"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_below="@+id/cart_rvproduct"/>-->
             </RelativeLayout>
 
             <LinearLayout
@@ -138,18 +137,18 @@
                     android:layout_height="wrap_content"
                     android:padding="@dimen/_5sdp">
 
-<!--                    <wolve.dms.customviews.CTextIcon-->
-<!--                        android:id="@+id/cart_save"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="@dimen/_25sdp"-->
-<!--                        android:minWidth="@dimen/_30sdp"-->
-<!--                        android:background="@drawable/btn_cancel_grey"-->
-<!--                        android:text="@string/icon_save"-->
-<!--                        android:textAllCaps="true"-->
-<!--                        android:textColor="@color/white"-->
-<!--                        android:textSize="@dimen/_12sdp"-->
-<!--                        android:layout_gravity="center_horizontal"-->
-<!--                        android:gravity="center"/>-->
+                    <!--                    <wolve.dms.customviews.CTextIcon-->
+                    <!--                        android:id="@+id/cart_save"-->
+                    <!--                        android:layout_width="wrap_content"-->
+                    <!--                        android:layout_height="@dimen/_25sdp"-->
+                    <!--                        android:minWidth="@dimen/_30sdp"-->
+                    <!--                        android:background="@drawable/btn_cancel_grey"-->
+                    <!--                        android:text="@string/icon_save"-->
+                    <!--                        android:textAllCaps="true"-->
+                    <!--                        android:textColor="@color/white"-->
+                    <!--                        android:textSize="@dimen/_12sdp"-->
+                    <!--                        android:layout_gravity="center_horizontal"-->
+                    <!--                        android:gravity="center"/>-->
 
                     <Button
                         android:id="@+id/cart_submit"
@@ -163,7 +162,7 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_marginLeft="@dimen/_20sdp"
                         android:layout_marginRight="@dimen/_20sdp"
-                        android:layout_toLeftOf="@+id/cart_total"/>
+                        android:layout_toLeftOf="@+id/cart_total" />
 
                     <TextView
                         android:id="@+id/cart_total"
@@ -175,7 +174,7 @@
                         android:layout_toLeftOf="@+id/cart_d"
                         android:layout_marginRight="@dimen/_5sdp"
                         android:layout_centerVertical="true"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/cart_d"
@@ -186,13 +185,10 @@
                         android:textSize="@dimen/_12sdp"
                         android:textStyle="italic"
                         android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"/>
-
+                        android:layout_centerVertical="true" />
 
 
                 </RelativeLayout>
-
-
 
 
                 <!--<View-->
@@ -202,9 +198,9 @@
                 <!--android:layout_alignParentBottom="true"/>-->
             </LinearLayout>
 
-<!--            <View-->
-<!--                android:layout_height="@dimen/_60sdp"-->
-<!--                android:layout_width="match_parent"/>-->
+            <!--            <View-->
+            <!--                android:layout_height="@dimen/_60sdp"-->
+            <!--                android:layout_width="match_parent"/>-->
 
 
         </LinearLayout>
@@ -212,12 +208,12 @@
     </ScrollView>
 
     <!--<LinearLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:orientation="vertical"-->
-        <!--android:layout_below="@+id/cart_header">-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:orientation="vertical"-->
+    <!--android:layout_below="@+id/cart_header">-->
 
-        <!---->
+    <!---->
 
     <!--</LinearLayout>-->
 
@@ -239,7 +235,7 @@
             android:text="@string/icon_bill"
             android:textSize="@dimen/_30sdp"
             android:textColor="@color/black_text_color_hint"
-            android:layout_centerInParent="true"/>
+            android:layout_centerInParent="true" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -247,7 +243,7 @@
             android:textColor="@color/black_text_color_hint"
             android:layout_below="@+id/cart_icon"
             android:text="Chưa có sản phẩm"
-            android:layout_centerInParent="true"/>
+            android:layout_centerInParent="true" />
 
     </RelativeLayout>
 
@@ -262,7 +258,7 @@
         app:fab_colorNormal="@color/colorBlue"
         app:fab_colorPressed="@color/colorBlueDark"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentRight="true" />
 
 </RelativeLayout>
 

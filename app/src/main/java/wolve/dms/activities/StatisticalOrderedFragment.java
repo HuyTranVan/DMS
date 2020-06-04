@@ -1,7 +1,6 @@
 package wolve.dms.activities;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,22 +16,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.adapter.Customer_CheckinsAdapter;
 import wolve.dms.adapter.Statistical_OrderedAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
-import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackListObject;
-import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
-import wolve.dms.utils.Util;
 
 /**
  * Created by macos on 9/16/17.
@@ -51,7 +45,7 @@ public class StatisticalOrderedFragment extends Fragment implements View.OnClick
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_ordered,container,false);
+        view = inflater.inflate(R.layout.fragment_ordered, container, false);
         initializeView();
 
         intitialData();
@@ -64,7 +58,7 @@ public class StatisticalOrderedFragment extends Fragment implements View.OnClick
         loadListOrdered(0, new CallbackListObject() {
             @Override
             public void onResponse(List<BaseModel> list) {
-                listOrdered= list;
+                listOrdered = list;
                 createRVCustomerOrdered(listOrdered);
             }
         }, true);
@@ -86,7 +80,7 @@ public class StatisticalOrderedFragment extends Fragment implements View.OnClick
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.icon_back:
                 mActivity.onBackPressed();
                 break;
@@ -95,7 +89,7 @@ public class StatisticalOrderedFragment extends Fragment implements View.OnClick
         }
     }
 
-    private void loadListOrdered(int offset, CallbackListObject listener, boolean showloading){
+    private void loadListOrdered(int offset, CallbackListObject listener, boolean showloading) {
         CustomerConnect.getCustomerOrderedList(offset, mActivity.getCurrentUserId(), new CallbackCustomList() {
             @Override
             public void onResponse(List<BaseModel> results) {
@@ -112,14 +106,14 @@ public class StatisticalOrderedFragment extends Fragment implements View.OnClick
 
     }
 
-    private void createRVCustomerOrdered(List<BaseModel> list){
+    private void createRVCustomerOrdered(List<BaseModel> list) {
         adapter = new Statistical_OrderedAdapter(mActivity.tvEmployeeName.getText().toString().trim(),
                 list, new CallbackString() {
-                @Override
-                public void Result(String s) {
-                    openCustomerActivity(s);
+            @Override
+            public void Result(String s) {
+                openCustomerActivity(s);
 
-                }
+            }
 
         });
         rvCustomer.setLayoutManager(new LinearLayoutManager(mActivity));
@@ -129,7 +123,7 @@ public class StatisticalOrderedFragment extends Fragment implements View.OnClick
         initScrollListener();
     }
 
-    private void openCustomerActivity(String id){
+    private void openCustomerActivity(String id) {
         CustomerConnect.GetCustomerDetail(id, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
@@ -174,7 +168,7 @@ public class StatisticalOrderedFragment extends Fragment implements View.OnClick
         adapter.addItem(null);
         //adapter.notifyItemInserted(listOrdered.size() - 1);
 
-        loadListOrdered(adapter.getItemCount()-1, new CallbackListObject() {
+        loadListOrdered(adapter.getItemCount() - 1, new CallbackListObject() {
             @Override
             public void onResponse(List<BaseModel> list) {
                 adapter.removeItem(adapter.getItemCount() - 1);
@@ -184,7 +178,7 @@ public class StatisticalOrderedFragment extends Fragment implements View.OnClick
 //                int currentSize = scrollPosition;
 //                int nextLimit = currentSize + list.size();
 
-                for (int i=0; i<list.size(); i++ ){
+                for (int i = 0; i < list.size(); i++) {
 //                    listOrdered.add(list.get(i));
 
                     adapter.addItem(list.get(i));
@@ -205,7 +199,6 @@ public class StatisticalOrderedFragment extends Fragment implements View.OnClick
         }, false);
 
     }
-
 
 
 }

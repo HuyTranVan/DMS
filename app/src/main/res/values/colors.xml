@@ -22,7 +22,7 @@
     <color name="colorRedDark">#ce0208</color>
     <color name="colorGrape">#9C27B0</color>
 
-   <!--black text color-->
+    <!--black text color-->
     <color name="black_text_color">#de000000</color>
     <color name="black_text_color_hint">#61000000</color>
     <color name="black_text_icon">#61000000</color>

@@ -46,7 +46,6 @@ public class InventoryEditAdapter extends RecyclerView.Adapter<InventoryEditAdap
     }
 
 
-
     @Override
     public void onBindViewHolder(final ProductAdapterViewHolder holder, final int position) {
         holder.tvName.setText(mData.get(position).getString("name"));
@@ -64,7 +63,6 @@ public class InventoryEditAdapter extends RecyclerView.Adapter<InventoryEditAdap
 
             }
         });
-
 
 
     }
@@ -85,8 +83,8 @@ public class InventoryEditAdapter extends RecyclerView.Adapter<InventoryEditAdap
             lnParent = itemView.findViewById(R.id.product_import_item_parent);
             tvName = (TextView) itemView.findViewById(R.id.product_import_item_name);
             tvGroup = (TextView) itemView.findViewById(R.id.product_import_item_group);
-            tvMinus =  itemView.findViewById(R.id.product_import_item_minus);
-            tvPlus =  itemView.findViewById(R.id.product_import_item_plus);
+            tvMinus = itemView.findViewById(R.id.product_import_item_minus);
+            tvPlus = itemView.findViewById(R.id.product_import_item_plus);
             edQuantity = itemView.findViewById(R.id.product_import_item_number);
             tvQuantityLimit = itemView.findViewById(R.id.product_import_item_currentquantity);
 
@@ -94,11 +92,11 @@ public class InventoryEditAdapter extends RecyclerView.Adapter<InventoryEditAdap
 
     }
 
-    public List<BaseModel> getmData(){
+    public List<BaseModel> getmData() {
         return mData;
     }
 
-    private void showDialogEditInventory(int pos){
+    private void showDialogEditInventory(int pos) {
         CustomCenterDialog.showDialogInputQuantity(mData.get(pos).getString("name"),
                 mData.get(pos).getString("currentQuantity"),
                 mData.get(pos).getInt("currentQuantity"),

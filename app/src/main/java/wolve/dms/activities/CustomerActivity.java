@@ -26,7 +26,6 @@ import java.util.List;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import wolve.dms.R;
 import wolve.dms.adapter.Customer_ViewpagerAdapter;
-import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
@@ -34,12 +33,11 @@ import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
+import wolve.dms.libraries.FitScrollWithFullscreen;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
-import wolve.dms.libraries.FitScrollWithFullscreen;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.MapUtil;
@@ -53,8 +51,8 @@ import wolve.dms.utils.Util;
 public class CustomerActivity extends BaseActivity implements View.OnClickListener, View.OnLongClickListener, CallbackObject {
     private ImageView btnBack;
     protected Button btnSubmit;
-    private TextView  tvCheckInStatus, tvTime, tvTrash, tvPrint;
-    protected TextView tvTitle,tvAddress, tvDebt, tvPaid, tvTotal, tvBDF, btnShopCart, tvFilter, tvFilterIcon;
+    private TextView tvCheckInStatus, tvTime, tvTrash, tvPrint;
+    protected TextView tvTitle, tvAddress, tvDebt, tvPaid, tvTotal, tvBDF, btnShopCart, tvFilter, tvFilterIcon;
     private CoordinatorLayout coParent;
     //private RecyclerView rvFilterTitle;
     private ViewPager viewPager;
@@ -68,16 +66,16 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     protected List<BaseModel> listCheckins = new ArrayList<>();
     protected List<BaseModel> listBills = new ArrayList<>();
     protected List<BaseModel> listBillDetail = new ArrayList<>();
-    protected List<BaseModel> listDebtBill= new ArrayList<>();
+    protected List<BaseModel> listDebtBill = new ArrayList<>();
     private long countTime;
     private Fragment mFragment;
     protected List<String> mYears = new ArrayList<>();
     private Customer_ViewpagerAdapter pageAdapter;
     protected BaseModel currentBill, tempBill = null;
-    protected Double currentDebt =0.0;
+    protected Double currentDebt = 0.0;
     private Handler mHandlerUpdateCustomer = new Handler();
     private boolean haschange = false;
-    private int currentPosition =0;
+    private int currentPosition = 0;
 
     protected CustomerBillsFragment billsFragment;
     protected CustomerInfoFragment infoFragment;
@@ -94,7 +92,8 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     Thread threadShowTime = new Thread() {
         @Override
         public void run() {
-            try { while (!threadShowTime.isInterrupted()) {
+            try {
+                while (!threadShowTime.isInterrupted()) {
                     Thread.sleep(1000);
                     runOnUiThread(new Runnable() {
                         @Override
@@ -163,10 +162,10 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         Util.textViewEvent(tvFilter, new CallbackString() {
             @Override
             public void Result(String s) {
-                if (!s.equals("")){
-                    tvFilter.setPadding( Util.convertSdpToInt(R.dimen._15sdp),0,0,0);
-                }else {
-                    tvFilter.setPadding( 0,0,0,0);
+                if (!s.equals("")) {
+                    tvFilter.setPadding(Util.convertSdpToInt(R.dimen._15sdp), 0, 0, 0);
+                } else {
+                    tvFilter.setPadding(0, 0, 0, 0);
                 }
             }
         });
@@ -176,7 +175,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void initialData() {
-        countTime = Util.CurrentTimeStamp()  - CustomSQL.getLong(Constants.CHECKIN_TIME);
+        countTime = Util.CurrentTimeStamp() - CustomSQL.getLong(Constants.CHECKIN_TIME);
         CustomSQL.removeKey(Constants.CURRENT_DISTANCE);
 
         tvTrash.setVisibility(User.getCurrentRoleId() == Constants.ROLE_ADMIN ? View.VISIBLE : View.GONE);
@@ -188,7 +187,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         checkLocation(new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
-                if (result){
+                if (result) {
                     billsFragment.updateTempBill();
 
                 }
@@ -197,17 +196,17 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     }
 
-    private void updateView(BaseModel customer){
+    private void updateView(BaseModel customer) {
         currentCustomer = customer;
         //createRVFilter();
 
         tvTitle.setText(String.format("%s %s", Constants.shopName[currentCustomer.getInt("shopType")], currentCustomer.getString("signBoard")));
 
-        if (currentCustomer.hasKey(Constants.TEMPBILL) ){
+        if (currentCustomer.hasKey(Constants.TEMPBILL)) {
             tempBill = currentCustomer.getBaseModel(Constants.TEMPBILL);
             viewPager.setCurrentItem(1, true);
 
-        }else {
+        } else {
             tempBill = null;
         }
 
@@ -216,7 +215,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         listBillDetail = new ArrayList<>(DataUtil.getAllBillDetail(listBills));
         listCheckins = new ArrayList<>(DataUtil.array2ListBaseModel(currentCustomer.getJSONArray(Constants.CHECKINS)));
 
-        updateBillTabNotify(tempBill != null?true : false , listBills.size());
+        updateBillTabNotify(tempBill != null ? true : false, listBills.size());
 
         updateOverview(listBills);
 
@@ -229,17 +228,17 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     }
 
-    protected void updateOverview(List<BaseModel> list){
+    protected void updateOverview(List<BaseModel> list) {
         setFilterVisibility();
         setPrintIconVisibility();
-        if (list.size() >0){
+        if (list.size() > 0) {
             BaseModel object = Util.getTotal(list);
-            tvTotal.setText(String.format("Tổng: %s" ,Util.FormatMoney(object.getDouble("total"))));
-            tvDebt.setText(String.format("Nợ: %s" ,Util.FormatMoney(object.getDouble("debt"))));
-            tvPaid.setText(String.format("Trả: %s" ,Util.FormatMoney(object.getDouble("paid"))));
-            tvBDF.setText(String.format("BDF:%s ", DataUtil.defineBDFPercent(listBillDetail)) +"%");
+            tvTotal.setText(String.format("Tổng: %s", Util.FormatMoney(object.getDouble("total"))));
+            tvDebt.setText(String.format("Nợ: %s", Util.FormatMoney(object.getDouble("debt"))));
+            tvPaid.setText(String.format("Trả: %s", Util.FormatMoney(object.getDouble("paid"))));
+            tvBDF.setText(String.format("BDF:%s ", DataUtil.defineBDFPercent(listBillDetail)) + "%");
 
-        }else {
+        } else {
             tvTotal.setText("...");
             tvDebt.setText("...");
             tvPaid.setText("...");
@@ -249,10 +248,10 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     public void setupViewPager(ViewPager viewPager) {
         pageAdapter = new Customer_ViewpagerAdapter(getSupportFragmentManager());
-        pageAdapter.addFragment(Fragment.instantiate(this, CustomerInfoFragment.class.getName()), "Thông tin",0);
-        pageAdapter.addFragment(Fragment.instantiate(this, CustomerBillsFragment.class.getName()),"Hóa đơn",0);
-        pageAdapter.addFragment(Fragment.instantiate(this, CustomerProductFragment.class.getName()), "Sản Phẩm",0);
-        pageAdapter.addFragment(Fragment.instantiate(this, CustomerPaymentFragment.class.getName()), "Tiền mặt",0);
+        pageAdapter.addFragment(Fragment.instantiate(this, CustomerInfoFragment.class.getName()), "Thông tin", 0);
+        pageAdapter.addFragment(Fragment.instantiate(this, CustomerBillsFragment.class.getName()), "Hóa đơn", 0);
+        pageAdapter.addFragment(Fragment.instantiate(this, CustomerProductFragment.class.getName()), "Sản Phẩm", 0);
+        pageAdapter.addFragment(Fragment.instantiate(this, CustomerPaymentFragment.class.getName()), "Tiền mặt", 0);
 
         viewPager.setAdapter(pageAdapter);
         viewPager.setOffscreenPageLimit(4);
@@ -306,18 +305,18 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         tabLayout.requestFocus();
     }
 
-    protected void updateBillTabNotify(boolean hasTempBill, int billAmount){
+    protected void updateBillTabNotify(boolean hasTempBill, int billAmount) {
         TabLayout.Tab tab = tabLayout.getTabAt(1);
         tab.setCustomView(null);
         tab.setCustomView(pageAdapter.getNotifyBaged(billAmount, hasTempBill));
 
     }
 
-    private void addYearToList(String year){
-        if (mYears.size() ==0){
+    private void addYearToList(String year) {
+        if (mYears.size() == 0) {
             mYears.add(0, Constants.ALL_FILTER);
         }
-        if (!mYears.get(mYears.size()-1).equals(year)){
+        if (!mYears.get(mYears.size() - 1).equals(year)) {
             mYears.add(year);
         }
     }
@@ -335,10 +334,10 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 if (listBills.size() > 0) {
                     Util.showToast("Không thể xóa khách hàng đã có hóa đơn");
 
-                } else if (listCheckins.size() >0){
+                } else if (listCheckins.size() > 0) {
                     Util.showToast("Không thể xóa khách hàng có checkin");
 
-                } else{
+                } else {
                     deleteCustomer();
 
                 }
@@ -346,10 +345,10 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 break;
 
             case R.id.customer_shopcart:
-                if (tempBill != null){
+                if (tempBill != null) {
                     Util.showSnackbar("Có 1 đơn hàng chưa hoàn thành nên không thể tạo hóa đơn mới", null, null);
 
-                }else {
+                } else {
                     CustomSQL.setListBaseModel(Constants.BILL_DETAIL, listBillDetail);
                     openShopCartScreen();
                 }
@@ -357,14 +356,14 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 break;
 
             case R.id.customer_debt:
-                if (currentDebt >0){
+                if (currentDebt > 0) {
                     showDialogPayment();
                 }
 
                 break;
 
             case R.id.customer_paid:
-                if (listBills.size() >0){
+                if (listBills.size() > 0) {
                     CustomCenterDialog.alert("Chiết khấu", "Nhấn giữ vào biểu tường này để nhập số tiền chiết khấu cho khách hàng", "đồng ý");
 
                 }
@@ -377,10 +376,10 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 break;
 
             case R.id.customer_filter_icon_close:
-                if (tvFilter.getVisibility() == View.GONE){
+                if (tvFilter.getVisibility() == View.GONE) {
                     changeFragment(new DatePickerFragment(), true);
 
-                }else {
+                } else {
                     tvFilterIcon.setText(Util.getIcon(R.string.icon_calendar));
                     tvFilter.setVisibility(View.GONE);
                     filterBillByRange(0, 0);
@@ -394,27 +393,26 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 break;
 
 
-
         }
     }
 
-    protected void returnPreviousScreen(String customer){
+    protected void returnPreviousScreen(String customer) {
         Intent returnIntent = new Intent();
-        returnIntent.putExtra(Constants.CUSTOMER, customer != null? customer : null);
+        returnIntent.putExtra(Constants.CUSTOMER, customer != null ? customer : null);
         returnIntent.putExtra(Constants.RELOAD_DATA, haschange);
-        setResult(Constants.RESULT_CUSTOMER_ACTIVITY,returnIntent);
+        setResult(Constants.RESULT_CUSTOMER_ACTIVITY, returnIntent);
         Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.nothing, R.anim.slide_down);
         Util.getInstance().getCurrentActivity().finish();
 
     }
 
-    protected void openShopCartScreen(){
+    protected void openShopCartScreen() {
         Transaction.gotoShopCartActivity(DataUtil.convertListObject2Array(listDebtBill).toString());
 
     }
 
-    private void deleteCustomer(){
-        CustomCenterDialog.alertWithCancelButton(null, String.format("Xóa khách hàng %s", tvTitle.getText().toString()) , "ĐỒNG Ý","HỦY", new CallbackBoolean() {
+    private void deleteCustomer() {
+        CustomCenterDialog.alertWithCancelButton(null, String.format("Xóa khách hàng %s", tvTitle.getText().toString()), "ĐỒNG Ý", "HỦY", new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
                 CustomerConnect.DeleteCustomer(currentCustomer.getString("id"), new CallbackCustom() {
@@ -447,26 +445,26 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     @Override
     public void onBackPressed() {
         mFragment = getSupportFragmentManager().findFragmentById(R.id.customer_parent);
-        if (Util.getInstance().isLoading()){
+        if (Util.getInstance().isLoading()) {
             Util.getInstance().stopLoading(true);
 
-        } else if(mFragment != null && mFragment instanceof CustomerReturnFragment) {
+        } else if (mFragment != null && mFragment instanceof CustomerReturnFragment) {
             getSupportFragmentManager().popBackStack();
 
-        } else if(mFragment != null && mFragment instanceof CustomerEditMapFragment) {
+        } else if (mFragment != null && mFragment instanceof CustomerEditMapFragment) {
             getSupportFragmentManager().popBackStack();
 
-        }else if(mFragment != null && mFragment instanceof CustomerCheckinFragment) {
+        } else if (mFragment != null && mFragment instanceof CustomerCheckinFragment) {
             getSupportFragmentManager().popBackStack();
 
-        }else if(mFragment != null && mFragment instanceof DatePickerFragment) {
+        } else if (mFragment != null && mFragment instanceof DatePickerFragment) {
             getSupportFragmentManager().popBackStack();
 
-        } else if(tabLayout.getSelectedTabPosition() !=0){
+        } else if (tabLayout.getSelectedTabPosition() != 0) {
             TabLayout.Tab tab = tabLayout.getTabAt(0);
             tab.select();
 
-        }else {
+        } else {
             returnPreviousScreen(currentCustomer.BaseModelstoString());
 
         }
@@ -476,28 +474,28 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
         Util.getInstance().setCurrentActivity(this);
-        if (requestCode == Constants.RESULT_SHOPCART_ACTIVITY){
+        if (requestCode == Constants.RESULT_SHOPCART_ACTIVITY) {
             BaseModel data = new BaseModel(intent.getStringExtra(Constants.SHOP_CART_ACTIVITY));
             if (data.hasKey(Constants.RELOAD_DATA) && data.getBoolean(Constants.RELOAD_DATA)) {
                 reloadCustomer(CustomSQL.getBaseModel(Constants.CUSTOMER).getString("id"));
 
             }
 
-        }else if (requestCode == Constants.RESULT_PRINTBILL_ACTIVITY){
+        } else if (requestCode == Constants.RESULT_PRINTBILL_ACTIVITY) {
             BaseModel data = new BaseModel(intent.getStringExtra(Constants.PRINT_BILL_ACTIVITY));
             if (data.hasKey(Constants.RELOAD_DATA) && data.getBoolean(Constants.RELOAD_DATA)) {
                 reloadCustomer(CustomSQL.getBaseModel(Constants.CUSTOMER).getString("id"));
 
             }
 
-        }else {
+        } else {
             onResume();
 
         }
 
     }
 
-    protected void saveCustomerToLocal(String key, Object value){
+    protected void saveCustomerToLocal(String key, Object value) {
         currentCustomer.put(key, value);
 
         mHandlerUpdateCustomer.removeCallbacks(mUpdateTask);
@@ -505,10 +503,10 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     }
 
-    private Runnable mUpdateTask = new Runnable(){
+    private Runnable mUpdateTask = new Runnable() {
         @Override
         public void run() {
-            submitCustomer(currentCustomer,listCheckins.size(),  new CallbackBoolean() {
+            submitCustomer(currentCustomer, listCheckins.size(), new CallbackBoolean() {
                 @Override
                 public void onRespone(Boolean result) {
                     CustomSQL.setBaseModel(Constants.CUSTOMER, currentCustomer);
@@ -518,16 +516,16 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         }
     };
 
-    protected void submitCustomer(BaseModel customer,int checkincount,  CallbackBoolean listener){
+    protected void submitCustomer(BaseModel customer, int checkincount, CallbackBoolean listener) {
         smLoading.setVisibility(View.VISIBLE);
 
-        if (customer.getInt("checkinCount") != checkincount){
-            customer.put("checkinCount", checkincount );
+        if (customer.getInt("checkinCount") != checkincount) {
+            customer.put("checkinCount", checkincount);
         }
 
         String param = CustomerConnect.createParamCustomer(customer);
 
-        CustomerConnect.CreateCustomer(param , new CallbackCustom() {
+        CustomerConnect.CreateCustomer(param, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
                 smLoading.setVisibility(View.INVISIBLE);
@@ -544,18 +542,18 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         }, false);
     }
 
-    protected void openReturnFragment(BaseModel bill){
+    protected void openReturnFragment(BaseModel bill) {
         currentBill = bill;
         changeFragment(new CustomerReturnFragment(), true);
 
     }
 
-    protected void openEditMapFragment(){
+    protected void openEditMapFragment() {
         changeFragment(new CustomerEditMapFragment(), true);
 
     }
 
-    protected void reloadCustomer(String id){
+    protected void reloadCustomer(String id) {
         haschange = true;
         CustomerConnect.GetCustomerDetail(id, new CallbackCustom() {
             @Override
@@ -565,18 +563,17 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 updateView(customer);
 
 
-
             }
 
             @Override
             public void onError(String error) {
                 Util.showSnackbarError(error);
             }
-        }, true,false);
+        }, true, false);
 
     }
 
-    private void showDialogPayment(){
+    private void showDialogPayment() {
         CustomCenterDialog.showDialogPayment("THANH TOÁN CÁC HÓA ĐƠN NỢ",
                 listDebtBill,
                 0.0,
@@ -584,7 +581,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 new CallbackListCustom() {
                     @Override
                     public void onResponse(List result) {
-                        postPayToServer(DataUtil.createListPaymentParam(currentCustomer.getInt("id"),  result, false) );
+                        postPayToServer(DataUtil.createListPaymentParam(currentCustomer.getInt("id"), result, false));
 
                     }
 
@@ -596,7 +593,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     }
 
-    private void showDiscountPayment(){
+    private void showDiscountPayment() {
         CustomCenterDialog.showDialogDiscountPayment("TRỪ TIỀN CHIẾT KHẤU KHÁCH HÀNG",
                 "Nhập số tiền chiết khấu",
                 currentCustomer.getDouble("paid"),
@@ -605,10 +602,10 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                     public void Result(Double d) {
                         String param = DataUtil.createPostPaymentParam(currentCustomer.getInt("id"),
                                 User.getId(),
-                                d *-1,
+                                d * -1,
                                 0,
                                 "Trả chiết khấu",
-                                false) ;
+                                false);
                         CustomerConnect.PostPay(param, new CallbackCustom() {
                             @Override
                             public void onResponse(BaseModel result) {
@@ -624,7 +621,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 });
     }
 
-    private void postPayToServer(List<String> listParam){
+    private void postPayToServer(List<String> listParam) {
         CustomerConnect.PostListPay(listParam, new CallbackListCustom() {
             @Override
             public void onResponse(List result) {
@@ -639,12 +636,12 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         }, true);
     }
 
-    protected void printDebtBills(){
+    protected void printDebtBills() {
         Transaction.gotoPrintBillActivity(new BaseModel(), true);
 
     }
 
-    protected void printTempBill(BaseModel bill){
+    protected void printTempBill(BaseModel bill) {
         Transaction.checkInventoryBeforePrintBill(bill,
                 DataUtil.array2ListObject(bill.getString(Constants.BILL_DETAIL)),
                 User.getCurrentUser().getInt("warehouse_id"));
@@ -652,7 +649,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     }
 
-    private void checkLocation(CallbackBoolean mSuccess){
+    private void checkLocation(CallbackBoolean mSuccess) {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         tvCheckInStatus.setText("Đang kiểm tra vị trí...");
         getCurrentLocation(new LocationListener() {
@@ -662,14 +659,14 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 CustomSQL.setLong(Constants.CURRENT_DISTANCE, (long) distance);
                 mSuccess.onRespone(true);
 
-                if (distance < Constants.CHECKIN_DISTANCE){
+                if (distance < Constants.CHECKIN_DISTANCE) {
                     tvCheckInStatus.setText(String.format("Đang trong phạm vi cửa hàng ~%sm", Math.round(distance)));
                     threadShowTime.start();
-                    infoFragment.tvCheckin.setText(Util.getIconString(R.string.icon_district, "   ", "Checkin - Ghi chú" ));
+                    infoFragment.tvCheckin.setText(Util.getIconString(R.string.icon_district, "   ", "Checkin - Ghi chú"));
 
-                }else {
-                    tvCheckInStatus.setText(String.format("Đang bên ngoài cửa hàng ~%s", distance >1000? Math.round(distance)/1000 +"km": Math.round(distance) + "m"));
-                    infoFragment.tvCheckin.setText(Util.getIconString(R.string.icon_note, "   ","Thêm ghi chú" ));
+                } else {
+                    tvCheckInStatus.setText(String.format("Đang bên ngoài cửa hàng ~%s", distance > 1000 ? Math.round(distance) / 1000 + "km" : Math.round(distance) + "m"));
+                    infoFragment.tvCheckin.setText(Util.getIconString(R.string.icon_note, "   ", "Thêm ghi chú"));
                 }
 
             }
@@ -678,7 +675,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public boolean onLongClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.customer_paid:
                 showDiscountPayment();
                 break;
@@ -686,28 +683,28 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         return true;
     }
 
-    private void setPrintIconVisibility(){
-        if (currentPosition ==1 && listDebtBill.size() >0){
+    private void setPrintIconVisibility() {
+        if (currentPosition == 1 && listDebtBill.size() > 0) {
             tvPrint.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             tvPrint.setVisibility(View.GONE);
         }
     }
 
-    private void setFilterVisibility(){
-        if (currentPosition !=0 && listBills.size() >0){
+    private void setFilterVisibility() {
+        if (currentPosition != 0 && listBills.size() > 0) {
             lnFilter.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             lnFilter.setVisibility(View.GONE);
         }
     }
 
-    private void filterBillByRange(long start, long end){
-        if (start == 0 && end == 0){
+    private void filterBillByRange(long start, long end) {
+        if (start == 0 && end == 0) {
             billsFragment.adapter.getFilter().filter("");
             paymentFragment.adapter.getFilter().filter("");
             productFragment.updateListByRange("");
-        }else {
+        } else {
             BaseModel model = BaseModel.put2ValueToNewObject("from", start, "to", end);
             billsFragment.adapter.getFilter().filter(model.BaseModelstoString());
             paymentFragment.adapter.getFilter().filter(model.BaseModelstoString());
@@ -724,7 +721,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     public void onResponse(BaseModel object) {
         tvFilterIcon.setText(Util.getIcon(R.string.icon_x));
         tvFilter.setVisibility(View.VISIBLE);
-        tvFilter.setText( object.getString("text"));
+        tvFilter.setText(object.getString("text"));
 
         filterBillByRange(object.getLong("start"), object.getLong("end"));
 

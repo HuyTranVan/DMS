@@ -5,8 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -25,7 +23,7 @@ import wolve.dms.utils.Util;
  * Created by tranhuy on 5/24/17.
  */
 
-public class ProductInventoryAdapter extends RecyclerView.Adapter<ProductInventoryAdapter.ProductAdapterViewHolder>  {
+public class ProductInventoryAdapter extends RecyclerView.Adapter<ProductInventoryAdapter.ProductAdapterViewHolder> {
     private List<BaseModel> mData = new ArrayList<>();
     private List<BaseModel> baseData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
@@ -39,7 +37,6 @@ public class ProductInventoryAdapter extends RecyclerView.Adapter<ProductInvento
         this.mData = baseData;
 
 
-
     }
 
     @Override
@@ -47,7 +44,6 @@ public class ProductInventoryAdapter extends RecyclerView.Adapter<ProductInvento
         View itemView = mLayoutInflater.inflate(R.layout.adapter_product_import_item, parent, false);
         return new ProductAdapterViewHolder(itemView);
     }
-
 
 
     @Override
@@ -79,8 +75,8 @@ public class ProductInventoryAdapter extends RecyclerView.Adapter<ProductInvento
             lnParent = itemView.findViewById(R.id.product_import_item_parent);
             tvName = (TextView) itemView.findViewById(R.id.product_import_item_name);
             tvGroup = (TextView) itemView.findViewById(R.id.product_import_item_group);
-            tvMinus =  itemView.findViewById(R.id.product_import_item_minus);
-            tvPlus =  itemView.findViewById(R.id.product_import_item_plus);
+            tvMinus = itemView.findViewById(R.id.product_import_item_minus);
+            tvPlus = itemView.findViewById(R.id.product_import_item_plus);
             edQuantity = itemView.findViewById(R.id.product_import_item_number);
             tvQuantityLimit = itemView.findViewById(R.id.product_import_item_currentquantity);
 
@@ -89,15 +85,15 @@ public class ProductInventoryAdapter extends RecyclerView.Adapter<ProductInvento
     }
 
 
-    public void updateData(BaseModel model){
-        for (int i=0; i<mData.size(); i++){
-            if (mData.get(i).getInt("id") == model.getInt("id")){
+    public void updateData(BaseModel model) {
+        for (int i = 0; i < mData.size(); i++) {
+            if (mData.get(i).getInt("id") == model.getInt("id")) {
                 notifyItemChanged(i);
             }
         }
     }
 
-    public void updateData(List<BaseModel> list){
+    public void updateData(List<BaseModel> list) {
         mData = list;
         notifyDataSetChanged();
     }

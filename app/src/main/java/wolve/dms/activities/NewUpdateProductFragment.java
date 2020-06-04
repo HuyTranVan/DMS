@@ -1,32 +1,23 @@
 package wolve.dms.activities;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
-import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.soundcloud.android.crop.Crop;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -38,16 +29,12 @@ import wolve.dms.R;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.apiconnect.SystemConnect;
-import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CInputForm;
-//import wolve.dms.libraries.FileUploader;
-import wolve.dms.libraries.FitScrollWithFullscreen;
-import wolve.dms.libraries.connectapi.UploadCloudaryMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.utils.Constants;
@@ -59,6 +46,8 @@ import static android.app.Activity.RESULT_OK;
 import static wolve.dms.utils.Constants.REQUEST_CHOOSE_IMAGE;
 import static wolve.dms.utils.Constants.REQUEST_IMAGE_CAPTURE;
 
+//import wolve.dms.libraries.FileUploader;
+
 /**
  * Created by macos on 9/16/17.
  */
@@ -68,19 +57,19 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
     private ImageView btnBack;
     private CInputForm edName, edUnitPrice, edPurchasePrice, edGroup, edVolume,
             edIsPromotion, edBasePrice, edUnitInCarton;
-    private Button btnSubmit ;
+    private Button btnSubmit;
     private CircleImageView imgProduct;
 
     private BaseModel product;
     private ProductActivity mActivity;
     private List<String> listBoolean = new ArrayList<>();
-    private Uri imageChangeUri ;
+    private Uri imageChangeUri;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_add_product,container,false);
+        view = inflater.inflate(R.layout.fragment_add_product, container, false);
 //        FitScrollWithFullscreen.assistActivity(getActivity(), 1);
         initializeView();
 
@@ -92,12 +81,12 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
 
     private void intitialData() {
 
-        for (int i=0; i<mActivity.listProductGroup.size(); i++){
+        for (int i = 0; i < mActivity.listProductGroup.size(); i++) {
             mActivity.listProductGroup.get(i).put("text", mActivity.listProductGroup.get(i).getString("name"));
         }
 
-        listBoolean.add(0,Constants.IS_PROMOTION);
-        listBoolean.add(1,Constants.NO_PROMOTION);
+        listBoolean.add(0, Constants.IS_PROMOTION);
+        listBoolean.add(1, Constants.NO_PROMOTION);
 
         edGroup.setText(mActivity.listProductGroup.get(mActivity.currentPosition).getString("name"));
         edGroup.setDropdown(true, new CInputForm.ClickListener() {
@@ -119,25 +108,25 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
         edIsPromotion.setDropdown(true, new CInputForm.ClickListener() {
             @Override
             public void onClick(View view) {
-                CustomBottomDialog.choiceTwoOption(mActivity.getResources().getString(R.string.icon_gift),Constants.IS_PROMOTION,
-                                                    mActivity.getResources().getString(R.string.icon_empty), Constants.NO_PROMOTION,
-                                                            new CustomBottomDialog.TwoMethodListener() {
-                                                                @Override
-                                                                public void Method1(Boolean one) {
-                                                                    edIsPromotion.setText(Constants.IS_PROMOTION);
-                                                                }
+                CustomBottomDialog.choiceTwoOption(mActivity.getResources().getString(R.string.icon_gift), Constants.IS_PROMOTION,
+                        mActivity.getResources().getString(R.string.icon_empty), Constants.NO_PROMOTION,
+                        new CustomBottomDialog.TwoMethodListener() {
+                            @Override
+                            public void Method1(Boolean one) {
+                                edIsPromotion.setText(Constants.IS_PROMOTION);
+                            }
 
-                                                                @Override
-                                                                public void Method2(Boolean two) {
-                                                                    edIsPromotion.setText(Constants.NO_PROMOTION);
-                                                                }
-                                                            });
+                            @Override
+                            public void Method2(Boolean two) {
+                                edIsPromotion.setText(Constants.NO_PROMOTION);
+                            }
+                        });
 
             }
         });
 
         String bundle = getArguments().getString(Constants.PRODUCT);
-        if (bundle != null){
+        if (bundle != null) {
             product = new BaseModel(bundle);
 
             edName.setText(product.getString("name"));
@@ -148,19 +137,19 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
             edGroup.setText(product.getBaseModel("productGroup").getString("name"));
             edVolume.setText(product.getString("volume"));
             edUnitInCarton.setText(product.getString("unitInCarton"));
-            edIsPromotion.setText(product.getBoolean("promotion")? Constants.IS_PROMOTION :Constants.NO_PROMOTION);
+            edIsPromotion.setText(product.getBoolean("promotion") ? Constants.IS_PROMOTION : Constants.NO_PROMOTION);
 
-            if (!Util.checkImageNull(product.getString("image"))){
+            if (!Util.checkImageNull(product.getString("image"))) {
                 Glide.with(NewUpdateProductFragment.this).load(product.getString("image")).centerCrop().into(imgProduct);
 
-            }else {
-                Glide.with(this).load( R.drawable.ic_wolver).centerCrop().into(imgProduct);
+            } else {
+                Glide.with(this).load(R.drawable.ic_wolver).centerCrop().into(imgProduct);
 
             }
 
-        }else {
+        } else {
             product = new Product(new JSONObject());
-            product.put("id",0);
+            product.put("id", 0);
 
         }
 
@@ -183,7 +172,7 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
             }
         });
 
-        edBasePrice.setVisibility(Util.isAdmin()? View.VISIBLE: View.GONE);
+        edBasePrice.setVisibility(Util.isAdmin() ? View.VISIBLE : View.GONE);
 
     }
 
@@ -214,7 +203,7 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
     @Override
     public void onClick(View v) {
         Util.hideKeyboard(v);
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.icon_back:
                 mActivity.onBackPressed();
                 break;
@@ -234,7 +223,7 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
         }
     }
 
-    private void choiceGalleryCamera(){
+    private void choiceGalleryCamera() {
         CustomBottomDialog.choiceTwoOption(getString(R.string.icon_image),
                 "Chọn ảnh thư viện",
                 getString(R.string.icon_camera),
@@ -273,27 +262,27 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
         imageChangeUri = FileProvider.getUriForFile(getActivity(), BuildConfig.APPLICATION_ID + ".provider", Util.getOutputMediaFile());
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT,imageChangeUri );
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageChangeUri);
         startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
 
     }
 
-    private int defineGroupId(String groupName){
-        int id=0;
-        for (int i=0; i<mActivity.listProductGroup.size(); i++){
-            if (mActivity.listProductGroup.get(i).getString("name").equals(groupName)){
+    private int defineGroupId(String groupName) {
+        int id = 0;
+        for (int i = 0; i < mActivity.listProductGroup.size(); i++) {
+            if (mActivity.listProductGroup.get(i).getString("name").equals(groupName)) {
                 id = mActivity.listProductGroup.get(i).getInt("id");
             }
         }
         return id;
     }
 
-    private void submitProduct(){
+    private void submitProduct() {
         if (edName.getText().toString().trim().equals("")
                 || edUnitPrice.getText().toString().trim().equals("")
                 || edPurchasePrice.getText().toString().trim().equals("")
                 || edBasePrice.getText().toString().trim().equals("")
-                || edUnitInCarton.getText().toString().trim().equals("")){
+                || edUnitInCarton.getText().toString().trim().equals("")) {
             CustomCenterDialog.alertWithCancelButton(null, "Vui lòng nhập đủ thông tin", "đồng ý", null, new CallbackBoolean() {
                 @Override
                 public void onRespone(Boolean result) {
@@ -301,8 +290,8 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
                 }
             });
 
-        }else {
-            if (imageChangeUri != null){
+        } else {
+            if (imageChangeUri != null) {
                 SystemConnect.uploadImage(Util.getRealPathFromCaptureURI(imageChangeUri), new CallbackString() {
                     @Override
                     public void Result(String s) {
@@ -311,34 +300,33 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
                     }
                 });
 
-            }else {
-                if (product.getInt("id") ==0){
+            } else {
+                if (product.getInt("id") == 0) {
                     updateProduct("");
-                }else if (product.getString("image").startsWith("http")){
+                } else if (product.getString("image").startsWith("http")) {
                     updateProduct(product.getString("image"));
-                }else {
+                } else {
                     updateProduct("");
                 }
 
             }
 
 
-
         }
     }
 
-    private void updateProduct(String urlImage){
+    private void updateProduct(String urlImage) {
         String param = String.format(Api_link.PRODUCT_CREATE_PARAM,
-                product.getInt("id") == 0? "" : "id="+ product.getString("id") +"&",
+                product.getInt("id") == 0 ? "" : "id=" + product.getString("id") + "&",
                 Util.encodeString(edName.getText().toString().trim()),
-                edIsPromotion.getText().toString().trim().equals(Constants.IS_PROMOTION) ? true: false,
+                edIsPromotion.getText().toString().trim().equals(Constants.IS_PROMOTION) ? true : false,
                 Util.valueMoney(edUnitPrice.getText().toString()),
                 Util.valueMoney(edPurchasePrice.getText().toString()),
-                edVolume.getText().toString().trim().replace(",",""),
+                edVolume.getText().toString().trim().replace(",", ""),
                 defineGroupId(edGroup.getText().toString().trim()),
                 urlImage,
                 Util.valueMoney(edBasePrice.getText().toString()),
-                edUnitInCarton.getText().toString().trim().replace(",",""));
+                edUnitInCarton.getText().toString().trim().replace(",", ""));
 
         ProductConnect.CreateProduct(param, new CallbackCustom() {
             @Override
@@ -356,17 +344,16 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CHOOSE_IMAGE ){
-            if (data != null){
-                Crop.of(Uri.parse(data.getData().toString()), imageChangeUri).asSquare().withMaxSize(400,400).start(getActivity(), NewUpdateProductFragment.this);
+        if (requestCode == REQUEST_CHOOSE_IMAGE) {
+            if (data != null) {
+                Crop.of(Uri.parse(data.getData().toString()), imageChangeUri).asSquare().withMaxSize(400, 400).start(getActivity(), NewUpdateProductFragment.this);
 
             }
 
-        }else if (requestCode == REQUEST_IMAGE_CAPTURE){
-            Crop.of(imageChangeUri, imageChangeUri).asSquare().withMaxSize(400,400).start(getActivity(), NewUpdateProductFragment.this);
+        } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
+            Crop.of(imageChangeUri, imageChangeUri).asSquare().withMaxSize(400, 400).start(getActivity(), NewUpdateProductFragment.this);
 
-        }
-        else if (data != null && requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
+        } else if (data != null && requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
             Glide.with(this).load(imageChangeUri).centerCrop().into(imgProduct);
 
         } else if (requestCode == Crop.REQUEST_CROP) {
@@ -380,10 +367,6 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
         }
 
     }
-
-
-
-
 
 
 }

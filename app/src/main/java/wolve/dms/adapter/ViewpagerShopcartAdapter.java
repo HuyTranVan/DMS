@@ -16,7 +16,6 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Util;
 
 
@@ -28,14 +27,14 @@ public class ViewpagerShopcartAdapter extends PagerAdapter {
     private Context mContext;
     private LayoutInflater inflater;
     private List<CartProductDialogAdapter> listAdapter = new ArrayList<>();
-    private  List<String> listTitle = new ArrayList<>();
+    private List<String> listTitle = new ArrayList<>();
     private View view;
 
-    public ViewpagerShopcartAdapter(List<CartProductDialogAdapter> listAdapter, List<BaseModel> productGroups){
+    public ViewpagerShopcartAdapter(List<CartProductDialogAdapter> listAdapter, List<BaseModel> productGroups) {
         this.mContext = Util.getInstance().getCurrentActivity();
         this.listAdapter = listAdapter;
 
-        for (int i=0; i<productGroups.size(); i++){
+        for (int i = 0; i < productGroups.size(); i++) {
             listTitle.add(productGroups.get(i).getString("name"));
         }
     }
@@ -47,13 +46,13 @@ public class ViewpagerShopcartAdapter extends PagerAdapter {
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
-        return (view ==(LinearLayout)object);
+        return (view == (LinearLayout) object);
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        inflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        view = inflater.inflate(R.layout.adapter_customer_viewpager_item,container,false);
+        inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        view = inflater.inflate(R.layout.adapter_customer_viewpager_item, container, false);
         RecyclerView rvList = (RecyclerView) view.findViewById(R.id.customer_viewpager_item_rv);
 
 
@@ -87,6 +86,7 @@ public class ViewpagerShopcartAdapter extends PagerAdapter {
         public void onTouchEvent(RecyclerView rv, MotionEvent e) {
 
         }
+
         @Override
         public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
             int action = e.getAction();
@@ -97,6 +97,7 @@ public class ViewpagerShopcartAdapter extends PagerAdapter {
             }
             return false;
         }
+
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
 

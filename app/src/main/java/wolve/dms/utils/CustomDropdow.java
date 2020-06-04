@@ -6,16 +6,13 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.PopupMenu;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.callback.CallbackString;
-import wolve.dms.models.Status;
 
 /**
  * Created by macos on 11/16/17.
@@ -23,9 +20,9 @@ import wolve.dms.models.Status;
 
 public class CustomDropdow {
 
-    public static void createDropdown(View view , List<String> list, final CallbackString mListener){
+    public static void createDropdown(View view, List<String> list, final CallbackString mListener) {
         final PopupWindow popup = new PopupWindow(Util.getInstance().getCurrentActivity());
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(Util.getInstance().getCurrentActivity(), android.R.layout.select_dialog_item){
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(Util.getInstance().getCurrentActivity(), android.R.layout.select_dialog_item) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 String text = getItem(position);
@@ -40,7 +37,7 @@ public class CustomDropdow {
             }
         };
 
-        for (int i=0; i<list.size(); i++){
+        for (int i = 0; i < list.size(); i++) {
             adapter.add(list.get(i));
 
         }
@@ -61,7 +58,7 @@ public class CustomDropdow {
         popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
         popup.setWidth(Util.getInstance().getCurrentActivity().getResources().getDimensionPixelSize(R.dimen._100sdp));
         popup.setContentView(listViewDogs);
-        popup.showAsDropDown(view , 0, 0);
+        popup.showAsDropDown(view, 0, 0);
     }
 
 

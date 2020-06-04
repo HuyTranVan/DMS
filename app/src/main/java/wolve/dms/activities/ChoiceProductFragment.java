@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -14,8 +13,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +20,6 @@ import wolve.dms.R;
 import wolve.dms.adapter.CartProductDialogAdapter;
 import wolve.dms.adapter.ViewpagerShopcartAdapter;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Util;
 
@@ -33,9 +29,9 @@ import wolve.dms.utils.Util;
 
 public class ChoiceProductFragment extends Fragment implements View.OnClickListener {
     private View view;
-//    private ImageView btnBack;
+    //    private ImageView btnBack;
     private TextView tvSubmit;
-    private LinearLayout btnSubmit ;
+    private LinearLayout btnSubmit;
     private ViewPager viewPager;
     private TabLayout tabLayout;
 
@@ -43,14 +39,14 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
     private CartProductDialogAdapter adapter;
     private ProductGroup productGroup;
     private ViewpagerShopcartAdapter viewpagerAdapter;
-    private int currentPosition =0;
+    private int currentPosition = 0;
     private List<CartProductDialogAdapter> listadapter;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_cart_choice_product,container,false);
+        view = inflater.inflate(R.layout.fragment_cart_choice_product, container, false);
         initializeView();
 
         intitialData();
@@ -73,7 +69,7 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
     private void initializeView() {
         mActivity = (ShopCartActivity) getActivity();
         tvSubmit = view.findViewById(R.id.cart_choice_tvsubmit);
-        btnSubmit =  view.findViewById(R.id.cart_choice_submit);
+        btnSubmit = view.findViewById(R.id.cart_choice_submit);
         viewPager = view.findViewById(R.id.cart_choice_viewpager);
         tabLayout = view.findViewById(R.id.cart_choice_tabs);
 
@@ -81,7 +77,7 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.icon_back:
                 getActivity().getSupportFragmentManager().popBackStack();
                 Util.hideKeyboard(v);
@@ -94,11 +90,11 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
         }
     }
 
-    private void setupViewPager( ){
-        listadapter  = new ArrayList<>();
+    private void setupViewPager() {
+        listadapter = new ArrayList<>();
 
-        for (int  i=0; i<mActivity.listProductGroups.size(); i++){
-            CartProductDialogAdapter productAdapters = new CartProductDialogAdapter(mActivity.listInitialProduct, mActivity.listProducts, i,mActivity.listProductGroups.get(i), new CartProductDialogAdapter.CallbackViewPager() {
+        for (int i = 0; i < mActivity.listProductGroups.size(); i++) {
+            CartProductDialogAdapter productAdapters = new CartProductDialogAdapter(mActivity.listInitialProduct, mActivity.listProducts, i, mActivity.listProductGroups.get(i), new CartProductDialogAdapter.CallbackViewPager() {
                 @Override
                 public void onChoosen(int position, int count) {
                     reloadBillCount(position, count);
@@ -132,7 +128,7 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
             }
         });
 
-        for (int i=0; i<mActivity.listProductGroups.size(); i++){
+        for (int i = 0; i < mActivity.listProductGroups.size(); i++) {
             TabLayout.Tab tab = tabLayout.getTabAt(i);
             View customView = LayoutInflater.from(mActivity).inflate(R.layout.view_tab_product, null);
             TextView tabTextTitle = (TextView) customView.findViewById(R.id.tabNotify);
@@ -148,19 +144,18 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
     }
 
 
-    protected void  submitProduct(){
+    protected void submitProduct() {
         List<BaseModel> listChecked = new ArrayList<>();
 
-        for (int i=0; i<listadapter.size(); i++){
+        for (int i = 0; i < listadapter.size(); i++) {
             List<BaseModel> listTemp = new ArrayList<>();
             listTemp = listadapter.get(i).getAllData();
-            for (int j=0; j<listTemp.size(); j++){
-                if (listTemp.get(j).getBoolean("checked")){
+            for (int j = 0; j < listTemp.size(); j++) {
+                if (listTemp.get(j).getBoolean("checked")) {
                     listChecked.add(listTemp.get(j));
                 }
             }
         }
-
 
 
         mActivity.updatelistProduct(listChecked);
@@ -186,13 +181,13 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
 
     }
 
-    private void showSubmitEvent(){
+    private void showSubmitEvent() {
         int count = 0;
-        for (int i=0; i<listadapter.size(); i++){
+        for (int i = 0; i < listadapter.size(); i++) {
             count += listadapter.get(i).getCount();
         }
 
-        btnSubmit.setVisibility(count == 0?View.GONE: View.VISIBLE);
+        btnSubmit.setVisibility(count == 0 ? View.GONE : View.VISIBLE);
         tvSubmit.setText(String.format("Thêm vào giỏ hàng (%d)", count));
     }
 

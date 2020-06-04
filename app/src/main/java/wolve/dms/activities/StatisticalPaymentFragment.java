@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -43,7 +42,7 @@ public class StatisticalPaymentFragment extends Fragment implements View.OnClick
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_statistical_cash,container,false);
+        view = inflater.inflate(R.layout.fragment_statistical_cash, container, false);
         Util.paymentFragment = this;
         initializeView();
 
@@ -56,7 +55,6 @@ public class StatisticalPaymentFragment extends Fragment implements View.OnClick
     private void intitialData() {
 
     }
-
 
 
     private void addEvent() {
@@ -73,12 +71,12 @@ public class StatisticalPaymentFragment extends Fragment implements View.OnClick
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
 
         }
     }
 
-    public void reloadData(String user, List<BaseModel> list ){
+    public void reloadData(String user, List<BaseModel> list) {
         createRVCash(user, list);
     }
 
@@ -99,19 +97,19 @@ public class StatisticalPaymentFragment extends Fragment implements View.OnClick
                     public void onError(String error) {
 
                     }
-                }, true,true);
+                }, true, true);
             }
         });
         Util.createLinearRV(rvCash, adapter);
 
-        rdTotal.setText(String.format("Tổng: %s",Util.FormatMoney(adapter.sumPayments())));
+        rdTotal.setText(String.format("Tổng: %s", Util.FormatMoney(adapter.sumPayments())));
 
-        if (adapter.sumCollect() == 0.0){
+        if (adapter.sumCollect() == 0.0) {
             rdCollect.setVisibility(View.GONE);
 
-        }else {
+        } else {
             rdCollect.setVisibility(View.VISIBLE);
-            rdCollect.setText(String.format("Thu hộ: %s",Util.FormatMoney(adapter.sumCollect())));
+            rdCollect.setText(String.format("Thu hộ: %s", Util.FormatMoney(adapter.sumCollect())));
         }
 
 
@@ -119,7 +117,7 @@ public class StatisticalPaymentFragment extends Fragment implements View.OnClick
 
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
-        switch (checkedId){
+        switch (checkedId) {
             case R.id.statistical_cash_total:
                 adapter.getFilter().filter(Constants.ALL_TOTAL);
                 break;
@@ -130,15 +128,15 @@ public class StatisticalPaymentFragment extends Fragment implements View.OnClick
         }
     }
 
-    public double getSumPayment(){
+    public double getSumPayment() {
         return adapter.sumPayments();
     }
 
-    public int getCoutList(){
+    public int getCoutList() {
         return adapter.getItemCount();
     }
 
-    public double getSumProfit(){
+    public double getSumProfit() {
         return adapter.sumProfit();
 
     }

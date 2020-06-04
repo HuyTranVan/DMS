@@ -12,12 +12,10 @@ import com.orhanobut.dialogplus.OnBackPressListener;
 import com.orhanobut.dialogplus.OnDismissListener;
 import com.orhanobut.dialogplus.ViewHolder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.ItemAdapter;
-import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.models.BaseModel;
@@ -30,36 +28,42 @@ public class CustomBottomDialog {
 
     public interface TwoMethodListener {
         void Method1(Boolean one);
+
         void Method2(Boolean two);
     }
 
     public interface ThreeMethodListener {
         void Method1(Boolean one);
+
         void Method2(Boolean two);
+
         void Method3(Boolean three);
     }
 
     public interface FourMethodListener {
         void Method1(Boolean one);
+
         void Method2(Boolean two);
+
         void Method3(Boolean three);
+
         void Method4(Boolean four);
     }
 
-    public interface StringListener{
+    public interface StringListener {
         void onResponse(String content);
     }
 
-    public interface PositionListener{
+    public interface PositionListener {
         void onResponse(int pos);
     }
 
-    public static DialogPlus choiceTwoOption(String icon1, String text1, String icon2, String text2, final TwoMethodListener mListener){
+    public static DialogPlus choiceTwoOption(String icon1, String text1, String icon2, String text2, final TwoMethodListener mListener) {
         final DialogPlus dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
                 .setContentHolder(new ViewHolder(R.layout.view_choice_2method))
                 .setGravity(Gravity.BOTTOM)
                 .setBackgroundColorResId(R.drawable.bg_corner5_white)
-                .setMargin(10,10,10,10)
+                .setMargin(10, 10, 10, 10)
 //                .setPadding(20,30,20,20)
                 .setInAnimation(R.anim.slide_up)
                 .setOnBackPressListener(new OnBackPressListener() {
@@ -76,8 +80,8 @@ public class CustomBottomDialog {
         TextView tvText1 = (TextView) dialog.findViewById(R.id.choice_2method_text1);
         TextView tvText2 = (TextView) dialog.findViewById(R.id.choice_2method_text2);
 
-        tvIcon1.setText(icon1!= null? icon1:"");
-        tvIcon2.setText(icon2!= null? icon2:"");
+        tvIcon1.setText(icon1 != null ? icon1 : "");
+        tvIcon2.setText(icon2 != null ? icon2 : "");
         tvText1.setText(text1);
         tvText2.setText(text2);
 
@@ -119,12 +123,12 @@ public class CustomBottomDialog {
         return dialog;
     }
 
-    public static void choiceThreeOption(String icon1, String text1, String icon2, String text2,String icon3, String text3, final ThreeMethodListener mListener){
+    public static void choiceThreeOption(String icon1, String text1, String icon2, String text2, String icon3, String text3, final ThreeMethodListener mListener) {
         final DialogPlus dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
                 .setContentHolder(new ViewHolder(R.layout.view_choice_3method))
                 .setGravity(Gravity.BOTTOM)
                 .setBackgroundColorResId(R.drawable.bg_corner5_white)
-                .setMargin(10,10,10,10)
+                .setMargin(10, 10, 10, 10)
                 .setInAnimation(R.anim.slide_up)
                 .setOnBackPressListener(new OnBackPressListener() {
                     @Override
@@ -205,20 +209,20 @@ public class CustomBottomDialog {
     }
 
 
-    public static void choiceListObject(String title, final List<BaseModel> list, String key, final CallbackObject mListener, CallbackBoolean dismiss){
-        int heigh = list.size()>5 ? Util.convertSdpToInt(R.dimen._300sdp):
-                (list.size()+1)*Util.convertSdpToInt(R.dimen._35sdp)+ Util.convertSdpToInt(R.dimen._5sdp) ; //+Util.convertSdpToInt(R.dimen._30sdp);
+    public static void choiceListObject(String title, final List<BaseModel> list, String key, final CallbackObject mListener, CallbackBoolean dismiss) {
+        int heigh = list.size() > 5 ? Util.convertSdpToInt(R.dimen._300sdp) :
+                (list.size() + 1) * Util.convertSdpToInt(R.dimen._35sdp) + Util.convertSdpToInt(R.dimen._5sdp); //+Util.convertSdpToInt(R.dimen._30sdp);
         final DialogPlus dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
                 .setContentHolder(new ViewHolder(R.layout.view_choice_listmethod))
                 .setGravity(Gravity.BOTTOM)
                 .setBackgroundColorResId(R.drawable.bg_corner5_white)
-                .setMargin(20,20,20,20)
+                .setMargin(20, 20, 20, 20)
                 .setContentHeight(heigh)
                 .setInAnimation(R.anim.slide_up)
                 .setOnDismissListener(new OnDismissListener() {
                     @Override
                     public void onDismiss(DialogPlus dialog) {
-                        if (dismiss != null){
+                        if (dismiss != null) {
                             dismiss.onRespone(true);
 
                         }
@@ -234,9 +238,9 @@ public class CustomBottomDialog {
         RecyclerView rvList = (RecyclerView) dialog.findViewById(R.id.view_list_method_rv);
         TextView tvTitle = (TextView) dialog.findViewById(R.id.view_listmethod_title);
 
-        if (title == null){
+        if (title == null) {
             tvTitle.setVisibility(View.GONE);
-        }else {
+        } else {
             tvTitle.setVisibility(View.VISIBLE);
             tvTitle.setText(title);
         }

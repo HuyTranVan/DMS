@@ -4,16 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-<!--    <TextView-->
-<!--        android:id="@+id/statistical_cash_count"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:padding="@dimen/_5sdp"-->
-<!--        android:textColor="@color/colorMain"-->
-<!--        android:textStyle="bold"-->
-<!--        android:textSize="@dimen/_12sdp"-->
-<!--        android:gravity="center_vertical|right"-->
-<!--        android:layout_marginRight="@dimen/_5sdp"/>-->
+    <!--    <TextView-->
+    <!--        android:id="@+id/statistical_cash_count"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:padding="@dimen/_5sdp"-->
+    <!--        android:textColor="@color/colorMain"-->
+    <!--        android:textStyle="bold"-->
+    <!--        android:textSize="@dimen/_12sdp"-->
+    <!--        android:gravity="center_vertical|right"-->
+    <!--        android:layout_marginRight="@dimen/_5sdp"/>-->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -39,7 +39,7 @@
                 android:textSize="@dimen/_10sdp"
                 android:textColor="@color/black_text_color"
                 android:backgroundTint="@color/black_text_color_hint"
-                android:buttonTint="@color/black_text_color_hint"/>
+                android:buttonTint="@color/black_text_color_hint" />
 
             <RadioButton
                 android:id="@+id/statistical_cash_total"
@@ -52,7 +52,7 @@
                 android:checked="true"
                 android:backgroundTint="@color/colorBlue"
                 android:buttonTint="@color/colorBlue"
-                android:layout_marginLeft="@dimen/_20sdp"/>
+                android:layout_marginLeft="@dimen/_20sdp" />
 
         </RadioGroup>
 
@@ -72,6 +72,6 @@
         android:layout_height="wrap_content"
         android:clipToPadding="false"
         android:paddingTop="@dimen/_5sdp"
-        android:paddingBottom="@dimen/_50sdp"/>
+        android:paddingBottom="@dimen/_50sdp" />
 
 </LinearLayout>

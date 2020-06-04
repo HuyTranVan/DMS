@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -14,10 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.callback.CallbackBaseModel;
-import wolve.dms.callback.CallbackString;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Status;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Util;
@@ -33,16 +29,15 @@ public class CartCheckinReasonAdapter extends RecyclerView.Adapter<CartCheckinRe
     private Context mContext;
     private ReasonCallback mListener;
 
-    public interface ReasonCallback{
+    public interface ReasonCallback {
         void onResult(BaseModel result, int position);
     }
 
     public CartCheckinReasonAdapter(List<BaseModel> list, ReasonCallback callback) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
-        this.mListener = callback ;
+        this.mListener = callback;
         this.mData = list;
-
 
 
     }
@@ -56,7 +51,7 @@ public class CartCheckinReasonAdapter extends RecyclerView.Adapter<CartCheckinRe
     @Override
     public void onBindViewHolder(final ReasonAdapterViewHolder holder, final int position) {
         holder.tvName.setText(mData.get(position).getString("content"));
-        holder.line.setVisibility(position == mData.size() -1 ? View.GONE : View.VISIBLE);
+        holder.line.setVisibility(position == mData.size() - 1 ? View.GONE : View.VISIBLE);
 
         holder.lnParent.setOnClickListener(new View.OnClickListener() {
             @Override

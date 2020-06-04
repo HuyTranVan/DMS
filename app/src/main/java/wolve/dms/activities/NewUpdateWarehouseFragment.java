@@ -19,7 +19,6 @@ import wolve.dms.R;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.SystemConnect;
 import wolve.dms.apiconnect.UserConnect;
-import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackObject;
@@ -50,7 +49,7 @@ public class NewUpdateWarehouseFragment extends Fragment implements View.OnClick
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_add_depot,container,false);
+        view = inflater.inflate(R.layout.fragment_add_depot, container, false);
         initializeView();
 
         intitialData();
@@ -61,11 +60,11 @@ public class NewUpdateWarehouseFragment extends Fragment implements View.OnClick
 
     private void intitialData() {
         String bundle = getArguments().getString(Constants.DEPOT);
-        if (bundle != null){
+        if (bundle != null) {
             currentDepot = new BaseModel(bundle);
             edInput.setText(currentDepot.getString("name"));
             edUser.setText(currentDepot.getBaseModel("user").getString("displayName"));
-            switch (currentDepot.getInt("isMaster")){
+            switch (currentDepot.getInt("isMaster")) {
                 case 1:
                     rdDepotType.check(R.id.add_depot_rdmain);
                     rdUser.setVisibility(View.GONE);
@@ -110,19 +109,19 @@ public class NewUpdateWarehouseFragment extends Fragment implements View.OnClick
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.icon_back:
                 Util.hideKeyboard(v);
                 mActivity.onBackPressed();
                 break;
 
             case R.id.add_depot_submit:
-                if (edInput.getText().toString().trim().equals("")|| edUser.getText().toString().trim().equals("")){
+                if (edInput.getText().toString().trim().equals("") || edUser.getText().toString().trim().equals("")) {
                     CustomCenterDialog.alert(null, "Vui lòng điền đầy đủ thông tin", "đồng ý");
 
-                }else {
-                    String param = String.format(Api_link.WAREHOUSE_CREATE_PARAM, !currentDepot.hasKey("id")? "" : "id="+ currentDepot.getString("id") +"&",
-                                Util.encodeString(edInput.getText().toString()),
+                } else {
+                    String param = String.format(Api_link.WAREHOUSE_CREATE_PARAM, !currentDepot.hasKey("id") ? "" : "id=" + currentDepot.getString("id") + "&",
+                            Util.encodeString(edInput.getText().toString()),
                             currentDepot.getInt("user_id"),
                             currentDepot.getInt("isMaster"));
 
@@ -143,14 +142,14 @@ public class NewUpdateWarehouseFragment extends Fragment implements View.OnClick
         }
     }
 
-    private void userEvent(){
+    private void userEvent() {
         edUser.setDropdown(true, new CInputForm.ClickListener() {
             @Override
             public void onClick(View view) {
-                if (listUser.size() >0){
+                if (listUser.size() > 0) {
                     dialogChoiceUser(filterListBaseModel(listUser));
 
-                }else {
+                } else {
                     UserConnect.ListUser(new CallbackCustomList() {
                         @Override
                         public void onResponse(List<BaseModel> results) {
@@ -171,7 +170,7 @@ public class NewUpdateWarehouseFragment extends Fragment implements View.OnClick
         });
     }
 
-    private void dialogChoiceUser(List<BaseModel> list){
+    private void dialogChoiceUser(List<BaseModel> list) {
         CustomBottomDialog.choiceListObject("CHỌN NHÂN VIÊN", list, "displayName", new CallbackObject() {
             @Override
             public void onResponse(BaseModel object) {
@@ -184,7 +183,7 @@ public class NewUpdateWarehouseFragment extends Fragment implements View.OnClick
 
     @Override
     public void onCheckedChanged(RadioGroup radioGroup, int i) {
-        switch (i){
+        switch (i) {
             case R.id.add_depot_rdmain:
                 currentDepot.put("isMaster", 1);
                 break;
@@ -199,10 +198,10 @@ public class NewUpdateWarehouseFragment extends Fragment implements View.OnClick
         }
     }
 
-    private List<BaseModel> filterListBaseModel(List<BaseModel> list){
+    private List<BaseModel> filterListBaseModel(List<BaseModel> list) {
         List<BaseModel> results = new ArrayList<>();
-        for (BaseModel model: list){
-            if (model.getInt("role") == 1){
+        for (BaseModel model : list) {
+            if (model.getInt("role") == 1) {
                 results.add(model);
             }
 
@@ -212,6 +211,6 @@ public class NewUpdateWarehouseFragment extends Fragment implements View.OnClick
 //        defaultUser.put("displayName", "Mặc định");
 //        results.add(0, defaultUser);
 
-        return  results;
+        return results;
     }
 }

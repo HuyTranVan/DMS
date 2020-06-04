@@ -1,65 +1,43 @@
 package wolve.dms.activities;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
-import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.soundcloud.android.crop.Crop;
-import com.squareup.picasso.Picasso;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.R;
 import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.apiconnect.SystemConnect;
 import wolve.dms.apiconnect.UserConnect;
-import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomList;
-import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.CallbackUri;
 import wolve.dms.customviews.CInputForm;
-import wolve.dms.libraries.connectapi.UploadCloudaryMethod;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Product;
-import wolve.dms.models.ProductGroup;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomInputDialog;
 import wolve.dms.utils.CustomSQL;
-import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -77,13 +55,13 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
     private View view;
     private ImageView btnBack;
     private CInputForm edName, edPhone, edGender, edRole, edEmail, edWarehouse;
-    private TextView tvTitle,tvPasswordDefault;
-    private Button btnSubmit ;
+    private TextView tvTitle, tvPasswordDefault;
+    private Button btnSubmit;
     private CircleImageView imgUser;
 
     private UserActivity mActivity;
 
-    private Uri imageChangeUri = null ;
+    private Uri imageChangeUri = null;
     private BaseModel currentUser;
     private BaseModel currentWarehouse;
     private List<BaseModel> listWarehouse;
@@ -93,7 +71,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_add_user,container,false);
+        view = inflater.inflate(R.layout.fragment_add_user, container, false);
         initializeView();
 
         intitialData();
@@ -105,19 +83,19 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
     private void intitialData() {
         listWarehouse = new ArrayList<>();
         String bundle = getArguments().getString(Constants.USER);
-        tvPasswordDefault.setVisibility(Util.isAdmin()?View.VISIBLE: View.GONE);
+        tvPasswordDefault.setVisibility(Util.isAdmin() ? View.VISIBLE : View.GONE);
         phoneEvent();
-        if (bundle != null){
+        if (bundle != null) {
             currentUser = new BaseModel(bundle);
-            currentWarehouse = currentUser.hasKey("warehouse")? currentUser.getBaseModel("warehouse") : new BaseModel();
+            currentWarehouse = currentUser.hasKey("warehouse") ? currentUser.getBaseModel("warehouse") : new BaseModel();
             edName.setText(currentUser.getString("displayName"));
             edPhone.setText(currentUser.getString("phone"));
             edRole.setText(User.getRoleString(currentUser.getInt("role")));
-            edGender.setText(currentUser.getInt("gender") == 0? "NAM" : "NỮ");
+            edGender.setText(currentUser.getInt("gender") == 0 ? "NAM" : "NỮ");
             edEmail.setText(currentUser.getString("email"));
-            edWarehouse.setText(currentUser.hasKey("warehouse")?String.format(displayWarehouseFormat, currentUser.getBaseModel("warehouse").getString("name")): "");
+            edWarehouse.setText(currentUser.hasKey("warehouse") ? String.format(displayWarehouseFormat, currentUser.getBaseModel("warehouse").getString("name")) : "");
 
-            if (!Util.checkImageNull(currentUser.getString("image"))){
+            if (!Util.checkImageNull(currentUser.getString("image"))) {
                 String url = Util.remakeURL(currentUser.getString("image"));
                 Glide.with(this).load(url).dontAnimate().centerCrop().into(imgUser);
 //                Picasso.get().load(url).into(imgUser);
@@ -125,7 +103,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
 
             }
 
-        }else {
+        } else {
             currentUser = new BaseModel();
             currentWarehouse = new BaseModel();
             edRole.setText(User.getRoleString(4));
@@ -133,12 +111,12 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
 
         }
 
-        if (!CustomSQL.getBoolean(Constants.IS_ADMIN)){
+        if (!CustomSQL.getBoolean(Constants.IS_ADMIN)) {
             edPhone.setFocusable(false);
             edRole.setFocusable(false);
             edWarehouse.setFocusable(false);
 
-        }else {
+        } else {
             edPhone.setFocusable(true);
             roleEvent();
             warehouseEvent();
@@ -153,7 +131,6 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
         imgUser.setOnClickListener(this);
         tvPasswordDefault.setOnClickListener(this);
         genderEvent();
-
 
 
     }
@@ -177,7 +154,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
     @Override
     public void onClick(View v) {
         Util.hideKeyboard(v);
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.icon_back:
                 mActivity.onBackPressed();
 
@@ -222,7 +199,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
                             public void Method3(Boolean three) {
                                 imageChangeUri = null;
                                 currentUser.put("image", "");
-                                Glide.with(mActivity).load( R.drawable.ic_user).fitCenter().into(imgUser);
+                                Glide.with(mActivity).load(R.drawable.ic_user).fitCenter().into(imgUser);
                             }
                         });
 
@@ -234,24 +211,24 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CHOOSE_IMAGE ){
-            if (data != null){
-                Crop.of(Uri.parse(data.getData().toString()), imageChangeUri).asSquare().withMaxSize(512,512).start(mActivity, NewUpdateUserFragment.this);
+        if (requestCode == REQUEST_CHOOSE_IMAGE) {
+            if (data != null) {
+                Crop.of(Uri.parse(data.getData().toString()), imageChangeUri).asSquare().withMaxSize(512, 512).start(mActivity, NewUpdateUserFragment.this);
 
             }
 
-        }else if (requestCode == REQUEST_IMAGE_CAPTURE){
+        } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
             //Uri tempUri = imageChangeUri;
-            Crop.of(imageChangeUri, imageChangeUri).asSquare().withMaxSize(512,512).start(mActivity, NewUpdateUserFragment.this);
+            Crop.of(imageChangeUri, imageChangeUri).asSquare().withMaxSize(512, 512).start(mActivity, NewUpdateUserFragment.this);
 
-        }else if (data != null && requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
+        } else if (data != null && requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
             Glide.with(this).load(imageChangeUri).centerCrop().into(imgUser);
 
-        } else if (requestCode == Crop.REQUEST_CROP){
+        } else if (requestCode == Crop.REQUEST_CROP) {
             if (resultCode == RESULT_OK) {
                 Glide.with(this).load(imageChangeUri).centerCrop().into(imgUser);
 
-            } else if (resultCode == Crop.RESULT_ERROR){
+            } else if (resultCode == Crop.RESULT_ERROR) {
                 Util.showToast(Crop.getError(data).getMessage());
 
             }
@@ -260,7 +237,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
     }
 
 
-    private void phoneEvent(){
+    private void phoneEvent() {
         edPhone.addTextChangePhone(new CallbackString() {
             @Override
             public void Result(String s) {
@@ -271,7 +248,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
 
     }
 
-    private void genderEvent(){
+    private void genderEvent() {
         edGender.setDropdown(true, new CInputForm.ClickListener() {
             @Override
             public void onClick(View view) {
@@ -291,8 +268,8 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
         });
     }
 
-    private void roleEvent(){
-        edRole.setDropdown(true, new CInputForm.ClickListener(){
+    private void roleEvent() {
+        edRole.setDropdown(true, new CInputForm.ClickListener() {
             @Override
             public void onClick(View view) {
                 CustomBottomDialog.choiceListObject("CHỌN CHỨC VỤ", User.listRole(), "text", new CallbackObject() {
@@ -307,18 +284,19 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
         });
     }
 
-    private void warehouseEvent(){
-        edWarehouse.setDropdown(true, new CInputForm.ClickListener(){
+    private void warehouseEvent() {
+        edWarehouse.setDropdown(true, new CInputForm.ClickListener() {
             @Override
             public void onClick(View view) {
-                if (listWarehouse.size() ==0){
+                if (listWarehouse.size() == 0) {
                     SystemConnect.ListWarehouse(true, new CallbackCustomList() {
                         @Override
                         public void onResponse(List<BaseModel> results) {
-                            listWarehouse =  results;
+                            listWarehouse = results;
                             choiceWarehouse(filterListWarehouse(listWarehouse));
 
                         }
+
                         @Override
                         public void onError(String error) {
 
@@ -326,7 +304,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
                     }, true);
 
 
-                }else {
+                } else {
                     choiceWarehouse(filterListWarehouse(listWarehouse));
                 }
 
@@ -334,8 +312,8 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
         });
     }
 
-    private void choiceWarehouse(List<BaseModel> list){
-        if (list.size() >0){
+    private void choiceWarehouse(List<BaseModel> list) {
+        if (list.size() > 0) {
             CustomBottomDialog.choiceListObject("CHỌN KHO HÀNG", list, "name", new CallbackObject() {
                 @Override
                 public void onResponse(BaseModel object) {
@@ -345,14 +323,14 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
 
                 }
             }, null);
-        }else {
+        } else {
             CustomCenterDialog.alertWithCancelButton("",
                     "Chưa tồn tại kho hàng của nhân viên này. Vui lòng tạo kho hàng!",
                     "đồng ý",
                     "quay lại", new CallbackBoolean() {
                         @Override
                         public void onRespone(Boolean result) {
-                            if (result){
+                            if (result) {
                                 CustomInputDialog.inputWarehouse(view, new CallbackString() {
                                     @Override
                                     public void Result(String s) {
@@ -368,22 +346,21 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
         }
 
 
-
     }
 
-    private void submitUser(){
+    private void submitUser() {
         if (edName.getText().toString().trim().equals("")
                 || edPhone.getText().toString().trim().equals("")
-                || edEmail.getText().toString().trim().equals("")){
+                || edEmail.getText().toString().trim().equals("")) {
             Util.showSnackbar("Chưa nhập đủ thông tin!", null, null);
 
-        }else if (!Util.isEmailValid(edEmail.getText().toString())){
+        } else if (!Util.isEmailValid(edEmail.getText().toString())) {
             Util.showSnackbar("Sai định dạng email!", null, null);
 
-        }else if (!currentWarehouse.hasKey("name")){
+        } else if (!currentWarehouse.hasKey("name")) {
             Util.showSnackbar("Chưa chọn kho hàng cho nhân viên", null, null);
 
-        }else if (imageChangeUri != null){
+        } else if (imageChangeUri != null) {
             SystemConnect.uploadImage(Util.getRealPathFromCaptureURI(imageChangeUri), new CallbackString() {
                 @Override
                 public void Result(String url) {
@@ -392,31 +369,31 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
                 }
             });
 
-        }else {
-            if (currentUser.getInt("id") ==0){
+        } else {
+            if (currentUser.getInt("id") == 0) {
                 updateUser("");
-            }else if (currentUser.getString("image").startsWith("http")){
+            } else if (currentUser.getString("image").startsWith("http")) {
                 updateUser(currentUser.getString("image"));
-            }else {
+            } else {
                 updateUser("");
             }
 
         }
     }
 
-    private void updateUser(String url){
-        if (currentWarehouse.hasKey("id")){
+    private void updateUser(String url) {
+        if (currentWarehouse.hasKey("id")) {
             currentUser.put("warehouse_id", currentWarehouse.getInt("id"));
             currentUser.put("warehouse_name", currentWarehouse.getString("name"));
-        }else {
+        } else {
             currentUser.put("warehouse_id", 0);
             currentUser.put("warehouse_name", currentWarehouse.getString("name"));
 
         }
         String param = String.format(Api_link.USER_CREATE_PARAM,
-                currentUser.getInt("id") == 0? "" : "id="+ currentUser.getString("id") +"&",
+                currentUser.getInt("id") == 0 ? "" : "id=" + currentUser.getString("id") + "&",
                 Util.encodeString(edName.getText().toString().trim()),
-                edGender.getText().toString().equals("NAM")? 0 :1,
+                edGender.getText().toString().equals("NAM") ? 0 : 1,
                 edEmail.getText().toString(),
                 Util.getPhoneValue(edPhone),
                 User.getIndex(edRole.getText().toString()),
@@ -424,17 +401,17 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
                 currentUser.getInt("warehouse_id"),
                 Util.encodeString(currentUser.getString("warehouse_name")));
 
-        UserConnect.CreateUser(param, new CallbackCustom(){
+        UserConnect.CreateUser(param, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
-                if (CustomSQL.getBoolean(Constants.IS_ADMIN)){
-                    if (result.getInt("id") == User.getId()){
+                if (CustomSQL.getBoolean(Constants.IS_ADMIN)) {
+                    if (result.getInt("id") == User.getId()) {
                         CustomSQL.setBaseModel(Constants.USER, result);
                     }
                     getActivity().getSupportFragmentManager().popBackStack();
                     mActivity.loadUser();
 
-                }else {
+                } else {
                     Transaction.gotoHomeActivityRight(true);
 
                 }
@@ -449,10 +426,10 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
 
     }
 
-    private List<BaseModel> filterListWarehouse(List<BaseModel> list){
+    private List<BaseModel> filterListWarehouse(List<BaseModel> list) {
         List<BaseModel> results = new ArrayList<>();
-        for (BaseModel baseModel : list){
-            if (baseModel.getInt("isMaster")==3 && baseModel.getInt("user_id") == currentUser.getInt("id")){
+        for (BaseModel baseModel : list) {
+            if (baseModel.getInt("isMaster") == 3 && baseModel.getInt("user_id") == currentUser.getInt("id")) {
                 results.add(baseModel);
 
             }
@@ -460,8 +437,8 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
         return results;
     }
 
-    private void postNewWarehouse(String name, int user_id){
-        String param = String.format(Api_link.WAREHOUSE_CREATE_PARAM,  "", Util.encodeString(name), user_id, 3);
+    private void postNewWarehouse(String name, int user_id) {
+        String param = String.format(Api_link.WAREHOUSE_CREATE_PARAM, "", Util.encodeString(name), user_id, 3);
 
         SystemConnect.CreateDepot(param, new CallbackCustom() {
             @Override
@@ -478,7 +455,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
         }, true);
     }
 
-    private void submitPasswordDefault(){
+    private void submitPasswordDefault() {
         UserConnect.setDefaultPassword(currentUser.getInt("id"), new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {

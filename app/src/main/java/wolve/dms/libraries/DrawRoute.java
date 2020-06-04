@@ -84,12 +84,12 @@ public class DrawRoute {
         return this;
     }
 
-    public DrawRoute setLoader(boolean showloader){
+    public DrawRoute setLoader(boolean showloader) {
         this.show_loader = showloader;
         return this;
     }
 
-    public DrawRoute setLoaderMsg(String loadermsg){
+    public DrawRoute setLoaderMsg(String loadermsg) {
         this.loader_msg = loadermsg;
         return this;
     }

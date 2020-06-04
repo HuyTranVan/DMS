@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.callback.CallbackCustomList;
-import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
@@ -27,7 +26,7 @@ public class CustomGetPostListMethod extends AsyncTask<String, Void, List<String
     private CallbackCustomList mListener = null;
     private List<BaseModel> mParams;
 
-    public CustomGetPostListMethod( List<BaseModel> listParams, CallbackCustomList listener) {
+    public CustomGetPostListMethod(List<BaseModel> listParams, CallbackCustomList listener) {
         mListener = listener;
         this.mParams = listParams;
         //this.isJsonType = isJsonType;
@@ -38,8 +37,8 @@ public class CustomGetPostListMethod extends AsyncTask<String, Void, List<String
     protected List<String> doInBackground(String... s) {
         List<String> listResult = new ArrayList<>();
 
-        for (int i=0; i<mParams.size(); i++) {
-            switch (mParams.get(i).getString("method")){
+        for (int i = 0; i < mParams.size(); i++) {
+            switch (mParams.get(i).getString("method")) {
                 case "POST":
                     try {
                         URL obj = new URL(mParams.get(i).getString("url"));
@@ -128,14 +127,15 @@ public class CustomGetPostListMethod extends AsyncTask<String, Void, List<String
         return listResult;
     }
 
-    @Override protected void onPostExecute(List<String> responses) {
+    @Override
+    protected void onPostExecute(List<String> responses) {
         List<BaseModel> listResult = new ArrayList<>();
 
-        for (int i=0; i<responses.size(); i++) {
-            if (Util.isJSONObject(responses.get(i))){
+        for (int i = 0; i < responses.size(); i++) {
+            if (Util.isJSONObject(responses.get(i))) {
                 listResult.add(new BaseModel(responses.get(i)));
 
-            }else {
+            } else {
                 listResult.add(new BaseModel());
                 mListener.onError(responses.get(i));
 

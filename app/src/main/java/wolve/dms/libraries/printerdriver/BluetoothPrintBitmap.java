@@ -5,12 +5,7 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketAddress;
 
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.models.Printer;
@@ -19,7 +14,7 @@ import wolve.dms.utils.Util;
 /**
  * Created by tranhuy on 2/14/17.
  */
-public class BluetoothPrintBitmap extends AsyncTask<Printer,Void,Boolean> {
+public class BluetoothPrintBitmap extends AsyncTask<Printer, Void, Boolean> {
     public CallbackBoolean delegate = null;
     Context context;
     Bitmap bitmap;

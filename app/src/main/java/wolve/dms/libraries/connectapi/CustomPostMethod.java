@@ -3,10 +3,6 @@ package wolve.dms.libraries.connectapi;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.mortbay.util.ajax.JSON;
-
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -16,7 +12,6 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
-import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
@@ -27,7 +22,7 @@ import wolve.dms.utils.Util;
  * Created by tranhuy on 7/22/16.
  */
 public class CustomPostMethod extends AsyncTask<String, Void, String> {
-    private CallbackCustom mListener ;
+    private CallbackCustom mListener;
     private BaseModel mParam;
 
     public CustomPostMethod(BaseModel param, CallbackCustom listener) {
@@ -36,7 +31,8 @@ public class CustomPostMethod extends AsyncTask<String, Void, String> {
 
     }
 
-    @Override protected String doInBackground(String... params){
+    @Override
+    protected String doInBackground(String... params) {
         Log.d("url: ", mParam.getString("url"));
         Log.d("params: ", mParam.getString("param"));
 
@@ -48,7 +44,7 @@ public class CustomPostMethod extends AsyncTask<String, Void, String> {
             con.setRequestMethod("POST");
             con.setRequestProperty("User-Agent", "Mozilla/5.0");
 //            con.setRequestProperty("Content-Type",mParam.getBoolean("isjson")? "application/json":"application/x-www-form-urlencoded");
-            con.setRequestProperty("Content-Type",mParam.getBoolean("isjson")?  "application/json;charset=ISO-8859-1":"application/x-www-form-urlencoded");
+            con.setRequestProperty("Content-Type", mParam.getBoolean("isjson") ? "application/json;charset=ISO-8859-1" : "application/x-www-form-urlencoded");
             con.setRequestProperty("x-wolver-accesstoken", User.getToken());
             con.setRequestProperty("x-wolver-accessid", User.getUserId());
             con.setRequestProperty("x-wolver-debtid", Distributor.getDistributorId());
@@ -84,11 +80,12 @@ public class CustomPostMethod extends AsyncTask<String, Void, String> {
         }
     }
 
-    @Override protected void onPostExecute(String response) {
-        if (Util.isJSONObject(response)){
+    @Override
+    protected void onPostExecute(String response) {
+        if (Util.isJSONObject(response)) {
             mListener.onResponse(new BaseModel(response));
 
-        }else {
+        } else {
             mListener.onError(response);
 
         }

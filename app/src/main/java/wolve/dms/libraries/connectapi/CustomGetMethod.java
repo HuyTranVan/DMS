@@ -3,10 +3,6 @@ package wolve.dms.libraries.connectapi;
 import android.os.AsyncTask;
 import android.util.Log;
 
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,7 +11,6 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
-import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
@@ -36,7 +31,7 @@ public class CustomGetMethod extends AsyncTask<String, Void, String> {
     }
 
     @Override
-        protected String doInBackground(String... params) {
+    protected String doInBackground(String... params) {
         Log.d("url: ", baseUrl);
 
         StringBuffer response = null;
@@ -70,10 +65,10 @@ public class CustomGetMethod extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String response) {
-        if (Util.isJSONObject(response)){
+        if (Util.isJSONObject(response)) {
             mListener.onResponse(new BaseModel(response));
 
-        }else {
+        } else {
             mListener.onError(response);
 
         }

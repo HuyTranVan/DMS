@@ -19,7 +19,7 @@
             android:layout_height="match_parent"
             android:src="@drawable/ic_arrow_back_black_18dp"
             android:padding="@dimen/_8sdp"
-            android:background="?selectableItemBackground"/>
+            android:background="?selectableItemBackground" />
 
         <TextView
             android:id="@+id/update_price_title"
@@ -28,7 +28,7 @@
             android:layout_centerInParent="true"
             android:text="SẢN PHẨM"
             android:textSize="@dimen/_14sdp"
-            android:textColor="@color/black_text_color"/>
+            android:textColor="@color/black_text_color" />
 
     </RelativeLayout>
 
@@ -52,7 +52,7 @@
                 app:civ_border_color="@color/colorLightGrey"
                 android:src="@drawable/ic_wolver"
                 android:layout_margin="@dimen/_10sdp"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -68,7 +68,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="textCapWords"
                     app:textHint="Nhập tên sản phẩm"
-                    app:iconText="@string/icon_product"/>
+                    app:iconText="@string/icon_product" />
 
                 <wolve.dms.customviews.CInputForm
                     android:id="@+id/add_product_group"
@@ -77,7 +77,7 @@
                     app:textHint="Nhóm sản phẩm"
                     app:iconText="@string/icon_product_group"
                     app:isDropdown="true"
-                    app:textColor="@color/colorBlue"/>
+                    app:textColor="@color/colorBlue" />
 
                 <wolve.dms.customviews.CInputForm
                     android:id="@+id/add_product_unit_price"
@@ -85,8 +85,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="number"
                     app:textHint="Giá bán"
-                    app:iconText="@string/icon_price"
-                    />
+                    app:iconText="@string/icon_price" />
 
                 <wolve.dms.customviews.CInputForm
                     android:id="@+id/add_product_purchase_price"
@@ -94,7 +93,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="number"
                     app:textHint="Giá nhập hàng"
-                    app:iconText="@string/icon_purchase"/>
+                    app:iconText="@string/icon_purchase" />
 
                 <wolve.dms.customviews.CInputForm
                     android:id="@+id/add_product_distributor_price"
@@ -102,7 +101,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="number"
                     app:textHint="Giá nhà phân phối"
-                    app:iconText="@string/icon_briefcase"/>
+                    app:iconText="@string/icon_briefcase" />
 
                 <wolve.dms.customviews.CInputForm
                     android:id="@+id/add_product_unit_in_carton"
@@ -110,7 +109,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="number"
                     app:textHint="đơn vị/ thùng"
-                    app:iconText="@string/icon_container"/>
+                    app:iconText="@string/icon_container" />
 
                 <wolve.dms.customviews.CInputForm
                     android:id="@+id/add_product_volume"
@@ -118,7 +117,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
                     app:textHint="Khối lượng"
-                    app:iconText="@string/icon_weight"/>
+                    app:iconText="@string/icon_weight" />
 
                 <wolve.dms.customviews.CInputForm
                     android:id="@+id/add_product_promotion"
@@ -127,9 +126,7 @@
                     app:textHint=""
                     app:iconText="@string/icon_gift"
                     app:isDropdown="true"
-                    app:textColor="@color/colorBlue"/>
-
-
+                    app:textColor="@color/colorBlue" />
 
 
             </LinearLayout>
@@ -145,12 +142,10 @@
                 android:textAllCaps="true"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_14sdp"
-                android:layout_gravity="center_horizontal"/>
+                android:layout_gravity="center_horizontal" />
 
         </LinearLayout>
     </ScrollView>
-
-
 
 
 </LinearLayout>

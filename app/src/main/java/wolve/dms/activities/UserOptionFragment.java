@@ -1,13 +1,11 @@
 package wolve.dms.activities;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -17,39 +15,21 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
-import com.soundcloud.android.crop.Crop;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.R;
-import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.SystemConnect;
-import wolve.dms.apiconnect.UserConnect;
-import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackObject;
-import wolve.dms.callback.CallbackString;
-import wolve.dms.callback.CallbackUri;
-import wolve.dms.customviews.CInputForm;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomFixSQL;
-import wolve.dms.utils.CustomInputDialog;
-import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
-
-import static android.app.Activity.RESULT_OK;
-import static wolve.dms.utils.Constants.REQUEST_CHOOSE_IMAGE;
-import static wolve.dms.utils.Constants.REQUEST_IMAGE_CAPTURE;
 
 //import wolve.dms.libraries.FileUploader;
 
@@ -70,7 +50,7 @@ public class UserOptionFragment extends Fragment implements View.OnClickListener
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_user_option,container,false);
+        view = inflater.inflate(R.layout.fragment_user_option, container, false);
         initializeView();
 
         intitialData();
@@ -83,7 +63,7 @@ public class UserOptionFragment extends Fragment implements View.OnClickListener
         currentUser = User.getCurrentUser();
         tvDisplayname.setText(User.getFullName());
         tvRole.setText(User.getCurrentRoleString());
-        if (!Util.checkImageNull(User.getImage())){
+        if (!Util.checkImageNull(User.getImage())) {
             Glide.with(this).load(User.getImage()).centerCrop().into(imgUser);
 
         }
@@ -119,7 +99,7 @@ public class UserOptionFragment extends Fragment implements View.OnClickListener
     @Override
     public void onClick(View v) {
         Util.hideKeyboard(v);
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.icon_back:
                 mActivity.onBackPressed();
 
@@ -142,8 +122,6 @@ public class UserOptionFragment extends Fragment implements View.OnClickListener
                 break;
 
 
-
-
         }
     }
 
@@ -151,11 +129,11 @@ public class UserOptionFragment extends Fragment implements View.OnClickListener
         CustomCenterDialog.showDialogChangePass("Đổi mật khẩu", new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
-                if (result){
-                    CustomCenterDialog.alertWithButtonCanceled("", "Đổi mật khẩu thành công , vui lòng đăng nhập lại", "ĐỒNG Ý",false, new CallbackBoolean() {
+                if (result) {
+                    CustomCenterDialog.alertWithButtonCanceled("", "Đổi mật khẩu thành công , vui lòng đăng nhập lại", "ĐỒNG Ý", false, new CallbackBoolean() {
                         @Override
                         public void onRespone(Boolean result) {
-                            if (result){
+                            if (result) {
                                 mActivity.logout();
                             }
 
@@ -168,17 +146,17 @@ public class UserOptionFragment extends Fragment implements View.OnClickListener
 
     }
 
-    private void changeUser(){
+    private void changeUser() {
         List<BaseModel> users = CustomFixSQL.getListObject(Constants.USER_LIST);
         CustomCenterDialog.dialogChangeUser("ĐỔI SANG TÀI KHOẢN",
                 DataUtil.removeObjectFromList(users, User.getCurrentUser(), "id"),
                 new CallbackObject() {
                     @Override
                     public void onResponse(BaseModel object) {
-                        if (object == null){
+                        if (object == null) {
                             showReloginDialog(null);
 
-                        }else {
+                        } else {
                             showReloginDialog(object);
 
                         }
@@ -188,12 +166,11 @@ public class UserOptionFragment extends Fragment implements View.OnClickListener
     }
 
 
-
     private void showLogoutDialog() {
-        CustomCenterDialog.alertWithCancelButton(null, String.format("Đăng xuất tài khoản %s",User.getFullName()) , "ĐỒNG Ý","HỦY", new CallbackBoolean() {
+        CustomCenterDialog.alertWithCancelButton(null, String.format("Đăng xuất tài khoản %s", User.getFullName()), "ĐỒNG Ý", "HỦY", new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
-                if (result){
+                if (result) {
                     mActivity.logout();
                 }
 
@@ -201,21 +178,20 @@ public class UserOptionFragment extends Fragment implements View.OnClickListener
         });
 
 
-
     }
 
-    private void showReloginDialog(BaseModel user){
-        String title = user == null? "ĐĂNG NHẬP TÀI KHOẢN" : String.format("Đăng nhập tài khoản %s",user.getString("displayName"));
+    private void showReloginDialog(BaseModel user) {
+        String title = user == null ? "ĐĂNG NHẬP TÀI KHOẢN" : String.format("Đăng nhập tài khoản %s", user.getString("displayName"));
         CustomCenterDialog.showDialogRelogin(title, user, new CallbackBoolean() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onRespone(Boolean result) {
-                if (result){
+                if (result) {
                     mActivity.onBackPressed();
                     mActivity.initialData();
 
 
-                }else {
+                } else {
                     Util.showToast("Đăng nhập thất bại!");
 
                 }
@@ -251,9 +227,6 @@ public class UserOptionFragment extends Fragment implements View.OnClickListener
 //        }
 
     }
-
-
-
 
 
 }

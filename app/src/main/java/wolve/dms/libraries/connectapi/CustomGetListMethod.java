@@ -34,10 +34,10 @@ public class CustomGetListMethod extends AsyncTask<String, Void, List<String>> {
     }
 
     @Override
-        protected List<String> doInBackground(String... params) {
+    protected List<String> doInBackground(String... params) {
         List<String> listRespone = new ArrayList<>();
 
-        for (int i=0; i<listURL.length; i++){
+        for (int i = 0; i < listURL.length; i++) {
             try {
                 URL obj = new URL(listURL[i]);
                 HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -73,17 +73,17 @@ public class CustomGetListMethod extends AsyncTask<String, Void, List<String>> {
 
 
         return listRespone;
-        }
+    }
 
     @Override
     protected void onPostExecute(List<String> responses) {
         List<String> listResult = new ArrayList<>();
-        if (responses == null){
+        if (responses == null) {
             mListener.onError("Lỗi kết nối server ");
             Util.getInstance().showSnackbar("Lỗi kết nối server ", null, null);
 
-        }else {
-            for (int i=0; i<responses.size(); i++) {
+        } else {
+            for (int i = 0; i < responses.size(); i++) {
                 try {
                     JSONObject object = new JSONObject(responses.get(i));
                     if (object.getInt("status") == 200) {
@@ -101,7 +101,6 @@ public class CustomGetListMethod extends AsyncTask<String, Void, List<String>> {
             }
             mListener.onResponse(listResult);
         }
-
 
 
     }

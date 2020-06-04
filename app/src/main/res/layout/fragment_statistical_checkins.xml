@@ -16,7 +16,7 @@
             android:layout_weight="0.2"
             android:text="Số lần ghé cửa hàng"
             android:padding="@dimen/_5sdp"
-            android:textSize="@dimen/_10sdp"/>
+            android:textSize="@dimen/_10sdp" />
 
 
     </LinearLayout>
@@ -28,12 +28,11 @@
         android:background="#e5e5e5" />
 
 
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/checkins_rvcheckin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipToPadding="false"
-        android:paddingBottom="@dimen/_50sdp"/>
+        android:paddingBottom="@dimen/_50sdp" />
 
 </LinearLayout>

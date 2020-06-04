@@ -4,24 +4,14 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.OnBackPressListener;
 import com.orhanobut.dialogplus.OnDismissListener;
 import com.orhanobut.dialogplus.ViewHolder;
 
-import java.util.List;
-
-import cn.pedant.SweetAlert.SweetAlertDialog;
 import wolve.dms.R;
-import wolve.dms.activities.HomeActivity;
-import wolve.dms.adapter.ItemAdapter;
-import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.models.BaseModel;
 
 /**
  * Created by macos on 9/28/17.
@@ -30,7 +20,7 @@ import wolve.dms.models.BaseModel;
 public class CustomTopDialog {
     public static DialogPlus dialog;
 
-    public static void showTextNotify(String title, String text, CallbackBoolean dissmis){
+    public static void showTextNotify(String title, String text, CallbackBoolean dissmis) {
         Util.getInstance().getCurrentActivity().runOnUiThread(new Runnable() {
             public void run() {
                 dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
@@ -76,7 +66,6 @@ public class CustomTopDialog {
         });
 
     }
-
 
 
 }

@@ -15,15 +15,12 @@ import androidx.core.content.FileProvider;
 import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.Fragment;
 
-import com.google.api.client.auth.oauth.OAuthCallbackUrl;
-
 import java.io.File;
 import java.util.List;
 
 import wolve.dms.BuildConfig;
 import wolve.dms.R;
 import wolve.dms.activities.CustomerActivity;
-import wolve.dms.activities.WarehouseActivity;
 import wolve.dms.activities.DistributorActivity;
 import wolve.dms.activities.HomeActivity;
 import wolve.dms.activities.ImportActivity;
@@ -38,14 +35,10 @@ import wolve.dms.activities.StatisticalActivity;
 import wolve.dms.activities.StatusActivity;
 import wolve.dms.activities.TestActivity;
 import wolve.dms.activities.UserActivity;
-import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.SystemConnect;
-import wolve.dms.callback.Callback;
+import wolve.dms.activities.WarehouseActivity;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.callback.CallbackListObject;
 import wolve.dms.callback.CallbackUri;
-import wolve.dms.libraries.Security;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 
@@ -55,7 +48,7 @@ import static wolve.dms.utils.Constants.REQUEST_IMAGE_CAPTURE;
 
 public class Transaction {
 
-    public static void openGooglePlay(){
+    public static void openGooglePlay() {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         Uri.Builder uriBuilder = Uri.parse("https://play.google.com/store/apps/details")
                 .buildUpon()
@@ -218,26 +211,26 @@ public class Transaction {
 
     }
 
-    public static void checkInventoryBeforePrintBill(BaseModel bill, List<BaseModel> listproduct, int warehouse_id){
+    public static void checkInventoryBeforePrintBill(BaseModel bill, List<BaseModel> listproduct, int warehouse_id) {
         DataUtil.checkInventory(listproduct, warehouse_id, new CallbackListObject() {
             @Override
             public void onResponse(List<BaseModel> list) {
-                if (list.size() >0){
-                    CustomCenterDialog.showListProductWithDifferenceQuantity( User.getCurrentUser().getBaseModel("warehouse").getString("name") +": KHÔNG ĐỦ TỒN KHO ",
+                if (list.size() > 0) {
+                    CustomCenterDialog.showListProductWithDifferenceQuantity(User.getCurrentUser().getBaseModel("warehouse").getString("name") + ": KHÔNG ĐỦ TỒN KHO ",
                             list,
                             new CallbackBoolean() {
-                        @Override
-                        public void onRespone(Boolean result) {
-                            if (result){
-                                CustomSQL.setListBaseModel(Constants.PRODUCT_SUGGEST_LIST, listproduct);
-                                gotoImportActivity(User.getCurrentUser().getBaseModel("warehouse"), true);
+                                @Override
+                                public void onRespone(Boolean result) {
+                                    if (result) {
+                                        CustomSQL.setListBaseModel(Constants.PRODUCT_SUGGEST_LIST, listproduct);
+                                        gotoImportActivity(User.getCurrentUser().getBaseModel("warehouse"), true);
 
-                            }
+                                    }
 
-                        }
-                    });
+                                }
+                            });
 
-                }else {
+                } else {
                     gotoPrintBillActivity(bill, false);
                 }
             }
@@ -320,7 +313,7 @@ public class Transaction {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("image/*");
         intent.putExtra(Intent.EXTRA_STREAM, uri);
-        Util.getInstance().getCurrentActivity().startActivity(Intent.createChooser(intent, "Chia sẻ thông qua") );
+        Util.getInstance().getCurrentActivity().startActivity(Intent.createChooser(intent, "Chia sẻ thông qua"));
 
     }
 
@@ -395,13 +388,12 @@ public class Transaction {
     }
 
 
-
     @SuppressLint("WrongConstant")
     public static void openCallScreen(String phone) {
         Intent callIntent = new Intent(Intent.ACTION_CALL);
         callIntent.setData(Uri.parse("tel:" + Uri.encode(phone)));
         callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        if (PermissionChecker.checkSelfPermission(Util.getInstance().getCurrentActivity(), android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED ) {
+        if (PermissionChecker.checkSelfPermission(Util.getInstance().getCurrentActivity(), android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    Activity#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -415,8 +407,6 @@ public class Transaction {
 
 
     }
-
-
 
 
 }

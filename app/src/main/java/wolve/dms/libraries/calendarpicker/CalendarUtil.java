@@ -47,36 +47,36 @@ public class CalendarUtil {
         return d;
     }
 
-    private static long getStartDay(String month, String year){
+    private static long getStartDay(String month, String year) {
         long date = 0;
-        if (month != null){
-            if (month.split("-").length ==2){
+        if (month != null) {
+            if (month.split("-").length == 2) {
                 String yearStart = month.split("-")[1];
                 String yearNext = month.split("-")[1];
-                String monthStart = month.split("-")[0].length() ==1 ? "0"+month.split("-")[0] : month.split("-")[0];
+                String monthStart = month.split("-")[0].length() == 1 ? "0" + month.split("-")[0] : month.split("-")[0];
                 String monthNext = null;
                 int next = Integer.parseInt(monthStart) + 1;
 
-                if (next == 13){
+                if (next == 13) {
                     monthNext = "01";
-                    yearNext = String.valueOf(Integer.parseInt(yearNext)+1);
+                    yearNext = String.valueOf(Integer.parseInt(yearNext) + 1);
 
-                }else if (String.valueOf(next).length() ==1){
+                } else if (String.valueOf(next).length() == 1) {
                     monthNext = "0" + String.valueOf(next);
-                }else {
+                } else {
                     monthNext = String.valueOf(next);
                 }
 
-                date =Util.TimeStamp1(String.format("01-%s-%s",monthStart, yearStart));
+                date = Util.TimeStamp1(String.format("01-%s-%s", monthStart, yearStart));
 
 
-            }else {
+            } else {
                 date = Util.TimeStamp1(month);
 
             }
 
 
-        }else if (year != null){
+        } else if (year != null) {
             date = Util.TimeStamp1(String.format("01-01-%s", year));
 
         }
@@ -85,48 +85,47 @@ public class CalendarUtil {
         return date;
     }
 
-    private static long getEndDay(String month, String year){
+    private static long getEndDay(String month, String year) {
         long date = 0;
 
-        if (month != null){
-            if (month.split("-").length ==2){
+        if (month != null) {
+            if (month.split("-").length == 2) {
                 String yearStart = month.split("-")[1];
                 String yearNext = month.split("-")[1];
-                String monthStart = month.split("-")[0].length() ==1 ? "0"+month.split("-")[0] : month.split("-")[0];
+                String monthStart = month.split("-")[0].length() == 1 ? "0" + month.split("-")[0] : month.split("-")[0];
                 String monthNext = null;
                 int next = Integer.parseInt(monthStart) + 1;
 
-                if (next == 13){
+                if (next == 13) {
                     monthNext = "01";
-                    yearNext = String.valueOf(Integer.parseInt(yearNext)+1);
+                    yearNext = String.valueOf(Integer.parseInt(yearNext) + 1);
 
-                }else if (String.valueOf(next).length() ==1){
+                } else if (String.valueOf(next).length() == 1) {
                     monthNext = "0" + String.valueOf(next);
-                }else {
+                } else {
                     monthNext = String.valueOf(next);
                 }
 
-                date =Util.TimeStamp1(String.format("01-%s-%s", monthNext , yearNext));
+                date = Util.TimeStamp1(String.format("01-%s-%s", monthNext, yearNext));
 
 
-            }else {
+            } else {
                 date = Util.TimeStamp1(month) + 86400000;
 
             }
 
-        }else if (year != null){
+        } else if (year != null) {
 
-            date = Util.TimeStamp1(String.format("01-01-%d", Integer.parseInt(year) +1));
+            date = Util.TimeStamp1(String.format("01-01-%d", Integer.parseInt(year) + 1));
 
         }
-
 
 
         return date;
     }
 
 
-    public static void datePicker(final CustomCenterDialog.CallbackRangeTime mListener, final CallbackString mString){
+    public static void datePicker(final CustomCenterDialog.CallbackRangeTime mListener, final CallbackString mString) {
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_select_datepicker);
         dialogResult.setCancelable(true);
         dialogResult.setCanceledOnTouchOutside(true);
@@ -148,16 +147,17 @@ public class CalendarUtil {
         ArrayList<Integer> list = new ArrayList<>();
         list.add(1);
 
-        calendarView.init(lastYear.getTime(), nextYear.getTime(),new SimpleDateFormat("MMMM, YYYY", Locale.getDefault()))
+        calendarView.init(lastYear.getTime(), nextYear.getTime(), new SimpleDateFormat("MMMM, YYYY", Locale.getDefault()))
                 .inMode(CalendarPickerView.SelectionMode.RANGE)
 
                 .withSelectedDate(new Date());
 
-        new Handler().postDelayed (new Runnable() {
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 calendarView.scrollToDate(new Date());
-            }}, 200);
+            }
+        }, 200);
 
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -172,16 +172,16 @@ public class CalendarUtil {
             @Override
             public void onClick(View v) {
                 long startDate = new Timestamp(calendarView.getSelectedDates().get(0).getTime()).getTime();
-                long lastDate = new Timestamp(calendarView.getSelectedDates().get(calendarView.getSelectedDates().size()-1).getTime()).getTime() ;
+                long lastDate = new Timestamp(calendarView.getSelectedDates().get(calendarView.getSelectedDates().size() - 1).getTime()).getTime();
 
-                if (calendarView.getSelectedDates().size() ==1){
+                if (calendarView.getSelectedDates().size() == 1) {
                     //rdButton.setText(Util.DateString(startDate));
-                    mListener.onSelected(startDate, startDate+86400000);
+                    mListener.onSelected(startDate, startDate + 86400000);
                     mString.Result(Util.DateString(startDate));
-                }else {
+                } else {
                     //rdButton.setText(String.format("%s\n%s", Util.DateString(startDate) ,Util.DateString(lastDate)));
-                    mListener.onSelected(startDate,lastDate +86400000);
-                    mString.Result(String.format("%s đến %s",Util.DateString(startDate), Util.DateString(lastDate) ));
+                    mListener.onSelected(startDate, lastDate + 86400000);
+                    mString.Result(String.format("%s đến %s", Util.DateString(startDate), Util.DateString(lastDate)));
 
                 }
 
@@ -196,13 +196,13 @@ public class CalendarUtil {
         int mMonth = Calendar.getInstance().get(Calendar.MONTH);
         int mYear = Calendar.getInstance().get(Calendar.YEAR);
 
-        SimpleDatePickerDialogFragment datePickerDialogFragment=  SimpleDatePickerDialogFragment.getInstance(mYear, mMonth);
+        SimpleDatePickerDialogFragment datePickerDialogFragment = SimpleDatePickerDialogFragment.getInstance(mYear, mMonth);
         datePickerDialogFragment.setOnDateSetListener(new SimpleDatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(int year, int monthOfYear) {
-                mString.Result(monthOfYear+1 +"-" + year);
-                mListener.onSelected(getStartDay(monthOfYear+1 +"-" + year, null),
-                        getEndDay(monthOfYear+1 +"-" + year, null));
+                mString.Result(monthOfYear + 1 + "-" + year);
+                mListener.onSelected(getStartDay(monthOfYear + 1 + "-" + year, null),
+                        getEndDay(monthOfYear + 1 + "-" + year, null));
 
             }
         });
@@ -216,7 +216,7 @@ public class CalendarUtil {
         return datePickerDialogFragment;
     }
 
-    public static void showDialogYearPicker(String currentYear,CustomCenterDialog.CallbackRangeTime mListener, final CallbackString mString){
+    public static void showDialogYearPicker(String currentYear, CustomCenterDialog.CallbackRangeTime mListener, final CallbackString mString) {
         final Dialog dialogResult = YearPicker.showCustomDialog(R.layout.view_dialog_select_yearpicker);
         dialogResult.setCancelable(true);
         dialogResult.setCanceledOnTouchOutside(true);
@@ -225,10 +225,10 @@ public class CalendarUtil {
         final NumberPicker numberPicker = dialogResult.findViewById(R.id.year);
 
         int year = Calendar.getInstance().get(Calendar.YEAR);
-        numberPicker.setMaxValue(year+50);
-        numberPicker.setMinValue(year-50);
+        numberPicker.setMaxValue(year + 50);
+        numberPicker.setMinValue(year - 50);
         numberPicker.setWrapSelectorWheel(false);
-        numberPicker.setValue(currentYear != null? Util.YearInt(currentYear) : year);
+        numberPicker.setValue(currentYear != null ? Util.YearInt(currentYear) : year);
         numberPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 
         ok.setOnClickListener(new View.OnClickListener() {
@@ -252,7 +252,6 @@ public class CalendarUtil {
 
 
     }
-
 
 
 }

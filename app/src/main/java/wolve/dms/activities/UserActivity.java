@@ -27,14 +27,14 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class UserActivity extends BaseActivity implements View.OnClickListener{
+public class UserActivity extends BaseActivity implements View.OnClickListener {
     private ImageView btnBack;
     private RecyclerView rvUser;
     private FloatingActionButton btnNew;
 
 
     private UserAdapter adapter;
-    private List<BaseModel> listUser ;
+    private List<BaseModel> listUser;
     private boolean gotoUserDetail;
 
 
@@ -59,10 +59,10 @@ public class UserActivity extends BaseActivity implements View.OnClickListener{
     @Override
     public void initialData() {
         gotoUserDetail = getIntent().getExtras().getBoolean(Constants.FLAG);
-        if (!gotoUserDetail){
+        if (!gotoUserDetail) {
             loadUser();
 
-        }else {
+        } else {
             openFragment(User.getCurrentUser().BaseModelstoString());
 
         }
@@ -78,7 +78,7 @@ public class UserActivity extends BaseActivity implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.icon_back:
                 onBackPressed();
                 break;
@@ -107,7 +107,7 @@ public class UserActivity extends BaseActivity implements View.OnClickListener{
         }, true);
     }
 
-    private void createRVUser(List<BaseModel> list){
+    private void createRVUser(List<BaseModel> list) {
         adapter = new UserAdapter(list, new CallbackClickAdapter() {
             @Override
             public void onRespone(String data, int position) {
@@ -119,10 +119,10 @@ public class UserActivity extends BaseActivity implements View.OnClickListener{
 
     }
 
-    private void openFragment(String user){
+    private void openFragment(String user) {
         Bundle bundle = new Bundle();
         bundle.putString(Constants.USER, user);
-        changeFragment(new NewUpdateUserFragment(), bundle,true);
+        changeFragment(new NewUpdateUserFragment(), bundle, true);
     }
 
 
@@ -130,16 +130,16 @@ public class UserActivity extends BaseActivity implements View.OnClickListener{
     public void onBackPressed() {
         super.onBackPressed();
         Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.user_parent);
-        if(Util.getInstance().isLoading()){
+        if (Util.getInstance().isLoading()) {
             Util.getInstance().stopLoading(true);
 
-        }else if(mFragment != null && mFragment instanceof NewUpdateUserFragment) {
+        } else if (mFragment != null && mFragment instanceof NewUpdateUserFragment) {
             getSupportFragmentManager().popBackStack();
-            if (gotoUserDetail){
+            if (gotoUserDetail) {
                 Transaction.gotoHomeActivityRight(true);
             }
 
-        }else {
+        } else {
             Transaction.gotoHomeActivityRight(true);
         }
 

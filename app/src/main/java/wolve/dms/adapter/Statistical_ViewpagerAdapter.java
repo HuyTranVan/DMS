@@ -33,19 +33,19 @@ public class Statistical_ViewpagerAdapter extends FragmentPagerAdapter {
         this.mContext = Util.getInstance().getCurrentActivity();
     }
 
-    public void addFragment(Fragment fragment, String title, String  text) {
+    public void addFragment(Fragment fragment, String title, String text) {
         mFragments.add(fragment);
         mFragmentIcons.add(title);
         mFragmentText.add(text);
     }
 
-    public void addCountNotify(int count, int position){
+    public void addCountNotify(int count, int position) {
         //mFragmentNotify.remove(position);
         //mFragmentNotify.add(position, count);
         //notifyDataSetChanged();
     }
 
-    public void replaceFragment(Fragment fragment, String title, String  text, int count, int position) {
+    public void replaceFragment(Fragment fragment, String title, String text, int count, int position) {
         mFragments.remove(position);
         mFragments.add(position, fragment);
 
@@ -76,7 +76,6 @@ public class Statistical_ViewpagerAdapter extends FragmentPagerAdapter {
         }
         return tab;
     }
-
 
 
 }

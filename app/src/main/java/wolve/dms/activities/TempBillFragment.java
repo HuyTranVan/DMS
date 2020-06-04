@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -21,15 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.adapter.Customer_CheckinsAdapter;
 import wolve.dms.adapter.TempbillAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Checkin;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
@@ -54,11 +50,10 @@ public class TempBillFragment extends Fragment implements View.OnClickListener {
     private TempbillAdapter adapter;
 
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_tempbill,container,false);
+        view = inflater.inflate(R.layout.fragment_tempbill, container, false);
         initializeView();
 
         intitialData();
@@ -94,9 +89,9 @@ public class TempBillFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    public void reloadData(){
+    public void reloadData() {
         adapter.reloadData(mActivity.listTempBill);
-        if (mActivity.listTempBill.size() ==0){
+        if (mActivity.listTempBill.size() == 0) {
             mActivity.onBackPressed();
         }
 
@@ -104,17 +99,17 @@ public class TempBillFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.icon_back:
                 mActivity.onBackPressed();
                 break;
 
             case R.id.tempbill_select_check:
-                if(tvCheck.getText().toString().equals(Constants.CHECK_ALL)){
+                if (tvCheck.getText().toString().equals(Constants.CHECK_ALL)) {
                     adapter.checkAllData(true);
                     tvCheck.setText(Constants.UNCHECK);
 
-                }else {
+                } else {
                     adapter.checkAllData(false);
                     tvCheck.setText(Constants.CHECK_ALL);
                 }
@@ -126,10 +121,10 @@ public class TempBillFragment extends Fragment implements View.OnClickListener {
 
             case R.id.tempbill_select_list:
                 List<BaseModel> listbill = getBillFromTemp(adapter.getCheckedData());
-                if (listbill.size() >0){
-                    CustomCenterDialog.showListProduct("DANH SÁCH SẢN PHẨM",sumProduct(listbill));
+                if (listbill.size() > 0) {
+                    CustomCenterDialog.showListProduct("DANH SÁCH SẢN PHẨM", sumProduct(listbill));
 
-                }else {
+                } else {
                     Util.showToast("Vui lòng chọn hóa đơn đê thao tác tiếp");
 
                 }
@@ -139,18 +134,18 @@ public class TempBillFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public boolean checkSelected(){
+    public boolean checkSelected() {
         return lnSelect.getVisibility() == View.VISIBLE;
     }
 
-    public void closeSelected(){
+    public void closeSelected() {
         lnSelect.setVisibility(View.GONE);
         btnBack.setVisibility(View.VISIBLE);
         tvTitle.setVisibility(View.VISIBLE);
         adapter.checkAllData(false);
     }
 
-    private void createRVBill(List<BaseModel> list){
+    private void createRVBill(List<BaseModel> list) {
         adapter = new TempbillAdapter(list, new CallbackObject() {
             @Override
             public void onResponse(BaseModel object) {
@@ -180,14 +175,14 @@ public class TempBillFragment extends Fragment implements View.OnClickListener {
         }, new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
-                if (result){
-                    if (adapter.getCheckedData().size() >0){
+                if (result) {
+                    if (adapter.getCheckedData().size() > 0) {
                         lnSelect.setVisibility(View.VISIBLE);
                         tvCheck.setText(Constants.CHECK_ALL);
                         tvTitle.setVisibility(View.GONE);
                         btnBack.setVisibility(View.GONE);
 
-                    }else {
+                    } else {
                         lnSelect.setVisibility(View.GONE);
                         tvTitle.setVisibility(View.VISIBLE);
                         btnBack.setVisibility(View.VISIBLE);
@@ -198,7 +193,7 @@ public class TempBillFragment extends Fragment implements View.OnClickListener {
         Util.createLinearRV(rvTempBill, adapter);
     }
 
-    private void gotoPrintBillScreen(BaseModel model ){
+    private void gotoPrintBillScreen(BaseModel model) {
         CustomerConnect.GetCustomerDetail(model.getString("customer_id"), new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
@@ -216,10 +211,10 @@ public class TempBillFragment extends Fragment implements View.OnClickListener {
             public void onError(String error) {
 
             }
-        }, false,true);
+        }, false, true);
     }
 
-    private void checkLocation(LocationListener listener, boolean stopLoading){
+    private void checkLocation(LocationListener listener, boolean stopLoading) {
         Util.getInstance().showLoading();
         mActivity.getCurrentLocation(new LocationListener() {
             @Override
@@ -231,21 +226,21 @@ public class TempBillFragment extends Fragment implements View.OnClickListener {
         });
     }
 
-    private List<BaseModel> sumProduct(List<BaseModel> listbill){
+    private List<BaseModel> sumProduct(List<BaseModel> listbill) {
         List<BaseModel> listdetail = DataUtil.getAllBillDetail(listbill);
         List<BaseModel> results = new ArrayList<>();
 
-        for (int i=0; i<listdetail.size(); i++){
+        for (int i = 0; i < listdetail.size(); i++) {
             boolean check = false;
-            for (int ii=0; ii<results.size(); ii++){
-                if (listdetail.get(i).getInt("productId") == results.get(ii).getInt("productId")){
+            for (int ii = 0; ii < results.size(); ii++) {
+                if (listdetail.get(i).getInt("productId") == results.get(ii).getInt("productId")) {
                     results.get(ii).put("quantity", results.get(ii).getInt("quantity") + listdetail.get(i).getInt("quantity"));
                     check = true;
                     break;
                 }
 
             }
-            if (!check){
+            if (!check) {
                 results.add(listdetail.get(i));
             }
 
@@ -255,15 +250,14 @@ public class TempBillFragment extends Fragment implements View.OnClickListener {
         return results;
     }
 
-    private List<BaseModel> getBillFromTemp(List<BaseModel> list){
+    private List<BaseModel> getBillFromTemp(List<BaseModel> list) {
         List<BaseModel> results = new ArrayList<>();
-        for (BaseModel model: list){
+        for (BaseModel model : list) {
             results.add(model.getBaseModel("bill"));
         }
 
         return results;
     }
-
 
 
 }

@@ -28,7 +28,7 @@
                 android:textSize="@dimen/_10sdp"
                 android:textColor="@color/colorRed"
                 android:backgroundTint="@color/colorRed"
-                android:buttonTint="@color/colorRed"/>
+                android:buttonTint="@color/colorRed" />
 
             <RadioButton
                 android:id="@+id/statistical_bills_total"
@@ -41,7 +41,7 @@
                 android:checked="true"
                 android:backgroundTint="@color/colorBlue"
                 android:buttonTint="@color/colorBlue"
-                android:layout_marginLeft="@dimen/_40sdp"/>
+                android:layout_marginLeft="@dimen/_40sdp" />
 
         </RadioGroup>
 
@@ -55,12 +55,11 @@
         android:background="#e5e5e5" />
 
 
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/statistical_bills_rvbill"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipToPadding="false"
-        android:paddingBottom="@dimen/_50sdp"/>
+        android:paddingBottom="@dimen/_50sdp" />
 
 </LinearLayout>

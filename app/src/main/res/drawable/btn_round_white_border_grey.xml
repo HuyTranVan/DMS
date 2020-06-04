@@ -1,92 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:state_checked="true">
+    <item android:state_checked="true">
         <shape android:shape="rectangle">
-            <solid android:color="@color/black_text_color_hint"/>
-            <corners android:radius="@dimen/_20sdp"/>
-<!--            <stroke android:color="@color/black_text_color_hint"-->
-<!--                android:width="1dp"/>-->
+            <solid android:color="@color/black_text_color_hint" />
+            <corners android:radius="@dimen/_20sdp" />
+            <!--            <stroke android:color="@color/black_text_color_hint"-->
+            <!--                android:width="1dp"/>-->
         </shape>
     </item>
 
-    <item
-        android:state_focused="true">
+    <item android:state_focused="true">
         <shape android:shape="rectangle">
-            <solid android:color="@color/black_text_color_hint"/>
-            <corners android:radius="@dimen/_20sdp"/>
-<!--            <stroke android:color="@color/black_text_color_hint"-->
-<!--                android:width="1dp"/>-->
+            <solid android:color="@color/black_text_color_hint" />
+            <corners android:radius="@dimen/_20sdp" />
+            <!--            <stroke android:color="@color/black_text_color_hint"-->
+            <!--                android:width="1dp"/>-->
         </shape>
     </item>
 
-    <item
-        android:state_active="true">
+    <item android:state_active="true">
         <shape android:shape="rectangle">
-            <solid android:color="@color/black_text_color_hint"/>
-            <corners android:radius="@dimen/_20sdp"/>
-<!--            <stroke android:color="@color/black_text_color_hint"-->
-<!--                android:width="1dp"/>-->
+            <solid android:color="@color/black_text_color_hint" />
+            <corners android:radius="@dimen/_20sdp" />
+            <!--            <stroke android:color="@color/black_text_color_hint"-->
+            <!--                android:width="1dp"/>-->
         </shape>
     </item>
 
-    <item
-        android:state_hovered="true">
+    <item android:state_hovered="true">
         <shape android:shape="rectangle">
-            <solid android:color="@color/black_text_color_hint"/>
-            <corners android:radius="@dimen/_20sdp"/>
-<!--            <stroke android:color="@color/black_text_color_hint"-->
-<!--                android:width="1dp"/>-->
+            <solid android:color="@color/black_text_color_hint" />
+            <corners android:radius="@dimen/_20sdp" />
+            <!--            <stroke android:color="@color/black_text_color_hint"-->
+            <!--                android:width="1dp"/>-->
         </shape>
     </item>
 
-    <item
-        android:state_pressed="true">
+    <item android:state_pressed="true">
         <shape android:shape="rectangle">
-            <solid android:color="@color/black_text_color_hint"/>
-            <corners android:radius="@dimen/_20sdp"/>
-<!--            <stroke android:color="@color/black_text_color_hint"-->
-<!--                android:width="1dp"/>-->
+            <solid android:color="@color/black_text_color_hint" />
+            <corners android:radius="@dimen/_20sdp" />
+            <!--            <stroke android:color="@color/black_text_color_hint"-->
+            <!--                android:width="1dp"/>-->
         </shape>
     </item>
 
-    <item
-        android:state_checkable="true">
+    <item android:state_checkable="true">
         <shape android:shape="rectangle">
-            <solid android:color="@color/black_text_color_hint"/>
-            <corners android:radius="@dimen/_20sdp"/>
-<!--            <stroke android:color="@color/black_text_color_hint"-->
-<!--                android:width="1dp"/>-->
+            <solid android:color="@color/black_text_color_hint" />
+            <corners android:radius="@dimen/_20sdp" />
+            <!--            <stroke android:color="@color/black_text_color_hint"-->
+            <!--                android:width="1dp"/>-->
         </shape>
     </item>
 
-    <item
-        android:state_activated="true">
+    <item android:state_activated="true">
         <shape android:shape="rectangle">
-            <solid android:color="@color/black_text_color_hint"/>
-            <corners android:radius="@dimen/_20sdp"/>
-<!--            <stroke android:color="@color/black_text_color_hint"-->
-<!--                android:width="1dp"/>-->
+            <solid android:color="@color/black_text_color_hint" />
+            <corners android:radius="@dimen/_20sdp" />
+            <!--            <stroke android:color="@color/black_text_color_hint"-->
+            <!--                android:width="1dp"/>-->
         </shape>
     </item>
 
 
-    <item
-        android:state_selected="true">
+    <item android:state_selected="true">
         <shape android:shape="rectangle">
-            <solid android:color="@color/colorGrey"/>
-            <corners android:radius="@dimen/_20sdp"/>
-<!--            <stroke android:color="@color/black_text_color_hint"-->
-<!--                android:width="1dp"/>-->
+            <solid android:color="@color/colorGrey" />
+            <corners android:radius="@dimen/_20sdp" />
+            <!--            <stroke android:color="@color/black_text_color_hint"-->
+            <!--                android:width="1dp"/>-->
         </shape>
     </item>
 
-    <item >
+    <item>
         <shape android:shape="rectangle">
-            <solid android:color="@color/colorWhite"/>
-            <corners android:radius="@dimen/_20sdp"/>
-            <stroke android:color="@color/colorGrey"
-                android:width="1dp"/>
+            <solid android:color="@color/colorWhite" />
+            <corners android:radius="@dimen/_20sdp" />
+            <stroke android:color="@color/colorGrey" android:width="1dp" />
         </shape>
     </item>
 

@@ -13,20 +13,20 @@
         android:orientation="vertical">
 
         <!--<RelativeLayout-->
-            <!--android:id="@+id/cart_choice_header"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="@dimen/_20sdp"-->
-            <!--android:background="@color/colorLightGrey">-->
+        <!--android:id="@+id/cart_choice_header"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="@dimen/_20sdp"-->
+        <!--android:background="@color/colorLightGrey">-->
 
-            <!--<TextView-->
-                <!--android:id="@+id/header_title"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_centerInParent="true"-->
-                <!--android:text="Tất cả hóa đơn"-->
-                <!--android:textStyle="italic"-->
-                <!--android:textSize="@dimen/_10sdp"-->
-                <!--android:textColor="@color/black_text_color_hint"/>-->
+        <!--<TextView-->
+        <!--android:id="@+id/header_title"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerInParent="true"-->
+        <!--android:text="Tất cả hóa đơn"-->
+        <!--android:textStyle="italic"-->
+        <!--android:textSize="@dimen/_10sdp"-->
+        <!--android:textColor="@color/black_text_color_hint"/>-->
 
         <!--</RelativeLayout>-->
         <HorizontalScrollView
@@ -52,7 +52,7 @@
                     android:paddingLeft="@dimen/_8sdp"
                     android:paddingRight="@dimen/_8sdp"
                     android:layout_margin="@dimen/_5sdp"
-                    android:singleLine="true"/>
+                    android:singleLine="true" />
 
                 <TextView
                     android:id="@+id/bill_detail_debt"
@@ -66,7 +66,7 @@
                     android:paddingLeft="@dimen/_8sdp"
                     android:paddingRight="@dimen/_8sdp"
                     android:layout_margin="@dimen/_5sdp"
-                    android:singleLine="true"/>
+                    android:singleLine="true" />
 
                 <TextView
                     android:id="@+id/bill_detail_paid"
@@ -80,7 +80,7 @@
                     android:paddingLeft="@dimen/_8sdp"
                     android:paddingRight="@dimen/_8sdp"
                     android:layout_margin="@dimen/_5sdp"
-                    android:singleLine="true"/>
+                    android:singleLine="true" />
 
                 <TextView
                     android:id="@+id/bill_detail_total"
@@ -94,12 +94,11 @@
                     android:paddingLeft="@dimen/_8sdp"
                     android:paddingRight="@dimen/_8sdp"
                     android:layout_margin="@dimen/_5sdp"
-                    android:singleLine="true"/>
+                    android:singleLine="true" />
 
             </LinearLayout>
 
         </HorizontalScrollView>
-
 
 
         <LinearLayout
@@ -125,7 +124,7 @@
             <View
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
-                android:background="#75b9b3b3"/>
+                android:background="#75b9b3b3" />
 
             <android.support.v4.view.ViewPager
                 android:id="@+id/bill_detail_viewpager"
@@ -155,7 +154,6 @@
             android:paddingRight="@dimen/_10sdp">
 
 
-
         </RadioGroup>
 
         <TextView
@@ -169,7 +167,7 @@
             android:textSize="@dimen/_16sdp"
             android:gravity="center"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="@dimen/_10sdp"/>
+            android:layout_marginRight="@dimen/_10sdp" />
 
 
     </RelativeLayout>

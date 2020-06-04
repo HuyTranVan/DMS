@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tempbill_item_parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -18,7 +16,7 @@
             android:layout_height="match_parent"
             android:background="#e5e5e5"
             android:layout_above="@+id/tempbill_item_number"
-            android:layout_centerHorizontal="true"/>
+            android:layout_centerHorizontal="true" />
 
         <TextView
             android:fontFamily="@font/font_awesome"
@@ -30,7 +28,7 @@
             android:text="0"
             android:textSize="@dimen/_8sdp"
             android:gravity="center"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true" />
 
         <View
             android:id="@+id/tempbill_item_under"
@@ -38,7 +36,7 @@
             android:layout_height="match_parent"
             android:background="#e5e5e5"
             android:layout_below="@+id/tempbill_item_number"
-            android:layout_centerHorizontal="true"/>
+            android:layout_centerHorizontal="true" />
 
     </RelativeLayout>
 
@@ -48,7 +46,7 @@
         android:layout_height="1dp"
         android:layout_centerVertical="true"
         android:background="#e5e5e5"
-        android:layout_gravity="center_vertical"/>
+        android:layout_gravity="center_vertical" />
 
 
     <LinearLayout
@@ -80,7 +78,7 @@
                     android:singleLine="true"
                     android:text="a"
                     android:textColor="@color/black_text_color"
-                    android:layout_marginLeft="@dimen/_5sdp"/>
+                    android:layout_marginLeft="@dimen/_5sdp" />
 
                 <TextView
                     android:id="@+id/tempbill_item_employee"
@@ -110,7 +108,7 @@
                     android:textSize="@dimen/_8sdp"
                     android:textColor="@color/black_text_color_hint"
                     android:layout_marginLeft="@dimen/_5sdp"
-                    android:layout_toLeftOf="@+id/tempbill_item_date"/>
+                    android:layout_toLeftOf="@+id/tempbill_item_date" />
 
                 <TextView
                     android:id="@+id/tempbill_item_date"
@@ -123,11 +121,9 @@
                     android:textColor="@color/black_text_color_hint"
                     android:textSize="@dimen/_8sdp"
                     android:textStyle="italic"
-                    android:layout_alignParentRight="true"/>
+                    android:layout_alignParentRight="true" />
 
             </RelativeLayout>
-
-
 
 
         </LinearLayout>
@@ -142,7 +138,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/_10sdp"
-                android:padding="@dimen/_5sdp"/>
+                android:padding="@dimen/_5sdp" />
 
             <TextView
                 android:id="@+id/tempbill_item_total"
@@ -152,7 +148,7 @@
                 android:singleLine="true"
                 android:paddingRight="@dimen/_5sdp"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"/>
+                android:layout_centerVertical="true" />
 
         </RelativeLayout>
 
@@ -166,7 +162,7 @@
             android:paddingBottom="@dimen/_5sdp"
             android:textColor="@color/orange_dark"
             android:textStyle="italic"
-            android:textSize="@dimen/_10sdp"/>
+            android:textSize="@dimen/_10sdp" />
 
         <View
             android:layout_width="match_parent"
@@ -210,8 +206,7 @@
                     android:gravity="center"
                     android:textSize="@dimen/_10sdp"
                     android:paddingLeft="@dimen/_5sdp"
-                    android:paddingRight="@dimen/_10sdp"
-                    />
+                    android:paddingRight="@dimen/_10sdp" />
 
             </LinearLayout>
 
@@ -244,11 +239,9 @@
                     android:gravity="center"
                     android:textSize="@dimen/_10sdp"
                     android:paddingLeft="@dimen/_5sdp"
-                    android:paddingRight="@dimen/_10sdp"
-                    />
+                    android:paddingRight="@dimen/_10sdp" />
 
             </LinearLayout>
-
 
 
         </LinearLayout>

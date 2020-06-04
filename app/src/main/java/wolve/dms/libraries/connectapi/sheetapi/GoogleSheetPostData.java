@@ -1,35 +1,22 @@
 package wolve.dms.libraries.connectapi.sheetapi;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
-import com.google.api.services.sheets.v4.model.AddSheetRequest;
-import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest;
-import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetResponse;
-import com.google.api.services.sheets.v4.model.FindReplaceResponse;
-import com.google.api.services.sheets.v4.model.Request;
-import com.google.api.services.sheets.v4.model.SheetProperties;
-import com.google.api.services.sheets.v4.model.SpreadsheetProperties;
-import com.google.api.services.sheets.v4.model.UpdateSpreadsheetPropertiesRequest;
 import com.google.api.services.sheets.v4.model.ValueRange;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,7 +31,7 @@ public class GoogleSheetPostData extends AsyncTask<Void, Void, List<List<Object>
     private NetHttpTransport HTTP_TRANSPORT;
     private JsonFactory JSON_FACTORY;
     private CallbackListList mListener;
-    private List<String> SCOPES ;
+    private List<String> SCOPES;
     private List<List<Object>> mParams;
     private String majorDimension;
 
@@ -52,11 +39,11 @@ public class GoogleSheetPostData extends AsyncTask<Void, Void, List<List<Object>
     public static String SHEET_ROW = "ROWS";
     public static String SHEET_COLUM = "COLUMS";
 
-    public interface CallbackListList{
+    public interface CallbackListList {
         void onRespone(List<List<Object>> results);
     }
 
-    public GoogleSheetPostData(String sheetId, String range, List<List<Object>> param,String major,  CallbackListList callbackListList) {
+    public GoogleSheetPostData(String sheetId, String range, List<List<Object>> param, String major, CallbackListList callbackListList) {
         this.spreadsheetId = sheetId;
         this.range = range;
         this.mParams = param;
@@ -64,7 +51,7 @@ public class GoogleSheetPostData extends AsyncTask<Void, Void, List<List<Object>
         this.mListener = callbackListList;
         this.JSON_FACTORY = JacksonFactory.getDefaultInstance();
         this.SCOPES = Collections.singletonList(SheetsScopes.SPREADSHEETS);
-        this.majorDimension =major;
+        this.majorDimension = major;
     }
 
     private Credential getCredentials() {

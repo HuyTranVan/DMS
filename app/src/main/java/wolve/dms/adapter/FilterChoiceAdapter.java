@@ -12,17 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackString;
-import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.Util;
 
 /**
  * Created by tranhuy on 9/30/16.
  */
-public class FilterChoiceAdapter extends RecyclerView.Adapter<FilterChoiceAdapter.ChoiceMethodViewHolder>{
+public class FilterChoiceAdapter extends RecyclerView.Adapter<FilterChoiceAdapter.ChoiceMethodViewHolder> {
 
     private List<String> mData;
     private Context mContext;
@@ -67,7 +64,7 @@ public class FilterChoiceAdapter extends RecyclerView.Adapter<FilterChoiceAdapte
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                  mListener.Result(mData.get(getAdapterPosition()));
+                    mListener.Result(mData.get(getAdapterPosition()));
 
                 }
             });
@@ -82,7 +79,6 @@ public class FilterChoiceAdapter extends RecyclerView.Adapter<FilterChoiceAdapte
 
 
     }
-
 
 
 }

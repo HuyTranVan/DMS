@@ -19,7 +19,7 @@
             android:layout_height="match_parent"
             android:src="@drawable/ic_arrow_back_black_18dp"
             android:padding="@dimen/_8sdp"
-            android:background="?selectableItemBackground"/>
+            android:background="?selectableItemBackground" />
 
         <TextView
             android:id="@+id/import_title"
@@ -29,7 +29,7 @@
             android:text="NHẬP KHO"
             android:textAllCaps="true"
             android:textSize="@dimen/_12sdp"
-            android:textColor="@color/black_text_color"/>
+            android:textColor="@color/black_text_color" />
 
     </RelativeLayout>
 
@@ -61,7 +61,7 @@
                 android:textColor="@color/black_text_color"
                 android:gravity="center_vertical|right"
                 android:paddingRight="@dimen/_15sdp"
-                android:layout_marginLeft="@dimen/_5sdp"/>
+                android:layout_marginLeft="@dimen/_5sdp" />
 
             <TextView
                 android:fontFamily="@font/font_awesome"
@@ -72,7 +72,7 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="@dimen/_10sdp"
                 android:layout_marginRight="@dimen/_10sdp"
-                android:textSize="@dimen/_14sdp"/>
+                android:textSize="@dimen/_14sdp" />
 
             <TextView
                 android:fontFamily="@font/font_awesome"
@@ -86,7 +86,7 @@
                 android:layout_marginRight="@dimen/_5sdp"
                 android:textSize="@dimen/_12sdp"
                 android:gravity="center_vertical|right"
-                android:paddingRight="@dimen/_15sdp"/>
+                android:paddingRight="@dimen/_15sdp" />
 
 
         </LinearLayout>
@@ -96,7 +96,7 @@
             android:layout_height="1dp"
             android:background="#75b9b3b3"
             android:layout_marginBottom="@dimen/_2sdp"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -120,45 +120,45 @@
                 app:tabTextAppearance="@style/NavigationTabTextAppeareance"
                 app:tabTextColor="@color/black_text_color_hint" />
 
-<!--            <RelativeLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:layout_weight="0.5"-->
-<!--                android:background="@drawable/bg_round_white"-->
-<!--                android:orientation="horizontal"-->
-<!--                android:layout_marginRight="@dimen/_5sdp"-->
-<!--                android:layout_marginTop="@dimen/_2sdp"-->
-<!--                android:layout_marginBottom="@dimen/_2sdp"-->
-<!--                android:gravity="bottom">-->
+            <!--            <RelativeLayout-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="match_parent"-->
+            <!--                android:layout_weight="0.5"-->
+            <!--                android:background="@drawable/bg_round_white"-->
+            <!--                android:orientation="horizontal"-->
+            <!--                android:layout_marginRight="@dimen/_5sdp"-->
+            <!--                android:layout_marginTop="@dimen/_2sdp"-->
+            <!--                android:layout_marginBottom="@dimen/_2sdp"-->
+            <!--                android:gravity="bottom">-->
 
-<!--                <EditText-->
-<!--                    android:id="@+id/import_search_text"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    android:background="@null"-->
-<!--                    android:hint="Tìm sản phẩm"-->
-<!--                    android:textSize="@dimen/_12sdp"-->
-<!--                    android:gravity="center_vertical"-->
-<!--                    android:paddingLeft="@dimen/_10sdp"-->
-<!--                    android:layout_marginRight="@dimen/_30sdp"/>-->
+            <!--                <EditText-->
+            <!--                    android:id="@+id/import_search_text"-->
+            <!--                    android:layout_width="match_parent"-->
+            <!--                    android:layout_height="match_parent"-->
+            <!--                    android:background="@null"-->
+            <!--                    android:hint="Tìm sản phẩm"-->
+            <!--                    android:textSize="@dimen/_12sdp"-->
+            <!--                    android:gravity="center_vertical"-->
+            <!--                    android:paddingLeft="@dimen/_10sdp"-->
+            <!--                    android:layout_marginRight="@dimen/_30sdp"/>-->
 
-<!--                <wolve.dms.customviews.CTextIcon-->
-<!--                    android:id="@+id/import_search_icon"-->
-<!--                    android:layout_width="@dimen/_30sdp"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    android:text="@string/icon_search"-->
-<!--                    android:gravity="center"-->
-<!--                    android:textSize="@dimen/_12sdp"-->
-<!--                    android:layout_alignParentRight="true"/>-->
+            <!--                <wolve.dms.customviews.CTextIcon-->
+            <!--                    android:id="@+id/import_search_icon"-->
+            <!--                    android:layout_width="@dimen/_30sdp"-->
+            <!--                    android:layout_height="match_parent"-->
+            <!--                    android:text="@string/icon_search"-->
+            <!--                    android:gravity="center"-->
+            <!--                    android:textSize="@dimen/_12sdp"-->
+            <!--                    android:layout_alignParentRight="true"/>-->
 
-<!--            </RelativeLayout>-->
+            <!--            </RelativeLayout>-->
 
         </LinearLayout>
 
         <View
             android:layout_width="wrap_content"
             android:layout_height="1dp"
-            android:background="#75b9b3b3"/>
+            android:background="#75b9b3b3" />
 
 
         <androidx.viewpager.widget.ViewPager
@@ -182,7 +182,7 @@
         android:textSize="@dimen/_14sdp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 
 </RelativeLayout>

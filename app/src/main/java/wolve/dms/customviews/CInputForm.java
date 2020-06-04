@@ -70,11 +70,11 @@ public class CInputForm extends FrameLayout {
 
         if (a != null) {
             if (a.hasValue(R.styleable.CInputForm_multiLine)) {
-                setMultiLine(a.getBoolean(R.styleable.CInputForm_multiLine,false));
+                setMultiLine(a.getBoolean(R.styleable.CInputForm_multiLine, false));
             }
 
             if (a.hasValue(R.styleable.CInputForm_iconColor)) {
-                setIconColor(a.getColor(R.styleable.CInputForm_iconColor,0));
+                setIconColor(a.getColor(R.styleable.CInputForm_iconColor, 0));
             }
 
             if (a.hasValue(R.styleable.CInputForm_iconSize)) {
@@ -86,7 +86,7 @@ public class CInputForm extends FrameLayout {
             }
 
             if (a.hasValue(R.styleable.CInputForm_textColor)) {
-                setTextColor(a.getColor(R.styleable.CInputForm_textColor,0));
+                setTextColor(a.getColor(R.styleable.CInputForm_textColor, 0));
             }
 
             if (a.hasValue(R.styleable.CInputForm_text)) {
@@ -118,30 +118,28 @@ public class CInputForm extends FrameLayout {
             }
 
 
-
-
             a.recycle();
         }
     }
 
-    public EditText getEdInput(){
+    public EditText getEdInput() {
         return edInput;
     }
 
-    public void setIconMoreText(String text){
+    public void setIconMoreText(String text) {
         tvMore.setVisibility(VISIBLE);
         tvMore.setText(text);
     }
 
-    private void setVisibilityBottomLine(boolean value){
+    private void setVisibilityBottomLine(boolean value) {
         mLine.setVisibility(value ? GONE : VISIBLE);
     }
 
     public void setDropdown(boolean aBoolean, final ClickListener mListener) {
-        if (!aBoolean){
+        if (!aBoolean) {
             tvMore.setVisibility(GONE);
             edInput.setOnClickListener(null);
-        }else {
+        } else {
             tvMore.setVisibility(VISIBLE);
             tvMore.setOnClickListener(new OnClickListener() {
                 @Override
@@ -162,7 +160,7 @@ public class CInputForm extends FrameLayout {
         }
     }
 
-    public void setDropdownList(ArrayList<String> list){
+    public void setDropdownList(ArrayList<String> list) {
         listDropdown = list;
     }
 
@@ -171,17 +169,17 @@ public class CInputForm extends FrameLayout {
 
     }
 
-    public void setFocusable(boolean value){
-        if (value){
+    public void setFocusable(boolean value) {
+        if (value) {
             edInput.setFocusable(true);
             edInput.setFocusableInTouchMode(true);
 
-        }else {
+        } else {
             edInput.setFocusable(false);
         }
     }
 
-    public void setMultiLine(boolean value){
+    public void setMultiLine(boolean value) {
         edInput.setMaxLines(3);
         edInput.setSingleLine(false);
     }
@@ -201,7 +199,7 @@ public class CInputForm extends FrameLayout {
 
     }
 
-    public void addTextChangeListenter(final OnQueryTextListener listener){
+    public void addTextChangeListenter(final OnQueryTextListener listener) {
         edInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -220,7 +218,7 @@ public class CInputForm extends FrameLayout {
         });
     }
 
-    public void addTextChangePhone(CallbackString listener){
+    public void addTextChangePhone(CallbackString listener) {
         edInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -244,9 +242,6 @@ public class CInputForm extends FrameLayout {
                     edInput.addTextChangedListener(this);
 
 
-
-
-
                 } catch (Exception ex) {
 //                    ex.printStackTrace();
                     edInput.addTextChangedListener(this);
@@ -256,7 +251,7 @@ public class CInputForm extends FrameLayout {
         });
     }
 
-    public void addTextChangeName(CallbackString listener){
+    public void addTextChangeName(CallbackString listener) {
         final int[] countText = {0};
         edInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -273,27 +268,21 @@ public class CInputForm extends FrameLayout {
             public void afterTextChanged(Editable s) {
                 edInput.removeTextChangedListener(this);
                 listener.Result(s.toString());
-                if (countText[0] < s.toString().length() && s.toString().length() == 1){
-                    if (s.toString().equals("a") || s.toString().equals("A")){
+                if (countText[0] < s.toString().length() && s.toString().length() == 1) {
+                    if (s.toString().equals("a") || s.toString().equals("A")) {
                         edInput.setText("Anh ");
                         edInput.setSelection(edInput.getText().toString().length());
 
-                    }else if (s.toString().equals("c") || s.toString().equals("C")){
+                    } else if (s.toString().equals("c") || s.toString().equals("C")) {
                         edInput.setText("Chị ");
                         edInput.setSelection(edInput.getText().toString().length());
                     }
-
 
 
                 }
 
                 //listener.Result(edInput.getText().toString().trim());
                 edInput.addTextChangedListener(this);
-
-
-
-
-
 
 
             }
@@ -321,9 +310,6 @@ public class CInputForm extends FrameLayout {
 
                     mlistener.Result(Util.valueMoney(edInput));
                     edInput.addTextChangedListener(this);
-
-
-
 
 
                 } catch (Exception ex) {
@@ -373,9 +359,9 @@ public class CInputForm extends FrameLayout {
         tvIcon.setTextColor(color);
     }
 
-    private void createDropdown(ArrayList<String> list){
+    private void createDropdown(ArrayList<String> list) {
         final PopupWindow popup = new PopupWindow(this);
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(Util.getInstance().getCurrentActivity(), android.R.layout.select_dialog_item){
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(Util.getInstance().getCurrentActivity(), android.R.layout.select_dialog_item) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 String text = getItem(position);
@@ -413,7 +399,7 @@ public class CInputForm extends FrameLayout {
         popup.showAsDropDown(tvMore, 0, 0);
     }
 
-    public void setOnMoreClickView(OnClickListener listener){
+    public void setOnMoreClickView(OnClickListener listener) {
         tvMore.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

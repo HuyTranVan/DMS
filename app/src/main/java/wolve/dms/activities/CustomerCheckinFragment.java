@@ -4,26 +4,17 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
 
-import com.google.android.material.tabs.TabLayout;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.adapter.CartProductDialogAdapter;
 import wolve.dms.adapter.Customer_CheckinsAdapter;
-import wolve.dms.adapter.ViewpagerShopcartAdapter;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Util;
 
 /**
@@ -38,11 +29,10 @@ public class CustomerCheckinFragment extends Fragment implements View.OnClickLis
     private Customer_CheckinsAdapter adapter;
 
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_checkin,container,false);
+        view = inflater.inflate(R.layout.fragment_checkin, container, false);
         initializeView();
 
         intitialData();
@@ -70,7 +60,7 @@ public class CustomerCheckinFragment extends Fragment implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.icon_back:
                 mActivity.onBackPressed();
                 break;
@@ -79,11 +69,11 @@ public class CustomerCheckinFragment extends Fragment implements View.OnClickLis
         }
     }
 
-    private void createRVCheckin(List<BaseModel> list){
+    private void createRVCheckin(List<BaseModel> list) {
         adapter = new Customer_CheckinsAdapter(list, new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
-                if (result){
+                if (result) {
                     mActivity.reloadCustomer(mActivity.currentCustomer.getString("id"));
 
                 }
@@ -92,7 +82,6 @@ public class CustomerCheckinFragment extends Fragment implements View.OnClickLis
         });
         Util.createLinearRV(rvCheckin, adapter);
     }
-
 
 
 }

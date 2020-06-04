@@ -8,8 +8,6 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,11 +47,11 @@ public class Customer_SearchAdapter extends RecyclerView.Adapter<Customer_Search
 
     @Override
     public void onBindViewHolder(final CustomerSearchViewHolder holder, final int position) {
-        holder.tvMainText.setText(String.format("%s - %s",mData.get(position).getString("signBoard"), mData.get(position).getString("name")));
-        String address = String.format("%s %s - %s",mData.get(position).getString("address"),mData.get(position).getString("street"), mData.get(position).getString("district"));
+        holder.tvMainText.setText(String.format("%s - %s", mData.get(position).getString("signBoard"), mData.get(position).getString("name")));
+        String address = String.format("%s %s - %s", mData.get(position).getString("address"), mData.get(position).getString("street"), mData.get(position).getString("district"));
         holder.tvSecondText.setText(address);
         holder.tvPhone.setText(mData.get(position).getString("phone"));
-        holder.tvLine.setVisibility(position == mData.size()-1 ? GONE:VISIBLE);
+        holder.tvLine.setVisibility(position == mData.size() - 1 ? GONE : VISIBLE);
 
     }
 
@@ -70,7 +68,7 @@ public class Customer_SearchAdapter extends RecyclerView.Adapter<Customer_Search
             tvMainText = itemView.findViewById(R.id.suggestion_maintext);
             tvSecondText = itemView.findViewById(R.id.suggestion_secondtext);
             tvPhone = itemView.findViewById(R.id.suggestion_contact);
-            tvLine= itemView.findViewById(R.id.suggestion_line);
+            tvLine = itemView.findViewById(R.id.suggestion_line);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

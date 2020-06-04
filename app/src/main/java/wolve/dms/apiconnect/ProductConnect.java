@@ -1,6 +1,5 @@
 package wolve.dms.apiconnect;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -14,11 +13,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Iterator;
 
-import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomList;
-import wolve.dms.callback.CallbackJSONArray;
-import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.libraries.connectapi.CustomDeleteMethod;
 import wolve.dms.libraries.connectapi.CustomGetMethod;
 import wolve.dms.libraries.connectapi.CustomPostMethod;
@@ -33,20 +29,20 @@ import wolve.dms.utils.Util;
 
 public class ProductConnect {
 
-    public static void ListProductGroup(Boolean loading, final CallbackCustomList listener, final Boolean stopLoading){
+    public static void ListProductGroup(Boolean loading, final CallbackCustomList listener, final Boolean stopLoading) {
         if (loading)
             Util.getInstance().showLoading();
 
-        String url = Api_link.PRODUCT_GROUPS+ String.format(Api_link.DEFAULT_RANGE, 1,10);
+        String url = Api_link.PRODUCT_GROUPS + String.format(Api_link.DEFAULT_RANGE, 1, 10);
 
         new CustomGetMethod(url, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(stopLoading);
-                if (Constants.responeIsSuccess(result)){
+                if (Constants.responeIsSuccess(result)) {
                     listener.onResponse(Constants.getResponeArraySuccess(result));
 
-                }else {
+                } else {
                     Constants.throwError(result.getString("message"));
                     listener.onError(result.getString("message"));
                     Util.getInstance().stopLoading(true);
@@ -65,17 +61,17 @@ public class ProductConnect {
         }).execute();
     }
 
-    public static void CreateProductGroup(String params,final CallbackCustom listener, final Boolean stopLoading){
+    public static void CreateProductGroup(String params, final CallbackCustom listener, final Boolean stopLoading) {
         Util.getInstance().showLoading();
 
-        new CustomPostMethod(DataUtil.createNewProductGroupParam(params),new CallbackCustom() {
+        new CustomPostMethod(DataUtil.createNewProductGroupParam(params), new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(stopLoading);
-                if (Constants.responeIsSuccess(result)){
+                if (Constants.responeIsSuccess(result)) {
                     listener.onResponse(Constants.getResponeObjectSuccess(result));
 
-                }else {
+                } else {
                     Util.getInstance().stopLoading(true);
                     Constants.throwError(result.getString("message"));
                     listener.onError(result.getString("message"));
@@ -95,7 +91,7 @@ public class ProductConnect {
         }).execute();
     }
 
-    public static void DeleteProductGroup(String params,final CallbackCustom listener, final Boolean stopLoading){
+    public static void DeleteProductGroup(String params, final CallbackCustom listener, final Boolean stopLoading) {
         Util.getInstance().showLoading();
 
         String url = Api_link.PRODUCT_GROUP_DELETE + params;
@@ -104,10 +100,10 @@ public class ProductConnect {
             @Override
             public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(true);
-                if (Constants.responeIsSuccess(result)){
+                if (Constants.responeIsSuccess(result)) {
                     listener.onResponse(Constants.getResponeObjectSuccess(result));
 
-                }else {
+                } else {
                     Util.getInstance().stopLoading(true);
                     Constants.throwError(result.getString("message"));
                     listener.onError(result.getString("message"));
@@ -126,19 +122,19 @@ public class ProductConnect {
         }).execute();
     }
 
-    public static void ListProduct(final CallbackCustomList listener, final Boolean stopLoading){
+    public static void ListProduct(final CallbackCustomList listener, final Boolean stopLoading) {
         Util.getInstance().showLoading();
 
-        String url = Api_link.PRODUCTS+ String.format(Api_link.DEFAULT_RANGE, 1,500);
+        String url = Api_link.PRODUCTS + String.format(Api_link.DEFAULT_RANGE, 1, 500);
 
         new CustomGetMethod(url, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(stopLoading);
-                if (Constants.responeIsSuccess(result)){
+                if (Constants.responeIsSuccess(result)) {
                     listener.onResponse(Constants.getResponeArraySuccess(result));
 
-                }else {
+                } else {
                     Constants.throwError(result.getString("message"));
                     listener.onError(result.getString("message"));
 
@@ -156,17 +152,17 @@ public class ProductConnect {
         }).execute();
     }
 
-    public static void CreateProduct(final String params, CallbackCustom listener, final Boolean stopLoading){
+    public static void CreateProduct(final String params, CallbackCustom listener, final Boolean stopLoading) {
         Util.getInstance().showLoading();
 
-        new CustomPostMethod(DataUtil.createNewProductParam(params),new CallbackCustom() {
+        new CustomPostMethod(DataUtil.createNewProductParam(params), new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(stopLoading);
-                if (Constants.responeIsSuccess(result)){
+                if (Constants.responeIsSuccess(result)) {
                     listener.onResponse(Constants.getResponeObjectSuccess(result));
 
-                }else {
+                } else {
                     Util.getInstance().stopLoading(true);
                     Constants.throwError(result.getString("message"));
                     listener.onError(result.getString("message"));
@@ -187,7 +183,7 @@ public class ProductConnect {
 
     }
 
-    public static void DeleteProduct(String params,final CallbackCustom listener, final Boolean stopLoading){
+    public static void DeleteProduct(String params, final CallbackCustom listener, final Boolean stopLoading) {
         Util.getInstance().showLoading();
 
         String url = Api_link.PRODUCT_DELETE + params;
@@ -196,10 +192,10 @@ public class ProductConnect {
             @Override
             public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(true);
-                if (Constants.responeIsSuccess(result)){
+                if (Constants.responeIsSuccess(result)) {
                     listener.onResponse(Constants.getResponeObjectSuccess(result));
 
-                }else {
+                } else {
                     Util.getInstance().stopLoading(true);
                     Constants.throwError(result.getString("message"));
                     listener.onError(result.getString("message"));

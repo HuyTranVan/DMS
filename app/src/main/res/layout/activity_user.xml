@@ -19,7 +19,7 @@
             android:layout_height="match_parent"
             android:src="@drawable/ic_arrow_back_black_18dp"
             android:padding="@dimen/_8sdp"
-            android:background="?selectableItemBackground"/>
+            android:background="?selectableItemBackground" />
 
         <TextView
             android:id="@+id/user_title"
@@ -28,7 +28,7 @@
             android:layout_centerInParent="true"
             android:text="DANH SÁCH NHÂN VIÊN"
             android:textSize="@dimen/_14sdp"
-            android:textColor="@color/black_text_color"/>
+            android:textColor="@color/black_text_color" />
 
     </RelativeLayout>
 
@@ -39,7 +39,7 @@
         android:layout_below="@+id/user_header"
         android:clipToPadding="false"
         android:paddingBottom="@dimen/_50sdp"
-        android:paddingTop="@dimen/_5sdp"/>
+        android:paddingTop="@dimen/_5sdp" />
 
     <com.github.clans.fab.FloatingActionButton
         android:id="@+id/user_add_new"
@@ -50,6 +50,6 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         app:fab_size="normal"
-        style="@style/MenuButtonsBlue"/>
+        style="@style/MenuButtonsBlue" />
 
 </RelativeLayout>

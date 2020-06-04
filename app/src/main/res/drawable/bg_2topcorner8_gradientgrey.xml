@@ -7,8 +7,8 @@
         android:endColor="@color/float_transparent"
         android:type="linear" />
 
-    <corners android:topLeftRadius="@dimen/_5sdp"
-        android:topRightRadius="@dimen/_5sdp"
-        />
+    <corners
+        android:topLeftRadius="@dimen/_5sdp"
+        android:topRightRadius="@dimen/_5sdp" />
 
 </shape>

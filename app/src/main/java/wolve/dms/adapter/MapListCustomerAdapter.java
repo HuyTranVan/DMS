@@ -76,5 +76,4 @@ public class MapListCustomerAdapter extends RecyclerView.Adapter<MapListCustomer
     }
 
 
-
 }

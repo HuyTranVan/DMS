@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/input_data_parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -16,7 +15,7 @@
         android:textColor="@color/colorBlueTransparent"
         android:layout_gravity="center_vertical"
         android:layout_centerVertical="true"
-        android:gravity="center"/>
+        android:gravity="center" />
 
 
     <EditText
@@ -36,8 +35,7 @@
         android:clickable="true"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/input_data_dropdown"
-        android:textCursorDrawable="@drawable/custom_cursor"/>
-
+        android:textCursorDrawable="@drawable/custom_cursor" />
 
 
     <TextView
@@ -53,9 +51,7 @@
         android:gravity="center"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:visibility="gone"/>
-
-
+        android:visibility="gone" />
 
 
     <View
@@ -63,6 +59,6 @@
         android:layout_width="match_parent"
         android:layout_height="1dip"
         android:background="@color/colorGrey"
-        android:layout_below="@+id/input_data_content"/>
+        android:layout_below="@+id/input_data_content" />
 
 </RelativeLayout>

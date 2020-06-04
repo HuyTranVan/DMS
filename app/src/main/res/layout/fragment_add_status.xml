@@ -19,7 +19,7 @@
             android:layout_height="match_parent"
             android:src="@drawable/ic_arrow_back_black_18dp"
             android:padding="@dimen/_8sdp"
-            android:background="?selectableItemBackground"/>
+            android:background="?selectableItemBackground" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -27,7 +27,7 @@
             android:layout_centerInParent="true"
             android:text="TRẠNG THÁI"
             android:textSize="@dimen/_14sdp"
-            android:textColor="@color/black_text_color"/>
+            android:textColor="@color/black_text_color" />
 
     </RelativeLayout>
 
@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:inputType="textCapSentences"
             app:textHint="Nhập tên trạng thái"
-            app:iconText="@string/icon_product"/>
+            app:iconText="@string/icon_product" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -63,7 +63,7 @@
                 android:textColorHint="@color/black_text_color_hint"
                 android:inputType="textCapSentences"
                 android:gravity="center_vertical"
-                android:paddingLeft="@dimen/_25sdp"/>
+                android:paddingLeft="@dimen/_25sdp" />
 
             <TextView
                 android:fontFamily="@font/font_awesome"
@@ -73,7 +73,7 @@
                 android:textSize="@dimen/_14sdp"
                 android:textColor="@color/black_text_color_hint"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="@dimen/_2sdp"/>
+                android:layout_marginLeft="@dimen/_2sdp" />
 
             <TextView
                 android:id="@+id/add_status_color"
@@ -81,14 +81,14 @@
                 android:layout_height="@dimen/_20sdp"
                 android:background="@color/colorRed"
                 android:layout_gravity="center_vertical|right"
-                android:layout_marginRight="@dimen/_15sdp"/>
+                android:layout_marginRight="@dimen/_15sdp" />
 
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dip"
                 android:background="@color/colorGrey"
-                android:layout_gravity="bottom"/>
+                android:layout_gravity="bottom" />
 
         </FrameLayout>
 
@@ -106,7 +106,7 @@
                 android:layout_weight="0.5"
                 android:text="Mặc định"
                 android:textSize="@dimen/_12sdp"
-                android:paddingLeft="@dimen/_10sdp"/>
+                android:paddingLeft="@dimen/_10sdp" />
 
             <RadioButton
                 android:id="@+id/add_status_radio_nodefault"
@@ -115,7 +115,7 @@
                 android:layout_weight="0.5"
                 android:text="Trạng thái Check_in"
                 android:textSize="@dimen/_12sdp"
-                android:paddingLeft="@dimen/_10sdp"/>
+                android:paddingLeft="@dimen/_10sdp" />
 
         </RadioGroup>
 
@@ -134,7 +134,7 @@
         android:textAllCaps="true"
         android:textColor="@color/white"
         android:textSize="@dimen/_14sdp"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_gravity="center_horizontal" />
 
 
 </LinearLayout>

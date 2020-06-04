@@ -111,14 +111,14 @@ public class Constants {
     public final static boolean RESULT_FALSE = false;
     public final static String RESULT_MESSAGE = "message";
 
-    public static final int REQUEST_ENABLE_BT = 0*1000;
+    public static final int REQUEST_ENABLE_BT = 0 * 1000;
 
     public final static String BADGE = "badge";
 
     public final static String MARKER_ALL = "all";
     public final static String MARKER_INTERESTED = "interested";
     public final static String MARKER_ORDERED = "ordered";
-    public static final String BLUETOOTH_DEVICE ="bluetooth_device" ;
+    public static final String BLUETOOTH_DEVICE = "bluetooth_device";
     public static final String STATUS_LIST = "status_list";
     public static final String DISTRICT_LIST = "district_list";
     public static final String PRODUCTGROUP_LIST = "productgroup_list";
@@ -147,7 +147,7 @@ public class Constants {
     public final static String ONFAIL = "on_fail";
     public final static String ONSUCCESS = "on_success";
 
-    public final static String ALL_FILTER ="TẤT CẢ";
+    public final static String ALL_FILTER = "TẤT CẢ";
     public static final String USER_LIST = "user_list";
 
     public static final String ALL_TOTAL = "all total";
@@ -161,7 +161,7 @@ public class Constants {
     public static String UNCHECK = "BỎ CHỌN";
 
     //Home constant
-    public static ArrayList<JSONObject> HomeItemList(){
+    public static ArrayList<JSONObject> HomeItemList() {
         String[] icons = new String[]{
                 Util.getIcon(R.string.icon_edit_map),
                 Util.getIcon(R.string.icon_chart),
@@ -192,7 +192,7 @@ public class Constants {
                 "MANAGER"};
 
         ArrayList<JSONObject> list = new ArrayList<>();
-        for (int i=0; i< icons.length; i++){
+        for (int i = 0; i < icons.length; i++) {
             JSONObject object = new JSONObject();
             try {
                 object.put("icon", icons[i]);
@@ -227,25 +227,25 @@ public class Constants {
 
     }
 
-    public static boolean responeIsSuccess(BaseModel respone){
+    public static boolean responeIsSuccess(BaseModel respone) {
         if (!respone.isNull("status") && respone.getInt("status") == 200) {
             return true;
 
-        }else {
+        } else {
             return false;
         }
     }
 
-    public static BaseModel getResponeObjectSuccess(BaseModel respone){
+    public static BaseModel getResponeObjectSuccess(BaseModel respone) {
         return new BaseModel(respone.getJsonObject("data"));
 
     }
 
-    public static List<BaseModel> getResponeArraySuccess(BaseModel respone){
-        List<BaseModel> list  = new ArrayList<>();
+    public static List<BaseModel> getResponeArraySuccess(BaseModel respone) {
+        List<BaseModel> list = new ArrayList<>();
         JSONArray array = respone.getJSONArray("data");
         try {
-            for (int i=0; i<array.length(); i++){
+            for (int i = 0; i < array.length(); i++) {
                 list.add(new BaseModel(array.getJSONObject(i)));
             }
 
@@ -258,7 +258,7 @@ public class Constants {
 
     }
 
-    public static List<BaseModel> homeSettingSetup(){
+    public static List<BaseModel> homeSettingSetup() {
         List<BaseModel> list = new ArrayList<>();
 
         BaseModel item0 = new BaseModel();

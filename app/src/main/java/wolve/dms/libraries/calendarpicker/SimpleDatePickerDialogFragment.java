@@ -3,7 +3,6 @@ package wolve.dms.libraries.calendarpicker;
 import android.app.Dialog;
 import android.os.Bundle;
 
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
@@ -77,6 +76,7 @@ public class SimpleDatePickerDialogFragment extends DialogFragment {
         datePickerDialogFragment.setArguments(bundle);
         return datePickerDialogFragment;
     }
+
     /**
      * Get callback of the year and month selected.
      *
@@ -101,7 +101,7 @@ public class SimpleDatePickerDialogFragment extends DialogFragment {
         checkForValidMinDate(year, month, minDate);
         checkForValidMaxDate(year, month, maxDate);
         SimpleDatePickerDialog simpleDatePickerDialog = new SimpleDatePickerDialog(
-                getActivity(), mOnDateSetListener, mOnDismissListener,year, month);
+                getActivity(), mOnDateSetListener, mOnDismissListener, year, month);
         if (minDate != NULL_INT) {
             simpleDatePickerDialog.setMinDate(minDate);
         }

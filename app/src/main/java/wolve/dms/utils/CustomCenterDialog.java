@@ -27,7 +27,6 @@ import com.whinc.widget.ratingbar.RatingBar;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import wolve.dms.R;
 import wolve.dms.adapter.CartCheckinReasonAdapter;
@@ -40,7 +39,6 @@ import wolve.dms.adapter.ProductSelectAdapter;
 import wolve.dms.adapter.WaitingListAdapter;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.UserConnect;
-import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickProduct;
 import wolve.dms.callback.CallbackCustom;
@@ -60,12 +58,13 @@ import wolve.dms.models.User;
 
 public class CustomCenterDialog {
 
-    public interface ButtonCallback{
+    public interface ButtonCallback {
         void Submit(Boolean boolSubmit);
+
         void Cancel(Boolean boolCancel);
     }
 
-    public interface CallbackRangeTime{
+    public interface CallbackRangeTime {
         void onSelected(long start, long end);
     }
 
@@ -244,7 +243,7 @@ public class CustomCenterDialog {
         });
     }
 
-    public static void showDialogEditProduct(final BaseModel product, List<BaseModel> listBillDetail, final CallbackClickProduct callbackClickProduct){
+    public static void showDialogEditProduct(final BaseModel product, List<BaseModel> listBillDetail, final CallbackClickProduct callbackClickProduct) {
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_edit_product);
 
         final Button btnCancel = dialogResult.findViewById(R.id.btn_cancel);
@@ -252,8 +251,8 @@ public class CustomCenterDialog {
         TextView tvTitle = dialogResult.findViewById(R.id.dialog_edit_product_title);
         EditText tvUnitPrice = dialogResult.findViewById(R.id.dialog_edit_product_unitprice);
         final EditText edNetPrice = dialogResult.findViewById(R.id.dialog_edit_product_netprice);
-        final TextView tvTotal =  dialogResult.findViewById(R.id.dialog_edit_product_total);
-        final EditText edDiscount =  dialogResult.findViewById(R.id.dialog_edit_product_discount);
+        final TextView tvTotal = dialogResult.findViewById(R.id.dialog_edit_product_total);
+        final EditText edDiscount = dialogResult.findViewById(R.id.dialog_edit_product_discount);
         final EditText edQuantity = dialogResult.findViewById(R.id.dialog_edit_product_quantity);
         TextView tvClear = dialogResult.findViewById(R.id.dialog_edit_product_netprice_clear);
         RecyclerView rvPrice = dialogResult.findViewById(R.id.dialog_edit_product_rvprice);
@@ -264,14 +263,14 @@ public class CustomCenterDialog {
         tvUnitPrice.setText(Util.FormatMoney(product.getDouble("unitPrice")));
 
         edDiscount.setFocusable(false);
-        edDiscount.setText(product.getDouble("discount") ==0 ? "" : Util.FormatMoney((double) Math.round(product.getDouble("discount"))));
+        edDiscount.setText(product.getDouble("discount") == 0 ? "" : Util.FormatMoney((double) Math.round(product.getDouble("discount"))));
 
         edNetPrice.setText(Util.FormatMoney(product.getDouble("unitPrice") - product.getDouble("discount")));
 
         edQuantity.setText(String.valueOf(Math.round(product.getDouble("quantity"))));
         tvTotal.setText(Util.FormatMoney(product.getDouble("quantity") * (product.getDouble("unitPrice") - product.getDouble("discount"))));
 
-        edDiscount.setFilters(new InputFilter[]{new InputFilter.LengthFilter(tvUnitPrice.getText().toString().trim().length() )});
+        edDiscount.setFilters(new InputFilter[]{new InputFilter.LengthFilter(tvUnitPrice.getText().toString().trim().length())});
 
         Util.showKeyboardEditTextDelay(edNetPrice);
 
@@ -286,10 +285,10 @@ public class CustomCenterDialog {
         Util.textMoneyEvent(edNetPrice, product.getDouble("unitPrice"), new CallbackDouble() {
             @Override
             public void Result(Double d) {
-                tvClear.setVisibility(Util.isEmpty(edNetPrice) || edNetPrice.getText().toString().equals("0")? View.GONE : View.VISIBLE);
+                tvClear.setVisibility(Util.isEmpty(edNetPrice) || edNetPrice.getText().toString().equals("0") ? View.GONE : View.VISIBLE);
 
                 edDiscount.setText(Util.FormatMoney(product.getDouble("unitPrice") - Util.moneyValue(edNetPrice)));
-                tvTotal.setText(Util.FormatMoney(d *  Util.valueMoney(edQuantity)));
+                tvTotal.setText(Util.FormatMoney(d * Util.valueMoney(edQuantity)));
                 edNetPrice.setSelection(edNetPrice.getText().toString().length());
 
             }
@@ -306,10 +305,10 @@ public class CustomCenterDialog {
         edQuantity.addTextChangedListener(new DoubleTextWatcher(edQuantity, new CallbackString() {
             @Override
             public void Result(String text) {
-                if (!text.toString().equals("") && !text.equals("0")){
+                if (!text.toString().equals("") && !text.equals("0")) {
                     tvTotal.setText(Util.FormatMoney(Double.parseDouble(text) * (product.getDouble("unitPrice") - Util.valueMoney(edDiscount))));
 
-                }else if (text.toString().equals("")){
+                } else if (text.toString().equals("")) {
                     tvTotal.setText("0");
                 }
             }
@@ -322,21 +321,22 @@ public class CustomCenterDialog {
             }
         });
         btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
-                if (Util.isEmptyValue(edQuantity) || Util.isEmptyValue(edNetPrice)){
+            @Override
+            public void onClick(View v) {
+                if (Util.isEmptyValue(edQuantity) || Util.isEmptyValue(edNetPrice)) {
                     Util.showToast("Vui lòng nhập số lượng >0 ");
 
-                }else if (Util.isEmptyValue(edNetPrice)){
+                } else if (Util.isEmptyValue(edNetPrice)) {
                     Util.showToast("Vui lòng nhập giá tiền  >0 ");
 
-                }else if (Util.moneyValue(edNetPrice) > product.getDouble("unitPrice")){
+                } else if (Util.moneyValue(edNetPrice) > product.getDouble("unitPrice")) {
                     Util.showToast("Vui lòng nhập giá tiền nhỏ hơn giá đơn vị ");
 
-                }else{
+                } else {
                     BaseModel newProduct = product;
                     newProduct.put("quantity", Util.valueMoney(edQuantity));
                     newProduct.put("discount", edDiscount.getText().toString().equals("") ? 0 : Util.valueMoney(edDiscount));
-                    newProduct.put("totalMoney", tvTotal.getText().toString().replace(".",""));
+                    newProduct.put("totalMoney", tvTotal.getText().toString().replace(".", ""));
 
                     callbackClickProduct.ProductChoice(newProduct);
                     dialogResult.dismiss();
@@ -356,7 +356,7 @@ public class CustomCenterDialog {
                                         String submit,
                                         boolean touchOutside,
                                         boolean showListReason,
-                                        final CallbackString mListener){
+                                        final CallbackString mListener) {
         //TYPE 0: NOT INTERESTED
         //TYPE 1: NORMAL
 
@@ -384,7 +384,7 @@ public class CustomCenterDialog {
         edNote.setSelection(text.length());
 
         List<BaseModel> listReason = CustomSQL.getListObject(Constants.STATUS);
-        if (showListReason){
+        if (showListReason) {
             final CartCheckinReasonAdapter adapter = new CartCheckinReasonAdapter(listReason, new CartCheckinReasonAdapter.ReasonCallback() {
                 @Override
                 public void onResult(BaseModel result, int position) {
@@ -417,34 +417,33 @@ public class CustomCenterDialog {
             @Override
             public void onClick(View v) {
                 Util.hideKeyboard(v);
-                if (Util.isEmpty(edNote)){
+                if (Util.isEmpty(edNote)) {
 //                    Util.showToast("Vui lòng nhập nội dung để tiếp tục");
-                    mListener.Result(edNote.getText().toString().trim() );
+                    mListener.Result(edNote.getText().toString().trim());
                     dialogResult.dismiss();
 
-                }else {
-                    if (showListReason){
+                } else {
+                    if (showListReason) {
                         BaseModel baseModel = new BaseModel();
                         baseModel.put("type", 0);
-                        baseModel.put("content",edNote.getText().toString().trim() );
-                        baseModel.put("rate",1 );
+                        baseModel.put("content", edNote.getText().toString().trim());
+                        baseModel.put("rate", 1);
 
                         listReason.add(baseModel);
 
                         CustomSQL.setListBaseModel(Constants.STATUS, listReason);
                     }
 
-                    mListener.Result(edNote.getText().toString().trim() );
+                    mListener.Result(edNote.getText().toString().trim());
                     dialogResult.dismiss();
                 }
             }
         });
 
 
-
     }
 
-    public static void showCheckinDialog(String title, int customer_id, int status_id, int currentRating, CallbackObject listener){
+    public static void showCheckinDialog(String title, int customer_id, int status_id, int currentRating, CallbackObject listener) {
         //status_id 0: NEW
         //status_id 1: INTERESTED
         //status_id 2: NOT INTERESTED
@@ -490,7 +489,7 @@ public class CustomCenterDialog {
                 edProduct.setText("");
             }
         });
-        switch (status_id){
+        switch (status_id) {
             case 0:
                 radioNotInterest.setVisibility(View.VISIBLE);
                 radioInterest.setVisibility(View.GONE);
@@ -532,10 +531,10 @@ public class CustomCenterDialog {
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                switch (i){
+                switch (i) {
                     case R.id.dialog_checkin_owner:
                         edNote.setHint("Nhập ghi chú khách hàng");
-                        lnProductParent.setVisibility(status_id != 3? View.VISIBLE: View.GONE);
+                        lnProductParent.setVisibility(status_id != 3 ? View.VISIBLE : View.GONE);
                         lnNextVisit.setVisibility(View.VISIBLE);
                         ratingBar.setClickRating(true);
                         ratingBar.setTouchRating(true);
@@ -566,7 +565,7 @@ public class CustomCenterDialog {
         Util.textEvent(edNote, new CallbackString() {
             @Override
             public void Result(String s) {
-                tvNoteClear.setVisibility(s.equals("")? View.GONE : View.VISIBLE);
+                tvNoteClear.setVisibility(s.equals("") ? View.GONE : View.VISIBLE);
 
             }
         });
@@ -579,7 +578,7 @@ public class CustomCenterDialog {
         Util.textEvent(edProduct, new CallbackString() {
             @Override
             public void Result(String s) {
-                tvSearchClear.setVisibility(s.equals("")? View.GONE : View.VISIBLE);
+                tvSearchClear.setVisibility(s.equals("") ? View.GONE : View.VISIBLE);
             }
         });
         tvSearchClear.setOnClickListener(new View.OnClickListener() {
@@ -602,18 +601,18 @@ public class CustomCenterDialog {
                 Util.hideKeyboard(v);
                 String param;
                 BaseModel object = new BaseModel();
-                if (Util.isEmpty(edNextDay)){
+                if (Util.isEmpty(edNextDay)) {
                     Util.showSnackbar("Nhập ngày ghé cửa hàng tiếp theo", null, null);
 
-                }else if (radioGroup.getCheckedRadioButtonId() == R.id.dialog_checkin_notinterest){
-                    if (Util.isEmpty(edNote)){
+                } else if (radioGroup.getCheckedRadioButtonId() == R.id.dialog_checkin_notinterest) {
+                    if (Util.isEmpty(edNote)) {
                         Util.showSnackbar("Nhập lý do khách hàng không quan tâm để tiếp tục", null, null);
 
-                    }else {
+                    } else {
                         param = String.format(Api_link.SCHECKIN_CREATE_PARAM,
                                 customer_id,
                                 ratingBar.getCount(),
-                                Util.encodeString("Chuyển sang không quan tâm vì: "+ edNote.getText().toString()),
+                                Util.encodeString("Chuyển sang không quan tâm vì: " + edNote.getText().toString()),
                                 User.getId(),
                                 Util.CurrentTimeStamp() + 365 * 86400000,
                                 1);
@@ -626,18 +625,18 @@ public class CustomCenterDialog {
 
                     }
 
-                }else if (radioGroup.getCheckedRadioButtonId() == R.id.dialog_checkin_interest){
-                    if (Util.isEmpty(edNote)){
+                } else if (radioGroup.getCheckedRadioButtonId() == R.id.dialog_checkin_interest) {
+                    if (Util.isEmpty(edNote)) {
                         Util.showSnackbar("Nhập lý do khách hàng quan tâm để tiếp tục", null, null);
 
-                    }else if (selectAdapter.getData().size() <1){
+                    } else if (selectAdapter.getData().size() < 1) {
                         Util.showSnackbar("Chọn sản phẩm giới thiệu để tiếp tục", null, null);
 
-                    } else{
+                    } else {
                         param = String.format(Api_link.SCHECKIN_CREATE_PARAM,
                                 customer_id,
                                 ratingBar.getCount(),
-                                Util.encodeString(DataUtil.createCheckinNote(selectAdapter.getData(), "Chuyển sang quan tâm vì: "+ edNote.getText().toString())),
+                                Util.encodeString(DataUtil.createCheckinNote(selectAdapter.getData(), "Chuyển sang quan tâm vì: " + edNote.getText().toString())),
                                 User.getId(),
                                 Util.CurrentTimeStamp() + Integer.parseInt(edNextDay.getText().toString()) * 86400000,
                                 1);
@@ -650,11 +649,11 @@ public class CustomCenterDialog {
 
                     }
 
-                }else if (radioGroup.getCheckedRadioButtonId() == R.id.dialog_checkin_owner){
-                    if (Util.isEmpty(edNote)){
+                } else if (radioGroup.getCheckedRadioButtonId() == R.id.dialog_checkin_owner) {
+                    if (Util.isEmpty(edNote)) {
                         Util.showSnackbar("Nhập nội dung cuộc gặp để tiếp tục", null, null);
 
-                    }else if (selectAdapter.getData().size() <1 && lnProductParent.getVisibility() == View.VISIBLE){
+                    } else if (selectAdapter.getData().size() < 1 && lnProductParent.getVisibility() == View.VISIBLE) {
                         Util.showSnackbar("Chọn sản phẩm giới thiệu để tiếp tục", null, null);
 
                     } else {
@@ -666,10 +665,10 @@ public class CustomCenterDialog {
                                 Util.CurrentTimeStamp() + Integer.parseInt(edNextDay.getText().toString()) * 86400000,
                                 1);
 
-                        if (status_id ==0){
+                        if (status_id == 0) {
                             object.put("updateStatus", true);
                             object.put("status", 1);
-                        }else {
+                        } else {
                             object.put("updateStatus", false);
                         }
 
@@ -679,7 +678,7 @@ public class CustomCenterDialog {
 
                     }
 
-                }else if (radioGroup.getCheckedRadioButtonId() == R.id.dialog_checkin_notowner){
+                } else if (radioGroup.getCheckedRadioButtonId() == R.id.dialog_checkin_notowner) {
                     param = String.format(Api_link.SCHECKIN_CREATE_PARAM,
                             customer_id,
                             ratingBar.getCount(),
@@ -696,15 +695,13 @@ public class CustomCenterDialog {
                 }
 
 
-
             }
         });
 
 
-
     }
 
-    public static Dialog showDialogPayment(String title, List<BaseModel> listDebts , double money, boolean changeAmount, final CallbackListCustom mListener){
+    public static Dialog showDialogPayment(String title, List<BaseModel> listDebts, double money, boolean changeAmount, final CallbackListCustom mListener) {
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_input_paid);
         TextView tvTitle = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_title);
         TextView tvText = dialogResult.findViewById(R.id.dialog_input_paid_text);
@@ -719,29 +716,29 @@ public class CustomCenterDialog {
         final Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
 
         dialogResult.setCanceledOnTouchOutside(true);
-        final DebtAdapter debtAdapter = new DebtAdapter(listDebts == null? new ArrayList<BaseModel>() : listDebts, swFastPay.isChecked(), true);
+        final DebtAdapter debtAdapter = new DebtAdapter(listDebts == null ? new ArrayList<BaseModel>() : listDebts, swFastPay.isChecked(), true);
         Util.createLinearRV(rvDebt, debtAdapter);
 
         final Double totalDebt = debtAdapter.getTotalMoney();
 
         tvTitle.setText(title);
         tvRemain.setText(Util.FormatMoney(totalDebt));
-        tvText.setText(totalDebt >= 0 ? "Số tiền khách trả": "Số tiền trả lại khách");
+        tvText.setText(totalDebt >= 0 ? "Số tiền khách trả" : "Số tiền trả lại khách");
 
-        swFastPay.setVisibility(listDebts.size() ==1 ?View.GONE: View.VISIBLE);
+        swFastPay.setVisibility(listDebts.size() == 1 ? View.GONE : View.VISIBLE);
 
-        if (changeAmount){
+        if (changeAmount) {
             edPaid.setFocusable(true);
             edPaid.setFocusableInTouchMode(true);
             Util.showKeyboardDelay(edPaid);
 
-        }else {
+        } else {
             edPaid.setFocusable(false);
         }
 
-        edPaid.setText(money == 0.0? "" : Util.FormatMoney(money));
+        edPaid.setText(money == 0.0 ? "" : Util.FormatMoney(money));
 
-        Util.textMoneyEvent(edPaid,totalDebt, new CallbackDouble() {
+        Util.textMoneyEvent(edPaid, totalDebt, new CallbackDouble() {
             @Override
             public void Result(Double s) {
                 debtAdapter.inputPaid(s, swFastPay.isChecked());
@@ -779,7 +776,7 @@ public class CustomCenterDialog {
         return dialogResult;
     }
 
-    public static void showDialogDiscountPayment(String title, String text,Double limitMoney, final CallbackDouble mListener){
+    public static void showDialogDiscountPayment(String title, String text, Double limitMoney, final CallbackDouble mListener) {
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_input_paid_discount);
         TextView tvTitle = (TextView) dialogResult.findViewById(R.id.dialog_input_paid_discount_title);
         TextView tvText = dialogResult.findViewById(R.id.dialog_input_paid_discount_text);
@@ -792,7 +789,7 @@ public class CustomCenterDialog {
         tvText.setText(text);
 
         Util.showKeyboardDelay(edPaid);
-        Util.textMoneyEvent(edPaid,limitMoney, new CallbackDouble() {
+        Util.textMoneyEvent(edPaid, limitMoney, new CallbackDouble() {
             @Override
             public void Result(Double s) {
 
@@ -810,10 +807,10 @@ public class CustomCenterDialog {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Util.isEmpty(edPaid)){
+                if (Util.isEmpty(edPaid)) {
                     Util.showToast("Vui lòng nhập số tiền >0");
 
-                }else {
+                } else {
                     Util.hideKeyboard(v);
                     mListener.Result(Util.moneyValue(edPaid));
                     dialogResult.dismiss();
@@ -829,7 +826,7 @@ public class CustomCenterDialog {
     public static void showDialogInputQuantity(String title, String quantity,
                                                int currentQuantity,
                                                boolean emptyQuantityValue,
-                                               final CallbackString mListener){
+                                               final CallbackString mListener) {
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_input_quantity);
         TextView tvTitle = (TextView) dialogResult.findViewById(R.id.input_number_title);
         final EditText edQuantity = (EditText) dialogResult.findViewById(R.id.input_number_quantity);
@@ -840,7 +837,7 @@ public class CustomCenterDialog {
 
         dialogResult.setCanceledOnTouchOutside(true);
         tvTitle.setText(title);
-        currentQuantityParent.setVisibility(currentQuantity >0 ? View.VISIBLE: View.GONE);
+        currentQuantityParent.setVisibility(currentQuantity > 0 ? View.VISIBLE : View.GONE);
         edCurrentQuantity.setText(String.valueOf(currentQuantity));
         edQuantity.setText(quantity);
         btnSubmit.setText("đồng ý");
@@ -858,18 +855,18 @@ public class CustomCenterDialog {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Util.isEmpty(edQuantity) || edQuantity.getText().toString().equals("0")){
-                    if (emptyQuantityValue ){
+                if (Util.isEmpty(edQuantity) || edQuantity.getText().toString().equals("0")) {
+                    if (emptyQuantityValue) {
                         Util.hideKeyboard(v);
                         mListener.Result("0");
                         dialogResult.dismiss();
 
-                    }else {
+                    } else {
                         Util.showToast("Vui lòng nhập số lượng >0");
                     }
 
 
-                }else {
+                } else {
                     Util.hideKeyboard(v);
                     mListener.Result(edQuantity.getText().toString());
                     dialogResult.dismiss();
@@ -883,9 +880,7 @@ public class CustomCenterDialog {
     }
 
 
-
-
-    public static void showListProduct(String title, List<BaseModel> listProduct){
+    public static void showListProduct(String title, List<BaseModel> listProduct) {
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_list_product);
 
         final TextView tvTitle = dialogResult.findViewById(R.id.dialog_list_product_title);
@@ -909,7 +904,7 @@ public class CustomCenterDialog {
 
     }
 
-    public static void showListProductWithDifferenceQuantity(String title, List<BaseModel> listProduct, CallbackBoolean listener){
+    public static void showListProductWithDifferenceQuantity(String title, List<BaseModel> listProduct, CallbackBoolean listener) {
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_list);
 
         final TextView tvTitle = dialogResult.findViewById(R.id.dialog_list_title);
@@ -942,21 +937,21 @@ public class CustomCenterDialog {
 
     }
 
-    public static void showDialogRelogin(String title, final BaseModel user , final CallbackBoolean mlistener){
+    public static void showDialogRelogin(String title, final BaseModel user, final CallbackBoolean mlistener) {
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_relogin);
 
         final Button btnCancel = dialogResult.findViewById(R.id.btn_cancel);
         final Button btnSubmit = dialogResult.findViewById(R.id.btn_submit);
         TextView tvTitle = dialogResult.findViewById(R.id.dialog_relogin_title);
-        final EditText edPhone =  dialogResult.findViewById(R.id.dialog_relogin_phone);
-        final EditText edPass =  dialogResult.findViewById(R.id.dialog_relogin_password);
+        final EditText edPhone = dialogResult.findViewById(R.id.dialog_relogin_phone);
+        final EditText edPass = dialogResult.findViewById(R.id.dialog_relogin_password);
 
         btnCancel.setText("HỦY");
         btnSubmit.setText("ĐĂNG NHẬP");
         tvTitle.setText(title);
 
-        edPhone.setText(user == null? "" : user.getString("phone"));
-        Util.showKeyboardDelay(user == null || user.getString("phone").equals("")? edPhone : edPass);
+        edPhone.setText(user == null ? "" : user.getString("phone"));
+        Util.showKeyboardDelay(user == null || user.getString("phone").equals("") ? edPhone : edPass);
 
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -966,28 +961,29 @@ public class CustomCenterDialog {
             }
         });
         btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
                 Util.hideKeyboard(edPass);
 
-                if (!edPhone.getText().toString().equals("") && !edPass.getText().toString().equals("")){
+                if (!edPhone.getText().toString().equals("") && !edPass.getText().toString().equals("")) {
                     dialogResult.dismiss();
                     String fcm_token = User.getFCMToken();
-                    UserConnect.Logout(new CallbackCustom(){
+                    UserConnect.Logout(new CallbackCustom() {
                         @Override
                         public void onResponse(BaseModel result) {
-                            if (result.getBoolean("success")){
+                            if (result.getBoolean("success")) {
                                 UserConnect.doLogin(edPhone.getText().toString().trim(),
                                         edPass.getText().toString().trim(),
                                         fcm_token,
                                         new CallbackBoolean() {
                                             @Override
                                             public void onRespone(Boolean result) {
-                                                if (result){
+                                                if (result) {
                                                     CustomSQL.setBoolean(Constants.LOGIN_SUCCESS, true);
                                                     Util.showToast("Đăng nhập thành công");
                                                     mlistener.onRespone(true);
 
-                                                }else {
+                                                } else {
                                                     mlistener.onRespone(false);
                                                 }
                                             }
@@ -1002,7 +998,7 @@ public class CustomCenterDialog {
                         }
                     }, true);
 
-                }else {
+                } else {
                     Util.showToast("Nhập đầy đủ username và password");
                 }
             }
@@ -1011,7 +1007,7 @@ public class CustomCenterDialog {
 
     }
 
-    public static void showDialogChangePass(String title, final CallbackBoolean mListener){
+    public static void showDialogChangePass(String title, final CallbackBoolean mListener) {
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_change_password);
 
         final Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
@@ -1034,9 +1030,10 @@ public class CustomCenterDialog {
             }
         });
         btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
                 Util.hideKeyboard(edOldPass);
-                if (!Util.isEmpty(edOldPass) && !Util.isEmpty(edNewPass1) && !Util.isEmpty(edNewPass2)){
+                if (!Util.isEmpty(edOldPass) && !Util.isEmpty(edNewPass1) && !Util.isEmpty(edNewPass2)) {
                     if (edNewPass1.getText().toString().trim().equals(edNewPass2.getText().toString().trim())) {
 
                         UserConnect.doChangePass(edOldPass.getText().toString().trim(),
@@ -1053,18 +1050,16 @@ public class CustomCenterDialog {
                                         mListener.onRespone(false);
                                     }
 
-                        }, true);
+                                }, true);
 
-                    }else {
+                    } else {
                         Util.showToast("Mật khẩu mới không khớp");
 
                     }
 
-                }else {
+                } else {
                     Util.showToast("Nhập chưa đủ nội dung");
                 }
-
-
 
 
             }
@@ -1073,7 +1068,7 @@ public class CustomCenterDialog {
 
     }
 
-    public static void showWaitingList(String title, List<BaseModel> listCustomer, CallbackBoolean listener, CallbackInt listenerCount){
+    public static void showWaitingList(String title, List<BaseModel> listCustomer, CallbackBoolean listener, CallbackInt listenerCount) {
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_list);
 
         final TextView tvTitle = dialogResult.findViewById(R.id.dialog_list_title);
@@ -1090,7 +1085,7 @@ public class CustomCenterDialog {
             @Override
             public void onResponse(int value) {
                 listenerCount.onResponse(value);
-                if (value ==0){
+                if (value == 0) {
                     dialogResult.dismiss();
                 }
             }

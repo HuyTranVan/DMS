@@ -2,64 +2,56 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:state_checked="true">
-        <shape  android:shape="oval"
-            android:padding="10dp">
+        <shape android:shape="oval" android:padding="10dp">
             <solid android:color="@color/colorBlue" />
         </shape>
 
     </item>
 
     <item android:state_focused="true">
-        <shape  android:shape="oval"
-            android:padding="10dp">
+        <shape android:shape="oval" android:padding="10dp">
             <solid android:color="@color/colorBlue" />
         </shape>
 
     </item>
 
     <item android:state_active="true">
-        <shape  android:shape="oval"
-            android:padding="10dp">
+        <shape android:shape="oval" android:padding="10dp">
             <solid android:color="@color/colorBlue" />
         </shape>
 
     </item>
 
     <item android:state_hovered="true">
-        <shape  android:shape="oval"
-            android:padding="10dp">
+        <shape android:shape="oval" android:padding="10dp">
             <solid android:color="@color/colorBlue" />
         </shape>
 
     </item>
 
     <item android:state_pressed="true">
-        <shape  android:shape="oval"
-            android:padding="10dp">
+        <shape android:shape="oval" android:padding="10dp">
             <solid android:color="@color/colorBlue" />
         </shape>
 
     </item>
 
     <item android:state_checkable="true">
-        <shape  android:shape="oval"
-            android:padding="10dp">
+        <shape android:shape="oval" android:padding="10dp">
             <solid android:color="@color/colorBlue" />
         </shape>
 
     </item>
 
     <item android:state_activated="true">
-        <shape  android:shape="oval"
-            android:padding="10dp">
+        <shape android:shape="oval" android:padding="10dp">
             <solid android:color="@color/colorBlue" />
         </shape>
 
     </item>
 
     <item android:state_checkable="true">
-        <shape  android:shape="oval"
-            android:padding="10dp">
+        <shape android:shape="oval" android:padding="10dp">
             <solid android:color="@color/colorBlue" />
         </shape>
 
@@ -67,16 +59,14 @@
 
 
     <item android:state_selected="true">
-        <shape  android:shape="oval"
-            android:padding="10dp">
+        <shape android:shape="oval" android:padding="10dp">
             <solid android:color="@color/colorBlue" />
         </shape>
 
     </item>
 
-    <item >
-        <shape  android:shape="oval"
-                android:padding="10dp">
+    <item>
+        <shape android:shape="oval" android:padding="10dp">
             <solid android:color="@color/black_text_color_hint" />
         </shape>
     </item>

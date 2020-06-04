@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,18 +16,11 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.InventoryEditAdapter;
-import wolve.dms.adapter.ProductImportChoosenAdapter;
-import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.apiconnect.SystemConnect;
-import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.callback.CallbackListObject;
-import wolve.dms.callback.CallbackObject;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 /**
@@ -49,7 +41,7 @@ public class InventoryEditFragment extends Fragment implements View.OnClickListe
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_inventory_edit,container,false);
+        view = inflater.inflate(R.layout.fragment_inventory_edit, container, false);
         initializeView();
 
         intitialData();
@@ -60,7 +52,7 @@ public class InventoryEditFragment extends Fragment implements View.OnClickListe
 
     private void intitialData() {
         String bundle = getArguments().getString(Constants.TEMPWAREHOUSE);
-        if (bundle != null){
+        if (bundle != null) {
             currrentWarehouse = new BaseModel(bundle);
 
             tvTitle.setText(String.format("Hiệu chỉnh tồn %s", currrentWarehouse.getString("name")));
@@ -93,18 +85,16 @@ public class InventoryEditFragment extends Fragment implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.icon_back:
                 mActivity.onBackPressed();
                 break;
 
 
-
-
         }
     }
 
-    private void loadInventories(int warehouse_id, CallbackListObject listener){
+    private void loadInventories(int warehouse_id, CallbackListObject listener) {
         SystemConnect.GetInventoryList(warehouse_id, new CallbackListCustom() {
             @Override
             public void onResponse(List result) {
@@ -121,11 +111,10 @@ public class InventoryEditFragment extends Fragment implements View.OnClickListe
 
     }
 
-    private void createRVInventory(List<BaseModel> list){
+    private void createRVInventory(List<BaseModel> list) {
         adapter = new InventoryEditAdapter(list);
         Util.createLinearRV(rvInventory, adapter);
     }
-
 
 
 }

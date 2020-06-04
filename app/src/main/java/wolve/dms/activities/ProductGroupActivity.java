@@ -27,13 +27,13 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class ProductGroupActivity extends BaseActivity implements View.OnClickListener{
+public class ProductGroupActivity extends BaseActivity implements View.OnClickListener {
     private ImageView btnBack;
     private RecyclerView rvProductGroup;
     private ProductGroupAdapter productGroupAdapter;
     private FloatingActionButton btnAddProductGroup;
 
-    public List<BaseModel> listProductGroup ;
+    public List<BaseModel> listProductGroup;
 
     @Override
     public int getResourceLayout() {
@@ -49,7 +49,7 @@ public class ProductGroupActivity extends BaseActivity implements View.OnClickLi
     public void findViewById() {
         btnBack = (ImageView) findViewById(R.id.icon_back);
         rvProductGroup = (RecyclerView) findViewById(R.id.product_group_rvgroup);
-        btnAddProductGroup =  findViewById(R.id.product_group_add_new);
+        btnAddProductGroup = findViewById(R.id.product_group_add_new);
 
     }
 
@@ -68,7 +68,7 @@ public class ProductGroupActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.icon_back:
 //                Transaction.gotoHomeActivityRight(true);
                 onBackPressed();
@@ -85,10 +85,10 @@ public class ProductGroupActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onBackPressed() {
         Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.product_group_parent);
-        if(mFragment != null && mFragment instanceof NewUpdateProductGroupFragment) {
+        if (mFragment != null && mFragment instanceof NewUpdateProductGroupFragment) {
             getSupportFragmentManager().popBackStack();
 
-        }else {
+        } else {
             Transaction.gotoHomeActivityRight(true);
         }
     }
@@ -123,10 +123,10 @@ public class ProductGroupActivity extends BaseActivity implements View.OnClickLi
     }
 
 
-    private void createRVProductGroup(List<BaseModel> list){
+    private void createRVProductGroup(List<BaseModel> list) {
         listProductGroup = new ArrayList<>();
 
-        for (int i=0; i<list.size(); i++){
+        for (int i = 0; i < list.size(); i++) {
             listProductGroup.add(list.get(i));
 
         }
@@ -146,14 +146,12 @@ public class ProductGroupActivity extends BaseActivity implements View.OnClickLi
 
     }
 
-    private void openFragmentNewProductGroup(String productgroup){
+    private void openFragmentNewProductGroup(String productgroup) {
         NewUpdateProductGroupFragment groupFragment = new NewUpdateProductGroupFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constants.PRODUCTGROUP, productgroup);
-        changeFragment(groupFragment, bundle, true );
+        changeFragment(groupFragment, bundle, true);
     }
-
-
 
 
 }

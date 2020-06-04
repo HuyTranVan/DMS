@@ -10,10 +10,8 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -21,22 +19,17 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.ProductImportChoosenAdapter;
-import wolve.dms.adapter.Statistical_OrderedAdapter;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.apiconnect.SystemConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.callback.CallbackListObject;
 import wolve.dms.callback.CallbackObject;
-import wolve.dms.callback.CallbackString;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
-import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
 /**
@@ -59,7 +52,7 @@ public class ImportReturnFragment extends Fragment implements View.OnClickListen
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_import_return,container,false);
+        view = inflater.inflate(R.layout.fragment_import_return, container, false);
         initializeView();
 
         intitialData();
@@ -71,7 +64,7 @@ public class ImportReturnFragment extends Fragment implements View.OnClickListen
     private void intitialData() {
         String bundle1 = getArguments().getString(Constants.WAREHOUSE);
         String bundle2 = getArguments().getString(Constants.TEMPWAREHOUSE);
-        if (bundle1 != null){
+        if (bundle1 != null) {
             currrentWarehouse = new BaseModel(bundle1);
             returnWarehouse = new BaseModel(bundle2);
 
@@ -108,7 +101,7 @@ public class ImportReturnFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.icon_back:
                 mActivity.onBackPressed();
                 break;
@@ -122,7 +115,7 @@ public class ImportReturnFragment extends Fragment implements View.OnClickListen
         }
     }
 
-    private void loadListInventory(int warehouse_id, CallbackListObject listener){
+    private void loadListInventory(int warehouse_id, CallbackListObject listener) {
         SystemConnect.GetInventoryList(warehouse_id, new CallbackListCustom() {
             @Override
             public void onResponse(List result) {
@@ -139,13 +132,14 @@ public class ImportReturnFragment extends Fragment implements View.OnClickListen
 
     }
 
-    private void createRVInventory(List<BaseModel> list){
+    private void createRVInventory(List<BaseModel> list) {
         adapter = new ProductImportChoosenAdapter(list, false, new CallbackInt() {
             @Override
             public void onResponse(int value) {
-                btnSubmit.setVisibility(adapter.getAllSelected() >=0 ? View.VISIBLE: View.GONE);
+                btnSubmit.setVisibility(adapter.getAllSelected() >= 0 ? View.VISIBLE : View.GONE);
 
-            }}, new CallbackObject() {
+            }
+        }, new CallbackObject() {
             @Override
             public void onResponse(BaseModel object) {
 
@@ -154,14 +148,14 @@ public class ImportReturnFragment extends Fragment implements View.OnClickListen
         Util.createLinearRV(rvInventory, adapter);
     }
 
-    private void checkBoxEvent(){
+    private void checkBoxEvent() {
         cbAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b){
+                if (b) {
                     adapter.selectAll();
 
-                }else {
+                } else {
                     adapter.noneSelect();
 
                 }
@@ -169,7 +163,7 @@ public class ImportReturnFragment extends Fragment implements View.OnClickListen
         });
     }
 
-    private void submitImport(){
+    private void submitImport() {
         String param = DataUtil.createPostImportParam(returnWarehouse.getInt("id"),
                 currrentWarehouse.getInt("id"),
                 adapter.getAllDataHaveQuantity(),
@@ -177,8 +171,8 @@ public class ImportReturnFragment extends Fragment implements View.OnClickListen
         postImport(param, new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
-                if (result){
-                    DataUtil.saveProductPopular( adapter.getAllDataHaveQuantity());
+                if (result) {
+                    DataUtil.saveProductPopular(adapter.getAllDataHaveQuantity());
                     mActivity.initialData();
                     mActivity.onBackPressed();
 
@@ -189,7 +183,7 @@ public class ImportReturnFragment extends Fragment implements View.OnClickListen
 
     }
 
-    private void postImport(String param, CallbackBoolean listener){
+    private void postImport(String param, CallbackBoolean listener) {
         CustomerConnect.PostImport(param, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {

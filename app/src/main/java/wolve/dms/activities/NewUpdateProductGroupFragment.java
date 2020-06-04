@@ -1,7 +1,6 @@
 package wolve.dms.activities;
 
 import android.os.Bundle;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,13 +18,11 @@ import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.ProductConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.customviews.CInputForm;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
-import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 /**
@@ -43,7 +40,7 @@ public class NewUpdateProductGroupFragment extends Fragment implements View.OnCl
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_add_productgroup,container,false);
+        view = inflater.inflate(R.layout.fragment_add_productgroup, container, false);
         initializeView();
 
         intitialData();
@@ -54,7 +51,7 @@ public class NewUpdateProductGroupFragment extends Fragment implements View.OnCl
 
     private void intitialData() {
         String bundle = getArguments().getString(Constants.PRODUCTGROUP);
-        if (bundle != null){
+        if (bundle != null) {
             try {
                 productGroup = new ProductGroup(new JSONObject(bundle));
                 edInput.setText(productGroup.getString("name"));
@@ -84,7 +81,7 @@ public class NewUpdateProductGroupFragment extends Fragment implements View.OnCl
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.icon_back:
 //                getActivity().getSupportFragmentManager().popBackStack();
                 Util.hideKeyboard(v);
@@ -92,7 +89,7 @@ public class NewUpdateProductGroupFragment extends Fragment implements View.OnCl
                 break;
 
             case R.id.add_productgroup_submit:
-                if (edInput.getText().toString().trim().equals("")){
+                if (edInput.getText().toString().trim().equals("")) {
                     CustomCenterDialog.alertWithCancelButton(null, "Nhập tên nhóm sản phẩm", "đồng ý", null, new CallbackBoolean() {
                         @Override
                         public void onRespone(Boolean result) {
@@ -100,9 +97,9 @@ public class NewUpdateProductGroupFragment extends Fragment implements View.OnCl
                         }
                     });
 
-                }else {
-                    String param = String.format(Api_link.PRODUCTGROUP_CREATE_PARAM, productGroup == null? "" : "id="+ productGroup.getString("id") +"&",
-                                Util.encodeString(edInput.getText().toString()));
+                } else {
+                    String param = String.format(Api_link.PRODUCTGROUP_CREATE_PARAM, productGroup == null ? "" : "id=" + productGroup.getString("id") + "&",
+                            Util.encodeString(edInput.getText().toString()));
 
 
                     ProductConnect.CreateProductGroup(param, new CallbackCustom() {

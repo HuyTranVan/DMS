@@ -19,8 +19,7 @@
         app:tsquare_dividerColor="@android:color/transparent"
         app:tsquare_headerTextColor="#030303"
         android:layout_marginTop="@dimen/_10sdp"
-        android:layout_marginBottom="@dimen/_40sdp"/>
-
+        android:layout_marginBottom="@dimen/_40sdp" />
 
 
 </LinearLayout>

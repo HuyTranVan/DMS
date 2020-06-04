@@ -24,21 +24,21 @@ public class User extends BaseModel {
     //Role = 2 : WAREHOUSE
     //Role = 3 : DELIVER
     //Role = 4 : Sale
-    public static List< BaseModel> listRole(){
+    public static List<BaseModel> listRole() {
         List<BaseModel> roles = new ArrayList<>();
-        roles.add(BaseModel.put2ValueToNewObject( "text", "QUẢN LÝ", "index", 1));
-        roles.add( BaseModel.put2ValueToNewObject( "text", "THỦ KHO", "index", 2));
-        roles.add(BaseModel.put2ValueToNewObject( "text", "GIAO HÀNG", "index", 3));
-        roles.add( BaseModel.put2ValueToNewObject( "text", "SALE", "index", 4));
+        roles.add(BaseModel.put2ValueToNewObject("text", "QUẢN LÝ", "index", 1));
+        roles.add(BaseModel.put2ValueToNewObject("text", "THỦ KHO", "index", 2));
+        roles.add(BaseModel.put2ValueToNewObject("text", "GIAO HÀNG", "index", 3));
+        roles.add(BaseModel.put2ValueToNewObject("text", "SALE", "index", 4));
 
         return roles;
     }
 
-    public static int getIndex(String role){
+    public static int getIndex(String role) {
         int index = 0;
-        for (BaseModel model: listRole()){
-            if (model.getString("text").equals(role)){
-                index =  model.getInt("index");
+        for (BaseModel model : listRole()) {
+            if (model.getString("text").equals(role)) {
+                index = model.getInt("index");
 
                 break;
 
@@ -47,26 +47,26 @@ public class User extends BaseModel {
         return index;
     }
 
-    public static int getCurrentRoleId(){
+    public static int getCurrentRoleId() {
         BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
         return currentUser.getInt("role");
     }
 
-    public static String getImage(){
+    public static String getImage() {
         BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
 
         return currentUser.getString("image");
     }
 
 
-    public static String getCurrentRoleString(){
+    public static String getCurrentRoleString() {
         String role = "";
         BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
 
         if (currentUser != null) {
-            for (BaseModel model: listRole()){
-                if (model.getInt("index") == currentUser.getInt("role")){
-                    role =  model.getString("text");
+            for (BaseModel model : listRole()) {
+                if (model.getInt("index") == currentUser.getInt("role")) {
+                    role = model.getString("text");
                     break;
                 }
             }
@@ -75,12 +75,12 @@ public class User extends BaseModel {
         return role;
     }
 
-    public static String getRoleString(int id){
+    public static String getRoleString(int id) {
         String role = "";
 
-        for (BaseModel model: listRole()){
-            if (model.getInt("index") == id){
-                role =  model.getString("text");
+        for (BaseModel model : listRole()) {
+            if (model.getInt("index") == id) {
+                role = model.getString("text");
                 break;
             }
 
@@ -104,7 +104,7 @@ public class User extends BaseModel {
         }
     }
 
-    public static String getUserId(){
+    public static String getUserId() {
         int id_user = 0;
         BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
 
@@ -114,7 +114,7 @@ public class User extends BaseModel {
         return String.valueOf(id_user);
     }
 
-    public static int getId(){
+    public static int getId() {
         int id_user = 0;
         BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
 
@@ -124,7 +124,7 @@ public class User extends BaseModel {
         return id_user;
     }
 
-    public static String getToken(){
+    public static String getToken() {
         String token = "";
         BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
 
@@ -134,7 +134,7 @@ public class User extends BaseModel {
         return token;
     }
 
-    public static String getFCMToken(){
+    public static String getFCMToken() {
         String token = "";
         BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
 
@@ -144,7 +144,7 @@ public class User extends BaseModel {
         return token;
     }
 
-    public static String getFullName(){
+    public static String getFullName() {
         String name = "";
         BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
 
@@ -156,8 +156,7 @@ public class User extends BaseModel {
     }
 
 
-
-    public static String getPhone(){
+    public static String getPhone() {
         String phone = "";
         BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
 
@@ -167,11 +166,11 @@ public class User extends BaseModel {
         return phone;
     }
 
-    public static BaseModel getCurrentUser(){
+    public static BaseModel getCurrentUser() {
         return CustomSQL.getBaseModel(Constants.USER);
     }
 
-    public static JSONObject getCurrentUserString(){
+    public static JSONObject getCurrentUserString() {
         BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
         JSONObject user = new JSONObject();
         try {
@@ -188,7 +187,6 @@ public class User extends BaseModel {
 
         return user;
     }
-
 
 
 }

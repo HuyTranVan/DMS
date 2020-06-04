@@ -44,7 +44,7 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
         this.mListenerReturn = listenerreturn;
         this.mListenerEdit = listeneredit;
 
-        DataUtil.sortbyStringKey("isMaster",mData, false);
+        DataUtil.sortbyStringKey("isMaster", mData, false);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
         return new WarehouseAdapterViewHolder(itemView);
     }
 
-    public void addItems(ArrayList<ProductGroup> list){
+    public void addItems(ArrayList<ProductGroup> list) {
         mData = new ArrayList<>();
         mData.addAll(list);
         notifyDataSetChanged();
@@ -62,38 +62,38 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
 
     @Override
     public void onBindViewHolder(final WarehouseAdapterViewHolder holder, final int position) {
-        holder.tvGroupName.setText(String.format("%s (%d)",mData.get(position).getString("name"),
-                                                                    mData.get(position).getInt("quantity")));
+        holder.tvGroupName.setText(String.format("%s (%d)", mData.get(position).getString("name"),
+                mData.get(position).getInt("quantity")));
         holder.tvUsername.setText(Util.getIconString(R.string.icon_username, "   ", mData.get(position).getBaseModel("user").getString("displayName")));
 
-        if (Util.isAdmin() || mData.get(position).getInt("user_id") == User.getId()){
+        if (Util.isAdmin() || mData.get(position).getInt("user_id") == User.getId()) {
             holder.tvInfo.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             holder.tvInfo.setVisibility(View.GONE);
         }
-        if (mData.get(position).getInt("number_temp_import") >0){
+        if (mData.get(position).getInt("number_temp_import") > 0) {
             holder.tvTempImport.setVisibility(View.VISIBLE);
             holder.tvTempImport.setText(String.format("(%d) Chờ nhập kho", mData.get(position).getInt("number_temp_import")));
 
-        }else {
+        } else {
             holder.tvTempImport.setVisibility(View.GONE);
         }
-        switch (mData.get(position).getInt("isMaster")){
+        switch (mData.get(position).getInt("isMaster")) {
             case 1:
                 holder.tvType.setVisibility(View.VISIBLE);
                 holder.tvType.setText(Util.getIcon(R.string.icon_home));
-                holder.tvReturn.setVisibility( View.GONE);
+                holder.tvReturn.setVisibility(View.GONE);
                 break;
 
             case 2:
                 holder.tvType.setVisibility(View.VISIBLE);
                 holder.tvType.setText(Util.getIcon(R.string.icon_depot));
-                if (Util.isAdmin() && mData.get(position).getInt("quantity")>0){
-                    holder.tvReturn.setVisibility( View.VISIBLE);
+                if (Util.isAdmin() && mData.get(position).getInt("quantity") > 0) {
+                    holder.tvReturn.setVisibility(View.VISIBLE);
                     holder.tvReturn.setText(Util.getIcon(R.string.icon_edit_pen));
                     holder.tvReturn.setRotation(0);
 
-                }else {
+                } else {
                     holder.tvReturn.setVisibility(View.GONE);
                 }
 
@@ -101,15 +101,15 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
 
             case 3:
                 holder.tvType.setVisibility(View.GONE);
-                if (mData.get(position).getInt("quantity")>0){
-                    if (Util.isAdmin() || User.getId() == mData.get(position).getInt("user_id")){
-                        holder.tvReturn.setVisibility( View.VISIBLE);
+                if (mData.get(position).getInt("quantity") > 0) {
+                    if (Util.isAdmin() || User.getId() == mData.get(position).getInt("user_id")) {
+                        holder.tvReturn.setVisibility(View.VISIBLE);
                         holder.tvReturn.setText(Util.getIcon(R.string.icon_logout));
-                    }else {
+                    } else {
                         holder.tvReturn.setVisibility(View.GONE);
                     }
 
-                }else {
+                } else {
                     holder.tvReturn.setVisibility(View.GONE);
                 }
 
@@ -127,10 +127,10 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
         holder.tvReturn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mData.get(position).getInt("isMaster") == 2){
+                if (mData.get(position).getInt("isMaster") == 2) {
                     mListenerEdit.onResponse(mData.get(position));
 
-                }else {
+                } else {
                     mListenerReturn.onResponse(mData.get(position));
                 }
 
@@ -144,7 +144,7 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
             }
         });
 
-        holder.line.setVisibility(position == mData.size()-1? View.GONE: View.VISIBLE);
+        holder.line.setVisibility(position == mData.size() - 1 ? View.GONE : View.VISIBLE);
 
     }
 
@@ -155,7 +155,7 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
 
 
     public class WarehouseAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvGroupName, tvType, tvTempImport,  tvInfo, tvUsername, tvReturn;
+        private TextView tvGroupName, tvType, tvTempImport, tvInfo, tvUsername, tvReturn;
         private RelativeLayout lnParent;
         private View line;
 
@@ -173,15 +173,15 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
         }
     }
 
-    public List<BaseModel> getAllTempWarehouse(){
+    public List<BaseModel> getAllTempWarehouse() {
         List<BaseModel> results = new ArrayList<>();
-        for (BaseModel model: mData){
-            if (model.getInt("isMaster") == 2){
+        for (BaseModel model : mData) {
+            if (model.getInt("isMaster") == 2) {
                 results.add(model);
             }
         }
 
-        return  results;
+        return results;
     }
 
 }

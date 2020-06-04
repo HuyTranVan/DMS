@@ -18,7 +18,6 @@ import java.util.List;
 import wolve.dms.R;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 /**
@@ -32,7 +31,7 @@ public class Customer_PaymentAdapter extends RecyclerView.Adapter<Customer_Payme
     private Context mContext;
     private CallbackListObject mListenerList;
 
-    public interface CallbackListObject{
+    public interface CallbackListObject {
         void onResponse(List<BaseModel> listResult, Double total, int id);
     }
 
@@ -42,7 +41,7 @@ public class Customer_PaymentAdapter extends RecyclerView.Adapter<Customer_Payme
         this.mData = baseData;
         this.mContext = Util.getInstance().getCurrentActivity();
 
-        Collections.sort(mData, new Comparator<BaseModel>(){
+        Collections.sort(mData, new Comparator<BaseModel>() {
             public int compare(BaseModel obj1, BaseModel obj2) {
                 return obj1.getString("createAt").compareToIgnoreCase(obj2.getString("createAt"));
             }
@@ -64,7 +63,7 @@ public class Customer_PaymentAdapter extends RecyclerView.Adapter<Customer_Payme
                     BaseModel contentObj = new BaseModel(charString);
                     List<BaseModel> listTemp = new ArrayList<>();
                     for (BaseModel row : baseData) {
-                        if (row.getLong("createAt") >= contentObj.getLong("from") &&  row.getLong("createAt") <= contentObj.getLong("to")){
+                        if (row.getLong("createAt") >= contentObj.getLong("from") && row.getLong("createAt") <= contentObj.getLong("to")) {
                             listTemp.add(row);
                         }
                     }
@@ -85,10 +84,10 @@ public class Customer_PaymentAdapter extends RecyclerView.Adapter<Customer_Payme
         };
     }
 
-    public void updateData(List<BaseModel> data){
+    public void updateData(List<BaseModel> data) {
         this.baseData = data;
         this.mData = baseData;
-        Collections.sort(mData, new Comparator<BaseModel>(){
+        Collections.sort(mData, new Comparator<BaseModel>() {
             public int compare(BaseModel obj1, BaseModel obj2) {
                 return obj1.getString("createAt").compareToIgnoreCase(obj2.getString("createAt"));
             }
@@ -106,10 +105,10 @@ public class Customer_PaymentAdapter extends RecyclerView.Adapter<Customer_Payme
     @Override
     public void onBindViewHolder(final CustomerPaymentViewHolder holder, final int position) {
         holder.tvTime.setText(Util.DateHourString(mData.get(position).getLong("createAt")));
-        holder.line.setVisibility(position == mData.size() -1 ? View.GONE: View.VISIBLE);
+        holder.line.setVisibility(position == mData.size() - 1 ? View.GONE : View.VISIBLE);
 
-        if (mData.get(position).hasKey("type")){
-            switch (mData.get(position).getString("type")){
+        if (mData.get(position).hasKey("type")) {
+            switch (mData.get(position).getString("type")) {
                 case Constants.BILL:
                     holder.tvText.setText("Mua hàng ");
                     holder.tvTotal.setTextColor(mContext.getResources().getColor(R.color.black_text_color));
@@ -119,27 +118,27 @@ public class Customer_PaymentAdapter extends RecyclerView.Adapter<Customer_Payme
 
                 case Constants.PAYMENT:
 
-                    if (mData.get(position).getDoubleValue("total")>= 0.0){
-                        if (mData.get(position).hasKey("payByReturn") && mData.get(position).getInt("payByReturn") != 1){
+                    if (mData.get(position).getDoubleValue("total") >= 0.0) {
+                        if (mData.get(position).hasKey("payByReturn") && mData.get(position).getInt("payByReturn") != 1) {
                             holder.tvTotal.setTextColor(mContext.getResources().getColor(R.color.colorBlue));
                             holder.tvText.setTextColor(mContext.getResources().getColor(R.color.black_text_color));
                             holder.tvText.setText("Khách hàng thanh toán ");
-                            holder.tvTotal.setText("+ "+ Util.FormatMoney(mData.get(position).getDouble("total")));
+                            holder.tvTotal.setText("+ " + Util.FormatMoney(mData.get(position).getDouble("total")));
 
-                        }else {
+                        } else {
                             holder.tvTotal.setTextColor(mContext.getResources().getColor(R.color.black_text_color_hint));
                             holder.tvText.setTextColor(mContext.getResources().getColor(R.color.black_text_color_hint));
                             holder.tvText.setText("Trừ tiền trả hàng ");
-                            holder.tvTotal.setText("+ "+ Util.FormatMoney(mData.get(position).getDouble("total")));
+                            holder.tvTotal.setText("+ " + Util.FormatMoney(mData.get(position).getDouble("total")));
                         }
 
 
-                    }else {
+                    } else {
                         holder.tvTotal.setTextColor(mContext.getResources().getColor(R.color.orange_dark));
                         holder.tvText.setTextColor(mContext.getResources().getColor(R.color.black_text_color));
-                        holder.tvText.setText(String.format("Trả lại khách hàng %s",mData.get(position).getString("note").equals("")?
-                                "":  String.format("(%s)", mData.get(position).getString("note"))) );
-                        holder.tvTotal.setText("- "+ Util.FormatMoney(mData.get(position).getDouble("total")*-1));
+                        holder.tvText.setText(String.format("Trả lại khách hàng %s", mData.get(position).getString("note").equals("") ?
+                                "" : String.format("(%s)", mData.get(position).getString("note"))));
+                        holder.tvTotal.setText("- " + Util.FormatMoney(mData.get(position).getDouble("total") * -1));
                     }
 
 
@@ -173,10 +172,9 @@ public class Customer_PaymentAdapter extends RecyclerView.Adapter<Customer_Payme
 
     }
 
-    public List<BaseModel> getAllBill(){
+    public List<BaseModel> getAllBill() {
         return mData;
     }
-
 
 
 }

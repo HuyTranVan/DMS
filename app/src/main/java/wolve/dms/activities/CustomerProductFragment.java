@@ -9,23 +9,19 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.Statistical_ProductGroupAdapter;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.BillDetail;
 import wolve.dms.utils.Util;
 
 /**
  * Created by macos on 9/16/17.
  */
 
-public class CustomerProductFragment extends Fragment implements View.OnClickListener{
+public class CustomerProductFragment extends Fragment implements View.OnClickListener {
     private View view;
     private RecyclerView rvProductGroup;
 
@@ -33,11 +29,10 @@ public class CustomerProductFragment extends Fragment implements View.OnClickLis
     private CustomerActivity mActivity;
 
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_customer_product,container,false);
+        view = inflater.inflate(R.layout.fragment_customer_product, container, false);
 
 
         initializeView();
@@ -67,26 +62,25 @@ public class CustomerProductFragment extends Fragment implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-
+        switch (v.getId()) {
 
 
         }
     }
 
-    public void updateList(){
+    public void updateList() {
         adapter.updateData(mActivity.listBillDetail);
     }
 
-    public void updateListByRange(String range){
-        if (range.isEmpty()){
+    public void updateListByRange(String range) {
+        if (range.isEmpty()) {
             adapter.updateData(mActivity.listBillDetail);
 
-        }else {
+        } else {
             BaseModel contentObj = new BaseModel(range);
             List<BaseModel> listTemp = new ArrayList<>();
             for (BaseModel row : mActivity.listBillDetail) {
-                if (row.getLong("createAt") >= contentObj.getLong("from") &&  row.getLong("createAt") <= contentObj.getLong("to")){
+                if (row.getLong("createAt") >= contentObj.getLong("from") && row.getLong("createAt") <= contentObj.getLong("to")) {
                     listTemp.add(row);
                 }
             }
@@ -96,7 +90,7 @@ public class CustomerProductFragment extends Fragment implements View.OnClickLis
     }
 
     private void createRVProductGroup(List<BaseModel> listbilldetail) {
-        adapter = new Statistical_ProductGroupAdapter( listbilldetail);
+        adapter = new Statistical_ProductGroupAdapter(listbilldetail);
         Util.createLinearRV(rvProductGroup, adapter);
 
     }

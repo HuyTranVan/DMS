@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-<item android:state_pressed="true">
-    <shape xmlns:android="http://schemas.android.com/apk/res/android"
-        android:shape="oval"
-        android:padding="10dp">
-        <solid android:color="@color/colorBlueDark" /> <!-- this one is ths color of the Rounded Button -->
-    </shape>
-</item>
-<item>
-    <shape xmlns:android="http://schemas.android.com/apk/res/android"
-        android:shape="oval"
-        android:padding="10dp">
-        <solid android:color="@color/colorBlue" /> <!-- this one is ths color of the Rounded Button -->
-    </shape>
-</item>
+    <item android:state_pressed="true">
+        <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval" android:padding="10dp">
+            <solid android:color="@color/colorBlueDark" /> <!-- this one is ths color of the Rounded Button -->
+        </shape>
+    </item>
+    <item>
+        <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval" android:padding="10dp">
+            <solid android:color="@color/colorBlue" /> <!-- this one is ths color of the Rounded Button -->
+        </shape>
+    </item>
 </selector>
 
 

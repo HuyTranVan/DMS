@@ -2,15 +2,11 @@ package wolve.dms.apiconnect;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Locale;
 
-import wolve.dms.callback.Callback;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomList;
-import wolve.dms.callback.CallbackJSONArray;
-import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.libraries.connectapi.CustomGetMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
@@ -32,7 +28,7 @@ public class LocationConnect {
                 Util.getInstance().stopLoading(stopLoading);
                 try {
                     JSONArray results = result.getJSONArray("results");
-                    if(results.length() > 0) {
+                    if (results.length() > 0) {
                         BaseModel firstAddress = new BaseModel(results.getJSONObject(0));
                         listener.onResponse(firstAddress);
 
@@ -64,10 +60,10 @@ public class LocationConnect {
             @Override
             public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(stopLoading);
-                if (Constants.responeIsSuccess(result)){
+                if (Constants.responeIsSuccess(result)) {
                     listener.onResponse(Constants.getResponeArraySuccess(result));
 
-                }else {
+                } else {
                     Constants.throwError(result.getString("message"));
                     listener.onError(result.getString("message"));
 
@@ -92,10 +88,10 @@ public class LocationConnect {
             @Override
             public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(stopLoading);
-                if (Constants.responeIsSuccess(result)){
+                if (Constants.responeIsSuccess(result)) {
                     listener.onResponse(Constants.getResponeArraySuccess(result));
 
-                }else {
+                } else {
                     Constants.throwError(result.getString("message"));
                     listener.onError(result.getString("message"));
 

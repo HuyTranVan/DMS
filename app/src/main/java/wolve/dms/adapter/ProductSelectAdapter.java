@@ -4,18 +4,15 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.callback.CallbackDouble;
 import wolve.dms.utils.Util;
 
 
@@ -74,18 +71,18 @@ public class ProductSelectAdapter extends RecyclerView.Adapter<ProductSelectAdap
             super(itemView);
             lnParent = (RelativeLayout) itemView.findViewById(R.id.product_select_parent);
             tvText = (TextView) itemView.findViewById(R.id.product_select_text);
-            tvClose= (TextView) itemView.findViewById(R.id.product_select_close);
+            tvClose = (TextView) itemView.findViewById(R.id.product_select_close);
 
         }
 
     }
 
-    public void addItem(String item){
+    public void addItem(String item) {
         mData.add(item);
         notifyDataSetChanged();
     }
 
-    public List<String> getData(){
+    public List<String> getData() {
         return mData;
 
     }

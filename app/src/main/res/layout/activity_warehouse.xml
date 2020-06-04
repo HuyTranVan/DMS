@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/depot_parent"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -19,7 +18,7 @@
             android:layout_height="match_parent"
             android:src="@drawable/ic_arrow_back_black_18dp"
             android:padding="@dimen/_8sdp"
-            android:background="?selectableItemBackground"/>
+            android:background="?selectableItemBackground" />
 
         <TextView
             android:id="@+id/depot_title"
@@ -28,7 +27,7 @@
             android:layout_centerInParent="true"
             android:text="DANH SÁCH KHO HÀNG"
             android:textSize="@dimen/_12sdp"
-            android:textColor="@color/black_text_color"/>
+            android:textColor="@color/black_text_color" />
 
         <TextView
             android:fontFamily="@font/font_awesome"
@@ -39,7 +38,7 @@
             android:layout_alignParentRight="true"
             android:text="@string/icon_plus"
             android:gravity="center"
-            android:textSize="@dimen/_14sdp"/>
+            android:textSize="@dimen/_14sdp" />
 
     </RelativeLayout>
 
@@ -47,7 +46,7 @@
         android:id="@+id/depot_rv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/depot_header"/>
+        android:layout_below="@+id/depot_header" />
 
     <LinearLayout
         android:id="@+id/warehouse_import"
@@ -66,7 +65,7 @@
             android:layout_height="@dimen/_30sdp"
             android:text="@string/icon_filter"
             android:textColor="@color/colorWhite"
-            android:gravity="center"/>
+            android:gravity="center" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -74,8 +73,7 @@
             android:text="NHẬP KHO"
             android:textColor="@color/white_text_color"
             android:textSize="@dimen/_12sdp"
-            android:paddingRight="@dimen/_10sdp"/>
-
+            android:paddingRight="@dimen/_10sdp" />
 
 
     </LinearLayout>

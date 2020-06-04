@@ -8,7 +8,6 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -48,7 +47,7 @@ public class CVerticalView extends RelativeLayout {
 
     }
 
-    public static float convertPixelsToDp(float px, Context context){
+    public static float convertPixelsToDp(float px, Context context) {
         return px / ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
     }
 
@@ -57,7 +56,7 @@ public class CVerticalView extends RelativeLayout {
 
         if (a != null) {
             if (a.hasValue(R.styleable.CInputForm_iconColor)) {
-                setIconColor(a.getColor(R.styleable.CInputForm_iconColor,0));
+                setIconColor(a.getColor(R.styleable.CInputForm_iconColor, 0));
             }
 
             if (a.hasValue(R.styleable.CInputForm_iconSize)) {
@@ -69,7 +68,7 @@ public class CVerticalView extends RelativeLayout {
             }
 
             if (a.hasValue(R.styleable.CInputForm_titleColor)) {
-                setTitleColor(a.getColor(R.styleable.CInputForm_titleColor,0));
+                setTitleColor(a.getColor(R.styleable.CInputForm_titleColor, 0));
             }
 
             if (a.hasValue(R.styleable.CInputForm_titleSize)) {
@@ -81,7 +80,7 @@ public class CVerticalView extends RelativeLayout {
             }
 
             if (a.hasValue(R.styleable.CInputForm_textColor)) {
-                setTextColor(a.getColor(R.styleable.CInputForm_textColor,0));
+                setTextColor(a.getColor(R.styleable.CInputForm_textColor, 0));
             }
 
             if (a.hasValue(R.styleable.CInputForm_textSize)) {
@@ -104,7 +103,7 @@ public class CVerticalView extends RelativeLayout {
     }
 
 //    public void setIconBackground(Drawable background) {
-        //edInput.setBackgroundColor(color);
+    //edInput.setBackgroundColor(color);
 //        tvIcon.setBackgroundDrawable(background);
 
 //    }

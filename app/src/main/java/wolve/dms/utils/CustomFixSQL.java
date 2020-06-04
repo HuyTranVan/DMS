@@ -1,4 +1,5 @@
 package wolve.dms.utils;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -17,55 +18,55 @@ public class CustomFixSQL {
     final static String MY_PREFS = "DMS_fix_data";
     static SharedPreferences prefs;
 
-    public static void setBaseModel(String title, BaseModel value){
+    public static void setBaseModel(String title, BaseModel value) {
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
         prefs.edit().putString(title, value.BaseModelstoString()).commit();
 
     }
 
-    public static void setString(String title, String value){
+    public static void setString(String title, String value) {
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
         prefs.edit().putString(title, value).commit();
 
     }
 
-    public static void setInt(String title, int value){
+    public static void setInt(String title, int value) {
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
         prefs.edit().putInt(title, value).commit();
     }
 
-    public static void setBoolean(String title, boolean boole){
+    public static void setBoolean(String title, boolean boole) {
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
         prefs.edit().putBoolean(title, boole).commit();
     }
 
-    public static void setLong(String title, long lon){
+    public static void setLong(String title, long lon) {
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
         prefs.edit().putLong(title, lon).commit();
     }
 
-    public static void setObject (String title, Object value){
+    public static void setObject(String title, Object value) {
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
         prefs.edit().putString(title, new Gson().toJson(value)).commit();
 
     }
 
-    public static void setBasemodel (String title, BaseModel value){
+    public static void setBasemodel(String title, BaseModel value) {
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
         prefs.edit().putString(title, value.BaseModelstoString()).commit();
 
     }
 
-    public static void setListObject (String title, List<Object> value){
+    public static void setListObject(String title, List<Object> value) {
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
         prefs.edit().putString(title, new Gson().toJson(value)).commit();
 
     }
 
-    public static void setListJSONObject (String title, List<JSONObject> value){
+    public static void setListJSONObject(String title, List<JSONObject> value) {
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
         JSONArray array = new JSONArray();
-        for (int i=0; i<value.size(); i++){
+        for (int i = 0; i < value.size(); i++) {
             array.put(value.get(i));
         }
 
@@ -73,10 +74,10 @@ public class CustomFixSQL {
 
     }
 
-    public static void setListBaseModel (String title, List<BaseModel> value){
+    public static void setListBaseModel(String title, List<BaseModel> value) {
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
         JSONArray array = new JSONArray();
-        for (int i=0; i<value.size(); i++){
+        for (int i = 0; i < value.size(); i++) {
             array.put(value.get(i).BaseModelJSONObject());
         }
 
@@ -85,52 +86,52 @@ public class CustomFixSQL {
     }
 
     //----------------------------
-    public static BaseModel getBaseModel(String title){
+    public static BaseModel getBaseModel(String title) {
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
-        if(prefs != null){
+        if (prefs != null) {
             return new BaseModel(prefs.getString(title, ""));
-        }else {
+        } else {
             return new BaseModel();
         }
 
     }
 
 
-    public static String getString(String title){
+    public static String getString(String title) {
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
-        if(prefs != null){
+        if (prefs != null) {
             return prefs.getString(title, "");
-        }else {
+        } else {
             return "";
         }
 
     }
 
-    public static int getInt(String title){
+    public static int getInt(String title) {
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
-        if(prefs != null)
+        if (prefs != null)
             return prefs.getInt(title, 0);
         return 0;
     }
 
 
-    public static boolean getBoolean(String title){
+    public static boolean getBoolean(String title) {
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
-        if(prefs != null)
+        if (prefs != null)
             return prefs.getBoolean(title, false);
         return false;
     }
 
-    public static long getLong(String title){
+    public static long getLong(String title) {
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
-        if(prefs != null)
+        if (prefs != null)
             return prefs.getLong(title, 0);
         return 0;
     }
 
-    public static <T extends Object> T getObject(String name, Class<T> type){
+    public static <T extends Object> T getObject(String name, Class<T> type) {
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
-        if(prefs != null) {
+        if (prefs != null) {
             Gson gson = new Gson();
             String json = prefs.getString(name, "");
             T obj = gson.fromJson(json, type);
@@ -141,15 +142,15 @@ public class CustomFixSQL {
     }
 
 
-    public static List<BaseModel>  getListObject(String name){
+    public static List<BaseModel> getListObject(String name) {
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
         List<BaseModel> listObject = new ArrayList<>();
 
         String value = prefs.getString(name, "");
         try {
-            if(prefs != null && !value.equals("")) {
+            if (prefs != null && !value.equals("")) {
                 JSONArray array = new JSONArray(value);
-                for (int i=0; i<array.length(); i++){
+                for (int i = 0; i < array.length(); i++) {
                     listObject.add(new BaseModel(array.getJSONObject(i)));
                 }
 
@@ -160,17 +161,17 @@ public class CustomFixSQL {
         return listObject;
     }
 
-    public static void removeKey(String title){
+    public static void removeKey(String title) {
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
-        if(prefs != null){
+        if (prefs != null) {
             prefs.edit().remove(title).commit();
         }
 
     }
 
-    public static void clear(){
+    public static void clear() {
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
-        if(prefs != null){
+        if (prefs != null) {
             prefs.edit().clear().commit();
         }
 

@@ -12,16 +12,15 @@
         android:id="@+id/cart_choice_header"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_20sdp"
-        android:background="#f4f4f4"
-        >
+        android:background="#f4f4f4">
 
         <!--<ImageView-->
-            <!--android:id="@+id/icon_back"-->
-            <!--android:layout_width="@dimen/_35sdp"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:src="@drawable/ic_arrow_back_black_18dp"-->
-            <!--android:padding="@dimen/_8sdp"-->
-            <!--android:background="?selectableItemBackground"/>-->
+        <!--android:id="@+id/icon_back"-->
+        <!--android:layout_width="@dimen/_35sdp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:src="@drawable/ic_arrow_back_black_18dp"-->
+        <!--android:padding="@dimen/_8sdp"-->
+        <!--android:background="?selectableItemBackground"/>-->
 
         <TextView
             android:id="@+id/cart_choice_header_title"
@@ -31,7 +30,7 @@
             android:text="Chọn sản phẩm khách cần mua"
             android:textStyle="italic"
             android:textSize="@dimen/_12sdp"
-            android:textColor="@color/black_text_color_hint"/>
+            android:textColor="@color/black_text_color_hint" />
 
     </RelativeLayout>
 
@@ -42,9 +41,9 @@
         android:layout_below="@+id/cart_choice_header">
 
         <!--<View-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="1dp"-->
-            <!--android:background="#75b9b3b3"/>-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="1dp"-->
+        <!--android:background="#75b9b3b3"/>-->
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/cart_choice_tabs"
@@ -65,7 +64,7 @@
         <View
             android:layout_width="wrap_content"
             android:layout_height="1dp"
-            android:background="#75b9b3b3"/>
+            android:background="#75b9b3b3" />
 
 
         <androidx.viewpager.widget.ViewPager
@@ -96,7 +95,7 @@
             android:textSize="@dimen/_12sdp"
             android:layout_marginLeft="@dimen/_10sdp"
             android:layout_marginRight="@dimen/_10sdp"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center" />
 
 
         <TextView
@@ -108,11 +107,8 @@
             android:textColor="@color/white"
             android:textSize="@dimen/_12sdp"
             android:gravity="center"
-            android:layout_marginRight="@dimen/_20sdp"/>
+            android:layout_marginRight="@dimen/_20sdp" />
     </LinearLayout>
-
-
-
 
 
 </RelativeLayout>

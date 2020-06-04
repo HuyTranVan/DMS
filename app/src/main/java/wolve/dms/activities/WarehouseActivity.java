@@ -31,14 +31,14 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class WarehouseActivity extends BaseActivity implements View.OnClickListener{
+public class WarehouseActivity extends BaseActivity implements View.OnClickListener {
     private ImageView btnBack;
     private RecyclerView rvDepot;
     private WarehouseAdapter adapter;
     private TextView btnAddPDepot;
     private LinearLayout btnImport;
 
-    public List<BaseModel> listDepot ;
+    public List<BaseModel> listDepot;
 
     @Override
     public int getResourceLayout() {
@@ -54,7 +54,7 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
     public void findViewById() {
         btnBack = (ImageView) findViewById(R.id.icon_back);
         rvDepot = (RecyclerView) findViewById(R.id.depot_rv);
-        btnAddPDepot =  findViewById(R.id.depot_add_new);
+        btnAddPDepot = findViewById(R.id.depot_add_new);
         btnImport = findViewById(R.id.warehouse_import);
 
     }
@@ -76,20 +76,20 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.icon_back:
                 onBackPressed();
                 break;
 
             case R.id.depot_add_new:
-                 BaseModel baseModel = new BaseModel();
+                BaseModel baseModel = new BaseModel();
 
-                if (checkMasterWarehouseExist(listDepot)){
+                if (checkMasterWarehouseExist(listDepot)) {
                     CustomCenterDialog.alertWithButton("Tạo kho hàng",
                             "Đã tồn tại kho tổng, bạn chỉ có thể tạo kho hàng tạm", "đồng ý", new CallbackBoolean() {
                                 @Override
                                 public void onRespone(Boolean result) {
-                                    if (result){
+                                    if (result) {
                                         baseModel.put("isMaster", 2);
                                         openFragmentNewDepot(baseModel.BaseModelstoString());
 
@@ -98,7 +98,7 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
                             });
 
 
-                }else {
+                } else {
                     CustomBottomDialog.choiceTwoOption(null, "Kho tổng", null, "Kho tạm", new CustomBottomDialog.TwoMethodListener() {
                         @Override
                         public void Method1(Boolean one) {
@@ -130,16 +130,16 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onBackPressed() {
         Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.depot_parent);
-        if(mFragment != null && mFragment instanceof NewUpdateWarehouseFragment) {
+        if (mFragment != null && mFragment instanceof NewUpdateWarehouseFragment) {
             getSupportFragmentManager().popBackStack();
 
-        }else if(mFragment != null && mFragment instanceof ImportReturnFragment) {
+        } else if (mFragment != null && mFragment instanceof ImportReturnFragment) {
             getSupportFragmentManager().popBackStack();
 
-        } else if(mFragment != null && mFragment instanceof InventoryEditFragment) {
+        } else if (mFragment != null && mFragment instanceof InventoryEditFragment) {
             getSupportFragmentManager().popBackStack();
 
-        }else {
+        } else {
             Transaction.gotoHomeActivityRight(true);
         }
     }
@@ -159,7 +159,7 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
         }, true);
     }
 
-    private void createRVDepot(List<BaseModel> list){
+    private void createRVDepot(List<BaseModel> list) {
         listDepot = list;
         adapter = new WarehouseAdapter(listDepot, new CallbackObject() {
             @Override
@@ -206,33 +206,33 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
 
     }
 
-    private void openFragmentNewDepot(String depot){
+    private void openFragmentNewDepot(String depot) {
         NewUpdateWarehouseFragment depotFragment = new NewUpdateWarehouseFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constants.DEPOT, depot);
-        changeFragment(depotFragment, bundle, true );
+        changeFragment(depotFragment, bundle, true);
     }
 
-    private void openFragmentImportReturn(BaseModel warehouse, BaseModel temptWarehouse){
+    private void openFragmentImportReturn(BaseModel warehouse, BaseModel temptWarehouse) {
         ImportReturnFragment importReturnFragment = new ImportReturnFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constants.WAREHOUSE, warehouse.BaseModelstoString());
         bundle.putString(Constants.TEMPWAREHOUSE, temptWarehouse.BaseModelstoString());
-        changeFragment(importReturnFragment, bundle, true );
+        changeFragment(importReturnFragment, bundle, true);
     }
 
-    private void openFragmentInventoryEdit(BaseModel temptWarehouse){
+    private void openFragmentInventoryEdit(BaseModel temptWarehouse) {
         InventoryEditFragment importReturnFragment = new InventoryEditFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constants.TEMPWAREHOUSE, temptWarehouse.BaseModelstoString());
-        changeFragment(importReturnFragment, bundle, true );
+        changeFragment(importReturnFragment, bundle, true);
     }
 
-    private boolean checkMasterWarehouseExist(List<BaseModel> list){
+    private boolean checkMasterWarehouseExist(List<BaseModel> list) {
         boolean check = false;
-        for (BaseModel model: list){
-            if (model.getInt("isMaster") == 1){
-                check =  true;
+        for (BaseModel model : list) {
+            if (model.getInt("isMaster") == 1) {
+                check = true;
                 break;
             }
         }
@@ -248,11 +248,11 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
 
     }
 
-    private void selectTempWarehouseReturn(BaseModel objectWarehouse){
-        if (adapter.getAllTempWarehouse().size() == 1){
+    private void selectTempWarehouseReturn(BaseModel objectWarehouse) {
+        if (adapter.getAllTempWarehouse().size() == 1) {
             openFragmentImportReturn(objectWarehouse, adapter.getAllTempWarehouse().get(0));
 
-        }else {
+        } else {
             CustomBottomDialog.choiceListObject("chọn kho nhận hàng trả về",
                     adapter.getAllTempWarehouse(),
                     "name",
@@ -268,7 +268,7 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
 
     }
 
-    private void openEditInventoryFragment(BaseModel curentWarehouse){
+    private void openEditInventoryFragment(BaseModel curentWarehouse) {
         CustomCenterDialog.alertWithCancelButton("Hiệu chỉnh  tồn kho",
                 "Mở trang điều chỉnh số lượng tồn kho tạm",
                 "tiếp tục",
@@ -276,7 +276,7 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
                 new CallbackBoolean() {
                     @Override
                     public void onRespone(Boolean result) {
-                        if (result){
+                        if (result) {
                             openFragmentInventoryEdit(curentWarehouse);
 
                         }

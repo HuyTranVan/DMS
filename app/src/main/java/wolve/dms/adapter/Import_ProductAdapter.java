@@ -75,13 +75,13 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<Import_ProductAd
 
             }
         });
-        holder.tvAccept.setVisibility(mData.get(position).getInt("acceptBy") != 0? View.GONE: View.VISIBLE);
-        holder.tvDelete.setVisibility(mData.get(position).getInt("acceptBy") != 0? View.GONE: View.VISIBLE);
-        holder.tvCopy.setVisibility(mData.get(position).getInt("acceptBy") != 0 && Util.isAdmin()? View.VISIBLE: View.GONE);
+        holder.tvAccept.setVisibility(mData.get(position).getInt("acceptBy") != 0 ? View.GONE : View.VISIBLE);
+        holder.tvDelete.setVisibility(mData.get(position).getInt("acceptBy") != 0 ? View.GONE : View.VISIBLE);
+        holder.tvCopy.setVisibility(mData.get(position).getInt("acceptBy") != 0 && Util.isAdmin() ? View.VISIBLE : View.GONE);
 
         if (Util.isAdmin()
                 || User.getId() == mData.get(position).getBaseModel("fr_warehouse").getInt("user_id")
-                && mData.get(position).getBaseModel("warehouse").getInt("isMaster") != 2){
+                && mData.get(position).getBaseModel("warehouse").getInt("isMaster") != 2) {
             holder.tvAccept.setText(Util.getIconString(R.string.icon_check, "  ", "DUYỆT NHẬP KHO"));
             holder.tvAccept.setTextColor(mContext.getResources().getColor(R.color.colorBlue));
             holder.tvAccept.setOnClickListener(new View.OnClickListener() {
@@ -92,7 +92,7 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<Import_ProductAd
                 }
             });
 
-        }else {
+        } else {
             holder.tvAccept.setText(Util.getIconString(R.string.icon_x, "  ", "CHƯA DUYỆT"));
             holder.tvAccept.setTextColor(mContext.getResources().getColor(R.color.black_text_color_hint));
             holder.tvAccept.setOnClickListener(null);
@@ -106,37 +106,36 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<Import_ProductAd
         });
 
 
-
     }
 
     private void submitAcceptImport(int position, List<BaseModel> importdetails) {
         checkInventory(importdetails, mData.get(position).getBaseModel("fr_warehouse"), new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
-                if (result){
+                if (result) {
                     CustomCenterDialog.alertWithCancelButton(null, String.format("Xác nhận nhập kho %s của nhân viên %s",
-                        Util.DateHourString(mData.get(position).getLong("createAt")),
-                        mData.get(position).getBaseModel("user").getString("displayName")),
-                        "XÁC NHẬN","HỦY", new CallbackBoolean() {
-                            @Override
-                            public void onRespone(Boolean result) {
-                                if (result){
-                                    String param = DataUtil.createUpdateAcceptImportParam(mData.get(position).getInt("id"), User.getId());
-                                    postUpdateImport(param, new CallbackBoolean() {
-                                        @Override
-                                        public void onRespone(Boolean result){
-                                            mListener.onRespone(true);
+                            Util.DateHourString(mData.get(position).getLong("createAt")),
+                            mData.get(position).getBaseModel("user").getString("displayName")),
+                            "XÁC NHẬN", "HỦY", new CallbackBoolean() {
+                                @Override
+                                public void onRespone(Boolean result) {
+                                    if (result) {
+                                        String param = DataUtil.createUpdateAcceptImportParam(mData.get(position).getInt("id"), User.getId());
+                                        postUpdateImport(param, new CallbackBoolean() {
+                                            @Override
+                                            public void onRespone(Boolean result) {
+                                                mListener.onRespone(true);
 
-                                        }
-                                    });
+                                            }
+                                        });
 
+
+                                    }
 
                                 }
+                            });
 
-                            }
-                        });
-
-                }else {
+                } else {
                     CustomCenterDialog.alert("Nhập kho",
                             String.format("Vui lòng nhập kho %s để thao tác tiếp", mData.get(position).getBaseModel("fr_warehouse").getString("name")),
                             "đồng ý");
@@ -145,34 +144,33 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<Import_ProductAd
         });
 
 
-
     }
 
     private void deleteImport(int position) {
-        CustomCenterDialog.alertWithCancelButton(null, String.format("Bạn muốn xóa nhập kho %s",Util.DateHourString(mData.get(position).getLong("createAt"))),
-        "ĐỒNG Ý","HỦY", new CallbackBoolean() {
-            @Override
-            public void onRespone(Boolean result) {
-                if (result){
-                    CustomerConnect.DeleteImport(mData.get(position).getString("id"), new CallbackCustom() {
-                        @Override
-                        public void onResponse(BaseModel result) {
-                            if (result.getBoolean("deleted")){
-                                Util.getInstance().stopLoading(true);
-                                Util.showToast("Xóa thành công!");
-                                mListener.onRespone(true);
-                            }
+        CustomCenterDialog.alertWithCancelButton(null, String.format("Bạn muốn xóa nhập kho %s", Util.DateHourString(mData.get(position).getLong("createAt"))),
+                "ĐỒNG Ý", "HỦY", new CallbackBoolean() {
+                    @Override
+                    public void onRespone(Boolean result) {
+                        if (result) {
+                            CustomerConnect.DeleteImport(mData.get(position).getString("id"), new CallbackCustom() {
+                                @Override
+                                public void onResponse(BaseModel result) {
+                                    if (result.getBoolean("deleted")) {
+                                        Util.getInstance().stopLoading(true);
+                                        Util.showToast("Xóa thành công!");
+                                        mListener.onRespone(true);
+                                    }
+                                }
+
+                                @Override
+                                public void onError(String error) {
+
+                                }
+                            }, true);
                         }
 
-                        @Override
-                        public void onError(String error) {
-
-                        }
-                    }, true);
-                }
-
-            }
-        });
+                    }
+                });
     }
 
     @Override
@@ -181,7 +179,7 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<Import_ProductAd
     }
 
     public class Import_ProductViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvDate,  tvDelete, tvUser, tvWarehouse, tvAccept, tvCopy;
+        private TextView tvDate, tvDelete, tvUser, tvWarehouse, tvAccept, tvCopy;
         private RecyclerView rvProduct;
         private CardView lnParent;
 
@@ -201,14 +199,14 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<Import_ProductAd
 
     }
 
-    public void reloadData(List<BaseModel> list){
+    public void reloadData(List<BaseModel> list) {
         mData = list;
         DataUtil.sortbyStringKey("createAt", mData, true);
 
         notifyDataSetChanged();
     }
 
-    private void postUpdateImport(String param, CallbackBoolean listener){
+    private void postUpdateImport(String param, CallbackBoolean listener) {
         CustomerConnect.PostImport(param, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
@@ -223,16 +221,16 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<Import_ProductAd
         }, true);
     }
 
-    private String createImportContentForShare(int position){
+    private String createImportContentForShare(int position) {
         String patern = "Ngày %s\nNhập từ %s >>> %s\n\n%s\n\n=>>> %s";
         String detail = "";
         List<BaseModel> details = DataUtil.array2ListObject(mData.get(position).getString("details"));
-        for (int i=0; i<details.size(); i++){
+        for (int i = 0; i < details.size(); i++) {
             detail += String.format("%s x  %s (%s)",
                     details.get(i).getInt("quantity"),
                     details.get(i).getString("productName"),
                     Util.FormatMoney(details.get(i).getDouble("basePrice")))
-                    + (i == details.size()-1? "": "\n");
+                    + (i == details.size() - 1 ? "" : "\n");
         }
 
         return String.format(patern, Util.DateHourString(mData.get(position).getLong("createAt")),
@@ -243,12 +241,12 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<Import_ProductAd
 
     }
 
-    private void checkInventory(List<BaseModel> importdetails, BaseModel warehouse, CallbackBoolean listener){
+    private void checkInventory(List<BaseModel> importdetails, BaseModel warehouse, CallbackBoolean listener) {
         DataUtil.checkInventory(importdetails, warehouse.getInt("id"), new CallbackListObject() {
             @Override
             public void onResponse(List<BaseModel> list) {
-                if (list.size() >0){
-                    CustomCenterDialog.showListProductWithDifferenceQuantity( warehouse.getString("name") +": KHÔNG ĐỦ TỒN KHO ",
+                if (list.size() > 0) {
+                    CustomCenterDialog.showListProductWithDifferenceQuantity(warehouse.getString("name") + ": KHÔNG ĐỦ TỒN KHO ",
                             list,
                             new CallbackBoolean() {
                                 @Override
@@ -259,7 +257,7 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<Import_ProductAd
                                 }
                             });
 
-                }else {
+                } else {
                     listener.onRespone(true);
                 }
             }

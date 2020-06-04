@@ -33,7 +33,7 @@ import wolve.dms.utils.Util;
 public class StatisticalDebtFragment extends Fragment implements View.OnClickListener {
     private View view;
     private RecyclerView rvDebts;
-    private TextView tvSum, tvSumDebt, tvSumOrder, tvSort ;
+    private TextView tvSum, tvSumDebt, tvSumOrder, tvSort;
     private StatisticalActivity mActivity;
     private LinearLayout lnSum, lnOrdered;
 
@@ -43,7 +43,7 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_statistical_debt,container,false);
+        view = inflater.inflate(R.layout.fragment_statistical_debt, container, false);
         Util.debtFragment = this;
         initializeView();
 
@@ -85,8 +85,8 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
         rvDebts = (RecyclerView) view.findViewById(R.id.statistical_debt_rvbill);
         tvSum = view.findViewById(R.id.statistical_debt_count);
         tvSort = view.findViewById(R.id.statistical_debt_sort);
-        tvSumDebt= view.findViewById(R.id.statistical_debt_number_customer_debt);
-        tvSumOrder= view.findViewById(R.id.statistical_debt_number_customer);
+        tvSumDebt = view.findViewById(R.id.statistical_debt_number_customer_debt);
+        tvSumOrder = view.findViewById(R.id.statistical_debt_number_customer);
         lnSum = view.findViewById(R.id.statistical_debt_count_parent);
         lnOrdered = view.findViewById(R.id.statistical_ordered_count_parent);
 
@@ -94,18 +94,18 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
 
         }
     }
 
-    public void updateCustomerNumber(int user_id, List<BaseModel> list){
-        if (user_id ==0){
-            tvSumOrder.setText(String.valueOf(DataUtil.sumNumberFromList(list,"num_of_order")));
+    public void updateCustomerNumber(int user_id, List<BaseModel> list) {
+        if (user_id == 0) {
+            tvSumOrder.setText(String.valueOf(DataUtil.sumNumberFromList(list, "num_of_order")));
 
-        }else {
-            for (BaseModel model: list){
-                if (model.getInt("user_id") == user_id){
+        } else {
+            for (BaseModel model : list) {
+                if (model.getInt("user_id") == user_id) {
                     tvSumOrder.setText(model.getString("num_of_order"));
                     break;
                 }
@@ -115,7 +115,7 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
 
     }
 
-    public void reloadData(String user, List<BaseModel> listDebt){
+    public void reloadData(String user, List<BaseModel> listDebt) {
         createRVCDebt(user, listDebt);
 
     }
@@ -152,15 +152,15 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
 
     }
 
-    protected double getSumDebt(){
+    protected double getSumDebt() {
         return adapter.sumDebts();
     }
 
-    private void sortDebt(){
-        if (tvSort.getRotation() == 180){
+    private void sortDebt() {
+        if (tvSort.getRotation() == 180) {
             tvSort.setRotation(0);
 
-        }else {
+        } else {
             tvSort.setRotation(180);
         }
         adapter.sortUp();

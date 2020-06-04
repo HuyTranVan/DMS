@@ -19,7 +19,6 @@ import java.util.List;
 import wolve.dms.R;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
@@ -40,9 +39,9 @@ public class Statistical_ProductGroupAdapter extends RecyclerView.Adapter<Statis
 
         List<BaseModel> listGroup = ProductGroup.getProductGroupList();
 
-        for (int i=0; i<listGroup.size(); i++){
+        for (int i = 0; i < listGroup.size(); i++) {
             BaseModel group = createGroupFromBill(listGroup.get(i), data);
-            if (group.getInt("count") >0){
+            if (group.getInt("count") > 0) {
                 mData.add(group);
             }
         }
@@ -50,13 +49,13 @@ public class Statistical_ProductGroupAdapter extends RecyclerView.Adapter<Statis
 
     }
 
-    public void updateData(List<BaseModel> data){
+    public void updateData(List<BaseModel> data) {
         List<BaseModel> listGroup = ProductGroup.getProductGroupList();
         mData = new ArrayList<>();
 
-        for (int i=0; i<listGroup.size(); i++){
+        for (int i = 0; i < listGroup.size(); i++) {
             BaseModel group = createGroupFromBill(listGroup.get(i), data);
-            if (group.getInt("count") >0){
+            if (group.getInt("count") > 0) {
                 mData.add(group);
             }
         }
@@ -78,11 +77,11 @@ public class Statistical_ProductGroupAdapter extends RecyclerView.Adapter<Statis
         Statistical_ProductAdapter adapter = new Statistical_ProductAdapter(mData.get(position).getList("products"), new CallbackString() {
             @Override
             public void Result(String s) {
-                if (!s.equals("0")){
+                if (!s.equals("0")) {
                     holder.tvSumCheck.setVisibility(View.VISIBLE);
-                    holder.tvSumCheck.setText(String.format("(%s)",s));
+                    holder.tvSumCheck.setText(String.format("(%s)", s));
 
-                }else {
+                } else {
                     holder.tvSumCheck.setVisibility(View.GONE);
 //                    holder.tvSumCheck.setText(s);
                 }
@@ -113,18 +112,18 @@ public class Statistical_ProductGroupAdapter extends RecyclerView.Adapter<Statis
 
     }
 
-    private BaseModel createGroupFromBill(BaseModel group, List<BaseModel> detailList){
+    private BaseModel createGroupFromBill(BaseModel group, List<BaseModel> detailList) {
         List<BaseModel> mResults = new ArrayList<>();
-        for (BaseModel detail : detailList){
-            if (detail.getInt("productGroup_id") == group.getInt("id")){
+        for (BaseModel detail : detailList) {
+            if (detail.getInt("productGroup_id") == group.getInt("id")) {
                 boolean check = false;
-                for (BaseModel result : mResults){
-                    if (result.getInt("product_id") == detail.getInt("product_id")){
+                for (BaseModel result : mResults) {
+                    if (result.getInt("product_id") == detail.getInt("product_id")) {
                         int quantity = result.getInt("quantity") + detail.getInt("quantity");
                         double total = result.getDouble("total")
                                 + (detail.getDouble("unitPrice") - detail.getDouble("discount")) * detail.getInt("quantity");
-                        result.put("quantity", quantity );
-                        result.put("total", total );
+                        result.put("quantity", quantity);
+                        result.put("total", total);
                         check = true;
 
                         break;
@@ -133,7 +132,7 @@ public class Statistical_ProductGroupAdapter extends RecyclerView.Adapter<Statis
 
                 }
 
-                if (!check){
+                if (!check) {
                     BaseModel newDetail = new BaseModel();
                     newDetail.put("product_id", detail.getInt("product_id"));
                     newDetail.put("productName", detail.getString("productName"));
@@ -149,7 +148,7 @@ public class Statistical_ProductGroupAdapter extends RecyclerView.Adapter<Statis
         }
         BaseModel groupResult = new BaseModel();
 
-        groupResult.put("count", Math.round(DataUtil.sumValueFromList(mResults, "quantity") ));
+        groupResult.put("count", Math.round(DataUtil.sumValueFromList(mResults, "quantity")));
         groupResult.put("name", group.getString("name"));
         groupResult.putList("products", mResults);
 
@@ -157,12 +156,12 @@ public class Statistical_ProductGroupAdapter extends RecyclerView.Adapter<Statis
 
     }
 
-    private int sumProductQuantity(JSONArray array){
+    private int sumProductQuantity(JSONArray array) {
         int sum = 0;
-        try{
-            for (int i=0; i<array.length(); i++){
+        try {
+            for (int i = 0; i < array.length(); i++) {
                 JSONObject object = array.getJSONObject(i);
-                sum+= object.getInt("sumquantity");
+                sum += object.getInt("sumquantity");
             }
         } catch (JSONException e) {
             e.printStackTrace();

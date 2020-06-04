@@ -27,19 +27,19 @@ public class CustomDeleteListMethod extends AsyncTask<String, Void, List<String>
     private CallbackListCustom mListener = null;
     private List<String> listURL;
 
-    public CustomDeleteListMethod(List<String> listurl,  CallbackListCustom listener) {
+    public CustomDeleteListMethod(List<String> listurl, CallbackListCustom listener) {
         mListener = listener;
         this.listURL = listurl;
 
     }
 
     @Override
-        protected List<String> doInBackground(String... params) {
+    protected List<String> doInBackground(String... params) {
 //        Log.d("url: ", baseUrl);
 //        Log.d("params: ", mParams.toString());
 
         List<String> listResult = new ArrayList<>();
-        for (int i=0; i<listURL.size(); i++) {
+        for (int i = 0; i < listURL.size(); i++) {
 
             try {
                 URL obj = new URL(listURL.get(i));
@@ -59,7 +59,7 @@ public class CustomDeleteListMethod extends AsyncTask<String, Void, List<String>
                 String inputLine;
                 response = new StringBuffer();
 
-                while ((inputLine = in.readLine()) != null){
+                while ((inputLine = in.readLine()) != null) {
                     response.append(inputLine);
                 }
                 in.close();
@@ -84,12 +84,12 @@ public class CustomDeleteListMethod extends AsyncTask<String, Void, List<String>
     @Override
     protected void onPostExecute(List<String> response) {
         List<String> listResult = new ArrayList<>();
-        if (response == null){
+        if (response == null) {
             mListener.onError("Lỗi kết nối server ");
             Util.getInstance().showSnackbar("Lỗi kết nối server ", null, null);
 
-        }else {
-            for (int i=0; i<response.size(); i++) {
+        } else {
+            for (int i = 0; i < response.size(); i++) {
                 try {
                     JSONObject object = new JSONObject(response.get(i));
                     if (object.getInt("status") == 200) {

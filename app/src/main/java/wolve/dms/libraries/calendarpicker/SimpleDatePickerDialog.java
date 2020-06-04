@@ -28,9 +28,9 @@ public class SimpleDatePickerDialog extends AlertDialog implements DialogInterfa
     /**
      * @param context The context the dialog is to run in.
      */
-    public SimpleDatePickerDialog(Context context, OnDateSetListener listener,OnDismissListener listener1, int year,
+    public SimpleDatePickerDialog(Context context, OnDateSetListener listener, OnDismissListener listener1, int year,
                                   int monthOfYear) {
-        this(context, 0, listener,listener1, year, monthOfYear);
+        this(context, 0, listener, listener1, year, monthOfYear);
     }
 
     /**
@@ -145,7 +145,7 @@ public class SimpleDatePickerDialog extends AlertDialog implements DialogInterfa
         void onDateSet(int year, int monthOfYear);
     }
 
-    public interface OnDismissListener{
+    public interface OnDismissListener {
         void onDismiss(boolean result);
     }
 }

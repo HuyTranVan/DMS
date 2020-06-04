@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.Customer_BillsAdapter;
@@ -18,9 +17,6 @@ import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackInt;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomBottomDialog;
-import wolve.dms.utils.DataUtil;
-import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
 /**
@@ -35,11 +31,10 @@ public class CustomerBillsFragment extends Fragment implements View.OnClickListe
     private CustomerActivity mActivity;
 
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_customer_bills,container,false);
+        view = inflater.inflate(R.layout.fragment_customer_bills, container, false);
 
         initializeView();
 
@@ -65,18 +60,18 @@ public class CustomerBillsFragment extends Fragment implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
 
 
         }
     }
 
-    public void updateList(){
+    public void updateList() {
         adapter.updateData(mActivity.listBills);
     }
 
 
-    public void CreateRVBill(){
+    public void CreateRVBill() {
         adapter = new Customer_BillsAdapter(new ArrayList<>(), new CallbackBaseModel() {
             @Override
             public void onResponse(BaseModel result) {
@@ -113,7 +108,7 @@ public class CustomerBillsFragment extends Fragment implements View.OnClickListe
         }, new CallbackInt() {
             @Override
             public void onResponse(int value) {
-                mActivity.updateBillTabNotify(mActivity.tempBill != null?true : false , value);
+                mActivity.updateBillTabNotify(mActivity.tempBill != null ? true : false, value);
             }
         });
 
@@ -121,7 +116,7 @@ public class CustomerBillsFragment extends Fragment implements View.OnClickListe
 
     }
 
-    public void updateTempBill(){
+    public void updateTempBill() {
         adapter.updateTempBill();
     }
 

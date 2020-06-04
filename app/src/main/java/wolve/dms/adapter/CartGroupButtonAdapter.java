@@ -44,7 +44,7 @@ public class CartGroupButtonAdapter extends RecyclerView.Adapter<CartGroupButton
     @Override
     public void onBindViewHolder(final CartGroupButtonViewHolder holder, final int position) {
         holder.tvGroupName.setText(mData.get(position).getString("name"));
-        switch ((position+1) %4){
+        switch ((position + 1) % 4) {
             case 0:
                 holder.tvGroupName.setBackground(mContext.getResources().getDrawable(R.drawable.btn_choice_blue));
                 holder.tvGroupName.setTextColor(mContext.getResources().getColor(R.color.colorBlueDark));
@@ -84,7 +84,7 @@ public class CartGroupButtonAdapter extends RecyclerView.Adapter<CartGroupButton
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mListener.onRespone(mData.get(getAdapterPosition()).ProductGrouptoString() , getAdapterPosition());
+                    mListener.onRespone(mData.get(getAdapterPosition()).ProductGrouptoString(), getAdapterPosition());
                 }
             });
         }

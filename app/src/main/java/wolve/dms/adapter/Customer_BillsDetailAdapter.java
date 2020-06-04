@@ -38,10 +38,10 @@ public class Customer_BillsDetailAdapter extends RecyclerView.Adapter<Customer_B
 
     @Override
     public void onBindViewHolder(final CustomerBillsDetailAdapterViewHolder holder, final int position) {
-        Double  netMoney = mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount");
+        Double netMoney = mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount");
         Double sumMoney = mData.get(position).getInt("quantity") * (mData.get(position).getDouble("unitPrice") - mData.get(position).getDouble("discount"));
         holder.tvName.setText(mData.get(position).getString("productName"));
-        holder.tvQuantity.setText(netMoney ==0 ? String.format("SL: %s",mData.get(position).getInt("quantity")) :String.format("%sx%s", mData.get(position).getInt("quantity") ,  Util.FormatMoney(netMoney) ));
+        holder.tvQuantity.setText(netMoney == 0 ? String.format("SL: %s", mData.get(position).getInt("quantity")) : String.format("%sx%s", mData.get(position).getInt("quantity"), Util.FormatMoney(netMoney)));
 
     }
 
@@ -64,7 +64,6 @@ public class Customer_BillsDetailAdapter extends RecyclerView.Adapter<Customer_B
         }
 
     }
-
 
 
 }

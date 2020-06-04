@@ -33,7 +33,7 @@ import static wolve.dms.utils.Constants.REQUEST_IMAGE_CAPTURE;
  * Created by macos on 9/16/17.
  */
 
-public class DistributorActivity extends BaseActivity implements View.OnClickListener{
+public class DistributorActivity extends BaseActivity implements View.OnClickListener {
     private ImageView btnBack;
     private CInputForm tvCompany, tvPhone, tvAddress, tvSite, tvThanks;
     private Button btnSubmit;
@@ -42,7 +42,7 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
     private ImageView image;
 
     private BaseModel currentDistributor;
-    private Uri imageChangeUri ;
+    private Uri imageChangeUri;
     private String imgURL;
 
     @Override
@@ -88,19 +88,19 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
 
     }
 
-    private void updateView(BaseModel content){
+    private void updateView(BaseModel content) {
         tvCompany.setText(content.getString("company"));
         tvAddress.setText(content.getString("address"));
         tvPhone.setText(Util.FormatPhone(content.getString("phone")));
         tvSite.setText(content.getString("website"));
         tvThanks.setText(content.getString("thanks"));
         tvTitle.setText(content.getString("name"));
-        if (!Util.checkImageNull(content.getString("image"))){
+        if (!Util.checkImageNull(content.getString("image"))) {
             Glide.with(this).load(content.getString("image")).fitCenter().into(image);
             imgURL = content.getString("image");
 
-        }else {
-            Glide.with(this).load( R.drawable.lub_logo_red).fitCenter().into(image);
+        } else {
+            Glide.with(this).load(R.drawable.lub_logo_red).fitCenter().into(image);
             imgURL = "";
 
         }
@@ -124,7 +124,7 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.icon_back:
                 onBackPressed();
                 break;
@@ -157,7 +157,7 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
                                 imgURL = "";
                                 imageChangeUri = FileProvider.getUriForFile(DistributorActivity.this, BuildConfig.APPLICATION_ID + ".provider", Util.getOutputMediaFile());
 
-                                Glide.with(DistributorActivity.this).load( R.drawable.lub_logo_red).fitCenter().into(image);
+                                Glide.with(DistributorActivity.this).load(R.drawable.lub_logo_red).fitCenter().into(image);
                             }
                         });
                 break;
@@ -166,8 +166,8 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
         }
     }
 
-    private void submitDistributor(){
-        if (imageChangeUri != null){
+    private void submitDistributor() {
+        if (imageChangeUri != null) {
             SystemConnect.uploadImage(Util.getRealPathFromCaptureURI(imageChangeUri), new CallbackString() {
                 @Override
                 public void Result(String s) {
@@ -176,15 +176,15 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
                 }
             });
 
-        }else {
+        } else {
             updateDistributor(imgURL);
 
         }
 
     }
 
-    private void updateDistributor(String imageLink){
-        String param = String.format(Api_link.DISTRIBUTOR_CREATE_PARAM, currentDistributor.getInt("id") == 0? "" : String.format("id=%s&",currentDistributor.getString("id") ),
+    private void updateDistributor(String imageLink) {
+        String param = String.format(Api_link.DISTRIBUTOR_CREATE_PARAM, currentDistributor.getInt("id") == 0 ? "" : String.format("id=%s&", currentDistributor.getString("id")),
                 Util.encodeString(tvCompany.getText().toString()),
                 Util.encodeString(tvAddress.getText().toString()),
                 Util.encodeString(tvPhone.getText().toString().replace(".", "")),
@@ -207,16 +207,16 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CHOOSE_IMAGE ){
-            if (data != null){
-                Crop.of(Uri.parse(data.getData().toString()), imageChangeUri).asSquare().withMaxSize(512,512).start(this);
+        if (requestCode == REQUEST_CHOOSE_IMAGE) {
+            if (data != null) {
+                Crop.of(Uri.parse(data.getData().toString()), imageChangeUri).asSquare().withMaxSize(512, 512).start(this);
 
             }
 
-        }else if (requestCode == REQUEST_IMAGE_CAPTURE){
-            Crop.of(imageChangeUri, imageChangeUri).asSquare().withMaxSize(512,512).start(this);
+        } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
+            Crop.of(imageChangeUri, imageChangeUri).asSquare().withMaxSize(512, 512).start(this);
 
-        }else if (data != null && requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
+        } else if (data != null && requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
             Glide.with(this).load(imageChangeUri).centerCrop().into(image);
 
         } else if (requestCode == Crop.REQUEST_CROP) {
@@ -256,8 +256,7 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
 //    }
 
 
-
-    private void phoneEvent(){
+    private void phoneEvent() {
         tvPhone.addTextChangePhone(new CallbackString() {
             @Override
             public void Result(String s) {
@@ -265,9 +264,6 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
             }
         });
     }
-
-
-
 
 
 }

@@ -29,13 +29,13 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class StatusActivity extends BaseActivity implements View.OnClickListener{
+public class StatusActivity extends BaseActivity implements View.OnClickListener {
     private ImageView btnBack;
     private RecyclerView rvStatus;
     private FloatingActionButton btnAddStatus;
 
     private StatusAdapter statusAdapter;
-    private ArrayList<Status> listStatus ;
+    private ArrayList<Status> listStatus;
 
     @Override
     public int getResourceLayout() {
@@ -74,7 +74,7 @@ public class StatusActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.icon_back:
                 onBackPressed();
                 break;
@@ -90,18 +90,17 @@ public class StatusActivity extends BaseActivity implements View.OnClickListener
     @Override
     public void onBackPressed() {
         Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.status_parent);
-        if(Util.getInstance().isLoading()){
+        if (Util.getInstance().isLoading()) {
             Util.getInstance().stopLoading(true);
 
-        }else if(mFragment != null && mFragment instanceof NewUpdateStatusFragment) {
+        } else if (mFragment != null && mFragment instanceof NewUpdateStatusFragment) {
             getSupportFragmentManager().popBackStack();
 
-        }else {
+        } else {
             Transaction.gotoHomeActivityRight(true);
         }
 
     }
-
 
 
     protected void loadStatus() {
@@ -119,7 +118,7 @@ public class StatusActivity extends BaseActivity implements View.OnClickListener
     }
 
 
-    private void createRVProductGroup(List<BaseModel> list){
+    private void createRVProductGroup(List<BaseModel> list) {
         listStatus = new ArrayList<>();
         statusAdapter = new StatusAdapter(list, new CallbackClickAdapter() {
             @Override
@@ -141,11 +140,11 @@ public class StatusActivity extends BaseActivity implements View.OnClickListener
     }
 
 
-    private void openFragmentNewStatus(String status){
+    private void openFragmentNewStatus(String status) {
         NewUpdateStatusFragment statusFragment = new NewUpdateStatusFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constants.STATUS, status);
-        changeFragment(statusFragment, bundle, true );
+        changeFragment(statusFragment, bundle, true);
     }
 
 

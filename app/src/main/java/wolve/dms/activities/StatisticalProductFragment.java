@@ -30,7 +30,7 @@ public class StatisticalProductFragment extends Fragment implements View.OnClick
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_statistical_products,container,false);
+        view = inflater.inflate(R.layout.fragment_statistical_products, container, false);
         Util.productFragment = this;
         initializeView();
 
@@ -45,7 +45,6 @@ public class StatisticalProductFragment extends Fragment implements View.OnClick
     }
 
 
-
     private void addEvent() {
 
     }
@@ -57,20 +56,20 @@ public class StatisticalProductFragment extends Fragment implements View.OnClick
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
 
         }
     }
 
-    public void reloadData(String username, List<BaseModel> listDetail){
-        List<BaseModel> listTemp ;
-        if (username.equals(Constants.ALL_FILTER)){
+    public void reloadData(String username, List<BaseModel> listDetail) {
+        List<BaseModel> listTemp;
+        if (username.equals(Constants.ALL_FILTER)) {
             listTemp = listDetail;
 
-        }else {
+        } else {
             listTemp = new ArrayList<>();
-            for (BaseModel row : listDetail){
-                if (row.getBaseModel("user").getString("displayName").equals(username)){
+            for (BaseModel row : listDetail) {
+                if (row.getBaseModel("user").getString("displayName").equals(username)) {
                     listTemp.add(row);
                 }
             }
@@ -80,7 +79,7 @@ public class StatisticalProductFragment extends Fragment implements View.OnClick
     }
 
     private void createRVProductGroup(List<BaseModel> list) {
-        adapter = new Statistical_ProductGroupAdapter( list);
+        adapter = new Statistical_ProductGroupAdapter(list);
         Util.createLinearRV(rvProductGroup, adapter);
 
     }

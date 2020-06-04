@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/product_select_parent"
     android:orientation="horizontal"
     android:layout_width="match_parent"
@@ -19,7 +18,7 @@
         android:paddingLeft="@dimen/_10sdp"
         android:paddingRight="@dimen/_5sdp"
         android:layout_toLeftOf="@+id/product_select_close"
-        android:singleLine="true"/>
+        android:singleLine="true" />
 
     <TextView
         android:fontFamily="@font/font_awesome"
@@ -29,6 +28,6 @@
         android:background="?selectableItemBackground"
         android:text="@string/icon_x"
         android:layout_alignParentRight="true"
-        android:gravity="center"/>
+        android:gravity="center" />
 
 </RelativeLayout>

@@ -74,7 +74,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
                     BaseModel contentObj = new BaseModel(charString);
                     List<BaseModel> listTemp = new ArrayList<>();
                     for (BaseModel row : baseData) {
-                        if (row.getLong("createAt") >= contentObj.getLong("from") &&  row.getLong("createAt") <= contentObj.getLong("to")){
+                        if (row.getLong("createAt") >= contentObj.getLong("from") && row.getLong("createAt") <= contentObj.getLong("to")) {
                             listTemp.add(row);
                         }
                     }
@@ -96,14 +96,14 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
         };
     }
 
-    public void updateData(List<BaseModel> data){
+    public void updateData(List<BaseModel> data) {
         this.baseData = data;
         this.mData = baseData;
         DataUtil.sortbyStringKey("createAt", mData, true);
         notifyDataSetChanged();
     }
 
-    public void updateTempBill(){
+    public void updateTempBill() {
         notifyDataSetChanged();
 
     }
@@ -117,17 +117,17 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onBindViewHolder(final CustomerBillsAdapterViewHolder holder, final int position) {
-        holder.lnCover.setVisibility(mData.get(position).isNull(Constants.DELIVER_BY)? View.VISIBLE: View.GONE);
-        holder.btnDelete.setVisibility(User.getCurrentRoleId() == Constants.ROLE_ADMIN||
+        holder.lnCover.setVisibility(mData.get(position).isNull(Constants.DELIVER_BY) ? View.VISIBLE : View.GONE);
+        holder.btnDelete.setVisibility(User.getCurrentRoleId() == Constants.ROLE_ADMIN ||
                 User.getId() == mData.get(position).getInt("user_id")
-                ? View.VISIBLE:View.GONE);
+                ? View.VISIBLE : View.GONE);
 
         holder.btnConfirm.setVisibility(CustomSQL.getLong(Constants.CURRENT_DISTANCE) < 500 ? View.VISIBLE : View.GONE);
 
         holder.tvDate.setText(Util.DateHourString(mData.get(position).getLong("createAt")));
         holder.tvTotal.setText(Util.FormatMoney(mData.get(position).getDouble("total")) + " đ");
         holder.tvDebt.setText(Util.FormatMoney(mData.get(position).getDouble("debt")) + " đ");
-        if ( mData.get(position).getDouble("debt") >0.0 ){
+        if (mData.get(position).getDouble("debt") > 0.0) {
             holder.tvDebt.setBackground(mContext.getDrawable(R.drawable.btn_round_transparent_border_red));
             holder.tvDebt.setTextColor(mContext.getResources().getColor(R.color.colorRed));
             holder.tvDebt.setOnClickListener(new View.OnClickListener() {
@@ -137,7 +137,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
 
                 }
             });
-        }else {
+        } else {
             holder.tvDebt.setBackground(null);
             holder.tvDebt.setTextColor(mContext.getResources().getColor(R.color.colorBlue));
             holder.tvDebt.setOnClickListener(null);
@@ -149,13 +149,13 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
         Customer_BillsReturnAdapter adapterReturn = new Customer_BillsReturnAdapter(listReturn);
         Util.createLinearRV(holder.rvReturn, adapterReturn);
 
-        if (!mData.get(position).isNull(Constants.DELIVER_BY)){
+        if (!mData.get(position).isNull(Constants.DELIVER_BY)) {
             holder.tvDeliver.setVisibility(View.VISIBLE);
             holder.tvDeliver.setText(String.format("%s giao hàng %s",
                     mData.get(position).getBaseModel("deliverByObject").getString("displayName"),
-                    mData.get(position).getLong("createAt").equals(mData.get(position).getLong("deliverTime"))? "" : Util.DateHourString(mData.get(position).getLong("deliverTime"))));
+                    mData.get(position).getLong("createAt").equals(mData.get(position).getLong("deliverTime")) ? "" : Util.DateHourString(mData.get(position).getLong("deliverTime"))));
 
-        }else {
+        } else {
             holder.tvDeliver.setVisibility(View.GONE);
         }
 
@@ -165,28 +165,28 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
         Util.createLinearRV(holder.rvBillDetail, adapterDetail);
 
         List<BaseModel> listPayment = new ArrayList<>(DataUtil.array2ListObject(mData.get(position).getString("payments")));
-        if (listPayment.size() >0){
-            holder.lnPayment.setVisibility(View.VISIBLE );
+        if (listPayment.size() > 0) {
+            holder.lnPayment.setVisibility(View.VISIBLE);
             PaymentAdapter paymentAdapter = new PaymentAdapter(listPayment, new CallbackBoolean() {
                 @Override
                 public void onRespone(Boolean result) {
-                    if (result){
+                    if (result) {
                         BaseModel respone = new BaseModel();
                         respone.put(Constants.TYPE, Constants.PAYMENT_DELETE);
                         mListener.onResponse(respone);
-                    }else {
+                    } else {
                         Util.showToast("Không thể xóa, bị lỗi");
                     }
                 }
             });
             Util.createLinearRV(holder.rvPayment, paymentAdapter);
 
-        }else {
+        } else {
             holder.lnPayment.setVisibility(View.GONE);
         }
 
 
-        holder.tvIcon.setText(String.valueOf(mData.size()-position));
+        holder.tvIcon.setText(String.valueOf(mData.size() - position));
 
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -211,25 +211,25 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
                 List<String> list = new ArrayList<>();
                 list.add("Trả hàng");
 
-                if (User.getCurrentRoleId()==Constants.ROLE_ADMIN){
+                if (User.getCurrentRoleId() == Constants.ROLE_ADMIN) {
                     list.add("Xóa hóa đơn");
                 }
 
                 CustomDropdow.createDropdown(holder.btnMenu, list, new CallbackString() {
                     @Override
                     public void Result(String s) {
-                        if (s.equals(list.get(0))){
+                        if (s.equals(list.get(0))) {
                             BaseModel respone = new BaseModel();
                             respone.put(Constants.TYPE, Constants.BILL_RETURN);
                             respone.putBaseModel(Constants.RESULT, mData.get(position));
                             mListener.onResponse(respone);
 
-                        }else if (s.equals(list.get(1))){
-                            if (listPayment.size() >0 ){
+                        } else if (s.equals(list.get(1))) {
+                            if (listPayment.size() > 0) {
                                 Util.showToast("Không thể xóa hóa đơn có phát sinh thanh toán ");
-                            }else if (listReturn.size() >0){
+                            } else if (listReturn.size() > 0) {
                                 Util.showToast("Không thể xóa hóa đơn có phát sinh trả hàng ");
-                            }else {
+                            } else {
                                 deleteBill(position);
                             }
 
@@ -249,10 +249,10 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
     }
 
     public class CustomerBillsAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvDate, tvHour, tvPay, tvDebt, tvTotal, tvIcon, tvDeliver,  btnMenu, btnDelete;
+        private TextView tvDate, tvHour, tvPay, tvDebt, tvTotal, tvIcon, tvDeliver, btnMenu, btnDelete;
         private RecyclerView rvBillDetail, rvPayment, rvReturn;
         private LinearLayout lnPayment;
-        private RelativeLayout lnTitle,lnCover ;
+        private RelativeLayout lnTitle, lnCover;
         private Button btnConfirm;
 
         public CustomerBillsAdapterViewHolder(View itemView) {
@@ -268,7 +268,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
             rvReturn = (RecyclerView) itemView.findViewById(R.id.bills_item_rvreturn);
             lnPayment = (LinearLayout) itemView.findViewById(R.id.bills_item_payment_parent);
             //lnReturn = (LinearLayout) itemView.findViewById(R.id.bills_item_return_parent);
-            lnTitle =  (RelativeLayout) itemView.findViewById(R.id.bills_item_title);
+            lnTitle = (RelativeLayout) itemView.findViewById(R.id.bills_item_title);
             lnCover = itemView.findViewById(R.id.bills_item_cover);
             btnDelete = itemView.findViewById(R.id.btn_delete);
             btnConfirm = itemView.findViewById(R.id.btn_confirm);
@@ -278,57 +278,57 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
 
     }
 
-    public List<BaseModel> getAllBill(){
+    public List<BaseModel> getAllBill() {
         return mData;
     }
 
-    private void deleteBill(final int currentPosition){
-        CustomCenterDialog.alertWithCancelButton(null, String.format("Bạn muốn xóa hóa đơn %s với số tiền %s đ",Util.DateString(mData.get(currentPosition).getLong("updateAt")), Util.FormatMoney(mData.get(currentPosition).getDouble("total"))),
-                "ĐỒNG Ý","HỦY", new CallbackBoolean() {
-            @Override
-            public void onRespone(Boolean result) {
-                if (result){
-                    List<String> listParams = new ArrayList<>();
-                    listParams.add(mData.get(currentPosition).getString("id"));
+    private void deleteBill(final int currentPosition) {
+        CustomCenterDialog.alertWithCancelButton(null, String.format("Bạn muốn xóa hóa đơn %s với số tiền %s đ", Util.DateString(mData.get(currentPosition).getLong("updateAt")), Util.FormatMoney(mData.get(currentPosition).getDouble("total"))),
+                "ĐỒNG Ý", "HỦY", new CallbackBoolean() {
+                    @Override
+                    public void onRespone(Boolean result) {
+                        if (result) {
+                            List<String> listParams = new ArrayList<>();
+                            listParams.add(mData.get(currentPosition).getString("id"));
 
-                    if (mData.get(currentPosition).hasKey(Constants.HAVEBILLRETURN)){
-                        List<BaseModel> list = DataUtil.array2ListBaseModel(mData.get(currentPosition).getJSONArray(Constants.HAVEBILLRETURN));
-                        for (BaseModel baseModel : list){
-                            listParams.add(baseModel.getString("id"));
+                            if (mData.get(currentPosition).hasKey(Constants.HAVEBILLRETURN)) {
+                                List<BaseModel> list = DataUtil.array2ListBaseModel(mData.get(currentPosition).getJSONArray(Constants.HAVEBILLRETURN));
+                                for (BaseModel baseModel : list) {
+                                    listParams.add(baseModel.getString("id"));
 
-                        }
-                    }
-
-                    CustomerConnect.DeleteListBill(listParams, new CallbackListCustom() {
-                        @Override
-                        public void onResponse(List result) {
-                            if (result.size() >0){
-                                Util.showToast("Xóa thành công");
-                                BaseModel respone = new BaseModel();
-                                respone.put(Constants.TYPE, Constants.BILL_DELETE);
-                                mListener.onResponse(respone);
-
-                            }else {
-                                Util.showSnackbarError("Lỗi");
+                                }
                             }
 
+                            CustomerConnect.DeleteListBill(listParams, new CallbackListCustom() {
+                                @Override
+                                public void onResponse(List result) {
+                                    if (result.size() > 0) {
+                                        Util.showToast("Xóa thành công");
+                                        BaseModel respone = new BaseModel();
+                                        respone.put(Constants.TYPE, Constants.BILL_DELETE);
+                                        mListener.onResponse(respone);
+
+                                    } else {
+                                        Util.showSnackbarError("Lỗi");
+                                    }
+
+                                }
+
+                                @Override
+                                public void onError(String error) {
+                                    Util.showSnackbarError(error);
+                                    mListener.onError();
+                                }
+                            }, true);
                         }
 
-                        @Override
-                        public void onError(String error) {
-                            Util.showSnackbarError(error);
-                            mListener.onError();
-                        }
-                    }, true);
-                }
-
-            }
-        });
+                    }
+                });
 
     }
 
-    private void payBill(final int currentPosition){
-        if (mData.get(currentPosition).getDouble("debt") != 0){
+    private void payBill(final int currentPosition) {
+        if (mData.get(currentPosition).getDouble("debt") != 0) {
             List currentDebt = new ArrayList();
             currentDebt.add(mData.get(currentPosition));
 
@@ -342,7 +342,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
 
                             try {
                                 CustomerConnect.PostListPay(DataUtil.createListPaymentParam(new JSONObject(mData.get(currentPosition).getString("customer")).getInt("id"),
-                                        result,false), new CallbackListCustom() {
+                                        result, false), new CallbackListCustom() {
                                     @Override
                                     public void onResponse(List result) {
 
@@ -374,16 +374,16 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
                     });
 
 
-        }else {
+        } else {
             Util.showToast("Hóa đơn này đã thanh toán");
         }
     }
 
-    private List<BaseModel> returnProduct(List<BaseModel> list){
+    private List<BaseModel> returnProduct(List<BaseModel> list) {
         List<BaseModel> listResult = new ArrayList<>();
-        for (int i=0; i<list.size(); i++){
+        for (int i = 0; i < list.size(); i++) {
             list.get(i).put("quantity", mergeQuantity(list, list.get(i)));
-            if (list.get(i).getInt("quantity") > 0){
+            if (list.get(i).getInt("quantity") > 0) {
                 listResult.add(list.get(i));
             }
 
@@ -394,17 +394,17 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
     }
 
 
-    private int mergeQuantity(List<BaseModel> list, BaseModel billdetail){
+    private int mergeQuantity(List<BaseModel> list, BaseModel billdetail) {
         int count = billdetail.getInt("quantity");
 
-        for (int i=0; i<list.size(); i++){
-            if (!list.get(i).getString("id").equals(billdetail.getString("id"))){
+        for (int i = 0; i < list.size(); i++) {
+            if (!list.get(i).getString("id").equals(billdetail.getString("id"))) {
                 Double netPrice1 = billdetail.getDouble("unitPrice") - billdetail.getDouble("discount");
                 Double netPrice2 = list.get(i).getDouble("unitPrice") - list.get(i).getDouble("discount");
 
                 if (billdetail.getInt("productId") == list.get(i).getInt("productId")
-                        && list.get(i).getInt("quantity")<0
-                        && netPrice1.equals( netPrice2)){
+                        && list.get(i).getInt("quantity") < 0
+                        && netPrice1.equals(netPrice2)) {
                     count = count + list.get(i).getInt("quantity");
 
                 }

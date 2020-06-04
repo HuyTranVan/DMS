@@ -46,24 +46,24 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class ImportActivity extends BaseActivity implements View.OnClickListener{
+public class ImportActivity extends BaseActivity implements View.OnClickListener {
     private ImageView btnBack;
     private ViewPager viewPager;
     private TabLayout tabLayout;
-    private TextView tvTitle, tvFromWarehouse,tvToWarehouse;
+    private TextView tvTitle, tvFromWarehouse, tvToWarehouse;
     private Button btnSubmit;
     private RelativeLayout coParent;
 
     private List<BaseModel> listWarehouse;
     private BaseModel fromWarehouse = null, toWarehouse = null;
     private ViewpagerMultiListAdapter viewpagerAdapter;
-    private List<RecyclerView.Adapter>  listadapter;
+    private List<RecyclerView.Adapter> listadapter;
     private ProductImportAdapter adapterProduct;
     private ProductImportChoosenAdapter adapterChoosen;
     private ProductInventoryAdapter adapterInventory;
     private Import_ProductAdapter adapterImport;
     //private List<BaseModel> listCurrentInventory = new ArrayList<>();
-    private int currentPosition =0;
+    private int currentPosition = 0;
     private List<String> mTitle = new ArrayList<>();
     private boolean[] searches = new boolean[]{false, false, false, false};
 
@@ -98,11 +98,11 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
 
         tvTitle.setText("nhập kho");
         tvToWarehouse.setText(Util.getStringIcon(toWarehouse.getString("name"), "   ", R.string.icon_down));
-        if (Util.isAdmin()){
+        if (Util.isAdmin()) {
             tvToWarehouse.setFocusable(true);
             tvToWarehouse.setFocusableInTouchMode(true);
 
-        }else {
+        } else {
             tvToWarehouse.setFocusable(false);
         }
 
@@ -111,14 +111,14 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
             @Override
             public void onResponse(List<BaseModel> list) {
                 setupViewPager(new ArrayList<>(), list);
-                if (list.size()>0){
+                if (list.size() > 0) {
                     updateImportTempTitle(list.size());
                 }
                 getInventory(toWarehouse.getInt("id"), new CallbackListObject() {
                     @Override
                     public void onResponse(List<BaseModel> list) {
                         updateInventoryTitle(list);
-                        if (list.size()>0){
+                        if (list.size() > 0) {
                             viewPager.setCurrentItem(2, true);
                         }
 
@@ -127,8 +127,6 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
                 });
             }
         }, true, false);
-
-
 
 
     }
@@ -145,7 +143,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
     @Override
     public void onClick(View v) {
         Util.hideKeyboard(v);
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.icon_back:
                 onBackPressed();
                 break;
@@ -160,10 +158,10 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
                 break;
 
             case R.id.import_towarehouse:
-                if (Util.isAdmin()){
+                if (Util.isAdmin()) {
                     selectToWarehouse(true);
 
-                }else {
+                } else {
                     Util.showSnackbar("Không thể chọn kho hàng khác", null, null);
 
                 }
@@ -173,16 +171,16 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         }
     }
 
-    private List<String> createTabTitle(){
+    private List<String> createTabTitle() {
         List<String> titles = new ArrayList<>();
-        titles.add(0,"DANH SÁCH");
+        titles.add(0, "DANH SÁCH");
         titles.add(1, "ĐÃ CHỌN");
-        titles.add(2, "TỒN " +toWarehouse.getString("name"));
-        titles.add(3,"LỊCH SỬ");
+        titles.add(2, "TỒN " + toWarehouse.getString("name"));
+        titles.add(3, "LỊCH SỬ");
         return titles;
     }
 
-    private void getListImport(CallbackListObject listener, boolean showloading, boolean stoploading){
+    private void getListImport(CallbackListObject listener, boolean showloading, boolean stoploading) {
         String param = String.format("?warehouse_id=%d", toWarehouse.getInt("id"));
         CustomerConnect.ListImport(param, new CallbackCustomList() {
             @Override
@@ -200,15 +198,15 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
     @Override
     public void onBackPressed() {
         Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.import_parent);
-        if (Util.getInstance().isLoading()){
+        if (Util.getInstance().isLoading()) {
             Util.getInstance().stopLoading(true);
-        }else {
+        } else {
             Transaction.returnPreviousActivity();
         }
     }
 
-    private void setupViewPager(List<BaseModel> listProduct, List<BaseModel> listImport ){
-        listadapter  = new ArrayList<>();
+    private void setupViewPager(List<BaseModel> listProduct, List<BaseModel> listImport) {
+        listadapter = new ArrayList<>();
         adapterProduct = new ProductImportAdapter(listProduct, new CallbackObject() {
             @Override
             public void onResponse(BaseModel object) {
@@ -222,7 +220,8 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
                 updateChoosenTitle(value);
                 btnSubmit.setVisibility(value > 0 && currentPosition == 1 ? View.VISIBLE : View.GONE);
 
-            }}, new CallbackObject() {
+            }
+        }, new CallbackObject() {
             @Override
             public void onResponse(BaseModel object) {
                 adapterProduct.updateData(object);
@@ -247,7 +246,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         viewpagerAdapter = new ViewpagerMultiListAdapter(listadapter, mTitle, searches, new CallbackClickAdapter() {
             @Override
             public void onRespone(String data, int position) {
-                if (position ==0){
+                if (position == 0) {
                     adapterProduct.getFilter().filter(data);
                 }
             }
@@ -256,8 +255,8 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         viewPager.setCurrentItem(currentPosition);
         viewPager.setOffscreenPageLimit(4);
 
-        for (int i=0; i<mTitle.size(); i++){
-            updateTabNotify(i, mTitle.get(i),0);
+        for (int i = 0; i < mTitle.size(); i++) {
+            updateTabNotify(i, mTitle.get(i), 0);
 
         }
 
@@ -271,9 +270,9 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
             public void onPageSelected(int position) {
                 currentPosition = position;
                 Util.hideKeyboard(viewPager);
-                if (position ==1 && adapterChoosen.getItemCount() >0){
+                if (position == 1 && adapterChoosen.getItemCount() > 0) {
                     btnSubmit.setVisibility(View.VISIBLE);
-                }else {
+                } else {
                     btnSubmit.setVisibility(View.GONE);
 
                 }
@@ -287,17 +286,17 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
 
     }
 
-    private void updateTabNotify(int position, String title, int number){
+    private void updateTabNotify(int position, String title, int number) {
         TabLayout.Tab tab = tabLayout.getTabAt(position);
         View customView = LayoutInflater.from(ImportActivity.this).inflate(R.layout.view_tab_product, null);
         TextView tabTextNotify = (TextView) customView.findViewById(R.id.tabNotify);
         TextView textTitle = (TextView) customView.findViewById(R.id.tabTitle);
 
         textTitle.setText(title);
-        if (number >0){
+        if (number > 0) {
             tabTextNotify.setVisibility(View.VISIBLE);
             tabTextNotify.setText(String.valueOf(number));
-        }else {
+        } else {
             tabTextNotify.setVisibility(View.GONE);
         }
 
@@ -305,7 +304,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         tab.setCustomView(customView);
     }
 
-    private void submitEvent(){
+    private void submitEvent() {
         String param = DataUtil.createPostImportParam(toWarehouse.getInt("id"),
                 fromWarehouse.getInt("id"),
                 adapterChoosen.getmData(),
@@ -313,7 +312,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         postImport(param, new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
-                if (result){
+                if (result) {
                     DataUtil.saveProductPopular(adapterChoosen.getmData());
                     reloadAllWarehouse(new CallbackBoolean() {
                         @Override
@@ -323,14 +322,14 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
 
                         }
                     });
-                    viewPager.setCurrentItem(Util.isAdmin()? 2: 3, true);
+                    viewPager.setCurrentItem(Util.isAdmin() ? 2 : 3, true);
                 }
             }
         });
 
     }
 
-    private void returnPreviousActivity(){
+    private void returnPreviousActivity() {
         CustomCenterDialog.alertWithCancelButton("Nhập kho thành công",
                 "Bạn muốn nhập kho tiếp hay trở về",
                 "Trở về",
@@ -338,25 +337,25 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
                 new CallbackBoolean() {
                     @Override
                     public void onRespone(Boolean result) {
-                        if (result){
+                        if (result) {
                             onBackPressed();
                         }
                     }
                 });
     }
 
-    public void reloadListImport(boolean setActive, boolean reloadToWarehouse){
+    public void reloadListImport(boolean setActive, boolean reloadToWarehouse) {
         getListImport(new CallbackListObject() {
             @Override
             public void onResponse(List<BaseModel> list) {
-                if (list.size()>0){
+                if (list.size() > 0) {
                     updateImportTempTitle(list.size());
                 }
                 adapterImport.reloadData(list);
-                if (setActive){
+                if (setActive) {
                     viewPager.setCurrentItem(3, true);
                 }
-                if (reloadToWarehouse){
+                if (reloadToWarehouse) {
                     getInventory(toWarehouse.getInt("id"), new CallbackListObject() {
                         @Override
                         public void onResponse(List<BaseModel> list2) {
@@ -370,7 +369,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
 
     }
 
-    private void dialogSelectWarehouse(String title, List<BaseModel> list, CallbackObject listener){
+    private void dialogSelectWarehouse(String title, List<BaseModel> list, CallbackObject listener) {
         CustomBottomDialog.choiceListObject(title, list, "name", new CallbackObject() {
             @Override
             public void onResponse(BaseModel object) {
@@ -382,8 +381,8 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
 
     }
 
-    private void getListWarehouse(CallbackListObject listener , boolean showloading){
-        if (listWarehouse.size() ==0){
+    private void getListWarehouse(CallbackListObject listener, boolean showloading) {
+        if (listWarehouse.size() == 0) {
             SystemConnect.ListWarehouse(showloading, new CallbackCustomList() {
                 @Override
                 public void onResponse(List<BaseModel> results) {
@@ -391,6 +390,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
                     listener.onResponse(listWarehouse);
 
                 }
+
                 @Override
                 public void onError(String error) {
 
@@ -398,14 +398,14 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
             }, true);
 
 
-        }else {
+        } else {
             listener.onResponse(listWarehouse);
 
         }
 
     }
 
-    private void getInventory(int warehouse_id, CallbackListObject listener){
+    private void getInventory(int warehouse_id, CallbackListObject listener) {
         SystemConnect.GetInventoryList(warehouse_id, new CallbackListCustom() {
             @Override
             public void onResponse(List result) {
@@ -420,42 +420,42 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         }, true);
     }
 
-    private void selectFromWarehouse(boolean showloading){
+    private void selectFromWarehouse(boolean showloading) {
         //todo: show all include Master Warehouse
         getListWarehouse(new CallbackListObject() {
             @Override
             public void onResponse(List<BaseModel> list) {
-                dialogSelectWarehouse("CHỌN KHO XUẤT",filterListFromWarehouse(list), new CallbackObject() {
+                dialogSelectWarehouse("CHỌN KHO XUẤT", filterListFromWarehouse(list), new CallbackObject() {
                     @Override
                     public void onResponse(BaseModel object) {
 
-                        if (object.getInt("isMaster") ==1 ){
-                            if (toWarehouse.getInt("isMaster") != 2){
+                        if (object.getInt("isMaster") == 1) {
+                            if (toWarehouse.getInt("isMaster") != 2) {
                                 CustomCenterDialog.alert("Không thể thực hiện", "Chỉ có thể xuất từ kho tổng sang kho tạm. Vui lòng chọn kho đích là kho tạm", " đồng ý");
 
-                            }else {
-                                tvFromWarehouse.setText(Util.getStringIcon(object.getString("name"),"   ",R.string.icon_down));
+                            } else {
+                                tvFromWarehouse.setText(Util.getStringIcon(object.getString("name"), "   ", R.string.icon_down));
                                 viewPager.setCurrentItem(0, true);
                                 fromWarehouse = object;
                                 adapterProduct.updateData(Product.getProductList());
                                 adapterChoosen.emptyList();
                                 updateChoosenTitle(0);
-                                refreshSearchView(0, Product.getProductList().size()> 0? true: false );
+                                refreshSearchView(0, Product.getProductList().size() > 0 ? true : false);
 
                             }
 
-                        }else {
+                        } else {
                             getInventory(object.getInt("id"), new CallbackListObject() {
                                 @Override
                                 public void onResponse(List<BaseModel> list) {
-                                    tvFromWarehouse.setText(Util.getStringIcon(object.getString("name"),"   ",R.string.icon_down));
+                                    tvFromWarehouse.setText(Util.getStringIcon(object.getString("name"), "   ", R.string.icon_down));
                                     viewPager.setCurrentItem(0, true);
                                     fromWarehouse = object;
                                     adapterProduct.updateData(list);
                                     adapterChoosen.emptyList();
 
                                     updateChoosenTitle(0);
-                                    refreshSearchView(0, list.size()> 0? true: false );
+                                    refreshSearchView(0, list.size() > 0 ? true : false);
 
                                 }
                             });
@@ -471,16 +471,16 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
 
     }
 
-    private void refreshSearchView(int position, boolean isShow){
+    private void refreshSearchView(int position, boolean isShow) {
         RelativeLayout lnSearch = viewpagerAdapter.getView(position).findViewById(R.id.search_parent);
         EditText tvSearch = viewpagerAdapter.getView(position).findViewById(R.id.search_text);
 
-        lnSearch.setVisibility(isShow? View.VISIBLE: View.GONE);
+        lnSearch.setVisibility(isShow ? View.VISIBLE : View.GONE);
         tvSearch.setText("");
 
     }
 
-    private void selectToWarehouse(boolean showloading){
+    private void selectToWarehouse(boolean showloading) {
         //todo: show all include Master Warehouse
         getListWarehouse(new CallbackListObject() {
             @Override
@@ -490,7 +490,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
                     @Override
                     public void onResponse(BaseModel object) {
                         toWarehouse = object;
-                        tvToWarehouse.setText(Util.getStringIcon(object.getString("name"),"   ", R.string.icon_down));
+                        tvToWarehouse.setText(Util.getStringIcon(object.getString("name"), "   ", R.string.icon_down));
 
                         reloadAllWarehouse(null);
 
@@ -503,14 +503,14 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
 
     }
 
-    private List<BaseModel> filterListToWarehouse(List<BaseModel> list){
+    private List<BaseModel> filterListToWarehouse(List<BaseModel> list) {
         List<BaseModel> results = new ArrayList<>();
-        for (BaseModel model: list){
-            if (model.getInt("isMaster") !=1){
-                if (fromWarehouse != null && model.getInt("id") != fromWarehouse.getInt("id")){
+        for (BaseModel model : list) {
+            if (model.getInt("isMaster") != 1) {
+                if (fromWarehouse != null && model.getInt("id") != fromWarehouse.getInt("id")) {
                     results.add(model);
 
-                }else if (fromWarehouse == null){
+                } else if (fromWarehouse == null) {
                     results.add(model);
 
                 }
@@ -521,15 +521,15 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         return results;
     }
 
-    private List<BaseModel> filterListFromWarehouse(List<BaseModel> list){
+    private List<BaseModel> filterListFromWarehouse(List<BaseModel> list) {
         List<BaseModel> listResutl = new ArrayList<>();
-        for (BaseModel model: list){
-            if (Util.isAdmin()){
-                if (model.getInt("id") != toWarehouse.getInt("id") ){
-                    if (toWarehouse.getInt("isMaster") == 2){
+        for (BaseModel model : list) {
+            if (Util.isAdmin()) {
+                if (model.getInt("id") != toWarehouse.getInt("id")) {
+                    if (toWarehouse.getInt("isMaster") == 2) {
                         listResutl.add(model);
 
-                    }else if (model.getInt("isMaster") != 1){
+                    } else if (model.getInt("isMaster") != 1) {
                         listResutl.add(model);
 
                     }
@@ -537,9 +537,9 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
 
                 }
 
-            }else {
+            } else {
                 if (model.getInt("id") != toWarehouse.getInt("id")
-                        && model.getInt("isMaster") != 1){
+                        && model.getInt("isMaster") != 1) {
                     listResutl.add(model);
                 }
             }
@@ -548,14 +548,14 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         return listResutl;
     }
 
-    private List<BaseModel> filterWarehouseHaveQuantity(List<BaseModel> list){
+    private List<BaseModel> filterWarehouseHaveQuantity(List<BaseModel> list) {
         List<BaseModel> results = new ArrayList<>();
-        for (BaseModel model: list){
-            if (Util.isAdmin()){
+        for (BaseModel model : list) {
+            if (Util.isAdmin()) {
                 results.add(model);
 
-            }else {
-                if (model.getInt("quantity") > 0 || model.getInt("isMaster") ==1 || model.getInt("isMaster") ==2){
+            } else {
+                if (model.getInt("quantity") > 0 || model.getInt("isMaster") == 1 || model.getInt("isMaster") == 2) {
                     results.add(model);
 
                 }
@@ -566,20 +566,20 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         return results;
     }
 
-    private void updateInventoryTitle(List<BaseModel> list){
+    private void updateInventoryTitle(List<BaseModel> list) {
         adapterInventory.updateData(list);
-        updateTabNotify(2, "TỒN "+ toWarehouse.getString("name").toUpperCase(), list.size());
+        updateTabNotify(2, "TỒN " + toWarehouse.getString("name").toUpperCase(), list.size());
     }
 
-    private void updateChoosenTitle(int number){
+    private void updateChoosenTitle(int number) {
         updateTabNotify(1, mTitle.get(1), number);
     }
 
-    private void updateImportTempTitle(int number){
+    private void updateImportTempTitle(int number) {
         updateTabNotify(3, mTitle.get(3), number);
     }
 
-    private void postImport(String param, CallbackBoolean listener){
+    private void postImport(String param, CallbackBoolean listener) {
         CustomerConnect.PostImport(param, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
@@ -595,8 +595,8 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         }, true);
     }
 
-    private void reloadAllWarehouse(CallbackBoolean listener){
-        if (fromWarehouse == null || fromWarehouse.getInt("isMaster") == 1){
+    private void reloadAllWarehouse(CallbackBoolean listener) {
+        if (fromWarehouse == null || fromWarehouse.getInt("isMaster") == 1) {
             adapterProduct.updateData(Product.getProductList());
             adapterChoosen.emptyList();
             updateChoosenTitle(0);
@@ -605,14 +605,14 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
                 @Override
                 public void onResponse(List<BaseModel> list2) {
                     updateInventoryTitle(list2);
-                    if (listener != null){
+                    if (listener != null) {
                         listener.onRespone(true);
                     }
                 }
             });
 
 
-        }else {
+        } else {
             getInventory(fromWarehouse.getInt("id"), new CallbackListObject() {
                 @Override
                 public void onResponse(List<BaseModel> list1) {
@@ -624,7 +624,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
                         @Override
                         public void onResponse(List<BaseModel> list2) {
                             updateInventoryTitle(list2);
-                            if (listener != null){
+                            if (listener != null) {
                                 listener.onRespone(true);
                             }
 
@@ -636,9 +636,6 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
 
         }
     }
-
-
-
 
 
 }

@@ -11,8 +11,6 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.service.notification.StatusBarNotification;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -62,7 +60,7 @@ import wolve.dms.utils.Util;
 public class HomeActivity extends BaseActivity implements View.OnClickListener, CallbackClickAdapter, SwipeRefreshLayout.OnRefreshListener {
     private RecyclerView rvItems;
     private CircleImageView imgUser;
-    private TextView tvFullname , tvCash, tvProfit, tvMonth, tvHaveNewProduct,
+    private TextView tvFullname, tvCash, tvProfit, tvMonth, tvHaveNewProduct,
             tvNumberTemp, tvNumberTempImport, tvDistributor;
     private LinearLayout lnUser;
     private RelativeLayout lnTempGroup, lnTempImport;
@@ -90,7 +88,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void findViewById() {
-        rvItems= (RecyclerView) findViewById(R.id.home_rvitems);
+        rvItems = (RecyclerView) findViewById(R.id.home_rvitems);
         imgUser = findViewById(R.id.home_icon);
         tvFullname = findViewById(R.id.home_fullname);
         lnUser = findViewById(R.id.home_user);
@@ -112,11 +110,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         Util.getInstance().setCurrentActivity(this);
         checkPermission();
         swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorBlueDark));
-        tvFullname.setText(String.format("%s _ %s",User.getFullName(), User.getCurrentRoleString()));
-        tvDistributor.setText(Util.getStringIcon(Distributor.getName(), "    ",R.string.icon_home ));
-        tvMonth.setText(Util.getStringIcon( Util.CurrentMonthYear(),"     ", R.string.icon_calendar));
+        tvFullname.setText(String.format("%s _ %s", User.getFullName(), User.getCurrentRoleString()));
+        tvDistributor.setText(Util.getStringIcon(Distributor.getName(), "    ", R.string.icon_home));
+        tvMonth.setText(Util.getStringIcon(Util.CurrentMonthYear(), "     ", R.string.icon_calendar));
 
-        if (!Util.checkImageNull(User.getImage())){
+        if (!Util.checkImageNull(User.getImage())) {
             Glide.with(this).load(User.getImage()).centerCrop().into(imgUser);
         }
 
@@ -126,13 +124,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
         }
 
-        if (CustomSQL.getBoolean(Constants.LOGIN_SUCCESS)){
+        if (CustomSQL.getBoolean(Constants.LOGIN_SUCCESS)) {
             loadCurrentData();
             CustomSQL.setBoolean(Constants.LOGIN_SUCCESS, false);
 
         }
         loadOverView();
-        checkNewProductUpdated(new CallbackListObject(){
+        checkNewProductUpdated(new CallbackListObject() {
             @Override
             public void onResponse(List<BaseModel> list) {
                 updateTempBillVisibility(list);
@@ -145,7 +143,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             }
         });
 
-        NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         List<NotificationChannel> list = notificationManager.getNotificationChannels();
         //notificationManager.
 
@@ -163,17 +161,17 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     }
 
-    private void loadOverView(){
+    private void loadOverView() {
         List<BaseModel> params = new ArrayList<>();
         long start = Util.TimeStamp1(Util.Current01MonthYear());
         long end = Util.TimeStamp1(Util.Next01MonthYear());
 
-        params.add(DataUtil.createListPaymentParam(start,end ));
+        params.add(DataUtil.createListPaymentParam(start, end));
         SystemConnect.loadListObject(params, new CallbackCustomListList() {
             @Override
             public void onResponse(List<List<BaseModel>> results) {
                 double paid = DataUtil.sumValueFromList(results.get(0), "paid");
-                tvCash.setText(Util.getStringIcon(Util.FormatMoney(paid) , "    ", R.string.icon_usd));
+                tvCash.setText(Util.getStringIcon(Util.FormatMoney(paid), "    ", R.string.icon_usd));
 
             }
 
@@ -195,9 +193,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.home_user:
-                changeFragment(new UserOptionFragment() , true);
+                changeFragment(new UserOptionFragment(), true);
 
                 break;
 
@@ -206,11 +204,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 break;
 
             case R.id.home_tempbill_group:
-                changeFragment(new TempBillFragment() , true);
+                changeFragment(new TempBillFragment(), true);
                 break;
 
             case R.id.home_tempimport_group:
-                changeFragment(new TempImportFragment() , true);
+                changeFragment(new TempImportFragment(), true);
                 break;
 
         }
@@ -220,29 +218,29 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     public void onBackPressed() {
         mFragment = getSupportFragmentManager().findFragmentById(R.id.home_parent);
 
-        if(Util.getInstance().isLoading()){
+        if (Util.getInstance().isLoading()) {
             Util.getInstance().stopLoading(true);
 
-        }else if (swipeRefreshLayout.isRefreshing()) {
+        } else if (swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
 
-        }else if(mFragment != null && mFragment instanceof TempBillFragment) {
+        } else if (mFragment != null && mFragment instanceof TempBillFragment) {
             TempBillFragment fragment = (TempBillFragment) mFragment;
-            if (((TempBillFragment) mFragment).checkSelected()){
+            if (((TempBillFragment) mFragment).checkSelected()) {
                 ((TempBillFragment) mFragment).closeSelected();
 
-            }else {
+            } else {
                 getSupportFragmentManager().popBackStack();
 
             }
 
-        }else if(mFragment != null && mFragment instanceof TempImportFragment) {
+        } else if (mFragment != null && mFragment instanceof TempImportFragment) {
             getSupportFragmentManager().popBackStack();
 
-        }else if(mFragment != null && mFragment instanceof UserOptionFragment) {
+        } else if (mFragment != null && mFragment instanceof UserOptionFragment) {
             getSupportFragmentManager().popBackStack();
 
-        }else {
+        } else {
             if (doubleBackToExitPressedOnce) {
                 this.finish();
             }
@@ -263,7 +261,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void onRespone(String data, int position) {
-        switch (position){
+        switch (position) {
             case 0:
                 if (checkWarehouse())
                     Transaction.gotoMapsActivity();
@@ -298,7 +296,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         }
 
 
-
     }
 
     private void loadCurrentData() {
@@ -314,35 +311,35 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             }
 
             @Override
-            public void onError(String error){
+            public void onError(String error) {
 
             }
         }, false);
 
     }
 
-    private void choiceSetupItem(){
+    private void choiceSetupItem() {
         CustomBottomDialog.choiceListObject("cài đặt",
                 Constants.homeSettingSetup(),
                 "text",
                 new CallbackObject() {
                     @Override
                     public void onResponse(BaseModel object) {
-                        switch (object.getInt("position")){
+                        switch (object.getInt("position")) {
                             case 0:
-                                if (CustomSQL.getBoolean(Constants.IS_ADMIN)){
+                                if (CustomSQL.getBoolean(Constants.IS_ADMIN)) {
                                     Transaction.gotoDistributorActivity();
                                 }
                                 break;
 
                             case 1:
-                                if (User.getCurrentRoleId()==Constants.ROLE_ADMIN){
+                                if (User.getCurrentRoleId() == Constants.ROLE_ADMIN) {
                                     Transaction.gotoUserActivity(false);
                                 }
                                 break;
 
                             case 2:
-                                if (User.getCurrentRoleId()==Constants.ROLE_ADMIN){
+                                if (User.getCurrentRoleId() == Constants.ROLE_ADMIN) {
                                     Transaction.gotoProductGroupActivity();
                                 }
                                 break;
@@ -352,7 +349,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                                 break;
 
                             case 4:
-                                if (User.getCurrentRoleId()==Constants.ROLE_ADMIN){
+                                if (User.getCurrentRoleId() == Constants.ROLE_ADMIN) {
                                     Transaction.gotoStatusActivity();
                                 }
 
@@ -362,20 +359,20 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                         }
 
                     }
-                },null);
+                }, null);
 
     }
 
-    protected void logout(){
+    protected void logout() {
         UserConnect.Logout(new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
-                if (result.getBoolean("success")){
+                if (result.getBoolean("success")) {
                     Util.showToast("Đăng xuất thành công");
                     CustomSQL.clear();
                     Transaction.gotoLoginActivityRight();
 
-                }else {
+                } else {
                     Util.showSnackbar("Đăng xuất thất bại", null, null);
                 }
             }
@@ -411,10 +408,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         });
 
 
-
     }
 
-    private void checkNewProductUpdated(CallbackListObject listenertempbill, CallbackListObject listenertempimport){
+    private void checkNewProductUpdated(CallbackListObject listenertempbill, CallbackListObject listenertempimport) {
         SystemConnect.getLastestProductUpdated(new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
@@ -422,22 +418,22 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 listenertempbill.onResponse(DataUtil.listTempBill(DataUtil.array2ListObject(result.getString("tempBills"))));
                 listenertempimport.onResponse(DataUtil.filterListTempImport(DataUtil.array2ListObject(result.getString("tempImport"))));
 
-                if (result.getLong("lastProductUpdate") > CustomSQL.getLong(Constants.LAST_PRODUCT_UPDATE)){
+                if (result.getLong("lastProductUpdate") > CustomSQL.getLong(Constants.LAST_PRODUCT_UPDATE)) {
                     tvHaveNewProduct.setVisibility(View.VISIBLE);
 
                     CustomCenterDialog.alertWithCancelButton("CÓ SẢN PHẨM MỚI",
                             "Đồng bộ danh mục sản phẩm với thiết bị của bạn",
-                                    "ĐỒNG Ý",
+                            "ĐỒNG Ý",
                             "HỦY",
                             new CallbackBoolean() {
                                 @Override
                                 public void onRespone(Boolean result) {
-                                    if (result){
+                                    if (result) {
                                         loadCurrentData();
                                     }
                                 }
                             });
-                }else {
+                } else {
                     tvHaveNewProduct.setVisibility(View.GONE);
                 }
 
@@ -450,21 +446,21 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         }, false);
     }
 
-    private void updateTempBillVisibility(List<BaseModel> list){
+    private void updateTempBillVisibility(List<BaseModel> list) {
         listTempBill = list;
-        if (list.size() >0){
+        if (list.size() > 0) {
             lnTempGroup.setVisibility(View.VISIBLE);
             tvNumberTemp.setText(String.valueOf(list.size()));
-        }else {
+        } else {
             lnTempGroup.setVisibility(View.GONE);
         }
 
         mFragment = getSupportFragmentManager().findFragmentById(R.id.home_parent);
-        if(mFragment != null && mFragment instanceof TempBillFragment) {
-            if (((TempBillFragment) mFragment).checkSelected()){
+        if (mFragment != null && mFragment instanceof TempBillFragment) {
+            if (((TempBillFragment) mFragment).checkSelected()) {
                 ((TempBillFragment) mFragment).closeSelected();
 
-            }else {
+            } else {
                 ((TempBillFragment) mFragment).reloadData();
 
             }
@@ -473,28 +469,28 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     }
 
-    protected void updateTempImportVisibility(List<BaseModel> list){
+    protected void updateTempImportVisibility(List<BaseModel> list) {
         listTempImport = list;
-        if (list.size() >0){
+        if (list.size() > 0) {
             lnTempImport.setVisibility(View.VISIBLE);
             tvNumberTempImport.setText(String.valueOf(list.size()));
-        }else {
+        } else {
             lnTempImport.setVisibility(View.GONE);
         }
         mFragment = getSupportFragmentManager().findFragmentById(R.id.home_parent);
-        if(mFragment != null && mFragment instanceof TempImportFragment) {
+        if (mFragment != null && mFragment instanceof TempImportFragment) {
             ((TempImportFragment) mFragment).reloadData();
 
         }
     }
 
     @SuppressLint("WrongConstant")
-    private void checkPermission(){
+    private void checkPermission() {
         Activity context = Util.getInstance().getCurrentActivity();
         if (PermissionChecker.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
                 PermissionChecker.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
                 PermissionChecker.checkSelfPermission(context, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED ||
-                PermissionChecker.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED ||
+                PermissionChecker.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
                 PermissionChecker.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
                 PermissionChecker.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
 
@@ -506,7 +502,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                     new CallbackBoolean() {
                         @Override
                         public void onRespone(Boolean result) {
-                            if (result){
+                            if (result) {
                                 ActivityCompat.requestPermissions(context, new String[]{
                                         android.Manifest.permission.ACCESS_FINE_LOCATION,
                                         android.Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -517,15 +513,15 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
                                 }, Constants.REQUEST_PERMISSION);
 
-                            }else {
+                            } else {
                                 logout();
 
                             }
-                    }
+                        }
 
-            });
+                    });
 
-        }else {
+        } else {
             createListItem();
         }
 
@@ -534,20 +530,20 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == Constants.REQUEST_PERMISSION) {
-            if (grantResults.length > 0 ) {
+            if (grantResults.length > 0) {
 
                 boolean hasDenied = false;
-                for (int i=0; i<grantResults.length; i++){
-                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED){
+                for (int i = 0; i < grantResults.length; i++) {
+                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
                         hasDenied = true;
                         break;
                     }
                 }
 
-                if (!hasDenied){
+                if (!hasDenied) {
                     createListItem();
 
-                }else {
+                } else {
                     Util.showToast("Cấp quyền truy cập không thành công!");
                     CustomCenterDialog.alertWithCancelButton("Cấp quyền truy cập!",
                             "Ứng dụng chưa được cấp quyền đầy đủ",
@@ -556,10 +552,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                             new CallbackBoolean() {
                                 @Override
                                 public void onRespone(Boolean result) {
-                                    if (result){
+                                    if (result) {
                                         checkPermission();
 
-                                    }else {
+                                    } else {
                                         logout();
                                     }
 
@@ -591,12 +587,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         loadOverView();
     }
 
-    protected boolean checkWarehouse(){
+    protected boolean checkWarehouse() {
         BaseModel user = User.getCurrentUser();
-        if (User.getCurrentUser().getInt("warehouse_id") == 0){
-            CustomCenterDialog.alert(null,"Cập nhật thông tin kho hàng nhân viên để tiếp tục thao tác", "đồng ý");
+        if (User.getCurrentUser().getInt("warehouse_id") == 0) {
+            CustomCenterDialog.alert(null, "Cập nhật thông tin kho hàng nhân viên để tiếp tục thao tác", "đồng ý");
             return false;
-        }else {
+        } else {
             return true;
         }
     }

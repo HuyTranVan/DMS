@@ -30,7 +30,7 @@ public class CustomPostListMethod extends AsyncTask<String, Void, List<String>> 
     private String baseUrl;
     private List<String> mParams;
 
-    private Boolean isJsonType= false;
+    private Boolean isJsonType = false;
 
     public CustomPostListMethod(String url, List<String> listParams, Boolean isJsonType, CallbackListCustom listener) {
         mListener = listener;
@@ -46,7 +46,7 @@ public class CustomPostListMethod extends AsyncTask<String, Void, List<String>> 
         Log.d("params: ", mParams.toString());
 
         List<String> listResult = new ArrayList<>();
-        for (int i=0; i<mParams.size(); i++) {
+        for (int i = 0; i < mParams.size(); i++) {
 
             try {
                 URL obj = new URL(baseUrl);
@@ -100,14 +100,15 @@ public class CustomPostListMethod extends AsyncTask<String, Void, List<String>> 
         return listResult;
     }
 
-    @Override protected void onPostExecute(List<String> responses) {
+    @Override
+    protected void onPostExecute(List<String> responses) {
         List<String> listResult = new ArrayList<>();
-        if (responses == null){
+        if (responses == null) {
             mListener.onError("Lỗi kết nối server ");
             Util.getInstance().showSnackbar("Lỗi kết nối server ", null, null);
 
-        }else {
-            for (int i=0; i<responses.size(); i++) {
+        } else {
+            for (int i = 0; i < responses.size(); i++) {
                 try {
                     JSONObject object = new JSONObject(responses.get(i));
                     if (object.getInt("status") == 200) {
@@ -127,7 +128,6 @@ public class CustomPostListMethod extends AsyncTask<String, Void, List<String>> 
         }
 
     }
-
 
 
 }

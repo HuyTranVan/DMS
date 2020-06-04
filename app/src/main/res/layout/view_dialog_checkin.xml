@@ -21,7 +21,7 @@
             android:textSize="@dimen/_12sdp"
             android:textColor="@color/black_text_color"
             android:gravity="center"
-            android:textAllCaps="true"/>
+            android:textAllCaps="true" />
 
         <TextView
             android:id="@+id/dialog_checkin_status"
@@ -36,7 +36,7 @@
             android:paddingTop="@dimen/_2sdp"
             android:paddingBottom="@dimen/_2sdp"
             android:layout_gravity="center"
-            android:layout_marginTop="@dimen/_5sdp"/>
+            android:layout_marginTop="@dimen/_5sdp" />
 
         <RadioGroup
             android:id="@+id/dialog_checkin_rg"
@@ -54,7 +54,7 @@
                 android:textSize="@dimen/_12sdp"
                 android:paddingLeft="@dimen/_10sdp"
                 android:buttonTint="@color/colorBlue"
-                android:checked="true"/>
+                android:checked="true" />
 
             <RadioButton
                 android:id="@+id/dialog_checkin_notowner"
@@ -63,7 +63,7 @@
                 android:text="Không gặp chủ nhà"
                 android:textSize="@dimen/_12sdp"
                 android:paddingLeft="@dimen/_10sdp"
-                android:buttonTint="@color/colorBlue"/>
+                android:buttonTint="@color/colorBlue" />
 
             <RadioButton
                 android:id="@+id/dialog_checkin_notinterest"
@@ -72,7 +72,7 @@
                 android:text="Chuyển sang không quan tâm"
                 android:textSize="@dimen/_12sdp"
                 android:paddingLeft="@dimen/_10sdp"
-                android:buttonTint="@color/colorBlue"/>
+                android:buttonTint="@color/colorBlue" />
 
             <RadioButton
                 android:id="@+id/dialog_checkin_interest"
@@ -81,7 +81,7 @@
                 android:text="Khách hàng chuyển sang quan tâm"
                 android:textSize="@dimen/_12sdp"
                 android:paddingLeft="@dimen/_10sdp"
-                android:buttonTint="@color/colorBlue"/>
+                android:buttonTint="@color/colorBlue" />
 
         </RadioGroup>
 
@@ -91,7 +91,7 @@
             android:background="#0d000000"
             android:layout_marginLeft="@dimen/_10sdp"
             android:layout_marginRight="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_5sdp"/>
+            android:layout_marginBottom="@dimen/_5sdp" />
 
         <LinearLayout
             android:id="@+id/dialog_checkin_product_parent"
@@ -105,7 +105,7 @@
                 android:text="Chọn sản phẩm giới thiệu:"
                 android:textSize="@dimen/_10sdp"
                 android:layout_marginLeft="@dimen/_10sdp"
-                android:textStyle="italic"/>
+                android:textStyle="italic" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/dialog_checkin_rvproduct"
@@ -115,7 +115,7 @@
                 android:clipToPadding="false"
                 android:layout_marginLeft="@dimen/_10sdp"
                 android:layout_marginRight="@dimen/_10sdp"
-                android:paddingBottom="@dimen/_5sdp"/>
+                android:paddingBottom="@dimen/_5sdp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -126,13 +126,14 @@
                 android:layout_marginRight="@dimen/_10sdp">
 
                 <TextView
-                    android:fontFamily="@font/font_awesome"                    android:layout_width="0dp"
+                    android:fontFamily="@font/font_awesome"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.1"
                     android:text="@string/icon_search"
                     android:gravity="center"
                     android:textSize="@dimen/_12sdp"
-                    android:textColor="@color/black_text_color_hint"/>
+                    android:textColor="@color/black_text_color_hint" />
 
                 <AutoCompleteTextView
                     android:id="@+id/dialog_checkin_search"
@@ -144,7 +145,7 @@
                     android:gravity="center_vertical"
                     android:textSize="@dimen/_12sdp"
                     android:ems="10"
-                    android:textCursorDrawable="@drawable/custom_cursor"/>
+                    android:textCursorDrawable="@drawable/custom_cursor" />
 
                 <TextView
                     android:fontFamily="@font/font_awesome"
@@ -171,8 +172,7 @@
             android:layout_marginLeft="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_5sdp"
             android:textSize="@dimen/_10sdp"
-            android:textStyle="italic"/>
-
+            android:textStyle="italic" />
 
 
         <com.whinc.widget.ratingbar.RatingBar
@@ -186,8 +186,8 @@
             app:rb_empty="@drawable/ic_star_empty"
             app:rb_fill="@drawable/ic_star_full"
             app:rb_max_count="5"
-            app:rb_count ="1"
-            app:rb_touch_rating="true"/>
+            app:rb_count="1"
+            app:rb_touch_rating="true" />
 
         <LinearLayout
             android:id="@+id/dialog_checkin_nextvisit_parent"
@@ -200,7 +200,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dip"
                 android:background="#0d000000"
-                android:layout_margin="@dimen/_10sdp"/>
+                android:layout_margin="@dimen/_10sdp" />
 
             <LinearLayout
 
@@ -215,7 +215,7 @@
                     android:layout_height="wrap_content"
                     android:text="Lần ghé cửa hàng kế tiếp"
                     android:textSize="@dimen/_10sdp"
-                    android:textStyle="italic"/>
+                    android:textStyle="italic" />
 
                 <EditText
                     android:id="@+id/dialog_checkin_nextday"
@@ -229,7 +229,7 @@
                     android:layout_marginLeft="@dimen/_5sdp"
                     android:textSize="@dimen/_12sdp"
                     android:textCursorDrawable="@drawable/custom_cursor"
-                    android:inputType="number"/>
+                    android:inputType="number" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -237,13 +237,11 @@
                     android:text="ngày"
                     android:textSize="@dimen/_10sdp"
                     android:textStyle="italic"
-                    android:layout_marginLeft="@dimen/_5sdp"/>
+                    android:layout_marginLeft="@dimen/_5sdp" />
 
             </LinearLayout>
 
         </LinearLayout>
-
-
 
 
         <RelativeLayout
@@ -269,7 +267,7 @@
                 android:hint="Nội dung cuộc gặp"
                 android:layout_margin="@dimen/_5sdp"
                 android:inputType="textCapSentences|textMultiLine"
-                android:textCursorDrawable="@drawable/custom_cursor"/>
+                android:textCursorDrawable="@drawable/custom_cursor" />
 
             <TextView
                 android:id="@+id/dialog_select_status_clear"
@@ -281,17 +279,16 @@
                 android:text="@string/icon_x"
                 android:gravity="center"
                 android:layout_margin="@dimen/_7sdp"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
         </RelativeLayout>
 
-        <include android:layout_height="wrap_content"
+        <include
+            android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            layout="@layout/view_bottom_dialog_button"/>
+            layout="@layout/view_bottom_dialog_button" />
 
     </LinearLayout>
-
-
 
 
 </FrameLayout>

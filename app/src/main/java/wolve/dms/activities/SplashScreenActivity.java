@@ -12,12 +12,10 @@ import wolve.dms.apiconnect.SystemConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Transaction;
-import wolve.dms.utils.Util;
 
 public class SplashScreenActivity extends BaseActivity {
     private ProgressBar progressBar;
@@ -52,10 +50,10 @@ public class SplashScreenActivity extends BaseActivity {
                     @Override
                     public void onRespone(Boolean result) {
                         progressBar.setVisibility(View.GONE);
-                        if (result){
+                        if (result) {
                             Transaction.gotoHomeActivity();
 
-                        }else {
+                        } else {
                             gotoLoginScreen();
 
                         }
@@ -79,7 +77,7 @@ public class SplashScreenActivity extends BaseActivity {
         super.onDestroy();
     }
 
-    private void gotoLoginScreen(){
+    private void gotoLoginScreen() {
         Intent intent = new Intent(SplashScreenActivity.this, LoginActivity.class);
         startActivity(intent);
         SplashScreenActivity.this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
@@ -90,11 +88,11 @@ public class SplashScreenActivity extends BaseActivity {
         finish();
     }
 
-    private void checkLogin(CallbackBoolean listener){
-        SystemConnect.getCheckLogin(new CallbackCustom(){
+    private void checkLogin(CallbackBoolean listener) {
+        SystemConnect.getCheckLogin(new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
-                if (result.getInt("version") > BuildConfig.VERSION_CODE){
+                if (result.getInt("version") > BuildConfig.VERSION_CODE) {
                     progressBar.setVisibility(View.GONE);
                     CustomCenterDialog.alertWithCancelButton("PHIÊN BẢN MỚI",
                             "Có 1 bản cập nhật mới trên Store \nVui lòng cập nhật",
@@ -102,10 +100,10 @@ public class SplashScreenActivity extends BaseActivity {
                             "không", new CallbackBoolean() {
                                 @Override
                                 public void onRespone(Boolean result) {
-                                    if (!result){
+                                    if (!result) {
                                         finish();
 
-                                    }else {
+                                    } else {
                                         Transaction.openGooglePlay();
 
 
@@ -114,10 +112,10 @@ public class SplashScreenActivity extends BaseActivity {
                             });
 
 
-                }else {
-                    if (result.getBoolean("success")){
+                } else {
+                    if (result.getBoolean("success")) {
                         listener.onRespone(true);
-                    }else {
+                    } else {
                         listener.onRespone(false);
                     }
 

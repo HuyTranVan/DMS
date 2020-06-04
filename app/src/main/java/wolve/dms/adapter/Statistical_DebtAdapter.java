@@ -41,12 +41,12 @@ public class Statistical_DebtAdapter extends RecyclerView.Adapter<Statistical_De
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mListener = listener;
 
-        if (user.equals(Constants.ALL_FILTER)){
+        if (user.equals(Constants.ALL_FILTER)) {
             this.mData = data;
-        }else {
+        } else {
             mData = new ArrayList<>();
-            for (BaseModel row : data){
-                if (row.getBaseModel("user").getString("displayName").equals(user)){
+            for (BaseModel row : data) {
+                if (row.getBaseModel("user").getString("displayName").equals(user)) {
                     mData.add(row);
                 }
             }
@@ -56,7 +56,7 @@ public class Statistical_DebtAdapter extends RecyclerView.Adapter<Statistical_De
 
     }
 
-    public void sortUp(){
+    public void sortUp() {
         Collections.reverse(mData);
         notifyDataSetChanged();
     }
@@ -69,14 +69,14 @@ public class Statistical_DebtAdapter extends RecyclerView.Adapter<Statistical_De
 
     @Override
     public void onBindViewHolder(final StatisticalBillsViewHolder holder, final int position) {
-        holder.tvNumber.setText(mData.size() >0? String.valueOf(mData.size() -position) : "");
+        holder.tvNumber.setText(mData.size() > 0 ? String.valueOf(mData.size() - position) : "");
         holder.tvsignBoard.setText(Constants.shopName[mData.get(position).getInt("shopType")] + " " + mData.get(position).getString("signBoard"));
         holder.tvDistrict.setText(mData.get(position).getString("street") + " - " + mData.get(position).getString("district"));
-        holder.tvUser.setText(Util.getIconString(R.string.icon_username, "  ",mData.get(position).getBaseModel("user").getString("displayName")));
+        holder.tvUser.setText(Util.getIconString(R.string.icon_username, "  ", mData.get(position).getBaseModel("user").getString("displayName")));
         holder.tvDebt.setText(Util.FormatMoney(mData.get(position).getDouble("debt")));
         holder.tvTime.setText(String.format("%d ngày", Util.countDay(mData.get(position).getLong("last_debt"))));
 
-        holder.vLine.setVisibility(position == mData.size()-1? View.GONE:View.VISIBLE);
+        holder.vLine.setVisibility(position == mData.size() - 1 ? View.GONE : View.VISIBLE);
 
         holder.tvNumber.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,7 +84,6 @@ public class Statistical_DebtAdapter extends RecyclerView.Adapter<Statistical_De
                 mListener.Result(mData.get(position).getString("id"));
             }
         });
-
 
 
     }
@@ -97,7 +96,7 @@ public class Statistical_DebtAdapter extends RecyclerView.Adapter<Statistical_De
     public class StatisticalBillsViewHolder extends RecyclerView.ViewHolder {
         private TextView tvNumber, tvsignBoard, tvDistrict, tvUser, tvTime, tvDebt;
         private View vLine;
-//        private View vLineUpper, vLineUnder;
+        //        private View vLineUpper, vLineUnder;
         private LinearLayout lnParent;
 
         public StatisticalBillsViewHolder(View itemView) {
@@ -108,7 +107,7 @@ public class Statistical_DebtAdapter extends RecyclerView.Adapter<Statistical_De
             tvUser = itemView.findViewById(R.id.statistical_debt_item_user);
             tvTime = itemView.findViewById(R.id.statistical_debt_item_last_debt);
             tvDebt = itemView.findViewById(R.id.statistical_debt_item_debt);
-            vLine =itemView.findViewById(R.id.statistical_debt_item_line);
+            vLine = itemView.findViewById(R.id.statistical_debt_item_line);
 //            vLineUnder = itemView.findViewById(R.id.statistical_cash_item_under);
 //            vLineUpper = itemView.findViewById(R.id.statistical_cash_item_upper);
 
@@ -151,9 +150,9 @@ public class Statistical_DebtAdapter extends RecyclerView.Adapter<Statistical_De
 //        };
 //    }
 
-    public double sumDebts(){
+    public double sumDebts() {
         double totalDebt = 0.0;
-        for (BaseModel row : mData){
+        for (BaseModel row : mData) {
             totalDebt += row.getDouble("debt");
         }
         return totalDebt;

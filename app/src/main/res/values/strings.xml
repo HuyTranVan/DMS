@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">DMS</string>
     <string name="map_id">AIzaSyCJ-4zFtAI6ZVWSXY8E2xxM_EyLqXtwCXE</string>
-    <string name="map_route">AIzaSyCJ-4zFtAI6ZVWSXY8E2xxM_EyLqXtwCXE</string>
+        <string name="map_route">AIzaSyCJ-4zFtAI6ZVWSXY8E2xxM_EyLqXtwCXE</string>
 
     <string name="cloud_image_name">lubsolution</string>
     <string name="cloud_image_key">482386522287271</string>

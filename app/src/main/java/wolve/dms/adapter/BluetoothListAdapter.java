@@ -41,12 +41,12 @@ public class BluetoothListAdapter extends RecyclerView.Adapter<BluetoothListAdap
         return new BluetoothListViewHolder(itemView);
     }
 
-    public void addItems(BluetoothDevice item){
+    public void addItems(BluetoothDevice item) {
         mData.add(item);
         notifyDataSetChanged();
     }
 
-    public void reloadList(List<BluetoothDevice> list){
+    public void reloadList(List<BluetoothDevice> list) {
         mData = list;
         notifyDataSetChanged();
     }
@@ -55,7 +55,7 @@ public class BluetoothListAdapter extends RecyclerView.Adapter<BluetoothListAdap
     public void onBindViewHolder(final BluetoothListViewHolder holder, final int position) {
         holder.tvName.setText(mData.get(position).getName());
         holder.tvMac.setText(mData.get(position).getAddress());
-        holder.tvLine.setVisibility(position == mData.size() - 1 ? View.GONE: View.VISIBLE);
+        holder.tvLine.setVisibility(position == mData.size() - 1 ? View.GONE : View.VISIBLE);
         holder.lnParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,7 +87,7 @@ public class BluetoothListAdapter extends RecyclerView.Adapter<BluetoothListAdap
 
     }
 
-    public interface CallbackBluetooth{
+    public interface CallbackBluetooth {
         void OnDevice(BluetoothDevice device);
     }
 

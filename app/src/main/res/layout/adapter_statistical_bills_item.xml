@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/statistical_bills_item_parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -19,7 +17,7 @@
             android:layout_height="match_parent"
             android:background="#e5e5e5"
             android:layout_above="@+id/statistical_bills_item_number"
-            android:layout_centerHorizontal="true"/>
+            android:layout_centerHorizontal="true" />
 
         <TextView
             android:id="@+id/statistical_bills_item_number"
@@ -30,7 +28,7 @@
             android:text="0"
             android:textSize="@dimen/_8sdp"
             android:gravity="center"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true" />
 
         <View
             android:id="@+id/statistical_bills_item_under"
@@ -38,7 +36,7 @@
             android:layout_height="match_parent"
             android:background="#e5e5e5"
             android:layout_below="@+id/statistical_bills_item_number"
-            android:layout_centerHorizontal="true"/>
+            android:layout_centerHorizontal="true" />
 
     </RelativeLayout>
 
@@ -48,34 +46,34 @@
         android:layout_height="1dp"
         android:layout_centerVertical="true"
         android:background="#e5e5e5"
-        android:layout_gravity="center_vertical"/>
+        android:layout_gravity="center_vertical" />
 
     <!--<RelativeLayout-->
-        <!--android:layout_width="@dimen/_15sdp"-->
-        <!--android:layout_height="match_parent">-->
+    <!--android:layout_width="@dimen/_15sdp"-->
+    <!--android:layout_height="match_parent">-->
 
-        <!--<TextView-->
-            <!--android:id="@+id/statistical_bills_item_date"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_above="@+id/statistical_bills_item_line"-->
-            <!--android:paddingLeft="@dimen/_2sdp"-->
-            <!--android:text="Default"-->
-            <!--android:textColor="@color/black_text_color_hint"-->
-            <!--android:textSize="@dimen/_7sdp" />-->
+    <!--<TextView-->
+    <!--android:id="@+id/statistical_bills_item_date"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_above="@+id/statistical_bills_item_line"-->
+    <!--android:paddingLeft="@dimen/_2sdp"-->
+    <!--android:text="Default"-->
+    <!--android:textColor="@color/black_text_color_hint"-->
+    <!--android:textSize="@dimen/_7sdp" />-->
 
-        <!---->
+    <!---->
 
-        <!--<TextView-->
-            <!--android:id="@+id/statistical_bills_item_hour"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_below="@+id/statistical_bills_item_line"-->
-            <!--android:gravity="right"-->
-            <!--android:paddingRight="@dimen/_2sdp"-->
-            <!--android:text="Default"-->
-            <!--android:textColor="@color/black_text_color_hint"-->
-            <!--android:textSize="@dimen/_7sdp" />-->
+    <!--<TextView-->
+    <!--android:id="@+id/statistical_bills_item_hour"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_below="@+id/statistical_bills_item_line"-->
+    <!--android:gravity="right"-->
+    <!--android:paddingRight="@dimen/_2sdp"-->
+    <!--android:text="Default"-->
+    <!--android:textColor="@color/black_text_color_hint"-->
+    <!--android:textSize="@dimen/_7sdp" />-->
 
     <!--</RelativeLayout>-->
 
@@ -111,7 +109,7 @@
                     android:singleLine="true"
                     android:text="a"
                     android:textColor="@color/black"
-                    android:layout_marginLeft="@dimen/_5sdp"/>
+                    android:layout_marginLeft="@dimen/_5sdp" />
 
                 <TextView
                     android:id="@+id/statistical_bills_item_district"
@@ -123,7 +121,7 @@
                     android:singleLine="true"
                     android:text="a"
                     android:textColor="@color/black"
-                    android:layout_marginRight="@dimen/_5sdp"/>
+                    android:layout_marginRight="@dimen/_5sdp" />
             </LinearLayout>
 
             <LinearLayout
@@ -144,7 +142,7 @@
                     android:paddingRight="@dimen/_5sdp"
                     android:layout_marginLeft="@dimen/_10sdp"
                     android:layout_marginBottom="@dimen/_2sdp"
-                    android:gravity="center"/>
+                    android:gravity="center" />
 
                 <TextView
                     android:id="@+id/statistical_bills_item_user"
@@ -158,7 +156,6 @@
                     android:textStyle="italic" />
 
             </LinearLayout>
-
 
 
         </LinearLayout>
@@ -239,7 +236,7 @@
             android:background="@drawable/bg_corner5_lighgrey"
             android:layout_marginLeft="@dimen/_2sdp"
             android:layout_marginRight="@dimen/_2sdp"
-            android:layout_marginBottom="@dimen/_2sdp"/>
+            android:layout_marginBottom="@dimen/_2sdp" />
 
 
     </LinearLayout>

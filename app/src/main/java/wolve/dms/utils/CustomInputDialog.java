@@ -1,8 +1,6 @@
 package wolve.dms.utils;
 
 import android.graphics.Rect;
-import android.inputmethodservice.KeyboardView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -13,11 +11,9 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-//import com.hold1.keyboardheightprovider.KeyboardHeightProvider;
 import androidx.cardview.widget.CardView;
 
 import com.orhanobut.dialogplus.DialogPlus;
@@ -25,25 +21,24 @@ import com.orhanobut.dialogplus.OnBackPressListener;
 import com.orhanobut.dialogplus.OnCancelListener;
 import com.orhanobut.dialogplus.ViewHolder;
 
-import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
-import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
-
 import wolve.dms.R;
 import wolve.dms.callback.CallbackString;
 
-public class CustomInputDialog {
-    private static DialogPlus dialog ;
+//import com.hold1.keyboardheightprovider.KeyboardHeightProvider;
 
-    public static void dismissDialog(){
-        if (dialog != null && dialog.isShowing() )
+public class CustomInputDialog {
+    private static DialogPlus dialog;
+
+    public static void dismissDialog() {
+        if (dialog != null && dialog.isShowing())
             dialog.dismiss();
     }
 
-    public interface ShopNameListener{
+    public interface ShopNameListener {
         void onShopname(String shopname, int shoptype);
     }
 
-    public static void inputShopName(View view, final ShopNameListener mListener){
+    public static void inputShopName(View view, final ShopNameListener mListener) {
         dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
                 .setContentHolder(new ViewHolder(R.layout.view_input_shopname))
                 .setGravity(Gravity.BOTTOM)
@@ -89,7 +84,7 @@ public class CustomInputDialog {
                         mListener.onShopname(edName.getText().toString().trim(), shopType[0]);
                         handled = true;
 
-                    }else {
+                    } else {
                         Util.showToast("Nhập chưa đủ thông tin");
                     }
 
@@ -106,7 +101,7 @@ public class CustomInputDialog {
                     mListener.onShopname(edName.getText().toString().trim(), shopType[0]);
                     Util.hideKeyboard(v);
 
-                }else {
+                } else {
                     Util.showToast("Nhập chưa đủ thông tin");
                 }
             }
@@ -136,7 +131,7 @@ public class CustomInputDialog {
         Util.showKeyboard(edName);
     }
 
-    public static void inputWarehouse(View view, final CallbackString mListener){
+    public static void inputWarehouse(View view, final CallbackString mListener) {
         dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
                 .setContentHolder(new ViewHolder(R.layout.view_input_warehouse))
                 .setGravity(Gravity.BOTTOM)
@@ -166,7 +161,7 @@ public class CustomInputDialog {
                         mListener.Result(edName.getText().toString().trim());
                         handled = true;
 
-                    }else {
+                    } else {
                         Util.showToast("Nhập chưa đủ thông tin");
                     }
 
@@ -183,7 +178,7 @@ public class CustomInputDialog {
                     dismissDialog();
                     Util.hideKeyboard(v);
 
-                }else {
+                } else {
                     Util.showToast("Nhập chưa đủ thông tin");
                 }
             }
@@ -213,7 +208,7 @@ public class CustomInputDialog {
 
     }
 
-    public static void inputPhoneNumber(View view, final CallbackString mListener){
+    public static void inputPhoneNumber(View view, final CallbackString mListener) {
         dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
                 .setContentHolder(new ViewHolder(R.layout.view_input_phonenumber))
                 .setGravity(Gravity.BOTTOM)
@@ -250,11 +245,11 @@ public class CustomInputDialog {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 boolean handled = false;
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    if (Util.getPhoneValue(edPhone).matches(Util.DETECT_PHONE)){
+                    if (Util.getPhoneValue(edPhone).matches(Util.DETECT_PHONE)) {
                         mListener.Result(Util.getPhoneValue(edPhone));
                         handled = true;
 
-                    }else {
+                    } else {
                         Util.showToast("Sai số điện thoại");
                     }
 
@@ -268,11 +263,11 @@ public class CustomInputDialog {
             @Override
             public void onClick(View v) {
 
-                if (Util.getPhoneValue(edPhone).matches(Util.DETECT_PHONE)){
+                if (Util.getPhoneValue(edPhone).matches(Util.DETECT_PHONE)) {
                     mListener.Result(Util.getPhoneValue(edPhone));
                     Util.hideKeyboard(v);
 
-                }else {
+                } else {
                     Util.showToast("Sai số điện thoại");
                 }
 
@@ -300,14 +295,13 @@ public class CustomInputDialog {
         });
 
 
-
         dialog.show();
         edPhone.requestFocus();
         Util.showKeyboard(edPhone);
 
     }
 
-    public static void inputNumber(View view,final CallbackString mListener){
+    public static void inputNumber(View view, final CallbackString mListener) {
         dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
                 .setContentHolder(new ViewHolder(R.layout.view_input_number))
                 .setGravity(Gravity.BOTTOM)
@@ -378,7 +372,6 @@ public class CustomInputDialog {
 
             }
         });
-
 
 
         dialog.show();

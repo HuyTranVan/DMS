@@ -19,7 +19,7 @@
             android:layout_height="match_parent"
             android:src="@drawable/ic_arrow_back_black_18dp"
             android:padding="@dimen/_8sdp"
-            android:background="?selectableItemBackground"/>
+            android:background="?selectableItemBackground" />
 
         <TextView
             android:id="@+id/update_price_title"
@@ -28,7 +28,7 @@
             android:layout_centerInParent="true"
             android:text="DANH SÁCH SẢN PHẨM"
             android:textSize="@dimen/_14sdp"
-            android:textColor="@color/black_text_color"/>
+            android:textColor="@color/black_text_color" />
 
     </RelativeLayout>
 
@@ -46,7 +46,7 @@
             <View
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
-                android:background="#75b9b3b3"/>
+                android:background="#75b9b3b3" />
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/product_tabs"
@@ -67,14 +67,14 @@
             <View
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
-                android:background="#75b9b3b3"/>
+                android:background="#75b9b3b3" />
 
 
             <androidx.viewpager.widget.ViewPager
                 android:id="@+id/product_viewpager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/colorWhite"/>
+                android:background="@color/colorWhite" />
 
         </LinearLayout>
     </wolve.dms.libraries.MySwipeRefreshLayout>
@@ -89,6 +89,6 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         app:fab_size="normal"
-        style="@style/MenuButtonsBlue"/>
+        style="@style/MenuButtonsBlue" />
 
 </RelativeLayout>

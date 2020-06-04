@@ -14,7 +14,7 @@
         android:text="hoa"
         android:textSize="@dimen/_12sdp"
         android:padding="5sp"
-        android:gravity="center"/>
+        android:gravity="center" />
 
     <TextView
         android:id="@+id/bluetooth_list_item_mac"
@@ -24,12 +24,12 @@
         android:text="hoa"
         android:textSize="@dimen/_12sdp"
         android:padding="5sp"
-        android:gravity="center"/>
+        android:gravity="center" />
 
     <TextView
         android:id="@+id/bluetooth_list_item_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/colorLightGrey"/>
+        android:background="@color/colorLightGrey" />
 </LinearLayout>
 

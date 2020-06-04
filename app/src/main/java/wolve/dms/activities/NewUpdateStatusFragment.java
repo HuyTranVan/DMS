@@ -26,7 +26,6 @@ import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.StatusConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackJSONObject;
 import wolve.dms.customviews.CInputForm;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Status;
@@ -57,7 +56,7 @@ public class NewUpdateStatusFragment extends Fragment implements View.OnClickLis
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_add_status,container,false);
+        view = inflater.inflate(R.layout.fragment_add_status, container, false);
         initializeView();
 
         intitialData();
@@ -71,22 +70,22 @@ public class NewUpdateStatusFragment extends Fragment implements View.OnClickLis
         tvColor.setBackgroundColor(Color.parseColor(currentColor));
         rdNoDefault.setChecked(true);
         String bundle = getArguments().getString(Constants.STATUS);
-        if (bundle != null){
+        if (bundle != null) {
             try {
                 status = new Status(new JSONObject(bundle));
                 edName.setText(status.getString("name"));
                 tvColor.setBackgroundColor(Color.parseColor(status.getString("color")));
-                if (status.getBoolean("defaultStatus") != null){
-                    if (status.getBoolean("defaultStatus")){
+                if (status.getBoolean("defaultStatus") != null) {
+                    if (status.getBoolean("defaultStatus")) {
                         rdDefault.setChecked(true);
                         rdNoDefault.setChecked(false);
                         defaultStatus = 1;
-                    }else {
+                    } else {
                         rdDefault.setChecked(false);
                         rdNoDefault.setChecked(true);
                         defaultStatus = 0;
                     }
-                }else {
+                } else {
                     rdNoDefault.setChecked(true);
                     rdDefault.setChecked(false);
                     defaultStatus = 0;
@@ -120,7 +119,7 @@ public class NewUpdateStatusFragment extends Fragment implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.icon_back:
 //                getActivity().getSupportFragmentManager().popBackStack();
                 Util.hideKeyboard(v);
@@ -141,7 +140,7 @@ public class NewUpdateStatusFragment extends Fragment implements View.OnClickLis
                 break;
 
             case R.id.add_status_submit:
-                if (edName.getText().toString().trim().equals("")){
+                if (edName.getText().toString().trim().equals("")) {
                     CustomCenterDialog.alertWithCancelButton(null, "Vui lòng nhập đủ thông tin", "đồng ý", null, new CallbackBoolean() {
                         @Override
                         public void onRespone(Boolean result) {
@@ -149,8 +148,8 @@ public class NewUpdateStatusFragment extends Fragment implements View.OnClickLis
                         }
                     });
 
-                }else {
-                    String param = String.format(Api_link.STATUS_CREATE_PARAM, status == null? "" : "id="+ status.getString("id") +"&",
+                } else {
+                    String param = String.format(Api_link.STATUS_CREATE_PARAM, status == null ? "" : "id=" + status.getString("id") + "&",
                             Util.encodeString(edName.getText().toString()),
                             currentColor,
                             defaultStatus);
@@ -174,7 +173,7 @@ public class NewUpdateStatusFragment extends Fragment implements View.OnClickLis
 
     @Override
     public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
-        switch (checkedId){
+        switch (checkedId) {
             case R.id.add_status_radio_default:
                 defaultStatus = 1;
                 break;

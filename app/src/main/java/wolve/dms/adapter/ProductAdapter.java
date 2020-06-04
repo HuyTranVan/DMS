@@ -17,8 +17,8 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.R;
 import wolve.dms.apiconnect.ProductConnect;
-import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.models.BaseModel;
@@ -50,9 +50,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
         this.mListener = callbackClickAdapter;
         this.mDeleteListener = callbackDeleteAdapter;
 
-        for (int i=0; i< list.size(); i++){
+        for (int i = 0; i < list.size(); i++) {
             ProductGroup productGroup = new ProductGroup(list.get(i).getJsonObject("productGroup"));
-            if (productGroup.getInt("id")== group.getInt("id")){
+            if (productGroup.getInt("id") == group.getInt("id")) {
                 mData.add(list.get(i));
             }
         }
@@ -65,7 +65,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
         return new ProductAdapterViewHolder(itemView);
     }
 
-    public void addItems(ArrayList<Product> list){
+    public void addItems(ArrayList<Product> list) {
         mData = new ArrayList<>();
         mData.addAll(list);
         notifyDataSetChanged();
@@ -76,26 +76,24 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
     public void onBindViewHolder(final ProductAdapterViewHolder holder, final int position) {
         holder.tvName.setText(mData.get(position).getString("name"));
         holder.tvPrice.setText(Util.FormatMoney(mData.get(position).getDouble("unitPrice")));
-        String baseprice = Util.isAdmin()?(String.format(" (%s)", Util.FormatMoney(mData.get(position).getDouble("basePrice")))): "";
+        String baseprice = Util.isAdmin() ? (String.format(" (%s)", Util.FormatMoney(mData.get(position).getDouble("basePrice")))) : "";
         holder.tvBasePrice.setText(Util.FormatMoney(mData.get(position).getDouble("purchasePrice")) + baseprice);
 
 
-
-
-        holder.tvGift.setVisibility(mData.get(position).getBoolean("promotion")?View.VISIBLE : View.GONE);
-        if (!Util.checkImageNull(mData.get(position).getString("image"))){
+        holder.tvGift.setVisibility(mData.get(position).getBoolean("promotion") ? View.VISIBLE : View.GONE);
+        if (!Util.checkImageNull(mData.get(position).getString("image"))) {
             Glide.with(mContext).load(mData.get(position).getString("image")).centerCrop().into(holder.imageProduct);
 
-        }else {
-            Glide.with(mContext).load( R.drawable.ic_wolver).centerCrop().into(holder.imageProduct);
+        } else {
+            Glide.with(mContext).load(R.drawable.ic_wolver).centerCrop().into(holder.imageProduct);
 
         }
 
-        if (User.getCurrentRoleId()==Constants.ROLE_ADMIN){
+        if (User.getCurrentRoleId() == Constants.ROLE_ADMIN) {
             holder.rlParent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mListener.onRespone(mData.get(position).BaseModelstoString() , position);
+                    mListener.onRespone(mData.get(position).BaseModelstoString(), position);
 
                 }
             });
@@ -103,10 +101,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
             holder.rlParent.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    CustomCenterDialog.alertWithCancelButton(null, "Bạn muốn xóa sản phẩm " + mData.get(position).getString("name"), "ĐỒNG Ý","HỦY", new CallbackBoolean() {
+                    CustomCenterDialog.alertWithCancelButton(null, "Bạn muốn xóa sản phẩm " + mData.get(position).getString("name"), "ĐỒNG Ý", "HỦY", new CallbackBoolean() {
                         @Override
                         public void onRespone(Boolean result) {
-                            if (result){
+                            if (result) {
                                 String param = String.valueOf(mData.get(position).getInt("id"));
                                 ProductConnect.DeleteProduct(param, new CallbackCustom() {
                                     @Override

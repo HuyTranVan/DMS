@@ -6,7 +6,7 @@ import org.json.JSONObject;
  * Created by macos on 9/16/17.
  */
 
-public class Bill extends BaseModel{
+public class Bill extends BaseModel {
     public Bill() {
         jsonObject = null;
     }
@@ -15,11 +15,11 @@ public class Bill extends BaseModel{
         jsonObject = objOrder;
     }
 
-    public String BillstoString(){
+    public String BillstoString() {
         return jsonObject.toString();
     }
 
-    public JSONObject convertJsonObject(){
+    public JSONObject convertJsonObject() {
         return jsonObject;
     }
 }

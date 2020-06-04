@@ -1,11 +1,8 @@
 package wolve.dms.models;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import wolve.dms.utils.Constants;
@@ -17,7 +14,7 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class District extends BaseModel{
+public class District extends BaseModel {
     static List<String> mListDistricts = null;
 
     public District() {
@@ -28,7 +25,7 @@ public class District extends BaseModel{
         jsonObject = objOrder;
     }
 
-    public String DistricttoString(){
+    public String DistricttoString() {
         return jsonObject.toString();
     }
 

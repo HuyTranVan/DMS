@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -37,7 +36,7 @@
                 android:text="000"
                 android:textSize="@dimen/_8sdp"
                 android:gravity="center"
-                android:layout_centerVertical="true"/>
+                android:layout_centerVertical="true" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -53,8 +52,7 @@
                     android:layout_height="wrap_content"
                     android:text="Default"
                     android:textColor="@color/black_text_color_hint"
-                    android:textSize="@dimen/_12sdp"
-                    />
+                    android:textSize="@dimen/_12sdp" />
 
                 <TextView
                     android:id="@+id/bills_item_deliver_name"
@@ -66,7 +64,7 @@
                     android:textColor="@color/black_text_disable"
                     android:paddingRight="@dimen/_5sdp"
                     android:layout_marginBottom="@dimen/_2sdp"
-                    android:gravity="center"/>
+                    android:gravity="center" />
             </LinearLayout>
 
 
@@ -83,7 +81,7 @@
                 android:paddingLeft="@dimen/_8sdp"
                 android:paddingRight="@dimen/_8sdp"
                 android:layout_toLeftOf="@+id/bills_item_delete"
-                android:layout_centerVertical="true"/>
+                android:layout_centerVertical="true" />
 
             <TextView
                 android:id="@+id/bills_item_delete"
@@ -97,7 +95,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:gravity="center"
-                android:layout_marginLeft="@dimen/_5sdp"/>
+                android:layout_marginLeft="@dimen/_5sdp" />
 
         </RelativeLayout>
 
@@ -127,7 +125,7 @@
                     android:gravity="right|center_vertical"
                     android:text="Default"
                     android:textSize="@dimen/_12sdp"
-                    android:layout_gravity="center_vertical"/>
+                    android:layout_gravity="center_vertical" />
 
             </LinearLayout>
 
@@ -145,13 +143,13 @@
                     android:text="Thanh toán:"
                     android:textSize="@dimen/_10sdp"
                     android:textColor="@color/black_text_color"
-                    android:textStyle="italic"/>
+                    android:textStyle="italic" />
 
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/bills_item_rvpayment"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content" />
 
 
             </LinearLayout>
@@ -159,7 +157,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/bills_item_rvreturn"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 
@@ -182,7 +180,7 @@
             android:gravity="center"
             android:textSize="@dimen/_12sdp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/_10sdp"/>
+            android:layout_marginLeft="@dimen/_10sdp" />
 
         <TextView
             android:fontFamily="@font/font_awesome"
@@ -197,7 +195,7 @@
             android:layout_gravity="center"
             android:visibility="visible"
             android:layout_centerInParent="true"
-            android:padding="@dimen/_10sdp"/>
+            android:padding="@dimen/_10sdp" />
 
         <Button
             android:id="@+id/btn_confirm"
@@ -213,7 +211,7 @@
             android:visibility="gone"
             android:layout_marginRight="@dimen/_10sdp"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true" />
 
 
     </RelativeLayout>

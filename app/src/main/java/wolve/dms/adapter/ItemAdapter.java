@@ -18,7 +18,7 @@ import wolve.dms.utils.Util;
 /**
  * Created by tranhuy on 9/30/16.
  */
-public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ChoiceMethodViewHolder>{
+public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ChoiceMethodViewHolder> {
 
     private List<BaseModel> mData;
     private Context mContext;
@@ -26,7 +26,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ChoiceMethodVi
     private CustomBottomDialog.PositionListener mListener;
     private String mKey;
 
-    public interface CountListener{
+    public interface CountListener {
         void onRespone(int count);
     }
 
@@ -50,7 +50,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ChoiceMethodVi
     }
 
     public class ChoiceMethodViewHolder extends RecyclerView.ViewHolder {
-        private TextView text, line,  icon;
+        private TextView text, line, icon;
 
         public ChoiceMethodViewHolder(View itemView) {
             super(itemView);
@@ -61,7 +61,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ChoiceMethodVi
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                  mListener.onResponse(getAdapterPosition());
+                    mListener.onResponse(getAdapterPosition());
 
                 }
             });
@@ -73,16 +73,15 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ChoiceMethodVi
     @Override
     public void onBindViewHolder(final ChoiceMethodViewHolder holder, final int position) {
         holder.text.setText(mData.get(position).getString(mKey));
-        holder.line.setVisibility(position == mData.size() -1?View.GONE:View.VISIBLE);
-        if (mData.get(position).hasKey("icon")){
+        holder.line.setVisibility(position == mData.size() - 1 ? View.GONE : View.VISIBLE);
+        if (mData.get(position).hasKey("icon")) {
             holder.icon.setVisibility(View.VISIBLE);
             holder.icon.setText(mData.get(position).getString("icon"));
-        }else {
+        } else {
             holder.icon.setVisibility(View.GONE);
         }
 
     }
-
 
 
 }

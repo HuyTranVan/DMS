@@ -8,7 +8,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-
 import android.util.Log;
 import android.view.View;
 
@@ -71,7 +70,7 @@ abstract public class SwipeToDeleteCallback extends ItemTouchHelper.Callback {
         }
 
         mBackground.setColor(backgroundColor);
-        Log.e("right",itemView.getRight() + "aaa" );
+        Log.e("right", itemView.getRight() + "aaa");
 //        mBackground.setBounds((int) (0.8* itemView.getRight()), itemView.getTop(), itemView.getRight(), itemView.getBottom());
         mBackground.setBounds(itemView.getRight() + (int) dX, itemView.getTop(), itemView.getRight(), itemView.getBottom());
         mBackground.draw(c);
@@ -84,7 +83,7 @@ abstract public class SwipeToDeleteCallback extends ItemTouchHelper.Callback {
 
 
         deleteDrawable.setBounds(deleteIconLeft, deleteIconTop, deleteIconRight, deleteIconBottom);
-        Log.e("colom", deleteIconLeft + " " + deleteIconTop + " "+ deleteIconTop + " " +deleteIconBottom );
+        Log.e("colom", deleteIconLeft + " " + deleteIconTop + " " + deleteIconTop + " " + deleteIconBottom);
         deleteDrawable.draw(c);
 
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);

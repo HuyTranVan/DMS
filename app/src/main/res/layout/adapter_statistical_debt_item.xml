@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/statistical_debt_item_parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -18,7 +16,7 @@
         android:gravity="center"
         android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/_10sdp"
-        android:layout_marginRight="@dimen/_10sdp"/>
+        android:layout_marginRight="@dimen/_10sdp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -47,7 +45,7 @@
                     android:text="a"
                     android:textSize="@dimen/_10sdp"
                     android:textColor="@color/black_text_color"
-                    android:textAllCaps="true"/>
+                    android:textAllCaps="true" />
 
                 <TextView
                     android:id="@+id/statistical_debt_item_user"
@@ -59,10 +57,9 @@
                     android:textColor="@color/black_text_color_hint"
                     android:textSize="@dimen/_8sdp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="@dimen/_10sdp"/>
+                    android:layout_marginLeft="@dimen/_10sdp" />
 
             </LinearLayout>
-
 
 
             <TextView
@@ -71,10 +68,9 @@
                 android:layout_height="wrap_content"
                 android:text="a"
                 android:textColor="@color/black_text_color_hint"
-                android:textSize="@dimen/_9sdp"/>
+                android:textSize="@dimen/_9sdp" />
 
         </LinearLayout>
-
 
 
         <LinearLayout
@@ -90,14 +86,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/_12sdp"
-                android:textColor="@color/colorMain"/>
+                android:textColor="@color/colorMain" />
 
             <TextView
                 android:id="@+id/statistical_debt_item_last_debt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/_8sdp"
-                android:text="date"/>
+                android:text="date" />
 
 
         </LinearLayout>
@@ -111,7 +107,7 @@
         android:layout_height="1dip"
         android:background="#f1f1f1"
         android:layout_alignParentBottom="true"
-        android:layout_marginLeft="@dimen/_5sdp"/>
+        android:layout_marginLeft="@dimen/_5sdp" />
 
 
 </RelativeLayout>

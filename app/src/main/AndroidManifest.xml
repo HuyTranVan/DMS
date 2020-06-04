@@ -3,17 +3,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="wolve.dms">
     <!--CAMERA-->
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
-    <uses-feature android:name="android.hardware.camera.flash"  android:required="false"/>
-    <uses-feature android:name="android.hardware.camera2.full"   android:required="false"/>
-    <uses-feature android:name="android.hardware.camera.full"   android:required="false"/>
-    <uses-feature android:name="android.hardware.camera.autofocus"   android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.flash"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera2.full"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.full"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.FLASHLIGHT"/>
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
 
     <!--BLUETOOTH-->
-    <uses-permission android:name="android.permission.BLUETOOTH"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <!--DOCUMENT-->
     <!--<uses-permission android:name="android.permission.MANAGE_DOCUMENTS" />-->
@@ -34,8 +45,8 @@
 
     <!--PHONE & CONTACT-->
     <uses-permission android:name="android.permission.CALL_PHONE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS"/>
-    <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
 
     <!-- Location -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -50,10 +61,11 @@
 
 
     <!--FINGER_PRINT-->
-    <uses-feature android:name="android.hardware.fingerprint"
-        android:required="false"/>
-<!--    <uses-permission-->
-<!--        android:name="android.permission.FIN" />-->
+    <uses-feature
+        android:name="android.hardware.fingerprint"
+        android:required="false" />
+    <!--    <uses-permission-->
+    <!--        android:name="android.permission.FIN" />-->
 
     <application
         android:name=".DMSApplication"
@@ -81,11 +93,11 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/map_id"/>
+            android:value="@string/map_id" />
 
         <meta-data
             android:name="CLOUDINARY_URL"
-            android:value="cloudinary://482386522287271:Mh2EsnmYHBAsTAp7jsNLoJ5dXhk@lubsolution"/>
+            android:value="cloudinary://482386522287271:Mh2EsnmYHBAsTAp7jsNLoJ5dXhk@lubsolution" />
 
         <!--activity-->
         <activity
@@ -93,17 +105,19 @@
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
                     android:host="dmslub.com"
-                    android:scheme="http"/>
+                    android:scheme="http" />
             </intent-filter>
 
         </activity>
@@ -113,112 +127,112 @@
             android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.HomeActivity"
             android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.MapsActivity"
             android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
-            android:windowSoftInputMode="adjustResize|stateHidden"/>
+            android:windowSoftInputMode="adjustResize|stateHidden" />
 
         <activity
             android:name=".activities.WarehouseActivity"
             android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.ImportActivity"
             android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.ProductActivity"
             android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.UserActivity"
             android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.ProductGroupActivity"
             android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.StatusActivity"
             android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.CustomerActivity"
             android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize|adjustUnspecified"/>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize|adjustUnspecified" />
 
         <activity
             android:name=".activities.ShopCartActivity"
             android:label="@string/app_name"
             android:screenOrientation="unspecified"
-            android:theme= "@style/FullScreen"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+            android:theme="@style/FullScreen"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.StatisticalActivity"
             android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.PrintBillActivity"
             android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.ScannerActivity"
             android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.DistributorActivity"
             android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.TestActivity"
             android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
 
@@ -242,8 +256,6 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" />
-
-
 
 
     </application>

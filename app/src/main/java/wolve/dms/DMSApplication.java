@@ -4,10 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.res.Configuration;
 
-
 import com.cloudinary.android.MediaManager;
 
-import org.acra.ACRA;
 import org.acra.annotation.AcraMailSender;
 
 import java.util.Locale;

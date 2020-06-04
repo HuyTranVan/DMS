@@ -24,7 +24,7 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class DatePickerFragment extends Fragment implements View.OnClickListener{
+public class DatePickerFragment extends Fragment implements View.OnClickListener {
     private View view;
     private ImageView btnBack;
     private Button btnSubmit;
@@ -33,14 +33,14 @@ public class DatePickerFragment extends Fragment implements View.OnClickListener
     private TabLayout tabLayout;
 
     private ViewpagerDatePickerAdapter viewpagerAdapter;
-    private int currentPosition =0;
+    private int currentPosition = 0;
     private String[] titles = new String[]{"CHỌN NGÀY", "CHỌN THÁNG", "CHỌN NĂM"};
     private CallbackObject onDataPass;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_date_picker,container,false);
+        view = inflater.inflate(R.layout.fragment_date_picker, container, false);
         initializeView();
 
         intitialData();
@@ -76,14 +76,14 @@ public class DatePickerFragment extends Fragment implements View.OnClickListener
     @Override
     public void onClick(View v) {
         Util.hideKeyboard(v);
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.icon_back:
                 getActivity().getSupportFragmentManager().popBackStack();
 
                 break;
 
             case R.id.date_picker_submit:
-                switch (currentPosition){
+                switch (currentPosition) {
                     case 0:
                         onDataPass.onResponse(viewpagerAdapter.getDateSelected());
                         break;
@@ -106,7 +106,7 @@ public class DatePickerFragment extends Fragment implements View.OnClickListener
         }
     }
 
-    private void setupViewPager(){
+    private void setupViewPager() {
         viewpagerAdapter = new ViewpagerDatePickerAdapter(titles);
         viewPager.setAdapter(viewpagerAdapter);
         viewPager.setCurrentItem(currentPosition);
@@ -129,7 +129,7 @@ public class DatePickerFragment extends Fragment implements View.OnClickListener
             }
         });
 
-        for (int i=0; i<titles.length; i++){
+        for (int i = 0; i < titles.length; i++) {
             TabLayout.Tab tab = tabLayout.getTabAt(i);
             View customView = LayoutInflater.from(getActivity()).inflate(R.layout.view_tab_text, null);
             TextView textTitle = (TextView) customView.findViewById(R.id.tabTitle);

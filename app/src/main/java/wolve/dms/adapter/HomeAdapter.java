@@ -44,7 +44,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
         return new ItemAdapterViewHolder(itemView);
     }
 
-    public void addItems(ArrayList<JSONObject> list){
+    public void addItems(ArrayList<JSONObject> list) {
         mData = new ArrayList<>();
         mData.addAll(list);
         notifyDataSetChanged();
@@ -64,7 +64,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
         holder.rlParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onRespone(holder.tvTitle.getText().toString() , position);
+                mListener.onRespone(holder.tvTitle.getText().toString(), position);
 
             }
         });

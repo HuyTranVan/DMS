@@ -49,24 +49,24 @@ public class Statistical_CheckinsAdapter extends RecyclerView.Adapter<Statistica
     @Override
     public void onBindViewHolder(final StatisticalBillsViewHolder holder, final int position) {
         try {
-            holder.tvNumber.setText(String.valueOf(mData.size() -position));
+            holder.tvNumber.setText(String.valueOf(mData.size() - position));
             holder.tvsignBoard.setText(Constants.shopName[mData.get(position).getInt("shopType")] + " " + mData.get(position).getString("signBoard"));
             holder.tvDistrict.setText(mData.get(position).getString("street") + " - " + mData.get(position).getString("district"));
 
             //JSONObject objectCheckin = mData.get(position).getJsonObject("checkin");
 
-            String user = String.format("Nhân viên: %s",mData.get(position).getJsonObject("user").getString("displayName"));
+            String user = String.format("Nhân viên: %s", mData.get(position).getJsonObject("user").getString("displayName"));
             String hour = Util.DateHourString(mData.get(position).getLong("createAt"));
             String time = mData.get(position).getString("note").contains("[") ?
-                    mData.get(position).getString("note").substring(mData.get(position).getString("note").indexOf("[") + 1, mData.get(position).getString("note").indexOf("]")):
+                    mData.get(position).getString("note").substring(mData.get(position).getString("note").indexOf("[") + 1, mData.get(position).getString("note").indexOf("]")) :
                     "";
             holder.tvUser.setText(String.format("%s         %s   %s", user, hour, time));
 
 //            holder.tvTime.setText(String.format("Thời gian Checkin: %s", ""));
-            String note = mData.get(position).getString("note").contains("]")? mData.get(position).getString("note").split("]")[1] :   mData.get(position).getString("note");
+            String note = mData.get(position).getString("note").contains("]") ? mData.get(position).getString("note").split("]")[1] : mData.get(position).getString("note");
             holder.tvContent.setText(note);
 
-            holder.vLine.setVisibility(position == mData.size()-1? View.GONE:View.VISIBLE);
+            holder.vLine.setVisibility(position == mData.size() - 1 ? View.GONE : View.VISIBLE);
 
         } catch (JSONException e) {
             e.printStackTrace();

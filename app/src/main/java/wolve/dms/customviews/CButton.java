@@ -3,15 +3,11 @@ package wolve.dms.customviews;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -57,7 +53,7 @@ public class CButton extends LinearLayout {
 
         if (a != null) {
             if (a.hasValue(R.styleable.CInputForm_iconColor)) {
-                setIconColor(a.getColor(R.styleable.CInputForm_iconColor,0));
+                setIconColor(a.getColor(R.styleable.CInputForm_iconColor, 0));
             }
 
             if (a.hasValue(R.styleable.CInputForm_iconSize)) {
@@ -69,7 +65,7 @@ public class CButton extends LinearLayout {
             }
 
             if (a.hasValue(R.styleable.CInputForm_textColor)) {
-                setTextColor(a.getColor(R.styleable.CInputForm_textColor,0));
+                setTextColor(a.getColor(R.styleable.CInputForm_textColor, 0));
             }
 
             if (a.hasValue(R.styleable.CInputForm_textSize)) {
@@ -110,7 +106,6 @@ public class CButton extends LinearLayout {
     public void setTextColor(int color) {
         tvText.setTextColor(color);
     }
-
 
 
     public void setTextSize(float dimension) {

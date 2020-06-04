@@ -63,5 +63,4 @@ public class ProductQuantityAdapter extends RecyclerView.Adapter<ProductQuantity
     }
 
 
-
 }

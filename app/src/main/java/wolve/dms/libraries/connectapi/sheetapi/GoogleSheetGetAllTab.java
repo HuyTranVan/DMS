@@ -1,7 +1,6 @@
 package wolve.dms.libraries.connectapi.sheetapi;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -15,7 +14,6 @@ import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.Sheet;
 import com.google.api.services.sheets.v4.model.Spreadsheet;
-import com.google.api.services.sheets.v4.model.ValueRange;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,14 +28,14 @@ import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
 
 
-public class GoogleSheetGetAllTab extends AsyncTask<Void, Void, List<Sheet> > {
+public class GoogleSheetGetAllTab extends AsyncTask<Void, Void, List<Sheet>> {
     private String spreadsheetId;
     private NetHttpTransport HTTP_TRANSPORT;
     private JsonFactory JSON_FACTORY;
     private CallbackListSheet mListener;
-    private List<String> SCOPES ;
+    private List<String> SCOPES;
 
-    public interface CallbackListSheet{
+    public interface CallbackListSheet {
         void onRespone(List<Sheet> results);
     }
 
@@ -77,7 +75,7 @@ public class GoogleSheetGetAllTab extends AsyncTask<Void, Void, List<Sheet> > {
                 .setApplicationName(Constants.DMS_NAME)
                 .build();
         try {
-            Spreadsheet response=   service.spreadsheets().get(spreadsheetId).execute();
+            Spreadsheet response = service.spreadsheets().get(spreadsheetId).execute();
             sheets = response.getSheets();
 
 

@@ -33,7 +33,7 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
     private PrintBillActivity mActivity;
     private OnDataPass mListener;
 
-    public interface OnDataPass{
+    public interface OnDataPass {
         void dataReturnFromFragment(String data1, String data2);
     }
 
@@ -46,7 +46,7 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.view_dialog_bluetooth_list,container,false);
+        view = inflater.inflate(R.layout.view_dialog_bluetooth_list, container, false);
         initializeView();
 
         intitialData();
@@ -74,18 +74,18 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.btn_cancel:
                 finish();
                 break;
         }
     }
 
-    public void updateList(){
+    public void updateList() {
         adapter.reloadList(mActivity.listDevice);
     }
 
-    private void createRVBluetoothList(List<BluetoothDevice> list){
+    private void createRVBluetoothList(List<BluetoothDevice> list) {
         adapter = new BluetoothListAdapter(mActivity.listDevice, new BluetoothListAdapter.CallbackBluetooth() {
             @Override
             public void OnDevice(final BluetoothDevice device) {
@@ -110,7 +110,7 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
     }
 
 
-//    public void registerBluetooth() {
+    //    public void registerBluetooth() {
 //        try {
 //            if (initDevicesList() != 0) {
 //                finish();
@@ -214,7 +214,7 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
 //        }
 //    }
 //
-    protected void finish(){
+    protected void finish() {
         this.dismiss();
     }
 }

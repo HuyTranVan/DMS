@@ -1,6 +1,5 @@
 package wolve.dms.apiconnect;
 
-import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -35,7 +34,7 @@ import wolve.dms.utils.Util;
 
 public class SystemConnect {
 
-    public static void getFCMToken(CallbackString listener){
+    public static void getFCMToken(CallbackString listener) {
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                     @Override
@@ -55,14 +54,14 @@ public class SystemConnect {
 
     }
 
-    public static void getAllData(final CallbackListCustom listener, final Boolean stopLoading){
+    public static void getAllData(final CallbackListCustom listener, final Boolean stopLoading) {
         Util.getInstance().showLoading();
 
-        String[] url =new String[]{
-                Api_link.STATUS+ String.format(Api_link.DEFAULT_RANGE, 1,20),
+        String[] url = new String[]{
+                Api_link.STATUS + String.format(Api_link.DEFAULT_RANGE, 1, 20),
                 Api_link.DISTRICTS + Distributor.getLocationId(),
-                Api_link.PRODUCT_GROUPS+ String.format(Api_link.DEFAULT_RANGE, 1,10),
-                Api_link.PRODUCTS+ String.format(Api_link.DEFAULT_RANGE, 1,500),
+                Api_link.PRODUCT_GROUPS + String.format(Api_link.DEFAULT_RANGE, 1, 10),
+                Api_link.PRODUCTS + String.format(Api_link.DEFAULT_RANGE, 1, 500),
                 Api_link.PROVINCES};
 
         new CustomGetListMethod(url, new CallbackListCustom() {
@@ -80,18 +79,18 @@ public class SystemConnect {
         }).execute();
     }
 
-    public static void getDistrict(int provinceId, final CallbackCustomList listener){
+    public static void getDistrict(int provinceId, final CallbackCustomList listener) {
         //Util.getInstance().showLoading();
 
-        String url = Api_link.DISTRICTS+provinceId;
+        String url = Api_link.DISTRICTS + provinceId;
         new CustomGetMethod(url, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
                 //Util.getInstance().stopLoading(stopLoading);
-                if (Constants.responeIsSuccess(result)){
+                if (Constants.responeIsSuccess(result)) {
                     listener.onResponse(Constants.getResponeArraySuccess(result));
 
-                }else {
+                } else {
                     Constants.throwError(result.getString("message"));
                     listener.onError(result.getString("message"));
 
@@ -111,18 +110,18 @@ public class SystemConnect {
 
     }
 
-    public static void getCheckLogin(final CallbackCustom listener, boolean showLoding){
+    public static void getCheckLogin(final CallbackCustom listener, boolean showLoding) {
         Util.getInstance().showLoading(showLoding);
 
-        String url = Api_link.CHECK_LOGIN ;
+        String url = Api_link.CHECK_LOGIN;
         new CustomGetMethod(url, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(true);
-                if (Constants.responeIsSuccess(result)){
+                if (Constants.responeIsSuccess(result)) {
                     listener.onResponse(Constants.getResponeObjectSuccess(result));
 
-                }else {
+                } else {
                     Constants.throwError(result.getString("message"));
                     listener.onError(result.getString("message"));
 
@@ -142,18 +141,18 @@ public class SystemConnect {
 
     }
 
-    public static void getCategories(final CallbackCustom listener, boolean stoploading){
+    public static void getCategories(final CallbackCustom listener, boolean stoploading) {
         Util.getInstance().showLoading();
 
         String url = Api_link.CATEGORIES;
         new CustomGetMethod(url, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
-                if (Constants.responeIsSuccess(result)){
+                if (Constants.responeIsSuccess(result)) {
                     Util.getInstance().stopLoading(stoploading);
                     listener.onResponse(Constants.getResponeObjectSuccess(result));
 
-                }else {
+                } else {
                     Util.getInstance().stopLoading(true);
                     Constants.throwError(result.getString("message"));
                     listener.onError(result.getString("message"));
@@ -174,7 +173,7 @@ public class SystemConnect {
 
     }
 
-    public static void getStatisticals(String range, final CallbackCustom listener){
+    public static void getStatisticals(String range, final CallbackCustom listener) {
         Util.getInstance().showLoading();
 
         String url = Api_link.STATISTICALS + range;
@@ -182,10 +181,10 @@ public class SystemConnect {
             @Override
             public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(true);
-                if (Constants.responeIsSuccess(result)){
+                if (Constants.responeIsSuccess(result)) {
                     listener.onResponse(Constants.getResponeObjectSuccess(result));
 
-                }else {
+                } else {
                     Constants.throwError(result.getString("message"));
                     listener.onError(result.getString("message"));
 
@@ -205,7 +204,7 @@ public class SystemConnect {
 
     }
 
-    public static void loadListObject(List<BaseModel> listParam, CallbackCustomListList listener, final Boolean stopLoading){
+    public static void loadListObject(List<BaseModel> listParam, CallbackCustomListList listener, final Boolean stopLoading) {
         Util.getInstance().showLoading();
 
         new CustomGetPostListMethod(listParam, new CallbackCustomList() {
@@ -214,13 +213,13 @@ public class SystemConnect {
                 Util.getInstance().stopLoading(stopLoading);
                 List<List<BaseModel>> listResult = new ArrayList<>();
 
-                for (int i=0; i<results.size(); i++){
-                    if (Constants.responeIsSuccess(results.get(i))){
+                for (int i = 0; i < results.size(); i++) {
+                    if (Constants.responeIsSuccess(results.get(i))) {
                         listResult.add(Constants.getResponeArraySuccess(results.get(i)));
 
-                    }else {
+                    } else {
                         listResult.add(new ArrayList<>());
-                        Constants.throwError(String.format("list position at %d error",i));
+                        Constants.throwError(String.format("list position at %d error", i));
                         listener.onError("");
 
                     }
@@ -240,7 +239,7 @@ public class SystemConnect {
         }).execute();
     }
 
-    public static void GetDistributorDetail(String params,final CallbackCustom listener, Boolean stopLoading){
+    public static void GetDistributorDetail(String params, final CallbackCustom listener, Boolean stopLoading) {
         Util.getInstance().showLoading();
 
         String url = Api_link.DISTRIBUTOR_DETAIL + params;
@@ -248,10 +247,10 @@ public class SystemConnect {
             @Override
             public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(stopLoading);
-                if (Constants.responeIsSuccess(result)){
+                if (Constants.responeIsSuccess(result)) {
                     listener.onResponse(Constants.getResponeObjectSuccess(result));
 
-                }else {
+                } else {
                     Constants.throwError(result.getString("message"));
                     listener.onError(result.getString("message"));
 
@@ -270,19 +269,19 @@ public class SystemConnect {
         }).execute();
     }
 
-    public static void CreateDistributor(String params, final CallbackCustom listener, final Boolean showLoading){
+    public static void CreateDistributor(String params, final CallbackCustom listener, final Boolean showLoading) {
 
         Util.getInstance().showLoading();
 
-        new CustomPostMethod(DataUtil.createNewDistributorParam(params),new CallbackCustom() {
+        new CustomPostMethod(DataUtil.createNewDistributorParam(params), new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
 
-                if (Constants.responeIsSuccess(result)){
+                if (Constants.responeIsSuccess(result)) {
                     listener.onResponse(Constants.getResponeObjectSuccess(result));
                     Util.getInstance().stopLoading(showLoading);
 
-                }else {
+                } else {
                     Util.getInstance().stopLoading(true);
                     Constants.throwError(result.getString("message"));
                     listener.onError(result.getString("message"));
@@ -302,7 +301,7 @@ public class SystemConnect {
         }).execute();
     }
 
-    public static void getLastestProductUpdated(final CallbackCustom listener, boolean showLoading){
+    public static void getLastestProductUpdated(final CallbackCustom listener, boolean showLoading) {
         Util.getInstance().showLoading(showLoading);
 
         String url = Api_link.PRODUCT_LASTEST;
@@ -310,10 +309,10 @@ public class SystemConnect {
             @Override
             public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(true);
-                if (Constants.responeIsSuccess(result)){
+                if (Constants.responeIsSuccess(result)) {
                     listener.onResponse(Constants.getResponeObjectSuccess(result));
 
-                }else {
+                } else {
                     Constants.throwError(result.getString("message"));
                     listener.onError(result.getString("message"));
 
@@ -333,7 +332,7 @@ public class SystemConnect {
 
     }
 
-    public static void ListWarehouse(Boolean loading, final CallbackCustomList listener, final Boolean stopLoading){
+    public static void ListWarehouse(Boolean loading, final CallbackCustomList listener, final Boolean stopLoading) {
         if (loading)
             Util.getInstance().showLoading();
 
@@ -343,10 +342,10 @@ public class SystemConnect {
             @Override
             public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(stopLoading);
-                if (Constants.responeIsSuccess(result)){
+                if (Constants.responeIsSuccess(result)) {
                     listener.onResponse(Constants.getResponeArraySuccess(result));
 
-                }else {
+                } else {
                     Constants.throwError(result.getString("message"));
                     listener.onError(result.getString("message"));
                     Util.getInstance().stopLoading(true);
@@ -365,17 +364,17 @@ public class SystemConnect {
         }).execute();
     }
 
-    public static void CreateDepot(String params,final CallbackCustom listener, final Boolean stopLoading){
+    public static void CreateDepot(String params, final CallbackCustom listener, final Boolean stopLoading) {
         Util.getInstance().showLoading();
 
-        new CustomPostMethod(DataUtil.createNewDepotParam(params),new CallbackCustom() {
+        new CustomPostMethod(DataUtil.createNewDepotParam(params), new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(stopLoading);
-                if (Constants.responeIsSuccess(result)){
+                if (Constants.responeIsSuccess(result)) {
                     listener.onResponse(Constants.getResponeObjectSuccess(result));
 
-                }else {
+                } else {
                     Util.getInstance().stopLoading(true);
                     Constants.throwError(result.getString("message"));
                     listener.onError(result.getString("message"));
@@ -395,7 +394,7 @@ public class SystemConnect {
         }).execute();
     }
 
-    public static void GetInventoryList(int warehouse_id, final CallbackListCustom listener, Boolean stopLoading){
+    public static void GetInventoryList(int warehouse_id, final CallbackListCustom listener, Boolean stopLoading) {
         Util.getInstance().showLoading(stopLoading);
 
         String url = Api_link.INVENTORIES + String.format("?id=%d", warehouse_id);
@@ -403,10 +402,10 @@ public class SystemConnect {
             @Override
             public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(true);
-                if (Constants.responeIsSuccess(result)){
+                if (Constants.responeIsSuccess(result)) {
                     listener.onResponse(Constants.getResponeArraySuccess(result));
 
-                }else {
+                } else {
                     Constants.throwError(result.getString("message"));
                     listener.onError(result.getString("message"));
 
@@ -426,17 +425,17 @@ public class SystemConnect {
         }).execute();
     }
 
-    public static void UpdateInventoryQuantity(String params, final CallbackCustom listener, final Boolean stopLoading){
+    public static void UpdateInventoryQuantity(String params, final CallbackCustom listener, final Boolean stopLoading) {
         Util.getInstance().showLoading();
 
-        new CustomPostMethod(DataUtil.postInventoryQuantityParam(params),new CallbackCustom() {
+        new CustomPostMethod(DataUtil.postInventoryQuantityParam(params), new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(stopLoading);
-                if (Constants.responeIsSuccess(result)){
+                if (Constants.responeIsSuccess(result)) {
                     listener.onResponse(Constants.getResponeObjectSuccess(result));
 
-                }else {
+                } else {
                     Util.getInstance().stopLoading(true);
                     Constants.throwError(result.getString("message"));
                     listener.onError(result.getString("message"));
@@ -457,13 +456,13 @@ public class SystemConnect {
     }
 
 
-    public static void uploadImage(String uriPath, final CallbackString mListener){
+    public static void uploadImage(String uriPath, final CallbackString mListener) {
         Util.getInstance().showLoading();
         new UploadCloudaryMethod(uriPath, new CallbackString() {
             @Override
             public void Result(String s) {
                 Util.getInstance().stopLoading(true);
-                if (s != null){
+                if (s != null) {
                     mListener.Result(s);
                 }
             }

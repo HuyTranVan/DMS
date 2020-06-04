@@ -5,8 +5,6 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -22,12 +20,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.R;
-import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackClickAdapter;
-import wolve.dms.callback.CallbackClickProduct;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Product;
-import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Util;
 
 
@@ -40,11 +33,11 @@ public class CartProductDialogAdapter extends RecyclerView.Adapter<CartProductDi
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackViewPager mListener;
-    private int count =0;
+    private int count = 0;
     private int groupPosition;
 //    private Boolean isPromotion;
 
-    public interface CallbackViewPager{
+    public interface CallbackViewPager {
         void onChoosen(int position, int count);
     }
 
@@ -57,15 +50,15 @@ public class CartProductDialogAdapter extends RecyclerView.Adapter<CartProductDi
         //this.isPromotion = ispromotion;
 
         int groupId = group.getInt("id");
-        for (int i=0 ; i<list.size(); i++){
+        for (int i = 0; i < list.size(); i++) {
             try {
                 int groupid = new JSONObject(list.get(i).getString("productGroup")).getInt("id");
-                if (groupId == groupid && !checkHasChoosen(listChoosen, list.get(i))){
+                if (groupId == groupid && !checkHasChoosen(listChoosen, list.get(i))) {
                     list.get(i).put("checked", false);
                     this.mData.add(list.get(i));
                 }
 
-            } catch (JSONException e){
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
@@ -82,14 +75,14 @@ public class CartProductDialogAdapter extends RecyclerView.Adapter<CartProductDi
     public void onBindViewHolder(final ProductDialogShopCartAdapterViewHolder holder, final int position) {
         holder.tvName.setText(mData.get(position).getString("name"));
         holder.tvUnitPrice.setText(Util.FormatMoney(mData.get(position).getDouble("unitPrice")));
-        holder.tvLine.setVisibility(position == mData.size() -1 ? View.GONE : View.VISIBLE);
-        holder.lnParent.setBackgroundColor(mData.get(position).getBoolean("checked") ? Color.parseColor("#0d000000") : Color.parseColor("#ffffff") );
+        holder.tvLine.setVisibility(position == mData.size() - 1 ? View.GONE : View.VISIBLE);
+        holder.lnParent.setBackgroundColor(mData.get(position).getBoolean("checked") ? Color.parseColor("#0d000000") : Color.parseColor("#ffffff"));
 
-        if (!Util.checkImageNull(mData.get(position).getString("image_path")) ){
+        if (!Util.checkImageNull(mData.get(position).getString("image_path"))) {
             Glide.with(mContext).load(mData.get(position).getString("image_path")).centerCrop().into(holder.imgProduct);
 
-        }else {
-            Glide.with(mContext).load( R.drawable.ic_wolver).centerCrop().into(holder.imgProduct);
+        } else {
+            Glide.with(mContext).load(R.drawable.ic_wolver).centerCrop().into(holder.imgProduct);
 
         }
 
@@ -97,21 +90,21 @@ public class CartProductDialogAdapter extends RecyclerView.Adapter<CartProductDi
             @Override
             public void onClick(View v) {
 //                try {
-                     if (mData.get(position).getBoolean("checked")){
-                         mData.get(position).put("checked", false);
-                         holder.lnParent.setBackgroundColor(Color.parseColor("#ffffff") );
-                         count -=1;
-                         mListener.onChoosen(groupPosition,count);
-                         //notifyItemChanged(position);
+                if (mData.get(position).getBoolean("checked")) {
+                    mData.get(position).put("checked", false);
+                    holder.lnParent.setBackgroundColor(Color.parseColor("#ffffff"));
+                    count -= 1;
+                    mListener.onChoosen(groupPosition, count);
+                    //notifyItemChanged(position);
 
-                     }else {
-                         mData.get(position).put("checked", true);
-                         holder.lnParent.setBackgroundColor( Color.parseColor("#50000000") );
-                         //notifyItemChanged(position);
-                         count +=1;
-                         mListener.onChoosen(groupPosition,count);
+                } else {
+                    mData.get(position).put("checked", true);
+                    holder.lnParent.setBackgroundColor(Color.parseColor("#50000000"));
+                    //notifyItemChanged(position);
+                    count += 1;
+                    mListener.onChoosen(groupPosition, count);
 
-                     }
+                }
 //                }catch (JSONException e){
 //                    e.printStackTrace();
 //                }
@@ -142,25 +135,24 @@ public class CartProductDialogAdapter extends RecyclerView.Adapter<CartProductDi
 
     }
 
-    public List<BaseModel> getAllData(){
+    public List<BaseModel> getAllData() {
         return mData;
     }
 
-    private Boolean checkHasChoosen(List<BaseModel> listChoosen, BaseModel product){
+    private Boolean checkHasChoosen(List<BaseModel> listChoosen, BaseModel product) {
         Boolean check = false;
-        for (int i=0; i<listChoosen.size(); i++){
-            if (listChoosen.get(i).getString("id").equals(product.getString("id"))){
+        for (int i = 0; i < listChoosen.size(); i++) {
+            if (listChoosen.get(i).getString("id").equals(product.getString("id"))) {
                 check = true;
                 break;
             }
         }
-        return  check;
+        return check;
     }
 
-    public int getCount(){
+    public int getCount() {
         return count;
     }
-
 
 
 }

@@ -50,11 +50,11 @@ public class ProductCompareInventoryAdapter extends RecyclerView.Adapter<Product
         holder.tvQuantity2.setText(mData.get(position).getString("inventoryQuantity"));
         holder.tvQuantity3.setText(mData.get(position).getString("differenceQuantity"));
 
-        holder.tvQuantity3.setTextColor(mData.get(position).getInt("differenceQuantity")>=0?
-                mContext.getResources().getColor(R.color.black_text_color):
+        holder.tvQuantity3.setTextColor(mData.get(position).getInt("differenceQuantity") >= 0 ?
+                mContext.getResources().getColor(R.color.black_text_color) :
                 mContext.getResources().getColor(R.color.orange_dark));
 
-        holder.line.setVisibility(position == mData.size()-1? View.GONE:View.VISIBLE);
+        holder.line.setVisibility(position == mData.size() - 1 ? View.GONE : View.VISIBLE);
 
     }
 
@@ -80,7 +80,6 @@ public class ProductCompareInventoryAdapter extends RecyclerView.Adapter<Product
         }
 
     }
-
 
 
 }

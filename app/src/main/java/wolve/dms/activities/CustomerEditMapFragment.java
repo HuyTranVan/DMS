@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -34,26 +33,13 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import wolve.dms.R;
 import wolve.dms.apiconnect.LocationConnect;
-import wolve.dms.apiconnect.SystemConnect;
-import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackString;
-import wolve.dms.customviews.CInputForm;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Province;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomBottomDialog;
-import wolve.dms.utils.CustomCenterDialog;
-import wolve.dms.utils.CustomInputDialog;
-import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.MapUtil;
-import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
 /**
@@ -62,9 +48,9 @@ import wolve.dms.utils.Util;
 
 public class CustomerEditMapFragment extends Fragment implements View.OnClickListener,
         OnMapReadyCallback,
-        GoogleMap.OnCameraMoveListener{
+        GoogleMap.OnCameraMoveListener {
     private View view, vCover;
-    private TextView tvAddress, tvTitle,btnLocation,tvEdit;
+    private TextView tvAddress, tvTitle, btnLocation, tvEdit;
     private ImageView btnBack, iconPin;
     private CardView lnEditDetail;
     private LinearLayout rlBottom;
@@ -83,7 +69,7 @@ public class CustomerEditMapFragment extends Fragment implements View.OnClickLis
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_edit_map,container,false);
+        view = inflater.inflate(R.layout.fragment_edit_map, container, false);
 
         initializeView();
 
@@ -94,7 +80,7 @@ public class CustomerEditMapFragment extends Fragment implements View.OnClickLis
     }
 
     public void intitialData() {
-        tvTitle.setText(String.format("Sửa vị trí %s",mActivity.tvTitle.getText().toString().toUpperCase()));
+        tvTitle.setText(String.format("Sửa vị trí %s", mActivity.tvTitle.getText().toString().toUpperCase()));
         showAddress(mActivity.currentCustomer);
 
         tvAdd.setText(objectAdress.getString("address"));
@@ -120,10 +106,9 @@ public class CustomerEditMapFragment extends Fragment implements View.OnClickLis
         KeyboardVisibilityEvent.setEventListener(mActivity, new KeyboardVisibilityEventListener() {
             @Override
             public void onVisibilityChanged(boolean isOpen) {
-                rlBottom.setVisibility(isOpen? View.GONE : View.VISIBLE);
+                rlBottom.setVisibility(isOpen ? View.GONE : View.VISIBLE);
             }
         });
-
 
 
     }
@@ -150,19 +135,19 @@ public class CustomerEditMapFragment extends Fragment implements View.OnClickLis
 
     }
 
-    private void backEvent(){
-        if (lnEditDetail.getVisibility() == View.VISIBLE){
+    private void backEvent() {
+        if (lnEditDetail.getVisibility() == View.VISIBLE) {
             lnEditDetail.setVisibility(View.GONE);
             vCover.setVisibility(View.GONE);
 
-        }else {
+        } else {
             mActivity.onBackPressed();
         }
 
 
     }
 
-    private void addressEvent(){
+    private void addressEvent() {
         Util.textEvent(tvAdd, new CallbackString() {
             @Override
             public void Result(String s) {
@@ -176,7 +161,7 @@ public class CustomerEditMapFragment extends Fragment implements View.OnClickLis
         });
     }
 
-    private void streetEvent(){
+    private void streetEvent() {
         Util.textEvent(tvStreet, new CallbackString() {
             @Override
             public void Result(String s) {
@@ -190,8 +175,8 @@ public class CustomerEditMapFragment extends Fragment implements View.OnClickLis
         });
     }
 
-    private void showAddress(BaseModel add){
-        objectAdress.put("address",add.getString("address"));
+    private void showAddress(BaseModel add) {
+        objectAdress.put("address", add.getString("address"));
         objectAdress.put("street", add.getString("street"));
         objectAdress.put("district", add.getString("district"));
         objectAdress.put("province", add.getString("province"));
@@ -208,7 +193,7 @@ public class CustomerEditMapFragment extends Fragment implements View.OnClickLis
     @Override
     public void onClick(View v) {
         Util.hideKeyboard(v);
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.icon_back:
                 backEvent();
 
@@ -236,12 +221,12 @@ public class CustomerEditMapFragment extends Fragment implements View.OnClickLis
 
             case R.id.edit_map_edit:
                 tvEdit.setRotation(tvEdit.getRotation() + 180);
-                if (lnEditDetail.getVisibility() == View.VISIBLE){
+                if (lnEditDetail.getVisibility() == View.VISIBLE) {
                     lnEditDetail.setVisibility(View.GONE);
                     vCover.setVisibility(View.GONE);
 
 
-                }else {
+                } else {
                     lnEditDetail.setVisibility(View.VISIBLE);
                     vCover.setVisibility(View.VISIBLE);
                     //tvAdd.setFocusableInTouchMode(true);
@@ -275,7 +260,7 @@ public class CustomerEditMapFragment extends Fragment implements View.OnClickLis
 
     }
 
-    private void animateToCurrentLocation(){
+    private void animateToCurrentLocation() {
         getCurrentLocation(new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -287,23 +272,24 @@ public class CustomerEditMapFragment extends Fragment implements View.OnClickLis
 
     }
 
-    private void showPinDelay(int milisec){
-        new Handler().postDelayed (new Runnable() {
+    private void showPinDelay(int milisec) {
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
 
-                LatLng latLng = new LatLng(mActivity.currentCustomer.getDouble("lat"),mActivity.currentCustomer.getDouble("lng") );
+                LatLng latLng = new LatLng(mActivity.currentCustomer.getDouble("lat"), mActivity.currentCustomer.getDouble("lng"));
                 float zoom = mMap.getCameraPosition().zoom < 15 ? 15 : mMap.getCameraPosition().zoom;
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom), 400, new GoogleMap.CancelableCallback() {
                     @Override
                     public void onFinish() {
                         iconPin.setVisibility(View.VISIBLE);
-                        new Handler().postDelayed (new Runnable() {
+                        new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 mMap.setOnCameraMoveListener(CustomerEditMapFragment.this);
 
-                            }}, 1);
+                            }
+                        }, 1);
 
                     }
 
@@ -313,7 +299,8 @@ public class CustomerEditMapFragment extends Fragment implements View.OnClickLis
                     }
                 });
 
-            }}, milisec);
+            }
+        }, milisec);
     }
 
 
@@ -331,13 +318,13 @@ public class CustomerEditMapFragment extends Fragment implements View.OnClickLis
             btnSubmit.setVisibility(View.VISIBLE);
 
             LatLng center = mMap.getCameraPosition().target;
-            updateLocation(center.latitude , center.longitude);
+            updateLocation(center.latitude, center.longitude);
 
 
         }
     };
 
-    private void updateLocation( double lat, double lng){
+    private void updateLocation(double lat, double lng) {
         LocationConnect.getAddressFromLocation(lat, lng, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {

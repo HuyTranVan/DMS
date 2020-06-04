@@ -11,9 +11,6 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +34,7 @@ public class Statistical_ProductAdapter extends RecyclerView.Adapter<Statistical
         this.mListener = callback;
         this.mContext = Util.getInstance().getCurrentActivity();
 
-        for (BaseModel model : data){
+        for (BaseModel model : data) {
             model.put("isChecked", false);
         }
         this.mData = data;
@@ -52,19 +49,19 @@ public class Statistical_ProductAdapter extends RecyclerView.Adapter<Statistical
 
     @Override
     public void onBindViewHolder(final StatisticalProductGroupViewHolder holder, final int pos) {
-        String averagePrice = String.format("(~%s)",Util.FormatMoney((double) Math.round(mData.get(pos).getDouble("total")/mData.get(pos).getDouble("quantity"))));
+        String averagePrice = String.format("(~%s)", Util.FormatMoney((double) Math.round(mData.get(pos).getDouble("total") / mData.get(pos).getDouble("quantity"))));
         holder.tvName.setText(mData.get(pos).getString("productName"));
         holder.tvAveragePrice.setText(averagePrice);
         holder.tvQuantity.setText(String.valueOf(mData.get(pos).getInt("quantity")));
 
-        if (mData.get(pos).getBoolean("isChecked")){
+        if (mData.get(pos).getBoolean("isChecked")) {
             holder.cbCheck.setVisibility(View.VISIBLE);
             holder.tvName.setTypeface(null, Typeface.BOLD);
             holder.tvQuantity.setTypeface(null, Typeface.BOLD);
 
-        }else {
+        } else {
             holder.cbCheck.setVisibility(View.GONE);
-            holder.tvName.setTypeface( null, Typeface.NORMAL);
+            holder.tvName.setTypeface(null, Typeface.NORMAL);
             holder.tvQuantity.setTypeface(null, Typeface.NORMAL);
 
         }
@@ -73,7 +70,7 @@ public class Statistical_ProductAdapter extends RecyclerView.Adapter<Statistical
             @Override
             public void onClick(View v) {
                 boolean check = mData.get(pos).getBoolean("isChecked");
-                mData.get(pos).put("isChecked", check? false : true);
+                mData.get(pos).put("isChecked", check ? false : true);
                 mListener.Result(String.valueOf(getSumProduct()));
                 notifyDataSetChanged();
 
@@ -88,7 +85,7 @@ public class Statistical_ProductAdapter extends RecyclerView.Adapter<Statistical
     }
 
     public class StatisticalProductGroupViewHolder extends RecyclerView.ViewHolder {
-        private TextView  tvQuantity, tvName, tvAveragePrice;
+        private TextView tvQuantity, tvName, tvAveragePrice;
         private CheckBox cbCheck;
         private View line;
         private RecyclerView rvGroup;
@@ -108,16 +105,15 @@ public class Statistical_ProductAdapter extends RecyclerView.Adapter<Statistical
 
     }
 
-    private int getSumProduct(){
-        int sum =0;
-        for (int i=0; i<mData.size(); i++){
-            if (mData.get(i).getBoolean("isChecked")){
+    private int getSumProduct() {
+        int sum = 0;
+        for (int i = 0; i < mData.size(); i++) {
+            if (mData.get(i).getBoolean("isChecked")) {
                 sum += mData.get(i).getInt("quantity");
             }
         }
         return sum;
     }
-
 
 
 }

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -13,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import wolve.dms.R;
@@ -51,12 +49,12 @@ public class Statistical_OrderedAdapter extends RecyclerView.Adapter<RecyclerVie
         return mData.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
     }
 
-    public void addItem(BaseModel model){
+    public void addItem(BaseModel model) {
         mData.add(model);
-        notifyItemInserted(mData.size()-1);
+        notifyItemInserted(mData.size() - 1);
     }
 
-    public void removeItem(int pos){
+    public void removeItem(int pos) {
         mData.remove(pos);
         notifyDataSetChanged();
     }
@@ -92,15 +90,15 @@ public class Statistical_OrderedAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
     private void setItemRows(ItemViewHolder holder, int position) {
-        holder.tvNumber.setText(String.valueOf(position +1));
-        holder.tvsignBoard.setText(Constants.shopName[mData.get(position).getInt("shopType")]+ " " + mData.get(position).getString("signBoard"));
+        holder.tvNumber.setText(String.valueOf(position + 1));
+        holder.tvsignBoard.setText(Constants.shopName[mData.get(position).getInt("shopType")] + " " + mData.get(position).getString("signBoard"));
         holder.tvDistrict.setText(mData.get(position).getString("street") + " - " + mData.get(position).getString("district"));
-        holder.tvUser.setText(Util.getIconString(R.string.icon_username, "  ",mData.get(position).getBaseModel("user").getString("displayName")));
-        holder.tvDebt.setVisibility(mData.get(position).getDouble("debt") > 0.0? View.VISIBLE :View.GONE);
+        holder.tvUser.setText(Util.getIconString(R.string.icon_username, "  ", mData.get(position).getBaseModel("user").getString("displayName")));
+        holder.tvDebt.setVisibility(mData.get(position).getDouble("debt") > 0.0 ? View.VISIBLE : View.GONE);
         holder.tvDebt.setText(Util.FormatMoney(mData.get(position).getDouble("debt")));
         holder.tvTime.setText(String.format("Mua %d ngày trước", Util.countDay(mData.get(position).getLong("last_bill"))));
 
-        holder.vLine.setVisibility(position == mData.size()-1? View.GONE:View.VISIBLE);
+        holder.vLine.setVisibility(position == mData.size() - 1 ? View.GONE : View.VISIBLE);
 
         holder.tvNumber.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,7 +126,7 @@ public class Statistical_OrderedAdapter extends RecyclerView.Adapter<RecyclerVie
             tvUser = itemView.findViewById(R.id.statistical_ordered_item_user);
             tvTime = itemView.findViewById(R.id.statistical_ordered_item_last_debt);
             tvDebt = itemView.findViewById(R.id.statistical_ordered_item_debt);
-            vLine =itemView.findViewById(R.id.statistical_ordered_item_line);
+            vLine = itemView.findViewById(R.id.statistical_ordered_item_line);
 
 
         }

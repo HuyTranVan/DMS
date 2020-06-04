@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/list_user_change_new_parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -18,7 +17,7 @@
         android:textSize="@dimen/_12sdp"
         android:layout_marginLeft="@dimen/_5sdp"
         android:layout_marginTop="@dimen/_10sdp"
-        android:layout_marginBottom="@dimen/_5sdp"/>
+        android:layout_marginBottom="@dimen/_5sdp" />
 
     <TextView
         android:id="@+id/list_user_change_item_name"
@@ -29,7 +28,7 @@
         android:textSize="@dimen/_12sdp"
         android:layout_toRightOf="@+id/list_user_change_new_image"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/_5sdp"/>
+        android:layout_marginLeft="@dimen/_5sdp" />
 
 
 </RelativeLayout>

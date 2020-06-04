@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -19,7 +18,7 @@
             android:layout_height="match_parent"
             android:src="@drawable/ic_arrow_back_black_18dp"
             android:padding="@dimen/_8sdp"
-            android:background="?selectableItemBackground"/>
+            android:background="?selectableItemBackground" />
 
         <TextView
             android:id="@+id/tempbill_title"
@@ -28,7 +27,7 @@
             android:layout_centerInParent="true"
             android:text="HÓA ĐƠN CHƯA GIAO"
             android:textSize="@dimen/_12sdp"
-            android:textColor="@color/black_text_color"/>
+            android:textColor="@color/black_text_color" />
 
         <RelativeLayout
             android:id="@+id/tempbill_select_group"
@@ -44,7 +43,7 @@
                 android:layout_height="match_parent"
                 android:text="@string/icon_x"
                 android:gravity="center"
-                android:textSize="@dimen/_14sdp"/>
+                android:textSize="@dimen/_14sdp" />
 
             <TextView
                 android:fontFamily="@font/font_awesome"
@@ -55,7 +54,7 @@
                 android:gravity="center"
                 android:paddingLeft="@dimen/_5sdp"
                 android:paddingRight="@dimen/_5sdp"
-                android:layout_toLeftOf="@+id/tempbill_select_list"/>
+                android:layout_toLeftOf="@+id/tempbill_select_list" />
 
             <TextView
                 android:fontFamily="@font/font_awesome"
@@ -66,7 +65,7 @@
                 android:text="@string/icon_bill"
                 android:gravity="center"
                 android:textSize="@dimen/_14sdp"
-                android:layout_alignParentRight="true"/>
+                android:layout_alignParentRight="true" />
         </RelativeLayout>
 
     </RelativeLayout>
@@ -75,7 +74,6 @@
         android:id="@+id/tempbill_rvtempbill"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-
 
 
 </LinearLayout>

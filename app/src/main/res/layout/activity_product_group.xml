@@ -19,7 +19,7 @@
             android:layout_height="match_parent"
             android:src="@drawable/ic_arrow_back_black_18dp"
             android:padding="@dimen/_8sdp"
-            android:background="?selectableItemBackground"/>
+            android:background="?selectableItemBackground" />
 
         <TextView
             android:id="@+id/product_group_title"
@@ -28,7 +28,7 @@
             android:layout_centerInParent="true"
             android:text="DANH SÁCH NHÓM SẢN PHẨM"
             android:textSize="@dimen/_14sdp"
-            android:textColor="@color/black_text_color"/>
+            android:textColor="@color/black_text_color" />
 
     </RelativeLayout>
 
@@ -36,7 +36,7 @@
         android:id="@+id/product_group_rvgroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/product_group_header"/>
+        android:layout_below="@+id/product_group_header" />
 
     <com.github.clans.fab.FloatingActionButton
         android:id="@+id/product_group_add_new"
@@ -47,7 +47,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         app:fab_size="normal"
-        style="@style/MenuButtonsBlue"/>
+        style="@style/MenuButtonsBlue" />
 
 
 </RelativeLayout>

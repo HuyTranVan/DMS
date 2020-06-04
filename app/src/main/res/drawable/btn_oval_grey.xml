@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true">
-        <shape
-            android:shape="oval"
-            android:padding="5dp">
+        <shape android:shape="oval" android:padding="5dp">
             <solid android:color="@color/pin_deactivated" />
             <!--<solid android:color="#324a5e" /> -->
         </shape>
     </item>
 
     <item>
-        <shape
-            android:shape="oval"
-            android:padding="5dp">
+        <shape android:shape="oval" android:padding="5dp">
             <solid android:color="@color/black_text_color_hint" />
             <!--<solid android:color="#324a5e" /> -->
         </shape>

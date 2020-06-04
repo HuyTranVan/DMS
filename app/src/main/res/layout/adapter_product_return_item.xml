@@ -1,106 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/product_return_item_parent"
     android:background="@drawable/btn_none_white">
 
     <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginBottom="@dimen/_5sdp">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_marginBottom="@dimen/_5sdp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/product_return_item_quantity_group">
+            android:layout_toLeftOf="@+id/product_return_item_quantity_group">
 
 
-            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/product_return_item_totalquantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textColor="@color/colorBlue"
+            android:textSize="@dimen/_12sdp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/_10sdp" />
+
+        <TextView
+            android:id="@+id/product_return_item_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sản phẩm"
+            android:textColor="@color/black_text_color"
+            android:textSize="@dimen/_12sdp"
+            android:layout_toLeftOf="@+id/product_return_item_quantity_group"
+            android:layout_toRightOf="@+id/product_return_item_totalquantity"
+            android:layout_centerVertical="true" />
+
+
+        <LinearLayout
+            android:id="@+id/product_return_item_quantity_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/_5sdp">
+
 
             <TextView
-                android:id="@+id/product_return_item_totalquantity"
+                android:fontFamily="@font/font_awesome"
+                android:id="@+id/product_return_item_sub"
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="@dimen/_25sdp"
+                android:background="@drawable/btn_oval_white_border_grey"
+                android:text="@string/icon_minus"
+                android:textSize="@dimen/_10sdp"
+                android:textColor="@color/black_text_color_hint"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/product_return_item_quantity"
                 android:layout_width="wrap_content"
+                android:minWidth="@dimen/_20sdp"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:text="0"
-                android:textColor="@color/colorBlue"
-                android:textSize="@dimen/_12sdp"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/_10sdp"/>
-
-            <TextView
-                android:id="@+id/product_return_item_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Sản phẩm"
                 android:textColor="@color/black_text_color"
                 android:textSize="@dimen/_12sdp"
-                android:layout_toLeftOf="@+id/product_return_item_quantity_group"
-                android:layout_toRightOf="@+id/product_return_item_totalquantity"
-                android:layout_centerVertical="true"/>
+                android:padding="@dimen/_5sdp" />
 
-
-            <LinearLayout
-                android:id="@+id/product_return_item_quantity_group"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
+            <TextView
+                android:fontFamily="@font/font_awesome"
+                android:id="@+id/product_return_item_plus"
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="@dimen/_25sdp"
+                android:background="@drawable/btn_oval_white_border_grey"
+                android:text="@string/icon_plus"
+                android:textSize="@dimen/_10sdp"
+                android:textColor="@color/black_text_color_hint"
                 android:gravity="center"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="@dimen/_5sdp">
+                android:layout_gravity="center_vertical" />
 
 
-                <TextView
-                    android:fontFamily="@font/font_awesome"
-                    android:id="@+id/product_return_item_sub"
-                    android:layout_width="@dimen/_25sdp"
-                    android:layout_height="@dimen/_25sdp"
-                    android:background="@drawable/btn_oval_white_border_grey"
-                    android:text="@string/icon_minus"
-                    android:textSize="@dimen/_10sdp"
-                    android:textColor="@color/black_text_color_hint"
-                    android:gravity="center"
-                    android:layout_gravity="center_vertical"
-                    android:visibility="visible"/>
-
-                <TextView
-                    android:id="@+id/product_return_item_quantity"
-                    android:layout_width="wrap_content"
-                    android:minWidth="@dimen/_20sdp"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="0"
-                    android:textColor="@color/black_text_color"
-                    android:textSize="@dimen/_12sdp"
-                    android:padding="@dimen/_5sdp"/>
-
-                <TextView
-                    android:fontFamily="@font/font_awesome"
-                    android:id="@+id/product_return_item_plus"
-                    android:layout_width="@dimen/_25sdp"
-                    android:layout_height="@dimen/_25sdp"
-                    android:background="@drawable/btn_oval_white_border_grey"
-                    android:text="@string/icon_plus"
-                    android:textSize="@dimen/_10sdp"
-                    android:textColor="@color/black_text_color_hint"
-                    android:gravity="center"
-                    android:layout_gravity="center_vertical"/>
+        </LinearLayout>
 
 
-
-
-            </LinearLayout>
-
-
-        </RelativeLayout>
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/product_return_item_note"
@@ -124,6 +120,6 @@
         android:layout_alignParentBottom="true"
 
         android:layout_marginLeft="@dimen/_10sdp"
-        android:layout_marginRight="@dimen/_10sdp"/>
+        android:layout_marginRight="@dimen/_10sdp" />
 
 </RelativeLayout>

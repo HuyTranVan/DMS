@@ -2,12 +2,7 @@ package wolve.dms.libraries;
 
 import com.scottyab.aescrypt.AESCrypt;
 
-import org.apache.commons.codec.binary.Base64;
-
 import java.security.GeneralSecurityException;
-
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
 
 /**
  * Created by tranhuy on 9/26/16.
@@ -18,7 +13,7 @@ public class Security {
         String password = "dmslub";
         try {
             return AESCrypt.encrypt(password, input);
-        }catch (GeneralSecurityException e){
+        } catch (GeneralSecurityException e) {
             return "";
         }
     }
@@ -28,9 +23,9 @@ public class Security {
         try {
             return AESCrypt.decrypt(password, input);
 
-        }catch (GeneralSecurityException e){
+        } catch (GeneralSecurityException e) {
             return input;
-        }catch (Exception e) {
+        } catch (Exception e) {
             return input;
         }
     }
@@ -65,7 +60,6 @@ public class Security {
 //        }
 //        return "";
 //    }
-
 
 
 }

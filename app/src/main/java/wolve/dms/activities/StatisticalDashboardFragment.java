@@ -5,8 +5,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -45,7 +43,7 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
     private View view;
     private ColumnChartView chartIncome;
     private PieChartView chartDistrict;
-    private CVerticalView vRevenue, vCash, vDebt, vProfit, vInventory, vBaseProfit, vtotalNet, vTemp ;
+    private CVerticalView vRevenue, vCash, vDebt, vProfit, vInventory, vBaseProfit, vtotalNet, vTemp;
 
     private StatisticalActivity mActivity;
 
@@ -53,7 +51,7 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_statistical_dashboard,container,false);
+        view = inflater.inflate(R.layout.fragment_statistical_dashboard, container, false);
         Util.dashboardFragment = this;
         initializeView();
 
@@ -72,7 +70,7 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         chartIncome.setOnValueTouchListener(new ColumnChartOnValueSelectListener() {
             @Override
             public void onValueSelected(int columnIndex, int subcolumnIndex, SubcolumnValue value) {
-                Log.e("chart", columnIndex +" % " + subcolumnIndex +" & " + value.toString());
+                Log.e("chart", columnIndex + " % " + subcolumnIndex + " & " + value.toString());
             }
 
             @Override
@@ -99,7 +97,7 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
 
         }
     }
@@ -108,34 +106,34 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
                            List<BaseModel> list,
                            List<BaseModel> listDetail,
                            double total,
-                           double paid ,int countpayment,
-                           double debt,int countdebt,
+                           double paid, int countpayment,
+                           double debt, int countdebt,
                            double profit,
                            double base_profit,
-                           BaseModel temptWarehouse){
+                           BaseModel temptWarehouse) {
         List<BaseModel> mList = new ArrayList<>();
-        List<BaseModel> mListDetail= new ArrayList<>();
-        if (username.equals(Constants.ALL_FILTER)){
+        List<BaseModel> mListDetail = new ArrayList<>();
+        if (username.equals(Constants.ALL_FILTER)) {
             mList = list;
             mListDetail = listDetail;
 
-        }else {
+        } else {
             mList = new ArrayList<>();
             mListDetail = new ArrayList<>();
 
-            for (BaseModel row1 : list){
-                if (row1.getBaseModel("user").getString("displayName").equals(username)){
+            for (BaseModel row1 : list) {
+                if (row1.getBaseModel("user").getString("displayName").equals(username)) {
                     mList.add(row1);
                 }
             }
 
-            for (BaseModel row2 : listDetail){
-                if (row2.getBaseModel("user").getString("displayName").equals(username)){
+            for (BaseModel row2 : listDetail) {
+                if (row2.getBaseModel("user").getString("displayName").equals(username)) {
                     mListDetail.add(row2);
                 }
             }
         }
-        setupIncomeChart( mListDetail,total,  paid, debt, profit);
+        setupIncomeChart(mListDetail, total, paid, debt, profit);
         setupDistrictChart(mList);
         updateOverView(username, mList, paid, countpayment, total, debt, countdebt, profit, base_profit, temptWarehouse);
 
@@ -143,12 +141,12 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
 
     private void updateOverView(String username,
                                 List<BaseModel> bills,
-                                double paid,int countpayment,
+                                double paid, int countpayment,
                                 double total,
                                 double debt, int countdebt,
                                 double profit,
                                 double baseprofit,
-                                BaseModel warehouse){
+                                BaseModel warehouse) {
 
         vRevenue.setTitleText(String.format("Tổng bán hàng (%d)", bills.size()));
         vRevenue.setText(Util.FormatMoney(total));
@@ -165,18 +163,17 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         vtotalNet.setTitleText("Giá NET theo tiền thu");
         vtotalNet.setText(Util.FormatMoney(paid - profit));
 
-        vInventory.setTitleText(String.format("Tồn kho NPP (%d)",warehouse.getInt("quantity")));
+        vInventory.setTitleText(String.format("Tồn kho NPP (%d)", warehouse.getInt("quantity")));
         vInventory.setText(Util.FormatMoney(warehouse.getDouble("total")));
 
         vBaseProfit.setTitleText("Chênh lệch giá NPP");
         vBaseProfit.setText(Util.FormatMoney(baseprofit));
 
 
-
-        vtotalNet.setVisibility(username.equals(Constants.ALL_FILTER)?View.GONE: View.VISIBLE);
-        vTemp.setVisibility(username.equals(Constants.ALL_FILTER)?View.GONE: View.VISIBLE);
-        vInventory.setVisibility(Util.isAdmin()?View.VISIBLE: View.GONE);
-        vBaseProfit.setVisibility(Util.isAdmin()?View.VISIBLE: View.GONE);
+        vtotalNet.setVisibility(username.equals(Constants.ALL_FILTER) ? View.GONE : View.VISIBLE);
+        vTemp.setVisibility(username.equals(Constants.ALL_FILTER) ? View.GONE : View.VISIBLE);
+        vInventory.setVisibility(Util.isAdmin() ? View.VISIBLE : View.GONE);
+        vBaseProfit.setVisibility(Util.isAdmin() ? View.VISIBLE : View.GONE);
     }
 
 
@@ -185,18 +182,18 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         ArrayList<JSONObject> listData = new ArrayList<>();
         List<BaseModel> listDistrict = District.getDistricts();
         try {
-            for (int i = 0; i< listDistrict.size(); i++){
-                Double total =0.0;
-                for (int j=0; j<list.size(); j++){
-                    if (list.get(j).getBaseModel("customer").getString("district").equals(listDistrict.get(i).getString("text"))){
-                        total +=list.get(j).getDouble("total");
+            for (int i = 0; i < listDistrict.size(); i++) {
+                Double total = 0.0;
+                for (int j = 0; j < list.size(); j++) {
+                    if (list.get(j).getBaseModel("customer").getString("district").equals(listDistrict.get(i).getString("text"))) {
+                        total += list.get(j).getDouble("total");
                     }
 
                 }
 
 
                 JSONObject district = new JSONObject();
-                district.put("name",listDistrict.get(i).getString("text") );
+                district.put("name", listDistrict.get(i).getString("text"));
                 district.put("total", total);
                 listData.add(district);
 
@@ -206,8 +203,8 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
             PieChartData data;
 
             List<SliceValue> values = new ArrayList<SliceValue>();
-            for (int i=0; i<listData.size(); i++){
-                if (listData.get(i).getDouble("total") > 0.0){
+            for (int i = 0; i < listData.size(); i++) {
+                if (listData.get(i).getDouble("total") > 0.0) {
                     SliceValue sliceValue = new SliceValue((float) listData.get(i).getDouble("total"), ChartUtils.nextColor());
                     sliceValue.setLabel(listData.get(i).getString("name") + " - " + Util.FormatMoney(listData.get(i).getDouble("total")));
                     values.add(sliceValue);
@@ -224,19 +221,18 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
 //            data.setHasCenterCircle(true);
 
 
-
             chartDistrict.setPieChartData(data);
             chartDistrict.setCircleFillRatio(0.7f);
 
 
-        }catch (JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 
 
     }
 
-    private void setupIncomeChart( List<BaseModel> listDetail , double total, double paid, double debt, double profit){
+    private void setupIncomeChart(List<BaseModel> listDetail, double total, double paid, double debt, double profit) {
         //float total = Util.getTotalMoney(list).floatValue();
         //float debt =Util.getSumDebt(list).floatValue();
         //float income = Util.getTotalMoney(list).floatValue() - debt;
@@ -250,8 +246,8 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
 //            profit =Util.getTotalProfit(list).floatValue();
 //        }
 //        float[] inputData = new float[]{total, income , debt , profit};
-        double[] inputDataDouble = new double[]{total,  paid, profit,  debt, bdf};
-        float[] inputData = new float[]{(float) total, (float) paid, (float) profit, (float) debt,(float)  bdf};
+        double[] inputDataDouble = new double[]{total, paid, profit, debt, bdf};
+        float[] inputData = new float[]{(float) total, (float) paid, (float) profit, (float) debt, (float) bdf};
 
         List<Column> columns = new ArrayList<Column>();
 
@@ -275,12 +271,12 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
 
         axisValues.add(new AxisValue(1, "Tiền đã thu".toCharArray()));
 
-        String profitString = new DecimalFormat("#.##").format(profit *100 /paid) + " %";
+        String profitString = new DecimalFormat("#.##").format(profit * 100 / paid) + " %";
         axisValues.add(new AxisValue(2, String.format("### (%s)", profitString).toCharArray()));
 
         axisValues.add(new AxisValue(3, "Công nợ".toCharArray()));
 
-        String bdfString = new DecimalFormat("#.##").format(bdf *100 /total) + " %";
+        String bdfString = new DecimalFormat("#.##").format(bdf * 100 / total) + " %";
         axisValues.add(new AxisValue(4, String.format("BDF (%s)", bdfString).toCharArray()));
         Axis axisX = new Axis(axisValues);
 
@@ -288,7 +284,6 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
 
 
 //        data.setAxisYLeft(axisX);
-
 
 
 //        final Viewport v = new Viewport(chartIncome.getMaximumViewport());
@@ -303,7 +298,7 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         chartIncome.setOnValueTouchListener(new ColumnChartOnValueSelectListener() {
             @Override
             public void onValueSelected(int i, int i1, SubcolumnValue subcolumnValue) {
-                switch (i){
+                switch (i) {
                     case 0:
                         mActivity.viewPager.setCurrentItem(1, true);
                         break;
@@ -322,7 +317,6 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
                         break;
 
 
-
                 }
 
 
@@ -336,9 +330,6 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         });
 
     }
-
-
-
 
 
 }

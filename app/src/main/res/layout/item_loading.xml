@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
 
     <ProgressBar
@@ -11,7 +11,7 @@
         android:layout_height="@dimen/_20sdp"
         android:layout_gravity="center"
         android:indeterminateTint="@color/colorBlue"
-        android:layout_marginLeft="@dimen/_10sdp"/>
+        android:layout_marginLeft="@dimen/_10sdp" />
 
 
 </LinearLayout>

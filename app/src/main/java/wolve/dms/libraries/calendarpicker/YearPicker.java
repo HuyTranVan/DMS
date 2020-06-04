@@ -50,7 +50,7 @@ public class YearPicker {
         return d;
     }
 
-    public static void showDialogYearPicker(String currentYear, final CallbackString mListener, final CallbackBoolean clickListener){
+    public static void showDialogYearPicker(String currentYear, final CallbackString mListener, final CallbackBoolean clickListener) {
         final Dialog dialogResult = YearPicker.showCustomDialog(R.layout.view_dialog_select_yearpicker);
         dialogResult.setCancelable(true);
         dialogResult.setCanceledOnTouchOutside(true);
@@ -59,10 +59,10 @@ public class YearPicker {
         final NumberPicker numberPicker = dialogResult.findViewById(R.id.year);
 
         int year = Calendar.getInstance().get(Calendar.YEAR);
-        numberPicker.setMaxValue(year+50);
-        numberPicker.setMinValue(year-50);
+        numberPicker.setMaxValue(year + 50);
+        numberPicker.setMinValue(year - 50);
         numberPicker.setWrapSelectorWheel(false);
-        numberPicker.setValue(currentYear != null? Util.YearInt(currentYear) : year);
+        numberPicker.setValue(currentYear != null ? Util.YearInt(currentYear) : year);
         numberPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 
         dialogResult.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -71,7 +71,6 @@ public class YearPicker {
                 clickListener.onRespone(false);
             }
         });
-
 
 
         ok.setOnClickListener(new View.OnClickListener() {
@@ -94,7 +93,7 @@ public class YearPicker {
 
     }
 
-    public static void showDialogDatePicker(final RadioButton rdButton, final CustomCenterDialog.CallbackRangeTime mListener, final CallbackBoolean clickListener){
+    public static void showDialogDatePicker(final RadioButton rdButton, final CustomCenterDialog.CallbackRangeTime mListener, final CallbackBoolean clickListener) {
         //final String result ="&billingFrom=%d&billingTo=%d";
 
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_select_datepicker);
@@ -118,19 +117,20 @@ public class YearPicker {
         ArrayList<Integer> list = new ArrayList<>();
         list.add(1);
 
-        calendarView.init(lastYear.getTime(), nextYear.getTime(),new SimpleDateFormat("MMMM, YYYY", Locale.getDefault()))
+        calendarView.init(lastYear.getTime(), nextYear.getTime(), new SimpleDateFormat("MMMM, YYYY", Locale.getDefault()))
                 .inMode(CalendarPickerView.SelectionMode.RANGE)
 
                 .withSelectedDate(new Date());
 //                .withDeactivateDates(list);
-                //.withHighlightedDates(arrayList);
+        //.withHighlightedDates(arrayList);
 
 
-        new Handler().postDelayed (new Runnable() {
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 calendarView.scrollToDate(new Date());
-            }}, 200);
+            }
+        }, 200);
 
 
         dialogResult.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -154,14 +154,14 @@ public class YearPicker {
             @Override
             public void onClick(View v) {
                 long startDate = new Timestamp(calendarView.getSelectedDates().get(0).getTime()).getTime();
-                long lastDate = new Timestamp(calendarView.getSelectedDates().get(calendarView.getSelectedDates().size()-1).getTime()).getTime() ;
+                long lastDate = new Timestamp(calendarView.getSelectedDates().get(calendarView.getSelectedDates().size() - 1).getTime()).getTime();
 
-                if (calendarView.getSelectedDates().size() ==1){
+                if (calendarView.getSelectedDates().size() == 1) {
                     rdButton.setText(Util.DateString(startDate));
-                    mListener.onSelected(startDate, startDate+86400000);
-                }else {
-                    rdButton.setText(String.format("%s\n%s", Util.DateString(startDate) ,Util.DateString(lastDate)));
-                    mListener.onSelected(startDate,lastDate +86400000);
+                    mListener.onSelected(startDate, startDate + 86400000);
+                } else {
+                    rdButton.setText(String.format("%s\n%s", Util.DateString(startDate), Util.DateString(lastDate)));
+                    mListener.onSelected(startDate, lastDate + 86400000);
                 }
 
 //                mListener.Result(String.format(result, startDate, lastDate+ 86400000));

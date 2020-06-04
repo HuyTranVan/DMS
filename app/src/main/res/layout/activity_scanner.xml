@@ -24,7 +24,7 @@
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_arrow_back_black_18dp"
                 android:padding="@dimen/_8sdp"
-                android:background="?selectableItemBackground"/>
+                android:background="?selectableItemBackground" />
 
             <TextView
                 android:id="@+id/scanner_title"
@@ -36,7 +36,7 @@
                 android:textColor="@color/black_text_color"
                 android:singleLine="true"
                 android:layout_centerInParent="true"
-                android:gravity="center"/>
+                android:gravity="center" />
 
         </RelativeLayout>
 
@@ -46,7 +46,7 @@
             android:layout_height="wrap_content"
             app:isDropdown="true"
             android:layout_marginLeft="@dimen/_10sdp"
-            android:layout_marginRight="@dimen/_10sdp"/>
+            android:layout_marginRight="@dimen/_10sdp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -65,7 +65,7 @@
                 android:gravity="center_vertical"
                 android:paddingLeft="@dimen/_10sdp"
                 android:singleLine="true"
-                android:imeOptions="actionDone"/>
+                android:imeOptions="actionDone" />
 
             <Button
                 android:id="@+id/scanner_submit"
@@ -75,7 +75,7 @@
                 android:background="@drawable/btn_confirm_blue"
                 android:layout_marginLeft="@dimen/_10sdp"
                 android:text="Thêm"
-                android:textColor="@color/colorWhite"/>
+                android:textColor="@color/colorWhite" />
 
         </LinearLayout>
 
@@ -91,7 +91,7 @@
                 android:textSize="@dimen/_40sdp"
                 android:text="0"
                 android:textStyle="bold"
-                android:layout_centerInParent="true"/>
+                android:layout_centerInParent="true" />
 
             <TextView
                 android:id="@+id/scanner_delete"
@@ -105,10 +105,9 @@
                 android:paddingBottom="@dimen/_5sdp"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_margin="@dimen/_10sdp"/>
+                android:layout_margin="@dimen/_10sdp" />
 
         </RelativeLayout>
-
 
 
         <androidx.recyclerview.widget.RecyclerView
@@ -116,7 +115,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:paddingBottom="@dimen/_50sdp"/>
+            android:paddingBottom="@dimen/_50sdp" />
 
     </LinearLayout>
 
@@ -133,8 +132,7 @@
         android:textColor="@color/white"
         android:textSize="@dimen/_14sdp"
         android:layout_alignParentBottom="true"
-        android:visibility="gone"/>
-
+        android:visibility="gone" />
 
 
 </RelativeLayout>

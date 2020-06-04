@@ -26,7 +26,7 @@ public class CustomWindowAdapter implements GoogleMap.InfoWindowAdapter {
     private final View myContentsView;
     private LatlngListener mListener;
 
-    public CustomWindowAdapter(  LatlngListener listener){
+    public CustomWindowAdapter(LatlngListener listener) {
         myContentsView = Util.getInstance().getCurrentActivity().getLayoutInflater().inflate(R.layout.view_map_infowindow, null);
         this.mListener = listener;
     }
@@ -45,31 +45,31 @@ public class CustomWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
         JSONArray arrayCheckIns = customer.getJSONArray("checkIns");
 
-        String title = Constants.shopName[customer.getInt("shopType")] +" " + customer.getString("signBoard");
+        String title = Constants.shopName[customer.getInt("shopType")] + " " + customer.getString("signBoard");
         tvname.setText(title);
 
-        tvPhoneIcon.setVisibility(customer.getString("phone").equals("")?View.GONE:View.VISIBLE);
+        tvPhoneIcon.setVisibility(customer.getString("phone").equals("") ? View.GONE : View.VISIBLE);
 
         //String add = customer.getString("address") + " " + customer.getString("street") ;
 
         try {
-            JSONObject objectLastCheckin = arrayCheckIns.length()>0? arrayCheckIns.getJSONObject( arrayCheckIns.length()-1) : new JSONObject();
-            int day = objectLastCheckin.isNull("createAt")?0:(int)  Util.countDay(objectLastCheckin.getLong("createAt"));
+            JSONObject objectLastCheckin = arrayCheckIns.length() > 0 ? arrayCheckIns.getJSONObject(arrayCheckIns.length() - 1) : new JSONObject();
+            int day = objectLastCheckin.isNull("createAt") ? 0 : (int) Util.countDay(objectLastCheckin.getLong("createAt"));
 
-            if (arrayCheckIns.length() >0){
+            if (arrayCheckIns.length() > 0) {
                 tvCount.setVisibility(View.GONE);
-                tvCount.setText(day ==0? "Đã checkin hôm nay": String.format("Checkin %d ngày trước", day));
+                tvCount.setText(day == 0 ? "Đã checkin hôm nay" : String.format("Checkin %d ngày trước", day));
 
-                if (objectLastCheckin.isNull("note")){
+                if (objectLastCheckin.isNull("note")) {
                     lnNoteGroup.setVisibility(View.GONE);
-                }else {
+                } else {
                     lnNoteGroup.setVisibility(View.VISIBLE);
                     String note = String.format("[%s] %s", Util.DateMonthYearString(objectLastCheckin.getLong("createAt")),
-                            objectLastCheckin.getString("note").contains("[")? objectLastCheckin.getString("note").split(" ", 2)[1] :objectLastCheckin.getString("note"));
+                            objectLastCheckin.getString("note").contains("[") ? objectLastCheckin.getString("note").split(" ", 2)[1] : objectLastCheckin.getString("note"));
                     tvNote.setText(note);
                 }
 
-            }else {
+            } else {
                 tvCount.setVisibility(View.GONE);
                 lnNoteGroup.setVisibility(View.GONE);
             }
@@ -77,7 +77,7 @@ public class CustomWindowAdapter implements GoogleMap.InfoWindowAdapter {
             e.printStackTrace();
         }
 
-        mListener.onLatlngChange(new LatLng(customer.getDouble("lat"),customer.getDouble("lng")));
+        mListener.onLatlngChange(new LatLng(customer.getDouble("lat"), customer.getDouble("lng")));
         return myContentsView;
     }
 
@@ -88,7 +88,7 @@ public class CustomWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
     }
 
-    public View getCurrentView(){
+    public View getCurrentView() {
         return myContentsView;
     }
 

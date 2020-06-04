@@ -22,9 +22,9 @@ import wolve.dms.utils.Util;
 
 public class MoreLayout {
 
-    public static void DialogSpinner(View view , int width, Drawable color, ArrayList<String> list , final CallbackClickAdapter listener){
+    public static void DialogSpinner(View view, int width, Drawable color, ArrayList<String> list, final CallbackClickAdapter listener) {
         final PopupWindow popup = new PopupWindow(Util.getInstance().getCurrentActivity());
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(Util.getInstance().getCurrentActivity(), android.R.layout.select_dialog_item){
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(Util.getInstance().getCurrentActivity(), android.R.layout.select_dialog_item) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 String text = getItem(position);
@@ -49,7 +49,7 @@ public class MoreLayout {
         listViewDogs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                listener.onRespone(parent.getItemAtPosition(position).toString() , position);
+                listener.onRespone(parent.getItemAtPosition(position).toString(), position);
                 popup.dismiss();
             }
         });
@@ -59,7 +59,7 @@ public class MoreLayout {
         popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
         popup.setWidth(width);
         popup.setContentView(listViewDogs);
-        popup.showAsDropDown(view , 50, 0);
+        popup.showAsDropDown(view, 50, 0);
     }
 
 }

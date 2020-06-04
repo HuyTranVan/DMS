@@ -1,6 +1,5 @@
 package wolve.dms.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,38 +8,16 @@ import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-
-import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
-import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.R;
-import wolve.dms.apiconnect.ProductConnect;
-import wolve.dms.callback.CallbackBaseModel;
-import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackClickAdapter;
-import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackObject;
-import wolve.dms.callback.CallbackString;
-import wolve.dms.libraries.CounterHandler;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Product;
-import wolve.dms.models.ProductGroup;
-import wolve.dms.models.User;
-import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomCenterDialog;
-import wolve.dms.utils.CustomInputDialog;
-import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
@@ -72,23 +49,22 @@ public class ProductImportAdapter extends RecyclerView.Adapter<ProductImportAdap
     }
 
 
-
     @Override
     public void onBindViewHolder(final ProductAdapterViewHolder holder, final int position) {
         holder.tvName.setText(mData.get(position).getString("name"));
         holder.tvGroup.setText(mData.get(position).getBaseModel("productGroup").getString("name"));
-        if (mData.get(position).hasKey("currentQuantity") && mData.get(position).getInt("currentQuantity") >0){
+        if (mData.get(position).hasKey("currentQuantity") && mData.get(position).getInt("currentQuantity") > 0) {
             holder.tvQuantityLimit.setText(mData.get(position).getString("currentQuantity"));
-        }else {
+        } else {
             holder.tvQuantityLimit.setText("");
         }
-        if (mData.get(position).hasKey("quantity") && mData.get(position).getInt("quantity") >0 ){
+        if (mData.get(position).hasKey("quantity") && mData.get(position).getInt("quantity") > 0) {
             holder.tvMinus.setVisibility(View.VISIBLE);
             holder.edQuantity.setVisibility(View.VISIBLE);
             holder.edQuantity.setText(mData.get(position).getString("quantity"));
             holder.lnParent.setBackgroundResource(R.color.colorLightGrey);
 
-        }else {
+        } else {
             holder.tvMinus.setVisibility(View.GONE);
             holder.edQuantity.setVisibility(View.GONE);
             holder.lnParent.setBackgroundResource(R.color.colorWhite);
@@ -97,14 +73,14 @@ public class ProductImportAdapter extends RecyclerView.Adapter<ProductImportAdap
         holder.tvPlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int quantity = mData.get(position).hasKey("quantity")? mData.get(position).getInt("quantity") : 0;
+                int quantity = mData.get(position).hasKey("quantity") ? mData.get(position).getInt("quantity") : 0;
 
-                if (!mData.get(position).hasKey("currentQuantity") || mData.get(position).getInt("currentQuantity") > quantity ){
-                    mData.get(position).put("quantity", quantity +1);
+                if (!mData.get(position).hasKey("currentQuantity") || mData.get(position).getInt("currentQuantity") > quantity) {
+                    mData.get(position).put("quantity", quantity + 1);
                     notifyItemChanged(position);
                     mListener.onResponse(mData.get(position));
 
-                }else {
+                } else {
                     Util.showToast("Sản phẩm hết tồn kho");
                 }
 
@@ -115,14 +91,14 @@ public class ProductImportAdapter extends RecyclerView.Adapter<ProductImportAdap
         holder.lnParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int quantity = mData.get(position).hasKey("quantity")? mData.get(position).getInt("quantity") : 0;
+                int quantity = mData.get(position).hasKey("quantity") ? mData.get(position).getInt("quantity") : 0;
 
-                if (!mData.get(position).hasKey("currentQuantity") || mData.get(position).getInt("currentQuantity") > quantity ){
-                    mData.get(position).put("quantity", quantity +1);
+                if (!mData.get(position).hasKey("currentQuantity") || mData.get(position).getInt("currentQuantity") > quantity) {
+                    mData.get(position).put("quantity", quantity + 1);
                     notifyItemChanged(position);
                     mListener.onResponse(mData.get(position));
 
-                }else {
+                } else {
                     Util.showToast("Sản phẩm hết tồn kho");
                 }
 
@@ -134,7 +110,7 @@ public class ProductImportAdapter extends RecyclerView.Adapter<ProductImportAdap
         holder.tvMinus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mData.get(position).put("quantity", mData.get(position).getInt("quantity") -1);
+                mData.get(position).put("quantity", mData.get(position).getInt("quantity") - 1);
                 notifyItemChanged(position);
                 mListener.onResponse(mData.get(position));
             }
@@ -150,7 +126,7 @@ public class ProductImportAdapter extends RecyclerView.Adapter<ProductImportAdap
 
 
     public class ProductAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvName, tvGroup, tvQuantityLimit,  tvPlus, tvMinus;
+        private TextView tvName, tvGroup, tvQuantityLimit, tvPlus, tvMinus;
         private EditText edQuantity;
         private LinearLayout lnParent;
 
@@ -159,8 +135,8 @@ public class ProductImportAdapter extends RecyclerView.Adapter<ProductImportAdap
             lnParent = itemView.findViewById(R.id.product_import_item_parent);
             tvName = (TextView) itemView.findViewById(R.id.product_import_item_name);
             tvGroup = (TextView) itemView.findViewById(R.id.product_import_item_group);
-            tvMinus =  itemView.findViewById(R.id.product_import_item_minus);
-            tvPlus =  itemView.findViewById(R.id.product_import_item_plus);
+            tvMinus = itemView.findViewById(R.id.product_import_item_minus);
+            tvPlus = itemView.findViewById(R.id.product_import_item_plus);
             edQuantity = itemView.findViewById(R.id.product_import_item_number);
             tvQuantityLimit = itemView.findViewById(R.id.product_import_item_currentquantity);
 
@@ -180,7 +156,7 @@ public class ProductImportAdapter extends RecyclerView.Adapter<ProductImportAdap
                 } else {
                     List<BaseModel> listTemp = new ArrayList<>();
                     for (BaseModel row : baseData) {
-                        if (row.getString("name").toLowerCase().contains(charString)){
+                        if (row.getString("name").toLowerCase().contains(charString)) {
                             listTemp.add(row);
                         }
                     }
@@ -201,20 +177,20 @@ public class ProductImportAdapter extends RecyclerView.Adapter<ProductImportAdap
         };
     }
 
-    public void updateData(BaseModel model){
-        for (int i=0; i<mData.size(); i++){
-            if (mData.get(i).getInt("id") == model.getInt("id")){
+    public void updateData(BaseModel model) {
+        for (int i = 0; i < mData.size(); i++) {
+            if (mData.get(i).getInt("id") == model.getInt("id")) {
                 notifyItemChanged(i);
             }
         }
     }
 
-    public void reloadData(){
+    public void reloadData() {
         mData = baseData;
         notifyDataSetChanged();
     }
 
-    public void updateData(List<BaseModel> list){
+    public void updateData(List<BaseModel> list) {
         baseData = DataUtil.getProductPopular(list);
         mData = baseData;
         notifyDataSetChanged();

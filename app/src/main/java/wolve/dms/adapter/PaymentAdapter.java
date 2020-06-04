@@ -1,17 +1,12 @@
 package wolve.dms.adapter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,30 +52,30 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.PrintBil
     public void onBindViewHolder(final PrintBillViewHolder holder, final int position) {
         String date = Util.DateHourString(mData.get(position).getLong("createAt"));
         String note = "";
-        if (mData.get(position).getInt("payByReturn") == 1){
+        if (mData.get(position).getInt("payByReturn") == 1) {
             note = "Trừ tiền thu hàng".toUpperCase();
             holder.tvTotal.setTextColor(mContext.getResources().getColor(R.color.black_text_color_hint));
 
-        }else if (mData.get(position).getDouble("paid") <0.0){
-            note ="trả khách tiền mặt".toUpperCase();
+        } else if (mData.get(position).getDouble("paid") < 0.0) {
+            note = "trả khách tiền mặt".toUpperCase();
             holder.tvTotal.setTextColor(mContext.getResources().getColor(R.color.colorRedTransparent));
 
-        }else {
-            note ="thu tiền mặt".toUpperCase();
+        } else {
+            note = "thu tiền mặt".toUpperCase();
             holder.tvTotal.setTextColor(mContext.getResources().getColor(R.color.colorBlue));
 
         }
 
-        holder.tvDate.setText(String.format("%s %s:",date, note));
+        holder.tvDate.setText(String.format("%s %s:", date, note));
 
-        holder.tvTotal.setText(String.format("%s %s đ",mData.get(position).getDouble("paid") <0.0? "-" : "+",
-                mData.get(position).getDouble("paid") <0.0? Util.FormatMoney(mData.get(position).getDouble("paid") *-1) :Util.FormatMoney(mData.get(position).getDouble("paid"))));
+        holder.tvTotal.setText(String.format("%s %s đ", mData.get(position).getDouble("paid") < 0.0 ? "-" : "+",
+                mData.get(position).getDouble("paid") < 0.0 ? Util.FormatMoney(mData.get(position).getDouble("paid") * -1) : Util.FormatMoney(mData.get(position).getDouble("paid"))));
 
         String user = Util.getIconString(R.string.icon_username, "   ", mData.get(position).getBaseModel("user").getString("displayName"));
-        String collect = mData.get(position).getInt("user_id") != mData.get(position).getInt("user_collect")?
-                String.format(" (%s thu hộ)",mData.get(position).getBaseModel("collect_by").getString("displayName") ) : "";
+        String collect = mData.get(position).getInt("user_id") != mData.get(position).getInt("user_collect") ?
+                String.format(" (%s thu hộ)", mData.get(position).getBaseModel("collect_by").getString("displayName")) : "";
         holder.tvName.setText(user + collect);
-        holder.tvDelete.setVisibility(Util.isAdmin()? View.VISIBLE: View.GONE);
+        holder.tvDelete.setVisibility(Util.isAdmin() ? View.VISIBLE : View.GONE);
         holder.tvDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -95,11 +90,11 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.PrintBil
         return mData.size();
     }
 
-    public Double getTotalMoney(){
-        Double total =0.0;
-        for (int i=0; i<mData.size(); i++){
+    public Double getTotalMoney() {
+        Double total = 0.0;
+        for (int i = 0; i < mData.size(); i++) {
 //            try {
-            total += (mData.get(i).getDouble("debt") );
+            total += (mData.get(i).getDouble("debt"));
 //            } catch (JSONException e) {
 //                total =0.0;
 //            }
@@ -108,7 +103,7 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.PrintBil
     }
 
     public class PrintBillViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvDate, tvTotal  , tvName, tvDelete;
+        private TextView tvDate, tvTotal, tvName, tvDelete;
         private View vLine;
 
         public PrintBillViewHolder(View itemView) {
@@ -122,34 +117,34 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.PrintBil
 
     }
 
-    private void deletePayment(int pos){
-        CustomCenterDialog.alertWithCancelButton(null, String.format("Xác nhận xóa thanh toán số tiền %s", Util.FormatMoney(mData.get(pos).getDouble("paid"))) ,
-                "ĐỒNG Ý","HỦY", new CallbackBoolean() {
-            @Override
-            public void onRespone(Boolean result) {
-                CustomerConnect.DeletePayment(mData.get(pos).getString("id"), new CallbackCustom() {
+    private void deletePayment(int pos) {
+        CustomCenterDialog.alertWithCancelButton(null, String.format("Xác nhận xóa thanh toán số tiền %s", Util.FormatMoney(mData.get(pos).getDouble("paid"))),
+                "ĐỒNG Ý", "HỦY", new CallbackBoolean() {
                     @Override
-                    public void onResponse(BaseModel result) {
-                        if (result.getBoolean("deleted")){
-                            Util.getInstance().stopLoading(true);
-                            Util.showToast("Xóa thành công!");
-                            mListener.onRespone(true);
-                        }
+                    public void onRespone(Boolean result) {
+                        CustomerConnect.DeletePayment(mData.get(pos).getString("id"), new CallbackCustom() {
+                            @Override
+                            public void onResponse(BaseModel result) {
+                                if (result.getBoolean("deleted")) {
+                                    Util.getInstance().stopLoading(true);
+                                    Util.showToast("Xóa thành công!");
+                                    mListener.onRespone(true);
+                                }
 
 
+                            }
+
+                            @Override
+                            public void onError(String error) {
+                                Util.getInstance().stopLoading(true);
+                                Constants.throwError(error);
+
+                            }
+
+
+                        }, true);
                     }
-
-                    @Override
-                    public void onError(String error) {
-                        Util.getInstance().stopLoading(true);
-                        Constants.throwError(error);
-
-                    }
-
-
-                }, true);
-            }
-        });
+                });
 
 
     }

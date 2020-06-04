@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/view_list_method_parent"
     android:layout_width="match_parent"
@@ -11,27 +9,26 @@
     android:orientation="vertical">
 
 
+    <TextView
+        android:id="@+id/view_listmethod_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_30sdp"
+        android:background="#10000000"
+        android:text="Title"
+        android:textAllCaps="true"
+        android:gravity="center"
+        android:textSize="@dimen/_12sdp"
+        android:textColor="@color/black_text_color" />
 
-        <TextView
-            android:id="@+id/view_listmethod_title"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_30sdp"
-            android:background="#10000000"
-            android:text="Title"
-            android:textAllCaps="true"
-            android:gravity="center"
-            android:textSize="@dimen/_12sdp"
-            android:textColor="@color/black_text_color"/>
+    <!--        <View-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="1dp"-->
+    <!--            android:background="#10000000"/>-->
 
-<!--        <View-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="1dp"-->
-<!--            android:background="#10000000"/>-->
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/view_list_method_rv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/view_list_method_rv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 
 </LinearLayout>

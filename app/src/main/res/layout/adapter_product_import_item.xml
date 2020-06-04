@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/product_import_item_parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -38,7 +37,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/orange_dark"
                     android:textSize="@dimen/_12sdp"
-                    android:layout_marginLeft="@dimen/_10sdp"/>
+                    android:layout_marginLeft="@dimen/_10sdp" />
 
             </LinearLayout>
 
@@ -48,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:text="Default"
                 android:textColor="@color/black_text_color_hint"
-                android:textSize="@dimen/_8sdp"/>
+                android:textSize="@dimen/_8sdp" />
 
         </LinearLayout>
 
@@ -71,7 +70,7 @@
                 android:background="@drawable/btn_round_white_border_grey"
                 android:text="@string/icon_minus"
                 android:gravity="center"
-                android:layout_marginRight="@dimen/_5sdp"/>
+                android:layout_marginRight="@dimen/_5sdp" />
 
             <EditText
                 android:id="@+id/product_import_item_number"
@@ -85,7 +84,7 @@
                 android:paddingBottom="@dimen/_2sdp"
                 android:layout_marginRight="@dimen/_5sdp"
                 android:visibility="gone"
-                android:focusable="false"/>
+                android:focusable="false" />
 
             <TextView
                 android:fontFamily="@font/font_awesome"
@@ -96,12 +95,10 @@
                 android:minHeight="@dimen/_30sdp"
                 android:background="@drawable/btn_round_white_border_grey"
                 android:text="@string/icon_plus"
-                android:gravity="center"
-                />
+                android:gravity="center" />
 
 
         </LinearLayout>
-
 
 
     </RelativeLayout>
@@ -111,6 +108,6 @@
         android:layout_width="match_parent"
         android:layout_height="1dip"
         android:background="#0d000000"
-        android:layout_alignParentBottom="true"/>
+        android:layout_alignParentBottom="true" />
 
 </LinearLayout>

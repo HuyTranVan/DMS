@@ -40,7 +40,7 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class ProductActivity extends BaseActivity implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener{
+public class ProductActivity extends BaseActivity implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
     private ImageView btnBack;
     private ProductGroupAdapter productGroupAdapter;
     private FloatingActionButton btnAddProduct;
@@ -50,10 +50,10 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
     private MySwipeRefreshLayout swipeRefreshLayout;
 
     private ProductAdapter productAdapter;
-    public List<BaseModel> listProductGroup ;
-    private List<BaseModel> listProduct ;
+    public List<BaseModel> listProductGroup;
+    private List<BaseModel> listProduct;
     private ViewpagerProductAdapter viewpagerAdapter;
-    public int currentPosition =0;
+    public int currentPosition = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +87,7 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
     public void initialData() {
         loadProductGroup(true);
         tabLayout.setupWithViewPager(viewPager);
-        btnAddProduct.setVisibility(User.getCurrentRoleId()==Constants.ROLE_ADMIN ? View.VISIBLE : View.GONE);
+        btnAddProduct.setVisibility(User.getCurrentRoleId() == Constants.ROLE_ADMIN ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.icon_back:
                 onBackPressed();
                 break;
@@ -116,10 +116,10 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
     @Override
     public void onBackPressed() {
         Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.product_parent);
-        if(mFragment != null && mFragment instanceof NewUpdateProductFragment) {
+        if (mFragment != null && mFragment instanceof NewUpdateProductFragment) {
             getSupportFragmentManager().popBackStack();
 
-        }else {
+        } else {
             Transaction.gotoHomeActivityRight(true);
         }
     }
@@ -129,7 +129,7 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
         ProductConnect.ListProductGroup(loading, new CallbackCustomList() {
             @Override
             public void onResponse(List<BaseModel> results) {
-                for (int i=0; i<results.size(); i++){
+                for (int i = 0; i < results.size(); i++) {
                     listProductGroup.add(results.get(i));
 
                 }
@@ -150,32 +150,32 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
         ProductConnect.ListProduct(new CallbackCustomList() {
             @Override
             public void onResponse(List<BaseModel> results) {
-                for (int i=0; i<results.size(); i++){
+                for (int i = 0; i < results.size(); i++) {
                     listProduct.add(results.get(i));
 
                 }
                 DataUtil.sortProduct(listProduct, false);
-                setupViewPager(listProductGroup , listProduct);
+                setupViewPager(listProductGroup, listProduct);
             }
 
             @Override
-            public void onError(String error){
+            public void onError(String error) {
 
             }
         }, true);
     }
 
-    private void openFragmentNewProduct(String product){
+    private void openFragmentNewProduct(String product) {
         NewUpdateProductFragment groupFragment = new NewUpdateProductFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constants.PRODUCT, product);
-        changeFragment(groupFragment, bundle, true );
+        changeFragment(groupFragment, bundle, true);
     }
 
-    private void setupViewPager(final List<BaseModel> listproductgroup, final List<BaseModel> listproduct){
+    private void setupViewPager(final List<BaseModel> listproductgroup, final List<BaseModel> listproduct) {
         final List<RecyclerView.Adapter> listadapter = new ArrayList<>();
 
-        for (int  i=0; i<listproductgroup.size(); i++){
+        for (int i = 0; i < listproductgroup.size(); i++) {
             ProductAdapter productAdapters = new ProductAdapter(listproductgroup.get(i), listproduct, new CallbackClickAdapter() {
                 @Override
                 public void onRespone(String data, int position) {
@@ -214,7 +214,7 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
             }
         });
 
-        for (int i=0; i<listproductgroup.size(); i++){
+        for (int i = 0; i < listproductgroup.size(); i++) {
             TabLayout.Tab tab = tabLayout.getTabAt(i);
             View customView = LayoutInflater.from(this).inflate(R.layout.view_tab_product, null);
             //LinearLayout tabParent =  customView.findViewById(R.id.tabParent);

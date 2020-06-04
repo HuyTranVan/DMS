@@ -12,7 +12,6 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
@@ -39,10 +38,10 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class CustomerInfoFragment extends Fragment implements View.OnClickListener,  RadioGroup.OnCheckedChangeListener {
+public class CustomerInfoFragment extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
     private View view;
     private CInputForm edAdress, edPhone, edName, edNote;
-    private EditText edShopName ;
+    private EditText edShopName;
     private CButtonVertical mDirection, mCall, mInterest;
     protected TextView tvLastCheckin, tvCheckin, tvHistory;
     private Spinner spShoptype;
@@ -54,7 +53,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_customer_info,container,false);
+        view = inflater.inflate(R.layout.fragment_customer_info, container, false);
 
 
         initializeView();
@@ -84,8 +83,8 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 
     }
 
-    protected void reshowAddress(BaseModel address){
-        String add= String.format("%s%s, %s, %s",
+    protected void reshowAddress(BaseModel address) {
+        String add = String.format("%s%s, %s, %s",
                 Util.isEmpty(address.getString("address")) ? "" : address.getString("address") + " ",
                 Util.isEmpty(address.getString("street")) ? "" : address.getString("street"),
                 address.getString("district"),
@@ -98,7 +97,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         //mActivity.reshowAdd(address);
     }
 
-    public void reloadInfo(){
+    public void reloadInfo() {
         edAdress.setIconMoreText(mActivity.getResources().getString(R.string.icon_edit_pen));
         edNote.setIconMoreText(mActivity.getResources().getString(R.string.icon_edit_pen));
         edNote.setFocusable(false);
@@ -123,22 +122,22 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 //            rgType.check(R.id.customer_info_ser);
 //        }
 
-        if (mActivity.listCheckins.size() >0){
-            String note = mActivity.listCheckins.get(mActivity.listCheckins.size()-1).getInt("meetOwner") == 0?
-                    "Không gặp chủ nhà. " + mActivity.listCheckins.get(mActivity.listCheckins.size()-1).getString("note") :
-                    mActivity.listCheckins.get(mActivity.listCheckins.size()-1).getString("note");
+        if (mActivity.listCheckins.size() > 0) {
+            String note = mActivity.listCheckins.get(mActivity.listCheckins.size() - 1).getInt("meetOwner") == 0 ?
+                    "Không gặp chủ nhà. " + mActivity.listCheckins.get(mActivity.listCheckins.size() - 1).getString("note") :
+                    mActivity.listCheckins.get(mActivity.listCheckins.size() - 1).getString("note");
 
-            String checkin = String.format("%s %s",Util.DateHourString(mActivity.listCheckins.get(mActivity.listCheckins.size()-1).getLong("createAt")), note );
+            String checkin = String.format("%s %s", Util.DateHourString(mActivity.listCheckins.get(mActivity.listCheckins.size() - 1).getLong("createAt")), note);
             tvHistory.setVisibility(View.VISIBLE);
             tvLastCheckin.setVisibility(View.VISIBLE);
             tvLastCheckin.setText(checkin);
             tvHistory.setText(Util.getIconString(R.string.icon_history, "   ", String.format("Lịch sử ghé cửa hàng (%d)", mActivity.listCheckins.size())));
-        }else {
+        } else {
             tvHistory.setVisibility(View.GONE);
             tvLastCheckin.setVisibility(View.GONE);
 
         }
-        mCall.setVisibility(mActivity.currentCustomer.getString("phone").equals("")?View.GONE: View.VISIBLE);
+        mCall.setVisibility(mActivity.currentCustomer.getString("phone").equals("") ? View.GONE : View.VISIBLE);
         updateStatus(mActivity.currentCustomer.getBaseModel("status").getInt("id"));
 
 //todo addevent after setdata
@@ -172,11 +171,9 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         });
 
 
-
-
     }
 
-    private void setupShopTypeSpinner(){
+    private void setupShopTypeSpinner() {
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(Util.getInstance().getCurrentActivity(), R.layout.view_spinner_text, Constants.shopName);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spShoptype.setAdapter(dataAdapter);
@@ -205,8 +202,8 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 
     }
 
-    private void updateStatus(int status){
-        if (status ==2){
+    private void updateStatus(int status) {
+        if (status == 2) {
             //tvType.setTextColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
 
             mInterest.setText("Không quan tâm");
@@ -226,7 +223,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
             mActivity.btnShopCart.setTextColor(mActivity.getResources().getColor(R.color.colorBlue));
 
 
-        }else {
+        } else {
             //tvType.setTextColor(mActivity.getResources().getColor(R.color.colorBlue));
 
             mDirection.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
@@ -238,23 +235,22 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
             edPhone.setIconColor(mActivity.getResources().getColor(R.color.colorBlue));
 
 
-
             mActivity.btnShopCart.setBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_blue));
             mActivity.btnShopCart.setTextColor(mActivity.getResources().getColor(R.color.colorWhite));
 
-            if (status == 3){
+            if (status == 3) {
                 mInterest.setText("Đã mua hàng");
                 mInterest.setIconBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_blue));
                 mInterest.setTextColor(mActivity.getResources().getColor(R.color.colorBlue));
                 mInterest.setIconText(mActivity.getResources().getString(R.string.icon_check));
 
-            }else if (status ==1){
+            } else if (status == 1) {
                 mInterest.setText("Có quan tâm");
                 mInterest.setIconBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_orange));
                 mInterest.setTextColor(mActivity.getResources().getColor(R.color.orange_dark));
                 mInterest.setIconText(mActivity.getResources().getString(R.string.icon_heart));
 
-            }else if (status ==0){
+            } else if (status == 0) {
                 mInterest.setText("Khách hàng mới");
                 mInterest.setIconBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_pink));
                 mInterest.setTextColor(mActivity.getResources().getColor(R.color.colorPink));
@@ -268,7 +264,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
     @Override
     public void onClick(View v) {
         Util.hideKeyboard(v);
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.customer_info_direction:
                 openGoogleMap();
 
@@ -280,17 +276,17 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
                 break;
 
             case R.id.customer_history:
-                mActivity.changeFragment(new CustomerCheckinFragment() , true);
+                mActivity.changeFragment(new CustomerCheckinFragment(), true);
 
                 break;
 
             case R.id.customer_checkin:
-                if (!tvCheckin.getText().toString().toLowerCase().contains("checkin")){
+                if (!tvCheckin.getText().toString().toLowerCase().contains("checkin")) {
                     showDialogNote();
 
-                }else {
-                    int currentRating = mActivity.listCheckins.size()>0?
-                            mActivity.listCheckins.get(mActivity.listCheckins.size() -1).getInt("rating"):
+                } else {
+                    int currentRating = mActivity.listCheckins.size() > 0 ?
+                            mActivity.listCheckins.get(mActivity.listCheckins.size() - 1).getInt("rating") :
                             1;
                     CustomCenterDialog.showCheckinDialog("chi tiết ghé thăm cửa hàng",
                             mActivity.currentCustomer.getInt("id"),
@@ -302,10 +298,10 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
                                     submitCheckin(object.getString("param"), new CallbackBoolean() {
                                         @Override
                                         public void onRespone(Boolean result) {
-                                            if (result){
-                                                if (object.getBoolean("updateStatus")){
+                                            if (result) {
+                                                if (object.getBoolean("updateStatus")) {
                                                     mActivity.currentCustomer.put("status_id", object.getInt("status"));
-                                                    mActivity.submitCustomer(mActivity.currentCustomer,mActivity.listCheckins.size() +1,  new CallbackBoolean() {
+                                                    mActivity.submitCustomer(mActivity.currentCustomer, mActivity.listCheckins.size() + 1, new CallbackBoolean() {
                                                         @Override
                                                         public void onRespone(Boolean result) {
                                                             mActivity.returnPreviousScreen(mActivity.currentCustomer.BaseModelstoString());
@@ -313,7 +309,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
                                                         }
                                                     });
 
-                                                }else {
+                                                } else {
                                                     mActivity.returnPreviousScreen(mActivity.currentCustomer.BaseModelstoString());
 
                                                 }
@@ -333,11 +329,11 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         }
     }
 
-    private void openGoogleMap(){
-        CustomCenterDialog.alertWithCancelButton("Chỉ đường", "Mở ứng dụng bản đồ để tiếp tục chỉ đường", "Tiếp tục","Quay lại", new CallbackBoolean() {
+    private void openGoogleMap() {
+        CustomCenterDialog.alertWithCancelButton("Chỉ đường", "Mở ứng dụng bản đồ để tiếp tục chỉ đường", "Tiếp tục", "Quay lại", new CallbackBoolean() {
             @Override
             public void onRespone(Boolean re) {
-                if (re){
+                if (re) {
                     Transaction.openGoogleMapRoute(mActivity.currentCustomer.getDouble("lat"), mActivity.currentCustomer.getDouble("lng"));
 
                 }
@@ -346,7 +342,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         });
     }
 
-    private void shopNameEvent(){
+    private void shopNameEvent() {
         Util.textEvent(edShopName, new CallbackString() {
             @Override
             public void Result(String s) {
@@ -357,19 +353,19 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         });
     }
 
-    private void phoneEvent(){
+    private void phoneEvent() {
         edPhone.addTextChangePhone(new CallbackString() {
             @Override
             public void Result(String s) {
                 mActivity.saveCustomerToLocal("phone", s);
 
-                mCall.setVisibility(mActivity.currentCustomer.getString("phone").equals("")?View.GONE: View.VISIBLE);
+                mCall.setVisibility(mActivity.currentCustomer.getString("phone").equals("") ? View.GONE : View.VISIBLE);
 
             }
         });
     }
 
-    private void nameEvent(){
+    private void nameEvent() {
         edName.addTextChangeName(new CallbackString() {
             @Override
             public void Result(String s) {
@@ -379,7 +375,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         });
     }
 
-    private void noteEvent(){
+    private void noteEvent() {
 //        Util.textEvent(edNote, new CallbackString() {
 //            @Override
 //            public void Result(String s) {
@@ -388,8 +384,8 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 //        });
     }
 
-    private String getNoteText(String note){
-        if (!note.isEmpty()){
+    private String getNoteText(String note) {
+        if (!note.isEmpty()) {
             try {
                 JSONObject object = new JSONObject(note.trim());
                 return object.getString("note");
@@ -398,14 +394,14 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
             } catch (JSONException e) {
                 return note;
             }
-        }else {
+        } else {
             return "";
         }
 
     }
 
 
-    private void updateShopName(){
+    private void updateShopName() {
         mActivity.tvTitle.setText(String.format("%s %s",
                 Constants.shopName[mActivity.currentCustomer.getInt("shopType")],
                 mActivity.currentCustomer.getString("signBoard")));
@@ -438,7 +434,6 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 //    }
 
 
-
 //    private void changeShopTypeBackground(boolean isEnable){
 //        for (int i = 0; i < rgType.getChildCount(); ++i) {
 //            RadioButton radioButton = (RadioButton) rgType.getChildAt(i);
@@ -450,7 +445,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
-        switch (checkedId){
+        switch (checkedId) {
 //            case R.id.customer_info_repair:
 //                mActivity.saveCustomerToLocal("shopType", Constants.shopType[0]);
 //                tvType.setText(Constants.shopName[0]);
@@ -476,7 +471,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 
     }
 
-    private String createParamCheckin(BaseModel customer, int statusId, String note){
+    private String createParamCheckin(BaseModel customer, int statusId, String note) {
         String params = String.format(Api_link.SCHECKIN_CREATE_PARAM, customer.getInt("id"),
                 statusId,
                 Util.encodeString(note),
@@ -485,7 +480,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         return params;
     }
 
-    protected void submitCheckin(String param, CallbackBoolean listener){
+    protected void submitCheckin(String param, CallbackBoolean listener) {
         CustomerConnect.PostCheckin(param, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
@@ -500,11 +495,11 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         }, true);
     }
 
-    private void showDialogNote(){
+    private void showDialogNote() {
         String currentNote = getNoteText(mActivity.currentCustomer.getString("note"));
         CustomCenterDialog.showReasonChoice("GHI CHÚ KHÁCH HÀNG",
                 "Nhập nội dung ghi chú ",
-                Util.isEmpty(currentNote)? "" : currentNote +"\n",
+                Util.isEmpty(currentNote) ? "" : currentNote + "\n",
                 "quay lại",
                 "lưu",
                 false,

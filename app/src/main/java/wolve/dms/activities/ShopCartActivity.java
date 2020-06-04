@@ -1,7 +1,6 @@
 package wolve.dms.activities;
 
 import android.content.Intent;
-
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -42,7 +41,7 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class ShopCartActivity extends BaseActivity implements  View.OnClickListener,  View.OnLongClickListener {
+public class ShopCartActivity extends BaseActivity implements View.OnClickListener, View.OnLongClickListener {
     private ImageView btnBack;
     private Button btnSubmit;
     private TextView tvTitle, tvTotal, tvBDF, tvAddress;
@@ -73,15 +72,15 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
     @Override
     public void findViewById() {
-        btnSubmit =  findViewById(R.id.cart_submit);
-        btnBack =  findViewById(R.id.icon_back);
-        tvTitle =  findViewById(R.id.cart_title);
-        tvTotal =  findViewById(R.id.cart_total);
+        btnSubmit = findViewById(R.id.cart_submit);
+        btnBack = findViewById(R.id.icon_back);
+        tvTitle = findViewById(R.id.cart_title);
+        tvTotal = findViewById(R.id.cart_total);
         tvBDF = findViewById(R.id.cart_bdf);
-        tvNote =  findViewById(R.id.cart_note);
+        tvNote = findViewById(R.id.cart_note);
         lnSubmitGroup = findViewById(R.id.cart_submit_group);
-        rvProducts =  findViewById(R.id.cart_rvproduct);
-        rlCover =  findViewById(R.id.cart_cover);
+        rvProducts = findViewById(R.id.cart_rvproduct);
+        rlCover = findViewById(R.id.cart_cover);
         btnAddProduct = findViewById(R.id.add_product);
         tvAddress = findViewById(R.id.cart_address);
 
@@ -96,7 +95,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
         lnSubmitGroup.setVisibility(View.GONE);
         rlCover.setVisibility(View.VISIBLE);
-        tvTitle.setText(String.format("%s %s",Constants.shopName[currentCustomer.getInt("shopType")], currentCustomer.getString("signBoard").toUpperCase() ));
+        tvTitle.setText(String.format("%s %s", Constants.shopName[currentCustomer.getInt("shopType")], currentCustomer.getString("signBoard").toUpperCase()));
 
         btnSubmit.setText(CustomSQL.getLong(Constants.CURRENT_DISTANCE) < Constants.CHECKIN_DISTANCE ? "in và thanh toán" : "lưu hóa đơn");
 
@@ -106,14 +105,14 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 currentCustomer.getString("district"),
                 currentCustomer.getString("province")));
 
-        tvBDF.setVisibility(listInitialProduct.size() ==0? View.GONE :View.VISIBLE);
+        tvBDF.setVisibility(listInitialProduct.size() == 0 ? View.GONE : View.VISIBLE);
         loadListProduct();
         loadListProductGroup();
         createRVProduct(listInitialProduct);
 
 
-        if(listInitialProduct.size() ==0){
-            changeFragment(new ChoiceProductFragment() , true);
+        if (listInitialProduct.size() == 0) {
+            changeFragment(new ChoiceProductFragment(), true);
         }
 
     }
@@ -129,14 +128,14 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     @Override
     public void onBackPressed() {
         Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.cart_parent);
-        if (Util.getInstance().isLoading()){
+        if (Util.getInstance().isLoading()) {
             Util.getInstance().stopLoading(true);
 
-        }else if(mFragment != null && mFragment instanceof ChoiceProductFragment) {
+        } else if (mFragment != null && mFragment instanceof ChoiceProductFragment) {
             ChoiceProductFragment fragment = (ChoiceProductFragment) mFragment;
             fragment.submitProduct();
 
-        }else {
+        } else {
             Transaction.returnPreviousActivity(Constants.SHOP_CART_ACTIVITY, new BaseModel(), Constants.RESULT_SHOPCART_ACTIVITY);
 
         }
@@ -146,14 +145,14 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     @Override
     public void onClick(View v) {
         Util.hideKeyboard(v);
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.icon_back:
                 onBackPressed();
 
                 break;
 
             case R.id.cart_submit:
-                if (CustomSQL.getLong(Constants.CURRENT_DISTANCE) < Constants.CHECKIN_DISTANCE ){
+                if (CustomSQL.getLong(Constants.CURRENT_DISTANCE) < Constants.CHECKIN_DISTANCE) {
                     CustomCenterDialog.alertWithCancelButton2("",
                             "In hóa đơn và tiếp tục giao hàng bấm 'TIẾP TỤC'\nLưu hóa đơn bấm 'LƯU'",
                             "tiếp tục",
@@ -171,14 +170,13 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                             });
 
 
-
-                }else {
+                } else {
                     CustomCenterDialog.alertWithButton("Lưu hóa đơn",
                             "Bạn đang ở ngoài khu vực cửa hàng.\nLưu hóa đơn để nhân viên giao hàng tiếp nhận đơn hàng này",
                             "Lưu hóa đơn", new CallbackBoolean() {
                                 @Override
                                 public void onRespone(Boolean result) {
-                                    if (result){
+                                    if (result) {
                                         postBillAndSave();
                                     }
                                 }
@@ -189,15 +187,15 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 break;
 
             case R.id.add_product:
-                changeFragment(new ChoiceProductFragment() , true);
+                changeFragment(new ChoiceProductFragment(), true);
 
                 break;
         }
     }
 
-    private void loadListProduct(){
+    private void loadListProduct() {
         List<BaseModel> all = Product.getProductList();
-        for (int i=0 ; i<all.size(); i++){
+        for (int i = 0; i < all.size(); i++) {
             BaseModel product = all.get(i);
             product.put("checked", false);
             listProducts.add(product);
@@ -207,12 +205,12 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         DataUtil.sortProduct(listProducts, false);
     }
 
-    private void loadListProductGroup(){
+    private void loadListProductGroup() {
         listProductGroups = ProductGroup.getProductGroupList();
 
     }
 
-    private void createRVProduct(final List<BaseModel> list){
+    private void createRVProduct(final List<BaseModel> list) {
         adapterProducts = new CartProductsAdapter(list, listBillDetail, new CallbackDouble() {
             @Override
             public void Result(Double price) {
@@ -221,19 +219,19 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 rvProducts.requestLayout();
                 rvProducts.invalidate();
 
-                lnSubmitGroup.setVisibility(adapterProducts.getAllDataProduct().size()>0 ? View.VISIBLE : View.GONE);
-                rlCover.setVisibility(adapterProducts.getAllDataProduct().size()>0 ? View.GONE : View.VISIBLE);
+                lnSubmitGroup.setVisibility(adapterProducts.getAllDataProduct().size() > 0 ? View.VISIBLE : View.GONE);
+                rlCover.setVisibility(adapterProducts.getAllDataProduct().size() > 0 ? View.GONE : View.VISIBLE);
 
                 updateBDFValue();
             }
-        }) ;
+        });
         Util.createLinearRV(rvProducts, adapterProducts);
 
     }
 
-    protected void updatelistProduct(List<BaseModel> list_product){
-        for (int i=0; i<list_product.size(); i++){
-            Product product = new Product(new JSONObject()) ;
+    protected void updatelistProduct(List<BaseModel> list_product) {
+        for (int i = 0; i < list_product.size(); i++) {
+            Product product = new Product(new JSONObject());
             product.put("id", list_product.get(i).getInt("id"));
             product.put("product_id", list_product.get(i).getInt("product_id"));
             product.put("name", list_product.get(i).getString("name"));
@@ -258,12 +256,12 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
     }
 
-    private void updateBDFValue(){
-        if (adapterProducts.getAllDataProduct().size() >0 ){
-            tvBDF.setVisibility(View.VISIBLE );
-            tvBDF.setText(String.format("BDF:%s ", DataUtil.defineBDFPercent(adapterProducts.getAllData())) +"%");
+    private void updateBDFValue() {
+        if (adapterProducts.getAllDataProduct().size() > 0) {
+            tvBDF.setVisibility(View.VISIBLE);
+            tvBDF.setText(String.format("BDF:%s ", DataUtil.defineBDFPercent(adapterProducts.getAllData())) + "%");
 
-        }else {
+        } else {
             tvBDF.setVisibility(View.GONE);
         }
     }
@@ -272,10 +270,10 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
     public void onActivityResult(int reqCode, int resultCode, Intent intent) {
         super.onActivityResult(reqCode, resultCode, intent);
         Util.getInstance().setCurrentActivity(this);
-        if (reqCode == Constants.RESULT_PRINTBILL_ACTIVITY){
+        if (reqCode == Constants.RESULT_PRINTBILL_ACTIVITY) {
             BaseModel data = new BaseModel(intent.getStringExtra(Constants.PRINT_BILL_ACTIVITY));
-            if (data.hasKey(Constants.RELOAD_DATA) && data.getBoolean(Constants.RELOAD_DATA)){
-                Transaction.returnPreviousActivity(Constants.SHOP_CART_ACTIVITY,data , Constants.RESULT_SHOPCART_ACTIVITY);
+            if (data.hasKey(Constants.RELOAD_DATA) && data.getBoolean(Constants.RELOAD_DATA)) {
+                Transaction.returnPreviousActivity(Constants.SHOP_CART_ACTIVITY, data, Constants.RESULT_SHOPCART_ACTIVITY);
 
             }
 
@@ -285,7 +283,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
 
     @Override
     public boolean onLongClick(View v) {
-        if (User.getCurrentRoleId()==Constants.ROLE_ADMIN){
+        if (User.getCurrentRoleId() == Constants.ROLE_ADMIN) {
             gotoPrintBill();
 
         }
@@ -293,7 +291,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
         return true;
     }
 
-    private void postBillAndSave(){
+    private void postBillAndSave() {
         CustomCenterDialog.showReasonChoice("GHI CHÚ ĐƠN HÀNG",
                 "Ghi chú để lưu ý cho nhân viên giao hàng",
                 "",
@@ -318,7 +316,7 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                             public void onResponse(BaseModel result) {
                                 BaseModel modelResult = new BaseModel();
                                 modelResult.put(Constants.RELOAD_DATA, true);
-                                Transaction.returnPreviousActivity(Constants.SHOP_CART_ACTIVITY,modelResult,Constants.RESULT_SHOPCART_ACTIVITY);
+                                Transaction.returnPreviousActivity(Constants.SHOP_CART_ACTIVITY, modelResult, Constants.RESULT_SHOPCART_ACTIVITY);
                             }
 
                             @Override
@@ -332,20 +330,16 @@ public class ShopCartActivity extends BaseActivity implements  View.OnClickListe
                 });
 
 
-
-
-
-
     }
 
-    private void gotoPrintBill(){
+    private void gotoPrintBill() {
         BaseModel bill = new BaseModel();
-        bill.put("id",0);
+        bill.put("id", 0);
         bill.putBaseModel("user", User.getCurrentUser());
         bill.put("total", adapterProducts.totalPrice());
         bill.put("debt", adapterProducts.totalPrice());
         bill.put("note", tvNote.getText().toString());
-        bill.putList(Constants.BILL_DETAIL,adapterProducts.getAllData() );
+        bill.putList(Constants.BILL_DETAIL, adapterProducts.getAllData());
 
         Transaction.checkInventoryBeforePrintBill(bill,
                 adapterProducts.getAllData(),

@@ -10,16 +10,16 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.Map;
 
-import me.leolin.shortcutbadger.ShortcutBadger;
 import wolve.dms.activities.BaseActivity;
 import wolve.dms.utils.Util;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "MyFirebaseMsgService";
+
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         if (remoteMessage.getNotification() != null) {
-            Map<String, String> data  = remoteMessage.getData();
+            Map<String, String> data = remoteMessage.getData();
             String tag = data.get("tag");
             sendNotification(tag);
 //            String title = remoteMessage.getNotification().getTitle();

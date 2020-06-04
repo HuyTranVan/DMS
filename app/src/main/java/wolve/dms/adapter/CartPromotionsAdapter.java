@@ -9,8 +9,6 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,19 +58,19 @@ public class CartPromotionsAdapter extends RecyclerView.Adapter<CartPromotionsAd
 
     @Override
     public void onBindViewHolder(final ProductDialogShopCartAdapterViewHolder holder, final int position) {
-        holder.tvName.setText(mData.get(position).getString("name") +" ("+Util.FormatMoney(mData.get(position).getDouble("unitPrice")) +")" );
+        holder.tvName.setText(mData.get(position).getString("name") + " (" + Util.FormatMoney(mData.get(position).getDouble("unitPrice")) + ")");
         //holder.tvQuantity.setText(mData.get(position).getInt("quantity").toString());
 
         holder.btnSub.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                try {
-                    int currentQuantity = mData.get(position).getInt("quantity");
-                    if ( currentQuantity > 1){
-                        mData.get(position).put("quantity", currentQuantity -1);
-                        //mData.get(position).put("totalMoney", (currentQuantity -1)* mData.get(position).getDouble("unitPrice"));
-                        notifyItemChanged(position);
-                    }
+                int currentQuantity = mData.get(position).getInt("quantity");
+                if (currentQuantity > 1) {
+                    mData.get(position).put("quantity", currentQuantity - 1);
+                    //mData.get(position).put("totalMoney", (currentQuantity -1)* mData.get(position).getDouble("unitPrice"));
+                    notifyItemChanged(position);
+                }
 //                } catch (JSONException e) {
 //                    e.printStackTrace();
 //                }
@@ -82,10 +80,10 @@ public class CartPromotionsAdapter extends RecyclerView.Adapter<CartPromotionsAd
             @Override
             public void onClick(View v) {
 //                try {
-                    int currentQuantity = mData.get(position).getInt("quantity");
-                    mData.get(position).put("quantity", currentQuantity +1);
-                    //mData.get(position).put("totalMoney", (currentQuantity +1)* mData.get(position).getDouble("unitPrice"));
-                    notifyItemChanged(position);
+                int currentQuantity = mData.get(position).getInt("quantity");
+                mData.get(position).put("quantity", currentQuantity + 1);
+                //mData.get(position).put("totalMoney", (currentQuantity +1)* mData.get(position).getDouble("unitPrice"));
+                notifyItemChanged(position);
 
 //                } catch (JSONException e) {
 //                    e.printStackTrace();
@@ -96,7 +94,7 @@ public class CartPromotionsAdapter extends RecyclerView.Adapter<CartPromotionsAd
         holder.lnParent.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                CustomCenterDialog.alertWithCancelButton(null, "Xóa " + mData.get(position).getString("name") +" khỏi danh sách" , "ĐỒNG Ý","HỦY", new CallbackBoolean() {
+                CustomCenterDialog.alertWithCancelButton(null, "Xóa " + mData.get(position).getString("name") + " khỏi danh sách", "ĐỒNG Ý", "HỦY", new CallbackBoolean() {
                     @Override
                     public void onRespone(Boolean result) {
                         mDelete.onDelete(mData.get(position).ProducttoString(), position);
@@ -119,7 +117,7 @@ public class CartPromotionsAdapter extends RecyclerView.Adapter<CartPromotionsAd
     }
 
     public class ProductDialogShopCartAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvName, tvQuantity , btnSub, btnPlus;
+        private TextView tvName, tvQuantity, btnSub, btnPlus;
         private RelativeLayout lnParent;
         private CircleImageView imgProduct;
 
@@ -136,12 +134,13 @@ public class CartPromotionsAdapter extends RecyclerView.Adapter<CartPromotionsAd
 
     }
 
-    public void addItemPromotion(Product product){
+    public void addItemPromotion(Product product) {
         mData.add(product);
         notifyDataSetChanged();
 
     }
-    public List<Product> getAllDataPromotion(){
+
+    public List<Product> getAllDataPromotion() {
         return mData;
     }
 

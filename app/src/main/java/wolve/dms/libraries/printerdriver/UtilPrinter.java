@@ -7,7 +7,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -21,14 +20,13 @@ import wolve.dms.utils.Util;
 
 /**
  * Created by imrankst1221@gmail.com
- *
  */
 
 public class UtilPrinter {
     // UNICODE 0x23 = #
-    public static final byte[] UNICODE_TEXT = new byte[] {0x23, 0x23, 0x23,
-            0x23, 0x23, 0x23,0x23, 0x23, 0x23,0x23, 0x23, 0x23,0x23, 0x23, 0x23,
-            0x23, 0x23, 0x23,0x23, 0x23, 0x23,0x23, 0x23, 0x23,0x23, 0x23, 0x23,
+    public static final byte[] UNICODE_TEXT = new byte[]{0x23, 0x23, 0x23,
+            0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23,
+            0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23,
             0x23, 0x23, 0x23};
 
 //    public static final int SMALLTEXT = 0;
@@ -45,11 +43,11 @@ public class UtilPrinter {
 //    public static final byte[] alignRight = PrinterCommands.ESC_ALIGN_RIGHT;
 
     private static String hexStr = "0123456789ABCDEF";
-    private static String[] binaryArray = { "0000", "0001", "0010", "0011",
+    private static String[] binaryArray = {"0000", "0001", "0010", "0011",
             "0100", "0101", "0110", "0111", "1000", "1001", "1010", "1011",
-            "1100", "1101", "1110", "1111" };
+            "1100", "1101", "1110", "1111"};
 
-    public static byte[] decodeBitmap(Bitmap bmp){
+    public static byte[] decodeBitmap(Bitmap bmp) {
 
         int bmpWidth = bmp.getWidth();
         int bmpHeight = bmp.getHeight();
@@ -113,7 +111,7 @@ public class UtilPrinter {
         heightHexString = heightHexString + "00";
 
         List<String> commandList = new ArrayList<String>();
-        commandList.add(commandHexString+widthHexString+heightHexString);
+        commandList.add(commandHexString + widthHexString + heightHexString);
         commandList.addAll(bmpHexList);
 
         return hexList2Byte(commandList);
@@ -196,15 +194,15 @@ public class UtilPrinter {
 
     public static void printCustomText(OutputStream outputStream, String msg, int size, int align) {
         //Print config "mode"
-        byte[] cc = new byte[]{0x1B,0x21,0x05};  // 0- normal size text
+        byte[] cc = new byte[]{0x1B, 0x21, 0x05};  // 0- normal size text
         //byte[] cc1 = new byte[]{0x1B,0x21,0x00};  // 0- normal size text
-        byte[] bb = new byte[]{0x1B,0x21,0x00};  // 1- only bold text
-        byte[] bb2 = new byte[]{0x1B,0x21,0x20}; // 2- bold with medium text
+        byte[] bb = new byte[]{0x1B, 0x21, 0x00};  // 1- only bold text
+        byte[] bb2 = new byte[]{0x1B, 0x21, 0x20}; // 2- bold with medium text
 //        byte[] bb3 = new byte[]{0x1a,0x21,0x32}; // 3- bold with large text
-        byte[] bb3 = new byte[]{29,33,33};
-        byte[] bb4 = new byte[]{0x1B,0x21,0x23};
+        byte[] bb3 = new byte[]{29, 33, 33};
+        byte[] bb4 = new byte[]{0x1B, 0x21, 0x23};
         try {
-            switch (size){
+            switch (size) {
                 case 0:
                     outputStream.write(cc);
                     break;
@@ -222,7 +220,7 @@ public class UtilPrinter {
                     break;
             }
 
-            switch (align){
+            switch (align) {
                 case 0:
                     //left align
                     outputStream.write(PrinterCommands.ESC_ALIGN_LEFT);
@@ -246,42 +244,42 @@ public class UtilPrinter {
 
     }
 
-    public static void printCustom2Text(OutputStream outputStream,String printerSize, String msg1,String msg2, int size, int align) {
+    public static void printCustom2Text(OutputStream outputStream, String printerSize, String msg1, String msg2, int size, int align) {
         //Print config "mode"
-        byte[] cc = new byte[]{0x1B,0x21,0x10};  // 0- normal size text
+        byte[] cc = new byte[]{0x1B, 0x21, 0x10};  // 0- normal size text
         //byte[] cc1 = new byte[]{0x1B,0x21,0x00};  // 0- normal size text
-        byte[] bb = new byte[]{0x1B,0x21,0x21};  // 1- only bold text
-        byte[] bb2 = new byte[]{0x1B,0x21,0x20}; // 2- bold with medium text
-        byte[] bb3 = new byte[]{0x1B,0x21,0x30}; // 3- bold with large text
-        byte[] bb4 = new byte[]{0x1B,0x21,0x23};
+        byte[] bb = new byte[]{0x1B, 0x21, 0x21};  // 1- only bold text
+        byte[] bb2 = new byte[]{0x1B, 0x21, 0x20}; // 2- bold with medium text
+        byte[] bb3 = new byte[]{0x1B, 0x21, 0x30}; // 3- bold with large text
+        byte[] bb4 = new byte[]{0x1B, 0x21, 0x23};
 
 
-        int width =0;
+        int width = 0;
         try {
-            switch (size){
+            switch (size) {
                 case 0:
                     outputStream.write(cc);
-                    width = printerSize.equals(Constants.PRINTER_57)?30:42;
+                    width = printerSize.equals(Constants.PRINTER_57) ? 30 : 42;
                     break;
                 case 1:
                     outputStream.write(bb);
-                    width = printerSize.equals(Constants.PRINTER_57)?30:42;
+                    width = printerSize.equals(Constants.PRINTER_57) ? 30 : 42;
                     break;
                 case 2:
                     outputStream.write(bb2);
-                    width = printerSize.equals(Constants.PRINTER_57)?30:42;
+                    width = printerSize.equals(Constants.PRINTER_57) ? 30 : 42;
                     break;
                 case 3:
                     outputStream.write(bb3);
-                    width = printerSize.equals(Constants.PRINTER_57)?30:42;
+                    width = printerSize.equals(Constants.PRINTER_57) ? 30 : 42;
                     break;
                 case 4:
                     outputStream.write(bb4);
-                    width = printerSize.equals(Constants.PRINTER_57)?19:24;
+                    width = printerSize.equals(Constants.PRINTER_57) ? 19 : 24;
                     break;
             }
 
-            switch (align){
+            switch (align) {
                 case 0:
                     //left align
                     outputStream.write(PrinterCommands.ESC_ALIGN_LEFT);
@@ -299,9 +297,9 @@ public class UtilPrinter {
             String space = " ";
             int l = msg1.length() + msg2.length();
 
-            if(l < width){
-                for(int x = width-l; x >= 0; x--) {
-                    space = space+" ";
+            if (l < width) {
+                for (int x = width - l; x >= 0; x--) {
+                    space = space + " ";
                 }
             }
             outputStream.write((Util.unAccent(msg1) + space + Util.unAccent(msg2)).getBytes());
@@ -328,7 +326,7 @@ public class UtilPrinter {
 
     }
 
-    public static void printCustom2TextNew(OutputStream outputStream,String printerSize, String msg1,String msg2, int size, int align) {
+    public static void printCustom2TextNew(OutputStream outputStream, String printerSize, String msg1, String msg2, int size, int align) {
         try {
             outputStream.write(getTextSize(size));
             outputStream.write(getAlign(align));
@@ -337,10 +335,10 @@ public class UtilPrinter {
             String space = " ";
             int l = msg1.length() + msg2.length();
 
-            int width = printerSize.equals(Constants.PRINTER_57)?30:30;
-            if(l < width){
-                for(int x = width-l; x >= 0; x--) {
-                    space = space+" ";
+            int width = printerSize.equals(Constants.PRINTER_57) ? 30 : 30;
+            if (l < width) {
+                for (int x = width - l; x >= 0; x--) {
+                    space = space + " ";
                 }
             }
             outputStream.write((Util.unAccent(msg1) + space + Util.unAccent(msg2)).getBytes());
@@ -352,11 +350,11 @@ public class UtilPrinter {
 
     }
 
-    public static void printDrawablePhoto(OutputStream outputStream,Drawable img) {
+    public static void printDrawablePhoto(OutputStream outputStream, Drawable img) {
         try {
 //            Bitmap bmp = BitmapFactory.decodeResource(Util.getInstance().getCurrentActivity().getResources(), img);
             Bitmap bmp = drawableToBitmap(img);
-            if(bmp!=null){
+            if (bmp != null) {
                 byte[] command = UtilPrinter.decodeBitmap(bmp);
                 outputStream.write(PrinterCommands.ESC_ALIGN_CENTER);
                 outputStream.write(command);
@@ -364,7 +362,7 @@ public class UtilPrinter {
                 outputStream.write(PrinterCommands.FEED_LINE);
 
 
-            }else{
+            } else {
                 Util.showToast("The file isn't exists");
             }
         } catch (Exception e) {
@@ -373,11 +371,11 @@ public class UtilPrinter {
         }
     }
 
-    public static void printPhoto(OutputStream outputStream,String path) {
+    public static void printPhoto(OutputStream outputStream, String path) {
         try {
             //Bitmap bmp = BitmapFactory.decodeResource(getResources(), img);
             Bitmap bmp = BitmapFactory.decodeFile(path);
-            if(bmp!=null){
+            if (bmp != null) {
                 byte[] command = UtilPrinter.decodeBitmap(bmp);
                 outputStream.write(PrinterCommands.ESC_ALIGN_CENTER);
                 outputStream.write(command);
@@ -385,7 +383,7 @@ public class UtilPrinter {
                 outputStream.write(PrinterCommands.FEED_LINE);
 
 
-            }else{
+            } else {
                 Log.e("file", "The file isn't exists");
                 //Util.showToast("The file isn't exists");
             }
@@ -396,17 +394,17 @@ public class UtilPrinter {
         }
     }
 
-    public static void printPhoto(OutputStream outputStream,Bitmap bmp) {
+    public static void printPhoto(OutputStream outputStream, Bitmap bmp) {
         try {
             //Bitmap bmp = BitmapFactory.decodeResource(getResources(), img);
 //            Bitmap bmp = BitmapFactory.decodeFile(path);
-            if(bmp!=null){
+            if (bmp != null) {
                 byte[] command = decodeBitmap(bmp);
                 outputStream.write(PrinterCommands.ESC_ALIGN_CENTER);
                 outputStream.write(command);
 
 
-            }else{
+            } else {
                 Log.e("file", "The file isn't exists");
                 //Util.showToast("The file isn't exists");
             }
@@ -421,34 +419,30 @@ public class UtilPrinter {
         int length = input.length();
         byte[] retVal = new byte[length];
 
-        for(int i=0; i<length; i++)
-        {
+        for (int i = 0; i < length; i++) {
             char c = input.charAt(i);
 
-            if (c < 127)
-            {
-                retVal[i] = (byte)c;
-            }
-            else
-            {
-                retVal[i] = (byte)(c - 256);
+            if (c < 127) {
+                retVal[i] = (byte) c;
+            } else {
+                retVal[i] = (byte) (c - 256);
             }
         }
 
         return retVal;
     }
 
-    public static Bitmap drawableToBitmap (Drawable drawable) {
+    public static Bitmap drawableToBitmap(Drawable drawable) {
         Bitmap bitmap = null;
 
         if (drawable instanceof BitmapDrawable) {
             BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
-            if(bitmapDrawable.getBitmap() != null) {
+            if (bitmapDrawable.getBitmap() != null) {
                 return bitmapDrawable.getBitmap();
             }
         }
 
-        if(drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+        if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
             bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
         } else {
             bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
@@ -461,35 +455,36 @@ public class UtilPrinter {
     }
 
 
-    private static byte[] getTextSize(int size){
+    private static byte[] getTextSize(int size) {
         byte[] byteReturn = null;
-        switch (size){
+        switch (size) {
             case 1:
-                byteReturn = new byte[]{0x1B,0x21,0x05};
+                byteReturn = new byte[]{0x1B, 0x21, 0x05};
                 break;
 
             case 2:
-                byteReturn = new byte[]{0x1B,0x21,0x06};
+                byteReturn = new byte[]{0x1B, 0x21, 0x06};
                 break;
 
             case 3:
-                byteReturn = new byte[]{0x1B,0x21,0x15};
+                byteReturn = new byte[]{0x1B, 0x21, 0x15};
                 break;
 
             case 4:
-                byteReturn = new byte[]{0x1B,0x21,0x16};
+                byteReturn = new byte[]{0x1B, 0x21, 0x16};
                 break;
 
             case 11:
-                byteReturn = new byte[]{0x1B,0x21,0x69};
+                byteReturn = new byte[]{0x1B, 0x21, 0x69};
                 break;
 
             case 22:
-                byteReturn = new byte[]{0x1B,0x21,0x71};
+                byteReturn = new byte[]{0x1B, 0x21, 0x71};
                 break;
 
             case 33:
-                byteReturn = new byte[]{0x1B,0x21,0x72};;
+                byteReturn = new byte[]{0x1B, 0x21, 0x72};
+                ;
 
                 break;
 
@@ -498,9 +493,9 @@ public class UtilPrinter {
         return byteReturn;
     }
 
-    private static byte[] getAlign(int align){
+    private static byte[] getAlign(int align) {
         byte[] alignReturn = null;
-        switch (align){
+        switch (align) {
             case 0:
                 alignReturn = PrinterCommands.ESC_ALIGN_LEFT;
                 break;
@@ -630,8 +625,6 @@ public class UtilPrinter {
             return result;
         }
     }
-
-
 
 
 }

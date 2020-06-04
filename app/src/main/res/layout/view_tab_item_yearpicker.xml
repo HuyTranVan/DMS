@@ -18,6 +18,6 @@
         android:layout_marginRight="@dimen/_50sdp"
         android:layout_marginTop="@dimen/_100sdp"
         android:layout_marginBottom="@dimen/_100sdp"
-        android:theme="@style/NumberPickerYear"/>
+        android:theme="@style/NumberPickerYear" />
 
 </LinearLayout>

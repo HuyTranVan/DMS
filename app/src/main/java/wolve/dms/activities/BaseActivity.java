@@ -1,42 +1,23 @@
 package wolve.dms.activities;
 
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 
-import android.widget.Toast;
-
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.orhanobut.dialogplus.DialogPlus;
 
 import wolve.dms.R;
-import wolve.dms.activities.HomeActivity;
-import wolve.dms.activities.ImportActivity;
-import wolve.dms.activities.NewUpdateProductGroupFragment;
-import wolve.dms.activities.NewUpdateProductFragment;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.models.BaseModel;
-import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomTopDialog;
-import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
 
@@ -119,7 +100,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 .commitAllowingStateLoss();
     }
 
-    public void showFragmentDialog(DialogFragment fragment){
+    public void showFragmentDialog(DialogFragment fragment) {
         String tag = fragment.getClass().getSimpleName();
         DialogFragment myFragment = (DialogFragment) getSupportFragmentManager().findFragmentByTag(tag);
         DialogFragment fragmentReplace;
@@ -135,7 +116,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(Util.getInstance().isLoading()){
+        if (Util.getInstance().isLoading()) {
             Util.getInstance().stopLoading(true);
 
         }
@@ -154,41 +135,39 @@ public abstract class BaseActivity extends AppCompatActivity {
         });
     }
 
-    public void receiveBundleFormFCM(String tag){
-        if (CustomTopDialog.dialog != null && CustomTopDialog.dialog.isShowing()){
+    public void receiveBundleFormFCM(String tag) {
+        if (CustomTopDialog.dialog != null && CustomTopDialog.dialog.isShowing()) {
             CustomTopDialog.dialog.dismiss();
 
-        }else {
-            if (Util.isJSONObject(tag)){
+        } else {
+            if (Util.isJSONObject(tag)) {
                 BaseModel content = new BaseModel(tag);
-                CustomTopDialog.showTextNotify(Util.getIconString(R.string.icon_username," ", content.getString("title")),
+                CustomTopDialog.showTextNotify(Util.getIconString(R.string.icon_username, " ", content.getString("title")),
                         content.getString("message"), new CallbackBoolean() {
-                    @Override
-                    public void onRespone(Boolean result) {
-                        String currentActivity = Util.getInstance().getCurrentActivity().getLocalClassName();
-                        switch (currentActivity){
-                            case "activities.HomeActivity":
-                                HomeActivity activityHome = (HomeActivity) Util.getInstance().getCurrentActivity();
-                                activityHome.onRefresh();
-                                break;
+                            @Override
+                            public void onRespone(Boolean result) {
+                                String currentActivity = Util.getInstance().getCurrentActivity().getLocalClassName();
+                                switch (currentActivity) {
+                                    case "activities.HomeActivity":
+                                        HomeActivity activityHome = (HomeActivity) Util.getInstance().getCurrentActivity();
+                                        activityHome.onRefresh();
+                                        break;
 
-                            case "activities.ImportActivity":
-                                ImportActivity activityImport = (ImportActivity) Util.getInstance().getCurrentActivity();
-                                activityImport.reloadListImport(true, true);
-                                break;
+                                    case "activities.ImportActivity":
+                                        ImportActivity activityImport = (ImportActivity) Util.getInstance().getCurrentActivity();
+                                        activityImport.reloadListImport(true, true);
+                                        break;
 
-                        }
+                                }
 
-                    }
-                });
+                            }
+                        });
 
-            }else {
+            } else {
                 CustomTopDialog.showTextNotify("Notify", tag, null);
             }
 
         }
-
-
 
 
 //        Intent intent = new Intent("LISTEN_FROM_GCM");
@@ -202,6 +181,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 //    ////            intent.putExtra("id", bundle.getString("id"));
 //                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 //            }
-        }
+    }
 
 }

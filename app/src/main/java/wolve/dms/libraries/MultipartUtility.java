@@ -1,10 +1,5 @@
 package wolve.dms.libraries;
 
-import android.app.NotificationManager;
-import android.content.Context;
-import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -18,11 +13,7 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Calendar;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
-import wolve.dms.callback.CallbackProgress;
 import wolve.dms.models.User;
 
 public class MultipartUtility {

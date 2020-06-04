@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
@@ -26,7 +24,7 @@
             android:focusable="false"
             android:text="adfasdf"
             android:textSize="16sp"
-            android:singleLine="true"/>
+            android:singleLine="true" />
 
         <TextView
             android:id="@+id/suggestion_secondtext"
@@ -37,8 +35,7 @@
             android:gravity="center_vertical"
             android:focusable="false"
             android:text="adfasdf"
-            android:textSize="12sp"
-            />
+            android:textSize="12sp" />
 
     </LinearLayout>
 
@@ -54,7 +51,7 @@
         android:focusable="false"
         android:text="0909136885"
         android:textSize="16sp"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentRight="true" />
 
 
     <TextView
@@ -62,6 +59,6 @@
         android:layout_width="match_parent"
         android:layout_height="1dip"
         android:background="#0d000000"
-        android:layout_alignParentBottom="true"/>
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

@@ -13,17 +13,13 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
-import com.google.api.services.sheets.v4.model.AddSheetRequest;
 import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest;
 import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetResponse;
 import com.google.api.services.sheets.v4.model.Request;
-import com.google.api.services.sheets.v4.model.SheetProperties;
-import com.google.api.services.sheets.v4.model.ValueRange;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,11 +33,11 @@ public class GoogleSheetCreateUpdateTab extends AsyncTask<Void, Void, List<List<
     private NetHttpTransport HTTP_TRANSPORT;
     private JsonFactory JSON_FACTORY;
     private CallbackListList mListener;
-    private List<String> SCOPES ;
-    private List<Request> mRequestList ;
+    private List<String> SCOPES;
+    private List<Request> mRequestList;
     private List<List<Object>> mParams;
 
-    public interface CallbackListList{
+    public interface CallbackListList {
         void onRespone(List<List<Object>> results);
     }
 
@@ -90,12 +86,12 @@ public class GoogleSheetCreateUpdateTab extends AsyncTask<Void, Void, List<List<
 
 
         try {
-        BatchUpdateSpreadsheetRequest body = new BatchUpdateSpreadsheetRequest().setRequests(mRequestList);
-        BatchUpdateSpreadsheetResponse response = service.spreadsheets().batchUpdate(spreadsheetId, body).execute();
+            BatchUpdateSpreadsheetRequest body = new BatchUpdateSpreadsheetRequest().setRequests(mRequestList);
+            BatchUpdateSpreadsheetResponse response = service.spreadsheets().batchUpdate(spreadsheetId, body).execute();
 
-        Log.e("res", response.getReplies().toString());
-        //FindReplaceResponse findReplaceResponse = response.getReplies().get(1).getFindReplace();
-        //System.out.printf("%d replacements made.", findReplaceResponse.getOccurrencesChanged());
+            Log.e("res", response.getReplies().toString());
+            //FindReplaceResponse findReplaceResponse = response.getReplies().get(1).getFindReplace();
+            //System.out.printf("%d replacements made.", findReplaceResponse.getOccurrencesChanged());
 
         } catch (IOException e) {
             e.printStackTrace();

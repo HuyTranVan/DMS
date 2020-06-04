@@ -8,9 +8,6 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +37,7 @@ public class PrintOldBillAdapter extends RecyclerView.Adapter<PrintOldBillAdapte
 
     @Override
     public PrintBillViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mLayoutInflater.inflate(printSize == 57? R.layout.adapter_print_oldbill_item : R.layout.adapter_print_oldbill_item, parent, false);
+        View itemView = mLayoutInflater.inflate(printSize == 57 ? R.layout.adapter_print_oldbill_item : R.layout.adapter_print_oldbill_item, parent, false);
         return new PrintBillViewHolder(itemView);
     }
 
@@ -54,7 +51,7 @@ public class PrintOldBillAdapter extends RecyclerView.Adapter<PrintOldBillAdapte
 
         List<BaseModel> list = DataUtil.array2ListObject(mData.get(position).getString("billDetails"));
 
-        PrintBillAdapter adapterBill = new PrintBillAdapter(printSize , list) ;
+        PrintBillAdapter adapterBill = new PrintBillAdapter(printSize, list);
         Util.createLinearRV(holder.rvBill, adapterBill);
 
     }
@@ -64,9 +61,9 @@ public class PrintOldBillAdapter extends RecyclerView.Adapter<PrintOldBillAdapte
         return mData.size();
     }
 
-    public Double getDebtMoney(){
-        Double total =0.0;
-        for (int i=0; i<mData.size(); i++){
+    public Double getDebtMoney() {
+        Double total = 0.0;
+        for (int i = 0; i < mData.size(); i++) {
             total += (mData.get(i).getDouble("debt"));
 
         }
@@ -75,7 +72,7 @@ public class PrintOldBillAdapter extends RecyclerView.Adapter<PrintOldBillAdapte
 
 
     public class PrintBillViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvDate, tvTotal, tvPaid, tvDebt ;
+        private TextView tvDate, tvTotal, tvPaid, tvDebt;
         private RecyclerView rvBill;
         private View vLine;
 

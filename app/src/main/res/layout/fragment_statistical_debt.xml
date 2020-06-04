@@ -26,7 +26,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/black_text_color_hint"
                 android:textSize="@dimen/_8sdp"
-                android:text="Đã mua hàng"/>
+                android:text="Đã mua hàng" />
 
             <TextView
                 android:id="@+id/statistical_debt_number_customer"
@@ -38,7 +38,7 @@
                 android:textStyle="bold"
                 android:layout_gravity="center"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"/>
+                android:layout_centerVertical="true" />
 
         </LinearLayout>
 
@@ -56,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/black_text_color_hint"
                 android:textSize="@dimen/_8sdp"
-                android:text="Đang nợ"/>
+                android:text="Đang nợ" />
 
             <TextView
                 android:id="@+id/statistical_debt_number_customer_debt"
@@ -67,7 +67,7 @@
                 android:textSize="@dimen/_12sdp"
                 android:textColor="@color/colorRed"
                 android:textStyle="bold"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center" />
 
         </LinearLayout>
 
@@ -93,7 +93,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/black_text_color_hint"
                     android:textSize="@dimen/_8sdp"
-                    android:text="Số tiền nợ"/>
+                    android:text="Số tiền nợ" />
 
 
                 <TextView
@@ -104,7 +104,7 @@
                     android:textColor="@color/orange_dark"
                     android:textSize="@dimen/_12sdp"
                     android:text="Công nợ"
-                    android:gravity="center_vertical|right"/>
+                    android:gravity="center_vertical|right" />
             </LinearLayout>
 
             <TextView
@@ -117,7 +117,7 @@
                 android:textSize="@dimen/_16sdp"
                 android:textColor="@color/black_text_color_hint"
                 android:gravity="center"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center" />
 
         </LinearLayout>
 
@@ -128,7 +128,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipToPadding="false"
-        android:paddingBottom="@dimen/_50sdp"/>
+        android:paddingBottom="@dimen/_50sdp" />
 
 
 </LinearLayout>

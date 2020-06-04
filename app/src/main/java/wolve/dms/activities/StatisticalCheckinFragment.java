@@ -33,7 +33,7 @@ public class StatisticalCheckinFragment extends Fragment implements View.OnClick
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_statistical_checkins,container,false);
+        view = inflater.inflate(R.layout.fragment_statistical_checkins, container, false);
         Util.checkinFragment = this;
         initializeView();
 
@@ -48,7 +48,6 @@ public class StatisticalCheckinFragment extends Fragment implements View.OnClick
     }
 
 
-
     private void addEvent() {
 
     }
@@ -61,12 +60,12 @@ public class StatisticalCheckinFragment extends Fragment implements View.OnClick
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
 
         }
     }
 
-    public void reloadData(List<BaseModel> list){
+    public void reloadData(List<BaseModel> list) {
         createRVCheckin(list);
 
     }
@@ -79,10 +78,10 @@ public class StatisticalCheckinFragment extends Fragment implements View.OnClick
 
     }
 
-    private boolean checkDuplicateCheckin(List<BaseModel> list, int id){
+    private boolean checkDuplicateCheckin(List<BaseModel> list, int id) {
         boolean check = false;
-        for (int i=0; i<list.size(); i++){
-            if (list.get(i).getInt("id") == id){
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getInt("id") == id) {
                 check = true;
                 break;
             }

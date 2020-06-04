@@ -34,11 +34,11 @@ public class BaseModel implements Serializable {
         }
     }
 
-    public String BaseModelstoString(){
+    public String BaseModelstoString() {
         return jsonObject.toString();
     }
 
-    public JSONObject BaseModelJSONObject(){
+    public JSONObject BaseModelJSONObject() {
         return jsonObject;
     }
 
@@ -64,20 +64,20 @@ public class BaseModel implements Serializable {
         }
     }
 
-    public static BaseModel putValueToNewObject(String key, Object value){
+    public static BaseModel putValueToNewObject(String key, Object value) {
         BaseModel model = new BaseModel();
         model.put(key, value);
         return model;
     }
 
-    public static BaseModel put2ValueToNewObject(String key, Object value, String key2, Object value2){
+    public static BaseModel put2ValueToNewObject(String key, Object value, String key2, Object value2) {
         BaseModel model = new BaseModel();
         model.put(key, value);
         model.put(key2, value2);
         return model;
     }
 
-    public void putBaseModel(String key, BaseModel value){
+    public void putBaseModel(String key, BaseModel value) {
         try {
             jsonObject.put(key, value.BaseModelJSONObject());
         } catch (JSONException e) {
@@ -85,7 +85,7 @@ public class BaseModel implements Serializable {
         }
     }
 
-    public void putList(String key, List<BaseModel> list){
+    public void putList(String key, List<BaseModel> list) {
         try {
             jsonObject.put(key, DataUtil.convertListObject2Array(list));
         } catch (JSONException e) {
@@ -94,7 +94,7 @@ public class BaseModel implements Serializable {
 
     }
 
-    public List<BaseModel> getList(String key){
+    public List<BaseModel> getList(String key) {
         try {
             return DataUtil.array2ListObject(jsonObject.getString(key));
         } catch (JSONException e) {
@@ -179,7 +179,7 @@ public class BaseModel implements Serializable {
 
     }
 
-    public BaseModel getBaseModel(String key){
+    public BaseModel getBaseModel(String key) {
         try {
             return new BaseModel(jsonObject.getJSONObject(key));
         } catch (JSONException e) {
@@ -195,19 +195,18 @@ public class BaseModel implements Serializable {
         return jsonObject.toString();
     }
 
-    public JSONObject convertJsonObject(){
+    public JSONObject convertJsonObject() {
         return jsonObject;
     }
 
-    public boolean isNull(String key){
+    public boolean isNull(String key) {
         return jsonObject.isNull(key);
     }
 
-    public void removeKey(String key){
+    public void removeKey(String key) {
         jsonObject.remove(key);
 
     }
-
 
 
 }

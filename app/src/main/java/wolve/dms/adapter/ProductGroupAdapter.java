@@ -14,8 +14,8 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.apiconnect.ProductConnect;
-import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.models.BaseModel;
@@ -37,7 +37,7 @@ public class ProductGroupAdapter extends RecyclerView.Adapter<ProductGroupAdapte
     private CallbackClickAdapter mListener;
     private CallbackDeleteAdapter mDeleteListener;
 
-    public ProductGroupAdapter(List<BaseModel> list,  CallbackClickAdapter callbackClickAdapter, CallbackDeleteAdapter callbackDeleteAdapter) {
+    public ProductGroupAdapter(List<BaseModel> list, CallbackClickAdapter callbackClickAdapter, CallbackDeleteAdapter callbackDeleteAdapter) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mData = list;
@@ -53,7 +53,7 @@ public class ProductGroupAdapter extends RecyclerView.Adapter<ProductGroupAdapte
         return new ProductGroupAdapterViewHolder(itemView);
     }
 
-    public void addItems(ArrayList<ProductGroup> list){
+    public void addItems(ArrayList<ProductGroup> list) {
         mData = new ArrayList<>();
         mData.addAll(list);
         notifyDataSetChanged();
@@ -67,7 +67,7 @@ public class ProductGroupAdapter extends RecyclerView.Adapter<ProductGroupAdapte
         holder.lnParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onRespone(mData.get(position).BaseModelstoString() , position);
+                mListener.onRespone(mData.get(position).BaseModelstoString(), position);
 
             }
         });
@@ -75,7 +75,7 @@ public class ProductGroupAdapter extends RecyclerView.Adapter<ProductGroupAdapte
         holder.lnParent.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                CustomCenterDialog.alertWithCancelButton(null, "Bạn muốn xóa nhóm " + mData.get(position).getString("name"), "XÓA","HỦY", new CallbackBoolean() {
+                CustomCenterDialog.alertWithCancelButton(null, "Bạn muốn xóa nhóm " + mData.get(position).getString("name"), "XÓA", "HỦY", new CallbackBoolean() {
                     @Override
                     public void onRespone(Boolean result) {
                         String param = String.valueOf(mData.get(position).getInt("id"));

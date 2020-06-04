@@ -3,7 +3,6 @@ package wolve.dms.utils;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -20,8 +19,6 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
-
-import android.provider.OpenableColumns;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
@@ -32,12 +29,8 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.RotateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -88,10 +81,10 @@ import wolve.dms.R;
 import wolve.dms.activities.MapsActivity;
 import wolve.dms.activities.ShopCartActivity;
 import wolve.dms.activities.StatisticalBillsFragment;
-import wolve.dms.activities.StatisticalPaymentFragment;
 import wolve.dms.activities.StatisticalCheckinFragment;
-import wolve.dms.activities.StatisticalDebtFragment;
 import wolve.dms.activities.StatisticalDashboardFragment;
+import wolve.dms.activities.StatisticalDebtFragment;
+import wolve.dms.activities.StatisticalPaymentFragment;
 import wolve.dms.activities.StatisticalProductFragment;
 import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackString;
@@ -103,7 +96,6 @@ import wolve.dms.models.Product;
 import wolve.dms.models.Province;
 import wolve.dms.models.User;
 
-import static android.content.Context.MODE_PRIVATE;
 import static wolve.dms.utils.Constants.REQUEST_GOOGLE_PLAY_SERVICES;
 
 public class Util {
@@ -135,7 +127,7 @@ public class Util {
         return currentLocation;
     }
 
-//    public static final Pattern DETECT_PHONE = Pattern.compile("(\\+84|0)\\d{9,10}");
+    //    public static final Pattern DETECT_PHONE = Pattern.compile("(\\+84|0)\\d{9,10}");
     public static final String DETECT_PHONE = "(\\+84|0)\\d{9,10}";
     public static final String DETECT_NUMBER = "^[0-9]*$";
 
@@ -184,7 +176,7 @@ public class Util {
     }
 
     public void showLoading(boolean show) {
-        if (show){
+        if (show) {
             showLoading("Đang xử lý...");
         }
 
@@ -266,7 +258,6 @@ public class Util {
 
         SnackbarManager.show(snb, Util.getInstance().getCurrentActivity()); // where it is displayed
     }
-
 
 
     public static void showSnackbar(String content, String actionlabel, boolean isIndefinite, ActionClickListener actionListener) {
@@ -434,21 +425,23 @@ public class Util {
         imm.showSoftInput(view, 0);
     }
 
-    public static void showKeyboardDelay(final View view){
-        new Handler().postDelayed (new Runnable() {
+    public static void showKeyboardDelay(final View view) {
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 Util.showKeyboard(view);
-            }}, 200);
+            }
+        }, 200);
     }
 
-    public static void showKeyboardEditTextDelay(EditText view){
-        new Handler().postDelayed (new Runnable() {
+    public static void showKeyboardEditTextDelay(EditText view) {
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 Util.showKeyboard(view);
                 view.setSelection(view.getText().toString().trim().length());
-            }}, 200);
+            }
+        }, 200);
     }
 
     public static void hideKeyboard(View view) {
@@ -456,13 +449,14 @@ public class Util {
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    public static void setTextEdDelay(final EditText editText, String text){
-        new Handler().postDelayed (new Runnable() {
+    public static void setTextEdDelay(final EditText editText, String text) {
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 editText.setText(text);
                 Util.showKeyboard(editText);
-            }}, 200);
+            }
+        }, 200);
     }
 
     public static boolean deleteDir(File dir) {
@@ -659,14 +653,14 @@ public class Util {
     public static String storeImage(Bitmap bitmap, String name) {
         File file = createCustomImageFile(name);
 
-        try{
+        try {
             OutputStream stream = null;
             stream = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
             stream.flush();
             stream.close();
 
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         Uri savedImageURI = Uri.parse(file.getAbsolutePath());
@@ -754,22 +748,21 @@ public class Util {
         int mYear = Calendar.getInstance().get(Calendar.YEAR);
 
         String month;
-        String year ;
+        String year;
 
-        if (mMonth <10){
-            month = "0"+ String.valueOf(mMonth);
+        if (mMonth < 10) {
+            month = "0" + String.valueOf(mMonth);
             year = String.valueOf(mYear);
-        }else if (mMonth>12){
+        } else if (mMonth > 12) {
             month = "01";
-            year = String.valueOf(mYear +1);
-        }else {
+            year = String.valueOf(mYear + 1);
+        } else {
             month = String.valueOf(mMonth);
             year = String.valueOf(mYear);
         }
 
 
-
-        return String.format("01-%s-%s",month, year);
+        return String.format("01-%s-%s", month, year);
         //return new SimpleDateFormat(monthFormat).format(Calendar.getInstance().getTime());
     }
 
@@ -914,10 +907,10 @@ public class Util {
 
     }
 
-    public static int countDay(long timestamp){
+    public static int countDay(long timestamp) {
         long time = CurrentTimeStamp() - timestamp;
 
-        return (int) (time/(1000*24*60*60));
+        return (int) (time / (1000 * 24 * 60 * 60));
     }
 
     public static String HourStringNatural(long timestamp) {
@@ -928,11 +921,11 @@ public class Util {
         cal.setTimeInMillis(timestamp);
 //        String hour = Integer.parseInt(DateFormat.format("HH", new Date(timestamp)).toString()) ==0 ?
 //                "" : String.format("%dh", Integer.parseInt(DateFormat.format("HH", new Date(timestamp)).toString()));
-        String minute = Integer.parseInt(DateFormat.format("mm", new Date(timestamp)).toString()) ==0 ?
+        String minute = Integer.parseInt(DateFormat.format("mm", new Date(timestamp)).toString()) == 0 ?
                 "" : String.format("%dp", Integer.parseInt(DateFormat.format("mm", new Date(timestamp)).toString()));
-        String second =  String.format("%ds", Integer.parseInt(DateFormat.format("ss", new Date(timestamp)).toString()));
+        String second = String.format("%ds", Integer.parseInt(DateFormat.format("ss", new Date(timestamp)).toString()));
 
-        return String.format("%s%s",  minute, second);
+        return String.format("%s%s", minute, second);
 
     }
 
@@ -946,7 +939,6 @@ public class Util {
 
         return date;
     }
-
 
 
     public static String getDeviceName() {
@@ -1031,7 +1023,7 @@ public class Util {
         return encoded;
     }
 
-    public static String remakeURL(String url){
+    public static String remakeURL(String url) {
         return url.replace("\"", "");
     }
 
@@ -1127,9 +1119,9 @@ public class Util {
         BaseModel object = new BaseModel();
         Double total = 0.0;
         Double paid = 0.0;
-        Double debt =0.0;
+        Double debt = 0.0;
         for (int i = 0; i < list.size(); i++) {
-            if (!Util.isBillReturn(list.get(i))){
+            if (!Util.isBillReturn(list.get(i))) {
                 total += list.get(i).getDouble("total");
                 paid += list.get(i).getDouble("paid");
                 debt += list.get(i).getDouble("debt");
@@ -1148,7 +1140,7 @@ public class Util {
         JSONObject object = new JSONObject();
         Double total = 0.0;
         Double paid = 0.0;
-        Double debt =0.0;
+        Double debt = 0.0;
         try {
             for (int i = 0; i < array.length(); i++) {
                 JSONObject ob = array.getJSONObject(i);
@@ -1207,15 +1199,15 @@ public class Util {
                     * billdetails.get(i).getDouble("quantity");
         }
 
-        double va =(paid * profit /  bill.getDouble("total"));
+        double va = (paid * profit / bill.getDouble("total"));
 
         return Math.round(va);
     }
 
 
-    public static boolean isBillReturn(BaseModel bill){
+    public static boolean isBillReturn(BaseModel bill) {
         boolean id = false;
-        if (!bill.getString("note").equals("") && bill.getString("note").matches(Util.DETECT_NUMBER)){
+        if (!bill.getString("note").equals("") && bill.getString("note").matches(Util.DETECT_NUMBER)) {
             id = true;
         }
 
@@ -1367,17 +1359,17 @@ public class Util {
             public void afterTextChanged(Editable s) {
                 edText.removeTextChangedListener(this);
                 try {
-                    if (limitMoney == null){
+                    if (limitMoney == null) {
                         edText.setText(Util.FormatMoney(Util.valueMoney(edText)));
                         edText.setSelection(edText.getText().toString().length());
 
                         mlistener.Result(Util.valueMoney(edText));
                         edText.addTextChangedListener(this);
 
-                    }else if (limitMoney >0){
-                        if (Util.valueMoney(edText) > limitMoney){
+                    } else if (limitMoney > 0) {
+                        if (Util.valueMoney(edText) > limitMoney) {
                             Util.showToast("Số tiền lớn hơn giới hạn");
-                            String text = Util.valueMoneyString(edText).replaceFirst(".$","");
+                            String text = Util.valueMoneyString(edText).replaceFirst(".$", "");
 
                             edText.setText(Util.FormatMoney(Double.valueOf(text)));
                             edText.setSelection(edText.getText().toString().length());
@@ -1385,7 +1377,7 @@ public class Util {
                             mlistener.Result(Util.valueMoney(edText));
                             edText.addTextChangedListener(this);
 
-                        }else {
+                        } else {
                             edText.setText(Util.FormatMoney(Util.valueMoney(edText)));
                             edText.setSelection(edText.getText().toString().length());
 
@@ -1394,27 +1386,26 @@ public class Util {
 
                         }
 
-                    }else if (limitMoney <0){
-                        if (Util.valueMoney(edText) > limitMoney*-1){
+                    } else if (limitMoney < 0) {
+                        if (Util.valueMoney(edText) > limitMoney * -1) {
                             Util.showToast("Số tiền nhỏ hơn giới hạn");
-                            String text = Util.valueMoneyString(edText).replaceFirst(".$","");
+                            String text = Util.valueMoneyString(edText).replaceFirst(".$", "");
 
                             edText.setText(Util.FormatMoney(Double.valueOf(text)));
                             edText.setSelection(edText.getText().toString().length());
 
-                            mlistener.Result(Util.valueMoney(edText)*-1);
+                            mlistener.Result(Util.valueMoney(edText) * -1);
                             edText.addTextChangedListener(this);
 
-                        }else {
+                        } else {
                             edText.setText(Util.FormatMoney(Util.valueMoney(edText)));
                             edText.setSelection(edText.getText().toString().length());
 
-                            mlistener.Result(Util.valueMoney(edText)*-1);
+                            mlistener.Result(Util.valueMoney(edText) * -1);
                             edText.addTextChangedListener(this);
 
                         }
                     }
-
 
 
                 } catch (Exception ex) {
@@ -1453,9 +1444,6 @@ public class Util {
                     edText.addTextChangedListener(this);
 
 
-
-
-
                 } catch (Exception ex) {
 //                    ex.printStackTrace();
                     edText.addTextChangedListener(this);
@@ -1485,11 +1473,11 @@ public class Util {
         });
     }
 
-    public static String getPhoneValue(EditText edText){
+    public static String getPhoneValue(EditText edText) {
         return edText.getText().toString().replace(".", "");
     }
 
-    public static String getPhoneValue(CInputForm edText){
+    public static String getPhoneValue(CInputForm edText) {
         return edText.getText().toString().replace(".", "");
     }
 
@@ -1534,9 +1522,9 @@ public class Util {
     }
 
     public static boolean checkForVirtualDevice() {
-        if (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")){
+        if (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")) {
             return true;
-        }else {
+        } else {
             return false;
         }
 
@@ -1567,7 +1555,7 @@ public class Util {
         return 0;
     }
 
-    public static void createLinearRV(RecyclerView recyclerView, RecyclerView.Adapter adapter){
+    public static void createLinearRV(RecyclerView recyclerView, RecyclerView.Adapter adapter) {
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
@@ -1575,7 +1563,7 @@ public class Util {
         recyclerView.setLayoutManager(layoutManager);
     }
 
-    public static void createHorizontalRV(RecyclerView recyclerView, RecyclerView.Adapter adapter){
+    public static void createHorizontalRV(RecyclerView recyclerView, RecyclerView.Adapter adapter) {
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setNestedScrollingEnabled(false);
@@ -1583,12 +1571,12 @@ public class Util {
         recyclerView.setLayoutManager(layoutManager);
     }
 
-    public static void createGridRV(RecyclerView recyclerView, RecyclerView.Adapter adapter, int gridCount){
+    public static void createGridRV(RecyclerView recyclerView, RecyclerView.Adapter adapter, int gridCount) {
         adapter.notifyDataSetChanged();
         recyclerView.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new GridLayoutManager(Util.getInstance().getCurrentActivity(), gridCount);
         recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.addItemDecoration(new ItemDecorationGridSpace((int) Util.convertDp2Px(1),gridCount));
+        recyclerView.addItemDecoration(new ItemDecorationGridSpace((int) Util.convertDp2Px(1), gridCount));
     }
 
     public static Bitmap tintImage(Bitmap bitmap, int color) {
@@ -1600,14 +1588,14 @@ public class Util {
         return bitmapResult;
     }
 
-    public static String combine2String(String text1, String text2, int width){
-        String space ="";
+    public static String combine2String(String text1, String text2, int width) {
+        String space = "";
         int length = width - (text1.length() + text2.length());
-        for (int i=0; i<length; i++){
-            space+=" ";
+        for (int i = 0; i < length; i++) {
+            space += " ";
         }
 
-        return text1+ space + text2;
+        return text1 + space + text2;
     }
 
     public static boolean isJSONValid(String test) {
@@ -1651,20 +1639,21 @@ public class Util {
         int level = 3;
         StackTraceElement[] traces;
         traces = Thread.currentThread().getStackTrace();
-        return (traces[level].toString() );
+        return (traces[level].toString());
 
 //        return new Exception().getStackTrace()[0].getFileName();
     }
 
-    public static void smoothImageRotation(ImageView img, float degree){
+    public static void smoothImageRotation(ImageView img, float degree) {
         img.animate().rotationBy(degree);
 
     }
+
     public static String firstTwo(String str) {
         return str.length() < 2 ? str : str.substring(0, 2);
     }
 
-    public static int convertSdpToInt(int sdp){
+    public static int convertSdpToInt(int sdp) {
         //sdp : R.dimen._sdp
         return getInstance().getCurrentActivity().getResources().getDimensionPixelSize(sdp);
     }
@@ -1678,26 +1667,26 @@ public class Util {
         return (double) tmp / factor;
     }
 
-    public static boolean isAdmin(){
+    public static boolean isAdmin() {
         return CustomSQL.getBoolean(Constants.IS_ADMIN);
     }
 
-    public static String getIcon(int name){
+    public static String getIcon(int name) {
         return getInstance().getCurrentActivity().getResources().getString(name);
 
     }
 
-    public static String getStringIcon(String text,String blank, int icon){
-        return text+ blank + getInstance().getCurrentActivity().getResources().getString(icon);
+    public static String getStringIcon(String text, String blank, int icon) {
+        return text + blank + getInstance().getCurrentActivity().getResources().getString(icon);
 
     }
 
-    public static String getIconString( int icon, String blank, String text){
-        return  getInstance().getCurrentActivity().getResources().getString(icon)+ blank+ text;
+    public static String getIconString(int icon, String blank, String text) {
+        return getInstance().getCurrentActivity().getResources().getString(icon) + blank + text;
 
     }
 
-    public static void clearSQL(){
+    public static void clearSQL() {
         List<BaseModel> listUser = CustomSQL.getListObject(Constants.USER_LIST);
         int versionCode = CustomSQL.getInt(Constants.VERSION_CODE);
         CustomSQL.clear();

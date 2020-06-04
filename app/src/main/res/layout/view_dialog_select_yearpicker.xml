@@ -16,7 +16,7 @@
         android:text="CHỌN NĂM"
         android:textSize="@dimen/_12sdp"
         android:textColor="@color/black_text_color"
-        android:gravity="center"/>
+        android:gravity="center" />
 
 
     <NumberPicker
@@ -31,7 +31,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="2px"
-        android:background="@color/colorGrey"/>
+        android:background="@color/colorGrey" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -49,14 +49,14 @@
             android:text="Hủy"
             android:textSize="@dimen/_12sdp"
             android:textAllCaps="true"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center" />
 
         <View
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:background="@color/colorGrey"
             android:layout_marginTop="@dimen/_2sdp"
-            android:layout_marginBottom="@dimen/_2sdp"/>
+            android:layout_marginBottom="@dimen/_2sdp" />
 
         <Button
             android:id="@+id/btn_submit"
@@ -68,7 +68,7 @@
             android:text="Chọn"
             android:textSize="@dimen/_12sdp"
             android:textAllCaps="true"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center" />
 
     </LinearLayout>
 

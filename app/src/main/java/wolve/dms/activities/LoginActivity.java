@@ -15,10 +15,10 @@ import wolve.dms.apiconnect.SystemConnect;
 import wolve.dms.apiconnect.UserConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackString;
+import wolve.dms.libraries.FitScrollWithFullscreen;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomSQL;
-import wolve.dms.libraries.FitScrollWithFullscreen;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -76,17 +76,17 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @Override
     public void onClick(View view) {
 
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.login_submit:
                 submitLogin();
 
                 break;
 
             case R.id.login_keyboard:
-                if (!detectNumberKeyboard){
+                if (!detectNumberKeyboard) {
                     edUsername.setInputType(InputType.TYPE_CLASS_NUMBER);
 
-                }else {
+                } else {
                     edUsername.setInputType(InputType.TYPE_CLASS_TEXT);
                 }
                 detectNumberKeyboard = !detectNumberKeyboard;
@@ -96,33 +96,33 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             case R.id.login_lost_password:
                 CustomCenterDialog.alertWithButtonCanceled("Quên mật khẩu!",
                         "Liên hệ Admin để cài đặt lại mật khẩu",
-                        "ĐỒNG Ý",false, new CallbackBoolean() {
-                    @Override
-                    public void onRespone(Boolean result) {
+                        "ĐỒNG Ý", false, new CallbackBoolean() {
+                            @Override
+                            public void onRespone(Boolean result) {
 
-                    }
-                });
+                            }
+                        });
 
                 break;
         }
 
     }
 
-    private void submitLogin(){
-        if (Util.isEmpty(edUsername) || Util.isEmpty(edPassword)){
+    private void submitLogin() {
+        if (Util.isEmpty(edUsername) || Util.isEmpty(edPassword)) {
             Util.showToast("Vui lòng nhập đủ thông tin");
-        }else {
+        } else {
             SystemConnect.getFCMToken(new CallbackString() {
                 @Override
                 public void Result(String s) {
-                    if (!s.equals("")){
+                    if (!s.equals("")) {
                         UserConnect.doLogin(edUsername.getText().toString().trim(),
                                 edPassword.getText().toString().trim(),
                                 s,
                                 new CallbackBoolean() {
                                     @Override
                                     public void onRespone(Boolean result) {
-                                        if (result){
+                                        if (result) {
                                             Util.showToast("Đăng nhập thành công");
                                             Transaction.gotoHomeActivity();
                                             CustomSQL.setBoolean(Constants.LOGIN_SUCCESS, true);
@@ -130,7 +130,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                                         }
                                     }
                                 });
-                    }else {
+                    } else {
                         Util.showSnackbar("Đăng nhập thất bại", "Thử lại", new ActionClickListener() {
                             @Override
                             public void onActionClicked(Snackbar snackbar) {

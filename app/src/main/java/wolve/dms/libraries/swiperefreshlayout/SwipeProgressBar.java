@@ -3,15 +3,16 @@ package wolve.dms.libraries.swiperefreshlayout;
 /**
  * Created by macos on 1/2/18.
  */
-    import android.graphics.Canvas;
-    import android.graphics.Paint;
-    import android.graphics.Rect;
-    import android.graphics.RectF;
-    import android.view.View;
-    import android.view.animation.AnimationUtils;
-    import android.view.animation.Interpolator;
 
-    import androidx.core.view.ViewCompat;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.view.animation.Interpolator;
+
+import androidx.core.view.ViewCompat;
 
 
 /**
@@ -234,10 +235,10 @@ final class SwipeProgressBar {
      * Draws a circle centered in the view.
      *
      * @param canvas the canvas to draw on
-     * @param cx the center x coordinate
-     * @param cy the center y coordinate
-     * @param color the color to draw
-     * @param pct the percentage of the view that the circle should cover
+     * @param cx     the center x coordinate
+     * @param cy     the center y coordinate
+     * @param color  the color to draw
+     * @param pct    the percentage of the view that the circle should cover
      */
     private void drawCircle(Canvas canvas, float cx, float cy, int color, float pct) {
         mPaint.setColor(color);
