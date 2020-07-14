@@ -221,6 +221,15 @@ public class Constants {
             "SHOP",
             "KHÁCH LẺ"};
 
+    public static String[] shopNameShortened = new String[]{
+            "SX",
+            "RX",
+            "PT",
+            "BT",
+            "GR",
+            "SH",
+            "KL"};
+
 
     public static void throwError(String err) {
         Util.showSnackbarError(err);

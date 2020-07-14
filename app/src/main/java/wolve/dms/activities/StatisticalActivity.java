@@ -28,6 +28,7 @@ import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
+import wolve.dms.utils.CustomTopDialog;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
@@ -148,7 +149,7 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
 
             case R.id.statistical_filter_by_employee:
                 if (Util.isAdmin()) {
-                    CustomBottomDialog.choiceListObject("Chọn nhân viên", listUser, "displayName", new CallbackObject() {
+                    CustomTopDialog.choiceListObject("Chọn nhân viên", listUser, "displayName", new CallbackObject() {
                         @Override
                         public void onResponse(BaseModel object) {
                             tvEmployeeName.setText(object.getString("displayName"));

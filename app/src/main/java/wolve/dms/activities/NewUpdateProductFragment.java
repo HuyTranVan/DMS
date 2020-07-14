@@ -332,11 +332,11 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
             @Override
             public void onResponse(BaseModel result) {
                 getActivity().getSupportFragmentManager().popBackStack();
-                mActivity.loadProduct();
+                mActivity.reupdateProduct(result);
             }
 
             @Override
-            public void onError(String error) {
+            public void onError(String error){
 
             }
         }, true);

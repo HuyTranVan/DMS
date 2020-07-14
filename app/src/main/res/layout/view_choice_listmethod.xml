@@ -20,16 +20,10 @@
         android:textSize="@dimen/_12sdp"
         android:textColor="@color/black_text_color" />
 
-    <!--        <View-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="1dp"-->
-    <!--            android:background="#10000000"/>-->
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/view_list_method_rv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-
 
 </LinearLayout>
 

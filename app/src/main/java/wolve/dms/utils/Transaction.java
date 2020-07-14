@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ShareCompat;
@@ -301,19 +302,36 @@ public class Transaction {
     }
 
     public static void shareViaZalo(String content) {
-        ShareCompat.IntentBuilder.from(Util.getInstance().getCurrentActivity())
-                .setType("text/plain")
-                .setChooserTitle("Chia sẻ thông qua")
-                .setText(content)
-                .startChooser();
+//        ShareCompat.IntentBuilder.from(Util.getInstance().getCurrentActivity())
+//                .setType("text/plain")
+//                .setChooserTitle("Chia sẻ thông qua")
+//                .setText(content)
+//                .startChooser();
+
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT,content);
+//        sendIntent.setPackage("com.facebook.orca");
+        sendIntent.setType("text/plain");
+        sendIntent.setPackage("com.zing.zalo");
+        try {
+            Util.getInstance().getCurrentActivity().startActivity(sendIntent);
+        }
+        catch (android.content.ActivityNotFoundException ex) {
+            Util.showToast("Please Install Facebook Messenger");
+        }
 
     }
 
     public static void shareImageViaZalo(Uri uri) {
-        Intent intent = new Intent(Intent.ACTION_SEND);
+//        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
         intent.setType("image/*");
+        intent.setPackage("com.zing.zalo");
         intent.putExtra(Intent.EXTRA_STREAM, uri);
-        Util.getInstance().getCurrentActivity().startActivity(Intent.createChooser(intent, "Chia sẻ thông qua"));
+//        Util.getInstance().getCurrentActivity().startActivity(Intent.createChooser(intent, "Chia sẻ thông qua"));
+        Util.getInstance().getCurrentActivity().startActivity(intent);
 
     }
 

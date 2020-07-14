@@ -66,6 +66,7 @@ import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.LatlngListener;
 import wolve.dms.customviews.CButton;
+import wolve.dms.libraries.Contacts;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Customer;
 import wolve.dms.models.District;
@@ -1020,6 +1021,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 BaseModel cust = DataUtil.rebuiltCustomer(result, false);
                 CustomSQL.setBaseModel(Constants.CUSTOMER, cust);
                 BaseModel customer = buildMarkerByCustomer(cust);
+                //Contacts.InsertContact(customer);
 
 
                 tvStatusDot.setTextColor(customer.getInt("statusColor"));

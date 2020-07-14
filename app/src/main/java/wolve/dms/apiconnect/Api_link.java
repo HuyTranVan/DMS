@@ -16,7 +16,7 @@ import wolve.dms.utils.Util;
 public class Api_link {
     public final static String DEFAULT_RANGE = "?page=%d&size=%d";
 
-    public final static String BASE_URL = BuildConfig.DEBUG_FLAG ? "http://192.168.1.45/" : BuildConfig.SERVER_URL;
+    public final static String BASE_URL = BuildConfig.DEBUG_FLAG ? "http://192.168.1.49/" : BuildConfig.SERVER_URL;
     public final static String LUB_LINK = "http://dmslub.com?";
 
     public final static String BASE_PHOTO_URL = BuildConfig.UPLOAD_URL;
@@ -124,15 +124,6 @@ public class Api_link {
     public final static String DEBT_NEW = BASE_URL + "dms/token/bill/DebtNew";
     public final static String DEBT_PARAM = "debt=%s&user_id=%d&customer_id=%d&distributor_id=%d";
 
-    public static Cloudinary getImageCloud() {
-        Map config = new HashMap();
-        config.put("cloud_name", Util.getInstance().getCurrentActivity().getResources().getString(R.string.cloud_image_name));
-        config.put("api_key", Util.getInstance().getCurrentActivity().getResources().getString(R.string.cloud_image_key));
-        config.put("api_secret", Util.getInstance().getCurrentActivity().getResources().getString(R.string.cloud_image_secret));
-        Cloudinary cloudinary = new Cloudinary(config);
-
-        return cloudinary;
-    }
 
 }
 

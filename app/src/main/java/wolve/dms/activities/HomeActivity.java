@@ -40,6 +40,7 @@ import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomListList;
 import wolve.dms.callback.CallbackListObject;
 import wolve.dms.callback.CallbackObject;
+import wolve.dms.libraries.Contacts;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.ProductGroup;
@@ -492,7 +493,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 PermissionChecker.checkSelfPermission(context, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED ||
                 PermissionChecker.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
                 PermissionChecker.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
-                PermissionChecker.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                PermissionChecker.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED||
+                PermissionChecker.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED||
+                PermissionChecker.checkSelfPermission(context, Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED){
 
 
             CustomCenterDialog.alertWithCancelButton("Cấp quyền truy cập!",
@@ -510,6 +513,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                                         android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
                                         android.Manifest.permission.READ_EXTERNAL_STORAGE,
                                         android.Manifest.permission.CAMERA,
+                                        android.Manifest.permission.READ_CONTACTS,
+                                        android.Manifest.permission.WRITE_CONTACTS
 
                                 }, Constants.REQUEST_PERMISSION);
 

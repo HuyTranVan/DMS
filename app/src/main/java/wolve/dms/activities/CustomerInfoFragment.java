@@ -45,7 +45,6 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
     private CButtonVertical mDirection, mCall, mInterest;
     protected TextView tvLastCheckin, tvCheckin, tvHistory;
     private Spinner spShoptype;
-    //private RadioGroup rgType;
 
     private CustomerActivity mActivity;
 
@@ -54,7 +53,6 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_customer_info, container, false);
-
 
         initializeView();
 

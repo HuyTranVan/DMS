@@ -1473,6 +1473,19 @@ public class Util {
         });
     }
 
+    public static String isPhoneFormat(String phone) {
+        String baseStringValue = phone.replace(".", "").replace(",", "");
+        if (isEmpty(baseStringValue)){
+            return "";
+        }else {
+            if (baseStringValue.matches(DETECT_PHONE)){
+                return baseStringValue;
+            }else {
+                return "";
+            }
+        }
+    }
+
     public static String getPhoneValue(EditText edText) {
         return edText.getText().toString().replace(".", "");
     }

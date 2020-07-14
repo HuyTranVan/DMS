@@ -49,10 +49,10 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
     private RelativeLayout lnParent;
     private MySwipeRefreshLayout swipeRefreshLayout;
 
-    private ProductAdapter productAdapter;
     public List<BaseModel> listProductGroup;
     private List<BaseModel> listProduct;
     private ViewpagerProductAdapter viewpagerAdapter;
+    private List<ProductAdapter> listadapter;
     public int currentPosition = 0;
 
     @Override
@@ -173,7 +173,7 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
     }
 
     private void setupViewPager(final List<BaseModel> listproductgroup, final List<BaseModel> listproduct) {
-        final List<RecyclerView.Adapter> listadapter = new ArrayList<>();
+        listadapter = new ArrayList<>();
 
         for (int i = 0; i < listproductgroup.size(); i++) {
             ProductAdapter productAdapters = new ProductAdapter(listproductgroup.get(i), listproduct, new CallbackClickAdapter() {
@@ -246,5 +246,25 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
     public void onRefresh() {
         swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#2196f3"));
         loadProductGroup(false);
+    }
+
+    protected void reupdateProduct(BaseModel product){
+        boolean check = false;
+        for (int i=0; i<listadapter.size(); i++){
+            List<BaseModel> listItem = listadapter.get(i).getmData();
+            for (int ii=0; ii<listItem.size(); ii++){
+                if (product.getInt("id") == listItem.get(ii).getInt("id")){
+                    listadapter.get(i).notifyItem(product, ii);
+                    check = true;
+                    break;
+
+                }
+
+            }
+            if (check){
+                break;
+            }
+        }
+
     }
 }

@@ -26,11 +26,11 @@ import wolve.dms.utils.Util;
 public class ViewpagerProductAdapter extends PagerAdapter {
     private Context mContext;
     private LayoutInflater inflater;
-    private List<RecyclerView.Adapter> listAdapter = new ArrayList<>();
+    private List<ProductAdapter> listAdapter = new ArrayList<>();
     private List<String> listTitle = new ArrayList<>();
     private View view;
 
-    public ViewpagerProductAdapter(List<RecyclerView.Adapter> listAdapter, List<BaseModel> productGroups) {
+    public ViewpagerProductAdapter(List<ProductAdapter> listAdapter, List<BaseModel> productGroups) {
         this.mContext = Util.getInstance().getCurrentActivity();
         this.listAdapter = listAdapter;
 

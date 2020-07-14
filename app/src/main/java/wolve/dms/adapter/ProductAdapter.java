@@ -45,7 +45,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
     public ProductAdapter(BaseModel group, List<BaseModel> list, CallbackClickAdapter callbackClickAdapter, CallbackDeleteAdapter callbackDeleteAdapter) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
-//        this.mData = list;
         this.mGroup = group;
         this.mListener = callbackClickAdapter;
         this.mDeleteListener = callbackDeleteAdapter;
@@ -155,6 +154,17 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
             rlParent = (RelativeLayout) itemView.findViewById(R.id.product_item_parent);
             imageProduct = itemView.findViewById(R.id.product_item_image);
         }
+
+    }
+
+    public List<BaseModel> getmData(){
+        return mData;
+    }
+
+    public void notifyItem(BaseModel item, int pos){
+        mData.remove(pos);
+        mData.add(pos, item);
+        notifyItemChanged(pos);
 
     }
 
