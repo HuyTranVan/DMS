@@ -42,6 +42,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }, 200);
 
         addEvent();
+
     }
 
     @Override
