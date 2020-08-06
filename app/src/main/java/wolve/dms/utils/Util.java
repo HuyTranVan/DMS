@@ -1,7 +1,11 @@
 package wolve.dms.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -18,6 +22,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
+import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -35,6 +40,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -47,6 +53,7 @@ import com.nispok.snackbar.SnackbarManager;
 import com.nispok.snackbar.enums.SnackbarType;
 import com.nispok.snackbar.listeners.ActionClickListener;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -77,6 +84,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import wolve.dms.BuildConfig;
 import wolve.dms.R;
 import wolve.dms.activities.MapsActivity;
 import wolve.dms.activities.ShopCartActivity;
@@ -568,38 +576,38 @@ public class Util {
         return isValid;
     }
 
-    public static ArrayList<String> getAllShownImagesPath() {
-        Uri uri;
-        Cursor cursor;
-        int column_index_data, column_index_folder_name;
-        ArrayList<String> listOfAllImages = new ArrayList<String>();
-
-        String absolutePathOfImage = null;
-        uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-
-        String[] projection = {MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME};
-
-        cursor = Util.getInstance().getCurrentActivity().getContentResolver().query(uri, projection, null, null, null);
-
-        column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-        column_index_folder_name = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
-        while (cursor.moveToNext()) {
-            absolutePathOfImage = cursor.getString(column_index_data);
-            if (absolutePathOfImage.contains(".png") | absolutePathOfImage.contains(".PNG")
-                    | absolutePathOfImage.contains(".jpg") | absolutePathOfImage.contains(".JPG")
-                    | absolutePathOfImage.contains(".jpeg") | absolutePathOfImage.contains(".JPEG")) {
-
-
-                listOfAllImages.add(absolutePathOfImage);
-            }
-
-        }
-
-//        ArrayList<String> tempArrayString = new ArrayList<String>(listOfAllImages);
-        Collections.reverse(listOfAllImages);
-
-        return listOfAllImages;
-    }
+//    public static ArrayList<String> getAllShownImagesPath() {
+//        Uri uri;
+//        Cursor cursor;
+//        int column_index_data, column_index_folder_name;
+//        ArrayList<String> listOfAllImages = new ArrayList<String>();
+//
+//        String absolutePathOfImage = null;
+//        uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+//
+//        String[] projection = {MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME};
+//
+//        cursor = Util.getInstance().getCurrentActivity().getContentResolver().query(uri, projection, null, null, null);
+//
+//        column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+//        column_index_folder_name = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
+//        while (cursor.moveToNext()) {
+//            absolutePathOfImage = cursor.getString(column_index_data);
+//            if (absolutePathOfImage.contains(".png") | absolutePathOfImage.contains(".PNG")
+//                    | absolutePathOfImage.contains(".jpg") | absolutePathOfImage.contains(".JPG")
+//                    | absolutePathOfImage.contains(".jpeg") | absolutePathOfImage.contains(".JPEG")) {
+//
+//
+//                listOfAllImages.add(absolutePathOfImage);
+//            }
+//
+//        }
+//
+////        ArrayList<String> tempArrayString = new ArrayList<String>(listOfAllImages);
+//        Collections.reverse(listOfAllImages);
+//
+//        return listOfAllImages;
+//    }
 
     public static File createCustomFolder(String name) {
         File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), Constants.APP_DIRECTORY);
@@ -612,102 +620,256 @@ public class Util {
         return new File(mediaStorageDir.getPath() + File.separator + name);
     }
 
-    public static File createCustomImageFile() {
-        File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), Constants.APP_DIRECTORY);
+//    public static File createCustomImageFile() {
+//        File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), Constants.APP_DIRECTORY);
+//
+//        if (!mediaStorageDir.exists()) {
+//            if (!mediaStorageDir.mkdirs()) {
+//                return null;
+//            }
+//        }
+//        File imageFile = new File(mediaStorageDir.getPath() + File.separator + "Images");
+//        if (!imageFile.exists()) {
+//            if (!imageFile.mkdirs()) {
+//                return null;
+//            }
+//        }
+//
+//        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
+//        return new File(imageFile.getPath() + File.separator + String.format("IMG_%s.jpg", timeStamp));
+//    }
 
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                return null;
-            }
-        }
-        File imageFile = new File(mediaStorageDir.getPath() + File.separator + "Images");
-        if (!imageFile.exists()) {
-            if (!imageFile.mkdirs()) {
-                return null;
-            }
-        }
+//    public static File createCustomImageFile(String name, boolean storeCacheFile) {
+//        String imageFileName = String.format("IMG_%s.jpg", name);
+//        if (Build.VERSION.SDK_INT >=29){
+//            if (!storeCacheFile){
+//                return new File(Util.getInstance().getCurrentActivity().getFilesDir(), imageFileName);
+//
+//            }else {
+//                try {
+//                    File.createTempFile(imageFileName, null, Util.getInstance().getCurrentActivity().getCacheDir());
+//                    return new File(Util.getInstance().getCurrentActivity().getCacheDir(), imageFileName);
+//
+//                } catch (IOException e) {
+//                    //e.printStackTrace();
+//                    Util.showSnackbar("Không thể lưu hình ảnh", null, null);
+//                    return null;
+//                }
+//
+//
+//            }
+//
+//
+//        }else {
+//            File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), Constants.APP_DIRECTORY);
+//            if (!mediaStorageDir.exists()) {
+//                if (!mediaStorageDir.mkdirs()) {
+//                    return null;
+//                }
+//            }
+//
+//            File imageFile = new File(mediaStorageDir.getPath() + File.separator + "Images");
+//            if (!imageFile.exists()) {
+//                if (!imageFile.mkdirs()) {
+//                    return null;
+//                }
+//            }
+//
+//            return new File(imageFile.getPath() + File.separator + imageFileName);
+//        }
+//
+//    }
 
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
-        return new File(imageFile.getPath() + File.separator + String.format("IMG_%s.jpg", timeStamp));
-    }
-
-    public static File createCustomImageFile(String name) {
-        File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), Constants.APP_DIRECTORY);
-
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                return null;
-            }
-        }
-        File imageFile = new File(mediaStorageDir.getPath() + File.separator + "Images");
-        if (!imageFile.exists()) {
-            if (!imageFile.mkdirs()) {
-                return null;
-            }
-        }
-
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
-        return new File(imageFile.getPath() + File.separator + String.format("IMG_%s.jpg", name));
-    }
-
-    public static String storeImage(Bitmap bitmap, String name) {
-        File file = createCustomImageFile(name);
+    public static Uri storeImage(Bitmap bitmap, String folderName, String imageGroup, boolean showTime) {
+        String imageFileName = String.format("IMG_%s%s.png", imageGroup, showTime? "_" + Util.CurrentMonthYearHourNotBlank() : "");
+        OutputStream stream = null;
 
         try {
-            OutputStream stream = null;
-            stream = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-            stream.flush();
-            stream.close();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+                String relativeLocation = Environment.DIRECTORY_PICTURES
+                        + File.separator
+                        + Constants.APP_DIRECTORY
+                        + File.separator
+                        + folderName;
+                ContentResolver resolver = Util.getInstance().getCurrentActivity().getContentResolver();
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, imageFileName);
+                contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/png");
+                contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, relativeLocation);
+                Uri uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+                assert uri != null;
+                stream = resolver.openOutputStream(uri);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+
+                stream.flush();
+                stream.close();
+
+                CustomSQL.setStringToList(Constants.IMAGES, uri.toString());
+                return uri;
+
+            }else {
+                String relativeLocation = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES )
+                        + File.separator
+                        + Constants.APP_DIRECTORY
+                        + File.separator
+                        + folderName;
+
+                File mediaStorageDir = new File(relativeLocation);
+
+                if (!mediaStorageDir.exists()) {
+                    mediaStorageDir.mkdirs();
+
+                }
+                File imageFile = new File(mediaStorageDir, imageFileName);
+                stream = new FileOutputStream(imageFile);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                stream.flush();
+                stream.close();
+
+                return  Uri.parse(imageFile.getAbsolutePath());
+
+//                File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), Constants.APP_DIRECTORY);
+//                if (!mediaStorageDir.exists()) {
+//                    mediaStorageDir.mkdirs();
+//                }
+//
+//                File imageFolder = new File(mediaStorageDir.getPath() + File.separator + "Images");
+//                if (!imageFolder.exists()) {
+//                    imageFolder.mkdirs();
+//                }
+//
+//                //File imageFile = new File(imageFolder.getPath() + File.separator + imageFileName);
+//                stream = new FileOutputStream(imageFile);
+//                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+//                stream.flush();
+//                stream.close();
+
+////
+//                //imageUri = Uri.parse(imageFile.getAbsolutePath());
+
+//
+////                return imageFile.getAbsolutePath();
+//                return null;
+
+            }
+
 
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Uri savedImageURI = Uri.parse(file.getAbsolutePath());
+            Util.showSnackbar("Lỗi lưu file", null, null);
+            return null;
 
-        return savedImageURI.getPath();
+        }
+
+
+
+
+
+//        File file = createCustomImageFile(name, storeCacheFile);
+//        try {
+//            OutputStream stream = null;
+//
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        assert file != null;
+//        Uri savedImageURI = Uri.parse(file.getAbsolutePath());
+//
+//        return savedImageURI.getPath();
+//
+//
+//        boolean saved;
+//        OutputStream fos = null;
+//
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//            ContentResolver resolver = Util.getInstance().getCurrentActivity().getContentResolver();
+//            ContentValues contentValues = new ContentValues();
+//            contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, name);
+//            contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/png");
+//            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Constants.APP_DIRECTORY + "acb");
+//            Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+//            fos = resolver.openOutputStream(imageUri);
+//        }
+//
+//        saved = bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+//        fos.flush();
+//        fos.close();
 
     }
 
-    //using parse for local category
-    public static File getOutputMediaFile() {
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), Constants.IMAGES_DIRECTORY
-        );
+    public static void deleteAllImageExternalStorage(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+            List<String> imageStored = CustomSQL.getListString(Constants.IMAGES);
+            ContentResolver resolver = Util.getInstance().getCurrentActivity().getContentResolver();
+            for (String item: imageStored){
+                Uri uri = Uri.parse(item);
+                resolver.delete(uri, null, null);
+            }
+
+        }else {
+            String relativeLocation = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES )
+                    + File.separator
+                    + Constants.APP_DIRECTORY;
+
+            File mediaStorageDir = new File(relativeLocation);
+            try {
+                FileUtils.deleteDirectory(mediaStorageDir);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+    }
+
+    public static File createTempFileOutput(String folderName, String groupName) {
+        String relativeLocation = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES )
+                + File.separator
+                + Constants.APP_DIRECTORY
+                + File.separator
+                + folderName;
+
+        File mediaStorageDir = new File(relativeLocation);
+
+//        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+//                Constants.IMAGES_DIRECTORY);
 
         if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                return null;
-            }
+            mediaStorageDir.mkdirs();
+//            if (!) {
+//                return null;
+//            }
         }
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
-        return new File(mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpeg");
+        String imageFileName = String.format("IMG_%s_%s.png", groupName, Util.CurrentMonthYearHourNotBlank());
+        return new File(mediaStorageDir.getPath() + File.separator + imageFileName);
     }
 
-    public static File getOutputMediaFile(String name) {
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), name);
+//    public static File getOutputMediaFile(String name) {
+//        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), name);
+//
+//        if (!mediaStorageDir.exists()) {
+//            if (!mediaStorageDir.mkdirs()) {
+//                return null;
+//            }
+//        }
+//        return new File(mediaStorageDir.getPath());
+//    }
+//
+//    public static File getOutputMediaFileLogo() {
+//        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), Constants.IMAGES_DIRECTORY);
+//
+//        if (!mediaStorageDir.exists()) {
+//            if (!mediaStorageDir.mkdirs()) {
+//                return null;
+//            }
+//        }
+//
+//        CustomSQL.setString("logo", mediaStorageDir.getPath() + File.separator + "logo.jpeg");
+//
+//        return new File(mediaStorageDir.getPath() + File.separator + "logo.jpeg");
+//    }
 
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                return null;
-            }
-        }
-        return new File(mediaStorageDir.getPath());
-    }
-
-    public static File getOutputMediaFileLogo() {
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), Constants.IMAGES_DIRECTORY);
-
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                return null;
-            }
-        }
-
-        CustomSQL.setString("logo", mediaStorageDir.getPath() + File.separator + "logo.jpeg");
-
-        return new File(mediaStorageDir.getPath() + File.separator + "logo.jpeg");
-    }
-
+    @SuppressLint("SimpleDateFormat")
     public static String CurrentTimeStampString() {
         SimpleDateFormat dfm = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 
@@ -962,11 +1124,10 @@ public class Util {
             cursor.moveToFirst();
             return cursor.getString(column_index);
         }
-        String s = uri.getPath();
         return uri.getPath();
     }
 
-    public static String getRealPathFromCaptureURI(Uri uri) {
+    public static String getRealPathFromCaptureURI(Uri uri){
         Uri returnUri = uri;
         Context context = Util.getInstance().getCurrentActivity();
         //Cursor returnCursor = context.getContentResolver().query(returnUri, null, null, null, null);

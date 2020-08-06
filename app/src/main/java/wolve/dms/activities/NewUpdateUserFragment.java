@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
-import com.soundcloud.android.crop.Crop;
+import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -180,8 +180,13 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
                         new CustomBottomDialog.ThreeMethodListener() {
                             @Override
                             public void Method1(Boolean one) {
-                                imageChangeUri = Uri.fromFile(Util.getOutputMediaFile());
-                                Transaction.startImageChooser(NewUpdateUserFragment.this);
+                                //imageChangeUri = Uri.fromFile(Util.createTempFileOutput());
+                                Transaction.startImageChooser(NewUpdateUserFragment.this, new CallbackUri() {
+                                    @Override
+                                    public void uriRespone(Uri uri) {
+                                        imageChangeUri = uri;
+                                    }
+                                });
                             }
 
                             @Override
@@ -211,25 +216,54 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == REQUEST_CHOOSE_IMAGE) {
+//            if (data != null) {
+//                Crop.of(Uri.parse(data.getData().toString()), imageChangeUri).asSquare().withMaxSize(512, 512).start(mActivity, NewUpdateUserFragment.this);
+//
+//            }
+//
+//        } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
+//            //Uri tempUri = imageChangeUri;
+//            Crop.of(imageChangeUri, imageChangeUri).asSquare().withMaxSize(512, 512).start(mActivity, NewUpdateUserFragment.this);
+//
+//        } else if (data != null && requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
+//            Glide.with(this).load(imageChangeUri).centerCrop().into(imgUser);
+//
+//        } else if (requestCode == Crop.REQUEST_CROP) {
+//            if (resultCode == RESULT_OK) {
+//                Glide.with(this).load(imageChangeUri).centerCrop().into(imgUser);
+//
+//            } else if (resultCode == Crop.RESULT_ERROR) {
+//                Util.showToast(Crop.getError(data).getMessage());
+//
+//            }
+//        }
+
         if (requestCode == REQUEST_CHOOSE_IMAGE) {
             if (data != null) {
-                Crop.of(Uri.parse(data.getData().toString()), imageChangeUri).asSquare().withMaxSize(512, 512).start(mActivity, NewUpdateUserFragment.this);
+                CropImage.activity(Uri.parse(data.getData().toString()))
+                        .setAspectRatio(1,1)
+                        .setMaxZoom(10)
+                        .setRequestedSize(512, 512)
+                        .start(mActivity,  NewUpdateUserFragment.this);
 
             }
 
         } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
-            //Uri tempUri = imageChangeUri;
-            Crop.of(imageChangeUri, imageChangeUri).asSquare().withMaxSize(512, 512).start(mActivity, NewUpdateUserFragment.this);
+            CropImage.activity(imageChangeUri)
+                    .setAspectRatio(1,1)
+                    .setMaxZoom(10)
+                    .setRequestedSize(512, 512)
+                    .start(mActivity,  NewUpdateUserFragment.this);
 
-        } else if (data != null && requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
-            Glide.with(this).load(imageChangeUri).centerCrop().into(imgUser);
-
-        } else if (requestCode == Crop.REQUEST_CROP) {
+        }else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
+                imageChangeUri = result.getUri();
                 Glide.with(this).load(imageChangeUri).centerCrop().into(imgUser);
 
-            } else if (resultCode == Crop.RESULT_ERROR) {
-                Util.showToast(Crop.getError(data).getMessage());
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Util.showToast(result.getError().getMessage());
 
             }
         }

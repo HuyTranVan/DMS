@@ -1,6 +1,8 @@
 package wolve.dms.activities;
 
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,6 +18,8 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -30,6 +34,8 @@ import wolve.dms.utils.CustomFixSQL;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.models.Product.getProductList;
 
 //import wolve.dms.libraries.FileUploader;
 
@@ -167,6 +173,19 @@ public class UserOptionFragment extends Fragment implements View.OnClickListener
 
 
     private void showLogoutDialog() {
+//        List<BaseModel> preProduct = getProductList();
+//        ContentResolver resolver = Util.getInstance().getCurrentActivity().getContentResolver();
+//        for (BaseModel model: preProduct){
+//            if (!model.getString("image_uri").equals("")){
+//                Uri uri = Uri.parse(model.getString("image_uri"));
+//                resolver.delete(uri, null, null);
+//            }
+//
+//        }
+        String s = CustomFixSQL.getString(Constants.IMAGES);
+        List<String> currentList = new ArrayList<String>(Arrays.asList(s.split(",")));
+
+
         CustomCenterDialog.alertWithCancelButton(null, String.format("Đăng xuất tài khoản %s", User.getFullName()), "ĐỒNG Ý", "HỦY", new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {

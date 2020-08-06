@@ -318,20 +318,29 @@ public class Transaction {
             Util.getInstance().getCurrentActivity().startActivity(sendIntent);
         }
         catch (android.content.ActivityNotFoundException ex) {
-            Util.showToast("Please Install Facebook Messenger");
+            Util.showToast("Please Install Zalo");
         }
 
     }
 
-    public static void shareImageViaZalo(Uri uri) {
-//        Intent intent = new Intent(Intent.ACTION_SENDTO);
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_SEND);
-        intent.setType("image/*");
-        intent.setPackage("com.zing.zalo");
-        intent.putExtra(Intent.EXTRA_STREAM, uri);
-//        Util.getInstance().getCurrentActivity().startActivity(Intent.createChooser(intent, "Chia sẻ thông qua"));
-        Util.getInstance().getCurrentActivity().startActivity(intent);
+    public static void shareImageViaZalo(Uri uri, BaseModel currentCustomer) {
+        String message = String.format("%s %s ::: %s",
+                Constants.shopName[currentCustomer.getInt("shopType")].toUpperCase(),
+                currentCustomer.getString("signBoard").toUpperCase(),
+                Util.CurrentMonthYearHourNotBlank());
+
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.setType("image/*");
+        sendIntent.setPackage("com.zing.zalo");
+        sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, message);
+        try {
+            Util.getInstance().getCurrentActivity().startActivity(sendIntent);
+        }
+        catch (android.content.ActivityNotFoundException ex) {
+            Util.showToast("Please Install Zalo");
+        }
 
     }
 
@@ -358,52 +367,78 @@ public class Transaction {
         ((AppCompatActivity) context).finish();
     }
 
-    public static void startImageChooser() {
+    public static void startImageChooser(Fragment fragment, CallbackUri callbackuri) {
+        Uri tempUri = Uri.fromFile(Util.createTempFileOutput("LOCAL", "Select"));
+        callbackuri.uriRespone(tempUri);
         Activity context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        context.startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
+
+        if (fragment != null){
+            fragment.startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
+
+        }else {
+            context.startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
+
+        }
+
 
     }
 
-    public static void startImageChooser(Fragment fragment) {
-        //Activity context = Util.getInstance().getCurrentActivity();
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        fragment.startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
+//    public static void startImageChooser(Fragment fragment) {
+//        //Activity context = Util.getInstance().getCurrentActivity();
+//        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//        fragment.startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
+//
+//    }
 
-    }
+    public static void startCamera(Fragment fragment, CallbackUri callbackuri) {
+//        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        if (takePictureIntent.resolveActivity(context.getPackageManager()) != null) {
+//            File photoFile = null;
+//            photoFile = Util.createCustomImageFile();
+//            if (photoFile != null) {
+//                Uri photoURI = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", photoFile);
+//                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+//                context.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+//            }
+//        }
 
-    public static void startCamera() {
         Activity context = Util.getInstance().getCurrentActivity();
+        Uri photoURI = FileProvider.getUriForFile(
+                context,
+                BuildConfig.APPLICATION_ID + ".provider",
+                Util.createTempFileOutput("CAMERA", "Camera"));
+        callbackuri.uriRespone(photoURI);
 
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(context.getPackageManager()) != null) {
-            File photoFile = null;
-            photoFile = Util.createCustomImageFile();
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                context.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-            }
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+        //context.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+        if (fragment != null){
+            fragment.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+
+        }else {
+            context.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+
         }
 
     }
 
-    public static void startCamera(Fragment fragment, CallbackUri callbackUrl) {
-        Activity context = Util.getInstance().getCurrentActivity();
-
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(context.getPackageManager()) != null) {
-            File photoFile = null;
-            photoFile = Util.createCustomImageFile();
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                callbackUrl.uriRespone(photoURI);
-                fragment.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-            }
-        }
-
-    }
+//    public static void startCamera(Fragment fragment, CallbackUri callbackuri) {
+//        Activity context = Util.getInstance().getCurrentActivity();
+//
+//        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        if (takePictureIntent.resolveActivity(context.getPackageManager()) != null) {
+//            File photoFile = null;
+//            photoFile = Util.createCustomImageFile();
+//            if (photoFile != null) {
+//                Uri photoURI = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", photoFile);
+//                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+//                callbackuri.uriRespone(photoURI);
+//                fragment.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+//            }
+//        }
+//
+//    }
 
 
     @SuppressLint("WrongConstant")

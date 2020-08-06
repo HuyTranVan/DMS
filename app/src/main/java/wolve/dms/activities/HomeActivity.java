@@ -5,11 +5,14 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -26,6 +29,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -146,12 +150,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         List<NotificationChannel> list = notificationManager.getNotificationChannels();
-        //notificationManager.
-
-//        for (NotificationChannel item: list){
-//            Log.e("nooooo", item.);
-//
-//        }
 
 
     }
@@ -369,8 +367,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             @Override
             public void onResponse(BaseModel result) {
                 if (result.getBoolean("success")) {
-                    Util.showToast("Đăng xuất thành công");
+                    Util.deleteAllImageExternalStorage();
+
                     CustomSQL.clear();
+                    Util.showToast("Đăng xuất thành công");
                     Transaction.gotoLoginActivityRight();
 
                 } else {

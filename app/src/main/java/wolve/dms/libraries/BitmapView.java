@@ -37,24 +37,24 @@ public class BitmapView {
 //        }
 //    }
 
-    public static Uri saveImageToSD(Bitmap outputImage) {
-//        File storagePath = new File(Environment.getExternalStorageDirectory() + "/Tinhtiendidong/");
-//        storagePath.mkdirs();
-
-        File myImage = Util.createCustomImageFile();
-
-
-        try {
-            FileOutputStream out = new FileOutputStream(myImage);
-            outputImage.compress(Bitmap.CompressFormat.PNG, 80, out);
-            out.flush();
-            out.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-//        return myImage.getAbsolutePath();
-        return Uri.parse(myImage.getPath());
-    }
+//    public static Uri saveImageToSD(Bitmap outputImage) {
+////        File storagePath = new File(Environment.getExternalStorageDirectory() + "/Tinhtiendidong/");
+////        storagePath.mkdirs();
+//
+//        File myImage = Util.createCustomImageFile();
+//
+//
+//        try {
+//            FileOutputStream out = new FileOutputStream(myImage);
+//            outputImage.compress(Bitmap.CompressFormat.PNG, 100, out);
+//            out.flush();
+//            out.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+////        return myImage.getAbsolutePath();
+//        return Uri.parse(myImage.getPath());
+//    }
 
     public static Bitmap getBitmapFromView(View view) {
         view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);

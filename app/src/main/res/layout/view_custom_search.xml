@@ -51,7 +51,7 @@
                     android:id="@+id/icon_close"
                     android:layout_width="@dimen/_35sdp"
                     android:layout_height="match_parent"
-                    android:src="@drawable/crop__ic_cancel"
+                    android:src="@drawable/btn_cancel_grey"
                     android:padding="@dimen/_8sdp"
                     android:background="?selectableItemBackground"
                     android:visibility="gone" />

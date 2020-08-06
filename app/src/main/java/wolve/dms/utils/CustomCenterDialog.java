@@ -694,10 +694,8 @@ public class CustomCenterDialog {
 
                 }
 
-
             }
         });
-
 
     }
 
@@ -725,6 +723,7 @@ public class CustomCenterDialog {
         tvRemain.setText(Util.FormatMoney(totalDebt));
         tvText.setText(totalDebt >= 0 ? "Số tiền khách trả" : "Số tiền trả lại khách");
 
+        btnSubmit.setText("tiếp tục");
         swFastPay.setVisibility(listDebts.size() == 1 ? View.GONE : View.VISIBLE);
 
         if (changeAmount) {

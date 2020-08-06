@@ -2,6 +2,7 @@ package wolve.dms.libraries.connectapi;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -14,6 +15,9 @@ import java.util.List;
 
 import wolve.dms.callback.CallbackListObject;
 import wolve.dms.models.BaseModel;
+import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomFixSQL;
+import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Util;
 
 /**
@@ -21,14 +25,14 @@ import wolve.dms.utils.Util;
  */
 public class DownloadListImage extends AsyncTask<String, Void, List<BaseModel>> {
     private List<BaseModel> mList;
-    private String mKey;
+    private String mKey, mGroupName;
     private CallbackListObject mListener;
 
-    public DownloadListImage(List<BaseModel> list, String keyurl, CallbackListObject listener) {
+    public DownloadListImage(List<BaseModel> list, String keyurl, String groupName,CallbackListObject listener) {
         this.mList = list;
         this.mListener = listener;
         this.mKey = keyurl;
-
+        this.mGroupName = groupName;
     }
 
     @Override
@@ -38,16 +42,20 @@ public class DownloadListImage extends AsyncTask<String, Void, List<BaseModel>> 
         InputStream is = null;
         try {
             for (int i = 0; i < mList.size(); i++) {
-                if (!Util.checkImageNull(mList.get(i).getString("image"))) {
-                    URL aURL = new URL(mList.get(i).getString("image"));
+                if (!Util.checkImageNull(mList.get(i).getString(mKey))) {
+                    URL aURL = new URL(mList.get(i).getString(mKey));
                     URLConnection conn = aURL.openConnection();
                     conn.connect();
                     is = conn.getInputStream();
                     bis = new BufferedInputStream(is);
                     bm = BitmapFactory.decodeStream(bis);
 
-                    String path = Util.storeImage(bm, mList.get(i).getString("id"));
-                    mList.get(i).put("image_path", path);
+                    Uri image_uri = Util.storeImage(
+                            bm,
+                            mGroupName,
+                            String.format("%s%s", mGroupName, mList.get(i).getString("id")),
+                            false);
+                    mList.get(i).put("image_uri", Util.getRealPathFromImageURI(image_uri));
 
                 }
 

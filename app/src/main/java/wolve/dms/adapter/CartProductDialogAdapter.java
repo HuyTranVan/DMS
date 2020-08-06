@@ -2,6 +2,8 @@ package wolve.dms.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,11 +80,13 @@ public class CartProductDialogAdapter extends RecyclerView.Adapter<CartProductDi
         holder.tvLine.setVisibility(position == mData.size() - 1 ? View.GONE : View.VISIBLE);
         holder.lnParent.setBackgroundColor(mData.get(position).getBoolean("checked") ? Color.parseColor("#0d000000") : Color.parseColor("#ffffff"));
 
-        if (!Util.checkImageNull(mData.get(position).getString("image_path"))) {
-            Glide.with(mContext).load(mData.get(position).getString("image_path")).centerCrop().into(holder.imgProduct);
+        Log.e("product", mData.get(position).getString("image_uri"));
+        Log.e("product1", Util.getRealPathFromImageURI(Uri.parse(mData.get(position).getString("image_uri"))));
+        if (!Util.checkImageNull(mData.get(position).getString("image_uri"))) {
+            Glide.with(mContext).load(Util.getRealPathFromImageURI(Uri.parse(mData.get(position).getString("image_uri")))).centerCrop().into(holder.imgProduct);
 
         } else {
-            Glide.with(mContext).load(R.drawable.ic_wolver).centerCrop().into(holder.imgProduct);
+            Glide.with(mContext).load(R.drawable.lub_icon_round).optionalCenterInside().into(holder.imgProduct);
 
         }
 

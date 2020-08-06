@@ -39,7 +39,7 @@ public class Constants {
     public final static String USER_USERNAME = "username";
     public final static String USER_PASSWORD = "password";
     public final static String IMAGES_DIRECTORY = "Lubsolution_DMS";
-    public final static String APP_DIRECTORY = "Lubsolution_DMS";
+    public final static String APP_DIRECTORY = "DMS";
     public final static int ROLE_ADMIN = 1;
     public final static int ROLE_WAREHOUSE = 2;
     public final static int ROLE_DELIVER = 3;
@@ -140,8 +140,7 @@ public class Constants {
 
     public final static String PRINTER_57 = "57mm";
     public final static String PRINTER_80 = "80mm";
-    public final static String currentEmulatorDevice1 = "Google Android SDK built for x86";
-    public final static String currentEmulatorDevice2 = "Google AOSP on IA Emulator";
+    public final static String currentEmulatorDevice = "Google Android SDK built for x86";
 
     public final static String ONSTART = "on_start";
     public final static String ONFAIL = "on_fail";
@@ -156,6 +155,7 @@ public class Constants {
     public static final String FCM_TOKEN = "fcm_token";
     public static final String PRODUCT_POPULAR = "product_popular";
     public static final String PRODUCT_SUGGEST_LIST = "product_suggest_list";
+    public static final String IMAGES = "images";
 
     public static String CHECK_ALL = Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_check) + " CHỌN TẤT CẢ";
     public static String UNCHECK = "BỎ CHỌN";

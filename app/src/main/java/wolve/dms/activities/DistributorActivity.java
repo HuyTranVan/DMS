@@ -8,17 +8,15 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.core.content.FileProvider;
-
 import com.bumptech.glide.Glide;
-import com.soundcloud.android.crop.Crop;
+import com.theartofdev.edmodo.cropper.CropImage;
 
-import wolve.dms.BuildConfig;
 import wolve.dms.R;
 import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.SystemConnect;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackString;
+import wolve.dms.callback.CallbackUri;
 import wolve.dms.customviews.CInputForm;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
@@ -95,7 +93,7 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
         tvSite.setText(content.getString("website"));
         tvThanks.setText(content.getString("thanks"));
         tvTitle.setText(content.getString("name"));
-        if (!Util.checkImageNull(content.getString("image"))) {
+        if (!Util.checkImageNull(content.getString("image"))){
             Glide.with(this).load(content.getString("image")).fitCenter().into(image);
             imgURL = content.getString("image");
 
@@ -143,20 +141,27 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
                         new CustomBottomDialog.ThreeMethodListener() {
                             @Override
                             public void Method1(Boolean one) {
-                                imageChangeUri = Uri.fromFile(Util.getOutputMediaFile());
-                                Transaction.startImageChooser();
+                                Transaction.startImageChooser(null, new CallbackUri() {
+                                    @Override
+                                    public void uriRespone(Uri uri) {
+                                        imageChangeUri = uri;
+                                    }
+                                });
                             }
 
                             @Override
                             public void Method2(Boolean two) {
-                                Transaction.startCamera();
+                                Transaction.startCamera(null, new CallbackUri() {
+                                    @Override
+                                    public void uriRespone(Uri uri) {
+                                        imageChangeUri = uri;
+                                    }
+                                });
                             }
 
                             @Override
                             public void Method3(Boolean three) {
                                 imgURL = "";
-                                imageChangeUri = FileProvider.getUriForFile(DistributorActivity.this, BuildConfig.APPLICATION_ID + ".provider", Util.getOutputMediaFile());
-
                                 Glide.with(DistributorActivity.this).load(R.drawable.lub_logo_red).fitCenter().into(image);
                             }
                         });
@@ -207,27 +212,41 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CHOOSE_IMAGE) {
             if (data != null) {
-                Crop.of(Uri.parse(data.getData().toString()), imageChangeUri).asSquare().withMaxSize(512, 512).start(this);
+                CropImage.activity(Uri.parse(data.getData().toString()))
+                        .setAspectRatio(1,1)
+                        .setMaxZoom(10)
+                        .setRequestedSize(512, 512)
+                        .start(this);
 
             }
 
         } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
-            Crop.of(imageChangeUri, imageChangeUri).asSquare().withMaxSize(512, 512).start(this);
+            CropImage.activity(imageChangeUri)
+                    .setAspectRatio(1,1)
+                    .setMaxZoom(10)
+                    .setRequestedSize(512, 512)
+                    .start(this);
 
-        } else if (data != null && requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
-            Glide.with(this).load(imageChangeUri).centerCrop().into(image);
-
-        } else if (requestCode == Crop.REQUEST_CROP) {
+        }else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
+                imageChangeUri = result.getUri();
                 Glide.with(this).load(imageChangeUri).centerCrop().into(image);
 
-            } else if (resultCode == Crop.RESULT_ERROR) {
-                Util.showToast(Crop.getError(data).getMessage());
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Util.showToast(result.getError().getMessage());
 
             }
         }
+//        else if (data != null && requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
+//            Glide.with(this).load(imageChangeUri).centerCrop().into(image);
+
+//        }
+
+
 
     }
 

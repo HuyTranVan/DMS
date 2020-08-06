@@ -1,9 +1,13 @@
 package wolve.dms.models;
 
+import android.content.ContentResolver;
+import android.net.Uri;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,8 +43,6 @@ public class Product extends BaseModel {
     }
 
     public static void saveProductList(JSONArray groups) {
-//        CustomSQL.setString(Constants.PRODUCT_LIST, product.toString());
-
         List<BaseModel> mProducts = new ArrayList<>();
         try {
             for (int i = 0; i < groups.length(); i++) {
@@ -48,12 +50,15 @@ public class Product extends BaseModel {
                 JSONArray arrayProduct = object.getJSONArray("product");
 
                 for (int ii = 0; ii < arrayProduct.length(); ii++) {
-                    mProducts.add(new BaseModel(arrayProduct.getJSONObject(ii)));
+                    BaseModel mProduct = new BaseModel(arrayProduct.getJSONObject(ii));
+                    mProducts.add(mProduct);
+
                 }
+
 
             }
 
-            new DownloadListImage(mProducts, "image", new CallbackListObject() {
+            new DownloadListImage(mProducts, "image", "PRODUCT", new CallbackListObject() {
                 @Override
                 public void onResponse(List<BaseModel> list) {
                     Util.getInstance().stopLoading(true);

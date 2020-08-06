@@ -187,6 +187,14 @@ public class BaseModel implements Serializable {
         }
     }
 
+//    public BaseModel getObject(String key) {
+//        try {
+//            return jsonObject.getO(key);
+//        } catch (JSONException e) {
+//            return new BaseModel();
+//        }
+//    }
+
     public boolean has(String key) {
         return jsonObject.has(key);
     }

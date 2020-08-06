@@ -1,147 +1,148 @@
 <resources>
-    <string name="app_name">DMS</string>
-    <string name="map_id">AIzaSyCJ-4zFtAI6ZVWSXY8E2xxM_EyLqXtwCXE</string>
-        <string name="map_route">AIzaSyCJ-4zFtAI6ZVWSXY8E2xxM_EyLqXtwCXE</string>
+    <string name="app_name" translatable="false">DMS</string>
+    <string name="map_id" translatable="false">AIzaSyCJ-4zFtAI6ZVWSXY8E2xxM_EyLqXtwCXE</string>
+        <string name="map_route" translatable="false">AIzaSyCJ-4zFtAI6ZVWSXY8E2xxM_EyLqXtwCXE</string>
 
-    <string name="cloud_image_name">lubsolution</string>
-    <string name="cloud_image_key">482386522287271</string>
-    <string name="cloud_image_secret">Mh2EsnmYHBAsTAp7jsNLoJ5dXhk</string>
+    <string name="cloud_image_name" translatable="false">lubsolution</string>
+    <string name="cloud_image_key" translatable="false">482386522287271</string>
+    <string name="cloud_image_secret" translatable="false">Mh2EsnmYHBAsTAp7jsNLoJ5dXhk</string>
 
     <string name="sheet_key1">1uooLXWdA6huFaBmRJl6Zs_1H9jOf4-2MVlord2busEU</string>
-    <string name="sheet_key2">1sWcFlXG-7UZlrcBDFocIBlk3SxxRxplPsvELP0WWxzQ</string>
+    <string name="sheet_key2" translatable="false">1sWcFlXG-7UZlrcBDFocIBlk3SxxRxplPsvELP0WWxzQ</string>
 
     <!-- FONT STRING -->
-    <string name="font_awesome">font_awesome.ttf</string>
-    <string name="font_regular">opensans_regular.ttf</string>
-    <string name="font_bold">opensans_bold.ttf</string>
-    <string name="font_semibold">opensans_semi_bold.ttf</string>
-    <string name="font_semibolditalic">opensans_semi_bold_italic.ttf</string>
-    <string name="font_opensans_italic">opensans_italic.ttf</string>
+    <string name="font_awesome" translatable="false">font_awesome.ttf</string>
+    <string name="font_regular" translatable="false">opensans_regular.ttf</string>
+    <string name="font_bold" translatable="false">opensans_bold.ttf</string>
+    <string name="font_semibold" translatable="false">opensans_semi_bold.ttf</string>
+    <string name="font_semibolditalic" translatable="false">opensans_semi_bold_italic.ttf</string>
+    <string name="font_opensans_italic" translatable="false">opensans_italic.ttf</string>
 
     <!--ICON STRING FROM AWSOME FONT-->
-    <string name="icon_username">&#xf007;</string>
-    <string name="icon_password">&#xf023;</string>
-    <string name="icon_non_password">&#xf13e;</string>
-    <string name="icon_email">&#xf0e0;</string>
-    <string name='icon_sms'>&#xf075;</string>
-    <string name="icon_phone">&#xf095;</string>
-    <string name="icon_idcard">&#xf02a;</string>
-    <string name="icon_edit">&#xf044;</string>
-    <string name="icon_edit_pen">&#xf304;</string>
-    <string name="icon_camera">&#xf030;</string>
-    <string name="icon_facebook">&#xf09a;</string>
-    <string name="icon_image">&#xf1c5;</string>
-    <string name="icon_circle">&#xf058;</string>
-    <string name="icon_trash">&#xf2ed;</string>
-    <string name="icon_upload">&#xf0ee;</string>
-    <string name="icon_clock">&#xf017;</string>
-    <string name="icon_heart">&#xf004;</string>
-    <string name="icon_dashboard">&#xf0e4;</string>
-    <string name="icon_group">&#xf0c0;</string>
-    <string name="icon_setting">&#xf085;</string>
-    <string name="icon_logout">&#xf2f5;</string>
-    <string name="icon_info">&#xf05a;</string>
-    <string name="icon_invite">&#xf0a1;</string>
-    <string name="icon_qrcode">&#xf029;</string>
-    <string name="icon_up">&#xf0de;</string>
-    <string name="icon_down">&#xf0d7;</string>
-    <string name="icon_schedule">&#xf073;</string>
-    <string name="icon_comment">&#xf4af;</string>
-    <string name="icon_account">&#xf013;</string>
-    <string name="icon_home">&#xf015;</string>
-    <string name="icon_plus">&#xf067;</string>
-    <string name="icon_minus">&#xf068;</string>
-    <string name="icon_product_group">&#xf0e8;</string>
-    <string name="icon_product">&#xf02d;</string>
-    <string name="icon_price">&#xf155;</string>
-    <string name="icon_purchase_price">&#xf0d6;</string>
-    <string name="icon_gift">&#xf06b;</string>
-    <string name="icon_chart">&#xf080;</string>
-    <string name="icon_status">&#xf27a;</string>
-    <string name="icon_purchase">&#xf291;</string>
-    <string name="icon_weight">&#xf5cd;</string>
-    <string name="icon_adress">&#xf277;</string>
-    <string name="icon_district">&#xf3c5;</string>
-    <string name="icon_detail">&#xf05a;</string>
-    <string name="icon_flag">&#xf024;</string>
-    <string name="icon_protect">&#xf132;</string>
-    <string name="icon_bill">&#xf543;</string>
-    <string name="icon_save">&#xf0c7;</string>
-    <string name="icon_edit_map">&#xf279;</string>
-    <string name="icon_money">&#xf53a;</string>
-    <string name="icon_warning">&#xf071;</string>
-    <string name="icon_print">&#xf02f;</string>
-    <string name="icon_keyboard">&#xf11c;</string>
-    <string name="icon_import">&#xf187;</string>
-    <string name="icon_notify">&#xf0a1;</string>
-    <string name="icon_bluetooth">&#xf294;</string>
-    <string name="icon_bluetooth_connected">&#xf293;</string>
-    <string name="icon_dot">&#xf192;</string>
-    <string name="icon_bookmark">&#xf02e;</string>
-    <string name="icon_export">&#xf093;</string>
-    <string name="icon_filter">&#xf0b0;</string>
-    <string name="icon_return">&#xf0e2;</string>
-    <string name="icon_delete">&#xf1f8;</string>
-    <string name="icon_reload">&#xf01e;</string>
-    <string name="icon_barcode">&#xf02a;</string>
-    <string name="icon_direction">&#xf124;</string>
-    <string name="icon_car">&#xf1b9;</string>
-    <string name="icon_next">&#xf105;</string>
-    <string name="icon_next_circle">&#xf0a9;</string>
-    <string name="icon_bomb">&#xf4fd;</string>
-    <string name="icon_users">&#xf0c0;</string>
-    <string name="icon_share">&#xf1e0;</string>
-    <string name="icon_menu">&#xf142;</string>
-    <string name="icon_pay">&#xf4c0;</string>
-    <string name="icon_receipt">&#xf543;</string>
-    <string name="icon_street">&#xf018;</string>
-    <string name="icon_city">&#xf64f;</string>
-    <string name="icon_repair">&#xf7d9;</string>
-    <string name="icon_close">&#xf057;</string>
-    <string name="icon_copy">&#xf0c5;</string>
-    <string name="icon_cart">&#xf07a;</string>
-    <string name="icon_empty">&#xf656;</string>
-    <string name="icon_web">&#xf37e;</string>
-    <string name="icon_smile">&#xf118;</string>
-    <string name="icon_building">&#xf1ad;</string>
-    <string name="icon_global">&#xf0ac;</string>
-    <string name="icon_chartline">&#xf201;</string>
-    <string name="icon_right">&#xf0da;</string>
-    <string name="icon_chat">&#xf086;</string>
-    <string name="calendar_check">&#xf274;</string>
-    <string name="icon_gender">&#xf228;</string>
-    <string name="icon_role">&#xf507;</string>
-    <string name="icon_calendar">&#xf272;</string>
-    <string name="icon_depot">&#xf480;</string>
-    <string name="icon_transfer">&#xf079;</string>
-    <string name="icon_inventory">&#xf4a1;</string>
-    <string name="icon_usd">&#xf2e8;</string>
-    <string name="icon_search">&#xf002;</string>
-    <string name="icon_check">&#xf00c;</string>
-    <string name="icon_x">&#xf00d;</string>
-    <string name="icon_star">&#xf005;</string>
-    <string name="icon_forward">&#xf04e;</string>
-    <string name="icon_note">&#xf4a6;</string>
-    <string name="icon_history">&#xf1da;</string>
-    <string name="icon_list_check">&#xf0ca;</string>
-    <string name="icon_container">&#xf49a;</string>
-    <string name="icon_briefcase">&#xf0b1;</string>
-    <string name="icon_truck">&#xf4de;</string>
-    <string name="icon_hand_on_money">&#xf4c0;</string>
-    <string name="icon_thumbtack">&#xf08d;</string>
-    <string name="icon_location">&#xf601;</string>
-    <string name="icon_dollar">&#xf155;</string>
-    <string name="icon_previuos">&#xf34b;</string>
+    <string name="icon_username" translatable="false">&#xf007;</string>
+    <string name="icon_password" translatable="false">&#xf023;</string>
+    <string name="icon_non_password" translatable="false">&#xf13e;</string>
+    <string name="icon_email" translatable="false">&#xf0e0;</string>
+    <string name='icon_sms' translatable="false">&#xf075;</string>
+    <string name="icon_phone" translatable="false">&#xf095;</string>
+    <string name="icon_idcard" translatable="false">&#xf02a;</string>
+    <string name="icon_edit" translatable="false">&#xf044;</string>
+    <string name="icon_edit_pen" translatable="false">&#xf304;</string>
+    <string name="icon_camera" translatable="false">&#xf030;</string>
+    <string name="icon_facebook" translatable="false">&#xf09a;</string>
+    <string name="icon_image" translatable="false">&#xf1c5;</string>
+    <string name="icon_circle" translatable="false">&#xf058;</string>
+    <string name="icon_trash" translatable="false">&#xf2ed;</string>
+    <string name="icon_upload" translatable="false">&#xf0ee;</string>
+    <string name="icon_clock" translatable="false">&#xf017;</string>
+    <string name="icon_heart" translatable="false">&#xf004;</string>
+    <string name="icon_dashboard" translatable="false">&#xf0e4;</string>
+    <string name="icon_group" translatable="false">&#xf0c0;</string>
+    <string name="icon_setting" translatable="false">&#xf085;</string>
+    <string name="icon_logout" translatable="false">&#xf2f5;</string>
+    <string name="icon_info" translatable="false">&#xf05a;</string>
+    <string name="icon_invite" translatable="false">&#xf0a1;</string>
+    <string name="icon_qrcode" translatable="false">&#xf029;</string>
+    <string name="icon_up" translatable="false">&#xf0de;</string>
+    <string name="icon_down" translatable="false">&#xf0d7;</string>
+    <string name="icon_schedule" translatable="false">&#xf073;</string>
+    <string name="icon_comment" translatable="false">&#xf4af;</string>
+    <string name="icon_account" translatable="false">&#xf013;</string>
+    <string name="icon_home" translatable="false">&#xf015;</string>
+    <string name="icon_plus" translatable="false">&#xf067;</string>
+    <string name="icon_minus" translatable="false">&#xf068;</string>
+    <string name="icon_product_group" translatable="false">&#xf0e8;</string>
+    <string name="icon_product" translatable="false">&#xf02d;</string>
+    <string name="icon_price" translatable="false">&#xf155;</string>
+    <string name="icon_purchase_price" translatable="false">&#xf0d6;</string>
+    <string name="icon_gift" translatable="false">&#xf06b;</string>
+    <string name="icon_chart" translatable="false">&#xf080;</string>
+    <string name="icon_status" translatable="false">&#xf27a;</string>
+    <string name="icon_purchase" translatable="false">&#xf291;</string>
+    <string name="icon_weight" translatable="false">&#xf5cd;</string>
+    <string name="icon_adress" translatable="false">&#xf277;</string>
+    <string name="icon_district" translatable="false">&#xf3c5;</string>
+    <string name="icon_detail" translatable="false">&#xf05a;</string>
+    <string name="icon_flag" translatable="false">&#xf024;</string>
+    <string name="icon_protect" translatable="false">&#xf132;</string>
+    <string name="icon_bill" translatable="false">&#xf543;</string>
+    <string name="icon_save" translatable="false">&#xf0c7;</string>
+    <string name="icon_edit_map" translatable="false">&#xf279;</string>
+    <string name="icon_money" translatable="false">&#xf53a;</string>
+    <string name="icon_warning" translatable="false">&#xf071;</string>
+    <string name="icon_print" translatable="false">&#xf02f;</string>
+    <string name="icon_keyboard" translatable="false">&#xf11c;</string>
+    <string name="icon_import" translatable="false">&#xf187;</string>
+    <string name="icon_notify" translatable="false">&#xf0a1;</string>
+    <string name="icon_bluetooth" translatable="false">&#xf294;</string>
+    <string name="icon_bluetooth_connected" translatable="false">&#xf293;</string>
+    <string name="icon_dot" translatable="false">&#xf192;</string>
+    <string name="icon_bookmark" translatable="false">&#xf02e;</string>
+    <string name="icon_export" translatable="false">&#xf093;</string>
+    <string name="icon_filter" translatable="false">&#xf0b0;</string>
+    <string name="icon_return" translatable="false">&#xf0e2;</string>
+    <string name="icon_delete" translatable="false">&#xf1f8;</string>
+    <string name="icon_reload" translatable="false">&#xf01e;</string>
+    <string name="icon_barcode" translatable="false">&#xf02a;</string>
+    <string name="icon_direction" translatable="false">&#xf124;</string>
+    <string name="icon_car" translatable="false">&#xf1b9;</string>
+    <string name="icon_next" translatable="false">&#xf105;</string>
+    <string name="icon_next_circle" translatable="false">&#xf0a9;</string>
+    <string name="icon_bomb" translatable="false">&#xf4fd;</string>
+    <string name="icon_users" translatable="false">&#xf0c0;</string>
+    <string name="icon_share" translatable="false">&#xf1e0;</string>
+    <string name="icon_menu" translatable="false">&#xf142;</string>
+    <string name="icon_pay" translatable="false">&#xf4c0;</string>
+    <string name="icon_receipt" translatable="false">&#xf543;</string>
+    <string name="icon_street" translatable="false">&#xf018;</string>
+    <string name="icon_city" translatable="false">&#xf64f;</string>
+    <string name="icon_repair" translatable="false">&#xf7d9;</string>
+    <string name="icon_close" translatable="false">&#xf057;</string>
+    <string name="icon_copy" translatable="false">&#xf0c5;</string>
+    <string name="icon_cart" translatable="false">&#xf07a;</string>
+    <string name="icon_empty" translatable="false">&#xf656;</string>
+    <string name="icon_web" translatable="false">&#xf37e;</string>
+    <string name="icon_smile" translatable="false">&#xf118;</string>
+    <string name="icon_building" translatable="false">&#xf1ad;</string>
+    <string name="icon_global" translatable="false">&#xf0ac;</string>
+    <string name="icon_chartline" translatable="false">&#xf201;</string>
+    <string name="icon_right" translatable="false">&#xf0da;</string>
+    <string name="icon_chat" translatable="false">&#xf086;</string>
+    <string name="calendar_check" translatable="false">&#xf274;</string>
+    <string name="icon_gender" translatable="false">&#xf228;</string>
+    <string name="icon_role" translatable="false">&#xf507;</string>
+    <string name="icon_calendar" translatable="false">&#xf272;</string>
+    <string name="icon_depot" translatable="false">&#xf480;</string>
+    <string name="icon_transfer" translatable="false">&#xf079;</string>
+    <string name="icon_inventory" translatable="false">&#xf4a1;</string>
+    <string name="icon_usd" translatable="false">&#xf2e8;</string>
+    <string name="icon_search" translatable="false">&#xf002;</string>
+    <string name="icon_check" translatable="false">&#xf00c;</string>
+    <string name="icon_x" translatable="false">&#xf00d;</string>
+    <string name="icon_star" translatable="false">&#xf005;</string>
+    <string name="icon_forward" translatable="false">&#xf04e;</string>
+    <string name="icon_note" translatable="false">&#xf4a6;</string>
+    <string name="icon_history" translatable="false">&#xf1da;</string>
+    <string name="icon_list_check" translatable="false">&#xf0ca;</string>
+    <string name="icon_container" translatable="false">&#xf49a;</string>
+    <string name="icon_briefcase" translatable="false">&#xf0b1;</string>
+    <string name="icon_truck" translatable="false">&#xf4de;</string>
+    <string name="icon_hand_on_money" translatable="false">&#xf4c0;</string>
+    <string name="icon_thumbtack" translatable="false">&#xf08d;</string>
+    <string name="icon_location" translatable="false">&#xf601;</string>
+    <string name="icon_dollar" translatable="false">&#xf155;</string>
+    <string name="icon_previuos" translatable="false">&#xf34b;</string>
 
-    <string name="login_username">Nhập tài khoản hoặc SĐT</string>
-    <string name="login_password">Nhập mật khẩu</string>
-    <string name="login_button_login">đăng nhập</string>
+    <string name="login_username" translatable="false">Nhập tài khoản hoặc SĐT</string>
+    <string name="login_password" translatable="false">Nhập mật khẩu</string>
+    <string name="login_button_login" translatable="false">đăng nhập</string>
 
-    <string name="day_month_year">day month year</string>
-    <string name="first_day_selected">First day selected</string>
-    <string name="last_day_selected">Last day selected</string>
+    <string name="day_month_year" translatable="false">day month year</string>
+    <string name="first_day_selected" translatable="false">First day selected</string>
+    <string name="last_day_selected" translatable="false">Last day selected</string>
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
-    <string name="fcm_message">FCM Message</string>
+    <string name="fcm_message" translatable="false">FCM Message</string>
+    <string name="file_provider_name" translatable="false">.fileProvider</string>
 
 
 </resources>

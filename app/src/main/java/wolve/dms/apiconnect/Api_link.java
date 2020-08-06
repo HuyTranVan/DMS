@@ -16,7 +16,7 @@ import wolve.dms.utils.Util;
 public class Api_link {
     public final static String DEFAULT_RANGE = "?page=%d&size=%d";
 
-    public final static String BASE_URL = BuildConfig.DEBUG_FLAG ? "http://192.168.1.49/" : BuildConfig.SERVER_URL;
+    public final static String BASE_URL = BuildConfig.DEBUG_FLAG ? "http://192.168.1.14/" : BuildConfig.SERVER_URL;
     public final static String LUB_LINK = "http://dmslub.com?";
 
     public final static String BASE_PHOTO_URL = BuildConfig.UPLOAD_URL;

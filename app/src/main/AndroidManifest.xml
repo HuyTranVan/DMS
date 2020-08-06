@@ -82,6 +82,7 @@
         android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:fullBackupContent="false"
+        android:requestLegacyExternalStorage="true"
         tools:replace="android:fullBackupContent">
 
         <provider
@@ -237,7 +238,16 @@
             android:theme="@style/FullScreen"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
-        <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
+
+        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat"/>
+
+<!--        <activity android:name="com.soundcloud.android.crop.CropImageActivity" />-->
+
+<!--        <activity-->
+<!--            android:name="com.yalantis.ucrop.UCropActivity"-->
+<!--            android:screenOrientation="portrait"-->
+<!--            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>-->
 
         <service
             android:name=".libraries.firebase.MyFirebaseMessagingService"

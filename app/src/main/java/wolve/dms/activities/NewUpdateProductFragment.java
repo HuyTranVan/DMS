@@ -16,7 +16,7 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
-import com.soundcloud.android.crop.Crop;
+import com.theartofdev.edmodo.cropper.CropImage;
 
 import org.json.JSONObject;
 
@@ -34,12 +34,14 @@ import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
+import wolve.dms.callback.CallbackUri;
 import wolve.dms.customviews.CInputForm;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
+import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
 import static android.app.Activity.RESULT_OK;
@@ -231,41 +233,54 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
                 new CustomBottomDialog.TwoMethodListener() {
                     @Override
                     public void Method1(Boolean one) {
-                        startImageChooser();
+                        Transaction.startImageChooser(NewUpdateProductFragment.this, new CallbackUri() {
+                            @Override
+                            public void uriRespone(Uri uri) {
+                                imageChangeUri = uri;
+                            }
+                        });
                     }
 
                     @Override
                     public void Method2(Boolean two) {
-                        startCamera();
+                        Transaction.startCamera(NewUpdateProductFragment.this, new CallbackUri() {
+                            @Override
+                            public void uriRespone(Uri uri) {
+                                imageChangeUri = uri;
+                            }
+                        });
                     }
                 });
     }
 
 
-    private void startImageChooser() {
-        imageChangeUri = Uri.fromFile(Util.getOutputMediaFile());
-        if (Build.VERSION.SDK_INT <= 19) {
-            Intent i = new Intent();
-            i.setType("image/*");
-            i.setAction(Intent.ACTION_GET_CONTENT);
-            i.addCategory(Intent.CATEGORY_OPENABLE);
-            startActivityForResult(i, REQUEST_CHOOSE_IMAGE);
-
-        } else if (Build.VERSION.SDK_INT > 19) {
-            Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
-        }
-    }
-
-    public void startCamera() {
-//        imageChangeUri = Uri.fromFile(Util.getOutputMediaFile());
-        imageChangeUri = FileProvider.getUriForFile(getActivity(), BuildConfig.APPLICATION_ID + ".provider", Util.getOutputMediaFile());
-
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageChangeUri);
-        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-
-    }
+//    private void startImageChooser() {
+//        imageChangeUri = Uri.fromFile(Util.createTempFileOutput());
+//        if (Build.VERSION.SDK_INT <= 19) {
+//            Intent i = new Intent();
+//            i.setType("image/*");
+//            i.setAction(Intent.ACTION_GET_CONTENT);
+//            i.addCategory(Intent.CATEGORY_OPENABLE);
+//            startActivityForResult(i, REQUEST_CHOOSE_IMAGE);
+//
+//        } else if (Build.VERSION.SDK_INT > 19) {
+//            Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//            startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
+//        }
+//    }
+//
+//    public void startCamera() {
+////        imageChangeUri = Uri.fromFile(Util.getOutputMediaFile());
+//        imageChangeUri = FileProvider.getUriForFile(
+//                getActivity(),
+//                BuildConfig.APPLICATION_ID + ".provider",
+//                Util.createTempFileOutput());
+//
+//        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageChangeUri);
+//        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+//
+//    }
 
     private int defineGroupId(String groupName) {
         int id = 0;
@@ -344,27 +359,58 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if (requestCode == REQUEST_CHOOSE_IMAGE) {
+//            if (data != null) {
+//                Crop.of(Uri.parse(data.getData().toString()), imageChangeUri).asSquare().withMaxSize(400, 400).start(getActivity(), NewUpdateProductFragment.this);
+//
+//            }
+//
+//        } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
+//            Crop.of(imageChangeUri, imageChangeUri).asSquare().withMaxSize(400, 400).start(getActivity(), NewUpdateProductFragment.this);
+//
+//        } else if (data != null && requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
+//            Glide.with(this).load(imageChangeUri).centerCrop().into(imgProduct);
+//
+//        } else if (requestCode == Crop.REQUEST_CROP) {
+//            if (resultCode == RESULT_OK) {
+//                Glide.with(this).load(imageChangeUri).centerCrop().into(imgProduct);
+//
+//            } else if (resultCode == Crop.RESULT_ERROR) {
+//                Util.showToast(Crop.getError(data).getMessage());
+//
+//            }
+//        }
+
         if (requestCode == REQUEST_CHOOSE_IMAGE) {
             if (data != null) {
-                Crop.of(Uri.parse(data.getData().toString()), imageChangeUri).asSquare().withMaxSize(400, 400).start(getActivity(), NewUpdateProductFragment.this);
+                CropImage.activity(Uri.parse(data.getData().toString()))
+                        .setAspectRatio(1,1)
+                        .setMaxZoom(10)
+                        .setRequestedSize(512, 512)
+                        .start(mActivity,  NewUpdateProductFragment.this);
 
             }
 
         } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
-            Crop.of(imageChangeUri, imageChangeUri).asSquare().withMaxSize(400, 400).start(getActivity(), NewUpdateProductFragment.this);
+            CropImage.activity(imageChangeUri)
+                    .setAspectRatio(1,1)
+                    .setMaxZoom(10)
+                    .setRequestedSize(512, 512)
+                    .start(mActivity,  NewUpdateProductFragment.this);
 
-        } else if (data != null && requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
-            Glide.with(this).load(imageChangeUri).centerCrop().into(imgProduct);
-
-        } else if (requestCode == Crop.REQUEST_CROP) {
+        }else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
+                imageChangeUri = result.getUri();
                 Glide.with(this).load(imageChangeUri).centerCrop().into(imgProduct);
 
-            } else if (resultCode == Crop.RESULT_ERROR) {
-                Util.showToast(Crop.getError(data).getMessage());
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Util.showToast(result.getError().getMessage());
 
             }
         }
+
+
 
     }
 
