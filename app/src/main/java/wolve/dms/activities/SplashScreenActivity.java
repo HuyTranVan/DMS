@@ -6,18 +6,14 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.cloudinary.Api;
-
 import java.util.List;
 
 import wolve.dms.BuildConfig;
 import wolve.dms.R;
-import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.SystemConnect;
+import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.NewCallbackCustom;
-import wolve.dms.libraries.connectapi.CustomGetPostMethod;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
@@ -96,9 +92,9 @@ public class SplashScreenActivity extends BaseActivity {
     }
 
     private void checkLogin(CallbackBoolean listener) {
-        BaseModel param = Api_link.createGetParam(Api_link.CHECK_LOGIN(), false);
+        BaseModel param = createGetParam(ApiUtil.CHECK_LOGIN(), false);
 
-        new CustomGetPostMethod(param, new NewCallbackCustom() {
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
                 if (result.getInt("version") > BuildConfig.VERSION_CODE) {

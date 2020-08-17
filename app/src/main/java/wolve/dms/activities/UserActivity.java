@@ -14,9 +14,10 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.UserAdapter;
-import wolve.dms.apiconnect.UserConnect;
+import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackClickAdapter;
-import wolve.dms.callback.CallbackCustomList;
+import wolve.dms.callback.NewCallbackCustom;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
@@ -92,19 +93,33 @@ public class UserActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void loadUser() {
-        UserConnect.ListUser(new CallbackCustomList() {
+        BaseModel param = createGetParam(ApiUtil.USERS(), true);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(List<BaseModel> results) {
-                listUser = new ArrayList<>(results);
+            public void onResponse(BaseModel result, List<BaseModel> list) {
+                listUser = new ArrayList<>(list);
                 createRVUser(listUser);
-
             }
 
             @Override
             public void onError(String error) {
 
             }
-        }, true);
+        }, true).execute();
+
+//        UserConnect.ListUser(new CallbackCustomList() {
+//            @Override
+//            public void onResponse(List<BaseModel> results) {
+//                listUser = new ArrayList<>(results);
+//                createRVUser(listUser);
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        }, true);
     }
 
     private void createRVUser(List<BaseModel> list) {

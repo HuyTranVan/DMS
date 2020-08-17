@@ -15,6 +15,8 @@ import android.widget.TextView;
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cloudinary.Api;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -22,9 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.apiconnect.libraries.CustomGetPostListMethod;
 import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.callback.CallbackString;
@@ -36,6 +41,9 @@ import wolve.dms.utils.CustomDropdow;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.activities.BaseActivity.createGetParam;
+import static wolve.dms.activities.BaseActivity.createPostParam;
 
 /**
  * Created by tranhuy on 5/24/17.
@@ -288,21 +296,25 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
                     @Override
                     public void onRespone(Boolean result) {
                         if (result) {
-                            List<String> listParams = new ArrayList<>();
-                            listParams.add(mData.get(currentPosition).getString("id"));
+                            List<BaseModel> params = new ArrayList<>();
+
+                            BaseModel param = createGetParam(ApiUtil.BILL_DELETE() + mData.get(currentPosition).getString("id"), false);
+                            params.add(param);
 
                             if (mData.get(currentPosition).hasKey(Constants.HAVEBILLRETURN)) {
                                 List<BaseModel> list = DataUtil.array2ListBaseModel(mData.get(currentPosition).getJSONArray(Constants.HAVEBILLRETURN));
                                 for (BaseModel baseModel : list) {
-                                    listParams.add(baseModel.getString("id"));
+                                    BaseModel item = createGetParam(ApiUtil.BILL_DELETE() + baseModel.getString("id"), false);
+                                    params.add(item);
+//                                    listParams.add(baseModel.getString("id"));
 
                                 }
                             }
 
-                            CustomerConnect.DeleteListBill(listParams, new CallbackListCustom() {
+                            new CustomGetPostListMethod(params, new CallbackCustomList() {
                                 @Override
-                                public void onResponse(List result) {
-                                    if (result.size() > 0) {
+                                public void onResponse(List<BaseModel> results) {
+                                    if (results.size() > 0) {
                                         Util.showToast("Xóa thành công");
                                         BaseModel respone = new BaseModel();
                                         respone.put(Constants.TYPE, Constants.BILL_DELETE);
@@ -311,15 +323,40 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
                                     } else {
                                         Util.showSnackbarError("Lỗi");
                                     }
-
                                 }
 
                                 @Override
                                 public void onError(String error) {
-                                    Util.showSnackbarError(error);
-                                    mListener.onError();
+
                                 }
-                            }, true);
+                            }, true).execute();
+
+//                            List<String> listParams = new ArrayList<>();
+//                            listParams.add(mData.get(currentPosition).getString("id"));
+
+
+
+//                            CustomerConnect.DeleteListBill(listParams, new CallbackListCustom() {
+//                                @Override
+//                                public void onResponse(List result) {
+//                                    if (result.size() > 0) {
+//                                        Util.showToast("Xóa thành công");
+//                                        BaseModel respone = new BaseModel();
+//                                        respone.put(Constants.TYPE, Constants.BILL_DELETE);
+//                                        mListener.onResponse(respone);
+//
+//                                    } else {
+//                                        Util.showSnackbarError("Lỗi");
+//                                    }
+//
+//                                }
+//
+//                                @Override
+//                                public void onError(String error) {
+//                                    Util.showSnackbarError(error);
+//                                    mListener.onError();
+//                                }
+//                            }, true);
                         }
 
                     }
@@ -339,29 +376,52 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
                     new CallbackListCustom() {
                         @Override
                         public void onResponse(List result) {
+                            List<String> listPayments = DataUtil.createListPaymentParam(mData.get(currentPosition).getBaseModel("customer").getInt("id"),
+                                    result, false);
+                            List<BaseModel> params = new ArrayList<>();
 
-                            try {
-                                CustomerConnect.PostListPay(DataUtil.createListPaymentParam(new JSONObject(mData.get(currentPosition).getString("customer")).getInt("id"),
-                                        result, false), new CallbackListCustom() {
-                                    @Override
-                                    public void onResponse(List result) {
-
-                                        //Util.showToast("Thanh toán thành công");
-                                        BaseModel respone = new BaseModel();
-                                        respone.put(Constants.TYPE, Constants.BILL_PAY);
-                                        mListener.onResponse(respone);
-
-                                    }
-
-                                    @Override
-                                    public void onError(String error) {
-
-                                    }
-                                }, true);
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                            for (String itemdetail: listPayments){
+                                BaseModel item = createPostParam(ApiUtil.PAY_NEW(), itemdetail, false, false);
+                                params.add(item);
                             }
+
+                            new CustomGetPostListMethod(params, new CallbackCustomList() {
+                                @Override
+                                public void onResponse(List<BaseModel> results) {
+//                                    reloadCustomer(currentCustomer.getString("id"));
+                                }
+
+                                @Override
+                                public void onError(String error) {
+
+                                }
+                            }, true).execute();
+
+
+
+
+//                            try {
+//                                CustomerConnect.PostListPay(DataUtil.createListPaymentParam(new JSONObject(mData.get(currentPosition).getString("customer")).getInt("id"),
+//                                        result, false), new CallbackListCustom() {
+//                                    @Override
+//                                    public void onResponse(List result) {
+//
+//                                        //Util.showToast("Thanh toán thành công");
+//                                        BaseModel respone = new BaseModel();
+//                                        respone.put(Constants.TYPE, Constants.BILL_PAY);
+//                                        mListener.onResponse(respone);
+//
+//                                    }
+//
+//                                    @Override
+//                                    public void onError(String error) {
+//
+//                                    }
+//                                }, true);
+//
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
 
 
                         }

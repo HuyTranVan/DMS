@@ -14,10 +14,11 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.ProductGroupAdapter;
-import wolve.dms.apiconnect.ProductConnect;
+import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackClickAdapter;
-import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackDeleteAdapter;
+import wolve.dms.callback.NewCallbackCustom;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.Transaction;
@@ -93,33 +94,31 @@ public class ProductGroupActivity extends BaseActivity implements View.OnClickLi
         }
     }
 
-    //    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        if (keyCode == KeyEvent.KEYCODE_BACK){
-//            Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.product_parent);
-//            if(mFragment != null && mFragment instanceof NewUpdateProductGroupFragment
-//                    ||mFragment != null && mFragment instanceof NewUpdateProductFragment) {
-//                getSupportFragmentManager().popBackStack();
-//            }else {
-//                Transaction.gotoHomeActivityRight(true);
-//            }
-//
-//        }
-//        return true;
-//    }
-
     protected void loadProductGroup() {
-        ProductConnect.ListProductGroup(true, new CallbackCustomList() {
+        BaseModel param = createGetParam(ApiUtil.PRODUCT_GROUPS(), true);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(List<BaseModel> results) {
-                createRVProductGroup(results);
+            public void onResponse(BaseModel result, List<BaseModel> list) {
+                createRVProductGroup(list);
             }
 
             @Override
             public void onError(String error) {
 
             }
-        }, true);
+        }, true).execute();
+
+//        ProductConnect.ListProductGroup(true, new CallbackCustomList() {
+//            @Override
+//            public void onResponse(List<BaseModel> results) {
+//                createRVProductGroup(results);
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        }, true);
     }
 
 

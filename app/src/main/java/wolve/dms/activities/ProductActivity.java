@@ -9,7 +9,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.ViewPager;
 
@@ -23,12 +22,13 @@ import wolve.dms.R;
 import wolve.dms.adapter.ProductAdapter;
 import wolve.dms.adapter.ProductGroupAdapter;
 import wolve.dms.adapter.ViewpagerProductAdapter;
-import wolve.dms.apiconnect.ProductConnect;
+import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackClickAdapter;
-import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackDeleteAdapter;
+import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.libraries.FitScrollWithFullscreen;
 import wolve.dms.libraries.MySwipeRefreshLayout;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
@@ -126,11 +126,13 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
 
     protected void loadProductGroup(Boolean loading) {
         listProductGroup = new ArrayList<>();
-        ProductConnect.ListProductGroup(loading, new CallbackCustomList() {
+
+        BaseModel param = createGetParam(ApiUtil.PRODUCT_GROUPS(), true);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(List<BaseModel> results) {
-                for (int i = 0; i < results.size(); i++) {
-                    listProductGroup.add(results.get(i));
+            public void onResponse(BaseModel result, List<BaseModel> list) {
+                for (int i = 0; i < list.size(); i++) {
+                    listProductGroup.add(list.get(i));
 
                 }
                 DataUtil.sortProductGroup(listProductGroup, false);
@@ -142,16 +144,35 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
             public void onError(String error) {
 
             }
-        }, false);
+        }, true).execute();
+
+//        ProductConnect.ListProductGroup(loading, new CallbackCustomList() {
+//            @Override
+//            public void onResponse(List<BaseModel> results) {
+//                for (int i = 0; i < results.size(); i++) {
+//                    listProductGroup.add(results.get(i));
+//
+//                }
+//                DataUtil.sortProductGroup(listProductGroup, false);
+//
+//                loadProduct();
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        }, false);
     }
 
     public void loadProduct() {
         listProduct = new ArrayList<>();
-        ProductConnect.ListProduct(new CallbackCustomList() {
+        BaseModel param = createGetParam(ApiUtil.PRODUCTS(), true);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(List<BaseModel> results) {
-                for (int i = 0; i < results.size(); i++) {
-                    listProduct.add(results.get(i));
+            public void onResponse(BaseModel result, List<BaseModel> list) {
+                for (int i = 0; i < list.size(); i++) {
+                    listProduct.add(list.get(i));
 
                 }
                 DataUtil.sortProduct(listProduct, false);
@@ -162,7 +183,23 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
             public void onError(String error) {
 
             }
-        }, true);
+        }, true).execute();
+//        ProductConnect.ListProduct(new CallbackCustomList() {
+//            @Override
+//            public void onResponse(List<BaseModel> results) {
+//                for (int i = 0; i < results.size(); i++) {
+//                    listProduct.add(results.get(i));
+//
+//                }
+//                DataUtil.sortProduct(listProduct, false);
+//                setupViewPager(listProductGroup, listProduct);
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        }, true);
     }
 
     private void openFragmentNewProduct(String product) {

@@ -1,19 +1,15 @@
 package wolve.dms.models;
 
-import android.content.ContentResolver;
-import android.net.Uri;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import wolve.dms.callback.CallbackListObject;
-import wolve.dms.libraries.connectapi.DownloadListImage;
+import wolve.dms.apiconnect.libraries.DownloadImageMethod;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
@@ -58,7 +54,7 @@ public class Product extends BaseModel {
 
             }
 
-            new DownloadListImage(mProducts, "image", "PRODUCT", new CallbackListObject() {
+            new DownloadImageMethod(mProducts, "image", "PRODUCT", new CallbackListObject() {
                 @Override
                 public void onResponse(List<BaseModel> list) {
                     Util.getInstance().stopLoading(true);

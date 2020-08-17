@@ -1,6 +1,5 @@
 package wolve.dms.utils;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.graphics.drawable.ColorDrawable;
@@ -39,20 +38,22 @@ import wolve.dms.adapter.ProductCompareInventoryAdapter;
 import wolve.dms.adapter.ProductQuantityAdapter;
 import wolve.dms.adapter.ProductSelectAdapter;
 import wolve.dms.adapter.WaitingListAdapter;
-import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.UserConnect;
+import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickProduct;
-import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
+import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.libraries.DoubleTextWatcher;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.models.User;
+
+import static wolve.dms.activities.BaseActivity.createPostParam;
 
 /**
  * Created by macos on 9/28/17.
@@ -611,7 +612,7 @@ public class CustomCenterDialog {
                         Util.showSnackbar("Nhập lý do khách hàng không quan tâm để tiếp tục", null, null);
 
                     } else {
-                        param = String.format(Api_link.SCHECKIN_CREATE_PARAM,
+                        param = String.format(ApiUtil.SCHECKIN_CREATE_PARAM,
                                 customer_id,
                                 ratingBar.getCount(),
                                 Util.encodeString("Chuyển sang không quan tâm vì: " + edNote.getText().toString()),
@@ -635,7 +636,7 @@ public class CustomCenterDialog {
                         Util.showSnackbar("Chọn sản phẩm giới thiệu để tiếp tục", null, null);
 
                     } else {
-                        param = String.format(Api_link.SCHECKIN_CREATE_PARAM,
+                        param = String.format(ApiUtil.SCHECKIN_CREATE_PARAM,
                                 customer_id,
                                 ratingBar.getCount(),
                                 Util.encodeString(DataUtil.createCheckinNote(selectAdapter.getData(), "Chuyển sang quan tâm vì: " + edNote.getText().toString())),
@@ -659,7 +660,7 @@ public class CustomCenterDialog {
                         Util.showSnackbar("Chọn sản phẩm giới thiệu để tiếp tục", null, null);
 
                     } else {
-                        param = String.format(Api_link.SCHECKIN_CREATE_PARAM,
+                        param = String.format(ApiUtil.SCHECKIN_CREATE_PARAM,
                                 customer_id,
                                 ratingBar.getCount(),
                                 Util.encodeString(DataUtil.createCheckinNote(selectAdapter.getData(), edNote.getText().toString())),
@@ -681,7 +682,7 @@ public class CustomCenterDialog {
                     }
 
                 } else if (radioGroup.getCheckedRadioButtonId() == R.id.dialog_checkin_notowner) {
-                    param = String.format(Api_link.SCHECKIN_CREATE_PARAM,
+                    param = String.format(ApiUtil.SCHECKIN_CREATE_PARAM,
                             customer_id,
                             ratingBar.getCount(),
                             Util.encodeString(DataUtil.createCheckinNote(selectAdapter.getData(), edNote.getText().toString())),
@@ -1065,22 +1066,39 @@ public class CustomCenterDialog {
                 Util.hideKeyboard(edOldPass);
                 if (!Util.isEmpty(edOldPass) && !Util.isEmpty(edNewPass1) && !Util.isEmpty(edNewPass2)) {
                     if (edNewPass1.getText().toString().trim().equals(edNewPass2.getText().toString().trim())) {
+                        BaseModel param = createPostParam(ApiUtil.USER_CHANGE_PASS(),
+                                String.format(ApiUtil.USER_CHANGE_PASS_PARAM, User.getId(),
+                                        edOldPass.getText().toString().trim(),
+                                        edNewPass1.getText().toString().trim()),
+                                false,
+                                false);
+                        new GetPostMethod(param, new NewCallbackCustom() {
+                            @Override
+                            public void onResponse(BaseModel result, List<BaseModel> list) {
+                                mListener.onRespone(true);
+                                dialogResult.dismiss();
+                            }
 
-                        UserConnect.doChangePass(edOldPass.getText().toString().trim(),
-                                edNewPass1.getText().toString().trim(),
-                                new CallbackCustom() {
-                                    @Override
-                                    public void onResponse(BaseModel result) {
-                                        mListener.onRespone(true);
-                                        dialogResult.dismiss();
-                                    }
-
-                                    @Override
-                                    public void onError(String error) {
-                                        mListener.onRespone(false);
-                                    }
-
-                                }, true);
+                            @Override
+                            public void onError(String error) {
+                                mListener.onRespone(false);
+                            }
+                        }, true).execute();
+//                        UserConnect.doChangePass(edOldPass.getText().toString().trim(),
+//                                edNewPass1.getText().toString().trim(),
+//                                new CallbackCustom() {
+//                                    @Override
+//                                    public void onResponse(BaseModel result) {
+//                                        mListener.onRespone(true);
+//                                        dialogResult.dismiss();
+//                                    }
+//
+//                                    @Override
+//                                    public void onError(String error) {
+//                                        mListener.onRespone(false);
+//                                    }
+//
+//                                }, true);
 
                     } else {
                         Util.showToast("Mật khẩu mới không khớp");

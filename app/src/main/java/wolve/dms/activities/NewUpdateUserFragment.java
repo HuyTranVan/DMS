@@ -21,16 +21,15 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.R;
-import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.SystemConnect;
-import wolve.dms.apiconnect.UserConnect;
+import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.CallbackUri;
+import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.customviews.CInputForm;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
+import wolve.dms.apiconnect.libraries.UploadCloudaryMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
@@ -42,6 +41,8 @@ import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
 import static android.app.Activity.RESULT_OK;
+import static wolve.dms.activities.BaseActivity.createGetParam;
+import static wolve.dms.activities.BaseActivity.createPostParam;
 import static wolve.dms.utils.Constants.REQUEST_CHOOSE_IMAGE;
 import static wolve.dms.utils.Constants.REQUEST_IMAGE_CAPTURE;
 
@@ -323,19 +324,20 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
             @Override
             public void onClick(View view) {
                 if (listWarehouse.size() == 0) {
-                    SystemConnect.ListWarehouse(true, new CallbackCustomList() {
+                    BaseModel param = createGetParam(ApiUtil.WAREHOUSES(), true);
+                    new GetPostMethod(param, new NewCallbackCustom() {
                         @Override
-                        public void onResponse(List<BaseModel> results) {
-                            listWarehouse = results;
+                        public void onResponse(BaseModel result, List<BaseModel> list) {
+                            listWarehouse = list;
                             choiceWarehouse(filterListWarehouse(listWarehouse));
-
                         }
 
                         @Override
                         public void onError(String error) {
 
                         }
-                    }, true);
+                    }, true).execute();
+
 
 
                 } else {
@@ -395,13 +397,21 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
             Util.showSnackbar("Chưa chọn kho hàng cho nhân viên", null, null);
 
         } else if (imageChangeUri != null) {
-            SystemConnect.uploadImage(Util.getRealPathFromCaptureURI(imageChangeUri), new CallbackString() {
+            new UploadCloudaryMethod(Util.getRealPathFromCaptureURI(imageChangeUri), new CallbackString() {
                 @Override
                 public void Result(String url) {
                     updateUser(url);
-
                 }
-            });
+
+            }).execute();
+
+//            SystemConnect.uploadImage(Util.getRealPathFromCaptureURI(imageChangeUri), new CallbackString() {
+//                @Override
+//                public void Result(String url) {
+//                    updateUser(url);
+//
+//                }
+//            });
 
         } else {
             if (currentUser.getInt("id") == 0) {
@@ -424,7 +434,8 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
             currentUser.put("warehouse_name", currentWarehouse.getString("name"));
 
         }
-        String param = String.format(Api_link.USER_CREATE_PARAM,
+        BaseModel param = createPostParam(ApiUtil.USER_NEW(),
+                String.format(ApiUtil.USER_CREATE_PARAM,
                 currentUser.getInt("id") == 0 ? "" : "id=" + currentUser.getString("id") + "&",
                 Util.encodeString(edName.getText().toString().trim()),
                 edGender.getText().toString().equals("NAM") ? 0 : 1,
@@ -433,11 +444,12 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
                 User.getIndex(edRole.getText().toString()),
                 url,
                 currentUser.getInt("warehouse_id"),
-                Util.encodeString(currentUser.getString("warehouse_name")));
-
-        UserConnect.CreateUser(param, new CallbackCustom() {
+                Util.encodeString(currentUser.getString("warehouse_name"))),
+                false,
+                false);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(BaseModel result) {
+            public void onResponse(BaseModel result, List<BaseModel> list) {
                 if (CustomSQL.getBoolean(Constants.IS_ADMIN)) {
                     if (result.getInt("id") == User.getId()) {
                         CustomSQL.setBaseModel(Constants.USER, result);
@@ -455,8 +467,30 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
             public void onError(String error) {
 
             }
+        }, true).execute();
 
-        }, true);
+//        UserConnect.CreateUser(param, new CallbackCustom() {
+//            @Override
+//            public void onResponse(BaseModel result) {
+//                if (CustomSQL.getBoolean(Constants.IS_ADMIN)) {
+//                    if (result.getInt("id") == User.getId()) {
+//                        CustomSQL.setBaseModel(Constants.USER, result);
+//                    }
+//                    getActivity().getSupportFragmentManager().popBackStack();
+//                    mActivity.loadUser();
+//
+//                } else {
+//                    Transaction.gotoHomeActivityRight(true);
+//
+//                }
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//
+//        }, true);
 
     }
 
@@ -471,28 +505,11 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
         return results;
     }
 
-    private void postNewWarehouse(String name, int user_id) {
-        String param = String.format(Api_link.WAREHOUSE_CREATE_PARAM, "", Util.encodeString(name), user_id, 3);
-
-        SystemConnect.CreateDepot(param, new CallbackCustom() {
-            @Override
-            public void onResponse(BaseModel result) {
-//                getActivity().getSupportFragmentManager().popBackStack();
-//                mActivity.loadDepot();
-
-            }
-
-            @Override
-            public void onError(String error) {
-
-            }
-        }, true);
-    }
-
     private void submitPasswordDefault() {
-        UserConnect.setDefaultPassword(currentUser.getInt("id"), new CallbackCustom() {
+        BaseModel param = createGetParam(String.format(ApiUtil.USER_DEFAULT_PASS(),currentUser.getInt("id")), false);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(BaseModel result) {
+            public void onResponse(BaseModel result, List<BaseModel> list) {
                 Util.showToast("Đặt mật khẩu về mặc định thành công");
             }
 
@@ -500,7 +517,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
             public void onError(String error) {
 
             }
-        }, true);
+        }, true).execute();
 
     }
 

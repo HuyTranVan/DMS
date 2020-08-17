@@ -11,11 +11,9 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.TestAdapter;
-import wolve.dms.apiconnect.Api_link;
-import wolve.dms.callback.CallbackCustom;
+import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.libraries.Security;
-import wolve.dms.libraries.connectapi.CustomGetMethod;
 import wolve.dms.libraries.connectapi.CustomPostListMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
@@ -86,31 +84,31 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
 
         Util.getInstance().showLoading(true);
         //String url = Api_link.BASE_URL + "token/bills/have_note";
-        String url = Api_link.BASE_URL + "token/temp/CustomerHaveBill";
+        String url = ApiUtil.BASE_URL + "token/temp/CustomerHaveBill";
 
-        new CustomGetMethod(url, new CallbackCustom() {
-            @Override
-            public void onResponse(BaseModel result) {
-                Util.getInstance().stopLoading(true);
-                if (Constants.responeIsSuccess(result)) {
-                    createRVTest(Constants.getResponeArraySuccess(result));
-
-                } else {
-                    Constants.throwError(result.getString("message"));
-                    //listener.onError(result.getString("message"));
-                    Util.getInstance().stopLoading(true);
-                }
-            }
-
-            @Override
-            public void onError(String error) {
-                Util.getInstance().stopLoading(true);
-                Constants.throwError(error);
-                //listener.onError(error);
-
-            }
-
-        }).execute();
+//        new CustomGetMethod(url, new CallbackCustom() {
+//            @Override
+//            public void onResponse(BaseModel result) {
+//                Util.getInstance().stopLoading(true);
+//                if (Constants.responeIsSuccess(result)) {
+//                    createRVTest(Constants.getResponeArraySuccess(result));
+//
+//                } else {
+//                    Constants.throwError(result.getString("message"));
+//                    //listener.onError(result.getString("message"));
+//                    Util.getInstance().stopLoading(true);
+//                }
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                Util.getInstance().stopLoading(true);
+//                Constants.throwError(error);
+//                //listener.onError(error);
+//
+//            }
+//
+//        }).execute();
     }
 
 
@@ -215,7 +213,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
 
         }
 
-        String url = Api_link.BASE_URL + "token/temp/IsBillReturnUpdate.php";
+        String url = ApiUtil.BASE_URL + "token/temp/IsBillReturnUpdate.php";
 
         Util.getInstance().showLoading();
         new CustomPostListMethod(url, params, false, new CallbackListCustom() {
@@ -241,7 +239,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
 
         }
 
-        String url = Api_link.BASE_URL + "token/temp/BillDelivered.php";
+        String url = ApiUtil.BASE_URL + "token/temp/BillDelivered.php";
 
         Util.getInstance().showLoading();
         new CustomPostListMethod(url, params, false, new CallbackListCustom() {
@@ -265,29 +263,29 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
 
         //String param = String.format(Api_link.DEBT_PARAM, 25000, 7, 1325);
 
-        for (int i = 0; i < list.size(); i++) {
-            params.add(String.format(Api_link.DEBT_PARAM,
-                    list.get(i).getDouble("debt"),
-                    list.get(i).getInt("user_id"),
-                    list.get(i).getInt("id"),
-                    list.get(i).getInt("distributor_id")));
+//        for (int i = 0; i < list.size(); i++) {
+//            params.add(String.format(Api_link.DEBT_PARAM,
+//                    list.get(i).getDouble("debt"),
+//                    list.get(i).getInt("user_id"),
+//                    list.get(i).getInt("id"),
+//                    list.get(i).getInt("distributor_id")));
+//
+//        }
 
-        }
-
-        String url = Api_link.DEBT_NEW;
-
-        Util.getInstance().showLoading();
-        new CustomPostListMethod(url, params, false, new CallbackListCustom() {
-            @Override
-            public void onResponse(List result) {
-                Util.getInstance().stopLoading(true);
-            }
-
-            @Override
-            public void onError(String error) {
-                Util.getInstance().stopLoading(true);
-            }
-        }).execute();
+//        String url = Api_link.DEBT_NEW;
+//
+//        Util.getInstance().showLoading();
+//        new CustomPostListMethod(url, params, false, new CallbackListCustom() {
+//            @Override
+//            public void onResponse(List result) {
+//                Util.getInstance().stopLoading(true);
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                Util.getInstance().stopLoading(true);
+//            }
+//        }).execute();
 
     }
 

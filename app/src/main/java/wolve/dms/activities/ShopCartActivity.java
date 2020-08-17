@@ -20,11 +20,12 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.CartProductsAdapter;
-import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.apiconnect.ApiUtil;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackString;
+import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.customviews.CInputForm;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
@@ -302,18 +303,28 @@ public class ShopCartActivity extends BaseActivity implements View.OnClickListen
                 new CallbackString() {
                     @Override
                     public void Result(String s) {
-                        final String params = DataUtil.newBillParam(currentCustomer.getInt("id"),
-                                User.getId(),
-                                adapterProducts.totalPrice(),
-                                0.0,
-                                adapterProducts.getAllData(),
-                                s,
-                                0,
-                                0);
-
-                        CustomerConnect.PostBill(params, new CallbackCustom() {
+//                        final String params = DataUtil.newBillJsonParam(currentCustomer.getInt("id"),
+//                                User.getId(),
+//                                adapterProducts.totalPrice(),
+//                                0.0,
+//                                adapterProducts.getAllData(),
+//                                s,
+//                                0,
+//                                0);
+                        BaseModel param = createPostParam(ApiUtil.BILL_NEW(),
+                                DataUtil.newBillJsonParam(currentCustomer.getInt("id"),
+                                        User.getId(),
+                                        adapterProducts.totalPrice(),
+                                        0.0,
+                                        adapterProducts.getAllData(),
+                                        s,
+                                        0,
+                                        0),
+                                true,
+                                false);
+                        new GetPostMethod(param, new NewCallbackCustom() {
                             @Override
-                            public void onResponse(BaseModel result) {
+                            public void onResponse(BaseModel result, List<BaseModel> list) {
                                 BaseModel modelResult = new BaseModel();
                                 modelResult.put(Constants.RELOAD_DATA, true);
                                 Transaction.returnPreviousActivity(Constants.SHOP_CART_ACTIVITY, modelResult, Constants.RESULT_SHOPCART_ACTIVITY);
@@ -321,10 +332,25 @@ public class ShopCartActivity extends BaseActivity implements View.OnClickListen
 
                             @Override
                             public void onError(String error) {
-                                Util.getInstance().stopLoading(true);
-                            }
 
-                        }, true);
+                            }
+                        }, true).execute();
+
+
+//                        CustomerConnect.PostBill(params, new CallbackCustom() {
+//                            @Override
+//                            public void onResponse(BaseModel result) {
+//                                BaseModel modelResult = new BaseModel();
+//                                modelResult.put(Constants.RELOAD_DATA, true);
+//                                Transaction.returnPreviousActivity(Constants.SHOP_CART_ACTIVITY, modelResult, Constants.RESULT_SHOPCART_ACTIVITY);
+//                            }
+//
+//                            @Override
+//                            public void onError(String error) {
+//                                Util.getInstance().stopLoading(true);
+//                            }
+//
+//                        }, true);
 
                     }
                 });

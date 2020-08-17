@@ -1,4 +1,4 @@
-package wolve.dms.libraries.connectapi;
+package wolve.dms.apiconnect.libraries;
 
 import android.os.AsyncTask;
 import android.webkit.URLUtil;
@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import wolve.dms.callback.CallbackString;
+import wolve.dms.utils.Constants;
 
 /**
  * Created by tranhuy on 7/22/16.
@@ -29,6 +30,7 @@ public class UploadCloudaryMethod extends AsyncTask<String, Void, String> {
         config.put("api_secret", "Mh2EsnmYHBAsTAp7jsNLoJ5dXhk");
         mCloud = new Cloudinary(config);
 
+        UtilLoading.getInstance().showLoading();
     }
 
     @Override
@@ -45,11 +47,12 @@ public class UploadCloudaryMethod extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String response) {
+        UtilLoading.getInstance().stopLoading();
         if (URLUtil.isValidUrl(response)) {
             mListener.Result(response);
 
         } else {
-            mListener.Result(null);
+            Constants.throwError("Upload image error!");
 
 
         }

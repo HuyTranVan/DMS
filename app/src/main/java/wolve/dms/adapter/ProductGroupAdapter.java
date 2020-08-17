@@ -13,17 +13,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.apiconnect.ProductConnect;
+import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickAdapter;
-import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDeleteAdapter;
+import wolve.dms.callback.NewCallbackCustom;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.ProductGroup;
-import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.activities.BaseActivity.createGetParam;
 
 
 /**
@@ -78,33 +80,20 @@ public class ProductGroupAdapter extends RecyclerView.Adapter<ProductGroupAdapte
                 CustomCenterDialog.alertWithCancelButton(null, "Bạn muốn xóa nhóm " + mData.get(position).getString("name"), "XÓA", "HỦY", new CallbackBoolean() {
                     @Override
                     public void onRespone(Boolean result) {
-                        String param = String.valueOf(mData.get(position).getInt("id"));
-                        ProductConnect.DeleteProductGroup(param, new CallbackCustom() {
+                        BaseModel param = createGetParam(ApiUtil.PRODUCT_GROUP_DELETE() + mData.get(position).getString("id"), false);
+                        new GetPostMethod(param, new NewCallbackCustom() {
                             @Override
-                            public void onResponse(BaseModel result) {
+                            public void onResponse(BaseModel result, List<BaseModel> list) {
                                 Util.getInstance().stopLoading(true);
                                 mDeleteListener.onDelete(mData.get(position).BaseModelstoString(), position);
-
-//                                if (Constants.responeIsSuccess(result)){
-//
-//
-//                                }else {
-//                                    Util.getInstance().stopLoading(true);
-//                                    Constants.throwError(result.getString("message"));
-//
-//
-//                                }
-
                             }
 
                             @Override
                             public void onError(String error) {
-                                Util.getInstance().stopLoading(true);
-                                Constants.throwError(error);
 
                             }
+                        }, true).execute();
 
-                        }, true);
                     }
                 });
 

@@ -16,18 +16,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.SystemConnect;
-import wolve.dms.apiconnect.UserConnect;
-import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackCustomList;
+import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackObject;
+import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.customviews.CInputForm;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.activities.BaseActivity.createGetParam;
+import static wolve.dms.activities.BaseActivity.createPostParam;
 
 /**
  * Created by macos on 9/16/17.
@@ -120,14 +121,17 @@ public class NewUpdateWarehouseFragment extends Fragment implements View.OnClick
                     CustomCenterDialog.alert(null, "Vui lòng điền đầy đủ thông tin", "đồng ý");
 
                 } else {
-                    String param = String.format(Api_link.WAREHOUSE_CREATE_PARAM, !currentDepot.hasKey("id") ? "" : "id=" + currentDepot.getString("id") + "&",
+                    BaseModel param = createPostParam(ApiUtil.WAREHOUSE_NEW(),
+                            String.format(ApiUtil.WAREHOUSE_CREATE_PARAM, !currentDepot.hasKey("id") ? "" : "id=" + currentDepot.getString("id") + "&",
                             Util.encodeString(edInput.getText().toString()),
                             currentDepot.getInt("user_id"),
-                            currentDepot.getInt("isMaster"));
+                            currentDepot.getInt("isMaster")),
+                            false,
+                            false);
 
-                    SystemConnect.CreateDepot(param, new CallbackCustom() {
+                    new GetPostMethod(param, new NewCallbackCustom() {
                         @Override
-                        public void onResponse(BaseModel result) {
+                        public void onResponse(BaseModel result, List<BaseModel> list) {
                             getActivity().getSupportFragmentManager().popBackStack();
                             mActivity.loadDepot();
                         }
@@ -136,7 +140,8 @@ public class NewUpdateWarehouseFragment extends Fragment implements View.OnClick
                         public void onError(String error) {
 
                         }
-                    }, true);
+                    }, true).execute();
+
                 }
                 break;
         }
@@ -150,19 +155,20 @@ public class NewUpdateWarehouseFragment extends Fragment implements View.OnClick
                     dialogChoiceUser(filterListBaseModel(listUser));
 
                 } else {
-                    UserConnect.ListUser(new CallbackCustomList() {
+                    BaseModel param = createGetParam(ApiUtil.USERS(), true);
+                    new GetPostMethod(param, new NewCallbackCustom() {
                         @Override
-                        public void onResponse(List<BaseModel> results) {
-                            listUser = results;
+                        public void onResponse(BaseModel result, List<BaseModel> list) {
+                            listUser = list;
                             dialogChoiceUser(filterListBaseModel(listUser));
-
                         }
 
                         @Override
                         public void onError(String error) {
 
                         }
-                    }, true);
+                    }, true).execute();
+
 
                 }
 

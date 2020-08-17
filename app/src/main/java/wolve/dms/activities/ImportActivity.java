@@ -9,7 +9,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
@@ -24,16 +23,14 @@ import wolve.dms.adapter.ProductImportAdapter;
 import wolve.dms.adapter.ProductImportChoosenAdapter;
 import wolve.dms.adapter.ProductInventoryAdapter;
 import wolve.dms.adapter.ViewpagerMultiListAdapter;
-import wolve.dms.apiconnect.CustomerConnect;
-import wolve.dms.apiconnect.SystemConnect;
+import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickAdapter;
-import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackInt;
-import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.callback.CallbackListObject;
 import wolve.dms.callback.CallbackObject;
+import wolve.dms.callback.NewCallbackCustom;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.utils.Constants;
@@ -182,19 +179,31 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void getListImport(int offset, CallbackListObject listener, boolean showloading, boolean stoploading) {
-        //String param = String.format("&warehouse_id=%d", toWarehouse.getInt("id"));
-        CustomerConnect.ListImport(offset, toWarehouse.getInt("id"), new CallbackCustomList() {
+        BaseModel param = createGetParam(String.format(ApiUtil.IMPORTS(), offset, 20, toWarehouse.getInt("id")), true);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(List<BaseModel> results) {
-                listener.onResponse(results);
-//                listener.onResponse(DataUtil.filterListImport(results, toWarehouse.getInt("id")));
+            public void onResponse(BaseModel result, List<BaseModel> list) {
+                listener.onResponse(list);
             }
 
             @Override
             public void onError(String error) {
-                Util.getInstance().stopLoading(true);
+
             }
-        }, showloading, stoploading);
+        }, true).execute();
+
+//        CustomerConnect.ListImport(offset, toWarehouse.getInt("id"), new CallbackCustomList() {
+//            @Override
+//            public void onResponse(List<BaseModel> results) {
+//
+////                listener.onResponse(DataUtil.filterListImport(results, toWarehouse.getInt("id")));
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                Util.getInstance().stopLoading(true);
+//            }
+//        }, showloading, stoploading);
     }
 
     @Override
@@ -311,7 +320,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void submitEvent() {
-        String param = DataUtil.createPostImportParam(toWarehouse.getInt("id"),
+        String param = DataUtil.createPostImportJsonParam(toWarehouse.getInt("id"),
                 fromWarehouse.getInt("id"),
                 adapterChoosen.getmData(),
                 "");
@@ -389,19 +398,20 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
 
     private void getListWarehouse(CallbackListObject listener, boolean showloading) {
         if (listWarehouse.size() == 0) {
-            SystemConnect.ListWarehouse(showloading, new CallbackCustomList() {
+            BaseModel param = createGetParam(ApiUtil.WAREHOUSES(), true);
+            new GetPostMethod(param, new NewCallbackCustom() {
                 @Override
-                public void onResponse(List<BaseModel> results) {
-                    listWarehouse = filterWarehouseHaveQuantity(results);
+                public void onResponse(BaseModel result, List<BaseModel> list) {
+                    listWarehouse = filterWarehouseHaveQuantity(list);
                     listener.onResponse(listWarehouse);
-
                 }
 
                 @Override
                 public void onError(String error) {
 
                 }
-            }, true);
+            }, true).execute();
+
 
 
         } else {
@@ -412,18 +422,19 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void getInventory(int warehouse_id, CallbackListObject listener) {
-        SystemConnect.GetInventoryList(warehouse_id, new CallbackListCustom() {
+        BaseModel param = createGetParam(String.format(ApiUtil.INVENTORIES(), warehouse_id), true);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(List result) {
-                listener.onResponse(result);
-
+            public void onResponse(BaseModel result, List<BaseModel> list) {
+                listener.onResponse(list);
             }
 
             @Override
             public void onError(String error) {
 
             }
-        }, true);
+        }, true).execute();
+
     }
 
     private void selectFromWarehouse(boolean showloading) {
@@ -585,20 +596,34 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         updateTabNotify(3, mTitle.get(3), number);
     }
 
-    private void postImport(String param, CallbackBoolean listener) {
-        CustomerConnect.PostImport(param, new CallbackCustom() {
+    private void postImport(String paramdetail, CallbackBoolean listener) {
+        BaseModel param = createPostParam(ApiUtil.IMPORT_NEW(),
+                paramdetail, true, false);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(BaseModel result) {
+            public void onResponse(BaseModel result, List<BaseModel> list) {
                 listener.onRespone(true);
-
-
             }
 
             @Override
             public void onError(String error) {
                 listener.onRespone(false);
             }
-        }, true);
+        }, true).execute();
+
+//        CustomerConnect.PostImport(param, new CallbackCustom() {
+//            @Override
+//            public void onResponse(BaseModel result) {
+//
+//
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//        }
+//        }, true);
     }
 
     private void reloadAllWarehouse(CallbackBoolean listener) {

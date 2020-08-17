@@ -33,10 +33,12 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
 
+import java.util.List;
+
 import wolve.dms.R;
-import wolve.dms.apiconnect.LocationConnect;
-import wolve.dms.callback.CallbackCustom;
+import wolve.dms.apiconnect.libraries.GMapGetMethod;
 import wolve.dms.callback.CallbackString;
+import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.MapUtil;
@@ -325,17 +327,20 @@ public class CustomerEditMapFragment extends Fragment implements View.OnClickLis
     };
 
     private void updateLocation(double lat, double lng) {
-        LocationConnect.getAddressFromLocation(lat, lng, new CallbackCustom() {
+        new GMapGetMethod(lat, lng, new NewCallbackCustom() {
             @Override
-            public void onResponse(BaseModel result) {
+            public void onResponse(BaseModel result, List<BaseModel> list) {
                 showAddress(MapUtil.getAddressFromMapResult(result));
+
             }
 
             @Override
             public void onError(String error) {
 
             }
-        }, true);
+        }, true).execute();
+
+
     }
 
     private void getCurrentLocation(final LocationListener mListener) {

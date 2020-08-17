@@ -14,16 +14,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.apiconnect.StatusConnect;
+import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickAdapter;
-import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDeleteAdapter;
+import wolve.dms.callback.NewCallbackCustom;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Status;
-import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.activities.BaseActivity.createGetParam;
 
 
 /**
@@ -81,22 +83,34 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusAdap
                     CustomCenterDialog.alertWithCancelButton(null, "Bạn muốn xóa trạng thái " + mData.get(position).getString("name"), "ĐỒNG Ý", "HỦY", new CallbackBoolean() {
                         @Override
                         public void onRespone(Boolean result) {
-                            String param = String.valueOf(mData.get(position).getInt("id"));
-                            StatusConnect.DeleteStatus(param, new CallbackCustom() {
+                            BaseModel param = createGetParam(ApiUtil.STATUS_DELETE() + mData.get(position).getString("id"), false);
+                            new GetPostMethod(param, new NewCallbackCustom() {
                                 @Override
-                                public void onResponse(BaseModel result) {
+                                public void onResponse(BaseModel result, List<BaseModel> list) {
                                     Util.getInstance().stopLoading(true);
                                     mDeleteListener.onDelete(mData.get(position).BaseModelstoString(), position);
-
                                 }
 
                                 @Override
                                 public void onError(String error) {
-                                    Util.getInstance().stopLoading(true);
-                                    Constants.throwError(error);
 
                                 }
-                            }, true);
+                            }, true).execute();
+//                            StatusConnect.DeleteStatus(param, new CallbackCustom() {
+//                                @Override
+//                                public void onResponse(BaseModel result) {
+//                                    Util.getInstance().stopLoading(true);
+//                                    mDeleteListener.onDelete(mData.get(position).BaseModelstoString(), position);
+//
+//                                }
+//
+//                                @Override
+//                                public void onError(String error) {
+//                                    Util.getInstance().stopLoading(true);
+//                                    Constants.throwError(error);
+//
+//                                }
+//                            }, true);
                         }
                     });
                 } else {

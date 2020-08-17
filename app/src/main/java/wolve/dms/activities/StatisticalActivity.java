@@ -17,17 +17,16 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.Statistical_ViewpagerAdapter;
-import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.SheetConnect;
-import wolve.dms.apiconnect.SystemConnect;
-import wolve.dms.callback.CallbackCustom;
+import wolve.dms.apiconnect.ApiUtil;
+import wolve.dms.apiconnect.libraries.GDriveMethod;
 import wolve.dms.callback.CallbackObject;
+import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.customviews.CustomTabLayout;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.libraries.connectapi.sheetapi.GoogleSheetGetData;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomTopDialog;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
@@ -203,9 +202,10 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
         start = starDay;
         end = lastDay;
         currentCheckedTime = currentcheckedtime;
-        SystemConnect.getStatisticals(String.format(Api_link.STATISTICAL_PARAM, starDay, lastDay), new CallbackCustom() {
+        BaseModel param = createGetParam(String.format(ApiUtil.STATISTICALS(), starDay, lastDay), false);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(BaseModel result) {
+            public void onResponse(BaseModel result, List<BaseModel> list) {
                 updatePaymentList(DataUtil.array2ListObject(result.getString(Constants.PAYMENTS)));
                 updateDebtList(result.getBaseModel(Constants.DEBTS));
                 updateBillsList(DataUtil.array2ListObject(result.getString(Constants.BILLS)));
@@ -213,14 +213,32 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
                 temptWarehouse = result.getBaseModel("inventory");
 
                 updateAllFragmentData(0);
-
             }
 
             @Override
             public void onError(String error) {
 
             }
-        });
+        }, true).execute();
+
+//        SystemConnect.getStatisticals(String.format(Api_link.STATISTICAL_PARAM, starDay, lastDay), new CallbackCustom() {
+//            @Override
+//            public void onResponse(BaseModel result) {
+//                updatePaymentList(DataUtil.array2ListObject(result.getString(Constants.PAYMENTS)));
+//                updateDebtList(result.getBaseModel(Constants.DEBTS));
+//                updateBillsList(DataUtil.array2ListObject(result.getString(Constants.BILLS)));
+//                updateBillDetailList(listInitialBill);
+//                temptWarehouse = result.getBaseModel("inventory");
+//
+//                updateAllFragmentData(0);
+
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        });
 
 
     }
@@ -332,8 +350,8 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
 //    }
 
     private void updateSheetIncomeData(final String tabtitle, String sheet_direction, final List<List<Object>> params) {
-        SheetConnect.postValue(Api_link.STATISTICAL_SHEET_KEY,
-                String.format(Api_link.STATISTICAL_SHEET_TAB, tabtitle, 1),
+        GDriveMethod.postValue(ApiUtil.STATISTICAL_SHEET_KEY,
+                String.format(ApiUtil.STATISTICAL_SHEET_TAB, tabtitle, 1),
                 params,
                 sheet_direction,
                 new GoogleSheetGetData.CallbackListList() {

@@ -1,4 +1,4 @@
-package wolve.dms.libraries.connectapi;
+package wolve.dms.apiconnect.libraries;
 
 import android.graphics.Color;
 import android.os.Handler;
@@ -7,8 +7,8 @@ import com.kaopiz.kprogresshud.KProgressHUD;
 
 import wolve.dms.utils.Util;
 
-public class LoadingEvent {
-    private static LoadingEvent util;
+public class UtilLoading {
+    private static UtilLoading util;
     private KProgressHUD cDialog;
     private Handler mHandlerLoading = new Handler();
 
@@ -22,9 +22,9 @@ public class LoadingEvent {
         }
     };
 
-    public static synchronized LoadingEvent getInstance() {
+    public static synchronized UtilLoading getInstance() {
         if (util == null)
-            util = new LoadingEvent();
+            util = new UtilLoading();
 
         return util;
     }

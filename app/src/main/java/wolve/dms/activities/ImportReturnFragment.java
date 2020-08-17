@@ -19,18 +19,20 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.ProductImportChoosenAdapter;
-import wolve.dms.apiconnect.CustomerConnect;
-import wolve.dms.apiconnect.SystemConnect;
+import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackInt;
-import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.callback.CallbackListObject;
 import wolve.dms.callback.CallbackObject;
+import wolve.dms.callback.NewCallbackCustom;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.activities.BaseActivity.createGetParam;
+import static wolve.dms.activities.BaseActivity.createPostParam;
 
 /**
  * Created by macos on 9/16/17.
@@ -116,18 +118,19 @@ public class ImportReturnFragment extends Fragment implements View.OnClickListen
     }
 
     private void loadListInventory(int warehouse_id, CallbackListObject listener) {
-        SystemConnect.GetInventoryList(warehouse_id, new CallbackListCustom() {
+        BaseModel param = createGetParam(String.format(ApiUtil.INVENTORIES(), warehouse_id), true);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(List result) {
-                listener.onResponse(result);
-
+            public void onResponse(BaseModel result, List<BaseModel> list) {
+                listener.onResponse(list);
             }
 
             @Override
             public void onError(String error) {
 
             }
-        }, true);
+        }, true).execute();
+
 
 
     }
@@ -164,7 +167,7 @@ public class ImportReturnFragment extends Fragment implements View.OnClickListen
     }
 
     private void submitImport() {
-        String param = DataUtil.createPostImportParam(returnWarehouse.getInt("id"),
+        String param = DataUtil.createPostImportJsonParam(returnWarehouse.getInt("id"),
                 currrentWarehouse.getInt("id"),
                 adapter.getAllDataHaveQuantity(),
                 "");
@@ -183,19 +186,34 @@ public class ImportReturnFragment extends Fragment implements View.OnClickListen
 
     }
 
-    private void postImport(String param, CallbackBoolean listener) {
-        CustomerConnect.PostImport(param, new CallbackCustom() {
+    private void postImport(String paramdetail, CallbackBoolean listener) {
+        BaseModel param = createPostParam(ApiUtil.IMPORT_NEW(),
+                paramdetail, true, false);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(BaseModel result) {
+            public void onResponse(BaseModel result, List<BaseModel> list) {
                 listener.onRespone(true);
-
             }
 
             @Override
             public void onError(String error) {
                 listener.onRespone(false);
             }
-        }, true);
+        }, true).execute();
+
+
+//        CustomerConnect.PostImport(param, new CallbackCustom() {
+//            @Override
+//            public void onResponse(BaseModel result) {
+//                listener.onRespone(true);
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                listener.onRespone(false);
+//            }
+//        }, true);
     }
 
 

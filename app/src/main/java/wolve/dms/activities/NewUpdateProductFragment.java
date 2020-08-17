@@ -2,9 +2,7 @@ package wolve.dms.activities;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +10,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
@@ -24,18 +21,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import wolve.dms.BuildConfig;
 import wolve.dms.R;
-import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.ProductConnect;
-import wolve.dms.apiconnect.SystemConnect;
+import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.CallbackUri;
+import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.customviews.CInputForm;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
+import wolve.dms.apiconnect.libraries.UploadCloudaryMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.utils.Constants;
@@ -45,6 +41,7 @@ import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
 import static android.app.Activity.RESULT_OK;
+import static wolve.dms.activities.BaseActivity.createPostParam;
 import static wolve.dms.utils.Constants.REQUEST_CHOOSE_IMAGE;
 import static wolve.dms.utils.Constants.REQUEST_IMAGE_CAPTURE;
 
@@ -307,13 +304,21 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
 
         } else {
             if (imageChangeUri != null) {
-                SystemConnect.uploadImage(Util.getRealPathFromCaptureURI(imageChangeUri), new CallbackString() {
+                new UploadCloudaryMethod(Util.getRealPathFromCaptureURI(imageChangeUri), new CallbackString() {
                     @Override
-                    public void Result(String s) {
-                        updateProduct(s);
-
+                    public void Result(String url) {
+                        updateProduct(url);
                     }
-                });
+
+                }).execute();
+
+//                SystemConnect.uploadImage(Util.getRealPathFromCaptureURI(imageChangeUri), new CallbackString() {
+//                    @Override
+//                    public void Result(String s) {
+//                        updateProduct(s);
+//
+//                    }
+//                });
 
             } else {
                 if (product.getInt("id") == 0) {
@@ -331,30 +336,43 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
     }
 
     private void updateProduct(String urlImage) {
-        String param = String.format(Api_link.PRODUCT_CREATE_PARAM,
-                product.getInt("id") == 0 ? "" : "id=" + product.getString("id") + "&",
-                Util.encodeString(edName.getText().toString().trim()),
-                edIsPromotion.getText().toString().trim().equals(Constants.IS_PROMOTION) ? 1 : 0,
-                Util.valueMoney(edUnitPrice.getText().toString()),
-                Util.valueMoney(edPurchasePrice.getText().toString()),
-                edVolume.getText().toString().trim().replace(",", ""),
-                defineGroupId(edGroup.getText().toString().trim()),
-                urlImage,
-                Util.valueMoney(edBasePrice.getText().toString()),
-                edUnitInCarton.getText().toString().trim().replace(",", ""));
-
-        ProductConnect.CreateProduct(param, new CallbackCustom() {
+        BaseModel param = createPostParam(ApiUtil.PRODUCT_NEW(),
+                String.format(ApiUtil.PRODUCT_CREATE_PARAM,
+                        product.getInt("id") == 0 ? "" : "id=" + product.getString("id") + "&",
+                        Util.encodeString(edName.getText().toString().trim()),
+                        edIsPromotion.getText().toString().trim().equals(Constants.IS_PROMOTION) ? 1 : 0,
+                        Util.valueMoney(edUnitPrice.getText().toString()),
+                        Util.valueMoney(edPurchasePrice.getText().toString()),
+                        edVolume.getText().toString().trim().replace(",", ""),
+                        defineGroupId(edGroup.getText().toString().trim()),
+                        urlImage,
+                        Util.valueMoney(edBasePrice.getText().toString()),
+                        edUnitInCarton.getText().toString().trim().replace(",", "")),
+                false, false);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(BaseModel result) {
+            public void onResponse(BaseModel result, List<BaseModel> list) {
                 getActivity().getSupportFragmentManager().popBackStack();
                 mActivity.reupdateProduct(result);
             }
 
             @Override
-            public void onError(String error){
+            public void onError(String error) {
 
             }
-        }, true);
+        },true).execute();
+//        ProductConnect.CreateProduct(param, new CallbackCustom() {
+//            @Override
+//            public void onResponse(BaseModel result) {
+//                getActivity().getSupportFragmentManager().popBackStack();
+//                mActivity.reupdateProduct(result);
+//            }
+//
+//            @Override
+//            public void onError(String error){
+//
+//            }
+//        }, true);
     }
 
     @Override

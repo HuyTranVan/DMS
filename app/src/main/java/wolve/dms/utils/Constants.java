@@ -233,36 +233,36 @@ public class Constants {
 
     }
 
-    public static boolean responeIsSuccess(BaseModel respone) {
-        if (!respone.isNull("status") && respone.getInt("status") == 200) {
-            return true;
-
-        } else {
-            return false;
-        }
-    }
-
-    public static BaseModel getResponeObjectSuccess(BaseModel respone) {
-        return new BaseModel(respone.getJsonObject("data"));
-
-    }
-
-    public static List<BaseModel> getResponeArraySuccess(BaseModel respone) {
-        List<BaseModel> list = new ArrayList<>();
-        JSONArray array = respone.getJSONArray("data");
-        try {
-            for (int i = 0; i < array.length(); i++) {
-                list.add(new BaseModel(array.getJSONObject(i)));
-            }
-
-        } catch (JSONException e) {
-            throwError(e.toString());
-            //e.printStackTrace();
-        }
-
-        return list;
-
-    }
+//    public static boolean responeIsSuccess(BaseModel respone) {
+//        if (!respone.isNull("status") && respone.getInt("status") == 200) {
+//            return true;
+//
+//        } else {
+//            return false;
+//        }
+//    }
+//
+//    public static BaseModel getResponeObjectSuccess(BaseModel respone) {
+//        return new BaseModel(respone.getJsonObject("data"));
+//
+//    }
+//
+//    public static List<BaseModel> getResponeArraySuccess(BaseModel respone) {
+//        List<BaseModel> list = new ArrayList<>();
+//        JSONArray array = respone.getJSONArray("data");
+//        try {
+//            for (int i = 0; i < array.length(); i++) {
+//                list.add(new BaseModel(array.getJSONObject(i)));
+//            }
+//
+//        } catch (JSONException e) {
+//            throwError(e.toString());
+//            //e.printStackTrace();
+//        }
+//
+//        return list;
+//
+//    }
 
     public static List<BaseModel> homeSettingSetup() {
         List<BaseModel> list = new ArrayList<>();

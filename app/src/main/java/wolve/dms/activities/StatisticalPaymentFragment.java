@@ -15,15 +15,18 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.Statistical_PaymentAdapter;
-import wolve.dms.apiconnect.CustomerConnect;
-import wolve.dms.callback.CallbackCustom;
+import wolve.dms.apiconnect.ApiUtil;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.callback.CallbackString;
+import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.activities.BaseActivity.createGetParam;
 
 /**
  * Created by macos on 9/16/17.
@@ -83,21 +86,35 @@ public class StatisticalPaymentFragment extends Fragment implements View.OnClick
     private void createRVCash(String user, List<BaseModel> list) {
         adapter = new Statistical_PaymentAdapter(user, list, new CallbackString() {
             @Override
-            public void Result(String s) {
-                CustomerConnect.GetCustomerDetail(s, new CallbackCustom() {
+            public void Result(String id) {
+                BaseModel param = createGetParam(ApiUtil.CUSTOMER_GETDETAIL() + id, false);
+                new GetPostMethod(param, new NewCallbackCustom() {
                     @Override
-                    public void onResponse(BaseModel result) {
+                    public void onResponse(BaseModel result, List<BaseModel> list) {
                         BaseModel customer = DataUtil.rebuiltCustomer(result, false);
                         CustomSQL.setBaseModel(Constants.CUSTOMER, customer);
 
                         Transaction.gotoCustomerActivity();
+
                     }
 
                     @Override
                     public void onError(String error) {
 
                     }
-                }, true, true);
+                }, true).execute();
+
+//                CustomerConnect.GetCustomerDetail(s, new CallbackCustom() {
+//                    @Override
+//                    public void onResponse(BaseModel result) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(String error) {
+//
+//                    }
+//                }, true, true);
             }
         });
         Util.createLinearRV(rvCash, adapter);

@@ -1,4 +1,4 @@
-package wolve.dms.apiconnect;
+package wolve.dms.apiconnect.libraries;
 
 import com.google.api.services.sheets.v4.model.AddConditionalFormatRuleRequest;
 import com.google.api.services.sheets.v4.model.AddSheetRequest;
@@ -24,7 +24,7 @@ import wolve.dms.libraries.connectapi.sheetapi.GoogleSheetGetData;
 import wolve.dms.libraries.connectapi.sheetapi.GoogleSheetPostData;
 import wolve.dms.utils.Util;
 
-public class SheetConnect {
+public class GDriveMethod {
 
     public static void getALlValue(String sheetId, String sheetTab, final GoogleSheetGetData.CallbackListList callback, final Boolean stoploading) {
         Util.getInstance().showLoading();

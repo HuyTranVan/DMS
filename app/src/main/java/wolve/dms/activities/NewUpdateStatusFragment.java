@@ -21,17 +21,21 @@ import com.turkialkhateeb.materialcolorpicker.ColorListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 import wolve.dms.R;
-import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.StatusConnect;
+import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackCustom;
+import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.customviews.CInputForm;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Status;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.activities.BaseActivity.createPostParam;
 
 /**
  * Created by macos on 9/16/17.
@@ -149,14 +153,16 @@ public class NewUpdateStatusFragment extends Fragment implements View.OnClickLis
                     });
 
                 } else {
-                    String param = String.format(Api_link.STATUS_CREATE_PARAM, status == null ? "" : "id=" + status.getString("id") + "&",
+                    BaseModel param = createPostParam(ApiUtil.STATUS_NEW(),
+                            String.format(ApiUtil.STATUS_CREATE_PARAM, status == null ? "" : "id=" + status.getString("id") + "&",
                             Util.encodeString(edName.getText().toString()),
                             currentColor,
-                            defaultStatus);
-
-                    StatusConnect.CreateStatus(param, new CallbackCustom() {
+                            defaultStatus),
+                            false,
+                            false);
+                    new GetPostMethod(param, new NewCallbackCustom() {
                         @Override
-                        public void onResponse(BaseModel result) {
+                        public void onResponse(BaseModel result, List<BaseModel> list) {
                             getActivity().getSupportFragmentManager().popBackStack();
                             mActivity.loadStatus();
                         }
@@ -165,7 +171,19 @@ public class NewUpdateStatusFragment extends Fragment implements View.OnClickLis
                         public void onError(String error) {
 
                         }
-                    }, true);
+                    }, true).execute();
+//                    StatusConnect.CreateStatus(param, new CallbackCustom() {
+//                        @Override
+//                        public void onResponse(BaseModel result) {
+//                            getActivity().getSupportFragmentManager().popBackStack();
+//                            mActivity.loadStatus();
+//                        }
+//
+//                        @Override
+//                        public void onError(String error) {
+//
+//                        }
+//                    }, true);
                 }
                 break;
         }

@@ -16,18 +16,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.apiconnect.ApiUtil;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackListObject;
+import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
-import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.activities.BaseActivity.createGetParam;
+import static wolve.dms.activities.BaseActivity.createPostParam;
 
 /**
  * Created by tranhuy on 5/24/17.
@@ -233,9 +235,10 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     @Override
                     public void onRespone(Boolean result) {
                         if (result) {
-                            CustomerConnect.DeleteImport(mData.get(position).getString("id"), new CallbackCustom() {
+                            BaseModel param = createGetParam(ApiUtil.IMPORT_DELETE() + mData.get(position).getString("id"), false);
+                            new GetPostMethod(param, new NewCallbackCustom() {
                                 @Override
-                                public void onResponse(BaseModel result) {
+                                public void onResponse(BaseModel result, List<BaseModel> list) {
                                     if (result.getBoolean("deleted")) {
                                         Util.getInstance().stopLoading(true);
                                         Util.showToast("Xóa thành công!");
@@ -247,7 +250,22 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                                 public void onError(String error) {
 
                                 }
-                            }, true);
+                            }, true).execute();
+//                            CustomerConnect.DeleteImport(mData.get(position).getString("id"), new CallbackCustom() {
+//                                @Override
+//                                public void onResponse(BaseModel result) {
+//                                    if (result.getBoolean("deleted")) {
+//                                        Util.getInstance().stopLoading(true);
+//                                        Util.showToast("Xóa thành công!");
+//                                        mListener.onRespone(true);
+//                                    }
+//                                }
+//
+//                                @Override
+//                                public void onError(String error) {
+//
+//                                }
+//                            }, true);
                         }
 
                     }
@@ -261,19 +279,32 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         notifyDataSetChanged();
     }
 
-    private void postUpdateImport(String param, CallbackBoolean listener) {
-        CustomerConnect.PostImport(param, new CallbackCustom() {
+    private void postUpdateImport(String paramdetail, CallbackBoolean listener) {
+        BaseModel param = createPostParam(ApiUtil.IMPORT_NEW(), paramdetail, true, false);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(BaseModel result) {
+            public void onResponse(BaseModel result, List<BaseModel> list) {
                 listener.onRespone(true);
-
             }
 
             @Override
             public void onError(String error) {
                 listener.onRespone(false);
             }
-        }, true);
+        }, true).execute();
+
+//        CustomerConnect.PostImport(param, new CallbackCustom() {
+//            @Override
+//            public void onResponse(BaseModel result) {
+//                listener.onRespone(true);
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                listener.onRespone(false);
+//            }
+//        }, true);
     }
 
     private String createImportContentForShare(int position) {
@@ -347,18 +378,18 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         addItem(null);
         notifyItemInserted(mData.size() - 1);
 
-        CustomerConnect.ListImport(getItemCount() - 1, warehouse_id, new CallbackCustomList() {
+        BaseModel param = createGetParam(String.format(ApiUtil.IMPORTS(), getItemCount() - 1, 20, warehouse_id), true);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(List<BaseModel> results) {
+            public void onResponse(BaseModel result, List<BaseModel> list) {
                 removeItem(getItemCount() - 1);
                 notifyDataSetChanged();
-                for (int i = 0; i < results.size(); i++) {
-                    addItem(results.get(i));
+                for (BaseModel model: list) {
+                    addItem(model);
 
                 }
                 notifyDataSetChanged();
                 isLoading = false;
-
 
             }
 
@@ -366,7 +397,21 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             public void onError(String error) {
 
             }
-        }, false, true);
+        }, true).execute();
+
+//        CustomerConnect.ListImport(getItemCount() - 1, warehouse_id, new CallbackCustomList() {
+//            @Override
+//            public void onResponse(List<BaseModel> results) {
+//
+//
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        }, false, true);
 
     }
 

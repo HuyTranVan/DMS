@@ -12,23 +12,25 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.SystemConnect;
-import wolve.dms.callback.CallbackListCustom;
+import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackListObject;
+import wolve.dms.callback.NewCallbackCustom;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 
+import static wolve.dms.activities.BaseActivity.createGetParam;
+
 public class DataUtil {
-    public static String newBillParam(int customerId,
-                                      int userId,
-                                      final Double total,
-                                      final Double paid,
-                                      List<BaseModel> listProduct,
-                                      String note,
-                                      int deliverBy,
-                                      int isreturnBill) {
+    public static String newBillJsonParam(int customerId,
+                                          int userId,
+                                          final Double total,
+                                          final Double paid,
+                                          List<BaseModel> listProduct,
+                                          String note,
+                                          int deliverBy,
+                                          int isreturnBill) {
         final JSONObject params = new JSONObject();
         try {
             params.put("debt", total - paid);
@@ -64,7 +66,7 @@ public class DataUtil {
     }
 
 
-    public static String updateBillDeliveredParam(int customerId, BaseModel currentBill, int userid, List<BaseModel> listProduct) {
+    public static String updateBillDeliveredJsonParam(int customerId, BaseModel currentBill, int userid, List<BaseModel> listProduct) {
         JSONObject params = new JSONObject();
         try {
             params.put("id", currentBill.getInt("id"));
@@ -97,10 +99,10 @@ public class DataUtil {
 
     }
 
-    public static String createPostImportParam(int warehouse_id,
-                                               int from_warehouse,
-                                               List<BaseModel> listProduct,
-                                               String note) {
+    public static String createPostImportJsonParam(int warehouse_id,
+                                                   int from_warehouse,
+                                                   List<BaseModel> listProduct,
+                                                   String note) {
         final JSONObject params = new JSONObject();
         try {
             params.put("warehouse_id", warehouse_id);
@@ -140,23 +142,41 @@ public class DataUtil {
     }
 
     public static void checkInventory(List<BaseModel> listproduct, int warehouse_id, CallbackListObject listener) {
-        SystemConnect.GetInventoryList(warehouse_id, new CallbackListCustom() {
+        BaseModel param = createGetParam(String.format(ApiUtil.INVENTORIES(), warehouse_id), true);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(List result) {
-                List<BaseModel> listresult = compareBillAndInventory(DataUtil.mergeProductDetail(listproduct), result);
+            public void onResponse(BaseModel result, List<BaseModel> list) {
+                List<BaseModel> listresult = compareBillAndInventory(DataUtil.mergeProductDetail(listproduct), list);
                 if (checkNegative(listresult, "differenceQuantity")) {
                     listener.onResponse(listresult);
                 } else {
                     listener.onResponse(new ArrayList<>());
                 }
-
             }
 
             @Override
             public void onError(String error) {
 
             }
-        }, true);
+        }, true).execute();
+
+//        SystemConnect.GetInventoryList(warehouse_id, new CallbackListCustom() {
+//            @Override
+//            public void onResponse(List result) {
+//                List<BaseModel> listresult = compareBillAndInventory(DataUtil.mergeProductDetail(listproduct), result);
+//                if (checkNegative(listresult, "differenceQuantity")) {
+//                    listener.onResponse(listresult);
+//                } else {
+//                    listener.onResponse(new ArrayList<>());
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        }, true);
     }
 
     public static List<BaseModel> compareBillAndInventory(List<BaseModel> listproduct, List<BaseModel> listinventory) {
@@ -197,7 +217,7 @@ public class DataUtil {
     public static List<String> createListPaymentParam(int customerId, List<BaseModel> list, boolean payByReturn) {
         List<String> results = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
-            String s = String.format(Api_link.PAY_PARAM,
+            String s = String.format(ApiUtil.PAY_PARAM,
                     customerId,
                     String.valueOf(Math.round(list.get(i).getDouble("paid"))),
                     list.get(i).getInt("billId"),
@@ -215,7 +235,7 @@ public class DataUtil {
     }
 
     public static String createPostPaymentParam(int customerId, int user_id, double paid, int billId, String note, boolean payByReturn) {
-        String s = String.format(Api_link.PAY_PARAM,
+        String s = String.format(ApiUtil.PAY_PARAM,
                 customerId,
                 String.valueOf(Math.round(paid)),
                 billId,
@@ -887,68 +907,47 @@ public class DataUtil {
         return listResutl;
     }
 
-    public static BaseModel createBillParam(long starDay, long lastDay) {
-        BaseModel billparam = new BaseModel();
-        billparam.put("url", Api_link.BILLS
-                + String.format(Api_link.DEFAULT_RANGE, 1, 5000)
-                + String.format(Api_link.BILL_RANGE_PARAM, starDay, lastDay));
-        billparam.put("method", "GET");
-        billparam.put("isjson", null);
-        billparam.put("param", null);
+//    public static BaseModel createBillParam(long starDay, long lastDay) {
+//        BaseModel billparam = new BaseModel();
+//        billparam.put("url", Api_link.BILLS
+//                + String.format(Api_link.DEFAULT_RANGE, 1, 5000)
+//                + String.format(Api_link.BILL_RANGE_PARAM, starDay, lastDay));
+//        billparam.put("method", "GET");
+//        billparam.put("isjson", null);
+//        billparam.put("param", null);
+//
+//        return billparam;
+//
+//    }
 
-        return billparam;
-
-    }
-
-    public static BaseModel createPaymentParam(long starDay, long lastDay) {
-        BaseModel payparam = new BaseModel();
-        payparam.put("url", Api_link.BILLS_HAVE_PAYMENT
-                + String.format(Api_link.DEFAULT_RANGE, 1, 1500)
-                + String.format(Api_link.BILL_HAVE_PAYMENT_RANGE_PARAM, starDay, lastDay));
-        payparam.put("method", "GET");
-        payparam.put("isjson", null);
-        payparam.put("param", null);
-
-        return payparam;
-
-    }
-
-//    public static BaseModel createDebtParam() {
+//    public static BaseModel createPaymentParam(long starDay, long lastDay) {
 //        BaseModel payparam = new BaseModel();
-//        payparam.put("url", Api_link.CUSTOMERS + String.format(Api_link.DEFAULT_RANGE, 1, 500));
-//        payparam.put("method", "POST");
-//        payparam.put("isjson", false);
-//        payparam.put("param", String.format(Api_link.CUSTOMER_DEBT_PARAM, 0));
+//        payparam.put("url", Api_link.BILLS_HAVE_PAYMENT
+//                + String.format(Api_link.DEFAULT_RANGE, 1, 1500)
+//                + String.format(Api_link.BILL_HAVE_PAYMENT_RANGE_PARAM, starDay, lastDay));
+//        payparam.put("method", "GET");
+//        payparam.put("isjson", null);
+//        payparam.put("param", null);
 //
 //        return payparam;
 //
 //    }
 
-    public static BaseModel createListPaymentParam(long starDay, long lastDay) {
-        BaseModel payparam = new BaseModel();
-        payparam.put("url", Api_link.PAYMENTS + String.format(Api_link.PAYMENTS_PARAM, starDay, lastDay));
-        payparam.put("method", "GET");
-        payparam.put("isjson", false);
-        payparam.put("param", null);
 
-        return payparam;
+//    public static BaseModel createListPaymentParam(long starDay, long lastDay) {
+//        BaseModel payparam = new BaseModel();
+//        payparam.put("url", Api_link.PAYMENTS + String.format(Api_link.PAYMENTS_PARAM, starDay, lastDay));
+//        payparam.put("method", "GET");
+//        payparam.put("isjson", false);
+//        payparam.put("param", null);
+//
+//        return payparam;
+//
+//    }
 
-    }
-
-    public static BaseModel getListCustomerParam() {
-        BaseModel payparam = new BaseModel();
-        payparam.put("url", Api_link.CUSTOMERS_HAVEDEBT);
-        payparam.put("method", "GET");
-        payparam.put("isjson", false);
-        payparam.put("param", null);
-
-        return payparam;
-
-    }
-
-//    public static BaseModel createNewCustomerParam(String param) {
+//    public static BaseModel createCustomerWaitingParam(String param) {
 //        BaseModel paramCustomer = new BaseModel();
-//        paramCustomer.put("url", Api_link.CUSTOMER_NEW);
+//        paramCustomer.put("url", Api_link.CUSTOMER_TEMP_NEW);
 //        paramCustomer.put("method", "POST");
 //        paramCustomer.put("isjson", false);
 //        paramCustomer.put("param", param);
@@ -957,116 +956,94 @@ public class DataUtil {
 //
 //    }
 
-    public static BaseModel createCustomerWaitingParam(String param) {
-        BaseModel paramCustomer = new BaseModel();
-        paramCustomer.put("url", Api_link.CUSTOMER_TEMP_NEW);
-        paramCustomer.put("method", "POST");
-        paramCustomer.put("isjson", false);
-        paramCustomer.put("param", param);
-
-        return paramCustomer;
-
-    }
-
-//    public static BaseModel getListCustomerParam(String param, int countinPage) {
-//        BaseModel paramCustomer = new BaseModel();
-//        paramCustomer.put("url", Api_link.CUSTOMERS + String.format(Api_link.DEFAULT_RANGE, 1, countinPage));
-//        paramCustomer.put("method", "POST");
-//        paramCustomer.put("isjson", false);
-//        paramCustomer.put("param", param);
-//
-//        return paramCustomer;
-//
-//    }
-
-    public static BaseModel postCheckinParam(String param) {
-        BaseModel paramCheckin = new BaseModel();
-        paramCheckin.put("url", Api_link.CHECKIN_NEW);
-        paramCheckin.put("method", "POST");
-        paramCheckin.put("isjson", false);
-        paramCheckin.put("param", param);
-
-        return paramCheckin;
-
-    }
-
-    public static BaseModel postBillParam(String param) {
-        BaseModel paramCheckin = new BaseModel();
-        paramCheckin.put("url", Api_link.BILL_NEW);
-        paramCheckin.put("method", "POST");
-        paramCheckin.put("isjson", true);
-        paramCheckin.put("param", param);
-
-        return paramCheckin;
-
-    }
-
-    public static BaseModel postImportParam(String param) {
-        BaseModel paramCheckin = new BaseModel();
-        paramCheckin.put("url", Api_link.IMPORT_NEW);
-        paramCheckin.put("method", "POST");
-        paramCheckin.put("isjson", true);
-        paramCheckin.put("param", param);
-
-        return paramCheckin;
-
-    }
-
-    public static BaseModel postInventoryQuantityParam(String param) {
-        BaseModel paramCheckin = new BaseModel();
-        paramCheckin.put("url", Api_link.INVENTORY_EDIT_QUANTITY);
-        paramCheckin.put("method", "POST");
-        paramCheckin.put("isjson", true);
-        paramCheckin.put("param", param);
-
-        return paramCheckin;
-
-    }
-
-    public static BaseModel getImportList() {
-        BaseModel param = new BaseModel();
-        param.put("url", Api_link.IMPORTS);
-        param.put("method", "GET");
-        param.put("isjson", null);
-        param.put("param", null);
-
-        return param;
-
-    }
-
-
-    public static BaseModel postDebtParam(String param) {
-        BaseModel paramDebt = new BaseModel();
-        paramDebt.put("url", Api_link.DEBT_NEW);
-        paramDebt.put("method", "POST");
-        paramDebt.put("isjson", true);
-        paramDebt.put("param", param);
-
-        return paramDebt;
-
-    }
-
-    public static BaseModel postPayParam(String param) {
-        BaseModel paramCheckin = new BaseModel();
-        paramCheckin.put("url", Api_link.PAY_NEW);
-        paramCheckin.put("method", "POST");
-        paramCheckin.put("isjson", false);
-        paramCheckin.put("param", param);
-
-        return paramCheckin;
-
-    }
-
-    public static BaseModel postLoginParam(String param) {
-        BaseModel paramCheckin = new BaseModel();
-//        paramCheckin.put("url", Api_link.LOGIN);
+//    public static BaseModel postCheckinParam(String param) {
+//        BaseModel paramCheckin = new BaseModel();
+//        paramCheckin.put("url", Api_link.CHECKIN_NEW);
 //        paramCheckin.put("method", "POST");
 //        paramCheckin.put("isjson", false);
 //        paramCheckin.put("param", param);
 //
-        return paramCheckin;
+//        return paramCheckin;
+//
+//    }
+//
+//    public static BaseModel postBillParam(String param) {
+//        BaseModel paramCheckin = new BaseModel();
+//        paramCheckin.put("url", Api_link.BILL_NEW);
+//        paramCheckin.put("method", "POST");
+//        paramCheckin.put("isjson", true);
+//        paramCheckin.put("param", param);
+//
+//        return paramCheckin;
+//
+//    }
 
-    }
+//    public static BaseModel postImportParam(String param) {
+//        BaseModel paramCheckin = new BaseModel();
+//        paramCheckin.put("url", Api_link.IMPORT_NEW);
+//        paramCheckin.put("method", "POST");
+//        paramCheckin.put("isjson", true);
+//        paramCheckin.put("param", param);
+//
+//        return paramCheckin;
+//
+//    }
+
+//    public static BaseModel postInventoryQuantityParam(String param) {
+//        BaseModel paramCheckin = new BaseModel();
+//        paramCheckin.put("url", Api_link.INVENTORY_EDIT_QUANTITY);
+//        paramCheckin.put("method", "POST");
+//        paramCheckin.put("isjson", true);
+//        paramCheckin.put("param", param);
+//
+//        return paramCheckin;
+//
+//    }
+
+//    public static BaseModel getImportList() {
+//        BaseModel param = new BaseModel();
+//        param.put("url", Api_link.IMPORTS);
+//        param.put("method", "GET");
+//        param.put("isjson", null);
+//        param.put("param", null);
+//
+//        return param;
+//
+//    }
+
+
+//    public static BaseModel postDebtParam(String param) {
+//        BaseModel paramDebt = new BaseModel();
+//        paramDebt.put("url", Api_link.DEBT_NEW);
+//        paramDebt.put("method", "POST");
+//        paramDebt.put("isjson", true);
+//        paramDebt.put("param", param);
+//
+//        return paramDebt;
+//
+//    }
+
+//    public static BaseModel postPayParam(String param) {
+//        BaseModel paramCheckin = new BaseModel();
+//        paramCheckin.put("url", Api_link.PAY_NEW);
+//        paramCheckin.put("method", "POST");
+//        paramCheckin.put("isjson", false);
+//        paramCheckin.put("param", param);
+//
+//        return paramCheckin;
+//
+//    }
+//
+//    public static BaseModel postLoginParam(String param) {
+//        BaseModel paramCheckin = new BaseModel();
+////        paramCheckin.put("url", Api_link.LOGIN);
+////        paramCheckin.put("method", "POST");
+////        paramCheckin.put("isjson", false);
+////        paramCheckin.put("param", param);
+////
+//        return paramCheckin;
+//
+//    }
 
 //    public static BaseModel getLogoutParam() {
 //        BaseModel paramLogout = new BaseModel();
@@ -1079,93 +1056,93 @@ public class DataUtil {
 //
 //    }
 
-    public static BaseModel createNewDepotParam(String param) {
-        BaseModel paramCustomer = new BaseModel();
-        paramCustomer.put("url", Api_link.WAREHOUSE_NEW);
-        paramCustomer.put("method", "POST");
-        paramCustomer.put("isjson", false);
-        paramCustomer.put("param", param);
+//    public static BaseModel createNewDepotParam(String param) {
+//        BaseModel paramCustomer = new BaseModel();
+//        paramCustomer.put("url", Api_link.WAREHOUSE_NEW);
+//        paramCustomer.put("method", "POST");
+//        paramCustomer.put("isjson", false);
+//        paramCustomer.put("param", param);
+//
+//        return paramCustomer;
+//
+//    }
 
-        return paramCustomer;
+//    public static BaseModel createNewProductParam(String param) {
+//        BaseModel paramCustomer = new BaseModel();
+//        paramCustomer.put("url", Api_link.PRODUCT_NEW);
+//        paramCustomer.put("method", "POST");
+//        paramCustomer.put("isjson", false);
+//        paramCustomer.put("param", param);
+//
+//        return paramCustomer;
+//
+//    }
 
-    }
+//    public static BaseModel createNewProductGroupParam(String param) {
+//        BaseModel paramCustomer = new BaseModel();
+//        paramCustomer.put("url", Api_link.PRODUCT_GROUP_NEW);
+//        paramCustomer.put("method", "POST");
+//        paramCustomer.put("isjson", false);
+//        paramCustomer.put("param", param);
+//
+//        return paramCustomer;
+//
+//    }
 
-    public static BaseModel createNewProductParam(String param) {
-        BaseModel paramCustomer = new BaseModel();
-        paramCustomer.put("url", Api_link.PRODUCT_NEW);
-        paramCustomer.put("method", "POST");
-        paramCustomer.put("isjson", false);
-        paramCustomer.put("param", param);
+//    public static BaseModel createNewStatusParam(String param) {
+//        BaseModel paramCustomer = new BaseModel();
+//        paramCustomer.put("url", Api_link.STATUS_NEW);
+//        paramCustomer.put("method", "POST");
+//        paramCustomer.put("isjson", false);
+//        paramCustomer.put("param", param);
+//
+//        return paramCustomer;
+//
+//    }
 
-        return paramCustomer;
+//    public static BaseModel createNewDistributorParam(String param) {
+//        BaseModel paramDistributor = new BaseModel();
+//        paramDistributor.put("url", Api_link.DISTRIBUTOR_NEW);
+//        paramDistributor.put("method", "POST");
+//        paramDistributor.put("isjson", false);
+//        paramDistributor.put("param", param);
+//
+//        return paramDistributor;
+//
+//    }
 
-    }
+//    public static BaseModel createNewUserParam(String param) {
+//        BaseModel paramCustomer = new BaseModel();
+//        paramCustomer.put("url", Api_link.USER_NEW);
+//        paramCustomer.put("method", "POST");
+//        paramCustomer.put("isjson", false);
+//        paramCustomer.put("param", param);
+//
+//        return paramCustomer;
+//
+//    }
+//
+//    public static BaseModel createUserChangePassParam(String param) {
+//        BaseModel paramCustomer = new BaseModel();
+//        paramCustomer.put("url", Api_link.USER_CHANGE_PASS);
+//        paramCustomer.put("method", "POST");
+//        paramCustomer.put("isjson", false);
+//        paramCustomer.put("param", param);
+//
+//        return paramCustomer;
+//
+//    }
 
-    public static BaseModel createNewProductGroupParam(String param) {
-        BaseModel paramCustomer = new BaseModel();
-        paramCustomer.put("url", Api_link.PRODUCT_GROUP_NEW);
-        paramCustomer.put("method", "POST");
-        paramCustomer.put("isjson", false);
-        paramCustomer.put("param", param);
-
-        return paramCustomer;
-
-    }
-
-    public static BaseModel createNewStatusParam(String param) {
-        BaseModel paramCustomer = new BaseModel();
-        paramCustomer.put("url", Api_link.STATUS_NEW);
-        paramCustomer.put("method", "POST");
-        paramCustomer.put("isjson", false);
-        paramCustomer.put("param", param);
-
-        return paramCustomer;
-
-    }
-
-    public static BaseModel createNewDistributorParam(String param) {
-        BaseModel paramDistributor = new BaseModel();
-        paramDistributor.put("url", Api_link.DISTRIBUTOR_NEW);
-        paramDistributor.put("method", "POST");
-        paramDistributor.put("isjson", false);
-        paramDistributor.put("param", param);
-
-        return paramDistributor;
-
-    }
-
-    public static BaseModel createNewUserParam(String param) {
-        BaseModel paramCustomer = new BaseModel();
-        paramCustomer.put("url", Api_link.USER_NEW);
-        paramCustomer.put("method", "POST");
-        paramCustomer.put("isjson", false);
-        paramCustomer.put("param", param);
-
-        return paramCustomer;
-
-    }
-
-    public static BaseModel createUserChangePassParam(String param) {
-        BaseModel paramCustomer = new BaseModel();
-        paramCustomer.put("url", Api_link.USER_CHANGE_PASS);
-        paramCustomer.put("method", "POST");
-        paramCustomer.put("isjson", false);
-        paramCustomer.put("param", param);
-
-        return paramCustomer;
-
-    }
-
-    public static BaseModel createUserDefaultPassParam(String param) {
-        BaseModel paramCustomer = new BaseModel();
-        paramCustomer.put("url", Api_link.USER_DEFAULT_PASS);
-        paramCustomer.put("method", "POST");
-        paramCustomer.put("isjson", false);
-        paramCustomer.put("param", param);
-
-        return paramCustomer;
-
-    }
+//    public static BaseModel createUserDefaultPassParam(String param) {
+//        BaseModel paramCustomer = new BaseModel();
+//        paramCustomer.put("url", Api_link.USER_DEFAULT_PASS);
+//        paramCustomer.put("method", "POST");
+//        paramCustomer.put("isjson", false);
+//        paramCustomer.put("param", param);
+//
+//        return paramCustomer;
+//
+//    }
 
 
 }

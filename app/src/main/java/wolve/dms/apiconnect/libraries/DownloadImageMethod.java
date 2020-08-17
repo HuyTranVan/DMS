@@ -1,4 +1,4 @@
-package wolve.dms.libraries.connectapi;
+package wolve.dms.apiconnect.libraries;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,12 +23,12 @@ import wolve.dms.utils.Util;
 /**
  * Created by tranhuy on 10/2/16.
  */
-public class DownloadListImage extends AsyncTask<String, Void, List<BaseModel>> {
+public class DownloadImageMethod extends AsyncTask<String, Void, List<BaseModel>> {
     private List<BaseModel> mList;
     private String mKey, mGroupName;
     private CallbackListObject mListener;
 
-    public DownloadListImage(List<BaseModel> list, String keyurl, String groupName,CallbackListObject listener) {
+    public DownloadImageMethod(List<BaseModel> list, String keyurl, String groupName, CallbackListObject listener) {
         this.mList = list;
         this.mListener = listener;
         this.mKey = keyurl;

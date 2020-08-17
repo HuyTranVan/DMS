@@ -21,10 +21,11 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.TempbillAdapter;
-import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.apiconnect.ApiUtil;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackObject;
+import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
@@ -34,6 +35,8 @@ import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.MapUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.activities.BaseActivity.createGetParam;
 
 /**
  * Created by macos on 9/16/17.
@@ -194,9 +197,10 @@ public class TempBillFragment extends Fragment implements View.OnClickListener {
     }
 
     private void gotoPrintBillScreen(BaseModel model) {
-        CustomerConnect.GetCustomerDetail(model.getString("customer_id"), new CallbackCustom() {
+        BaseModel param = createGetParam(ApiUtil.CUSTOMER_GETDETAIL() + model.getString("customer_id"), false);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(BaseModel result) {
+            public void onResponse(BaseModel result, List<BaseModel> list) {
                 BaseModel customer = DataUtil.rebuiltCustomer(result, true);
                 CustomSQL.setBaseModel(Constants.CUSTOMER, customer);
 
@@ -204,14 +208,27 @@ public class TempBillFragment extends Fragment implements View.OnClickListener {
                     Transaction.checkInventoryBeforePrintBill(customer.getBaseModel("temp_bill"),
                             DataUtil.array2ListObject(customer.getBaseModel("temp_bill").getString(Constants.BILL_DETAIL)),
                             User.getCurrentUser().getInt("warehouse_id"));
-
             }
 
             @Override
             public void onError(String error) {
 
             }
-        }, false, true);
+        }, true).execute();
+
+
+//        CustomerConnect.GetCustomerDetail(model.getString("customer_id"), new CallbackCustom() {
+//            @Override
+//            public void onResponse(BaseModel result) {
+//
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        }, false, true);
     }
 
     private void checkLocation(LocationListener listener, boolean stopLoading) {

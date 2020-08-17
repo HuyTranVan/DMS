@@ -5,14 +5,11 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -29,22 +26,19 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.R;
 import wolve.dms.adapter.HomeAdapter;
-import wolve.dms.apiconnect.SystemConnect;
-import wolve.dms.apiconnect.UserConnect;
+import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickAdapter;
-import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackCustomListList;
 import wolve.dms.callback.CallbackListObject;
 import wolve.dms.callback.CallbackObject;
-import wolve.dms.libraries.Contacts;
+import wolve.dms.callback.NewCallbackCustom;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.ProductGroup;
@@ -134,7 +128,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             CustomSQL.setBoolean(Constants.LOGIN_SUCCESS, false);
 
         }
-        loadOverView();
+        loadPaymentByUser();
         checkNewProductUpdated(new CallbackListObject() {
             @Override
             public void onResponse(List<BaseModel> list) {
@@ -160,25 +154,36 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     }
 
-    private void loadOverView() {
-        List<BaseModel> params = new ArrayList<>();
+    private void loadPaymentByUser() {
         long start = Util.TimeStamp1(Util.Current01MonthYear());
         long end = Util.TimeStamp1(Util.Next01MonthYear());
 
-        params.add(DataUtil.createListPaymentParam(start, end));
-        SystemConnect.loadListObject(params, new CallbackCustomListList() {
+        BaseModel param = createGetParam( String.format(ApiUtil.PAYMENTS(), start, end), true);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(List<List<BaseModel>> results) {
-                double paid = DataUtil.sumValueFromList(results.get(0), "paid");
+            public void onResponse(BaseModel result, List<BaseModel> list) {
+                double paid = DataUtil.sumValueFromList(list, "paid");
                 tvCash.setText(Util.getStringIcon(Util.FormatMoney(paid), "    ", R.string.icon_usd));
-
             }
 
             @Override
             public void onError(String error) {
 
             }
-        }, true);
+        }, true).execute();
+//        params.add(DataUtil.createListPaymentParam(start, end));
+//        SystemConnect.loadListObject(params, new CallbackCustomListList() {
+//            @Override
+//            public void onResponse(List<List<BaseModel>> results) {
+//
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        }, true);
     }
 
     @Override
@@ -298,9 +303,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     private void loadCurrentData() {
-        SystemConnect.getCategories(new CallbackCustom() {
+        BaseModel param = createGetParam(ApiUtil.CATEGORIES(), false);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(BaseModel result) {
+            public void onResponse(BaseModel result, List<BaseModel> list) {
                 Status.saveStatusList(result.getJSONArray("Status"));
                 ProductGroup.saveProductGroupList(result.getJSONArray("ProductGroup"));
 
@@ -313,7 +319,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             public void onError(String error) {
 
             }
-        }, false);
+        }, false).execute();
+
 
     }
 
@@ -412,9 +419,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     private void checkNewProductUpdated(CallbackListObject listenertempbill, CallbackListObject listenertempimport) {
-        SystemConnect.getLastestProductUpdated(new CallbackCustom() {
+        BaseModel param = createGetParam(ApiUtil.PRODUCT_LASTEST(), false);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(BaseModel result) {
+            public void onResponse(BaseModel result, List<BaseModel> list) {
                 swipeRefreshLayout.setRefreshing(false);
                 listenertempbill.onResponse(DataUtil.listTempBill(DataUtil.array2ListObject(result.getString("tempBills"))));
                 listenertempimport.onResponse(DataUtil.filterListTempImport(DataUtil.array2ListObject(result.getString("tempImport"))));
@@ -444,7 +452,18 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             public void onError(String error) {
 
             }
-        }, false);
+        }, false).execute();
+//        SystemConnect.getLastestProductUpdated(new CallbackCustom() {
+//            @Override
+//            public void onResponse(BaseModel result) {
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        }, false);
     }
 
     private void updateTempBillVisibility(List<BaseModel> list) {
@@ -589,7 +608,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 updateTempImportVisibility(list);
             }
         });
-        loadOverView();
+        loadPaymentByUser();
     }
 
     protected boolean checkWarehouse() {

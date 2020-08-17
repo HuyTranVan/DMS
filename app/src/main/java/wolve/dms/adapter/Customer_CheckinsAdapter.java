@@ -13,14 +13,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.apiconnect.ApiUtil;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackCustom;
+import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.models.BaseModel;
-import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.activities.BaseActivity.createGetParam;
 
 
 /**
@@ -66,26 +68,50 @@ public class Customer_CheckinsAdapter extends RecyclerView.Adapter<Customer_Chec
                     CustomCenterDialog.alertWithCancelButton(null, String.format("Xác nhận xóa Checkin ngày %s", Util.DateHourString(mData.get(position).getLong("createAt"))), "ĐỒNG Ý", "HỦY", new CallbackBoolean() {
                         @Override
                         public void onRespone(Boolean result) {
-                            CustomerConnect.DeleteCheckin(mData.get(position).getString("id"), new CallbackCustom() {
-                                @Override
-                                public void onResponse(BaseModel result) {
-                                    Util.getInstance().stopLoading(true);
-                                    Util.showToast("Xóa thành công!");
-                                    mData.remove(position);
-                                    notifyDataSetChanged();
-                                    mListener.onRespone(true);
+                            if (result){
+                                BaseModel param = createGetParam(ApiUtil.CHECKIN_DELETE() + mData.get(position).getString("id"), false);
+                                new GetPostMethod(param, new NewCallbackCustom() {
+                                    @Override
+                                    public void onResponse(BaseModel result, List<BaseModel> list) {
+                                        if (result.getBoolean("deleted")){
+                                            Util.getInstance().stopLoading(true);
+                                            Util.showToast("Xóa thành công!");
+                                            mData.remove(position);
+                                            notifyDataSetChanged();
+                                            mListener.onRespone(true);
+                                        }
+                                    }
 
-                                }
+                                    @Override
+                                    public void onError(String error) {
 
-                                @Override
-                                public void onError(String error) {
-                                    Util.getInstance().stopLoading(true);
-                                    Constants.throwError(error);
+                                    }
+                                }, true).execute();
+//                                CustomerConnect.DeleteCheckin(mData.get(position).getString("id"), new CallbackCustom() {
+//                                    @Override
+//                                    public void onResponse(BaseModel result) {
+//                                        if (result.getBoolean("deleted")){
+//                                            Util.getInstance().stopLoading(true);
+//                                            Util.showToast("Xóa thành công!");
+//                                            mData.remove(position);
+//                                            notifyDataSetChanged();
+//                                            mListener.onRespone(true);
+//                                        }
+//
+//
+//                                    }
+//
+//                                    @Override
+//                                    public void onError(String error) {
+//                                        Util.getInstance().stopLoading(true);
+//                                        Constants.throwError(error);
+//
+//                                    }
+//
+//
+//                                }, true);
+                            }
 
-                                }
-
-
-                            }, true);
                         }
                     });
 

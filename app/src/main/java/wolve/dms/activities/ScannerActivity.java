@@ -25,8 +25,8 @@ import java.util.Locale;
 
 import wolve.dms.R;
 import wolve.dms.adapter.ScannerCodeAdapter;
-import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.SheetConnect;
+import wolve.dms.apiconnect.ApiUtil;
+import wolve.dms.apiconnect.libraries.GDriveMethod;
 import wolve.dms.customviews.CInputForm;
 import wolve.dms.libraries.connectapi.sheetapi.GoogleSheetGetData;
 import wolve.dms.utils.Constants;
@@ -108,7 +108,7 @@ public class ScannerActivity extends BaseActivity implements View.OnClickListene
     }
 
     private void getAllDistributor() {
-        SheetConnect.getALlValue(Api_link.SCANNER_SHEET_KEY, Api_link.SCANNER_DISTRIBUTOR_TAB, new GoogleSheetGetData.CallbackListList() {
+        GDriveMethod.getALlValue(ApiUtil.SCANNER_SHEET_KEY, ApiUtil.SCANNER_DISTRIBUTOR_TAB, new GoogleSheetGetData.CallbackListList() {
             @Override
             public void onRespone(List<List<Object>> results) {
                 listDistributor = new ArrayList<>();
@@ -310,7 +310,7 @@ public class ScannerActivity extends BaseActivity implements View.OnClickListene
     }
 
     private void pushAllToServer() {
-        SheetConnect.getALlValue(Api_link.SCANNER_SHEET_KEY, String.format(Api_link.SCANNER_CODE_TAB, 3), new GoogleSheetGetData.CallbackListList() {
+        GDriveMethod.getALlValue(ApiUtil.SCANNER_SHEET_KEY, String.format(ApiUtil.SCANNER_CODE_TAB, 3), new GoogleSheetGetData.CallbackListList() {
             @Override
             public void onRespone(List<List<Object>> results) {
                 int pos = 2;
@@ -318,8 +318,8 @@ public class ScannerActivity extends BaseActivity implements View.OnClickListene
                     pos = results.size() + 2;
                 }
 
-                String range = String.format(Api_link.SCANNER_CODE_TAB, pos);
-                SheetConnect.postValue(Api_link.SCANNER_SHEET_KEY, range, getListValueExportToSheet(adapter.getAllItem()), SHEET_ROW, new GoogleSheetGetData.CallbackListList() {
+                String range = String.format(ApiUtil.SCANNER_CODE_TAB, pos);
+                GDriveMethod.postValue(ApiUtil.SCANNER_SHEET_KEY, range, getListValueExportToSheet(adapter.getAllItem()), SHEET_ROW, new GoogleSheetGetData.CallbackListList() {
                     @Override
                     public void onRespone(List<List<Object>> results) {
                         Util.showToast("Thành công");

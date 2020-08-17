@@ -13,17 +13,19 @@ import androidx.fragment.app.Fragment;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 import wolve.dms.R;
-import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.ProductConnect;
-import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackCustom;
+import wolve.dms.apiconnect.ApiUtil;
+import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.customviews.CInputForm;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.activities.BaseActivity.createPostParam;
 
 /**
  * Created by macos on 9/16/17.
@@ -81,30 +83,26 @@ public class NewUpdateProductGroupFragment extends Fragment implements View.OnCl
 
     @Override
     public void onClick(View v) {
+        Util.hideKeyboard(v);
         switch (v.getId()) {
             case R.id.icon_back:
-//                getActivity().getSupportFragmentManager().popBackStack();
                 Util.hideKeyboard(v);
                 mActivity.onBackPressed();
                 break;
 
             case R.id.add_productgroup_submit:
                 if (edInput.getText().toString().trim().equals("")) {
-                    CustomCenterDialog.alertWithCancelButton(null, "Nhập tên nhóm sản phẩm", "đồng ý", null, new CallbackBoolean() {
-                        @Override
-                        public void onRespone(Boolean result) {
-
-                        }
-                    });
+                    Util.showSnackbar("Tên nhóm không được để trống!", null, null);
 
                 } else {
-                    String param = String.format(Api_link.PRODUCTGROUP_CREATE_PARAM, productGroup == null ? "" : "id=" + productGroup.getString("id") + "&",
-                            Util.encodeString(edInput.getText().toString()));
-
-
-                    ProductConnect.CreateProductGroup(param, new CallbackCustom() {
+                    BaseModel param = createPostParam(ApiUtil.PRODUCT_GROUP_NEW(),
+                            String.format(ApiUtil.PRODUCTGROUP_CREATE_PARAM, productGroup == null ? "" : "id=" + productGroup.getString("id") + "&",
+                                    Util.encodeString(edInput.getText().toString())),
+                            false,
+                            false);
+                    new GetPostMethod(param, new NewCallbackCustom() {
                         @Override
-                        public void onResponse(BaseModel result) {
+                        public void onResponse(BaseModel result, List<BaseModel> list) {
                             getActivity().getSupportFragmentManager().popBackStack();
                             mActivity.loadProductGroup();
                         }
@@ -113,9 +111,10 @@ public class NewUpdateProductGroupFragment extends Fragment implements View.OnCl
                         public void onError(String error) {
 
                         }
-                    }, true);
+                    }, true).execute();
+
+                    break;
                 }
-                break;
         }
     }
 }

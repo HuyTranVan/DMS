@@ -5,23 +5,17 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -30,7 +24,6 @@ import com.google.zxing.WriterException;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -41,11 +34,15 @@ import wolve.dms.R;
 import wolve.dms.adapter.DebtAdapter;
 import wolve.dms.adapter.PrintBillAdapter;
 import wolve.dms.adapter.PrintOldBillAdapter;
+import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.apiconnect.libraries.CustomGetPostListMethod;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackCustom;
+import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.callback.CallbackProcess;
+import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.libraries.BitmapView;
 import wolve.dms.libraries.printerdriver.BluetoothPrintBitmap;
 import wolve.dms.models.BaseModel;
@@ -598,13 +595,13 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         String params = "";
 
         if (currentBill.isNull(Constants.DELIVER_BY) && currentBill.getInt("id") != 0) {
-            params = DataUtil.updateBillDeliveredParam(currentCustomer.getInt("id"),
+            params = DataUtil.updateBillDeliveredJsonParam(currentCustomer.getInt("id"),
                     currentBill,
                     User.getId(),
                     DataUtil.array2ListObject(currentBill.getString(Constants.BILL_DETAIL)));
 
         } else {
-            params = DataUtil.newBillParam(currentCustomer.getInt("id"),
+            params = DataUtil.newBillJsonParam(currentCustomer.getInt("id"),
                     User.getId(),
                     adapterBill.getTotalMoney(),
                     0.0,
@@ -614,9 +611,10 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
                     0);
         }
 
-        CustomerConnect.PostBill(params, new CallbackCustom() {
+        BaseModel param = createPostParam(ApiUtil.BILL_NEW(), params, true, false);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(BaseModel result) {
+            public void onResponse(BaseModel result, List<BaseModel> list) {
                 if (listPayments.size() > 0) {
                     if (listPayments.get(0).getInt("billId") == 0) {
                         listPayments.get(0).put("billId", result.getInt("id"));
@@ -635,28 +633,75 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
             @Override
             public void onError(String error) {
-                Util.getInstance().stopLoading(true);
+
             }
-        }, false);
+        }, true).execute();
+//        CustomerConnect.PostBill(params, new CallbackCustom() {
+//            @Override
+//            public void onResponse(BaseModel result) {
+//                if (listPayments.size() > 0) {
+//                    if (listPayments.get(0).getInt("billId") == 0) {
+//                        listPayments.get(0).put("billId", result.getInt("id"));
+//                        listPayments.get(0).put("billTotal", result.getDouble("total"));
+//
+//                    }
+//                    postPayToServer(DataUtil.createListPaymentParam(currentCustomer.getInt("id"), listPayments, false), true);
+//
+//                } else {
+//                    BaseModel modelResult = new BaseModel();
+//                    modelResult.put(Constants.RELOAD_DATA, true);
+//                    Transaction.returnPreviousActivity(Constants.PRINT_BILL_ACTIVITY, modelResult, Constants.RESULT_PRINTBILL_ACTIVITY);
+//
+//                }
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                Util.getInstance().stopLoading(true);
+//            }
+//        }, false);
 
     }
 
     private void postPayToServer(List<String> listParam, Boolean stopLoading) {
-        CustomerConnect.PostListPay(listParam, new CallbackListCustom() {
+        List<BaseModel> params = new ArrayList<>();
+
+        for (String itemdetail: listParam){
+            BaseModel item = createPostParam(ApiUtil.PAY_NEW(), itemdetail, false, false);
+            params.add(item);
+        }
+
+        new CustomGetPostListMethod(params, new CallbackCustomList() {
             @Override
-            public void onResponse(List result) {
+            public void onResponse(List<BaseModel> results) {
                 BaseModel modelResult = new BaseModel();
                 modelResult.put(Constants.RELOAD_DATA, true);
                 Transaction.returnPreviousActivity(Constants.PRINT_BILL_ACTIVITY, modelResult, Constants.RESULT_PRINTBILL_ACTIVITY);
-
 
             }
 
             @Override
             public void onError(String error) {
 
-            }//
-        }, stopLoading);
+            }
+        }, true).execute();
+
+
+//        CustomerConnect.PostListPay(listParam, new CallbackListCustom() {
+//            @Override
+//            public void onResponse(List result) {
+//                BaseModel modelResult = new BaseModel();
+//                modelResult.put(Constants.RELOAD_DATA, true);
+//                Transaction.returnPreviousActivity(Constants.PRINT_BILL_ACTIVITY, modelResult, Constants.RESULT_PRINTBILL_ACTIVITY);
+//
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }//
+//        }, stopLoading);
     }
 
     //************** Todo Bluetooth SETUP

@@ -15,15 +15,18 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.Statistical_BillsAdapter;
-import wolve.dms.apiconnect.CustomerConnect;
-import wolve.dms.callback.CallbackCustom;
+import wolve.dms.apiconnect.ApiUtil;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.callback.CallbackString;
+import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.activities.BaseActivity.createGetParam;
 
 /**
  * Created by macos on 9/16/17.
@@ -92,20 +95,34 @@ public class StatisticalBillsFragment extends Fragment implements View.OnClickLi
         adapter = new Statistical_BillsAdapter(username, list, new CallbackString() {
             @Override
             public void Result(String s) {
-                CustomerConnect.GetCustomerDetail(s, new CallbackCustom() {
+                BaseModel param = createGetParam(ApiUtil.CUSTOMER_GETDETAIL() + s, false);
+                new GetPostMethod(param, new NewCallbackCustom() {
                     @Override
-                    public void onResponse(BaseModel result) {
+                    public void onResponse(BaseModel result, List<BaseModel> list) {
                         BaseModel customer = DataUtil.rebuiltCustomer(result, false);
                         CustomSQL.setBaseModel(Constants.CUSTOMER, customer);
 
                         Transaction.gotoCustomerActivity();
+
                     }
 
                     @Override
                     public void onError(String error) {
 
                     }
-                }, true, true);
+                }, true).execute();
+
+//                CustomerConnect.GetCustomerDetail(s, new CallbackCustom() {
+//                    @Override
+//                    public void onResponse(BaseModel result) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(String error) {
+//
+//                    }
+//                }, true, true);
             }
         });
         Util.createLinearRV(rvBill, adapter);

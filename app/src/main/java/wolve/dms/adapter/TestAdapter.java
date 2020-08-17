@@ -100,20 +100,20 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.ProductGroupAd
         holder.text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CustomerConnect.GetCustomerDetail(mData.get(position).getString("id"), new CallbackCustom() {
-                    @Override
-                    public void onResponse(BaseModel result) {
-                        BaseModel customer = DataUtil.rebuiltCustomer(result, false);
-                        CustomSQL.setBaseModel(Constants.CUSTOMER, customer);
-
-                        Transaction.gotoCustomerActivity();
-                    }
-
-                    @Override
-                    public void onError(String error) {
-
-                    }
-                }, true, true);
+//                CustomerConnect.GetCustomerDetail(mData.get(position).getString("id"), new CallbackCustom() {
+//                    @Override
+//                    public void onResponse(BaseModel result) {
+//                        BaseModel customer = DataUtil.rebuiltCustomer(result, false);
+//                        CustomSQL.setBaseModel(Constants.CUSTOMER, customer);
+//
+//                        Transaction.gotoCustomerActivity();
+//                    }
+//
+//                    @Override
+//                    public void onError(String error) {
+//
+//                    }
+//                }, true, true);
             }
         });
 
@@ -163,20 +163,20 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.ProductGroupAd
                 if (result) {
 
 
-                    CustomerConnect.PostPay(param, new CallbackCustom() {
-                        @Override
-                        public void onResponse(BaseModel result) {
-
-                            Util.showToast("true");
-
-                        }
-
-                        @Override
-                        public void onError(String error) {
-
-                        }
-
-                    }, true);
+//                    CustomerConnect.PostPay(param, new CallbackCustom() {
+//                        @Override
+//                        public void onResponse(BaseModel result) {
+//
+//                            Util.showToast("true");
+//
+//                        }
+//
+//                        @Override
+//                        public void onError(String error) {
+//
+//                        }
+//
+//                    }, true);
 
 
                 }

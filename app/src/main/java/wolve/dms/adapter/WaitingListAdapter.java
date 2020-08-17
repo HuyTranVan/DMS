@@ -13,15 +13,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.CustomerConnect;
-import wolve.dms.callback.CallbackCustom;
+import wolve.dms.apiconnect.ApiUtil;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.callback.CallbackInt;
+import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.activities.BaseActivity.createPostParam;
 
 /**
  * Created by tranhuy on 5/24/17.
@@ -66,24 +68,44 @@ public class WaitingListAdapter extends RecyclerView.Adapter<WaitingListAdapter.
         holder.tvDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String param = String.format(Api_link.CUSTOMER_TEMP_NEW_PARAM, mData.get(position).getInt("waiting_id"), User.getId());
-                CustomerConnect.CreateCustomerWaitingList(param, new CallbackCustom() {
+                BaseModel param = createPostParam(ApiUtil.CUSTOMER_TEMP_NEW(),
+                        String.format(ApiUtil.CUSTOMER_TEMP_NEW_PARAM, mData.get(position).getInt("waiting_id"), User.getId()), false,
+                        false);
+                new GetPostMethod(param, new NewCallbackCustom() {
                     @Override
-                    public void onResponse(BaseModel result) {
+                    public void onResponse(BaseModel result, List<BaseModel> list) {
                         if (result.getBoolean("success")) {
                             mData.remove(position);
                             mListener.onResponse(mData.size());
                             notifyDataSetChanged();
-
                         }
-
                     }
 
                     @Override
                     public void onError(String error) {
 
                     }
-                }, false);
+                },false).execute();
+
+
+//                String param = String.format(Api_link.CUSTOMER_TEMP_NEW_PARAM, mData.get(position).getInt("waiting_id"), User.getId());
+//                CustomerConnect.CreateCustomerWaitingList(param, new CallbackCustom() {
+//                    @Override
+//                    public void onResponse(BaseModel result) {
+//                        if (result.getBoolean("success")) {
+//                            mData.remove(position);
+//                            mListener.onResponse(mData.size());
+//                            notifyDataSetChanged();
+//
+//                        }
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(String error) {
+//
+//                    }
+//                }, false);
 
 
             }

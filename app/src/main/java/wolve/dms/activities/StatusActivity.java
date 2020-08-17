@@ -15,10 +15,11 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.StatusAdapter;
-import wolve.dms.apiconnect.StatusConnect;
+import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackClickAdapter;
-import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackDeleteAdapter;
+import wolve.dms.callback.NewCallbackCustom;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Status;
 import wolve.dms.utils.Constants;
@@ -104,17 +105,19 @@ public class StatusActivity extends BaseActivity implements View.OnClickListener
 
 
     protected void loadStatus() {
-        StatusConnect.ListStatus(new CallbackCustomList() {
+        BaseModel param = createGetParam(ApiUtil.STATUS(), true);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(List<BaseModel> results) {
-                createRVProductGroup(results);
+            public void onResponse(BaseModel result, List<BaseModel> list) {
+                createRVProductGroup(list);
             }
 
             @Override
             public void onError(String error) {
 
             }
-        }, true);
+        }, true).execute();
+
     }
 
 

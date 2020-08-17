@@ -15,11 +15,14 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.Import_ProductAdapter;
-import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.apiconnect.ApiUtil;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackCustomList;
+import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.activities.BaseActivity.createGetParam;
 
 /**
  * Created by macos on 9/16/17.
@@ -100,10 +103,11 @@ public class TempImportFragment extends Fragment implements View.OnClickListener
     }
 
     private void reloadImportList() {
-        CustomerConnect.ListImport(0,0, new CallbackCustomList() {
+        BaseModel param = createGetParam(String.format(ApiUtil.IMPORTS(), 0, 20, 0), true);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(List<BaseModel> results) {
-                mActivity.updateTempImportVisibility(results);
+            public void onResponse(BaseModel result, List<BaseModel> list) {
+                mActivity.updateTempImportVisibility(list);
 
                 reloadData();
             }
@@ -112,7 +116,19 @@ public class TempImportFragment extends Fragment implements View.OnClickListener
             public void onError(String error) {
 
             }
-        }, true, true);
+        }, true).execute();
+
+//        CustomerConnect.ListImport(0,0, new CallbackCustomList() {
+//            @Override
+//            public void onResponse(List<BaseModel> results) {
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        }, true, true);
     }
 
 

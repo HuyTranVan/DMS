@@ -11,13 +11,16 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.theartofdev.edmodo.cropper.CropImage;
 
+import java.util.List;
+
 import wolve.dms.R;
-import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.SystemConnect;
-import wolve.dms.callback.CallbackCustom;
+import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.CallbackUri;
+import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.customviews.CInputForm;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
+import wolve.dms.apiconnect.libraries.UploadCloudaryMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.utils.CustomBottomDialog;
@@ -70,19 +73,20 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void initialData() {
-        SystemConnect.GetDistributorDetail(Distributor.getDistributorId(), new CallbackCustom() {
+        BaseModel param = createGetParam(ApiUtil.DISTRIBUTOR_DETAIL() + Distributor.getDistributorId(), false);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(BaseModel result) {
+            public void onResponse(BaseModel result, List<BaseModel> list) {
                 currentDistributor = result;
                 updateView(currentDistributor);
-
             }
 
             @Override
             public void onError(String error) {
 
             }
-        }, true);
+        }, true).execute();
+
 
     }
 
@@ -173,13 +177,21 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
 
     private void submitDistributor() {
         if (imageChangeUri != null) {
-            SystemConnect.uploadImage(Util.getRealPathFromCaptureURI(imageChangeUri), new CallbackString() {
+            new UploadCloudaryMethod(Util.getRealPathFromCaptureURI(imageChangeUri), new CallbackString() {
                 @Override
-                public void Result(String s) {
-                    updateDistributor(s);
-
+                public void Result(String url) {
+                    updateDistributor(url);
                 }
-            });
+
+            }).execute();
+
+//            SystemConnect.uploadImage(Util.getRealPathFromCaptureURI(imageChangeUri), new CallbackString() {
+//                @Override
+//                public void Result(String s) {
+//                    updateDistributor(s);
+//
+//                }
+//            });
 
         } else {
             updateDistributor(imgURL);
@@ -189,17 +201,19 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void updateDistributor(String imageLink) {
-        String param = String.format(Api_link.DISTRIBUTOR_CREATE_PARAM, currentDistributor.getInt("id") == 0 ? "" : String.format("id=%s&", currentDistributor.getString("id")),
-                Util.encodeString(tvCompany.getText().toString()),
-                Util.encodeString(tvAddress.getText().toString()),
-                Util.encodeString(tvPhone.getText().toString().replace(".", "")),
-                Util.encodeString(tvSite.getText().toString()),
-                Util.encodeString(tvThanks.getText().toString()),
-                imageLink);
-
-        SystemConnect.CreateDistributor(param, new CallbackCustom() {
+        BaseModel param = createPostParam(ApiUtil.DISTRIBUTOR_NEW(),
+                String.format(ApiUtil.DISTRIBUTOR_CREATE_PARAM, currentDistributor.getInt("id") == 0 ? "" : String.format("id=%s&", currentDistributor.getString("id")),
+                        Util.encodeString(tvCompany.getText().toString()),
+                        Util.encodeString(tvAddress.getText().toString()),
+                        Util.encodeString(tvPhone.getText().toString().replace(".", "")),
+                        Util.encodeString(tvSite.getText().toString()),
+                        Util.encodeString(tvThanks.getText().toString()),
+                        imageLink),
+                false,
+                false);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(BaseModel result) {
+            public void onResponse(BaseModel result, List<BaseModel> list) {
                 Transaction.gotoHomeActivityRight(true);
             }
 
@@ -207,7 +221,8 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
             public void onError(String error) {
 
             }
-        }, true);
+        }, true).execute();
+
     }
 
     @Override

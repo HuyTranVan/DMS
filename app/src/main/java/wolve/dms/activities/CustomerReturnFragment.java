@@ -21,14 +21,21 @@ import java.util.List;
 import wolve.dms.R;
 import wolve.dms.adapter.DebtAdapter;
 import wolve.dms.adapter.ProductReturnAdapter;
+import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.apiconnect.libraries.CustomGetPostListMethod;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.callback.CallbackCustom;
+import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackListCustom;
+import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.activities.BaseActivity.createPostParam;
 
 /**
  * Created by macos on 9/16/17.
@@ -443,90 +450,79 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
 //    }
 
     private void postUpdateBillReturn(List<BaseModel> listProductReturn, Double sumreturn, BaseModel currentBill, CallbackCustom listener, boolean loading) {
-        String params = DataUtil.newBillParam(mActivity.currentCustomer.getInt("id"),
+        BaseModel param = createPostParam(ApiUtil.BILL_NEW(),
+                DataUtil.newBillJsonParam(mActivity.currentCustomer.getInt("id"),
                 User.getId(),
                 0.0,
                 0.0,
                 listProductReturn,
                 "",
                 User.getId(),
-                currentBill.getInt("id"));
-        CustomerConnect.PostBill(params, new CallbackCustom() {
+                currentBill.getInt("id")),
+                true,
+                false);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(BaseModel billReturn) {
-                listener.onResponse(billReturn);
+            public void onResponse(BaseModel result, List<BaseModel> list) {
+                listener.onResponse(result);
             }
 
             @Override
             public void onError(String error) {
-                Util.showSnackbarError(error);
-                listener.onError(error);
+
             }
-        }, false);
-
-//        String note = Security.decrypt(currentBill.getString("note"));
-
-//        JSONObject noteObject = new JSONObject();
-//        JSONObject noteContent = new JSONObject();
-//        try {
-//            noteContent.put("id", currentBill.getString("id"));
-//            noteContent.put("createAt", currentBill.getLong("createAt"));
-//            noteObject.put(Constants.ISBILLRETURN, noteContent);
-//
-//        } catch (JSONException e) {
-//
-//        }
-
-        //String note = DataUtil.createBillNote(currentBill.getString("note"), Constants.ISBILLRETURN, noteContent);
-
-//                String params = DataUtil.updateBillHaveReturnParam(mActivity.currentCustomer.getInt("id"), currentBill, billReturn, sumreturn);
-//
-//                CustomerConnect.PostBill(params, new CallbackCustom() {
-//                    @Override
-//                    public void onResponse(BaseModel currbill) {
-//                        listener.onRespone(currbill, billReturn);
-//
-//                    }
-//
-//                    @Override
-//                    public void onError(String error) {
-//                        Util.showSnackbarError(error);
-//                        listener.onError(error);
-//                    }
-//                }, loading);
-
-    }
-
-
-//    private void postPayment(int customerId, int billid, double paid,double billTotal, CallbackBoolean listener, boolean stoploadding){
-//        CustomerConnect.PostPay(DataUtil.createPostPaymentParam(customerId, paid, billid, billTotal, false), new CallbackCustom() {
+        }, false).execute();
+//        CustomerConnect.PostBill(params, new CallbackCustom() {
 //            @Override
-//            public void onResponse(BaseModel result) {
-//                listener.onRespone(true);
+//            public void onResponse(BaseModel billReturn) {
+//
 //            }
 //
 //            @Override
 //            public void onError(String error) {
-//                listener.onRespone(false);
+//                Util.showSnackbarError(error);
+//                listener.onError(error);
 //            }
-//
-//        }, stoploadding);
-//
-//    }
+//        }, false);
+
+
+    }
+
 
     private void postListPayment(List<String> listParam, CallbackListCustom listener) {
-        CustomerConnect.PostListPay(listParam, new CallbackListCustom() {
-            @Override
-            public void onResponse(List result) {
-                listener.onResponse(result);
+        List<BaseModel> params = new ArrayList<>();
 
+        for (String itemdetail: listParam){
+            BaseModel item = createPostParam(ApiUtil.PAY_NEW(), itemdetail, false, false);
+            params.add(item);
+        }
+
+        new CustomGetPostListMethod(params, new CallbackCustomList() {
+            @Override
+            public void onResponse(List<BaseModel> results) {
+                listener.onResponse(results);
             }
 
             @Override
             public void onError(String error) {
 
-            }//
-        }, true);
+            }
+        }, true).execute();
+
+
+
+//        CustomerConnect.PostListPay(listParam, new CallbackListCustom() {
+//            @Override
+//            public void onResponse(List result) {
+//                listener.onResponse(result);
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }//
+//        }, true);
     }
 
 

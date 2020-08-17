@@ -23,8 +23,8 @@ import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.List;
 
-import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.SheetConnect;
+import wolve.dms.apiconnect.ApiUtil;
+import wolve.dms.apiconnect.libraries.GDriveMethod;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
 
@@ -52,13 +52,13 @@ public class GoogleSheetCreateUpdateTab extends AsyncTask<Void, Void, List<List<
     }
 
     private Credential getCredentials() {
-        InputStream in = SheetConnect.class.getResourceAsStream(Api_link.GOOGLESHEET_CREDENTIALS_FILE_PATH);
+        InputStream in = GDriveMethod.class.getResourceAsStream(ApiUtil.GOOGLESHEET_CREDENTIALS_FILE_PATH);
         try {
             GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
             GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                     HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-                    .setDataStoreFactory(new FileDataStoreFactory(Util.createCustomFolder(Api_link.GOOGLESHEET_TOKENS_PATH)))
+                    .setDataStoreFactory(new FileDataStoreFactory(Util.createCustomFolder(ApiUtil.GOOGLESHEET_TOKENS_PATH)))
                     .setAccessType("offline")
                     .build();
 

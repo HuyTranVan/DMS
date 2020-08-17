@@ -14,13 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.SystemConnect;
-import wolve.dms.callback.CallbackCustom;
+import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackString;
+import wolve.dms.callback.NewCallbackCustom;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.activities.BaseActivity.createPostParam;
 
 
 /**
@@ -104,12 +106,13 @@ public class InventoryEditAdapter extends RecyclerView.Adapter<InventoryEditAdap
                 new CallbackString() {
                     @Override
                     public void Result(String s) {
-                        String param = String.format(Api_link.INVENTORY_EDIT_QUANTITY_PARAM,
-                                mData.get(pos).getInt("id"),
-                                Integer.parseInt(s));
-                        SystemConnect.UpdateInventoryQuantity(param, new CallbackCustom() {
+                        BaseModel param = createPostParam(ApiUtil.INVENTORY_EDIT_QUANTITY(),
+                                String.format(ApiUtil.INVENTORY_EDIT_QUANTITY_PARAM, mData.get(pos).getInt("id"), s),
+                                false,
+                                false);
+                        new GetPostMethod(param, new NewCallbackCustom() {
                             @Override
-                            public void onResponse(BaseModel result) {
+                            public void onResponse(BaseModel result, List<BaseModel> list) {
                                 mData.get(pos).put("currentQuantity", result.getInt("quantity"));
                                 notifyItemChanged(pos);
 
@@ -120,7 +123,18 @@ public class InventoryEditAdapter extends RecyclerView.Adapter<InventoryEditAdap
                             public void onError(String error) {
 
                             }
-                        }, true);
+                        }, true).execute();
+//                        SystemConnect.UpdateInventoryQuantity(param, new CallbackCustom() {
+//                            @Override
+//                            public void onResponse(BaseModel result) {
+//
+//                            }
+//
+//                            @Override
+//                            public void onError(String error) {
+//
+//                            }
+//                        }, true);
 
 
                     }

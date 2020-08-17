@@ -18,13 +18,15 @@ import androidx.fragment.app.Fragment;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 import wolve.dms.R;
-import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.apiconnect.ApiUtil;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
+import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.customviews.CButtonVertical;
 import wolve.dms.customviews.CInputForm;
 import wolve.dms.models.BaseModel;
@@ -33,6 +35,8 @@ import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.activities.BaseActivity.createPostParam;
 
 /**
  * Created by macos on 9/16/17.
@@ -470,7 +474,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
     }
 
     private String createParamCheckin(BaseModel customer, int statusId, String note) {
-        String params = String.format(Api_link.SCHECKIN_CREATE_PARAM, customer.getInt("id"),
+        String params = String.format(ApiUtil.SCHECKIN_CREATE_PARAM, customer.getInt("id"),
                 statusId,
                 Util.encodeString(note),
                 User.getId());
@@ -478,19 +482,31 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         return params;
     }
 
-    protected void submitCheckin(String param, CallbackBoolean listener) {
-        CustomerConnect.PostCheckin(param, new CallbackCustom() {
+    protected void submitCheckin(String paramdetail, CallbackBoolean listener) {
+        BaseModel param = createPostParam(ApiUtil.CHECKIN_NEW(), paramdetail, false, false);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(BaseModel result) {
+            public void onResponse(BaseModel result, List<BaseModel> list) {
                 listener.onRespone(true);
-
             }
 
             @Override
             public void onError(String error) {
 
             }
-        }, true);
+        },true).execute();
+//        CustomerConnect.PostCheckin(param, new CallbackCustom() {
+//            @Override
+//            public void onResponse(BaseModel result) {
+//
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        }, true);
     }
 
     private void showDialogNote() {

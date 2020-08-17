@@ -26,17 +26,18 @@ import java.util.List;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import wolve.dms.R;
 import wolve.dms.adapter.Customer_ViewpagerAdapter;
-import wolve.dms.apiconnect.Api_link;
+import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.apiconnect.CustomerConnect;
+import wolve.dms.apiconnect.libraries.CustomGetPostListMethod;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackCustom;
+import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.libraries.FitScrollWithFullscreen;
-import wolve.dms.libraries.connectapi.CustomGetPostMethod;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
@@ -419,28 +420,41 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         CustomCenterDialog.alertWithCancelButton(null, String.format("Xóa khách hàng %s", tvTitle.getText().toString()), "ĐỒNG Ý", "HỦY", new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
-                CustomerConnect.DeleteCustomer(currentCustomer.getString("id"), new CallbackCustom() {
+                BaseModel param = createGetParam(ApiUtil.CUSTOMER_DELETE() + currentCustomer.getString("id"), false);
+                new GetPostMethod(param, new NewCallbackCustom() {
                     @Override
-                    public void onResponse(BaseModel result) {
-                        Util.getInstance().stopLoading(true);
+                    public void onResponse(BaseModel result, List<BaseModel> list) {
                         currentCustomer.put("deleted", true);
                         CustomSQL.setString(Constants.CUSTOMER, currentCustomer.BaseModelstoString());
 
                         Util.showToast("Xóa thành công!");
                         returnPreviousScreen(currentCustomer.BaseModelstoString());
-
-
                     }
 
                     @Override
                     public void onError(String error) {
-                        Util.getInstance().stopLoading(true);
-                        Constants.throwError(error);
 
                     }
+                }, true).execute();
 
-
-                }, true);
+//                CustomerConnect.DeleteCustomer(, new CallbackCustom() {
+//                    @Override
+//                    public void onResponse(BaseModel result) {
+//                        Util.getInstance().stopLoading(true);
+//
+//
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(String error) {
+//                        Util.getInstance().stopLoading(true);
+//                        Constants.throwError(error);
+//
+//                    }
+//
+//
+//                }, true);
             }
         });
 
@@ -534,7 +548,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 //            status = new BaseModel(customer.getJsonObject("status")).getInt("id");
 //        }
 
-        String param = String.format(Api_link.CUSTOMER_CREATE_PARAM, String.format("id=%s&", customer.getString("id")),
+        String param = String.format(ApiUtil.CUSTOMER_CREATE_PARAM, String.format("id=%s&", customer.getString("id")),
                 Util.encodeString(customer.getString("name")),//name
                 Util.encodeString(customer.getString("signBoard")),//signBoard
                 Util.encodeString(customer.getString("address")), //address
@@ -553,7 +567,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
         );
 
-        new CustomGetPostMethod(Api_link.createPostParam(Api_link.CUSTOMER_NEW(), param, false, false),
+        new GetPostMethod(createPostParam(ApiUtil.CUSTOMER_NEW(), param, false, false),
                 new NewCallbackCustom() {
                     @Override
                     public void onResponse(BaseModel result, List<BaseModel> list) {
@@ -568,21 +582,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                     }
                 }, false).execute();
 
-//        CustomerConnect.CreateCustomer(param, new CallbackCustom() {
-//            @Override
-//            public void onResponse(BaseModel result) {
-//                smLoading.setVisibility(View.INVISIBLE);
-//                listener.onRespone(true);
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//                smLoading.setVisibility(View.INVISIBLE);
-//                Util.showSnackbar("Không thể lưu thay đổi của khách hàng", null, null);
-//
-//            }
-//        }, false);
     }
 
     protected void openReturnFragment(BaseModel bill) {
@@ -598,21 +597,36 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     protected void reloadCustomer(String id) {
         haschange = true;
-        CustomerConnect.GetCustomerDetail(id, new CallbackCustom() {
+        BaseModel param = createGetParam(ApiUtil.CUSTOMER_GETDETAIL() + id, false);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(final BaseModel result) {
+            public void onResponse(BaseModel result, List<BaseModel> list) {
                 BaseModel customer = DataUtil.rebuiltCustomer(result, false);
                 CustomSQL.setBaseModel(Constants.CUSTOMER, customer);
                 updateView(customer);
-
-
             }
 
             @Override
             public void onError(String error) {
-                Util.showSnackbarError(error);
+
             }
-        }, true, false);
+        }, true).execute();
+
+//        CustomerConnect.GetCustomerDetail(id, new CallbackCustom() {
+//            @Override
+//            public void onResponse(final BaseModel result) {
+//                BaseModel customer = DataUtil.rebuiltCustomer(result, false);
+//                CustomSQL.setBaseModel(Constants.CUSTOMER, customer);
+//                updateView(customer);
+//
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                Util.showSnackbarError(error);
+//            }
+//        }, true, false);
 
     }
 
@@ -643,15 +657,28 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 new CallbackDouble() {
                     @Override
                     public void Result(Double d) {
-                        String param = DataUtil.createPostPaymentParam(currentCustomer.getInt("id"),
-                                User.getId(),
-                                d * -1,
-                                0,
-                                "Trả chiết khấu",
+                        BaseModel param = createPostParam(ApiUtil.PAY_NEW(),
+                                String.format(ApiUtil.PAY_PARAM,
+                                        currentCustomer.getInt("id"),
+                                        String.valueOf(Math.round(d * -1)),
+                                        0,
+                                        User.getId(),
+                                        Util.encodeString("Trả chiết khấu"),
+                                         0,
+                                        User.getId()),
+                                false,
                                 false);
-                        CustomerConnect.PostPay(param, new CallbackCustom() {
+
+//                                DataUtil.createPostPaymentParam(currentCustomer.getInt("id"),
+//                                User.getId(),
+//                                d * -1,
+//                                0,
+//                                "Trả chiết khấu",
+//                                false);
+
+                        new GetPostMethod(param, new NewCallbackCustom() {
                             @Override
-                            public void onResponse(BaseModel result) {
+                            public void onResponse(BaseModel result, List<BaseModel> list) {
                                 reloadCustomer(currentCustomer.getString("id"));
                             }
 
@@ -659,24 +686,54 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                             public void onError(String error) {
 
                             }
-                        }, true);
+                        }, true).execute();
+
+//                        CustomerConnect.PostPay(param, new CallbackCustom() {
+//                            @Override
+//                            public void onResponse(BaseModel result) {
+//
+//                            }
+//
+//                            @Override
+//                            public void onError(String error) {
+//
+//                            }
+//                        }, true);
                     }
                 });
     }
 
     private void postPayToServer(List<String> listParam) {
-        CustomerConnect.PostListPay(listParam, new CallbackListCustom() {
-            @Override
-            public void onResponse(List result) {
-                reloadCustomer(currentCustomer.getString("id"));
+        List<BaseModel> params = new ArrayList<>();
 
+        for (String itemdetail: listParam){
+            BaseModel item = createPostParam(ApiUtil.PAY_NEW(), itemdetail, false, false);
+            params.add(item);
+        }
+
+        new CustomGetPostListMethod(params, new CallbackCustomList() {
+            @Override
+            public void onResponse(List<BaseModel> results) {
+                reloadCustomer(currentCustomer.getString("id"));
             }
 
             @Override
             public void onError(String error) {
 
-            }//
-        }, true);
+            }
+        }, true).execute();
+//        CustomerConnect.PostListPay(listParam, new CallbackListCustom() {
+//            @Override
+//            public void onResponse(List result) {
+//                reloadCustomer(currentCustomer.getString("id"));
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }//
+//        }, true);
     }
 
     protected void printDebtBills() {

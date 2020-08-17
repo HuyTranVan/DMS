@@ -15,10 +15,11 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.WarehouseAdapter;
-import wolve.dms.apiconnect.SystemConnect;
+import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackObject;
+import wolve.dms.callback.NewCallbackCustom;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
@@ -145,18 +146,20 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
     }
 
     protected void loadDepot() {
-        SystemConnect.ListWarehouse(true, new CallbackCustomList() {
+        BaseModel param = createGetParam(ApiUtil.WAREHOUSES(), true);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(List<BaseModel> results) {
-                createRVDepot(results);
-
+            public void onResponse(BaseModel result, List<BaseModel> list) {
+                createRVDepot(list);
             }
 
             @Override
             public void onError(String error) {
 
             }
-        }, true);
+        }, true).execute();
+
+
     }
 
     private void createRVDepot(List<BaseModel> list) {

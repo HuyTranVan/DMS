@@ -459,7 +459,7 @@ public class Util {
             public void run() {
                 Util.showKeyboard(view);
             }
-        }, 200);
+        }, 1000);
     }
 
     public static void showKeyboardEditTextDelay(EditText view) {
@@ -596,39 +596,6 @@ public class Util {
         return isValid;
     }
 
-//    public static ArrayList<String> getAllShownImagesPath() {
-//        Uri uri;
-//        Cursor cursor;
-//        int column_index_data, column_index_folder_name;
-//        ArrayList<String> listOfAllImages = new ArrayList<String>();
-//
-//        String absolutePathOfImage = null;
-//        uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-//
-//        String[] projection = {MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME};
-//
-//        cursor = Util.getInstance().getCurrentActivity().getContentResolver().query(uri, projection, null, null, null);
-//
-//        column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-//        column_index_folder_name = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
-//        while (cursor.moveToNext()) {
-//            absolutePathOfImage = cursor.getString(column_index_data);
-//            if (absolutePathOfImage.contains(".png") | absolutePathOfImage.contains(".PNG")
-//                    | absolutePathOfImage.contains(".jpg") | absolutePathOfImage.contains(".JPG")
-//                    | absolutePathOfImage.contains(".jpeg") | absolutePathOfImage.contains(".JPEG")) {
-//
-//
-//                listOfAllImages.add(absolutePathOfImage);
-//            }
-//
-//        }
-//
-////        ArrayList<String> tempArrayString = new ArrayList<String>(listOfAllImages);
-//        Collections.reverse(listOfAllImages);
-//
-//        return listOfAllImages;
-//    }
-
     public static File createCustomFolder(String name) {
         File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), Constants.APP_DIRECTORY);
 
@@ -639,66 +606,6 @@ public class Util {
         }
         return new File(mediaStorageDir.getPath() + File.separator + name);
     }
-
-//    public static File createCustomImageFile() {
-//        File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), Constants.APP_DIRECTORY);
-//
-//        if (!mediaStorageDir.exists()) {
-//            if (!mediaStorageDir.mkdirs()) {
-//                return null;
-//            }
-//        }
-//        File imageFile = new File(mediaStorageDir.getPath() + File.separator + "Images");
-//        if (!imageFile.exists()) {
-//            if (!imageFile.mkdirs()) {
-//                return null;
-//            }
-//        }
-//
-//        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
-//        return new File(imageFile.getPath() + File.separator + String.format("IMG_%s.jpg", timeStamp));
-//    }
-
-//    public static File createCustomImageFile(String name, boolean storeCacheFile) {
-//        String imageFileName = String.format("IMG_%s.jpg", name);
-//        if (Build.VERSION.SDK_INT >=29){
-//            if (!storeCacheFile){
-//                return new File(Util.getInstance().getCurrentActivity().getFilesDir(), imageFileName);
-//
-//            }else {
-//                try {
-//                    File.createTempFile(imageFileName, null, Util.getInstance().getCurrentActivity().getCacheDir());
-//                    return new File(Util.getInstance().getCurrentActivity().getCacheDir(), imageFileName);
-//
-//                } catch (IOException e) {
-//                    //e.printStackTrace();
-//                    Util.showSnackbar("Không thể lưu hình ảnh", null, null);
-//                    return null;
-//                }
-//
-//
-//            }
-//
-//
-//        }else {
-//            File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), Constants.APP_DIRECTORY);
-//            if (!mediaStorageDir.exists()) {
-//                if (!mediaStorageDir.mkdirs()) {
-//                    return null;
-//                }
-//            }
-//
-//            File imageFile = new File(mediaStorageDir.getPath() + File.separator + "Images");
-//            if (!imageFile.exists()) {
-//                if (!imageFile.mkdirs()) {
-//                    return null;
-//                }
-//            }
-//
-//            return new File(imageFile.getPath() + File.separator + imageFileName);
-//        }
-//
-//    }
 
     public static Uri storeImage(Bitmap bitmap, String folderName, String imageGroup, boolean showTime) {
         String imageFileName = String.format("IMG_%s%s.png", imageGroup, showTime? "_" + Util.CurrentMonthYearHourNotBlank() : "");

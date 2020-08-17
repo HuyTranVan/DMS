@@ -32,7 +32,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.cloudinary.Api;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.location.LocationListener;
@@ -57,13 +56,11 @@ import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import wolve.dms.R;
 import wolve.dms.adapter.CustomWindowAdapter;
 import wolve.dms.adapter.Customer_SearchAdapter;
-import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.CustomerConnect;
-import wolve.dms.apiconnect.LocationConnect;
+import wolve.dms.apiconnect.ApiUtil;
+import wolve.dms.apiconnect.libraries.GMapGetMethod;
 import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackLong;
 import wolve.dms.callback.CallbackObject;
@@ -71,8 +68,7 @@ import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.LatlngListener;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.customviews.CButton;
-import wolve.dms.libraries.Contacts;
-import wolve.dms.libraries.connectapi.CustomGetPostMethod;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Customer;
 import wolve.dms.models.Distributor;
@@ -398,13 +394,13 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     }
 
     private void loadCustomersByDistrict(String district) {
-        BaseModel param = Api_link.createPostParam(
-                Api_link.CUSTOMERS(1, 500),
+        BaseModel param = createPostParam(
+                ApiUtil.CUSTOMERS(1, 500),
                 "district=" + Util.encodeString(district),
                 false,
                 true);
 
-        new CustomGetPostMethod(param, new NewCallbackCustom() {
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
                 List<BaseModel> tempCustomers = new ArrayList<>();
@@ -442,11 +438,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     private void loadCustomersByLocation(final Boolean clearMap, Double lat, Double lng) {
         progressLoading.setVisibility(View.VISIBLE);
-        BaseModel param = Api_link.createGetParam(
-                Api_link.CUSTOMERS_NEAREST(Util.encodeString(String.valueOf(lat)), Util.encodeString(String.valueOf(lng)), 1, 20),
+        BaseModel param = createGetParam(
+                ApiUtil.CUSTOMERS_NEAREST(Util.encodeString(String.valueOf(lat)), Util.encodeString(String.valueOf(lng)), 1, 20),
                 true);
 
-        new CustomGetPostMethod(param, new NewCallbackCustom() {
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
                 progressLoading.setVisibility(View.GONE);
@@ -916,7 +912,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         getAddressFromLatlng(lat, lng, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result1) {
-
                 postCustomerFast(shoptype, shopname, phone, lat, lng, result1, new CallbackCustom() {
                     @Override
                     public void onResponse(BaseModel result) {
@@ -932,7 +927,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                     public void onError(String error) {
                         Log.e("errrororr", error);
                     }
-                }, true);
+                });
             }
 
             @Override
@@ -945,47 +940,24 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     }
 
     private void getAddressFromLatlng(Double lat, Double lng, final CallbackCustom mListener, Boolean stopLoading) {
-        LocationConnect.getAddressFromLocation(lat, lng, new CallbackCustom() {
+        new GMapGetMethod(lat, lng, new NewCallbackCustom() {
             @Override
-            public void onResponse(BaseModel result) {
+            public void onResponse(BaseModel result, List<BaseModel> list) {
                 mListener.onResponse(MapUtil.getAddressFromMapResult(result));
+
             }
 
             @Override
             public void onError(String error) {
 
             }
-        }, stopLoading);
+        }, true).execute();
+
     }
 
-    private void postCustomerFast(int shoptype, String shopName, String phone, Double lat, Double lng, BaseModel objectAdress, final CallbackCustom mListener, Boolean stopLoading) {
-//        //BaseModel customer = new BaseModel();
-//        customer.put("id", "0");
-//        customer.put("shopType", shoptype);
-//        customer.put("signBoard", shopName);
-//        customer.put("name", "Anh " + shopName.substring(shopName.lastIndexOf(" ") + 1));
-//        customer.put("phone", phone);
-//        customer.put("note", "");
-//        customer.put("lat", lat);
-//        customer.put("lng", lng);
-//        customer.put("volumeEstimate", "10");
-//        customer.put("status_id", 0); // new customer
-//        customer.put("address", objectAdress.getString("address"));
-//        customer.put("street", objectAdress.getString("street"));
-//        customer.put("district", objectAdress.getString("district"));
-//        customer.put("province", objectAdress.getString("province"));
-//        customer.put("checkinCount", 0);
-//
-//
-//        int status = 0;
-//        if (customer.hasKey("status_id")) {
-//            status = customer.getInt("status_id");
-//        } else {
-//            status = new BaseModel(customer.getJsonObject("status")).getInt("id");
-//        }
-        //customer.put("currentDebt", currentdebt);
-
-        String param = String.format(Api_link.CUSTOMER_CREATE_PARAM, "",
+    private void postCustomerFast(int shoptype, String shopName, String phone, Double lat, Double lng, BaseModel objectAdress, final CallbackCustom mListener) {
+        BaseModel param = createPostParam(ApiUtil.CUSTOMER_NEW(),String.format(ApiUtil.CUSTOMER_CREATE_PARAM,
+                "",
                 Util.encodeString("Anh " + shopName.substring(shopName.lastIndexOf(" ") + 1)),//name
                 Util.encodeString(shopName),//signBoard
                 Util.encodeString(objectAdress.getString("address")), //address
@@ -1000,14 +972,13 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 Util.encodeString(String.valueOf(shoptype)), //shopType
                 0, //currentStatusId
                 Distributor.getDistributorId(),//DistributorId
-                0
+                0),
+                false,
+                false);
 
-        );
 
 
-
-        new CustomGetPostMethod(Api_link.createPostParam(Api_link.CUSTOMER_NEW(), param, false, false),
-                new NewCallbackCustom() {
+        new GetPostMethod(param, new NewCallbackCustom() {
                     @Override
                     public void onResponse(BaseModel result, List<BaseModel> list) {
                         mListener.onResponse(result);
@@ -1017,18 +988,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                     public void onError(String error) {
                         mListener.onError(error);
                     }
-                }, true);
-//        CustomerConnect.CreateCustomer(CustomerConnect.createParamCustomer(customer), new CallbackCustom() {
-//            @Override
-//            public void onResponse(BaseModel result) {
-//                mListener.onResponse(result);
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//                mListener.onError(error);
-//            }
-//        }, stopLoading);
+                }, true).execute();
+
 
     }
 
@@ -1114,9 +1075,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
         progressLoadCustomer.setVisibility(View.VISIBLE);
         lnSheetBody.setOnClickListener(null);
-        CustomerConnect.GetCustomerDetail(customer.getString("id"), new CallbackCustom() {
+
+        BaseModel param = createGetParam(ApiUtil.CUSTOMER_GETDETAIL() + customer.getString("id"), false);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(final BaseModel result) {
+            public void onResponse(BaseModel result, List<BaseModel> list) {
                 progressLoadCustomer.setVisibility(View.GONE);
                 BaseModel cust = DataUtil.rebuiltCustomer(result, false);
                 CustomSQL.setBaseModel(Constants.CUSTOMER, cust);
@@ -1167,14 +1130,29 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                         }
                     }
                 });
+
+
             }
 
             @Override
             public void onError(String error) {
                 progressLoadCustomer.setVisibility(View.GONE);
-                Util.showSnackbarError(error);
             }
-        }, false, false);
+        }, true).execute();
+
+
+//        CustomerConnect.GetCustomerDetail(, new CallbackCustom() {
+//            @Override
+//            public void onResponse(final BaseModel result) {
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                progressLoadCustomer.setVisibility(View.GONE);
+//                Util.showSnackbarError(error);
+//            }
+//        }, false, false);
 
 
         btnCall.setOnClickListener(new View.OnClickListener() {
@@ -1211,11 +1189,12 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         btnAddList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String param = String.format(Api_link.CUSTOMER_TEMP_NEW_PARAM, customer.getInt("id"), User.getId());
-                CustomerConnect.CreateCustomerWaitingList(param, new CallbackCustom() {
+                BaseModel param = createPostParam(ApiUtil.CUSTOMER_TEMP_NEW(),
+                        String.format(ApiUtil.CUSTOMER_TEMP_NEW_PARAM, customer.getInt("id"), User.getId()), false,
+                false);
+                new GetPostMethod(param, new NewCallbackCustom() {
                     @Override
-                    public void onResponse(BaseModel result) {
-
+                    public void onResponse(BaseModel result, List<BaseModel> list) {
                         if (result.getBoolean("success")) {
                             BaseModel customer = CustomSQL.getBaseModel(Constants.CUSTOMER);
                             customer.put("waiting_list", result.getBoolean("data"));
@@ -1228,8 +1207,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                     public void onError(String error) {
 
                     }
-                }, false);
-
+                },false).execute();
 
             }
         });
@@ -1262,13 +1240,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     }
 
     private void getWaitingList() {
-
-
-
-        CustomerConnect.getWaitingList(new CallbackCustomList() {
+        BaseModel param = createGetParam(ApiUtil.CUSTOMER_WAITING_LIST(), true);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(List<BaseModel> results) {
-                for (BaseModel model : results) {
+            public void onResponse(BaseModel result, List<BaseModel> list) {
+                for (BaseModel model : list) {
                     listCustomerWaiting.add(buildMarkerByCustomer(model));
                 }
 
@@ -1284,7 +1260,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             public void onError(String error) {
 
             }
-        }, false);
+        }, false).execute();
 
     }
 

@@ -17,20 +17,18 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.Statistical_OrderedAdapter;
-import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.CustomerConnect;
-import wolve.dms.callback.CallbackCustom;
-import wolve.dms.callback.CallbackCustomList;
+import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackListObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.NewCallbackCustom;
-import wolve.dms.libraries.connectapi.CustomGetPostMethod;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
-import wolve.dms.utils.Util;
+
+import static wolve.dms.activities.BaseActivity.createGetParam;
 
 /**
  * Created by macos on 9/16/17.
@@ -94,11 +92,11 @@ public class StatisticalOrderedFragment extends Fragment implements View.OnClick
     }
 
     private void loadListOrdered(int offset, CallbackListObject listener, boolean showloading) {
-        BaseModel param = Api_link.createGetParam(
-                Api_link.CUSTOMER_ORDERED(mActivity.getCurrentUserId(),offset, 20),
+        BaseModel param = createGetParam(
+                ApiUtil.CUSTOMER_ORDERED(mActivity.getCurrentUserId(),offset, 20),
                 true);
 
-        new CustomGetPostMethod(param, new NewCallbackCustom() {
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
                 listener.onResponse(list);
@@ -147,20 +145,35 @@ public class StatisticalOrderedFragment extends Fragment implements View.OnClick
     }
 
     private void openCustomerActivity(String id) {
-        CustomerConnect.GetCustomerDetail(id, new CallbackCustom() {
+        BaseModel param = createGetParam(ApiUtil.CUSTOMER_GETDETAIL() + id, false);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(BaseModel result) {
+            public void onResponse(BaseModel result, List<BaseModel> list) {
                 BaseModel customer = DataUtil.rebuiltCustomer(result, false);
                 CustomSQL.setBaseModel(Constants.CUSTOMER, customer);
 
                 Transaction.gotoCustomerActivity();
+
             }
 
             @Override
             public void onError(String error) {
 
             }
-        }, true, true);
+        }, true).execute();
+
+
+//        CustomerConnect.GetCustomerDetail(id, new CallbackCustom() {
+//            @Override
+//            public void onResponse(BaseModel result) {
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        }, true, true);
     }
 
     private void initScrollListener() {

@@ -16,12 +16,15 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.InventoryEditAdapter;
-import wolve.dms.apiconnect.SystemConnect;
-import wolve.dms.callback.CallbackListCustom;
+import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackListObject;
+import wolve.dms.callback.NewCallbackCustom;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.activities.BaseActivity.createGetParam;
 
 /**
  * Created by macos on 9/16/17.
@@ -95,18 +98,20 @@ public class InventoryEditFragment extends Fragment implements View.OnClickListe
     }
 
     private void loadInventories(int warehouse_id, CallbackListObject listener) {
-        SystemConnect.GetInventoryList(warehouse_id, new CallbackListCustom() {
+        BaseModel param = createGetParam(String.format(ApiUtil.INVENTORIES(), warehouse_id), true);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(List result) {
-                listener.onResponse(result);
-
+            public void onResponse(BaseModel result, List<BaseModel> list) {
+                listener.onResponse(list);
             }
 
             @Override
             public void onError(String error) {
 
             }
-        }, true);
+        }, true).execute();
+
+
 
 
     }

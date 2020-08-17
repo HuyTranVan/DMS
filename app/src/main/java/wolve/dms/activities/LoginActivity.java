@@ -8,11 +8,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import wolve.dms.R;
-import wolve.dms.apiconnect.SystemConnect;
-import wolve.dms.apiconnect.UserConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.libraries.FitScrollWithFullscreen;
+import wolve.dms.apiconnect.libraries.FCMMethod;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomSQL;
@@ -110,7 +109,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             Util.showToast("Vui lòng nhập đủ thông tin");
 
         } else {
-            SystemConnect.getFCMToken(new CallbackString() {
+            FCMMethod.getFCMToken(new CallbackString() {
                 @Override
                 public void Result(String token) {
                     if (!token.equals("")) {

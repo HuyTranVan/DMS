@@ -13,7 +13,6 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.cloudinary.Api;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -21,12 +20,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.apiconnect.Api_link;
-import wolve.dms.apiconnect.UserConnect;
+import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.NewCallbackCustom;
-import wolve.dms.libraries.connectapi.CustomGetPostMethod;
+import wolve.dms.apiconnect.libraries.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomFixSQL;
@@ -206,9 +203,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public void logout(CallbackBoolean listener){
-        BaseModel param = Api_link.createGetParam(Api_link.LOGOUT(), false);
-
-        new CustomGetPostMethod(param, new NewCallbackCustom() {
+        BaseModel param = createGetParam(ApiUtil.LOGOUT(), false);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
                 if (result.getBoolean("success")) {
@@ -238,12 +234,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public void login(final String username, final String pass, String fcm_token, final CallbackBoolean mListener) {
-        BaseModel param = Api_link.createPostParam(Api_link.LOGIN(),
-                String.format(Api_link.LOGIN_PARAM, username, pass, fcm_token),
+        BaseModel param = createPostParam(ApiUtil.LOGIN(),
+                String.format(ApiUtil.LOGIN_PARAM, username, pass, fcm_token),
                 false,
                 false);
 
-        new CustomGetPostMethod(param, new NewCallbackCustom() {
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
             public void onResponse(BaseModel object, List<BaseModel> list) {
                 CustomSQL.setString(Constants.DISTRIBUTOR, object.getString("distributor"));
@@ -280,46 +276,30 @@ public abstract class BaseActivity extends AppCompatActivity {
         }, true).execute();
 
 
-//          String params = String.format(Api_link.LOGIN_PARAM, username, pass, fcm_token);
-//          UserConnect.Login(params, new CallbackCustom() {
-//            @Override
-//            public void onResponse(BaseModel object) {
-//                CustomSQL.setString(Constants.DISTRIBUTOR, object.getString("distributor"));
-//                CustomSQL.setString(Constants.DISTRICT_LIST, object.getString("district"));
-//                CustomSQL.setString(Constants.USER_USERNAME, username);
-//                CustomSQL.setString(Constants.USER_PASSWORD, pass);
-//                CustomSQL.setInt(Constants.VERSION_CODE, CustomSQL.getInt(Constants.VERSION_CODE));
-//                object.removeKey("district");
-//
-//                //saveUser(object);
-//
-//                List<BaseModel> listUser = CustomFixSQL.getListObject(Constants.USER_LIST);
-//                if (!DataUtil.checkDuplicate(listUser, "id", object)) {
-//                    listUser.add(object);
-//                }
-//                CustomFixSQL.setListBaseModel(Constants.USER_LIST, listUser);
-//
-//                object.removeKey("distributor");
-//
-//                CustomSQL.setBaseModel(Constants.USER, object);
-//                if (object.getInt("role") == Constants.ROLE_ADMIN) {
-//                    CustomSQL.setBoolean(Constants.IS_ADMIN, true);
-//                } else {
-//                    CustomSQL.setBoolean(Constants.IS_ADMIN, false);
-//                }
-//
-//
-//                mListener.onRespone(true);
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//                mListener.onRespone(false);
-//
-//            }
-//
-//        }, true, true);
+    }
+
+    public static BaseModel createGetParam(String url, boolean resultIsList) {
+        BaseModel paramResult = new BaseModel();
+        paramResult.put("url", url);
+        paramResult.put("method", "GET");
+        paramResult.put("isjson", false);
+        paramResult.put("param", null);
+        paramResult.put("resultType", resultIsList? Constants.TYPE_ARRAY : Constants.TYPE_OBJECT);
+
+        return paramResult;
+
+    }
+
+    public static BaseModel createPostParam(String url, String param, boolean paramIsJSON,  boolean resultIsList) {
+        BaseModel paramResult = new BaseModel();
+        paramResult.put("url", url);
+        paramResult.put("method", "POST");
+        paramResult.put("isjson", paramIsJSON);
+        paramResult.put("param", param);
+        paramResult.put("resultType", resultIsList? Constants.TYPE_ARRAY : Constants.TYPE_OBJECT);
+
+        return paramResult;
+
     }
 
 }

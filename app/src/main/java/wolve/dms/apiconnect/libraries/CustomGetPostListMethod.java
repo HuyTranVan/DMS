@@ -1,6 +1,7 @@
-package wolve.dms.libraries.connectapi;
+package wolve.dms.apiconnect.libraries;
 
 import android.os.AsyncTask;
+import android.view.View;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -17,7 +18,12 @@ import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
+import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.apiconnect.ApiUtil.getResponeArraySuccess;
+import static wolve.dms.apiconnect.ApiUtil.getResponeObjectSuccess;
+import static wolve.dms.apiconnect.ApiUtil.responeIsSuccess;
 
 /**
  * Created by tranhuy on 7/22/16.
@@ -25,12 +31,27 @@ import wolve.dms.utils.Util;
 public class CustomGetPostListMethod extends AsyncTask<String, Void, List<String>> {
     private CallbackCustomList mListener = null;
     private List<BaseModel> mParams;
+    private CustomGetPostListMethod main;
 
-    public CustomGetPostListMethod(List<BaseModel> listParams, CallbackCustomList listener) {
-        mListener = listener;
+    public CustomGetPostListMethod(List<BaseModel> listParams, CallbackCustomList listener, boolean showLoading) {
+        this.mListener = listener;
         this.mParams = listParams;
-        //this.isJsonType = isJsonType;
+        this.main = this;
 
+        UtilLoading.getInstance().showLoading(showLoading);
+
+        if (!Util.checkInternetConnection()){
+            main.cancel(true);
+            Util.showLongSnackbar("No internet!",
+                    "Try again",
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            new CustomGetPostListMethod(mParams, mListener, showLoading);
+                        }
+                    });
+
+        }
     }
 
     @Override
@@ -61,7 +82,6 @@ public class CustomGetPostListMethod extends AsyncTask<String, Void, List<String
                         wr.writeBytes(mParams.get(i).getString("param"));
                         wr.flush();
 
-                        int responseCode = con.getResponseCode();
                         in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                         String inputLine;
                         StringBuffer response = new StringBuffer();
@@ -129,15 +149,17 @@ public class CustomGetPostListMethod extends AsyncTask<String, Void, List<String
 
     @Override
     protected void onPostExecute(List<String> responses) {
-        List<BaseModel> listResult = new ArrayList<>();
+        UtilLoading.getInstance().stopLoading();
 
+        List<BaseModel> listResult = new ArrayList<>();
         for (int i = 0; i < responses.size(); i++) {
             if (Util.isJSONObject(responses.get(i))) {
                 listResult.add(new BaseModel(responses.get(i)));
 
             } else {
-                listResult.add(new BaseModel());
-                mListener.onError(responses.get(i));
+                Constants.throwError(String.format("#%d error"));
+                listResult.add(null);
+
 
             }
 
