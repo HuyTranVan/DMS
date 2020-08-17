@@ -18,6 +18,7 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.location.Location;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -48,10 +49,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.kaopiz.kprogresshud.KProgressHUD;
-import com.nispok.snackbar.Snackbar;
-import com.nispok.snackbar.SnackbarManager;
-import com.nispok.snackbar.enums.SnackbarType;
-import com.nispok.snackbar.listeners.ActionClickListener;
+
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
@@ -84,6 +82,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import de.mateware.snacky.Snacky;
 import wolve.dms.BuildConfig;
 import wolve.dms.R;
 import wolve.dms.activities.MapsActivity;
@@ -229,32 +228,55 @@ public class Util {
         return true;
     }
 
-    public static void showSnackbar(String content, String actionlabel, ActionClickListener actionListener) {
-        Snackbar snb = Snackbar.with(Util.getInstance().getCurrentActivity().getApplicationContext())
-                .type(SnackbarType.MULTI_LINE) // Set is as a multi-line snackbar
-                .text(content) // text to be displayed
-                .actionColor(Color.parseColor("#2196f3"))
-                .duration(Snackbar.SnackbarDuration.LENGTH_SHORT);
-        if (actionlabel != null) {
-            snb.actionLabel(actionlabel).actionListener(actionListener);
-        }
+    public static void showSnackbar(String content, String actionlabel, View.OnClickListener listener) {
+        Snacky.builder()
+                .setActivity(Util.getInstance().getCurrentActivity())
+                .setActionText(actionlabel)
+                .setActionClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        listener.onClick(v);
+                    }
+                })
+                .setText(content)
+                .setDuration(Snacky.LENGTH_SHORT)
+                .setActionTextColor(getInstance().getCurrentActivity().getResources().getColor(R.color.colorBlue))
+                .build()
+                .show();
 
-        SnackbarManager.show(snb, Util.getInstance().getCurrentActivity()); // where it is displayed
+
+//        if (actionlabel != null) {
+//            snb.actionLabel(actionlabel).actionListener(actionListener);
+//        }
+//
+//        SnackbarManager.show(snb, Util.getInstance().getCurrentActivity()); // where it is displayed
+    }
+
+    public static void showLongSnackbar(String content, String actionlabel, View.OnClickListener  listener) {
+        Snacky.builder()
+                .setActivity(Util.getInstance().getCurrentActivity())
+                .setActionText(actionlabel)
+                .setActionClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        listener.onClick(v);
+                    }
+                })
+                .setText(content)
+                .setDuration(Snacky.LENGTH_LONG)
+                .setActionTextColor(getInstance().getCurrentActivity().getResources().getColor(R.color.colorBlue))
+                .build()
+                .show();
     }
 
     public static void showSnackbarError(String content) {
-        Snackbar snb = Snackbar.with(Util.getInstance().getCurrentActivity().getApplicationContext())
-                .type(SnackbarType.MULTI_LINE) // Set is as a multi-line snackbar
-                .text(content) // text to be displayed
-                .actionColor(Color.parseColor("#2196f3"))
-                .duration(Snackbar.SnackbarDuration.LENGTH_LONG)
-                .actionLabel("REPORT")
-                .actionColor(Util.getInstance().getCurrentActivity().getResources().getColor(R.color.colorBlue))
-                .actionListener(new ActionClickListener() {
-                    @Override
-                    public void onActionClicked(Snackbar snackbar) {
-                        Log.e("click", "yes");
 
+        Snacky.builder()
+                .setActivity(Util.getInstance().getCurrentActivity())
+                .setActionText("REPORT")
+                .setActionClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
                         Transaction.sendEmailReport(String.format("User: %s\nPhone: %s\nCurrentTime: %s\n\nContent: %s",
                                 User.getFullName(),
                                 User.getPhone(),
@@ -262,25 +284,29 @@ public class Util {
                                 content));
 
                     }
-                });
+                })
+                .setText(content)
+                .setDuration(Snacky.LENGTH_SHORT)
+                .setActionTextColor(getInstance().getCurrentActivity().getResources().getColor(R.color.colorBlue))
+                .build()
+                .show();
 
-        SnackbarManager.show(snb, Util.getInstance().getCurrentActivity()); // where it is displayed
     }
 
 
-    public static void showSnackbar(String content, String actionlabel, boolean isIndefinite, ActionClickListener actionListener) {
-        Snackbar snb = Snackbar.with(Util.getInstance().getCurrentActivity().getApplicationContext())
-                .type(SnackbarType.MULTI_LINE) // Set is as a multi-line snackbar
-                .text(content) // text to be displayed
-                .actionColor(Color.parseColor("#2196f3"))
-                .duration(isIndefinite ? Snackbar.SnackbarDuration.LENGTH_INDEFINITE : Snackbar.SnackbarDuration.LENGTH_SHORT);
-        if (actionlabel != null) {
-            snb.actionLabel(actionlabel).actionListener(actionListener);
-        }
-
-
-        SnackbarManager.show(snb, Util.getInstance().getCurrentActivity()); // where it is displayed
-    }
+//    public static void showSnackbar(String content, String actionlabel, boolean isIndefinite, ActionClickListener actionListener) {
+//        Snackbar snb = Snackbar.with(Util.getInstance().getCurrentActivity().getApplicationContext())
+//                .type(SnackbarType.MULTI_LINE) // Set is as a multi-line snackbar
+//                .text(content) // text to be displayed
+//                .actionColor(Color.parseColor("#2196f3"))
+//                .duration(isIndefinite ? Snackbar.SnackbarDuration.LENGTH_INDEFINITE : Snackbar.SnackbarDuration.LENGTH_SHORT);
+//        if (actionlabel != null) {
+//            snb.actionLabel(actionlabel).actionListener(actionListener);
+//        }
+//
+//
+//        SnackbarManager.show(snb, Util.getInstance().getCurrentActivity()); // where it is displayed
+//    }
 
     public static void showToast(String message) {
         if (currentToast != null) {
@@ -318,16 +344,10 @@ public class Util {
         return isInternetAvailable();
     }
 
-    public static boolean isInternetAvailable() {
-        try {
-            InetAddress ipAddr = InetAddress.getByName("http://propzy.vn");
+    private static boolean isInternetAvailable() {
+        ConnectivityManager cm = (ConnectivityManager) getInstance().getCurrentActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
 
-            return !ipAddr.equals("");
-
-        } catch (Exception e) {
-            return false;
-        }
-
+        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
     }
 
     public static DisplayMetrics getWindowSize() {

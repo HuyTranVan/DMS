@@ -26,6 +26,7 @@ import java.util.List;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import wolve.dms.R;
 import wolve.dms.adapter.Customer_ViewpagerAdapter;
+import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
@@ -33,8 +34,11 @@ import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
+import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.libraries.FitScrollWithFullscreen;
+import wolve.dms.libraries.connectapi.CustomGetPostMethod;
 import wolve.dms.models.BaseModel;
+import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
@@ -523,23 +527,62 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
             customer.put("checkinCount", checkincount);
         }
 
-        String param = CustomerConnect.createParamCustomer(customer);
+//        int status = 0;
+//        if (customer.hasKey("status_id")) {
+//            status = customer.getInt("status_id");
+//        } else {
+//            status = new BaseModel(customer.getJsonObject("status")).getInt("id");
+//        }
 
-        CustomerConnect.CreateCustomer(param, new CallbackCustom() {
-            @Override
-            public void onResponse(BaseModel result) {
-                smLoading.setVisibility(View.INVISIBLE);
-                listener.onRespone(true);
+        String param = String.format(Api_link.CUSTOMER_CREATE_PARAM, String.format("id=%s&", customer.getString("id")),
+                Util.encodeString(customer.getString("name")),//name
+                Util.encodeString(customer.getString("signBoard")),//signBoard
+                Util.encodeString(customer.getString("address")), //address
+                Util.encodeString(customer.getString("phone")), //phone
+                Util.encodeString(customer.getString("street")), //street
+                Util.encodeString(customer.getString("note")), //note
+                Util.encodeString(customer.getString("district")), //district
+                Util.encodeString(customer.getString("province")), //province
+                customer.getDouble("lat"), //lat
+                customer.getDouble("lng"), //lng
+                customer.getInt("volumeEstimate"), //province
+                Util.encodeString(customer.getString("shopType")), //shopType
+                customer.getInt("status_id"), //currentStatusId
+                Distributor.getDistributorId(),//DistributorId
+                customer.getInt("checkinCount")
 
-            }
+        );
 
-            @Override
-            public void onError(String error) {
-                smLoading.setVisibility(View.INVISIBLE);
-                Util.showSnackbar("Không thể lưu thay đổi của khách hàng", null, null);
+        new CustomGetPostMethod(Api_link.createPostParam(Api_link.CUSTOMER_NEW(), param, false, false),
+                new NewCallbackCustom() {
+                    @Override
+                    public void onResponse(BaseModel result, List<BaseModel> list) {
+                        smLoading.setVisibility(View.INVISIBLE);
+                        listener.onRespone(true);
+                    }
 
-            }
-        }, false);
+                    @Override
+                    public void onError(String error) {
+                        smLoading.setVisibility(View.INVISIBLE);
+                        Util.showSnackbar("Không thể lưu thay đổi của khách hàng", null, null);
+                    }
+                }, false).execute();
+
+//        CustomerConnect.CreateCustomer(param, new CallbackCustom() {
+//            @Override
+//            public void onResponse(BaseModel result) {
+//                smLoading.setVisibility(View.INVISIBLE);
+//                listener.onRespone(true);
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                smLoading.setVisibility(View.INVISIBLE);
+//                Util.showSnackbar("Không thể lưu thay đổi của khách hàng", null, null);
+//
+//            }
+//        }, false);
     }
 
     protected void openReturnFragment(BaseModel bill) {

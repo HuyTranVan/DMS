@@ -7,6 +7,8 @@ import java.util.Map;
 
 import wolve.dms.BuildConfig;
 import wolve.dms.R;
+import wolve.dms.models.BaseModel;
+import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
 
 /**
@@ -39,10 +41,20 @@ public class Api_link {
 
     public final static String PROVINCES = BASE_URL + "dms/token/util/provinces";
     public final static String DISTRICTS = BASE_URL + "dms/token/util/districts?provinceid=";
-
-    public final static String LOGIN = BASE_URL + "dms/token/system/Login";
+//Login
     public final static String LOGIN_PARAM = "phone=%s&password=%s&fcm_token=%s";
-    public final static String LOGOUT = BASE_URL + "dms/token/system/Logout";
+    public final static String LOGIN(){
+        return BASE_URL + "dms/token/system/Login";
+    }
+
+    public final static String CHECK_LOGIN(){
+        return BASE_URL + "dms/token/system/CheckLogin";
+    }
+
+//Logout
+    public final static String LOGOUT(){
+        return BASE_URL + "dms/token/system/Logout";
+    }
 
     public final static String PRODUCT_GROUPS = BASE_URL + "dms/token/productgroup/ProductgroupList";
     public final static String PRODUCT_GROUP_NEW = BASE_URL + "dms/token/productgroup/ProductgroupNew";
@@ -80,20 +92,39 @@ public class Api_link {
     public final static String STATUS_DELETE = BASE_URL + "dms/token/statu/StatusDelete?id=";
     public final static String STATUS_CREATE_PARAM = "%sname=%s&color=%s&defaultStatus=%s";
 
-    public final static String CUSTOMERS = BASE_URL + "dms/token/customer/CustomerList";
-    public final static String CUSTOMERS_NEAREST = BASE_URL + "dms/token/customer/CustomerNearest";
+    public final static String CUSTOMERS(int page, int size){
+        return BASE_URL + "dms/token/customer/CustomerList" + String.format(Api_link.DEFAULT_RANGE, page, size);
+    }
+
+    public final static String CUSTOMERS_NEAREST(String lat, String lng, int page, int size){
+        return BASE_URL + "dms/token/customer/CustomerNearest"
+                + String.format(Api_link.DEFAULT_RANGE, page, size)
+                + String.format("&lat=%s&lng=%s", lat, lng);
+    }
+
+    public final static String CUSTOMER_ORDERED(int user_id, int page, int size){
+        return BASE_URL + "dms/token/customer/CustomerOrderedList"
+                + String.format(Api_link.DEFAULT_RANGE, page, size)
+                + "&user_id=" + user_id;
+    }
+
+    public final static String CUSTOMER_CREATE_PARAM = "%sname=%s&signBoard=%s&address=%s&phone=%s&street=%s&note=%s&district=%s&province=%s&lat=%s&lng=%s&volumeEstimate=%s&shopType=%s&status_id=%d&distributor_id=%s&checkinCount=%d";
+    public final static String CUSTOMER_NEW(){
+        return BASE_URL + "dms/token/customer/CustomerNew";
+    }
+
+
     public final static String CUSTOMERS_HAVEDEBT = BASE_URL + "dms/token/customer/CustomerHaveDebtList";
-    public final static String CUSTOMER_NEW = BASE_URL + "dms/token/customer/CustomerNew";
+    //public final static String CUSTOMER_NEW = BASE_URL + "dms/token/customer/CustomerNew";
     public final static String CUSTOMER_DELETE = BASE_URL + "dms/token/customer/CustomerDetail?id=";
     public final static String CUSTOMER_GETDETAIL = BASE_URL + "dms/token/customer/CustomerDetail?id=";
     public final static String CUSTOMER_NEAREST_PARAM = "&lat=%s&lng=%s";
     public final static String CUSTOMER_CHECKIN_RANGE_PARAM = "&checkinFrom=%s&checkinTo=%s";
     public final static String CUSTOMER_DEBT_PARAM = "debt=%d";
-    public final static String CUSTOMER_CREATE_PARAM = "%sname=%s&signBoard=%s&address=%s&phone=%s&street=%s&note=%s&district=%s&province=%s&lat=%s&lng=%s&volumeEstimate=%s&shopType=%s&status_id=%d&distributor_id=%s&checkinCount=%d";
     public final static String CUSTOMER_TEMP_NEW = BASE_URL + "dms/token/customer/CustomerTempNew";
     public final static String CUSTOMER_TEMP_NEW_PARAM = "customer_id=%d&user_id=%d";
     public final static String CUSTOMER_WAITING_LIST = BASE_URL + "dms/token/customer/WaitingList";
-    public final static String CUSTOMER_ORDERED = BASE_URL + "dms/token/customer/CustomerOrderedList";
+    //public final static String CUSTOMER_ORDERED = BASE_URL + "dms/token/customer/CustomerOrderedList";
 
     public final static String DISTRIBUTOR_DETAIL = BASE_URL + "dms/token/distributor/DistributorDetail?id=";
     public final static String DISTRIBUTOR_NEW = BASE_URL + "dms/token/distributor/DistributorNew";
@@ -103,7 +134,7 @@ public class Api_link {
     public final static String SCHECKIN_CREATE_PARAM = "customer_id=%d&rating=%d&note=%s&user_id=%d&nextVisit=%d&meetOwner=%d";
     public final static String CHECKIN_DELETE = BASE_URL + "dms/token/customer/CheckinDelete?id=";
 
-    public final static String CHECK_LOGIN = BASE_URL + "dms/token/system/CheckLogin";
+
     public final static String CATEGORIES = BASE_URL + "dms/token/system/CategoryList";
     public final static String STATISTICALS = BASE_URL + "dms/token/system/StatisticalList";
     public final static String STATISTICAL_PARAM = "?from=%s&to=%s";
@@ -124,6 +155,30 @@ public class Api_link {
     public final static String DEBT_NEW = BASE_URL + "dms/token/bill/DebtNew";
     public final static String DEBT_PARAM = "debt=%s&user_id=%d&customer_id=%d&distributor_id=%d";
 
+
+    public static BaseModel createGetParam(String url, boolean resultIsList) {
+        BaseModel paramResult = new BaseModel();
+        paramResult.put("url", url);
+        paramResult.put("method", "GET");
+        paramResult.put("isjson", false);
+        paramResult.put("param", null);
+        paramResult.put("resultType", resultIsList? Constants.TYPE_ARRAY : Constants.TYPE_OBJECT);
+
+        return paramResult;
+
+    }
+
+    public static BaseModel createPostParam(String url, String param, boolean paramIsJSON,  boolean resultIsList) {
+        BaseModel paramResult = new BaseModel();
+        paramResult.put("url", url);
+        paramResult.put("method", "POST");
+        paramResult.put("isjson", paramIsJSON);
+        paramResult.put("param", param);
+        paramResult.put("resultType", resultIsList? Constants.TYPE_ARRAY : Constants.TYPE_OBJECT);
+
+        return paramResult;
+
+    }
 
 }
 

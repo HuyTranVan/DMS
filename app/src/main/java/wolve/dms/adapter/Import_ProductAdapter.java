@@ -4,9 +4,12 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -16,9 +19,11 @@ import wolve.dms.R;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
+import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackListObject;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
+import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
@@ -28,31 +33,74 @@ import wolve.dms.utils.Util;
  * Created by tranhuy on 5/24/17.
  */
 
-public class Import_ProductAdapter extends RecyclerView.Adapter<Import_ProductAdapter.Import_ProductViewHolder> {
+public class Import_ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackBoolean mListener;
+    private final int VIEW_TYPE_ITEM = 0;
+    private final int VIEW_TYPE_LOADING = 1;
+    private RecyclerView rvImport;
+    private boolean isLoading = false;
+    private int warehouse_id;
 
-    public Import_ProductAdapter(List<BaseModel> data, CallbackBoolean listener) {
+    public Import_ProductAdapter(int warehouseid, List<BaseModel> data, CallbackBoolean listener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mData = data;
         this.mListener = listener;
-
-        DataUtil.sortbyStringKey("createAt", mData, true);
+        this.warehouse_id = warehouseid;
+        //DataUtil.sortbyStringKey("createAt", mData, true);
 
     }
 
-
     @Override
-    public Import_ProductViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(mContext).inflate(R.layout.adapter_import_product_item, parent, false);
-        return new Import_ProductViewHolder(itemView);
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        rvImport = recyclerView;
     }
 
     @Override
-    public void onBindViewHolder(final Import_ProductViewHolder holder, final int position) {
+    public int getItemViewType(int position) {
+        return mData.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
+    }
+
+    public void addItem(BaseModel model) {
+        mData.add(model);
+        notifyItemInserted(mData.size() - 1);
+    }
+
+    public void removeItem(int pos) {
+        mData.remove(pos);
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == VIEW_TYPE_ITEM) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_import_product_item, parent, false);
+            return new Import_ProductAdapter.ItemViewHolder(view);
+        } else {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_loading, parent, false);
+            return new Import_ProductAdapter.LoadingViewHolder(view);
+        }
+    }
+
+    @Override
+    public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, final int position) {
+        if (viewHolder instanceof Import_ProductAdapter.ItemViewHolder) {
+            setItemRows((Import_ProductAdapter.ItemViewHolder) viewHolder, position);
+        } else if (viewHolder instanceof Import_ProductAdapter.LoadingViewHolder) {
+            showLoadingView((Import_ProductAdapter.LoadingViewHolder) viewHolder, position);
+        }
+
+    }
+
+    private void showLoadingView(Import_ProductAdapter.LoadingViewHolder viewHolder, int position) {
+
+    }
+
+    private void setItemRows(ItemViewHolder holder, int position) {
         holder.tvDate.setText(Util.DateHourString(mData.get(position).getLong("createAt")));
         holder.tvUser.setText(Util.getIconString(R.string.icon_username, "  ", mData.get(position).getBaseModel("user").getString("displayName")));
 
@@ -104,8 +152,41 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<Import_ProductAd
                 Transaction.shareViaZalo(createImportContentForShare(position));
             }
         });
+    }
+
+    @Override
+    public int getItemCount() {
+        return mData.size();
+    }
+
+    public class ItemViewHolder extends RecyclerView.ViewHolder {
+        private TextView tvDate, tvDelete, tvUser, tvWarehouse, tvAccept, tvCopy;
+        private RecyclerView rvProduct;
+        private CardView lnParent;
+
+        public ItemViewHolder(View itemView) {
+            super(itemView);
+            lnParent = (CardView) itemView.findViewById(R.id.import_product_item_parent);
+            tvDate = itemView.findViewById(R.id.import_product_item_title);
+            tvDelete = itemView.findViewById(R.id.import_product_item_delete);
+            tvCopy = itemView.findViewById(R.id.import_product_item_copy);
+            tvUser = itemView.findViewById(R.id.import_product_item_user);
+            tvWarehouse = itemView.findViewById(R.id.import_product_item_warehouse);
+            tvAccept = itemView.findViewById(R.id.import_product_item_accept);
+            rvProduct = itemView.findViewById(R.id.import_product_item_rvproduct);
 
 
+        }
+
+    }
+
+    public static class LoadingViewHolder extends RecyclerView.ViewHolder {
+        ProgressBar progressBar;
+
+        public LoadingViewHolder(@NonNull View itemView) {
+            super(itemView);
+            progressBar = itemView.findViewById(R.id.progressBar);
+        }
     }
 
     private void submitAcceptImport(int position, List<BaseModel> importdetails) {
@@ -173,32 +254,6 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<Import_ProductAd
                 });
     }
 
-    @Override
-    public int getItemCount() {
-        return mData.size();
-    }
-
-    public class Import_ProductViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvDate, tvDelete, tvUser, tvWarehouse, tvAccept, tvCopy;
-        private RecyclerView rvProduct;
-        private CardView lnParent;
-
-        public Import_ProductViewHolder(View itemView) {
-            super(itemView);
-            lnParent = (CardView) itemView.findViewById(R.id.import_product_item_parent);
-            tvDate = itemView.findViewById(R.id.import_product_item_title);
-            tvDelete = itemView.findViewById(R.id.import_product_item_delete);
-            tvCopy = itemView.findViewById(R.id.import_product_item_copy);
-            tvUser = itemView.findViewById(R.id.import_product_item_user);
-            tvWarehouse = itemView.findViewById(R.id.import_product_item_warehouse);
-            tvAccept = itemView.findViewById(R.id.import_product_item_accept);
-            rvProduct = itemView.findViewById(R.id.import_product_item_rvproduct);
-
-
-        }
-
-    }
-
     public void reloadData(List<BaseModel> list) {
         mData = list;
         DataUtil.sortbyStringKey("createAt", mData, true);
@@ -262,6 +317,57 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<Import_ProductAd
                 }
             }
         });
+    }
+
+    public void initScrollListener() {
+        rvImport.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+
+                if (!isLoading) {
+                    if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == getItemCount() - 1) {
+                        //bottom of list!
+                        loadMore();
+                        isLoading = true;
+                    }
+                }
+            }
+        });
+
+    }
+
+    private void loadMore() {
+        addItem(null);
+        notifyItemInserted(mData.size() - 1);
+
+        CustomerConnect.ListImport(getItemCount() - 1, warehouse_id, new CallbackCustomList() {
+            @Override
+            public void onResponse(List<BaseModel> results) {
+                removeItem(getItemCount() - 1);
+                notifyDataSetChanged();
+                for (int i = 0; i < results.size(); i++) {
+                    addItem(results.get(i));
+
+                }
+                notifyDataSetChanged();
+                isLoading = false;
+
+
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        }, false, true);
+
     }
 
 }

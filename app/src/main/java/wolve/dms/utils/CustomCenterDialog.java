@@ -1,5 +1,6 @@
 package wolve.dms.utils;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.graphics.drawable.ColorDrawable;
@@ -29,6 +30,7 @@ import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import wolve.dms.R;
+import wolve.dms.activities.BaseActivity;
 import wolve.dms.adapter.CartCheckinReasonAdapter;
 import wolve.dms.adapter.DebtAdapter;
 import wolve.dms.adapter.ListUserChangeAdapter;
@@ -967,35 +969,64 @@ public class CustomCenterDialog {
                 if (!edPhone.getText().toString().equals("") && !edPass.getText().toString().equals("")) {
                     dialogResult.dismiss();
                     String fcm_token = User.getFCMToken();
-                    UserConnect.Logout(new CallbackCustom() {
+                    BaseActivity activity = (BaseActivity) Util.getInstance().getCurrentActivity();
+                    activity.logout(new CallbackBoolean() {
                         @Override
-                        public void onResponse(BaseModel result) {
-                            if (result.getBoolean("success")) {
-                                UserConnect.doLogin(edPhone.getText().toString().trim(),
+                        public void onRespone(Boolean result) {
+                            if (result){
+                                activity.login(edPhone.getText().toString().trim(),
                                         edPass.getText().toString().trim(),
                                         fcm_token,
                                         new CallbackBoolean() {
                                             @Override
                                             public void onRespone(Boolean result) {
-                                                if (result) {
-                                                    CustomSQL.setBoolean(Constants.LOGIN_SUCCESS, true);
-                                                    Util.showToast("Đăng nhập thành công");
-                                                    mlistener.onRespone(true);
+                                                if (result){
+                                                    if (result) {
+                                                        CustomSQL.setBoolean(Constants.LOGIN_SUCCESS, true);
+                                                        Util.showToast("Đăng nhập thành công");
+                                                        mlistener.onRespone(true);
 
-                                                } else {
-                                                    mlistener.onRespone(false);
+                                                    } else {
+                                                        mlistener.onRespone(false);
+                                                    }
+
                                                 }
                                             }
                                         });
 
                             }
                         }
-
-                        @Override
-                        public void onError(String error) {
-
-                        }
-                    }, true);
+                    });
+//                    UserConnect.Logout(new CallbackCustom() {
+//                        @Override
+//                        public void onResponse(BaseModel result) {
+//                            if (result.getBoolean("success")) {
+//
+//                                UserConnect.doLogin(edPhone.getText().toString().trim(),
+//                                        edPass.getText().toString().trim(),
+//                                        fcm_token,
+//                                        new CallbackBoolean() {
+//                                            @Override
+//                                            public void onRespone(Boolean result) {
+//                                                if (result) {
+//                                                    CustomSQL.setBoolean(Constants.LOGIN_SUCCESS, true);
+//                                                    Util.showToast("Đăng nhập thành công");
+//                                                    mlistener.onRespone(true);
+//
+//                                                } else {
+//                                                    mlistener.onRespone(false);
+//                                                }
+//                                            }
+//                                        });
+//
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onError(String error) {
+//
+//                        }
+//                    }, true);
 
                 } else {
                     Util.showToast("Nhập đầy đủ username và password");

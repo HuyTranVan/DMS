@@ -9,6 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
@@ -107,13 +108,13 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         }
 
         tabLayout.setupWithViewPager(viewPager);
-        getListImport(new CallbackListObject() {
+        getListImport(0, new CallbackListObject() {
             @Override
             public void onResponse(List<BaseModel> list) {
                 setupViewPager(new ArrayList<>(), list);
-                if (list.size() > 0) {
-                    updateImportTempTitle(list.size());
-                }
+//                if (list.size() > 0) {
+//                    updateImportTempTitle(list.size());
+//                }
                 getInventory(toWarehouse.getInt("id"), new CallbackListObject() {
                     @Override
                     public void onResponse(List<BaseModel> list) {
@@ -180,23 +181,25 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         return titles;
     }
 
-    private void getListImport(CallbackListObject listener, boolean showloading, boolean stoploading) {
-        String param = String.format("?warehouse_id=%d", toWarehouse.getInt("id"));
-        CustomerConnect.ListImport(param, new CallbackCustomList() {
+    private void getListImport(int offset, CallbackListObject listener, boolean showloading, boolean stoploading) {
+        //String param = String.format("&warehouse_id=%d", toWarehouse.getInt("id"));
+        CustomerConnect.ListImport(offset, toWarehouse.getInt("id"), new CallbackCustomList() {
             @Override
             public void onResponse(List<BaseModel> results) {
-                listener.onResponse(DataUtil.filterListImport(results, toWarehouse.getInt("id")));
+                listener.onResponse(results);
+//                listener.onResponse(DataUtil.filterListImport(results, toWarehouse.getInt("id")));
             }
 
             @Override
             public void onError(String error) {
-
+                Util.getInstance().stopLoading(true);
             }
         }, showloading, stoploading);
     }
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.import_parent);
         if (Util.getInstance().isLoading()) {
             Util.getInstance().stopLoading(true);
@@ -228,7 +231,9 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
             }
         });
 
-        adapterImport = new Import_ProductAdapter(listImport, new CallbackBoolean() {
+        adapterInventory = new ProductInventoryAdapter(new ArrayList<>());
+
+        adapterImport = new Import_ProductAdapter(toWarehouse.getInt("id"), listImport, new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
                 reloadListImport(false, false);
@@ -236,7 +241,6 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
             }
         });
 
-        adapterInventory = new ProductInventoryAdapter(new ArrayList<>());
 
         listadapter.add(0, adapterProduct);
         listadapter.add(1, adapterChoosen);
@@ -254,6 +258,8 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         viewPager.setAdapter(viewpagerAdapter);
         viewPager.setCurrentItem(currentPosition);
         viewPager.setOffscreenPageLimit(4);
+
+        adapterImport.initScrollListener();
 
         for (int i = 0; i < mTitle.size(); i++) {
             updateTabNotify(i, mTitle.get(i), 0);
@@ -345,12 +351,12 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
     }
 
     public void reloadListImport(boolean setActive, boolean reloadToWarehouse) {
-        getListImport(new CallbackListObject() {
+        getListImport(0, new CallbackListObject() {
             @Override
             public void onResponse(List<BaseModel> list) {
-                if (list.size() > 0) {
-                    updateImportTempTitle(list.size());
-                }
+//                if (list.size() > 0) {
+//                    updateImportTempTitle(list.size());
+//                }
                 adapterImport.reloadData(list);
                 if (setActive) {
                     viewPager.setCurrentItem(3, true);

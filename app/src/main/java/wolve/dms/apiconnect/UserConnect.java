@@ -49,32 +49,32 @@ public class UserConnect {
         }).execute();
     }
 
-    public static void Logout(final CallbackCustom listener, final Boolean stopLoading) {
-        Util.getInstance().showLoading();
-        new CustomGetMethod(Api_link.LOGOUT, new CallbackCustom() {
-            @Override
-            public void onResponse(BaseModel result) {
-                Util.getInstance().stopLoading(stopLoading);
-                if (Constants.responeIsSuccess(result)) {
-                    listener.onResponse(Constants.getResponeObjectSuccess(result));
-
-                } else {
-                    Constants.throwError(result.getString("message"));
-                    listener.onError(result.getString("message"));
-
-                }
-
-            }
-
-            @Override
-            public void onError(String error) {
-                Util.getInstance().stopLoading(stopLoading);
-                Constants.throwError(error);
-                listener.onError(error);
-
-            }
-        }).execute();
-    }
+//    public static void Logout(final CallbackCustom listener, final Boolean stopLoading) {
+//        Util.getInstance().showLoading();
+//        new CustomGetMethod(Api_link.LOGOUT, new CallbackCustom(){
+//            @Override
+//            public void onResponse(BaseModel result) {
+//                Util.getInstance().stopLoading(stopLoading);
+//                if (Constants.responeIsSuccess(result)) {
+//                    listener.onResponse(Constants.getResponeObjectSuccess(result));
+//
+//                } else {
+//                    Constants.throwError(result.getString("message"));
+//                    listener.onError(result.getString("message"));
+//
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                Util.getInstance().stopLoading(stopLoading);
+//                Constants.throwError(error);
+//                listener.onError(error);
+//
+//            }
+//        }).execute();
+//    }
 
     public static void CreateUser(String params, final CallbackCustom listener, final Boolean stopLoading) {
         Util.getInstance().showLoading();

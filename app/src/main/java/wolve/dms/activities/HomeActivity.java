@@ -362,29 +362,29 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     }
 
-    protected void logout() {
-        UserConnect.Logout(new CallbackCustom() {
-            @Override
-            public void onResponse(BaseModel result) {
-                if (result.getBoolean("success")) {
-                    Util.deleteAllImageExternalStorage();
-
-                    CustomSQL.clear();
-                    Util.showToast("Đăng xuất thành công");
-                    Transaction.gotoLoginActivityRight();
-
-                } else {
-                    Util.showSnackbar("Đăng xuất thất bại", null, null);
-                }
-            }
-
-            @Override
-            public void onError(String error) {
-
-            }
-        }, true);
-
-    }
+//    protected void logout(){
+//        UserConnect.Logout(new CallbackCustom() {
+//            @Override
+//            public void onResponse(BaseModel result) {
+//                if (result.getBoolean("success")) {
+//                    Util.deleteAllImageExternalStorage();
+//
+//                    CustomSQL.clear();
+//                    Util.showToast("Đăng xuất thành công");
+//                    Transaction.gotoLoginActivityRight();
+//
+//                } else {
+//                    Util.showSnackbar("Đăng xuất thất bại", null, null);
+//                }
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        }, true);
+//
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -519,7 +519,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                                 }, Constants.REQUEST_PERMISSION);
 
                             } else {
-                                logout();
+                                logout(null);
 
                             }
                         }
@@ -561,7 +561,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                                         checkPermission();
 
                                     } else {
-                                        logout();
+                                        logout(null);
                                     }
 
                                 }

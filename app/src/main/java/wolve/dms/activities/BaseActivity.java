@@ -1,23 +1,39 @@
 package wolve.dms.activities;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.cloudinary.Api;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.util.List;
+
 import wolve.dms.R;
+import wolve.dms.apiconnect.Api_link;
+import wolve.dms.apiconnect.UserConnect;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackCustom;
+import wolve.dms.callback.NewCallbackCustom;
+import wolve.dms.libraries.connectapi.CustomGetPostMethod;
 import wolve.dms.models.BaseModel;
+import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomFixSQL;
+import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.CustomTopDialog;
+import wolve.dms.utils.DataUtil;
+import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
 
@@ -125,6 +141,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public void getCurrentLocation(final LocationListener mListener) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
         mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(final Location location) {
@@ -171,6 +190,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
 
 
+
+
 //        Intent intent = new Intent("LISTEN_FROM_GCM");
 //        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
@@ -182,6 +203,123 @@ public abstract class BaseActivity extends AppCompatActivity {
 //    ////            intent.putExtra("id", bundle.getString("id"));
 //                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 //            }
+    }
+
+    public void logout(CallbackBoolean listener){
+        BaseModel param = Api_link.createGetParam(Api_link.LOGOUT(), false);
+
+        new CustomGetPostMethod(param, new NewCallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result, List<BaseModel> list) {
+                if (result.getBoolean("success")) {
+                    Util.deleteAllImageExternalStorage();
+                    CustomSQL.clear();
+                    if (listener != null){
+                        listener.onRespone(true);
+
+                    }else {
+                        Util.showToast("Đăng xuất thành công");
+                        Transaction.gotoLoginActivityRight();
+
+                    }
+
+
+                } else {
+                    Util.showSnackbar("Đăng xuất thất bại", null, null);
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        }, true).execute();
+
+    }
+
+    public void login(final String username, final String pass, String fcm_token, final CallbackBoolean mListener) {
+        BaseModel param = Api_link.createPostParam(Api_link.LOGIN(),
+                String.format(Api_link.LOGIN_PARAM, username, pass, fcm_token),
+                false,
+                false);
+
+        new CustomGetPostMethod(param, new NewCallbackCustom() {
+            @Override
+            public void onResponse(BaseModel object, List<BaseModel> list) {
+                CustomSQL.setString(Constants.DISTRIBUTOR, object.getString("distributor"));
+                CustomSQL.setString(Constants.DISTRICT_LIST, object.getString("district"));
+                CustomSQL.setString(Constants.USER_USERNAME, username);
+                CustomSQL.setString(Constants.USER_PASSWORD, pass);
+                CustomSQL.setInt(Constants.VERSION_CODE, CustomSQL.getInt(Constants.VERSION_CODE));
+                object.removeKey("district");
+
+                ///////////////saveUser;
+                List<BaseModel> listUser = CustomFixSQL.getListObject(Constants.USER_LIST);
+                if (!DataUtil.checkDuplicate(listUser, "id", object)) {
+                    listUser.add(object);
+                }
+                CustomFixSQL.setListBaseModel(Constants.USER_LIST, listUser);
+                /////////////
+                object.removeKey("distributor");
+
+                CustomSQL.setBaseModel(Constants.USER, object);
+                if (object.getInt("role") == Constants.ROLE_ADMIN) {
+                    CustomSQL.setBoolean(Constants.IS_ADMIN, true);
+                } else {
+                    CustomSQL.setBoolean(Constants.IS_ADMIN, false);
+                }
+
+
+                mListener.onRespone(true);
+            }
+
+            @Override
+            public void onError(String error) {
+                mListener.onRespone(false);
+            }
+        }, true).execute();
+
+
+//          String params = String.format(Api_link.LOGIN_PARAM, username, pass, fcm_token);
+//          UserConnect.Login(params, new CallbackCustom() {
+//            @Override
+//            public void onResponse(BaseModel object) {
+//                CustomSQL.setString(Constants.DISTRIBUTOR, object.getString("distributor"));
+//                CustomSQL.setString(Constants.DISTRICT_LIST, object.getString("district"));
+//                CustomSQL.setString(Constants.USER_USERNAME, username);
+//                CustomSQL.setString(Constants.USER_PASSWORD, pass);
+//                CustomSQL.setInt(Constants.VERSION_CODE, CustomSQL.getInt(Constants.VERSION_CODE));
+//                object.removeKey("district");
+//
+//                //saveUser(object);
+//
+//                List<BaseModel> listUser = CustomFixSQL.getListObject(Constants.USER_LIST);
+//                if (!DataUtil.checkDuplicate(listUser, "id", object)) {
+//                    listUser.add(object);
+//                }
+//                CustomFixSQL.setListBaseModel(Constants.USER_LIST, listUser);
+//
+//                object.removeKey("distributor");
+//
+//                CustomSQL.setBaseModel(Constants.USER, object);
+//                if (object.getInt("role") == Constants.ROLE_ADMIN) {
+//                    CustomSQL.setBoolean(Constants.IS_ADMIN, true);
+//                } else {
+//                    CustomSQL.setBoolean(Constants.IS_ADMIN, false);
+//                }
+//
+//
+//                mListener.onRespone(true);
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                mListener.onRespone(false);
+//
+//            }
+//
+//        }, true, true);
     }
 
 }

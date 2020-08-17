@@ -87,7 +87,7 @@ public class TempImportFragment extends Fragment implements View.OnClickListener
     }
 
     private void createRVImport(List<BaseModel> list) {
-        adapter = new Import_ProductAdapter(list, new CallbackBoolean() {
+        adapter = new Import_ProductAdapter(0,list, new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
                 if (result) {
@@ -100,7 +100,7 @@ public class TempImportFragment extends Fragment implements View.OnClickListener
     }
 
     private void reloadImportList() {
-        CustomerConnect.ListImport("", new CallbackCustomList() {
+        CustomerConnect.ListImport(0,0, new CallbackCustomList() {
             @Override
             public void onResponse(List<BaseModel> results) {
                 mActivity.updateTempImportVisibility(results);

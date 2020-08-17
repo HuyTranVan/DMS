@@ -334,7 +334,7 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
         String param = String.format(Api_link.PRODUCT_CREATE_PARAM,
                 product.getInt("id") == 0 ? "" : "id=" + product.getString("id") + "&",
                 Util.encodeString(edName.getText().toString().trim()),
-                edIsPromotion.getText().toString().trim().equals(Constants.IS_PROMOTION) ? true : false,
+                edIsPromotion.getText().toString().trim().equals(Constants.IS_PROMOTION) ? 1 : 0,
                 Util.valueMoney(edUnitPrice.getText().toString()),
                 Util.valueMoney(edPurchasePrice.getText().toString()),
                 edVolume.getText().toString().trim().replace(",", ""),

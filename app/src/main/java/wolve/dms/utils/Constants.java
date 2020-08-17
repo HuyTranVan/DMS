@@ -131,13 +131,6 @@ public class Constants {
 
     public static final String ON_MAP_SCREEN = "on_map";
 
-    public final static String COMPANY_NAME = "CTY TNHH MTV TM DV XNK TRẦN VŨ ANH";
-    public final static String COMPANY_ADDRESS = "MST: 3702405542";
-    public final static String COMPANY_HOTLINE = "ĐT:0931.07.22.23";
-    public final static String COMPANY_WEBSITE = "Website: www.wolver.vn";
-    public final static String COMPANY_ORDERPHONE = String.format("Đặt hàng: %s", Util.FormatPhone(User.getPhone()));
-    public final static String COMPANY_THANKS = "Trân trọng cảm ơn quý khách hàng";
-
     public final static String PRINTER_57 = "57mm";
     public final static String PRINTER_80 = "80mm";
     public final static String currentEmulatorDevice = "Google Android SDK built for x86";
@@ -159,6 +152,10 @@ public class Constants {
 
     public static String CHECK_ALL = Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_check) + " CHỌN TẤT CẢ";
     public static String UNCHECK = "BỎ CHỌN";
+
+    public static String TYPE_OBJECT = "Object";
+    public static String TYPE_ARRAY = "Array";
+
 
     //Home constant
     public static ArrayList<JSONObject> HomeItemList() {

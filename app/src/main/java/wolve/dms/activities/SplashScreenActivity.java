@@ -6,11 +6,18 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.cloudinary.Api;
+
+import java.util.List;
+
 import wolve.dms.BuildConfig;
 import wolve.dms.R;
+import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.SystemConnect;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
+import wolve.dms.callback.NewCallbackCustom;
+import wolve.dms.libraries.connectapi.CustomGetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
@@ -89,9 +96,11 @@ public class SplashScreenActivity extends BaseActivity {
     }
 
     private void checkLogin(CallbackBoolean listener) {
-        SystemConnect.getCheckLogin(new CallbackCustom() {
+        BaseModel param = Api_link.createGetParam(Api_link.CHECK_LOGIN(), false);
+
+        new CustomGetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(BaseModel result) {
+            public void onResponse(BaseModel result, List<BaseModel> list) {
                 if (result.getInt("version") > BuildConfig.VERSION_CODE) {
                     progressBar.setVisibility(View.GONE);
                     CustomCenterDialog.alertWithCancelButton("PHIÊN BẢN MỚI",
@@ -127,7 +136,8 @@ public class SplashScreenActivity extends BaseActivity {
             public void onError(String error) {
 
             }
-        }, false);
+        }, false).execute();
+
 
     }
 

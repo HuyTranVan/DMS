@@ -913,16 +913,16 @@ public class DataUtil {
 
     }
 
-    public static BaseModel createDebtParam() {
-        BaseModel payparam = new BaseModel();
-        payparam.put("url", Api_link.CUSTOMERS + String.format(Api_link.DEFAULT_RANGE, 1, 500));
-        payparam.put("method", "POST");
-        payparam.put("isjson", false);
-        payparam.put("param", String.format(Api_link.CUSTOMER_DEBT_PARAM, 0));
-
-        return payparam;
-
-    }
+//    public static BaseModel createDebtParam() {
+//        BaseModel payparam = new BaseModel();
+//        payparam.put("url", Api_link.CUSTOMERS + String.format(Api_link.DEFAULT_RANGE, 1, 500));
+//        payparam.put("method", "POST");
+//        payparam.put("isjson", false);
+//        payparam.put("param", String.format(Api_link.CUSTOMER_DEBT_PARAM, 0));
+//
+//        return payparam;
+//
+//    }
 
     public static BaseModel createListPaymentParam(long starDay, long lastDay) {
         BaseModel payparam = new BaseModel();
@@ -946,16 +946,16 @@ public class DataUtil {
 
     }
 
-    public static BaseModel createNewCustomerParam(String param) {
-        BaseModel paramCustomer = new BaseModel();
-        paramCustomer.put("url", Api_link.CUSTOMER_NEW);
-        paramCustomer.put("method", "POST");
-        paramCustomer.put("isjson", false);
-        paramCustomer.put("param", param);
-
-        return paramCustomer;
-
-    }
+//    public static BaseModel createNewCustomerParam(String param) {
+//        BaseModel paramCustomer = new BaseModel();
+//        paramCustomer.put("url", Api_link.CUSTOMER_NEW);
+//        paramCustomer.put("method", "POST");
+//        paramCustomer.put("isjson", false);
+//        paramCustomer.put("param", param);
+//
+//        return paramCustomer;
+//
+//    }
 
     public static BaseModel createCustomerWaitingParam(String param) {
         BaseModel paramCustomer = new BaseModel();
@@ -968,16 +968,16 @@ public class DataUtil {
 
     }
 
-    public static BaseModel getListCustomerParam(String param, int countinPage) {
-        BaseModel paramCustomer = new BaseModel();
-        paramCustomer.put("url", Api_link.CUSTOMERS + String.format(Api_link.DEFAULT_RANGE, 1, countinPage));
-        paramCustomer.put("method", "POST");
-        paramCustomer.put("isjson", false);
-        paramCustomer.put("param", param);
-
-        return paramCustomer;
-
-    }
+//    public static BaseModel getListCustomerParam(String param, int countinPage) {
+//        BaseModel paramCustomer = new BaseModel();
+//        paramCustomer.put("url", Api_link.CUSTOMERS + String.format(Api_link.DEFAULT_RANGE, 1, countinPage));
+//        paramCustomer.put("method", "POST");
+//        paramCustomer.put("isjson", false);
+//        paramCustomer.put("param", param);
+//
+//        return paramCustomer;
+//
+//    }
 
     public static BaseModel postCheckinParam(String param) {
         BaseModel paramCheckin = new BaseModel();
@@ -1059,25 +1059,25 @@ public class DataUtil {
 
     public static BaseModel postLoginParam(String param) {
         BaseModel paramCheckin = new BaseModel();
-        paramCheckin.put("url", Api_link.LOGIN);
-        paramCheckin.put("method", "POST");
-        paramCheckin.put("isjson", false);
-        paramCheckin.put("param", param);
-
+//        paramCheckin.put("url", Api_link.LOGIN);
+//        paramCheckin.put("method", "POST");
+//        paramCheckin.put("isjson", false);
+//        paramCheckin.put("param", param);
+//
         return paramCheckin;
 
     }
 
-    public static BaseModel getLogoutParam() {
-        BaseModel paramLogout = new BaseModel();
-        paramLogout.put("url", Api_link.LOGOUT);
-        paramLogout.put("method", "GET");
-        paramLogout.put("isjson", null);
-        paramLogout.put("param", null);
-
-        return paramLogout;
-
-    }
+//    public static BaseModel getLogoutParam() {
+//        BaseModel paramLogout = new BaseModel();
+//        paramLogout.put("url", Api_link.LOGOUT);
+//        paramLogout.put("method", "GET");
+//        paramLogout.put("isjson", null);
+//        paramLogout.put("param", null);
+//
+//        return paramLogout;
+//
+//    }
 
     public static BaseModel createNewDepotParam(String param) {
         BaseModel paramCustomer = new BaseModel();

@@ -140,7 +140,7 @@ public class UserOptionFragment extends Fragment implements View.OnClickListener
                         @Override
                         public void onRespone(Boolean result) {
                             if (result) {
-                                mActivity.logout();
+                                mActivity.logout(null);
                             }
 
                         }
@@ -173,24 +173,11 @@ public class UserOptionFragment extends Fragment implements View.OnClickListener
 
 
     private void showLogoutDialog() {
-//        List<BaseModel> preProduct = getProductList();
-//        ContentResolver resolver = Util.getInstance().getCurrentActivity().getContentResolver();
-//        for (BaseModel model: preProduct){
-//            if (!model.getString("image_uri").equals("")){
-//                Uri uri = Uri.parse(model.getString("image_uri"));
-//                resolver.delete(uri, null, null);
-//            }
-//
-//        }
-        String s = CustomFixSQL.getString(Constants.IMAGES);
-        List<String> currentList = new ArrayList<String>(Arrays.asList(s.split(",")));
-
-
         CustomCenterDialog.alertWithCancelButton(null, String.format("Đăng xuất tài khoản %s", User.getFullName()), "ĐỒNG Ý", "HỦY", new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
                 if (result) {
-                    mActivity.logout();
+                    mActivity.logout(null);
                 }
 
             }

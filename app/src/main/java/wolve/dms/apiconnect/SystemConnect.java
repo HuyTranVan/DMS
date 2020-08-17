@@ -110,36 +110,36 @@ public class SystemConnect {
 
     }
 
-    public static void getCheckLogin(final CallbackCustom listener, boolean showLoding) {
-        Util.getInstance().showLoading(showLoding);
-
-        String url = Api_link.CHECK_LOGIN;
-        new CustomGetMethod(url, new CallbackCustom() {
-            @Override
-            public void onResponse(BaseModel result) {
-                Util.getInstance().stopLoading(true);
-                if (Constants.responeIsSuccess(result)) {
-                    listener.onResponse(Constants.getResponeObjectSuccess(result));
-
-                } else {
-                    Constants.throwError(result.getString("message"));
-                    listener.onError(result.getString("message"));
-
-                }
-
-            }
-
-            @Override
-            public void onError(String error) {
-                Util.getInstance().stopLoading(true);
-                Constants.throwError(error);
-                listener.onError(error);
-
-            }
-
-        }).execute();
-
-    }
+//    public static void getCheckLogin(final CallbackCustom listener, boolean showLoding) {
+//        Util.getInstance().showLoading(showLoding);
+//
+//        String url = Api_link.CHECK_LOGIN;
+//        new CustomGetMethod(url, new CallbackCustom() {
+//            @Override
+//            public void onResponse(BaseModel result) {
+//                Util.getInstance().stopLoading(true);
+//                if (Constants.responeIsSuccess(result)) {
+//                    listener.onResponse(Constants.getResponeObjectSuccess(result));
+//
+//                } else {
+//                    Constants.throwError(result.getString("message"));
+//                    listener.onError(result.getString("message"));
+//
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                Util.getInstance().stopLoading(true);
+//                Constants.throwError(error);
+//                listener.onError(error);
+//
+//            }
+//
+//        }).execute();
+//
+//    }
 
     public static void getCategories(final CallbackCustom listener, boolean stoploading) {
         Util.getInstance().showLoading();

@@ -36,37 +36,37 @@ import wolve.dms.utils.Util;
 
 public class CustomerConnect {
 
-    public static void CreateCustomer(String params, final CallbackCustom listener, final Boolean showLoading) {
-        if (showLoading) {
-            Util.getInstance().showLoading();
-        }
-
-        new CustomPostMethod(DataUtil.createNewCustomerParam(params), new CallbackCustom() {
-            @Override
-            public void onResponse(BaseModel result) {
-                Util.getInstance().stopLoading(true);
-                if (Constants.responeIsSuccess(result)) {
-                    listener.onResponse(Constants.getResponeObjectSuccess(result));
-
-                } else {
-                    Util.getInstance().stopLoading(true);
-                    Constants.throwError(result.getString("message"));
-                    listener.onError(result.getString("message"));
-
-                }
-
-            }
-
-            @Override
-            public void onError(String error) {
-                Util.getInstance().stopLoading(true);
-                Constants.throwError(error);
-                listener.onError(error);
-
-            }
-
-        }).execute();
-    }
+//    public static void CreateCustomer(String params, final CallbackCustom listener, final Boolean showLoading) {
+//        if (showLoading) {
+//            Util.getInstance().showLoading();
+//        }
+//
+//        new CustomPostMethod(DataUtil.createNewCustomerParam(params), new CallbackCustom() {
+//            @Override
+//            public void onResponse(BaseModel result) {
+//                Util.getInstance().stopLoading(true);
+//                if (Constants.responeIsSuccess(result)) {
+//                    listener.onResponse(Constants.getResponeObjectSuccess(result));
+//
+//                } else {
+//                    Util.getInstance().stopLoading(true);
+//                    Constants.throwError(result.getString("message"));
+//                    listener.onError(result.getString("message"));
+//
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                Util.getInstance().stopLoading(true);
+//                Constants.throwError(error);
+//                listener.onError(error);
+//
+//            }
+//
+//        }).execute();
+//    }
 
     public static void CreateCustomerWaitingList(String params, final CallbackCustom listener, final Boolean showLoading) {
         if (showLoading) {
@@ -130,102 +130,102 @@ public class CustomerConnect {
         }).execute();
     }
 
-    public static void getCustomerOrderedList(int offset, int user_id, final CallbackCustomList listener, Boolean showloading) {
-        if (showloading) {
-            Util.getInstance().showLoading();
-        }
-        String url = Api_link.CUSTOMER_ORDERED + String.format(Api_link.DEFAULT_RANGE, offset, 20) + "&user_id=" + user_id;
+//    public static void getCustomerOrderedList(int offset, int user_id, final CallbackCustomList listener, Boolean showloading) {
+//        if (showloading) {
+//            Util.getInstance().showLoading();
+//        }
+//        String url = Api_link.CUSTOMER_ORDERED + String.format(Api_link.DEFAULT_RANGE, offset, 20) + "&user_id=" + user_id;
+//
+//        new CustomGetMethod(url, new CallbackCustom() {
+//            @Override
+//            public void onResponse(BaseModel result) {
+//                Util.getInstance().stopLoading(true);
+//                if (Constants.responeIsSuccess(result)) {
+//                    listener.onResponse(Constants.getResponeArraySuccess(result));
+//
+//                } else {
+//                    Constants.throwError(result.getString("message"));
+//                    listener.onError(result.getString("message"));
+//
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                Util.getInstance().stopLoading(true);
+//                Constants.throwError(error);
+//                listener.onError(error);
+//
+//            }
+//
+//        }).execute();
+//    }
 
-        new CustomGetMethod(url, new CallbackCustom() {
-            @Override
-            public void onResponse(BaseModel result) {
-                Util.getInstance().stopLoading(true);
-                if (Constants.responeIsSuccess(result)) {
-                    listener.onResponse(Constants.getResponeArraySuccess(result));
+//    public static void ListCustomer(String param, int numberItem, final CallbackCustomList listener, Boolean showloading, final Boolean stopLoading) {
+//        if (showloading) {
+//            Util.getInstance().showLoading();
+//        }
+//
+//        new CustomPostMethod(DataUtil.getListCustomerParam(param, numberItem), new CallbackCustom() {
+//            @Override
+//            public void onResponse(BaseModel result) {
+//                Util.getInstance().stopLoading(stopLoading);
+//                if (Constants.responeIsSuccess(result)) {
+//                    listener.onResponse(Constants.getResponeArraySuccess(result));
+//
+//                } else {
+//                    Constants.throwError(result.getString("message"));
+//                    listener.onError(result.getString("message"));
+//
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                Util.getInstance().stopLoading(true);
+//                Constants.throwError(error);
+//                listener.onError(error);
+//
+//            }
+//
+//        }).execute();
+//    }
 
-                } else {
-                    Constants.throwError(result.getString("message"));
-                    listener.onError(result.getString("message"));
-
-                }
-
-            }
-
-            @Override
-            public void onError(String error) {
-                Util.getInstance().stopLoading(true);
-                Constants.throwError(error);
-                listener.onError(error);
-
-            }
-
-        }).execute();
-    }
-
-    public static void ListCustomer(String param, int numberItem, final CallbackCustomList listener, Boolean showloading, final Boolean stopLoading) {
-        if (showloading) {
-            Util.getInstance().showLoading();
-        }
-
-        new CustomPostMethod(DataUtil.getListCustomerParam(param, numberItem), new CallbackCustom() {
-            @Override
-            public void onResponse(BaseModel result) {
-                Util.getInstance().stopLoading(stopLoading);
-                if (Constants.responeIsSuccess(result)) {
-                    listener.onResponse(Constants.getResponeArraySuccess(result));
-
-                } else {
-                    Constants.throwError(result.getString("message"));
-                    listener.onError(result.getString("message"));
-
-                }
-
-            }
-
-            @Override
-            public void onError(String error) {
-                Util.getInstance().stopLoading(true);
-                Constants.throwError(error);
-                listener.onError(error);
-
-            }
-
-        }).execute();
-    }
-
-    public static void ListCustomerLocation(String lat, String lng, final CallbackCustomList listener, final Boolean stopLoading) {
-        //Util.getInstance().showLoading();
-
-        String url = Api_link.CUSTOMERS_NEAREST
-                + String.format(Api_link.DEFAULT_RANGE, 1, 20)
-                + String.format(Api_link.CUSTOMER_NEAREST_PARAM, lat, lng, 1, 20);
-
-
-        new CustomGetMethod(url, new CallbackCustom() {
-            @Override
-            public void onResponse(BaseModel result) {
-                Util.getInstance().stopLoading(stopLoading);
-                if (Constants.responeIsSuccess(result)) {
-                    listener.onResponse(Constants.getResponeArraySuccess(result));
-
-                } else {
-                    Constants.throwError(result.getString("message"));
-                    listener.onError(result.getString("message"));
-
-                }
-
-            }
-
-            @Override
-            public void onError(String error) {
-                Util.getInstance().stopLoading(true);
-                Constants.throwError(error);
-                listener.onError(error);
-
-            }
-
-        }).execute();
-    }
+//    public static void ListCustomerLocation(String lat, String lng, final CallbackCustomList listener, final Boolean stopLoading) {
+//        //Util.getInstance().showLoading();
+//
+//        String url = Api_link.CUSTOMERS_NEAREST
+//                + String.format(Api_link.DEFAULT_RANGE, 1, 20)
+//                + String.format(Api_link.CUSTOMER_NEAREST_PARAM, lat, lng, 1, 20);
+//
+//
+//        new CustomGetMethod(url, new CallbackCustom() {
+//            @Override
+//            public void onResponse(BaseModel result) {
+//                Util.getInstance().stopLoading(stopLoading);
+//                if (Constants.responeIsSuccess(result)) {
+//                    listener.onResponse(Constants.getResponeArraySuccess(result));
+//
+//                } else {
+//                    Constants.throwError(result.getString("message"));
+//                    listener.onError(result.getString("message"));
+//
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                Util.getInstance().stopLoading(true);
+//                Constants.throwError(error);
+//                listener.onError(error);
+//
+//            }
+//
+//        }).execute();
+//    }
 
     public static void DeleteCustomer(String params, final CallbackCustom listener, final Boolean stopLoading) {
         Util.getInstance().showLoading();
@@ -664,11 +664,12 @@ public class CustomerConnect {
         }).execute();
     }
 
-    public static void ListImport(String param, final CallbackCustomList listener, final Boolean loading, boolean stoploading) {
+    public static void ListImport(int offset, int warehouse_id, final CallbackCustomList listener, final Boolean loading, boolean stoploading) {
         if (loading) {
             Util.getInstance().showLoading();
         }
-        new CustomGetMethod(Api_link.IMPORTS + param, new CallbackCustom() {
+        String url = Api_link.IMPORTS + String.format(Api_link.DEFAULT_RANGE, offset, 20) + "&warehouse_id=" + warehouse_id;
+        new CustomGetMethod(url, new CallbackCustom() {
             @Override
             public void onResponse(BaseModel result) {
                 Util.getInstance().stopLoading(stoploading);

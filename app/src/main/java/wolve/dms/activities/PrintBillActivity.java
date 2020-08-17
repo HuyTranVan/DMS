@@ -310,6 +310,10 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 //                                                        "SHARE",
 //                                                        "SHARE",
 //                                                        true));
+                                                currentImagePath = Util.storeImage(BitmapView.ResizeBitMapDependWidth(BitmapView.getBitmapFromView(scContentParent), 512) ,
+                                                        "SHARE",
+                                                        "SHARE",
+                                                        true);
 
                                                 Transaction.shareImageViaZalo(currentImagePath, currentCustomer);
                                             }

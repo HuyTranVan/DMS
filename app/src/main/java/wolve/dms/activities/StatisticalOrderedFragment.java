@@ -17,16 +17,20 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.Statistical_OrderedAdapter;
+import wolve.dms.apiconnect.Api_link;
 import wolve.dms.apiconnect.CustomerConnect;
 import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackListObject;
 import wolve.dms.callback.CallbackString;
+import wolve.dms.callback.NewCallbackCustom;
+import wolve.dms.libraries.connectapi.CustomGetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
+import wolve.dms.utils.Util;
 
 /**
  * Created by macos on 9/16/17.
@@ -90,18 +94,36 @@ public class StatisticalOrderedFragment extends Fragment implements View.OnClick
     }
 
     private void loadListOrdered(int offset, CallbackListObject listener, boolean showloading) {
-        CustomerConnect.getCustomerOrderedList(offset, mActivity.getCurrentUserId(), new CallbackCustomList() {
-            @Override
-            public void onResponse(List<BaseModel> results) {
-                listener.onResponse(results);
+        BaseModel param = Api_link.createGetParam(
+                Api_link.CUSTOMER_ORDERED(mActivity.getCurrentUserId(),offset, 20),
+                true);
 
+        new CustomGetPostMethod(param, new NewCallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result, List<BaseModel> list) {
+                listener.onResponse(list);
             }
 
             @Override
             public void onError(String error) {
 
             }
-        }, showloading);
+        }, showloading).execute();
+
+
+
+//        CustomerConnect.getCustomerOrderedList(offset, mActivity.getCurrentUserId(), new CallbackCustomList() {
+//            @Override
+//            public void onResponse(List<BaseModel> results) {
+//                listener.onResponse(results);
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        }, showloading);
 
 
     }
@@ -118,9 +140,10 @@ public class StatisticalOrderedFragment extends Fragment implements View.OnClick
         });
         rvCustomer.setLayoutManager(new LinearLayoutManager(mActivity));
         rvCustomer.setAdapter(adapter);
-        //Util.createLinearRV(rvCustomer, adapter);
-//        rvCustomer.setAdapter(adapter);
         initScrollListener();
+//        Util.createLinearRV(rvCustomer, adapter);
+//        rvCustomer.setAdapter(adapter);
+
     }
 
     private void openCustomerActivity(String id) {
@@ -166,7 +189,6 @@ public class StatisticalOrderedFragment extends Fragment implements View.OnClick
 
     private void loadMore() {
         adapter.addItem(null);
-        //adapter.notifyItemInserted(listOrdered.size() - 1);
 
         loadListOrdered(adapter.getItemCount() - 1, new CallbackListObject() {
             @Override

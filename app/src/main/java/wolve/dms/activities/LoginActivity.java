@@ -7,9 +7,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.nispok.snackbar.Snackbar;
-import com.nispok.snackbar.listeners.ActionClickListener;
-
 import wolve.dms.R;
 import wolve.dms.apiconnect.SystemConnect;
 import wolve.dms.apiconnect.UserConnect;
@@ -111,14 +108,15 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private void submitLogin() {
         if (Util.isEmpty(edUsername) || Util.isEmpty(edPassword)) {
             Util.showToast("Vui lòng nhập đủ thông tin");
+
         } else {
             SystemConnect.getFCMToken(new CallbackString() {
                 @Override
-                public void Result(String s) {
-                    if (!s.equals("")) {
-                        UserConnect.doLogin(edUsername.getText().toString().trim(),
+                public void Result(String token) {
+                    if (!token.equals("")) {
+                        login(edUsername.getText().toString().trim(),
                                 edPassword.getText().toString().trim(),
-                                s,
+                                token,
                                 new CallbackBoolean() {
                                     @Override
                                     public void onRespone(Boolean result) {
@@ -130,12 +128,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                                         }
                                     }
                                 });
+
                     } else {
-                        Util.showSnackbar("Đăng nhập thất bại", "Thử lại", new ActionClickListener() {
+                        Util.showSnackbar("Đăng nhập thất bại", "Thử lại", new View.OnClickListener() {
                             @Override
-                            public void onActionClicked(Snackbar snackbar) {
+                            public void onClick(View view) {
                                 submitLogin();
                             }
+
                         });
                     }
                 }
