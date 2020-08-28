@@ -36,7 +36,7 @@ import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventList
 import java.util.List;
 
 import wolve.dms.R;
-import wolve.dms.apiconnect.libraries.GMapGetMethod;
+import wolve.dms.apiconnect.apiserver.GMapGetMethod;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.models.BaseModel;

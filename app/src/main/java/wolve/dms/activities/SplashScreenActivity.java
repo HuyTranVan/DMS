@@ -13,7 +13,7 @@ import wolve.dms.R;
 import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.NewCallbackCustom;
-import wolve.dms.apiconnect.libraries.GetPostMethod;
+import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;

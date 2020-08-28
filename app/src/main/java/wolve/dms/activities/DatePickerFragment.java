@@ -35,6 +35,7 @@ public class DatePickerFragment extends Fragment implements View.OnClickListener
     private ViewpagerDatePickerAdapter viewpagerAdapter;
     private int currentPosition = 0;
     private String[] titles = new String[]{"CHỌN NGÀY", "CHỌN THÁNG", "CHỌN NĂM"};
+    private long starttime;
     private CallbackObject onDataPass;
 
     @Nullable
@@ -53,6 +54,7 @@ public class DatePickerFragment extends Fragment implements View.OnClickListener
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             currentPosition = bundle.getInt("position", 0);
+            starttime = bundle.getLong("start_time", Util.CurrentTimeStamp());
         }
         tabLayout.setupWithViewPager(viewPager);
         setupViewPager();
@@ -107,7 +109,7 @@ public class DatePickerFragment extends Fragment implements View.OnClickListener
     }
 
     private void setupViewPager() {
-        viewpagerAdapter = new ViewpagerDatePickerAdapter(titles);
+        viewpagerAdapter = new ViewpagerDatePickerAdapter(starttime,currentPosition,  titles);
         viewPager.setAdapter(viewpagerAdapter);
         viewPager.setCurrentItem(currentPosition);
         viewPager.setOffscreenPageLimit(3);

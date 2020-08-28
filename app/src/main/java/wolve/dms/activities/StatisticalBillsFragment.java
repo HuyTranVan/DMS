@@ -16,7 +16,7 @@ import java.util.List;
 import wolve.dms.R;
 import wolve.dms.adapter.Statistical_BillsAdapter;
 import wolve.dms.apiconnect.ApiUtil;
-import wolve.dms.apiconnect.libraries.GetPostMethod;
+import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.models.BaseModel;

@@ -216,42 +216,42 @@ public class CalendarUtil {
         return datePickerDialogFragment;
     }
 
-    public static void showDialogYearPicker(String currentYear, CustomCenterDialog.CallbackRangeTime mListener, final CallbackString mString) {
-        final Dialog dialogResult = YearPicker.showCustomDialog(R.layout.view_dialog_select_yearpicker);
-        dialogResult.setCancelable(true);
-        dialogResult.setCanceledOnTouchOutside(true);
-        Button ok = dialogResult.findViewById(R.id.btn_submit);
-        Button cancel = dialogResult.findViewById(R.id.btn_cancel);
-        final NumberPicker numberPicker = dialogResult.findViewById(R.id.year);
-
-        int year = Calendar.getInstance().get(Calendar.YEAR);
-        numberPicker.setMaxValue(year + 50);
-        numberPicker.setMinValue(year - 50);
-        numberPicker.setWrapSelectorWheel(false);
-        numberPicker.setValue(currentYear != null ? Util.YearInt(currentYear) : year);
-        numberPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-
-        ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mString.Result(String.valueOf(numberPicker.getValue()));
-                mListener.onSelected(getStartDay(null, String.valueOf(numberPicker.getValue())),
-                        getEndDay(null, String.valueOf(numberPicker.getValue())));
-                dialogResult.dismiss();
-
-            }
-        });
-
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogResult.dismiss();
-
-            }
-        });
-
-
-    }
+//    public static void showDialogYearPicker(String currentYear, CustomCenterDialog.CallbackRangeTime mListener, final CallbackString mString) {
+//        final Dialog dialogResult = YearPicker.showCustomDialog(R.layout.view_dialog_select_yearpicker);
+//        dialogResult.setCancelable(true);
+//        dialogResult.setCanceledOnTouchOutside(true);
+//        Button ok = dialogResult.findViewById(R.id.btn_submit);
+//        Button cancel = dialogResult.findViewById(R.id.btn_cancel);
+//        final NumberPicker numberPicker = dialogResult.findViewById(R.id.year);
+//
+//        int year = Calendar.getInstance().get(Calendar.YEAR);
+//        numberPicker.setMaxValue(year + 50);
+//        numberPicker.setMinValue(year - 50);
+//        numberPicker.setWrapSelectorWheel(false);
+//        numberPicker.setValue(currentYear != null ? Util.YearInt(currentYear) : year);
+//        numberPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+//
+//        ok.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mString.Result(String.valueOf(numberPicker.getValue()));
+//                mListener.onSelected(getStartDay(null, String.valueOf(numberPicker.getValue())),
+//                        getEndDay(null, String.valueOf(numberPicker.getValue())));
+//                dialogResult.dismiss();
+//
+//            }
+//        });
+//
+//        cancel.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                dialogResult.dismiss();
+//
+//            }
+//        });
+//
+//
+//    }
 
 
 }

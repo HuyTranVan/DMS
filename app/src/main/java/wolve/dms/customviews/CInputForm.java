@@ -233,7 +233,10 @@ public class CInputForm extends FrameLayout {
             @Override
             public void afterTextChanged(Editable s) {
                 edInput.removeTextChangedListener(this);
-                listener.Result(edInput.getText().toString().replace(".", ""));
+                if (listener != null){
+                    listener.Result(edInput.getText().toString().replace(".", ""));
+                }
+
                 try {
                     edInput.setText(Util.FormatPhone(edInput.getText().toString().replace(".", "")));
                     edInput.setSelection(edInput.getText().toString().length());
@@ -307,8 +310,10 @@ public class CInputForm extends FrameLayout {
                 try {
                     edInput.setText(Util.FormatMoney(Util.valueMoney(edInput)));
                     edInput.setSelection(edInput.getText().toString().length());
+                    if (mlistener != null){
+                        mlistener.Result(Util.valueMoney(edInput));
+                    }
 
-                    mlistener.Result(Util.valueMoney(edInput));
                     edInput.addTextChangedListener(this);
 
 

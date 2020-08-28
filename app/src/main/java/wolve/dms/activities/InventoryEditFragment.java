@@ -19,7 +19,7 @@ import wolve.dms.adapter.InventoryEditAdapter;
 import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackListObject;
 import wolve.dms.callback.NewCallbackCustom;
-import wolve.dms.apiconnect.libraries.GetPostMethod;
+import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;

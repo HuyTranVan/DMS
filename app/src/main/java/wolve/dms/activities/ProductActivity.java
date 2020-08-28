@@ -28,7 +28,7 @@ import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.libraries.FitScrollWithFullscreen;
 import wolve.dms.libraries.MySwipeRefreshLayout;
-import wolve.dms.apiconnect.libraries.GetPostMethod;
+import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;

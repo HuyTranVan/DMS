@@ -1,7 +1,17 @@
 package wolve.dms.libraries.firebase;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Log;
+import android.widget.RemoteViews;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
@@ -10,8 +20,14 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.Map;
 
+import wolve.dms.R;
 import wolve.dms.activities.BaseActivity;
+import wolve.dms.activities.MapsActivity;
+import wolve.dms.activities.SplashScreenActivity;
+import wolve.dms.libraries.Contacts;
 import wolve.dms.utils.Util;
+
+import static android.app.Notification.EXTRA_NOTIFICATION_ID;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "MyFirebaseMsgService";
@@ -57,50 +73,47 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         BaseActivity activity = (BaseActivity) Util.getInstance().getCurrentActivity();
         activity.receiveBundleFormFCM(messageBody);
 
-//        Intent intent = new Intent(this, SplashScreenActivity.class);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+
+//        int NOTIFICATION_ID = 1;
 //
-//        String channelId = getString(R.string.project_id);
-//        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 //
-//        NotificationCompat.Builder notificationBuilder =
-//                new NotificationCompat.Builder(this, channelId)
-//                        .setSmallIcon(R.drawable.ic_lub_48x48)
-//                        //.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher_background))
-//                        .setContentTitle(getString(R.string.project_id))
-//                        .setContentText(messageBody)
-//                        .setAutoCancel(true)
-//                        .setSound(defaultSoundUri)
-//                        .setContentIntent(pendingIntent)
-//                        .setDefaults(Notification.DEFAULT_ALL)
-//                        .setPriority(NotificationManager.IMPORTANCE_HIGH);
+//        NotificationCompat.Builder builder = new NotificationCompat.(this);
+//        builder.setSmallIcon(R.drawable.ic_lub_notify);
+//        builder.setColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+//        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_account));
+//        builder.setContentTitle("Notification Actions");
+//        builder.setContentText("Tap View to launch our website");
+//        builder.setAutoCancel(true);
+//        PendingIntent launchIntent = getLaunchIntent(NOTIFICATION_ID, getBaseContext());
 //
-////                        .addAction(new NotificationCompat.Action(
-////                                android.R.drawable.sym_call_missed,
-////                                "Cancel",
-////                                PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)))
-////                        .addAction(new NotificationCompat.Action(
-////                                android.R.drawable.sym_call_outgoing,
-////                                "OK",
-////                                PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)));
+//        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.journaldev.com"));
+//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 //
-//        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//        Intent buttonIntent = new Intent(getBaseContext(), NotificationReceiver.class);
+//        buttonIntent.putExtra("notificationId", NOTIFICATION_ID);
+//        PendingIntent dismissIntent = PendingIntent.getBroadcast(getBaseContext(), 0, buttonIntent, 0);
 //
-//        // Since android Oreo notification channel is needed.
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            NotificationChannel channel = new NotificationChannel(
-//                    channelId,
-//                    "Channel human readable title",
-//                    NotificationManager.IMPORTANCE_DEFAULT);
+//        builder.setContentIntent(launchIntent);
+//        builder.addAction(android.R.drawable.ic_menu_view, "VIEW", pendingIntent);
+//        builder.addAction(android.R.drawable.ic_delete, "DISMISS", dismissIntent);
 //
-//            notificationManager.createNotificationChannel(channel);
-//        }
+//        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 //
-//        notificationManager.notify(0, notificationBuilder.build());
+//        // Will display the notification in the notification bar
+//        notificationManager.notify(NOTIFICATION_ID, builder.build());
 
 
     }
+
+    public PendingIntent getLaunchIntent(int notificationId, Context context) {
+
+        Intent intent = new Intent(context, MapsActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra("notificationId", notificationId);
+        return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+    }
+
+
 
 //    private void sendNotification(String messageBody) {
 //        Intent intent = new Intent(this, SplashScreenActivity.class);

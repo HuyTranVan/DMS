@@ -30,8 +30,8 @@ import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.CallbackUri;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.customviews.CInputForm;
-import wolve.dms.apiconnect.libraries.GetPostMethod;
-import wolve.dms.apiconnect.libraries.UploadCloudaryMethod;
+import wolve.dms.apiconnect.apiserver.GetPostMethod;
+import wolve.dms.apiconnect.apiserver.UploadCloudaryMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.utils.Constants;
@@ -152,25 +152,6 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
 
         }
 
-        edUnitPrice.textMoneyEvent(new CallbackDouble() {
-            @Override
-            public void Result(Double d) {
-
-            }
-        });
-        edPurchasePrice.textMoneyEvent(new CallbackDouble() {
-            @Override
-            public void Result(Double d) {
-
-            }
-        });
-        edBasePrice.textMoneyEvent(new CallbackDouble() {
-            @Override
-            public void Result(Double d) {
-
-            }
-        });
-
         edBasePrice.setVisibility(Util.isAdmin() ? View.VISIBLE : View.GONE);
 
     }
@@ -180,6 +161,9 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
         btnSubmit.setOnClickListener(this);
         imgProduct.setOnClickListener(this);
         edGroup.setOnClickListener(this);
+        edUnitPrice.textMoneyEvent(null);
+        edPurchasePrice.textMoneyEvent(null);
+        edBasePrice.textMoneyEvent(null);
 
     }
 

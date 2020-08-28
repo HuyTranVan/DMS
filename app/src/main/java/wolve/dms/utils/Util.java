@@ -244,12 +244,6 @@ public class Util {
                 .build()
                 .show();
 
-
-//        if (actionlabel != null) {
-//            snb.actionLabel(actionlabel).actionListener(actionListener);
-//        }
-//
-//        SnackbarManager.show(snb, Util.getInstance().getCurrentActivity()); // where it is displayed
     }
 
     public static void showLongSnackbar(String content, String actionlabel, View.OnClickListener  listener) {
@@ -270,7 +264,6 @@ public class Util {
     }
 
     public static void showSnackbarError(String content) {
-
         Snacky.builder()
                 .setActivity(Util.getInstance().getCurrentActivity())
                 .setActionText("REPORT")
@@ -293,20 +286,6 @@ public class Util {
 
     }
 
-
-//    public static void showSnackbar(String content, String actionlabel, boolean isIndefinite, ActionClickListener actionListener) {
-//        Snackbar snb = Snackbar.with(Util.getInstance().getCurrentActivity().getApplicationContext())
-//                .type(SnackbarType.MULTI_LINE) // Set is as a multi-line snackbar
-//                .text(content) // text to be displayed
-//                .actionColor(Color.parseColor("#2196f3"))
-//                .duration(isIndefinite ? Snackbar.SnackbarDuration.LENGTH_INDEFINITE : Snackbar.SnackbarDuration.LENGTH_SHORT);
-//        if (actionlabel != null) {
-//            snb.actionLabel(actionlabel).actionListener(actionListener);
-//        }
-//
-//
-//        SnackbarManager.show(snb, Util.getInstance().getCurrentActivity()); // where it is displayed
-//    }
 
     public static void showToast(String message) {
         if (currentToast != null) {
@@ -459,7 +438,7 @@ public class Util {
             public void run() {
                 Util.showKeyboard(view);
             }
-        }, 1000);
+        }, 500);
     }
 
     public static void showKeyboardEditTextDelay(EditText view) {
@@ -946,29 +925,21 @@ public class Util {
 
     }
 
-    public static String YearString(long timestamp) {
-        String date = "";
-
+    public static int YearString(long timestamp) {
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
-        //cal.setTimeInMillis(timestamp*1000);
         cal.setTimeInMillis(timestamp);
-        date = DateFormat.format("yyyy", cal).toString();
+        int year =cal.get(Calendar.YEAR);
 
-        return date;
+        return year;
 
     }
 
-    public static int YearInt(String year) {
-        SimpleDateFormat dfm = new SimpleDateFormat("yyyy");
+    public static int MonthString(long timestamp) {
+        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+        cal.setTimeInMillis(timestamp);
+        int monthOfYear = cal.get(Calendar.MONTH);
 
-        long unixtime = 0;
-        try {
-            unixtime = dfm.parse(year).getTime();
-            unixtime = unixtime;
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return (int) unixtime;
+        return monthOfYear;
 
     }
 
@@ -1123,26 +1094,6 @@ public class Util {
         return moneyFormated;
     }
 
-    public static ArrayList<String> arrayToList(String[] array) {
-        ArrayList<String> list = new ArrayList<>();
-        for (int i = 0; i < array.length; i++) {
-            list.add(array[i]);
-        }
-
-        return list;
-    }
-
-    public static void setProvincesList(JSONArray result) {
-        mListProvinces = new ArrayList<>();
-        try {
-            for (int i = 0; i < result.length(); i++) {
-                Province province = new Province(result.getJSONObject(i));
-                mListProvinces.add(province);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
 
     public static Double valueMoney(String money) {
         return Double.parseDouble(money.replaceAll(",|\\s|\\.", ""));
@@ -1166,34 +1117,7 @@ public class Util {
         return Double.parseDouble(edText.getText().toString().trim().replaceAll(",|\\s|\\.", ""));
     }
 
-    public static Double getTotalMoney(List<BaseModel> list) {
-        Double money = 0.0;
-        for (int i = 0; i < list.size(); i++) {
-            money += list.get(i).getDouble("total");
-        }
-        return money;
-    }
 
-    public static Double getTotalMoney1(List<JSONObject> list) {
-        Double money = 0.0;
-        try {
-            for (int i = 0; i < list.size(); i++) {
-                money += list.get(i).getDouble("total");
-
-            }
-        } catch (JSONException e) {
-            return money;
-        }
-        return money;
-    }
-
-    public static Double getTotalPaid(List<Bill> list) {
-        Double money = 0.0;
-        for (int i = 0; i < list.size(); i++) {
-            money += list.get(i).getDouble("paid");
-        }
-        return money;
-    }
 
     public static double getTotalDebt(List<BaseModel> list) {
         Double money = 0.0;
@@ -1222,61 +1146,6 @@ public class Util {
         object.put("size", list.size());
 
         return object;
-    }
-
-    public static JSONObject getTotal(JSONArray array) {
-        JSONObject object = new JSONObject();
-        Double total = 0.0;
-        Double paid = 0.0;
-        Double debt = 0.0;
-        try {
-            for (int i = 0; i < array.length(); i++) {
-                JSONObject ob = array.getJSONObject(i);
-                total += ob.getDouble("total");
-                paid += ob.getDouble("paid");
-                debt += ob.getDouble("debt");
-            }
-
-            object.put("total", total);
-            object.put("paid", paid);
-            object.put("debt", debt);
-            object.put("size", array.length());
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return object;
-    }
-
-    public static Double getTotalProfit(List<Bill> list) {
-        Double profit = 0.0;
-        try {
-            for (int i = 0; i < list.size(); i++) {
-                JSONArray arrayDetail = list.get(i).getJSONArray("billDetails");
-                if (arrayDetail.length() > 0) {
-                    for (int j = 0; j < arrayDetail.length(); j++) {
-                        JSONObject objectDetail = arrayDetail.getJSONObject(j);
-                        profit += (objectDetail.getDouble("unitPrice") - objectDetail.getDouble("discount") - objectDetail.getDouble("purchasePrice"))
-                                * objectDetail.getDouble("quantity");
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            return profit;
-        }
-        return profit;
-    }
-
-    public static double getProfit(BaseModel bill) {
-        Double profit = 0.0;
-        List<BaseModel> billdetails = DataUtil.array2ListBaseModel(bill.getJSONArray("billDetails"));
-        for (int i = 0; i < billdetails.size(); i++) {
-            profit += (billdetails.get(i).getDouble("unitPrice") - billdetails.get(i).getDouble("discount") - billdetails.get(i).getDouble("purchasePrice"))
-                    * billdetails.get(i).getDouble("quantity");
-        }
-
-
-        return profit;
     }
 
     public static double getProfitByPayment(BaseModel bill, double paid) {
@@ -1564,18 +1433,22 @@ public class Util {
     public static String isPhoneFormat(String phone) {
         String baseStringValue = phone.replace(".", "").replace(",", "");
         if (isEmpty(baseStringValue)){
-            return "";
+            return null;
         }else {
             if (baseStringValue.matches(DETECT_PHONE)){
                 return baseStringValue;
             }else {
-                return "";
+                return null;
             }
         }
     }
 
     public static String getPhoneValue(EditText edText) {
         return edText.getText().toString().replace(".", "");
+    }
+
+    public static String getPhoneValue(String text) {
+        return text.replace(".", "");
     }
 
     public static String getPhoneValue(CInputForm edText) {

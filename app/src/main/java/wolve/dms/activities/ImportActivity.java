@@ -30,7 +30,7 @@ import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackListObject;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.NewCallbackCustom;
-import wolve.dms.apiconnect.libraries.GetPostMethod;
+import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.utils.Constants;
@@ -105,7 +105,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         }
 
         tabLayout.setupWithViewPager(viewPager);
-        getListImport(0, new CallbackListObject() {
+        getListImport(1, new CallbackListObject() {
             @Override
             public void onResponse(List<BaseModel> list) {
                 setupViewPager(new ArrayList<>(), list);
@@ -196,7 +196,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
 //            @Override
 //            public void onResponse(List<BaseModel> results) {
 //
-////                listener.onResponse(DataUtil.filterListImport(results, toWarehouse.getInt("id")));
+//                listener.onResponse(DataUtil.filterListImport(results, toWarehouse.getInt("id")));
 //            }
 //
 //            @Override
@@ -360,7 +360,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
     }
 
     public void reloadListImport(boolean setActive, boolean reloadToWarehouse) {
-        getListImport(0, new CallbackListObject() {
+        getListImport(1, new CallbackListObject(){
             @Override
             public void onResponse(List<BaseModel> list) {
 //                if (list.size() > 0) {

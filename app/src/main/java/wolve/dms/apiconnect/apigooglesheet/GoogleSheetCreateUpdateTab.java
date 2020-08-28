@@ -1,4 +1,4 @@
-package wolve.dms.libraries.connectapi.sheetapi;
+package wolve.dms.apiconnect.apigooglesheet;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -13,36 +13,38 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
-import com.google.api.services.sheets.v4.model.ValueRange;
+import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest;
+import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetResponse;
+import com.google.api.services.sheets.v4.model.Request;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import wolve.dms.apiconnect.ApiUtil;
-import wolve.dms.apiconnect.libraries.GDriveMethod;
+import wolve.dms.apiconnect.apiserver.GDriveMethod;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
 
-
-public class GoogleSheetGetData extends AsyncTask<Void, Void, List<List<Object>>> {
+public class GoogleSheetCreateUpdateTab extends AsyncTask<Void, Void, List<List<Object>>> {
     private String spreadsheetId;
-    private String range;
     private NetHttpTransport HTTP_TRANSPORT;
     private JsonFactory JSON_FACTORY;
     private CallbackListList mListener;
     private List<String> SCOPES;
+    private List<Request> mRequestList;
+    private List<List<Object>> mParams;
 
     public interface CallbackListList {
         void onRespone(List<List<Object>> results);
     }
 
-    public GoogleSheetGetData(String sheetId, String sheetTab, CallbackListList callbackListList) {
+    public GoogleSheetCreateUpdateTab(String sheetId, List<Request> requestlist, CallbackListList callbackListList) {
         this.spreadsheetId = sheetId;
-        this.range = sheetTab;
+        //this.mTitle = tabtitle;
+        mRequestList = requestlist;
         this.HTTP_TRANSPORT = new NetHttpTransport();
         this.mListener = callbackListList;
         this.JSON_FACTORY = JacksonFactory.getDefaultInstance();
@@ -60,7 +62,7 @@ public class GoogleSheetGetData extends AsyncTask<Void, Void, List<List<Object>>
                     .setAccessType("offline")
                     .build();
 
-            Credential credential = new wolve.dms.libraries.googleauth.AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
+            Credential credential = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
 
             return credential;
 
@@ -72,48 +74,38 @@ public class GoogleSheetGetData extends AsyncTask<Void, Void, List<List<Object>>
 
     @Override
     protected List<List<Object>> doInBackground(Void... params) {
-        List<List<Object>> values = new ArrayList<>();
         Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials())
                 .setApplicationName(Constants.DMS_NAME)
                 .build();
+
+//        List<Request> requests = new ArrayList<>();
+//        Request request = new Request();
+//        request.setAddSheet(new AddSheetRequest().setProperties(new SheetProperties().setTitle(mTitle)));
+//
+//        requests.add(request);
+
+
         try {
-            ValueRange response = service.spreadsheets().values().get(spreadsheetId, range).execute();
+            BatchUpdateSpreadsheetRequest body = new BatchUpdateSpreadsheetRequest().setRequests(mRequestList);
+            BatchUpdateSpreadsheetResponse response = service.spreadsheets().batchUpdate(spreadsheetId, body).execute();
 
-//            Spreadsheet response1=   service.spreadsheets().get(spreadsheetId).execute();
-//            List<Sheet> sheets = response1.getSheets();
-
-            values = response.getValues();
-            if (values == null || values.isEmpty()) {
-                System.out.println("No data found.");
-            } else {
-                Log.e("name", values.toString());
-                for (List row : values) {
-
-                }
-            }
+            Log.e("res", response.getReplies().toString());
+            //FindReplaceResponse findReplaceResponse = response.getReplies().get(1).getFindReplace();
+            //System.out.printf("%d replacements made.", findReplaceResponse.getOccurrencesChanged());
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-
-        return values;
+        return mParams;
     }
 
     @Override
     protected void onPostExecute(List<List<Object>> lists) {
+//        super.onPostExecute(lists);
         mListener.onRespone(lists);
     }
 }
-
-//Get all Tab
-//            Spreadsheet response1= service.spreadsheets().get(spreadsheetId).setIncludeGridData (false).execute ();
-//
-//            List<Sheet> workSheetList = response1.getSheets();
-//
-//            for (Sheet sheet : workSheetList) {
-//                System.out.println(sheet.getProperties().getTitle());
-//            }
 
 
 

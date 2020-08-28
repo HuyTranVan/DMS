@@ -85,6 +85,9 @@
         android:requestLegacyExternalStorage="true"
         tools:replace="android:fullBackupContent">
 
+<!--        <receiver android:name=".libraries.firebase.NotificationReceiver"-->
+<!--            android:exported="false"/>-->
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

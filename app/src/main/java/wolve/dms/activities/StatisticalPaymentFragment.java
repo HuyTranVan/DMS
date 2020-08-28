@@ -16,7 +16,7 @@ import java.util.List;
 import wolve.dms.R;
 import wolve.dms.adapter.Statistical_PaymentAdapter;
 import wolve.dms.apiconnect.ApiUtil;
-import wolve.dms.apiconnect.libraries.GetPostMethod;
+import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.models.BaseModel;
@@ -104,29 +104,20 @@ public class StatisticalPaymentFragment extends Fragment implements View.OnClick
                     }
                 }, true).execute();
 
-//                CustomerConnect.GetCustomerDetail(s, new CallbackCustom() {
-//                    @Override
-//                    public void onResponse(BaseModel result) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onError(String error) {
-//
-//                    }
-//                }, true, true);
             }
         });
         Util.createLinearRV(rvCash, adapter);
 
-        rdTotal.setText(String.format("Tổng: %s", Util.FormatMoney(adapter.sumPayments())));
-
-        if (adapter.sumCollect() == 0.0) {
+        double total = adapter.sumPayments();
+        double collect = adapter.sumCollect();
+        if (collect == 0.0) {
             rdCollect.setVisibility(View.GONE);
+            rdTotal.setText(String.format("Tổng: %s", Util.FormatMoney(total)));
 
         } else {
             rdCollect.setVisibility(View.VISIBLE);
-            rdCollect.setText(String.format("Thu hộ: %s", Util.FormatMoney(adapter.sumCollect())));
+            rdCollect.setText(String.format("Thu hộ: %s", Util.FormatMoney(collect)));
+            rdTotal.setText(String.format("(%s) %s", Util.FormatMoney(total - collect), Util.FormatMoney(total)));
         }
 
 

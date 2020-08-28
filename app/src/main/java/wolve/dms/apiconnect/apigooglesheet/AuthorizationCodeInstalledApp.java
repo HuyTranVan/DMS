@@ -1,4 +1,4 @@
-package wolve.dms.libraries.googleauth;
+package wolve.dms.apiconnect.apigooglesheet;
 
 import android.content.Intent;
 import android.net.Uri;

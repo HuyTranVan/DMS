@@ -50,48 +50,48 @@ public class YearPicker {
         return d;
     }
 
-    public static void showDialogYearPicker(String currentYear, final CallbackString mListener, final CallbackBoolean clickListener) {
-        final Dialog dialogResult = YearPicker.showCustomDialog(R.layout.view_dialog_select_yearpicker);
-        dialogResult.setCancelable(true);
-        dialogResult.setCanceledOnTouchOutside(true);
-        Button ok = dialogResult.findViewById(R.id.btn_submit);
-        Button cancel = dialogResult.findViewById(R.id.btn_cancel);
-        final NumberPicker numberPicker = dialogResult.findViewById(R.id.year);
-
-        int year = Calendar.getInstance().get(Calendar.YEAR);
-        numberPicker.setMaxValue(year + 50);
-        numberPicker.setMinValue(year - 50);
-        numberPicker.setWrapSelectorWheel(false);
-        numberPicker.setValue(currentYear != null ? Util.YearInt(currentYear) : year);
-        numberPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-
-        dialogResult.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                clickListener.onRespone(false);
-            }
-        });
-
-
-        ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.Result(String.valueOf(numberPicker.getValue()));
-                dialogResult.dismiss();
-                clickListener.onRespone(true);
-            }
-        });
-
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogResult.dismiss();
-                clickListener.onRespone(false);
-            }
-        });
-
-
-    }
+//    public static void showDialogYearPicker(String currentYear, final CallbackString mListener, final CallbackBoolean clickListener) {
+//        final Dialog dialogResult = YearPicker.showCustomDialog(R.layout.view_dialog_select_yearpicker);
+//        dialogResult.setCancelable(true);
+//        dialogResult.setCanceledOnTouchOutside(true);
+//        Button ok = dialogResult.findViewById(R.id.btn_submit);
+//        Button cancel = dialogResult.findViewById(R.id.btn_cancel);
+//        final NumberPicker numberPicker = dialogResult.findViewById(R.id.year);
+//
+//        int year = Calendar.getInstance().get(Calendar.YEAR);
+//        numberPicker.setMaxValue(year + 50);
+//        numberPicker.setMinValue(year - 50);
+//        numberPicker.setWrapSelectorWheel(false);
+//        numberPicker.setValue(currentYear != null ? Util.YearInt(currentYear) : year);
+//        numberPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+//
+//        dialogResult.setOnCancelListener(new DialogInterface.OnCancelListener() {
+//            @Override
+//            public void onCancel(DialogInterface dialog) {
+//                clickListener.onRespone(false);
+//            }
+//        });
+//
+//
+//        ok.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mListener.Result(String.valueOf(numberPicker.getValue()));
+//                dialogResult.dismiss();
+//                clickListener.onRespone(true);
+//            }
+//        });
+//
+//        cancel.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                dialogResult.dismiss();
+//                clickListener.onRespone(false);
+//            }
+//        });
+//
+//
+//    }
 
     public static void showDialogDatePicker(final RadioButton rdButton, final CustomCenterDialog.CallbackRangeTime mListener, final CallbackBoolean clickListener) {
         //final String result ="&billingFrom=%d&billingTo=%d";

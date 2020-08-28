@@ -1,4 +1,4 @@
-package wolve.dms.libraries.connectapi.sheetapi;
+package wolve.dms.apiconnect.apigooglesheet;
 
 import android.os.AsyncTask;
 
@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import wolve.dms.apiconnect.ApiUtil;
-import wolve.dms.apiconnect.libraries.GDriveMethod;
+import wolve.dms.apiconnect.apiserver.GDriveMethod;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
 
@@ -65,7 +65,7 @@ public class GoogleSheetPostData extends AsyncTask<Void, Void, List<List<Object>
                     .setAccessType("offline")
                     .build();
 
-            Credential credential = new wolve.dms.libraries.googleauth.AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
+            Credential credential = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
 
             return credential;
 

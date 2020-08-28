@@ -1,4 +1,4 @@
-package wolve.dms.apiconnect.libraries;
+package wolve.dms.apiconnect.apiserver;
 
 import android.os.AsyncTask;
 import android.webkit.URLUtil;
@@ -30,7 +30,7 @@ public class UploadCloudaryMethod extends AsyncTask<String, Void, String> {
         config.put("api_secret", "Mh2EsnmYHBAsTAp7jsNLoJ5dXhk");
         mCloud = new Cloudinary(config);
 
-        UtilLoading.getInstance().showLoading();
+        UtilLoading.getInstance().showLoading(true);
     }
 
     @Override

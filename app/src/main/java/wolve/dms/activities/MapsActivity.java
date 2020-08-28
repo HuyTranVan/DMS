@@ -57,7 +57,7 @@ import wolve.dms.R;
 import wolve.dms.adapter.CustomWindowAdapter;
 import wolve.dms.adapter.Customer_SearchAdapter;
 import wolve.dms.apiconnect.ApiUtil;
-import wolve.dms.apiconnect.libraries.GMapGetMethod;
+import wolve.dms.apiconnect.apiserver.GMapGetMethod;
 import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustom;
@@ -68,13 +68,15 @@ import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.LatlngListener;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.customviews.CButton;
-import wolve.dms.apiconnect.libraries.GetPostMethod;
+import wolve.dms.apiconnect.apiserver.GetPostMethod;
+import wolve.dms.libraries.Contacts;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Customer;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.District;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.ContactUtil;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomInputDialog;
@@ -325,8 +327,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         loadCustomer = true;
         tvReload.setVisibility(loadCustomer ? View.GONE : View.VISIBLE);
 
-        unsetCurrentMarker();
-        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        unsetCurrentMarker(true);
         setNullButton();
     }
 
@@ -580,7 +581,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     }
 
     private void reUpdateMarkerDetail(BaseModel customer) {
-        unsetCurrentMarker();
+        unsetCurrentMarker(false);
         setCurrentMarker(addMarkerToList(customer));
 
     }
@@ -700,20 +701,23 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     @Override
     public boolean onMarkerClick(final Marker marker) {
-        unsetCurrentMarker();
+        unsetCurrentMarker(false);
         setCurrentMarker(marker);
 
 
         return true;
     }
 
-    private void unsetCurrentMarker() {
+    private void unsetCurrentMarker(boolean hidedetail) {
         if (currentMarker != null) {
             final BaseModel cust = new BaseModel(currentMarker.getTag().toString());
             Bitmap bitmap = MapUtil.GetBitmapMarker(this, cust.getInt("icon"), cust.getString("checkincount"), R.color.pin_waiting);
             currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
 
             currentMarker = null;
+            if (hidedetail){
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
         }
     }
 
@@ -786,8 +790,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             closeSearch();
 
         } else if (currentMarker != null){
-            unsetCurrentMarker();
-
+            unsetCurrentMarker(true);
+            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         } else {
             Transaction.gotoHomeActivityRight(true);
         }
@@ -839,7 +843,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         tvReload.setVisibility(View.GONE);
         tvListWating.setVisibility(View.GONE);
 
-        unsetCurrentMarker();
+        unsetCurrentMarker(true);
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         setNullButton();
 
@@ -1037,7 +1041,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
                     case BottomSheetBehavior.STATE_COLLAPSED:
                         setNullButton();
-                        unsetCurrentMarker();
+                        //unsetCurrentMarker();
                         btnNewCustomer.setVisibility(View.VISIBLE);
 
                         break;
@@ -1084,8 +1088,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 BaseModel cust = DataUtil.rebuiltCustomer(result, false);
                 CustomSQL.setBaseModel(Constants.CUSTOMER, cust);
                 BaseModel customer = buildMarkerByCustomer(cust);
-                //Contacts.InsertContact(customer);
 
+                Contacts.InsertContact(customer);
 
                 tvStatusDot.setTextColor(customer.getInt("statusColor"));
                 if (customer.getBoolean("statusInterested")) {
@@ -1138,21 +1142,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             public void onError(String error) {
                 progressLoadCustomer.setVisibility(View.GONE);
             }
-        }, true).execute();
-
-
-//        CustomerConnect.GetCustomerDetail(, new CallbackCustom() {
-//            @Override
-//            public void onResponse(final BaseModel result) {
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//                progressLoadCustomer.setVisibility(View.GONE);
-//                Util.showSnackbarError(error);
-//            }
-//        }, false, false);
+        }, false).execute();
 
 
         btnCall.setOnClickListener(new View.OnClickListener() {
@@ -1275,7 +1265,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     private void showListWaiting() {
         btnNewCustomer.close(true);
-        unsetCurrentMarker();
+        unsetCurrentMarker(true);
         setNullButton();
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         getCurrentLocation(new LocationListener() {

@@ -18,12 +18,12 @@ import java.util.List;
 import wolve.dms.R;
 import wolve.dms.adapter.Statistical_ViewpagerAdapter;
 import wolve.dms.apiconnect.ApiUtil;
-import wolve.dms.apiconnect.libraries.GDriveMethod;
+import wolve.dms.apiconnect.apiserver.GDriveMethod;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.customviews.CustomTabLayout;
-import wolve.dms.apiconnect.libraries.GetPostMethod;
-import wolve.dms.libraries.connectapi.sheetapi.GoogleSheetGetData;
+import wolve.dms.apiconnect.apiserver.GetPostMethod;
+import wolve.dms.apiconnect.apigooglesheet.GoogleSheetGetData;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
@@ -97,7 +97,9 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
         tvEmployeeName.setText(User.getCurrentRoleId() == Constants.ROLE_ADMIN ? Constants.ALL_FILTER : User.getFullName());
         tvCalendar.setText(Util.getIconString(R.string.icon_calendar, "   ", Util.CurrentMonthYear()));
 
-        loadInitialData(Util.TimeStamp1(Util.Current01MonthYear()), Util.TimeStamp1(Util.Next01MonthYear()), 1);
+        loadInitialData(Util.TimeStamp1(Util.Current01MonthYear()),
+                Util.TimeStamp1(Util.Next01MonthYear()),
+                1);
 
         setupViewPager(viewPager);
         setupTabLayout(tabLayout);
@@ -174,6 +176,7 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
             case R.id.statistical_calendar:
                 Bundle bundle = new Bundle();
                 bundle.putInt("position", currentCheckedTime);
+                bundle.putLong("start_time", start);
                 changeFragment(new DatePickerFragment(), bundle, true);
                 break;
 
@@ -220,25 +223,6 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
 
             }
         }, true).execute();
-
-//        SystemConnect.getStatisticals(String.format(Api_link.STATISTICAL_PARAM, starDay, lastDay), new CallbackCustom() {
-//            @Override
-//            public void onResponse(BaseModel result) {
-//                updatePaymentList(DataUtil.array2ListObject(result.getString(Constants.PAYMENTS)));
-//                updateDebtList(result.getBaseModel(Constants.DEBTS));
-//                updateBillsList(DataUtil.array2ListObject(result.getString(Constants.BILLS)));
-//                updateBillDetailList(listInitialBill);
-//                temptWarehouse = result.getBaseModel("inventory");
-//
-//                updateAllFragmentData(0);
-
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        });
 
 
     }
@@ -396,7 +380,7 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
 
     //data return from filter date fragment
     @Override
-    public void onResponse(BaseModel object) {
+    public void onResponse(BaseModel object){
         tvCalendar.setText(Util.getIconString(R.string.icon_calendar, "   ", object.getString("text")));
         loadInitialData(object.getLong("start"), object.getLong("end"), object.getInt("position"));
 

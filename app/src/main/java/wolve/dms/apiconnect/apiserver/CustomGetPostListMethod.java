@@ -1,4 +1,4 @@
-package wolve.dms.apiconnect.libraries;
+package wolve.dms.apiconnect.apiserver;
 
 import android.os.AsyncTask;
 import android.view.View;
@@ -20,10 +20,6 @@ import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
-
-import static wolve.dms.apiconnect.ApiUtil.getResponeArraySuccess;
-import static wolve.dms.apiconnect.ApiUtil.getResponeObjectSuccess;
-import static wolve.dms.apiconnect.ApiUtil.responeIsSuccess;
 
 /**
  * Created by tranhuy on 7/22/16.

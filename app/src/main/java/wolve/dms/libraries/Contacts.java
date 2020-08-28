@@ -18,14 +18,12 @@ import wolve.dms.utils.Util;
 
 public class Contacts {
     public static void InsertContact(BaseModel customer){
-        if (!Util.isPhoneFormat(customer.getString("phone")).equals("")){
-            if (Contacts.contactExists(customer.getString("phone"))){
-                Util.showToast("Da ton tai");
-            }else {
-                String name = String.format("%s %s. %s",
+        if (Util.isPhoneFormat(customer.getString("phone")) != null){
+            if (!Contacts.contactExists(Util.getPhoneValue(customer.getString("phone")))){
+                String name = String.format("DMS.%s %s (%s)",
                         Constants.shopNameShortened[customer.getInt("shopType")],
                         customer.getString("signBoard"),
-                        customer.getString("name").substring(customer.getString("name").lastIndexOf(" ")+1));
+                        customer.getString("name"));
 
                 ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
                 int rawContactInsertIndex = ops.size();
@@ -44,18 +42,16 @@ public class Contacts {
 
                 ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                         .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
-                        .withValue(ContactsContract.Data.MIMETYPE,
-                                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+                        .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
                         .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, customer.getString("phone"))
                         .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)
                         .build());
 
                 ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                         .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
-                        .withValue(ContactsContract.Data.MIMETYPE,
-                                ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
-                        .withValue(ContactsContract.CommonDataKinds.Email.DATA, "")
-                        .withValue(ContactsContract.CommonDataKinds.Email.TYPE, "")
+                        .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
+                        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.STREET, "XXXXX")
+                        //.withValue(ContactsContract.CommonDataKinds.Email.TYPE, "")
                         .build());
 
                 try {

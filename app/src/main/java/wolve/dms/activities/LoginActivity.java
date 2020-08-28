@@ -7,11 +7,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+
 import wolve.dms.R;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.libraries.FitScrollWithFullscreen;
-import wolve.dms.apiconnect.libraries.FCMMethod;
+import wolve.dms.apiconnect.apiserver.FCMMethod;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomSQL;
@@ -27,6 +29,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private Button btnSubmit;
     private TextView btnKeyboard, tvLostPassword;
     private Boolean detectNumberKeyboard = true;
+    private Fragment mFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +45,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     @Override
     public int setIdContainer() {
-        return 0;
+        return R.id.login_parent;
     }
 
     @Override
@@ -90,14 +93,16 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 break;
 
             case R.id.login_lost_password:
-                CustomCenterDialog.alertWithButtonCanceled("Quên mật khẩu!",
-                        "Liên hệ Admin để cài đặt lại mật khẩu",
-                        "ĐỒNG Ý", false, new CallbackBoolean() {
-                            @Override
-                            public void onRespone(Boolean result) {
+                changeFragment(new ResetPasswordFragment(), true);
 
-                            }
-                        });
+//                CustomCenterDialog.alertWithButtonCanceled("Quên mật khẩu!",
+//                        "Liên hệ Admin để cài đặt lại mật khẩu",
+//                        "ĐỒNG Ý", false, new CallbackBoolean() {
+//                            @Override
+//                            public void onRespone(Boolean result) {
+//
+//                            }
+//                        });
 
                 break;
         }
@@ -143,4 +148,16 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        mFragment = getSupportFragmentManager().findFragmentById(R.id.login_parent);
+        if (Util.getInstance().isLoading()) {
+            Util.getInstance().stopLoading(true);
+
+        }else if (mFragment != null && mFragment instanceof ResetPasswordFragment) {
+            getSupportFragmentManager().popBackStack();
+
+        }
+    }
 }

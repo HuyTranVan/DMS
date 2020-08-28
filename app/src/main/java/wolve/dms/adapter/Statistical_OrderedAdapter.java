@@ -70,9 +70,6 @@ public class Statistical_OrderedAdapter extends RecyclerView.Adapter<RecyclerVie
             return new LoadingViewHolder(view);
         }
 
-
-//        View itemView = LayoutInflater.from(mContext).inflate(R.layout.adapter_statistical_ordered_item, parent, false);
-//        return new StatisticalOrderedViewHolder(itemView);
     }
 
     @Override

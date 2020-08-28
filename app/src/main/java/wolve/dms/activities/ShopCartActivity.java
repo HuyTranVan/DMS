@@ -21,7 +21,7 @@ import java.util.List;
 import wolve.dms.R;
 import wolve.dms.adapter.CartProductsAdapter;
 import wolve.dms.apiconnect.ApiUtil;
-import wolve.dms.apiconnect.libraries.GetPostMethod;
+import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackString;

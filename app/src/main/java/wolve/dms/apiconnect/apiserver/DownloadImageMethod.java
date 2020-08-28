@@ -1,4 +1,4 @@
-package wolve.dms.apiconnect.libraries;
+package wolve.dms.apiconnect.apiserver;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,9 +15,6 @@ import java.util.List;
 
 import wolve.dms.callback.CallbackListObject;
 import wolve.dms.models.BaseModel;
-import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomFixSQL;
-import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Util;
 
 /**
@@ -55,6 +52,7 @@ public class DownloadImageMethod extends AsyncTask<String, Void, List<BaseModel>
                             mGroupName,
                             String.format("%s%s", mGroupName, mList.get(i).getString("id")),
                             false);
+
                     mList.get(i).put("image_uri", Util.getRealPathFromImageURI(image_uri));
 
                 }

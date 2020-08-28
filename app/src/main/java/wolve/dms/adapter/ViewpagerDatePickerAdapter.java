@@ -33,15 +33,18 @@ public class ViewpagerDatePickerAdapter extends PagerAdapter {
     private Context mContext;
     private LayoutInflater inflater;
     private View view;
+    private long startTime;
     private String[] mTitles;
     private CalendarPickerView datePickerView;
     private SimpleDatePickerDelegate monthPickerView;
     private NumberPicker yearPickerView;
+    private int mPosition;
 
-    public ViewpagerDatePickerAdapter(String[] titles) {
+    public ViewpagerDatePickerAdapter(long currenttime, int position, String[] titles) {
         this.mContext = Util.getInstance().getCurrentActivity();
+        this.startTime = currenttime;
         this.mTitles = titles;
-
+        this.mPosition = position;
     }
 
     @Override
@@ -60,18 +63,22 @@ public class ViewpagerDatePickerAdapter extends PagerAdapter {
         switch (position) {
             case 0:
                 view = inflater.inflate(R.layout.view_tab_item_datepicker, container, false);
-                dateSetup(view);
+                dateSetup(view,
+                        mPosition == position? new Date(startTime) : new Date());
                 break;
 
             case 1:
                 view = inflater.inflate(R.layout.view_tab_item_monthpicker, container, false);
-                monthSetup(view);
+                monthSetup(view,
+                        mPosition == position? Util.MonthString(startTime) : Calendar.getInstance().get(Calendar.MONTH),
+                        mPosition == position? Util.YearString(startTime) : Calendar.getInstance().get(Calendar.YEAR));
 
                 break;
 
             case 2:
                 view = inflater.inflate(R.layout.view_tab_item_yearpicker, container, false);
-                yearSetup(view);
+                yearSetup(view,
+                        mPosition == position? Util.YearString(startTime) : Calendar.getInstance().get(Calendar.YEAR));
                 break;
         }
 
@@ -86,13 +93,12 @@ public class ViewpagerDatePickerAdapter extends PagerAdapter {
         container.refreshDrawableState();
     }
 
-    @Override
-    public CharSequence getPageTitle(int position) {
-        return mTitles[position];
-    }
+//    @Override
+//    public CharSequence getPageTitle(int position) {
+//        return mTitles[position];
+//    }
 
-    private void yearSetup(View view) {
-        int year = Calendar.getInstance().get(Calendar.YEAR);
+    private void yearSetup(View view, int year) {
         yearPickerView = view.findViewById(R.id.year);
 
         yearPickerView.setMaxValue(year + 50);
@@ -103,7 +109,7 @@ public class ViewpagerDatePickerAdapter extends PagerAdapter {
 
     }
 
-    private void dateSetup(View view) {
+    private void dateSetup(View view, Date date) {
         datePickerView = view.findViewById(R.id.calendar_view);
 
         final Calendar nextYear = Calendar.getInstance();
@@ -117,26 +123,23 @@ public class ViewpagerDatePickerAdapter extends PagerAdapter {
 
         datePickerView.init(lastYear.getTime(), nextYear.getTime(), new SimpleDateFormat("MMMM, YYYY", Locale.getDefault()))
                 .inMode(CalendarPickerView.SelectionMode.RANGE)
-                .withSelectedDate(new Date());
+                .withSelectedDate(date);
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                datePickerView.scrollToDate(new Date());
+                datePickerView.scrollToDate(date);
             }
         }, 200);
 
 
     }
 
-    private void monthSetup(View view) {
-        int mMonth = Calendar.getInstance().get(Calendar.MONTH);
-        int mYear = Calendar.getInstance().get(Calendar.YEAR);
-
+    private void monthSetup(View view, int month, int year) {
         monthPickerView = new SimpleDatePickerDelegate(view);
-        monthPickerView.init(mYear, mMonth, new SimpleDatePickerDelegate.OnDateChangedListener() {
+        monthPickerView.init(year, month, new SimpleDatePickerDelegate.OnDateChangedListener() {
             @Override
-            public void onDateChanged(int year, int monthOfYear) {
+            public void onDateChanged(int year, int monthOfYear){
 
             }
         });
@@ -155,7 +158,7 @@ public class ViewpagerDatePickerAdapter extends PagerAdapter {
 
         } else {
             end = lastDate + 86400000;
-            text = String.format("%s >>> %s", Util.DateString(startDate), Util.DateString(lastDate));
+            text = String.format("%s >> %s", Util.DateString(startDate), Util.DateString(lastDate));
 
         }
 

@@ -8,9 +8,7 @@ import java.util.List;
 
 import wolve.dms.BuildConfig;
 import wolve.dms.R;
-import wolve.dms.apiconnect.libraries.UtilLoading;
 import wolve.dms.models.BaseModel;
-import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
 
 /**
@@ -119,8 +117,6 @@ public class ApiUtil {
     public final static String IMPORT_DELETE(){
         return BASE_URL + "dms/token/warehouse/ImportDelete?id=";
     }
-
-
 
     public final static String USERS(){
         return BASE_URL + "dms/token/user/UserList";
@@ -242,6 +238,12 @@ public class ApiUtil {
     public final static String PAYMENT_DELETE(){
         return BASE_URL + "dms/token/bill/PaymentDelete?id=";
     }
+
+    public final static String RESET_PASSWORD_PARAM = "phone=%s&email=%s";
+    public final static String RESET_PASSWORD(){
+        return BASE_URL + "dms/token/system/ResetPassword";
+    }
+
 
 //    public final static String DEBT_NEW = BASE_URL + "dms/token/bill/DebtNew";
 //    public final static String DEBT_PARAM = "debt=%s&user_id=%d&customer_id=%d&distributor_id=%d";

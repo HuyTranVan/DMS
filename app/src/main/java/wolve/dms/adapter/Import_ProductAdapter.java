@@ -17,7 +17,7 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.apiconnect.ApiUtil;
-import wolve.dms.apiconnect.libraries.GetPostMethod;
+import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackListObject;
 import wolve.dms.callback.NewCallbackCustom;
@@ -251,21 +251,7 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
                                 }
                             }, true).execute();
-//                            CustomerConnect.DeleteImport(mData.get(position).getString("id"), new CallbackCustom() {
-//                                @Override
-//                                public void onResponse(BaseModel result) {
-//                                    if (result.getBoolean("deleted")) {
-//                                        Util.getInstance().stopLoading(true);
-//                                        Util.showToast("Xóa thành công!");
-//                                        mListener.onRespone(true);
-//                                    }
-//                                }
-//
-//                                @Override
-//                                public void onError(String error) {
-//
-//                                }
-//                            }, true);
+
                         }
 
                     }
@@ -293,18 +279,6 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             }
         }, true).execute();
 
-//        CustomerConnect.PostImport(param, new CallbackCustom() {
-//            @Override
-//            public void onResponse(BaseModel result) {
-//                listener.onRespone(true);
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//                listener.onRespone(false);
-//            }
-//        }, true);
     }
 
     private String createImportContentForShare(int position) {
@@ -398,20 +372,6 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
             }
         }, true).execute();
-
-//        CustomerConnect.ListImport(getItemCount() - 1, warehouse_id, new CallbackCustomList() {
-//            @Override
-//            public void onResponse(List<BaseModel> results) {
-//
-//
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }, false, true);
 
     }
 

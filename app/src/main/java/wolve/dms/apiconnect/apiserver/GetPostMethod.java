@@ -1,10 +1,7 @@
-package wolve.dms.apiconnect.libraries;
+package wolve.dms.apiconnect.apiserver;
 
 import android.os.AsyncTask;
 import android.view.View;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -12,8 +9,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.NewCallbackCustom;
@@ -69,8 +64,8 @@ public class GetPostMethod extends AsyncTask<String, Void, String> {
             if (mParam.getString("method").equals("POST")){
                 url = new URL(mParam.getString("url"));
                 con = (HttpURLConnection) url.openConnection();
-                con.setReadTimeout(5000);
-                con.setConnectTimeout(5000);
+                con.setReadTimeout(10000);
+                con.setConnectTimeout(10000);
                 con.setRequestMethod("POST");
                 con.setRequestProperty("User-Agent", "Mozilla/5.0");
                 con.setRequestProperty("Content-Type", mParam.getBoolean("isjson") ? "application/json" : "application/x-www-form-urlencoded");
@@ -101,8 +96,8 @@ public class GetPostMethod extends AsyncTask<String, Void, String> {
                 url = new URL(mParam.getString("url"));
                 con = (HttpURLConnection) url.openConnection();
 
-                con.setReadTimeout(5000);
-                con.setConnectTimeout(5000);
+                con.setReadTimeout(10000);
+                con.setConnectTimeout(10000);
                 con.setRequestMethod("GET");
                 con.setRequestProperty("User-Agent", "Mozilla/5.0");
                 con.setRequestProperty("x-wolver-accesstoken", User.getToken());

@@ -149,6 +149,7 @@ public class Constants {
     public static final String PRODUCT_POPULAR = "product_popular";
     public static final String PRODUCT_SUGGEST_LIST = "product_suggest_list";
     public static final String IMAGES = "images";
+    public static final String LOADING_TIMES = "loading_times";
 
     public static String CHECK_ALL = Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_check) + " CHỌN TẤT CẢ";
     public static String UNCHECK = "BỎ CHỌN";

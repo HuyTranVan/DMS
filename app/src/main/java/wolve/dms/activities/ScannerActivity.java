@@ -26,15 +26,15 @@ import java.util.Locale;
 import wolve.dms.R;
 import wolve.dms.adapter.ScannerCodeAdapter;
 import wolve.dms.apiconnect.ApiUtil;
-import wolve.dms.apiconnect.libraries.GDriveMethod;
+import wolve.dms.apiconnect.apiserver.GDriveMethod;
 import wolve.dms.customviews.CInputForm;
-import wolve.dms.libraries.connectapi.sheetapi.GoogleSheetGetData;
+import wolve.dms.apiconnect.apigooglesheet.GoogleSheetGetData;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
-import static wolve.dms.libraries.connectapi.sheetapi.GoogleSheetPostData.SHEET_ROW;
+import static wolve.dms.apiconnect.apigooglesheet.GoogleSheetPostData.SHEET_ROW;
 
 /**
  * Created by macos on 9/15/17.

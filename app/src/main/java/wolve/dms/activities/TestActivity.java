@@ -14,7 +14,6 @@ import wolve.dms.adapter.TestAdapter;
 import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackListCustom;
 import wolve.dms.libraries.Security;
-import wolve.dms.libraries.connectapi.CustomPostListMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.DataUtil;
@@ -204,57 +203,57 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
     }
 
 
-    private void UpdateIsBillReturn() {
-        List<BaseModel> list = adapter.getmData();
-        List<String> params = new ArrayList<>();
-        String patern = "id=%d&isReturn=%d";
-        for (BaseModel baseModel : list) {
-            params.add(String.format(patern, baseModel.getInt("id"), baseModel.getInt("isReturnId")));
+//    private void UpdateIsBillReturn() {
+//        List<BaseModel> list = adapter.getmData();
+//        List<String> params = new ArrayList<>();
+//        String patern = "id=%d&isReturn=%d";
+//        for (BaseModel baseModel : list) {
+//            params.add(String.format(patern, baseModel.getInt("id"), baseModel.getInt("isReturnId")));
+//
+//        }
+//
+//        String url = ApiUtil.BASE_URL + "token/temp/IsBillReturnUpdate.php";
+//
+//        Util.getInstance().showLoading();
+//        new CustomPostListMethod(url, params, false, new CallbackListCustom() {
+//            @Override
+//            public void onResponse(List result) {
+//                Util.getInstance().stopLoading(true);
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                Util.getInstance().stopLoading(true);
+//            }
+//        }).execute();
+//
+//    }
 
-        }
-
-        String url = ApiUtil.BASE_URL + "token/temp/IsBillReturnUpdate.php";
-
-        Util.getInstance().showLoading();
-        new CustomPostListMethod(url, params, false, new CallbackListCustom() {
-            @Override
-            public void onResponse(List result) {
-                Util.getInstance().stopLoading(true);
-            }
-
-            @Override
-            public void onError(String error) {
-                Util.getInstance().stopLoading(true);
-            }
-        }).execute();
-
-    }
-
-    private void UpdateBillDelivered() {
-        List<BaseModel> list = adapter.getmData();
-        List<String> params = new ArrayList<>();
-        String patern = "id=%d&deliverBy=%d";
-        for (BaseModel baseModel : list) {
-            params.add(String.format(patern, baseModel.getInt("id"), baseModel.getInt("deliverId")));
-
-        }
-
-        String url = ApiUtil.BASE_URL + "token/temp/BillDelivered.php";
-
-        Util.getInstance().showLoading();
-        new CustomPostListMethod(url, params, false, new CallbackListCustom() {
-            @Override
-            public void onResponse(List result) {
-                Util.getInstance().stopLoading(true);
-            }
-
-            @Override
-            public void onError(String error) {
-                Util.getInstance().stopLoading(true);
-            }
-        }).execute();
-
-    }
+//    private void UpdateBillDelivered() {
+//        List<BaseModel> list = adapter.getmData();
+//        List<String> params = new ArrayList<>();
+//        String patern = "id=%d&deliverBy=%d";
+//        for (BaseModel baseModel : list) {
+//            params.add(String.format(patern, baseModel.getInt("id"), baseModel.getInt("deliverId")));
+//
+//        }
+//
+//        String url = ApiUtil.BASE_URL + "token/temp/BillDelivered.php";
+//
+//        Util.getInstance().showLoading();
+//        new CustomPostListMethod(url, params, false, new CallbackListCustom() {
+//            @Override
+//            public void onResponse(List result) {
+//                Util.getInstance().stopLoading(true);
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                Util.getInstance().stopLoading(true);
+//            }
+//        }).execute();
+//
+//    }
 
     private void UpdateCustomerDebt() {
         List<BaseModel> list = adapter.getDebtData();

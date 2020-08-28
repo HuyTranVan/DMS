@@ -21,7 +21,7 @@ import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackListObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.NewCallbackCustom;
-import wolve.dms.apiconnect.libraries.GetPostMethod;
+import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
@@ -108,20 +108,6 @@ public class StatisticalOrderedFragment extends Fragment implements View.OnClick
             }
         }, showloading).execute();
 
-
-
-//        CustomerConnect.getCustomerOrderedList(offset, mActivity.getCurrentUserId(), new CallbackCustomList() {
-//            @Override
-//            public void onResponse(List<BaseModel> results) {
-//                listener.onResponse(results);
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }, showloading);
 
 
     }

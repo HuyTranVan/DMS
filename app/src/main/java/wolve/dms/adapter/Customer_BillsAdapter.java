@@ -15,18 +15,12 @@ import android.widget.TextView;
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.cloudinary.Api;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.apiconnect.ApiUtil;
-import wolve.dms.apiconnect.CustomerConnect;
-import wolve.dms.apiconnect.libraries.CustomGetPostListMethod;
+import wolve.dms.apiconnect.apiserver.CustomGetPostListMethod;
 import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustomList;

@@ -1,4 +1,4 @@
-package wolve.dms.apiconnect.libraries;
+package wolve.dms.apiconnect.apiserver;
 
 import com.google.api.services.sheets.v4.model.AddConditionalFormatRuleRequest;
 import com.google.api.services.sheets.v4.model.AddSheetRequest;
@@ -18,10 +18,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import wolve.dms.libraries.connectapi.sheetapi.GoogleSheetCreateUpdateTab;
-import wolve.dms.libraries.connectapi.sheetapi.GoogleSheetGetAllTab;
-import wolve.dms.libraries.connectapi.sheetapi.GoogleSheetGetData;
-import wolve.dms.libraries.connectapi.sheetapi.GoogleSheetPostData;
+import wolve.dms.apiconnect.apigooglesheet.GoogleSheetCreateUpdateTab;
+import wolve.dms.apiconnect.apigooglesheet.GoogleSheetGetAllTab;
+import wolve.dms.apiconnect.apigooglesheet.GoogleSheetGetData;
+import wolve.dms.apiconnect.apigooglesheet.GoogleSheetPostData;
 import wolve.dms.utils.Util;
 
 public class GDriveMethod {
