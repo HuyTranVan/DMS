@@ -157,7 +157,7 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
             public void onError(String error) {
 
             }
-        }, true).execute();
+        }, 1).execute();
 
 
     }

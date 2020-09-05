@@ -334,23 +334,8 @@ public class ShopCartActivity extends BaseActivity implements View.OnClickListen
                             public void onError(String error) {
 
                             }
-                        }, true).execute();
+                        }, 1).execute();
 
-
-//                        CustomerConnect.PostBill(params, new CallbackCustom() {
-//                            @Override
-//                            public void onResponse(BaseModel result) {
-//                                BaseModel modelResult = new BaseModel();
-//                                modelResult.put(Constants.RELOAD_DATA, true);
-//                                Transaction.returnPreviousActivity(Constants.SHOP_CART_ACTIVITY, modelResult, Constants.RESULT_SHOPCART_ACTIVITY);
-//                            }
-//
-//                            @Override
-//                            public void onError(String error) {
-//                                Util.getInstance().stopLoading(true);
-//                            }
-//
-//                        }, true);
 
                     }
                 });

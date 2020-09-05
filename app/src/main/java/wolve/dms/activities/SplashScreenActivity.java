@@ -132,7 +132,7 @@ public class SplashScreenActivity extends BaseActivity {
             public void onError(String error) {
 
             }
-        }, false).execute();
+        }, 0).execute();
 
 
     }

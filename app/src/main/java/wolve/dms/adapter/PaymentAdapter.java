@@ -139,7 +139,7 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.PrintBil
                             public void onError(String error) {
 
                             }
-                        }, true).execute();
+                        }, 1).execute();
 //                        CustomerConnect.DeletePayment(mData.get(pos).getString("id"), new CallbackCustom() {
 //                            @Override
 //                            public void onResponse(BaseModel result) {

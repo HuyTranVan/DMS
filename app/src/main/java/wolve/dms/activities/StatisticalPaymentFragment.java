@@ -102,7 +102,7 @@ public class StatisticalPaymentFragment extends Fragment implements View.OnClick
                     public void onError(String error) {
 
                     }
-                }, true).execute();
+                }, 1).execute();
 
             }
         });

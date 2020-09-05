@@ -323,7 +323,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
                                 public void onError(String error) {
 
                                 }
-                            }, true).execute();
+                            }, 1).execute();
 
 //                            List<String> listParams = new ArrayList<>();
 //                            listParams.add(mData.get(currentPosition).getString("id"));
@@ -389,7 +389,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
                                 public void onError(String error) {
 
                                 }
-                            }, true).execute();
+                            }, 1).execute();
 
 
 

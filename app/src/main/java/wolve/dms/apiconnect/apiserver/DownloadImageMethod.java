@@ -53,13 +53,14 @@ public class DownloadImageMethod extends AsyncTask<String, Void, List<BaseModel>
                             String.format("%s%s", mGroupName, mList.get(i).getString("id")),
                             false);
 
-                    mList.get(i).put("image_uri", Util.getRealPathFromImageURI(image_uri));
+                    mList.get(i).put("image_uri", image_uri != null? Util.getRealPathFromImageURI(image_uri) : "");
 
                 }
 
+
             }
 
-            if (bis != null && is != null) {
+            if (bis != null && is != null){
                 bis.close();
                 is.close();
             }

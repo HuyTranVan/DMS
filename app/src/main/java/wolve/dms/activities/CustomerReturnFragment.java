@@ -470,7 +470,7 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
             public void onError(String error) {
 
             }
-        }, false).execute();
+        }, 0).execute();
 //        CustomerConnect.PostBill(params, new CallbackCustom() {
 //            @Override
 //            public void onResponse(BaseModel billReturn) {
@@ -506,7 +506,7 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
             public void onError(String error) {
 
             }
-        }, true).execute();
+        }, 1).execute();
 
 
 

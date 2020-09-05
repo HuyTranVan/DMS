@@ -54,13 +54,13 @@ public class Product extends BaseModel {
 
             }
 
-//            new DownloadImageMethod(mProducts, "image", "PRODUCT", new CallbackListObject() {
-//                @Override
-//                public void onResponse(List<BaseModel> list) {
-//                    //Util.getInstance().stopLoading(true);
-//                    CustomSQL.setListBaseModel(Constants.PRODUCT_LIST, list);
-//                }
-//            }).execute();
+            new DownloadImageMethod(mProducts, "image", "PRODUCT", new CallbackListObject() {
+                @Override
+                public void onResponse(List<BaseModel> list) {
+                    //Util.getInstance().stopLoading(true);
+                    CustomSQL.setListBaseModel(Constants.PRODUCT_LIST, list);
+                }
+            }).execute();
 
 
         } catch (JSONException e) {

@@ -33,12 +33,12 @@ public class GetPostMethod extends AsyncTask<String, Void, String> {
     private BaseModel mParam;
     private GetPostMethod main;
 
-    public GetPostMethod(BaseModel param, NewCallbackCustom listener, boolean showLoading) {
+    public GetPostMethod(BaseModel param, NewCallbackCustom listener, int loadingtimes) {
         this.mListener = listener;
         this.mParam = param;
         this.main = this;
 
-        UtilLoading.getInstance().showLoading(showLoading);
+        UtilLoading.getInstance().showLoading(loadingtimes);
 
         if (!Util.checkInternetConnection()){
             main.cancel(true);
@@ -47,7 +47,7 @@ public class GetPostMethod extends AsyncTask<String, Void, String> {
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            new GetPostMethod(mParam, mListener, showLoading);
+                            new GetPostMethod(mParam, mListener, loadingtimes);
                         }
                     });
 
@@ -139,12 +139,14 @@ public class GetPostMethod extends AsyncTask<String, Void, String> {
                 }
 
             }else {
-                Constants.throwError(respone.getString("message"));
+
                 mListener.onError(respone.getString("message"));
 
                 if (respone.getInt("status") == 203){
                     doRelogin();
 
+                }else {
+                    Constants.throwError(respone.getString("message"));
                 }
 
             }
@@ -160,8 +162,8 @@ public class GetPostMethod extends AsyncTask<String, Void, String> {
 
 
     private void doRelogin(){
-        Util.showLongSnackbar("Lỗi đăng nhập",
-                "Sai thông tin xác thực tài khoản, vui lòng đăng nhập lại",
+        Util.showLongSnackbar("Sai TOKEN, đăng nhập lại",
+                "Đăng nhập",
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

@@ -214,7 +214,7 @@ public class TempBillFragment extends Fragment implements View.OnClickListener {
             public void onError(String error) {
 
             }
-        }, true).execute();
+        }, 1).execute();
 
 
 //        CustomerConnect.GetCustomerDetail(model.getString("customer_id"), new CallbackCustom() {

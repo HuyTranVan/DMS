@@ -129,7 +129,7 @@ public class ImportReturnFragment extends Fragment implements View.OnClickListen
             public void onError(String error) {
 
             }
-        }, true).execute();
+        }, 1).execute();
 
 
 
@@ -199,7 +199,7 @@ public class ImportReturnFragment extends Fragment implements View.OnClickListen
             public void onError(String error) {
                 listener.onRespone(false);
             }
-        }, true).execute();
+        }, 1).execute();
 
 
 //        CustomerConnect.PostImport(param, new CallbackCustom() {

@@ -105,7 +105,7 @@ public class UserActivity extends BaseActivity implements View.OnClickListener {
             public void onError(String error) {
 
             }
-        }, true).execute();
+        }, 1).execute();
 
 //        UserConnect.ListUser(new CallbackCustomList() {
 //            @Override

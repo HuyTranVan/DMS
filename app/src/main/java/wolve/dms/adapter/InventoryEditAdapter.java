@@ -123,7 +123,7 @@ public class InventoryEditAdapter extends RecyclerView.Adapter<InventoryEditAdap
                             public void onError(String error) {
 
                             }
-                        }, true).execute();
+                        }, 1).execute();
 //                        SystemConnect.UpdateInventoryQuantity(param, new CallbackCustom() {
 //                            @Override
 //                            public void onResponse(BaseModel result) {

@@ -144,25 +144,9 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
             public void onError(String error) {
 
             }
-        }, true).execute();
+        }, 2).execute();
 
-//        ProductConnect.ListProductGroup(loading, new CallbackCustomList() {
-//            @Override
-//            public void onResponse(List<BaseModel> results) {
-//                for (int i = 0; i < results.size(); i++) {
-//                    listProductGroup.add(results.get(i));
-//
-//                }
-//                DataUtil.sortProductGroup(listProductGroup, false);
-//
-//                loadProduct();
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }, false);
+
     }
 
     public void loadProduct() {
@@ -183,23 +167,8 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
             public void onError(String error) {
 
             }
-        }, true).execute();
-//        ProductConnect.ListProduct(new CallbackCustomList() {
-//            @Override
-//            public void onResponse(List<BaseModel> results) {
-//                for (int i = 0; i < results.size(); i++) {
-//                    listProduct.add(results.get(i));
-//
-//                }
-//                DataUtil.sortProduct(listProduct, false);
-//                setupViewPager(listProductGroup, listProduct);
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }, true);
+        }, 0).execute();
+
     }
 
     private void openFragmentNewProduct(String product) {

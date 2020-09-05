@@ -152,7 +152,7 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
                 public void onError(String error) {
 
                 }
-            }, true).execute();
+            }, 1).execute();
 
         }
     }

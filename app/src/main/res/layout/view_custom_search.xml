@@ -47,13 +47,16 @@
                 android:orientation="horizontal"
                 android:layout_alignParentRight="true">
 
-                <ImageView
+                <TextView
                     android:id="@+id/icon_close"
                     android:layout_width="@dimen/_35sdp"
                     android:layout_height="match_parent"
-                    android:src="@drawable/btn_cancel_grey"
-                    android:padding="@dimen/_8sdp"
+                    android:fontFamily="@font/font_awesome"
                     android:background="?selectableItemBackground"
+                    android:text="&#xf00d;"
+                    android:gravity="center"
+                    android:textSize="@dimen/_14sdp"
+                    android:textColor="@color/black_text_color_hint"
                     android:visibility="gone" />
 
                 <View

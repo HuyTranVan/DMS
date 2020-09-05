@@ -229,7 +229,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             public void onError(String error) {
 
             }
-        }, true).execute();
+        }, 1).execute();
 
     }
 
@@ -272,7 +272,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             public void onError(String error) {
                 mListener.onRespone(false);
             }
-        }, true).execute();
+        }, 1).execute();
 
 
     }

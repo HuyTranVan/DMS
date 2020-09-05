@@ -12,17 +12,17 @@ import wolve.dms.utils.Util;
 public class UtilLoading {
     private static UtilLoading util;
     private KProgressHUD cDialog;
-    private Handler mHandlerLoading = new Handler();
-
-    private Runnable delayForLoading = new Runnable() {
-        @Override
-        public void run() {
-            if (cDialog != null && cDialog.isShowing() || cDialog != null) {
-                cDialog.dismiss();
-                cDialog = null;
-            }
-        }
-    };
+//    private Handler mHandlerLoading = new Handler();
+//
+//    private Runnable delayForLoading = new Runnable() {
+//        @Override
+//        public void run() {
+//            if (cDialog != null && cDialog.isShowing() || cDialog != null) {
+//                cDialog.dismiss();
+//                cDialog = null;
+//            }
+//        }
+//    };
 
     public static synchronized UtilLoading getInstance() {
         if (util == null)
@@ -52,21 +52,32 @@ public class UtilLoading {
 
     }
 
-    public void showLoading(boolean show) {
-        if (show) {
-            int times = CustomSQL.getInt(Constants.LOADING_TIMES) + 1;
-
-            if (times >0){
-                CustomSQL.setInt(Constants.LOADING_TIMES, times);
-                createLoading("Đang xử lý...");
-            }
-
+    public void showLoading(int times) {
+        if (times >0) {
+            CustomSQL.setInt(Constants.LOADING_TIMES, times);
+            createLoading("Đang xử lý...");
 
         }else {
             stopLoading();
         }
 
     }
+
+//    public void showLoading(boolean show) {
+//        if (show) {
+//            int times = CustomSQL.getInt(Constants.LOADING_TIMES) + 1;
+//
+//            if (times >0){
+//                CustomSQL.setInt(Constants.LOADING_TIMES, times);
+//                createLoading("Đang xử lý...");
+//            }
+//
+//
+//        }else {
+//            stopLoading();
+//        }
+//
+//    }
 
     public void createLoading(final String message) {
         if (!isLoading()){
@@ -80,41 +91,21 @@ public class UtilLoading {
                     .show();
         }
 
-
-//        if (isLoading()){
-//            mHandlerLoading.removeCallbacks(delayForLoading);
-//
-//        }else {
-//            cDialog = KProgressHUD.create(Util.getInstance().getCurrentActivity())
-//                    .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
-//                    .setDetailsLabel(message)
-//                    .setCancellable(false)
-//                    .setAnimationSpeed(2)
-//                    .setBackgroundColor(Color.parseColor("#40000000"))
-//                    .setDimAmount(0.5f)
-//                    .show();
-//
-//        }
-
     }
 
     public void stopLoading() {
         int times = CustomSQL.getInt(Constants.LOADING_TIMES);
-        if (times >0){
-            CustomSQL.setInt(Constants.LOADING_TIMES, times-1);
-            if (cDialog != null && cDialog.isShowing() || cDialog != null) {
+        if (times ==  0 || times ==1){
+            CustomSQL.setInt(Constants.LOADING_TIMES, 0);
+            if (cDialog != null && cDialog.isShowing() || cDialog != null){
                 cDialog.dismiss();
                 cDialog = null;
             }
 
         }else {
-            if (cDialog != null && cDialog.isShowing() || cDialog != null) {
-                cDialog.dismiss();
-                cDialog = null;
-            }
+            CustomSQL.setInt(Constants.LOADING_TIMES, times - 1);
 
         }
-        //mHandlerLoading.postDelayed(delayForLoading, 500);
 
     }
 

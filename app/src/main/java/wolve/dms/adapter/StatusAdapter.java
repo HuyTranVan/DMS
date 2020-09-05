@@ -95,7 +95,7 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.StatusAdap
                                 public void onError(String error) {
 
                                 }
-                            }, true).execute();
+                            }, 1).execute();
 //                            StatusConnect.DeleteStatus(param, new CallbackCustom() {
 //                                @Override
 //                                public void onResponse(BaseModel result) {

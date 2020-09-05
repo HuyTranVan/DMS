@@ -434,7 +434,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                     public void onError(String error) {
 
                     }
-                }, true).execute();
+                }, 1).execute();
 
 //                CustomerConnect.DeleteCustomer(, new CallbackCustom() {
 //                    @Override
@@ -579,7 +579,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                         smLoading.setVisibility(View.INVISIBLE);
                         Util.showSnackbar("Không thể lưu thay đổi của khách hàng", null, null);
                     }
-                }, false).execute();
+                }, 0).execute();
 
     }
 
@@ -609,7 +609,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
             public void onError(String error) {
 
             }
-        }, true).execute();
+        }, 1).execute();
 
 //        CustomerConnect.GetCustomerDetail(id, new CallbackCustom() {
 //            @Override
@@ -685,7 +685,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                             public void onError(String error) {
 
                             }
-                        }, true).execute();
+                        }, 1).execute();
 
 //                        CustomerConnect.PostPay(param, new CallbackCustom() {
 //                            @Override
@@ -720,7 +720,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
             public void onError(String error) {
 
             }
-        }, true).execute();
+        }, 1).execute();
 //        CustomerConnect.PostListPay(listParam, new CallbackListCustom() {
 //            @Override
 //            public void onResponse(List result) {

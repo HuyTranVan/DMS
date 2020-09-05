@@ -110,19 +110,9 @@ public class StatisticalBillsFragment extends Fragment implements View.OnClickLi
                     public void onError(String error) {
 
                     }
-                }, true).execute();
+                }, 1).execute();
 
-//                CustomerConnect.GetCustomerDetail(s, new CallbackCustom() {
-//                    @Override
-//                    public void onResponse(BaseModel result) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onError(String error) {
-//
-//                    }
-//                }, true, true);
+
             }
         });
         Util.createLinearRV(rvBill, adapter);

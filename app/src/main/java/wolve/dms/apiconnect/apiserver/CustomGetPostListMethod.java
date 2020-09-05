@@ -29,12 +29,12 @@ public class CustomGetPostListMethod extends AsyncTask<String, Void, List<String
     private List<BaseModel> mParams;
     private CustomGetPostListMethod main;
 
-    public CustomGetPostListMethod(List<BaseModel> listParams, CallbackCustomList listener, boolean showLoading) {
+    public CustomGetPostListMethod(List<BaseModel> listParams, CallbackCustomList listener, int loadingtimes) {
         this.mListener = listener;
         this.mParams = listParams;
         this.main = this;
 
-        UtilLoading.getInstance().showLoading(showLoading);
+        UtilLoading.getInstance().showLoading(loadingtimes);
 
         if (!Util.checkInternetConnection()){
             main.cancel(true);
@@ -43,7 +43,7 @@ public class CustomGetPostListMethod extends AsyncTask<String, Void, List<String
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            new CustomGetPostListMethod(mParams, mListener, showLoading);
+                            new CustomGetPostListMethod(mParams, mListener, loadingtimes);
                         }
                     });
 
@@ -154,8 +154,7 @@ public class CustomGetPostListMethod extends AsyncTask<String, Void, List<String
 
             } else {
                 Constants.throwError(String.format("#%d error"));
-                listResult.add(null);
-
+                listResult.add(new BaseModel());
 
             }
 

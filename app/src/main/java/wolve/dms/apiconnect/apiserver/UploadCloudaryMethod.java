@@ -30,7 +30,7 @@ public class UploadCloudaryMethod extends AsyncTask<String, Void, String> {
         config.put("api_secret", "Mh2EsnmYHBAsTAp7jsNLoJ5dXhk");
         mCloud = new Cloudinary(config);
 
-        UtilLoading.getInstance().showLoading(true);
+        UtilLoading.getInstance().showLoading(1);
     }
 
     @Override

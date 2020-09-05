@@ -119,7 +119,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
                                     public void onError(String error) {
 
                                     }
-                                }, true).execute();
+                                }, 1).execute();
 
 //                                ProductConnect.DeleteProduct(param, new CallbackCustom() {
 //                                    @Override

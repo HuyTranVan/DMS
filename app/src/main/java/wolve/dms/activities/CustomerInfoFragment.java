@@ -1,5 +1,7 @@
 package wolve.dms.activities;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -36,13 +38,14 @@ import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
+import static android.content.Context.CLIPBOARD_SERVICE;
 import static wolve.dms.activities.BaseActivity.createPostParam;
 
 /**
  * Created by macos on 9/16/17.
  */
 
-public class CustomerInfoFragment extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
+public class CustomerInfoFragment extends Fragment implements View.OnClickListener {
     private View view;
     private CInputForm edAdress, edPhone, edName, edNote;
     private EditText edShopName;
@@ -95,11 +98,10 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         edAdress.setText(add);
         mActivity.tvAddress.setText(add);
 
-
-        //mActivity.reshowAdd(address);
     }
 
     public void reloadInfo() {
+        edPhone.setIconMoreText(mActivity.getResources().getString(R.string.icon_copy));
         edAdress.setIconMoreText(mActivity.getResources().getString(R.string.icon_edit_pen));
         edNote.setIconMoreText(mActivity.getResources().getString(R.string.icon_edit_pen));
         edNote.setFocusable(false);
@@ -111,18 +113,6 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         edName.setText(mActivity.currentCustomer.getString("name"));
         edShopName.setText(mActivity.currentCustomer.getString("signBoard"));
         edNote.setText(getNoteText(mActivity.currentCustomer.getString("note")));
-
-        //tvType.setText(Constants.getShopName(mActivity.currentCustomer.getString("shopType")));
-
-//        if (mActivity.currentCustomer.getString("shopType").equals(Constants.shopType[0])){
-//            rgType.check(R.id.customer_info_repair);
-//        }else if (mActivity.currentCustomer.getString("shopType").equals(Constants.shopType[1])){
-//            rgType.check(R.id.customer_info_wash);
-//        }else if (mActivity.currentCustomer.getString("shopType").equals(Constants.shopType[2])){
-//            rgType.check(R.id.customer_info_access);
-//        }else if (mActivity.currentCustomer.getString("shopType").equals(Constants.shopType[3])){
-//            rgType.check(R.id.customer_info_ser);
-//        }
 
         if (mActivity.listCheckins.size() > 0) {
             String note = mActivity.listCheckins.get(mActivity.listCheckins.size() - 1).getInt("meetOwner") == 0 ?
@@ -147,7 +137,6 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         nameEvent();
         shopNameEvent();
         noteEvent();
-        //rgType.setOnCheckedChangeListener(this);
     }
 
     private void addEvent() {
@@ -169,6 +158,16 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
             public void onClick(View v) {
                 showDialogNote();
 
+            }
+        });
+        edPhone.setOnMoreClickView(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ClipboardManager manager = (ClipboardManager) mActivity.getSystemService(CLIPBOARD_SERVICE);
+                ClipData clipData = ClipData.newPlainText("text", Util.getPhoneValue(edPhone));
+                manager.setPrimaryClip(clipData);
+
+                Util.showToast("Đã copy số điện thoại");
             }
         });
 
@@ -359,8 +358,13 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         edPhone.addTextChangePhone(new CallbackString() {
             @Override
             public void Result(String s) {
-                mActivity.saveCustomerToLocal("phone", s);
+                if (Util.isEmpty(s)){
+                    edPhone.setIconMoreText(null);
 
+                }else {
+                    edPhone.setIconMoreText(mActivity.getResources().getString(R.string.icon_copy));
+                }
+                mActivity.saveCustomerToLocal("phone", s);
                 mCall.setVisibility(mActivity.currentCustomer.getString("phone").equals("") ? View.GONE : View.VISIBLE);
 
             }
@@ -411,67 +415,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 
     }
 
-//    private String getCustomerNote(String text){
-//        String result = "";
-//        //Double total = Util.getTotal(listBills).getDouble("debt");
-//        if (mActivity.currentDebt > 0.0){
-//            try{
-//                JSONObject object = new JSONObject();
-//                //object.put("debt", total);
-//                object.put("note", edNote.getText().toString());
-//                object.put("userId", mActivity.listBills.get(mActivity.listBills.size()-1).getJsonObject("user").getInt("id"));
-//                object.put("userName", mActivity.listBills.get(mActivity.listBills.size()-1).getJsonObject("user").getString("displayName"));
-//                result = object.toString();
-//
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//
-//        }else {
-//            result = text;
-//        }
-//
-//        //return result;
-//        return  text;
-//    }
 
-
-//    private void changeShopTypeBackground(boolean isEnable){
-//        for (int i = 0; i < rgType.getChildCount(); ++i) {
-//            RadioButton radioButton = (RadioButton) rgType.getChildAt(i);
-//            radioButton.setBackgroundResource(isEnable? R.drawable.btn_round_white_border_grey : R.drawable.btn_round_white_border_grey);
-//            radioButton.setTextColor(isEnable? getResources().getColor(R.color.black_text_color) : getResources().getColor(R.color.black_text_color));
-//        }
-//
-//    }
-
-    @Override
-    public void onCheckedChanged(RadioGroup group, int checkedId) {
-        switch (checkedId) {
-//            case R.id.customer_info_repair:
-//                mActivity.saveCustomerToLocal("shopType", Constants.shopType[0]);
-//                tvType.setText(Constants.shopName[0]);
-//                break;
-//
-//            case R.id.customer_info_wash:
-//                mActivity.saveCustomerToLocal("shopType", Constants.shopType[1]);
-//                tvType.setText(Constants.shopName[1]);
-//                break;
-//
-//            case R.id.customer_info_access:
-//                mActivity.saveCustomerToLocal("shopType", Constants.shopType[2]);
-//                tvType.setText(Constants.shopName[2]);
-//                break;
-//
-//            case R.id.customer_info_ser:
-//                mActivity.saveCustomerToLocal("shopType", Constants.shopType[3]);
-//                tvType.setText(Constants.shopName[3]);
-//                break;
-        }
-
-        updateShopName();
-
-    }
 
     private String createParamCheckin(BaseModel customer, int statusId, String note) {
         String params = String.format(ApiUtil.SCHECKIN_CREATE_PARAM, customer.getInt("id"),
@@ -494,19 +438,8 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
             public void onError(String error) {
 
             }
-        },true).execute();
-//        CustomerConnect.PostCheckin(param, new CallbackCustom() {
-//            @Override
-//            public void onResponse(BaseModel result) {
-//
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }, true);
+        },1).execute();
+
     }
 
     private void showDialogNote() {

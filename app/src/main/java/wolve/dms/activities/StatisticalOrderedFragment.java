@@ -63,7 +63,7 @@ public class StatisticalOrderedFragment extends Fragment implements View.OnClick
                 listOrdered = list;
                 createRVCustomerOrdered(listOrdered);
             }
-        }, true);
+        }, 1);
 
     }
 
@@ -91,7 +91,7 @@ public class StatisticalOrderedFragment extends Fragment implements View.OnClick
         }
     }
 
-    private void loadListOrdered(int offset, CallbackListObject listener, boolean showloading) {
+    private void loadListOrdered(int offset, CallbackListObject listener, int showloading) {
         BaseModel param = createGetParam(
                 ApiUtil.CUSTOMER_ORDERED(mActivity.getCurrentUserId(),offset, 20),
                 true);
@@ -146,7 +146,7 @@ public class StatisticalOrderedFragment extends Fragment implements View.OnClick
             public void onError(String error) {
 
             }
-        }, true).execute();
+        }, 1).execute();
 
 
 //        CustomerConnect.GetCustomerDetail(id, new CallbackCustom() {
@@ -217,7 +217,7 @@ public class StatisticalOrderedFragment extends Fragment implements View.OnClick
 
 
             }
-        }, false);
+        }, 0);
 
     }
 

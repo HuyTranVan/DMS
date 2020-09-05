@@ -250,7 +250,7 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                                 public void onError(String error) {
 
                                 }
-                            }, true).execute();
+                            }, 1).execute();
 
                         }
 
@@ -277,7 +277,7 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             public void onError(String error) {
                 listener.onRespone(false);
             }
-        }, true).execute();
+        }, 1).execute();
 
     }
 
@@ -337,7 +337,9 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
 
                 if (!isLoading) {
-                    if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == getItemCount() - 1) {
+                    if (linearLayoutManager != null &&
+                            linearLayoutManager.findLastCompletelyVisibleItemPosition() >= 20-1 &&
+                            linearLayoutManager.findLastCompletelyVisibleItemPosition() == getItemCount() - 1) {
                         //bottom of list!
                         loadMore();
                         isLoading = true;
@@ -371,7 +373,7 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             public void onError(String error) {
 
             }
-        }, true).execute();
+        }, 0).execute();
 
     }
 

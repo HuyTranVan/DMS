@@ -634,7 +634,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
             public void onError(String error) {
 
             }
-        }, true).execute();
+        }, 1).execute();
 //        CustomerConnect.PostBill(params, new CallbackCustom() {
 //            @Override
 //            public void onResponse(BaseModel result) {
@@ -683,7 +683,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
             public void onError(String error) {
 
             }
-        }, true).execute();
+        }, 1).execute();
 
 
 //        CustomerConnect.PostListPay(listParam, new CallbackListCustom() {

@@ -1083,22 +1083,8 @@ public class CustomCenterDialog {
                             public void onError(String error) {
                                 mListener.onRespone(false);
                             }
-                        }, true).execute();
-//                        UserConnect.doChangePass(edOldPass.getText().toString().trim(),
-//                                edNewPass1.getText().toString().trim(),
-//                                new CallbackCustom() {
-//                                    @Override
-//                                    public void onResponse(BaseModel result) {
-//                                        mListener.onRespone(true);
-//                                        dialogResult.dismiss();
-//                                    }
-//
-//                                    @Override
-//                                    public void onError(String error) {
-//                                        mListener.onRespone(false);
-//                                    }
-//
-//                                }, true);
+                        }, 1).execute();
+
 
                     } else {
                         Util.showToast("Mật khẩu mới không khớp");

@@ -336,7 +336,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
                         public void onError(String error) {
 
                         }
-                    }, true).execute();
+                    }, 1).execute();
 
 
 
@@ -467,7 +467,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
             public void onError(String error) {
 
             }
-        }, true).execute();
+        }, 1).execute();
 
 //        UserConnect.CreateUser(param, new CallbackCustom() {
 //            @Override
@@ -517,7 +517,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
             public void onError(String error) {
 
             }
-        }, true).execute();
+        }, 1).execute();
 
     }
 

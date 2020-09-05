@@ -92,7 +92,7 @@ public class ProductGroupAdapter extends RecyclerView.Adapter<ProductGroupAdapte
                             public void onError(String error) {
 
                             }
-                        }, true).execute();
+                        }, 1).execute();
 
                     }
                 });

@@ -86,7 +86,7 @@ public class Customer_CheckinsAdapter extends RecyclerView.Adapter<Customer_Chec
                                     public void onError(String error) {
 
                                     }
-                                }, true).execute();
+                                }, 1).execute();
 //                                CustomerConnect.DeleteCheckin(mData.get(position).getString("id"), new CallbackCustom() {
 //                                    @Override
 //                                    public void onResponse(BaseModel result) {

@@ -142,7 +142,7 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
                     public void onError(String error) {
 
                     }
-                }, true).execute();
+                }, 1).execute();
 
 //                CustomerConnect.GetCustomerDetail(s, new CallbackCustom() {
 //                    @Override

@@ -158,7 +158,7 @@ public class DataUtil {
             public void onError(String error) {
 
             }
-        }, true).execute();
+        }, 1).execute();
 
 //        SystemConnect.GetInventoryList(warehouse_id, new CallbackListCustom() {
 //            @Override

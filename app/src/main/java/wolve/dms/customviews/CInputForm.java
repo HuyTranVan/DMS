@@ -127,8 +127,13 @@ public class CInputForm extends FrameLayout {
     }
 
     public void setIconMoreText(String text) {
-        tvMore.setVisibility(VISIBLE);
-        tvMore.setText(text);
+        if (text == null){
+            tvMore.setVisibility(INVISIBLE);
+        }else {
+            tvMore.setVisibility(VISIBLE);
+            tvMore.setText(text);
+        }
+
     }
 
     private void setVisibilityBottomLine(boolean value) {

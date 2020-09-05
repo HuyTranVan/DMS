@@ -249,6 +249,7 @@ public class Util {
     public static void showLongSnackbar(String content, String actionlabel, View.OnClickListener  listener) {
         Snacky.builder()
                 .setActivity(Util.getInstance().getCurrentActivity())
+                .setText(content)
                 .setActionText(actionlabel)
                 .setActionClickListener(new View.OnClickListener() {
                     @Override
@@ -256,7 +257,6 @@ public class Util {
                         listener.onClick(v);
                     }
                 })
-                .setText(content)
                 .setDuration(Snacky.LENGTH_LONG)
                 .setActionTextColor(getInstance().getCurrentActivity().getResources().getColor(R.color.colorBlue))
                 .build()
@@ -603,15 +603,21 @@ public class Util {
                 contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/png");
                 contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, relativeLocation);
                 Uri uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
-                assert uri != null;
-                stream = resolver.openOutputStream(uri);
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                //assert uri != null;
+                if (uri != null){
+                    stream = resolver.openOutputStream(uri);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
 
-                stream.flush();
-                stream.close();
+                    stream.flush();
+                    stream.close();
 
-                CustomSQL.setStringToList(Constants.IMAGES, uri.toString());
-                return uri;
+                    CustomSQL.setStringToList(Constants.IMAGES, uri.toString());
+                    return uri;
+
+                }else {
+                    return null;
+                }
+
 
             }else {
                 String relativeLocation = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES )

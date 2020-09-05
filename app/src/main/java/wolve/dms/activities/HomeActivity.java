@@ -3,9 +3,6 @@ package wolve.dms.activities;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -69,6 +66,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     protected List<BaseModel> listTempImport = new ArrayList<>();
     private boolean doubleBackToExitPressedOnce = false;
     private Fragment mFragment;
+    private CallbackBoolean permissionListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,14 +105,27 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     public void initialData() {
         Util.getInstance().setCurrentActivity(this);
-        checkPermission();
         swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorBlueDark));
         tvFullname.setText(String.format("%s _ %s", User.getFullName(), User.getCurrentRoleString()));
         tvDistributor.setText(Util.getStringIcon(Distributor.getName(), "    ", R.string.icon_home));
         tvMonth.setText(Util.getStringIcon(Util.CurrentMonthYear(), "     ", R.string.icon_calendar));
-
         if (!Util.checkImageNull(User.getImage())) {
             Glide.with(this).load(User.getImage()).centerCrop().into(imgUser);
+        }
+
+        checkPermission();
+
+
+    }
+
+    private void createMainItem() {
+        HomeAdapter adapter = new HomeAdapter(HomeActivity.this);
+        Util.createGridRV(rvItems, adapter, 3);
+
+        if (CustomSQL.getBoolean(Constants.LOGIN_SUCCESS)) {
+            loadCurrentData();
+            CustomSQL.setBoolean(Constants.LOGIN_SUCCESS, false);
+
         }
 
         if (CustomSQL.getBoolean(Constants.ON_MAP_SCREEN)) {
@@ -123,34 +134,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
         }
 
-        if (CustomSQL.getBoolean(Constants.LOGIN_SUCCESS)) {
-            loadCurrentData();
-            CustomSQL.setBoolean(Constants.LOGIN_SUCCESS, false);
 
-        }
         loadPaymentByUser();
-        checkNewProductUpdated(new CallbackListObject() {
-            @Override
-            public void onResponse(List<BaseModel> list) {
-                updateTempBillVisibility(list);
-
-            }
-        }, new CallbackListObject() {
-            @Override
-            public void onResponse(List<BaseModel> list) {
-                updateTempImportVisibility(list);
-            }
-        });
-
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        List<NotificationChannel> list = notificationManager.getNotificationChannels();
+        checkNewProductUpdated(null);
 
 
-    }
-
-    private void createListItem() {
-        HomeAdapter adapter = new HomeAdapter(HomeActivity.this);
-        Util.createGridRV(rvItems, adapter, 3);
 
     }
 
@@ -170,20 +158,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             public void onError(String error) {
 
             }
-        }, true).execute();
-//        params.add(DataUtil.createListPaymentParam(start, end));
-//        SystemConnect.loadListObject(params, new CallbackCustomListList() {
-//            @Override
-//            public void onResponse(List<List<BaseModel>> results) {
-//
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }, true);
+        }, 0).execute();
+
     }
 
     @Override
@@ -319,7 +295,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             public void onError(String error) {
 
             }
-        }, false).execute();
+        }, 0).execute();
 
 
     }
@@ -369,64 +345,39 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     }
 
-//    protected void logout(){
-//        UserConnect.Logout(new CallbackCustom() {
-//            @Override
-//            public void onResponse(BaseModel result) {
-//                if (result.getBoolean("success")) {
-//                    Util.deleteAllImageExternalStorage();
-//
-//                    CustomSQL.clear();
-//                    Util.showToast("Đăng xuất thành công");
-//                    Transaction.gotoLoginActivityRight();
-//
-//                } else {
-//                    Util.showSnackbar("Đăng xuất thất bại", null, null);
-//                }
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }, true);
-//
-//    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Util.getInstance().setCurrentActivity(this);
         mFragment = getSupportFragmentManager().findFragmentById(R.id.home_parent);
-        checkNewProductUpdated(new CallbackListObject() {
+        checkNewProductUpdated(new CallbackBoolean() {
             @Override
-            public void onResponse(List<BaseModel> list) {
-                updateTempBillVisibility(list);
+            public void onRespone(Boolean result) {
+                if (result){
+                    if (mFragment != null && mFragment instanceof TempBillFragment) {
+                        ((TempBillFragment) mFragment).reloadData();
 
-                if (mFragment != null && mFragment instanceof TempBillFragment) {
-                    ((TempBillFragment) mFragment).reloadData();
+                    }else if (mFragment != null && mFragment instanceof TempImportFragment){
+                        ((TempImportFragment) mFragment).reloadData();
+                    }
 
                 }
             }
-        }, new CallbackListObject() {
-            @Override
-            public void onResponse(List<BaseModel> list) {
-                updateTempImportVisibility(list);
-            }
         });
-
 
     }
 
-    private void checkNewProductUpdated(CallbackListObject listenertempbill, CallbackListObject listenertempimport) {
+    private void checkNewProductUpdated(CallbackBoolean listener) {
         BaseModel param = createGetParam(ApiUtil.PRODUCT_LASTEST(), false);
         new GetPostMethod(param, new NewCallbackCustom() {
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
                 swipeRefreshLayout.setRefreshing(false);
-                listenertempbill.onResponse(DataUtil.listTempBill(DataUtil.array2ListObject(result.getString("tempBills"))));
-                listenertempimport.onResponse(DataUtil.filterListTempImport(DataUtil.array2ListObject(result.getString("tempImport"))));
-
+                updateTempBillVisibility(DataUtil.listTempBill(DataUtil.array2ListObject(result.getString("tempBills"))));
+                updateTempImportVisibility(DataUtil.filterListTempImport(DataUtil.array2ListObject(result.getString("tempImport"))));
+                if (listener != null){
+                    listener.onRespone(true);
+                }
                 if (result.getLong("lastProductUpdate") > CustomSQL.getLong(Constants.LAST_PRODUCT_UPDATE)) {
                     tvHaveNewProduct.setVisibility(View.VISIBLE);
 
@@ -452,18 +403,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             public void onError(String error) {
 
             }
-        }, false).execute();
-//        SystemConnect.getLastestProductUpdated(new CallbackCustom() {
-//            @Override
-//            public void onResponse(BaseModel result) {
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }, false);
+        }, 0).execute();
+
     }
 
     private void updateTempBillVisibility(List<BaseModel> list) {
@@ -546,7 +487,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                     });
 
         } else {
-            createListItem();
+            createMainItem();
         }
 
     }
@@ -565,7 +506,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 }
 
                 if (!hasDenied) {
-                    createListItem();
+                    createMainItem();
 
                 } else {
                     Util.showToast("Cấp quyền truy cập không thành công!");
@@ -597,17 +538,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void onRefresh() {
-        checkNewProductUpdated(new CallbackListObject() {
-            @Override
-            public void onResponse(List<BaseModel> list) {
-                updateTempBillVisibility(list);
-            }
-        }, new CallbackListObject() {
-            @Override
-            public void onResponse(List<BaseModel> list) {
-                updateTempImportVisibility(list);
-            }
-        });
+        checkNewProductUpdated(null);
         loadPaymentByUser();
     }
 

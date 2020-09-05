@@ -24,6 +24,7 @@ import wolve.dms.adapter.ProductImportChoosenAdapter;
 import wolve.dms.adapter.ProductInventoryAdapter;
 import wolve.dms.adapter.ViewpagerMultiListAdapter;
 import wolve.dms.apiconnect.ApiUtil;
+import wolve.dms.apiconnect.apiserver.UtilLoading;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackInt;
@@ -105,13 +106,10 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         }
 
         tabLayout.setupWithViewPager(viewPager);
-        getListImport(1, new CallbackListObject() {
+        getListImport(0, new CallbackListObject() {
             @Override
             public void onResponse(List<BaseModel> list) {
                 setupViewPager(new ArrayList<>(), list);
-//                if (list.size() > 0) {
-//                    updateImportTempTitle(list.size());
-//                }
                 getInventory(toWarehouse.getInt("id"), new CallbackListObject() {
                     @Override
                     public void onResponse(List<BaseModel> list) {
@@ -120,11 +118,11 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
                             viewPager.setCurrentItem(2, true);
                         }
 
-                        selectFromWarehouse(false);
+                        selectFromWarehouse(0);
                     }
                 });
             }
-        }, true, false);
+        }, 3);
 
 
     }
@@ -151,13 +149,13 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
                 break;
 
             case R.id.import_fromwarehouse:
-                selectFromWarehouse(true);
+                selectFromWarehouse(1);
 
                 break;
 
             case R.id.import_towarehouse:
                 if (Util.isAdmin()) {
-                    selectToWarehouse(true);
+                    selectToWarehouse(1);
 
                 } else {
                     Util.showSnackbar("Không thể chọn kho hàng khác", null, null);
@@ -178,40 +176,30 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         return titles;
     }
 
-    private void getListImport(int offset, CallbackListObject listener, boolean showloading, boolean stoploading) {
+    private void getListImport(int offset, CallbackListObject listener, int loadingtimes) {
         BaseModel param = createGetParam(String.format(ApiUtil.IMPORTS(), offset, 20, toWarehouse.getInt("id")), true);
         new GetPostMethod(param, new NewCallbackCustom() {
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
-                listener.onResponse(list);
+                //listener.onResponse(list);
+                listener.onResponse(DataUtil.filterListImport(list, toWarehouse.getInt("id")));
             }
 
             @Override
             public void onError(String error) {
 
             }
-        }, true).execute();
+        }, loadingtimes).execute();
 
-//        CustomerConnect.ListImport(offset, toWarehouse.getInt("id"), new CallbackCustomList() {
-//            @Override
-//            public void onResponse(List<BaseModel> results) {
-//
-//                listener.onResponse(DataUtil.filterListImport(results, toWarehouse.getInt("id")));
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//                Util.getInstance().stopLoading(true);
-//            }
-//        }, showloading, stoploading);
+
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.import_parent);
-        if (Util.getInstance().isLoading()) {
-            Util.getInstance().stopLoading(true);
+        if (UtilLoading.getInstance().isLoading()) {
+            UtilLoading.getInstance().stopLoading();
         } else {
             Transaction.returnPreviousActivity();
         }
@@ -360,7 +348,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
     }
 
     public void reloadListImport(boolean setActive, boolean reloadToWarehouse) {
-        getListImport(1, new CallbackListObject(){
+        getListImport(0, new CallbackListObject(){
             @Override
             public void onResponse(List<BaseModel> list) {
 //                if (list.size() > 0) {
@@ -380,7 +368,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
                     });
                 }
             }
-        }, true, true);
+        }, 0);
 
     }
 
@@ -396,7 +384,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
 
     }
 
-    private void getListWarehouse(CallbackListObject listener, boolean showloading) {
+    private void getListWarehouse(CallbackListObject listener, int loadingtimes) {
         if (listWarehouse.size() == 0) {
             BaseModel param = createGetParam(ApiUtil.WAREHOUSES(), true);
             new GetPostMethod(param, new NewCallbackCustom() {
@@ -410,13 +398,13 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
                 public void onError(String error) {
 
                 }
-            }, true).execute();
+            }, loadingtimes).execute();
 
 
 
         } else {
             listener.onResponse(listWarehouse);
-
+            UtilLoading.getInstance().stopLoading();
         }
 
     }
@@ -430,14 +418,14 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
             }
 
             @Override
-            public void onError(String error) {
+            public void onError(String error){
 
             }
-        }, true).execute();
+        }, 0).execute();
 
     }
 
-    private void selectFromWarehouse(boolean showloading) {
+    private void selectFromWarehouse(int loadingtimes) {
         //todo: show all include Master Warehouse
         getListWarehouse(new CallbackListObject() {
             @Override
@@ -484,7 +472,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
 
 
             }
-        }, showloading);
+        }, loadingtimes);
 
     }
 
@@ -497,7 +485,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
 
     }
 
-    private void selectToWarehouse(boolean showloading) {
+    private void selectToWarehouse(int loadingtimes) {
         //todo: show all include Master Warehouse
         getListWarehouse(new CallbackListObject() {
             @Override
@@ -515,7 +503,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
                 });
 
             }
-        }, showloading);
+        }, loadingtimes);
 
 
     }
@@ -586,6 +574,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
     private void updateInventoryTitle(List<BaseModel> list) {
         adapterInventory.updateData(list);
         updateTabNotify(2, "TỒN " + toWarehouse.getString("name").toUpperCase(), list.size());
+
     }
 
     private void updateChoosenTitle(int number) {
@@ -609,21 +598,9 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
             public void onError(String error) {
                 listener.onRespone(false);
             }
-        }, true).execute();
+        }, 1).execute();
 
-//        CustomerConnect.PostImport(param, new CallbackCustom() {
-//            @Override
-//            public void onResponse(BaseModel result) {
-//
-//
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//        }
-//        }, true);
+
     }
 
     private void reloadAllWarehouse(CallbackBoolean listener) {

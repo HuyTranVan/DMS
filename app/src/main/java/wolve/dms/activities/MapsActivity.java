@@ -102,7 +102,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     public SupportMapFragment mapFragment;
     private RadioGroup rdFilter;
     private RadioButton rdAll, rdIntersted, rdOrdered;
-    private ImageView btnBack, btnClose;
+    private ImageView btnBack;
     private EditText edSearch;
     private CoordinatorLayout coParent;
     private SmoothProgressBar progressLoading;
@@ -111,7 +111,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     private LinearLayout lnSheetBody, lnBottomSheet;
     private CButton btnDirection, btnCall, btnShare, btnAddList;
     private TextView tvShopname, tvAddress, tvTempBill, tvListWating,
-            tvLocation, tvReload, tvStatusDot, tvStatus, tvCheckin, tvDistance;
+            tvLocation, tvReload, tvStatusDot, tvStatus, tvCheckin, tvDistance, btnClose;
 
     private Handler mHandlerMoveMap = new Handler();
     private Handler mHandlerSearch = new Handler();
@@ -416,24 +416,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             public void onError(String error) {
 
             }
-        }, true).execute();
+        }, 1).execute();
 
-
-//        CustomerConnect.ListCustomer(param, 500, new CallbackCustomList() {
-//            @Override
-//            public void onResponse(List<BaseModel> results) {
-//                List<BaseModel> tempCustomers = new ArrayList<>();
-//                for (BaseModel model : results) {
-//                    tempCustomers.add(buildMarkerByCustomer(model));
-//                }
-//                addListMarkertoMap(mMap, true, tempCustomers, true);
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//            }
-//        }, true, true);
 
     }
 
@@ -458,7 +442,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             public void onError(String error) {
                 progressLoading.setVisibility(View.GONE);
             }
-        }, false).execute();
+        }, 0).execute();
 
 
 
@@ -863,12 +847,38 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     private Runnable delayForSerch = new Runnable() {
         @Override
         public void run() {
-            String param = "";
+            String mText = "";
             if (mSearchText.matches(Util.DETECT_NUMBER)) {
-                param = "phone=" + Util.encodeString(mSearchText);
+                mText = "phone=" + Util.encodeString(mSearchText);
             } else {
-                param = "shopName=" + Util.encodeString(mSearchText);
+                mText = "shopName=" + Util.encodeString(mSearchText);
             }
+
+            BaseModel param = createPostParam(
+                    ApiUtil.CUSTOMERS(1, 15),
+                    mText,
+                    false,
+                    true);
+
+            new GetPostMethod(param, new NewCallbackCustom() {
+                @Override
+                public void onResponse(BaseModel result, List<BaseModel> list) {
+                    createRVList(list);
+
+                    List<BaseModel> tempCustomers = new ArrayList<>();
+                    for (BaseModel model : list) {
+                        tempCustomers.add(buildMarkerByCustomer(model));
+                    }
+                    addListMarkertoMap(mMap, true, tempCustomers, true);
+
+                }
+
+                @Override
+                public void onError(String error) {
+
+                }
+            }, 0).execute();
+
 
 //            CustomerConnect.ListCustomer(param, 10, new CallbackCustomList() {
 //                @Override
@@ -955,7 +965,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             public void onError(String error) {
 
             }
-        }, true).execute();
+        }, 1).execute();
 
     }
 
@@ -992,7 +1002,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                     public void onError(String error) {
                         mListener.onError(error);
                     }
-                }, true).execute();
+                }, 1).execute();
 
 
     }
@@ -1142,7 +1152,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             public void onError(String error) {
                 progressLoadCustomer.setVisibility(View.GONE);
             }
-        }, false).execute();
+        }, 0).execute();
 
 
         btnCall.setOnClickListener(new View.OnClickListener() {
@@ -1197,7 +1207,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                     public void onError(String error) {
 
                     }
-                },false).execute();
+                },0).execute();
 
             }
         });
@@ -1250,7 +1260,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             public void onError(String error) {
 
             }
-        }, false).execute();
+        }, 0).execute();
 
     }
 

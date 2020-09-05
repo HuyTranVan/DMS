@@ -85,7 +85,7 @@ public class WaitingListAdapter extends RecyclerView.Adapter<WaitingListAdapter.
                     public void onError(String error) {
 
                     }
-                },false).execute();
+                },0).execute();
 
 
 //                String param = String.format(Api_link.CUSTOMER_TEMP_NEW_PARAM, mData.get(position).getInt("waiting_id"), User.getId());

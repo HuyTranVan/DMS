@@ -28,12 +28,12 @@ public class GMapGetMethod extends AsyncTask<String, Void, String> {
     private String mUrl;
     private GMapGetMethod main;
 
-    public GMapGetMethod(double lat, double lng, NewCallbackCustom listener, boolean showLoading) {
+    public GMapGetMethod(double lat, double lng, NewCallbackCustom listener, int loadingtimes) {
         this.mListener = listener;
         this.main = this;
         this.mUrl = String.format(Locale.ENGLISH, ApiUtil.MAP_GET_ADDRESS(), lat, lng);
 
-        UtilLoading.getInstance().showLoading(showLoading);
+        UtilLoading.getInstance().showLoading(loadingtimes);
 
         if (!Util.checkInternetConnection()){
             main.cancel(true);
@@ -42,7 +42,7 @@ public class GMapGetMethod extends AsyncTask<String, Void, String> {
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            new GMapGetMethod(lat, lng, mListener, showLoading);
+                            new GMapGetMethod(lat, lng, mListener, loadingtimes);
                         }
                     });
 

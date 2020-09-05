@@ -140,7 +140,7 @@ public class NewUpdateWarehouseFragment extends Fragment implements View.OnClick
                         public void onError(String error) {
 
                         }
-                    }, true).execute();
+                    }, 1).execute();
 
                 }
                 break;
@@ -167,7 +167,7 @@ public class NewUpdateWarehouseFragment extends Fragment implements View.OnClick
                         public void onError(String error) {
 
                         }
-                    }, true).execute();
+                    }, 1).execute();
 
 
                 }

@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "wolve.dms",
+  "variantName": "release",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "properties": [],
+      "versionCode": 9,
+      "versionName": "1.4",
+      "enabled": true,
+      "outputFile": "DMSRELEASE_010920.apk"
+    }
+  ]
+}

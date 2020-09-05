@@ -106,7 +106,7 @@ public class ProductGroupActivity extends BaseActivity implements View.OnClickLi
             public void onError(String error) {
 
             }
-        }, true).execute();
+        }, 1).execute();
 
 //        ProductConnect.ListProductGroup(true, new CallbackCustomList() {
 //            @Override
