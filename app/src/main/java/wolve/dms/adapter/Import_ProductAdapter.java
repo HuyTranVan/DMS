@@ -151,7 +151,7 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         holder.tvCopy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Transaction.shareViaZalo(createImportContentForShare(position));
+                Transaction.shareViaOtherApp(createImportContentForShare(position));
             }
         });
     }

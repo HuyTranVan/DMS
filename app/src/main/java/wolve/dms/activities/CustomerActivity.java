@@ -2,10 +2,12 @@ package wolve.dms.activities;
 
 import android.content.Intent;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -57,7 +59,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     protected Button btnSubmit;
     private TextView tvCheckInStatus, tvTime, tvTrash, tvPrint;
     protected TextView tvTitle, tvAddress, tvDebt, tvPaid, tvTotal, tvBDF, btnShopCart, tvFilter, tvFilterIcon;
-    private CoordinatorLayout coParent;
+    private FrameLayout coParent;
     //private RecyclerView rvFilterTitle;
     private ViewPager viewPager;
     private TabLayout tabLayout;
@@ -80,6 +82,8 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     private Handler mHandlerUpdateCustomer = new Handler();
     private boolean haschange = false;
     private int currentPosition = 0;
+    private long start = Util.TimeStamp1(Util.Current01MonthYear());
+    private int currentCheckedTime = 1;
 
     protected CustomerBillsFragment billsFragment;
     protected CustomerInfoFragment infoFragment;
@@ -90,7 +94,11 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FitScrollWithFullscreen.assistActivity(this, 1);
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q){
+            FitScrollWithFullscreen.assistActivity(this, 1);
+
+        }
+
     }
 
     Thread threadShowTime = new Thread() {
@@ -125,8 +133,11 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void findViewById() {
-        coParent = (CoordinatorLayout) findViewById(R.id.customer_parent);
-        coParent.setPadding(0, 0, 0, Util.getNavigationBarHeight());
+        coParent = (FrameLayout) findViewById(R.id.customer_parent);
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q){
+            coParent.setPadding(0, 0, 0, Util.getNavigationBarHeight());
+        }
+
         btnBack = (ImageView) findViewById(R.id.icon_back);
         btnShopCart = (TextView) findViewById(R.id.customer_shopcart);
         tvTrash = (TextView) findViewById(R.id.icon_more);
@@ -146,7 +157,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         tvAddress = findViewById(R.id.customer_address);
         lnFilter = findViewById(R.id.customer_filter);
         tvFilter = findViewById(R.id.customer_filter_text);
-        //rvFilterTitle = findViewById(R.id.customer_filter_rv);
         tvPrint = findViewById(R.id.customer_print);
         tvFilterIcon = findViewById(R.id.customer_filter_icon_close);
 
@@ -375,13 +385,20 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 break;
 
             case R.id.customer_filter:
-                changeFragment(new DatePickerFragment(), true);
+                Bundle bundle = new Bundle();
+                bundle.putInt("position", currentCheckedTime);
+                bundle.putLong("start_time", start);
+
+                changeFragment(new DatePickerFragment(), bundle,true);
 
                 break;
 
             case R.id.customer_filter_icon_close:
                 if (tvFilter.getVisibility() == View.GONE) {
-                    changeFragment(new DatePickerFragment(), true);
+                    Bundle bundle1 = new Bundle();
+                    bundle1.putInt("position", currentCheckedTime);
+                    bundle1.putLong("start_time", start);
+                    changeFragment(new DatePickerFragment(), bundle1, true);
 
                 } else {
                     tvFilterIcon.setText(Util.getIcon(R.string.icon_calendar));
@@ -436,24 +453,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                     }
                 }, 1).execute();
 
-//                CustomerConnect.DeleteCustomer(, new CallbackCustom() {
-//                    @Override
-//                    public void onResponse(BaseModel result) {
-//                        Util.getInstance().stopLoading(true);
-//
-//
-//
-//                    }
-//
-//                    @Override
-//                    public void onError(String error) {
-//                        Util.getInstance().stopLoading(true);
-//                        Constants.throwError(error);
-//
-//                    }
-//
-//
-//                }, true);
             }
         });
 
@@ -539,13 +538,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         if (customer.getInt("checkinCount") != checkincount) {
             customer.put("checkinCount", checkincount);
         }
-
-//        int status = 0;
-//        if (customer.hasKey("status_id")) {
-//            status = customer.getInt("status_id");
-//        } else {
-//            status = new BaseModel(customer.getJsonObject("status")).getInt("id");
-//        }
 
         String param = String.format(ApiUtil.CUSTOMER_CREATE_PARAM, String.format("id=%s&", customer.getString("id")),
                 Util.encodeString(customer.getString("name")),//name
@@ -818,6 +810,9 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     //get date return from fragment
     @Override
     public void onResponse(BaseModel object) {
+        start = object.getLong("start");
+        currentCheckedTime = object.getInt("position");
+
         tvFilterIcon.setText(Util.getIcon(R.string.icon_x));
         tvFilter.setVisibility(View.VISIBLE);
         tvFilter.setText(object.getString("text"));

@@ -132,6 +132,13 @@
     <string name="icon_location" translatable="false">&#xf601;</string>
     <string name="icon_dollar" translatable="false">&#xf155;</string>
     <string name="icon_previuos" translatable="false">&#xf34b;</string>
+    <string name="icon_registed" translatable="false">&#xf25d;</string>
+    <string name="icon_contact" translatable="false">&#xf2b9;</string>
+    <string name="icon_key" translatable="false">&#xf084;</string>
+    <string name="icon_chat_noname" translatable="false">&#xf075;</string>
+    <string name="icon_chat_viber">&#xf409;</string>
+    <string name="icon_chat_messenger">&#xf39f;</string>
+
 
     <string name="login_username" translatable="false">Nhập tài khoản hoặc SĐT</string>
     <string name="login_password" translatable="false">Nhập mật khẩu</string>

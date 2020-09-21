@@ -2,6 +2,7 @@ package wolve.dms.libraries;
 
 import android.app.Activity;
 import android.graphics.Rect;
+import android.os.Handler;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
@@ -36,13 +37,16 @@ public class FitScrollWithFullscreen {
     }
 
     private void possiblyResizeChildOfContent(double fixNumber) {
+
         int usableHeightNow = computeUsableHeight();
         if (usableHeightNow != usableHeightPrevious) {
             int usableHeightSansKeyboard = mChildOfContent.getRootView().getHeight();
             int heightDifference = usableHeightSansKeyboard - usableHeightNow;
             if (heightDifference > (usableHeightSansKeyboard / 4)) {
                 // keyboard probably just became visible
-                frameLayoutParams.height = (int) (usableHeightSansKeyboard - heightDifference / fixNumber + Util.convertSdpToInt(R.dimen._35sdp));
+                int sdp = Util.convertSdpToInt(R.dimen._35sdp);
+                int height = (int) (usableHeightSansKeyboard - heightDifference  + sdp);
+                frameLayoutParams.height = height;
             } else {
                 // keyboard probably just became hidden
                 frameLayoutParams.height = usableHeightSansKeyboard;

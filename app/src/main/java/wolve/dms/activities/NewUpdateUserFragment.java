@@ -1,5 +1,6 @@
 package wolve.dms.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -60,14 +61,12 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
     private Button btnSubmit;
     private CircleImageView imgUser;
 
-    private UserActivity mActivity;
-
     private Uri imageChangeUri = null;
     private BaseModel currentUser;
     private BaseModel currentWarehouse;
     private List<BaseModel> listWarehouse;
     private String displayWarehouseFormat = "Kho mặc định: %s";
-
+    private CallbackObject onDataPass;
 
     @Nullable
     @Override
@@ -99,9 +98,6 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
             if (!Util.checkImageNull(currentUser.getString("image"))) {
                 String url = Util.remakeURL(currentUser.getString("image"));
                 Glide.with(this).load(url).dontAnimate().centerCrop().into(imgUser);
-//                Picasso.get().load(url).into(imgUser);
-
-
             }
 
         } else {
@@ -112,16 +108,19 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
 
         }
 
-        if (!CustomSQL.getBoolean(Constants.IS_ADMIN)) {
+        if (!Util.isAdmin()){
             edPhone.setFocusable(false);
             edRole.setFocusable(false);
-            edWarehouse.setFocusable(false);
+            //edWarehouse.setFocusable(false);
+            tvPasswordDefault.setVisibility(View.GONE);
 
         } else {
             edPhone.setFocusable(true);
             roleEvent();
-            warehouseEvent();
+
+            tvPasswordDefault.setVisibility(View.VISIBLE);
         }
+        warehouseEvent();
 
     }
 
@@ -137,7 +136,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
     }
 
     private void initializeView() {
-        mActivity = (UserActivity) getActivity();
+        //mActivity = (UserActivity) getActivity();
         btnBack = (ImageView) view.findViewById(R.id.icon_back);
         edName = view.findViewById(R.id.add_user_name);
         edPhone = view.findViewById(R.id.add_user_phone);
@@ -157,7 +156,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
         Util.hideKeyboard(v);
         switch (v.getId()) {
             case R.id.icon_back:
-                mActivity.onBackPressed();
+                getActivity().onBackPressed();
 
                 break;
 
@@ -205,7 +204,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
                             public void Method3(Boolean three) {
                                 imageChangeUri = null;
                                 currentUser.put("image", "");
-                                Glide.with(mActivity).load(R.drawable.ic_user).fitCenter().into(imgUser);
+                                Glide.with(getActivity()).load(R.drawable.ic_user).fitCenter().into(imgUser);
                             }
                         });
 
@@ -217,36 +216,13 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == REQUEST_CHOOSE_IMAGE) {
-//            if (data != null) {
-//                Crop.of(Uri.parse(data.getData().toString()), imageChangeUri).asSquare().withMaxSize(512, 512).start(mActivity, NewUpdateUserFragment.this);
-//
-//            }
-//
-//        } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
-//            //Uri tempUri = imageChangeUri;
-//            Crop.of(imageChangeUri, imageChangeUri).asSquare().withMaxSize(512, 512).start(mActivity, NewUpdateUserFragment.this);
-//
-//        } else if (data != null && requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
-//            Glide.with(this).load(imageChangeUri).centerCrop().into(imgUser);
-//
-//        } else if (requestCode == Crop.REQUEST_CROP) {
-//            if (resultCode == RESULT_OK) {
-//                Glide.with(this).load(imageChangeUri).centerCrop().into(imgUser);
-//
-//            } else if (resultCode == Crop.RESULT_ERROR) {
-//                Util.showToast(Crop.getError(data).getMessage());
-//
-//            }
-//        }
-
         if (requestCode == REQUEST_CHOOSE_IMAGE) {
             if (data != null) {
                 CropImage.activity(Uri.parse(data.getData().toString()))
                         .setAspectRatio(1,1)
                         .setMaxZoom(10)
                         .setRequestedSize(512, 512)
-                        .start(mActivity,  NewUpdateUserFragment.this);
+                        .start(getActivity(),  NewUpdateUserFragment.this);
 
             }
 
@@ -255,7 +231,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
                     .setAspectRatio(1,1)
                     .setMaxZoom(10)
                     .setRequestedSize(512, 512)
-                    .start(mActivity,  NewUpdateUserFragment.this);
+                    .start(getActivity(),  NewUpdateUserFragment.this);
 
         }else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
@@ -405,14 +381,6 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
 
             }).execute();
 
-//            SystemConnect.uploadImage(Util.getRealPathFromCaptureURI(imageChangeUri), new CallbackString() {
-//                @Override
-//                public void Result(String url) {
-//                    updateUser(url);
-//
-//                }
-//            });
-
         } else {
             if (currentUser.getInt("id") == 0) {
                 updateUser("");
@@ -450,17 +418,30 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
         new GetPostMethod(param, new NewCallbackCustom() {
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
-                if (CustomSQL.getBoolean(Constants.IS_ADMIN)) {
-                    if (result.getInt("id") == User.getId()) {
-                        CustomSQL.setBaseModel(Constants.USER, result);
-                    }
+                if (result.getInt("id") == User.getId()) {
+                    //CustomSQL.setBaseModel(Constants.USER, result);
+                    onDataPass.onResponse(result);
                     getActivity().getSupportFragmentManager().popBackStack();
-                    mActivity.loadUser();
 
-                } else {
-                    Transaction.gotoHomeActivityRight(true);
+                }else {
+                    getActivity().getSupportFragmentManager().popBackStack();
 
                 }
+
+
+//                if (CustomSQL.getBoolean(Constants.IS_ADMIN)) {
+//                    if (result.getInt("id") == User.getId()) {
+//                        CustomSQL.setBaseModel(Constants.USER, result);
+//                    }else {
+//
+//                    }
+//
+//                    //mActivity.loadUser();
+//
+//                } else {
+//                    //Transaction.gotoHomeActivityRight(true);
+//
+//                }
             }
 
             @Override
@@ -468,29 +449,6 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
 
             }
         }, 1).execute();
-
-//        UserConnect.CreateUser(param, new CallbackCustom() {
-//            @Override
-//            public void onResponse(BaseModel result) {
-//                if (CustomSQL.getBoolean(Constants.IS_ADMIN)) {
-//                    if (result.getInt("id") == User.getId()) {
-//                        CustomSQL.setBaseModel(Constants.USER, result);
-//                    }
-//                    getActivity().getSupportFragmentManager().popBackStack();
-//                    mActivity.loadUser();
-//
-//                } else {
-//                    Transaction.gotoHomeActivityRight(true);
-//
-//                }
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//
-//        }, true);
 
     }
 
@@ -519,6 +477,12 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
             }
         }, 1).execute();
 
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        onDataPass = (CallbackObject) context;
     }
 
 

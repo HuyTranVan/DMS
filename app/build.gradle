@@ -9,8 +9,8 @@ android {
         multiDexEnabled true
         minSdkVersion 21
 //        targetSdkVersion 27
-        versionCode 10
-        versionName "1.41"
+        versionCode 13
+        versionName "1.44"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
@@ -31,7 +31,7 @@ android {
             buildConfigField "boolean", "DEBUG_FLAG", 'true'
             buildConfigField "Boolean", "FLAG", 'false'
             buildConfigField "String", "SERVER_URL", '"http://10.0.2.2/"'
-            buildConfigField "String", "UPLOAD_URL", '"http://10.0.2.2/"'
+//            buildConfigField "String", "SERVER_URL", '"http://192.168.1.4/"'
 
         }
 
@@ -41,7 +41,7 @@ android {
             signingConfig signingConfigs.debug
             buildConfigField "boolean", "DEBUG_FLAG", 'false'
             buildConfigField "Boolean", "FLAG", 'false'
-            buildConfigField "String", "SERVER_URL", '"http://lubsolution.com:8085/"'
+            buildConfigField "String", "SERVER_URL", '"http://139.59.241.163:8085/"'
             buildConfigField "String", "UPLOAD_URL", '"http://lubsolution.com:8085/"'
 
             def date = new Date().format('ddMMyy')
@@ -150,6 +150,7 @@ dependencies {
     implementation 'com.github.zcweng:switch-button:0.0.3@aar'
     implementation 'com.github.whinc:ratingbar:1.1.1'
     implementation "me.leolin:ShortcutBadger:1.1.22@aar"
+    implementation 'me.dm7.barcodescanner:zxing:1.9.13'
     //progress dialog
     implementation 'com.kaopiz:kprogresshud:1.1.0'
     implementation 'com.orhanobut:dialogplus:1.11@aar'

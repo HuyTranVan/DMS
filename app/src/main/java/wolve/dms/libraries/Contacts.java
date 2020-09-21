@@ -56,6 +56,7 @@ public class Contacts {
 
                 try {
                     Util.getInstance().getCurrentActivity().getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
+                    Util.showToast("Đã lưu danh bạ "+ name);
                 } catch (
                         RemoteException e) {
                     // TODO Auto-generated catch block

@@ -150,16 +150,21 @@ public class Constants {
     public static final String PRODUCT_SUGGEST_LIST = "product_suggest_list";
     public static final String IMAGES = "images";
     public static final String LOADING_TIMES = "loading_times";
+    public static final String AUTO_SAVE_CONTACT = "auto_save_contact";
 
-    public static String CHECK_ALL = Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_check) + " CHỌN TẤT CẢ";
-    public static String UNCHECK = "BỎ CHỌN";
+    public static final String CHECK_ALL = Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_check) + " CHỌN TẤT CẢ";
+    public static final String UNCHECK = "BỎ CHỌN";
 
-    public static String TYPE_OBJECT = "Object";
-    public static String TYPE_ARRAY = "Array";
+    public static final String TYPE_OBJECT = "Object";
+    public static final String TYPE_ARRAY = "Array";
 
+    public final static String ZALO_PACKAGE = "com.zing.zalo";
+    public final static String VIBER_PACKAGE = "com.viber.voip";
+    public final static String MESSENGER_PACKAGE = "com.facebook.orca";
+    public static final String PACKAGE_DEFAULT = "package_default";
 
     //Home constant
-    public static ArrayList<JSONObject> HomeItemList() {
+    public static List<BaseModel> HomeItemList() {
         String[] icons = new String[]{
                 Util.getIcon(R.string.icon_edit_map),
                 Util.getIcon(R.string.icon_chart),
@@ -171,37 +176,25 @@ public class Constants {
                 "Bán hàng",
                 "Thống kê",
                 "Nhập - Tồn kho",
-                "Cài đặt",
+                "Danh mục",
                 "Quét mã",
                 ""};
-        String[] colors = new String[]{
-                "Bán hàng",
-                "Thống kê",
-                "Xuất nhập tồn",
-                "Thông báo",
-                "Cài đặt",
-                "Tài khoản"};
-        String[] roles = new String[]{
-                "SALE",
-                "SALE",
-                "MANAGER",
-                "SALE",
-                "MANAGER",
-                "MANAGER"};
+        boolean[] isDistributor = new boolean[]{
+                false,
+                false,
+                false,
+                false,
+                false,
+                true};
 
-        ArrayList<JSONObject> list = new ArrayList<>();
+
+        List<BaseModel> list = new ArrayList<>();
         for (int i = 0; i < icons.length; i++) {
-            JSONObject object = new JSONObject();
-            try {
-                object.put("icon", icons[i]);
-                object.put("text", texts[i]);
-                object.put("color", colors[i]);
-                object.put("role", roles[i]);
+            BaseModel object = new BaseModel();
+            object.put("icon", icons[i]);
+            object.put("text", texts[i]);
+            object.put("isDistributor", isDistributor[i]);
 
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
 
             list.add(object);
         }
@@ -234,69 +227,63 @@ public class Constants {
 
     }
 
-//    public static boolean responeIsSuccess(BaseModel respone) {
-//        if (!respone.isNull("status") && respone.getInt("status") == 200) {
-//            return true;
-//
-//        } else {
-//            return false;
-//        }
-//    }
-//
-//    public static BaseModel getResponeObjectSuccess(BaseModel respone) {
-//        return new BaseModel(respone.getJsonObject("data"));
-//
-//    }
-//
-//    public static List<BaseModel> getResponeArraySuccess(BaseModel respone) {
-//        List<BaseModel> list = new ArrayList<>();
-//        JSONArray array = respone.getJSONArray("data");
-//        try {
-//            for (int i = 0; i < array.length(); i++) {
-//                list.add(new BaseModel(array.getJSONObject(i)));
-//            }
-//
-//        } catch (JSONException e) {
-//            throwError(e.toString());
-//            //e.printStackTrace();
-//        }
-//
-//        return list;
-//
-//    }
 
     public static List<BaseModel> homeSettingSetup() {
         List<BaseModel> list = new ArrayList<>();
 
+        BaseModel item1 = new BaseModel();
+        item1.put("position", 0);
+        item1.put("icon", Util.getIcon(R.string.icon_group));
+        item1.put("text", "Nhân viên");
+        list.add(0, item1);
+
+        BaseModel item2 = new BaseModel();
+        item2.put("position", 1);
+        item2.put("icon", Util.getIcon(R.string.icon_product_group));
+        item2.put("text", "Nhóm sản phẩm");
+        list.add(1, item2);
+
+        BaseModel item3 = new BaseModel();
+        item3.put("position", 2);
+        item3.put("icon", Util.getIcon(R.string.icon_product));
+        item3.put("text", "Sản phẩm");
+        list.add(2, item3);
+
+        BaseModel item4 = new BaseModel();
+        item4.put("position", 3);
+        item4.put("icon", Util.getIcon(R.string.icon_status));
+        item4.put("text", "Trạng thái");
+        list.add(3, item4);
+
+        return list;
+    }
+
+    public static List<BaseModel> listSharePackage(){
+        List<BaseModel> list = new ArrayList<>();
+
         BaseModel item0 = new BaseModel();
         item0.put("position", 0);
-        item0.put("icon", Util.getIcon(R.string.icon_info));
-        item0.put("text", "Thông tin nhà phân phối");
+        item0.put("icon", Util.getIcon(R.string.icon_chat));
+        item0.put("text", "Tùy chọn");
         list.add(0, item0);
 
         BaseModel item1 = new BaseModel();
         item1.put("position", 1);
-        item1.put("icon", Util.getIcon(R.string.icon_group));
-        item1.put("text", "Nhân viên");
+        item1.put("icon", Util.getIcon(R.string.icon_chat_noname));
+        item1.put("text", "Zalo");
         list.add(1, item1);
 
         BaseModel item2 = new BaseModel();
         item2.put("position", 2);
-        item2.put("icon", Util.getIcon(R.string.icon_product_group));
-        item2.put("text", "Nhóm sản phẩm");
+        item2.put("icon", Util.getIcon(R.string.icon_chat_viber));
+        item2.put("text", "Viber");
         list.add(2, item2);
 
         BaseModel item3 = new BaseModel();
         item3.put("position", 3);
-        item3.put("icon", Util.getIcon(R.string.icon_product));
-        item3.put("text", "Sản phẩm");
+        item3.put("icon", Util.getIcon(R.string.icon_chat_messenger));
+        item3.put("text", "Messenger");
         list.add(3, item3);
-
-        BaseModel item4 = new BaseModel();
-        item4.put("position", 4);
-        item4.put("icon", Util.getIcon(R.string.icon_status));
-        item4.put("text", "Trạng thái");
-        list.add(4, item4);
 
         return list;
     }

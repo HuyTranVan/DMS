@@ -76,9 +76,9 @@ import wolve.dms.models.Distributor;
 import wolve.dms.models.District;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.ContactUtil;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
+import wolve.dms.utils.CustomFixSQL;
 import wolve.dms.utils.CustomInputDialog;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
@@ -109,7 +109,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     private RelativeLayout rlSearchLayout;
     private RecyclerView rvSearch;
     private LinearLayout lnSheetBody, lnBottomSheet;
-    private CButton btnDirection, btnCall, btnShare, btnAddList;
+    private CButton btnDirection, btnCall, btnShare, btnAddList, btnContact;
     private TextView tvShopname, tvAddress, tvTempBill, tvListWating,
             tvLocation, tvReload, tvStatusDot, tvStatus, tvCheckin, tvDistance, btnClose;
 
@@ -169,6 +169,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         btnDirection = findViewById(R.id.map_detail_direction);
         btnShare = findViewById(R.id.map_detail_share);
         btnAddList = findViewById(R.id.map_detail_add);
+        btnContact = findViewById(R.id.map_detail_contact);
         tvDistance = findViewById(R.id.map_detail_distance);
         progressLoadCustomer = findViewById(R.id.map_loading_customer);
         tvStatus = findViewById(R.id.map_detail_status);
@@ -176,6 +177,28 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         tvTempBill = findViewById(R.id.map_detail_tempbill);
         tvListWating = findViewById(R.id.map_waiting_list_text);
 
+
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style_map));
+        mMap.setOnCameraMoveListener(this);
+        mMap.setOnCameraIdleListener(this);
+        mMap.setOnInfoWindowLongClickListener(this);
+        mMap.setOnMapLongClickListener(this);
+        mMap.setOnMarkerClickListener(this);
+        mMap.setOnMapClickListener(this);
+
+        adapterInfoMarker = new CustomWindowAdapter(new LatlngListener() {
+            @Override
+            public void onLatlngChange(LatLng latlng) {
+                triggerCurrentLocation(latlng, false);
+            }
+        });
+        mMap.setInfoWindowAdapter(adapterInfoMarker);
+        checkGPS();
 
     }
 
@@ -297,27 +320,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style_map));
-        mMap.setOnCameraMoveListener(this);
-        mMap.setOnCameraIdleListener(this);
-        mMap.setOnInfoWindowLongClickListener(this);
-        mMap.setOnMapLongClickListener(this);
-        mMap.setOnMarkerClickListener(this);
-        mMap.setOnMapClickListener(this);
 
-        adapterInfoMarker = new CustomWindowAdapter(new LatlngListener() {
-            @Override
-            public void onLatlngChange(LatLng latlng) {
-                triggerCurrentLocation(latlng, false);
-            }
-        });
-        mMap.setInfoWindowAdapter(adapterInfoMarker);
-        checkGPS();
-
-    }
 
     @Override
     public void onMapClick(LatLng latLng) {
@@ -1099,8 +1102,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 CustomSQL.setBaseModel(Constants.CUSTOMER, cust);
                 BaseModel customer = buildMarkerByCustomer(cust);
 
-                Contacts.InsertContact(customer);
-
                 tvStatusDot.setTextColor(customer.getInt("statusColor"));
                 if (customer.getBoolean("statusInterested")) {
                     btnDirection.setBackground(getResources().getDrawable(R.drawable.btn_round_blue));
@@ -1138,12 +1139,14 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 lnSheetBody.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (progressLoadCustomer.getVisibility() == View.GONE) {
+                        if (progressLoadCustomer.getVisibility() == View.GONE){
                             Transaction.gotoCustomerActivity();
 
                         }
                     }
                 });
+
+                saveContactEvent(customer);
 
 
             }
@@ -1165,7 +1168,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Transaction.shareViaZalo(customer.getString("id"));
+                Transaction.shareViaOtherApp(ApiUtil.DMS_HOST_LINK(customer.getString("id")));
             }
         });
 
@@ -1212,6 +1215,60 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             }
         });
 
+    }
+
+    private void saveContactEvent(BaseModel customer) {
+        btnContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                btnContact.setVisibility(View.GONE);
+                Contacts.InsertContact(customer);
+            }
+        });
+        if (Util.isPhoneFormat(customer.getString("phone")) != null){
+//            if (CustomFixSQL.hasKey(Constants.AUTO_SAVE_CONTACT)){
+                if (CustomFixSQL.getInt(Constants.AUTO_SAVE_CONTACT) == 1){
+                    btnContact.setVisibility(View.GONE);
+                    Contacts.InsertContact(customer);
+
+                }else {
+                    if (Contacts.contactExists(Util.getPhoneValue(customer.getString("phone")))){
+                        btnContact.setVisibility(View.GONE);
+                    }else {
+                        btnContact.setVisibility(View.VISIBLE);
+                    }
+                }
+
+//            }else {
+//                if (Contacts.contactExists(Util.getPhoneValue(customer.getString("phone")))){
+//                    btnContact.setVisibility(View.GONE);
+//                }else {
+//                    btnContact.setVisibility(View.VISIBLE);
+//                }
+//
+//            }
+
+        }else {
+           btnContact.setVisibility(View.GONE);
+        }
+
+//        else {
+//            if (Util.isPhoneFormat(customer.getString("phone")) != null &&
+//                    !Contacts.contactExists(Util.getPhoneValue(customer.getString("phone")))) {
+//
+//                CustomCenterDialog.dialogSaveContact(customer, new CallbackBoolean() {
+//                    @Override
+//                    public void onRespone(Boolean result) {
+//                        if (result){
+//                            Contacts.InsertContact(customer);
+//
+//                        }
+//                    }
+//                });
+//            }
+//
+//        }
     }
 
     private void setNullButton() {

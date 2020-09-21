@@ -10,11 +10,13 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.R;
 import wolve.dms.adapter.Statistical_ViewpagerAdapter;
 import wolve.dms.apiconnect.ApiUtil;
@@ -43,6 +45,7 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
     private CustomTabLayout tabLayout;
     private LinearLayout btnEmployeeFilter;
     private Fragment mFragment;
+    private CircleImageView employeeImage;
 
     private Statistical_ViewpagerAdapter pageAdapter;
 
@@ -86,6 +89,7 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
         btnReload = findViewById(R.id.statistical_reload);
         tvEmployeeName = findViewById(R.id.statistical_filter_by_employee_name);
         tvCalendar = findViewById(R.id.statistical_calendar);
+        employeeImage = findViewById(R.id.statistical_filter_by_employee_image);
 
     }
 
@@ -93,10 +97,17 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
     public void initialData() {
         listUser = new ArrayList<>();
         listUser.add(0, getAllFilterUser());
-
-        tvEmployeeName.setText(User.getCurrentRoleId() == Constants.ROLE_ADMIN ? Constants.ALL_FILTER : User.getFullName());
         tvCalendar.setText(Util.getIconString(R.string.icon_calendar, "   ", Util.CurrentMonthYear()));
 
+        if (User.getCurrentRoleId() == Constants.ROLE_ADMIN){
+            tvEmployeeName.setText( Constants.ALL_FILTER);
+            Glide.with(this).load(R.drawable.ic_user).fitCenter().into(employeeImage);
+
+        }else {
+            tvEmployeeName.setText(User.getFullName());
+            Glide.with(this).load(User.getImage()).placeholder(R.drawable.ic_user).fitCenter().into(employeeImage);
+
+        }
         loadInitialData(Util.TimeStamp1(Util.Current01MonthYear()),
                 Util.TimeStamp1(Util.Next01MonthYear()),
                 1);
@@ -154,6 +165,7 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
                         @Override
                         public void onResponse(BaseModel object) {
                             tvEmployeeName.setText(object.getString("displayName"));
+                            Glide.with(StatisticalActivity.this).load(object.getString("image")).placeholder(R.drawable.ic_user).fitCenter().into(employeeImage);
                             updateAllFragmentData(object.getInt("id"));
 
                         }
@@ -360,6 +372,7 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
 
     private BaseModel getAllFilterUser() {
         BaseModel model = new BaseModel();
+        model.put("image","");
         model.put("displayName", Constants.ALL_FILTER);
 
         return model;

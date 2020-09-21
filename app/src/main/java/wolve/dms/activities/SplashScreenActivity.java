@@ -1,7 +1,9 @@
 package wolve.dms.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -14,6 +16,7 @@ import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
+import wolve.dms.libraries.Security;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
@@ -44,6 +47,7 @@ public class SplashScreenActivity extends BaseActivity {
 
     @Override
     public void initialData() {
+        openUri();
         tvVersion.setText(String.format("Version %s", BuildConfig.VERSION_NAME));
         progressBar.setVisibility(View.VISIBLE);
         new Handler().postDelayed(new Runnable() {
@@ -138,22 +142,19 @@ public class SplashScreenActivity extends BaseActivity {
     }
 
 
-//    private void openUri(){
-//        Intent intent = getIntent();
-//        Uri data = intent.getData();
-//
-//
-//        if (data != null) {
-//            if (data.getQuery().contains("id")){
-//                String id = Security.decrypt(data.getQueryParameter("id"));
-//                CustomSQL.setString(Constants.CUSTOMER_ID, id);
-//
-//                Log.e("idabc" , id);
-//            }
-//        }
-//
-//
-//    }
+    private void openUri(){
+        Intent intent = getIntent();
+        Uri data = intent.getData();
+
+        if (data != null) {
+            if (data.getQuery().contains("id")){
+                CustomSQL.setString(Constants.CUSTOMER_ID, data.getQueryParameter("id"));
+
+            }
+        }
+
+
+    }
 
 
 }

@@ -51,6 +51,12 @@ public class Distributor extends BaseModel {
 
     }
 
+    public static String getImage() {
+        BaseModel currentDistributor = CustomSQL.getBaseModel(Constants.DISTRIBUTOR);
+
+        return currentDistributor.getString("image");
+    }
+
     public static int getLocationId() {
         int location = 0;
         BaseModel currentDistributor = CustomSQL.getBaseModel(Constants.DISTRIBUTOR);

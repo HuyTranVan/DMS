@@ -94,4 +94,15 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserAdapterVie
 
     }
 
+    public void updateUser(BaseModel user){
+        for (int i=0; i< mData.size(); i++){
+            if (mData.get(i).getInt("id") == user.getInt("id")){
+                mData.remove(i);
+                mData.add(i, user);
+                notifyItemChanged(i);
+                break;
+            }
+        }
+    }
+
 }

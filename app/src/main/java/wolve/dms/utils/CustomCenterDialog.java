@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -93,6 +94,31 @@ public class CustomCenterDialog {
         return d;
     }
 
+    public static Dialog showCustomDialogWithMargin(int resId) {
+        AlertDialog.Builder adb = new AlertDialog.Builder(Util.getInstance().getCurrentActivity());
+        final Dialog d = adb.setView(new View(Util.getInstance().getCurrentActivity())).create();
+        d.getWindow().setBackgroundDrawableResource(R.drawable.bg_corner5_white);
+        //d.getWindow().setAttributes();
+
+
+        d.setCanceledOnTouchOutside(false);
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(d.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.MATCH_PARENT;
+
+
+        d.getWindow().setAttributes(lp);
+
+        d.show();
+        d.setContentView(resId);
+
+
+        d.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+
+        return d;
+    }
+
     public static Dialog showCustomDialogNotCancel(int resId) {
         AlertDialog.Builder adb = new AlertDialog.Builder(Util.getInstance().getCurrentActivity());
         final Dialog d = adb.setView(new View(Util.getInstance().getCurrentActivity())).create();
@@ -112,25 +138,6 @@ public class CustomCenterDialog {
 
         d.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 
-        return d;
-    }
-
-    public static Dialog showCustomDialog(int resId, Boolean showLater) {
-        AlertDialog.Builder adb = new AlertDialog.Builder(Util.getInstance().getCurrentActivity());
-        final Dialog d = adb.setView(new View(Util.getInstance().getCurrentActivity())).create();
-        d.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-
-        d.setCanceledOnTouchOutside(true);
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(d.getWindow().getAttributes());
-        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-        lp.height = WindowManager.LayoutParams.MATCH_PARENT;
-
-        d.getWindow().setAttributes(lp);
-        if (!showLater) {
-            d.show();
-        }
-        d.setContentView(resId);
         return d;
     }
 
@@ -178,7 +185,10 @@ public class CustomCenterDialog {
                             @Override
                             public void onClick(SweetAlertDialog sDialog) {
                                 sDialog.dismissWithAnimation();
-                                callback.onRespone(true);
+                                if (callback != null){
+                                    callback.onRespone(true);
+                                }
+
                             }
                         });
                 dialog.setCanceledOnTouchOutside(cancel);
@@ -1165,6 +1175,44 @@ public class CustomCenterDialog {
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dialogResult.dismiss();
+            }
+        });
+
+    }
+
+    public static void dialogSaveContact(BaseModel customer, CallbackBoolean mListener) {
+        final Dialog dialogResult = CustomCenterDialog.showCustomDialogWithMargin(R.layout.view_dialog_save_contact);
+        final Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
+        final Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
+        TextView tvContent = dialogResult.findViewById(R.id.dialog_save_contact_content);
+        CheckBox checkBox = dialogResult.findViewById(R.id.dialog_save_contact_checkbox);
+
+
+        btnCancel.setText("Không");
+        btnSubmit.setText("đồng ý");
+        tvContent.setText("Lưu thông tin khách hàng vào danh bạ điện thoại");
+
+        dialogResult.setCanceledOnTouchOutside(true);
+
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (checkBox.isChecked()){
+                    CustomFixSQL.setInt(Constants.AUTO_SAVE_CONTACT, 1);
+                }
+                mListener.onRespone(true);
+                dialogResult.dismiss();
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (checkBox.isChecked()){
+                    CustomFixSQL.setInt(Constants.AUTO_SAVE_CONTACT, 0);
+                }
+                mListener.onRespone(false);
                 dialogResult.dismiss();
             }
         });

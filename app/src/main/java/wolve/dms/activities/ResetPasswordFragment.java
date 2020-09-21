@@ -3,6 +3,7 @@ package wolve.dms.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -150,7 +151,7 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
 
                 @Override
                 public void onError(String error) {
-
+                    Log.e("error", error);
                 }
             }, 1).execute();
 

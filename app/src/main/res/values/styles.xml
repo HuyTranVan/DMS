@@ -13,7 +13,7 @@
         <item name="windowActionBar">true</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
-        <!--<item name="android:windowActivityTransitions">false</item>-->
+<!--        <item name="android:windowActivityTransitions">false</item>-->
         <item name="android:windowTranslucentStatus">false</item>
     </style>
 
@@ -80,7 +80,7 @@
         <item name="colorControlActivated">@color/colorMain</item>
 
         <!-- inactive thumb color -->
-        <item name="colorSwitchThumbNormal">#CC0000</item>
+        <item name="colorSwitchThumbNormal">#a1a1a1</item>
 
         <!-- inactive track color (30% transparency) -->
         <item name="android:colorForeground">#666666

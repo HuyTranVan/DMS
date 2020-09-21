@@ -136,7 +136,7 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
             edGroup.setText(product.getBaseModel("productGroup").getString("name"));
             edVolume.setText(product.getString("volume"));
             edUnitInCarton.setText(product.getString("unitInCarton"));
-            edIsPromotion.setText(product.getBoolean("promotion") ? Constants.IS_PROMOTION : Constants.NO_PROMOTION);
+            edIsPromotion.setText(product.getInt("promotion") == 1 ? Constants.IS_PROMOTION : Constants.NO_PROMOTION);
 
             if (!Util.checkImageNull(product.getString("image"))) {
                 Glide.with(NewUpdateProductFragment.this).load(product.getString("image")).centerCrop().into(imgProduct);
@@ -234,35 +234,6 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
                 });
     }
 
-
-//    private void startImageChooser() {
-//        imageChangeUri = Uri.fromFile(Util.createTempFileOutput());
-//        if (Build.VERSION.SDK_INT <= 19) {
-//            Intent i = new Intent();
-//            i.setType("image/*");
-//            i.setAction(Intent.ACTION_GET_CONTENT);
-//            i.addCategory(Intent.CATEGORY_OPENABLE);
-//            startActivityForResult(i, REQUEST_CHOOSE_IMAGE);
-//
-//        } else if (Build.VERSION.SDK_INT > 19) {
-//            Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//            startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
-//        }
-//    }
-//
-//    public void startCamera() {
-////        imageChangeUri = Uri.fromFile(Util.getOutputMediaFile());
-//        imageChangeUri = FileProvider.getUriForFile(
-//                getActivity(),
-//                BuildConfig.APPLICATION_ID + ".provider",
-//                Util.createTempFileOutput());
-//
-//        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageChangeUri);
-//        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-//
-//    }
-
     private int defineGroupId(String groupName) {
         int id = 0;
         for (int i = 0; i < mActivity.listProductGroup.size(); i++) {
@@ -295,14 +266,6 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
                     }
 
                 }).execute();
-
-//                SystemConnect.uploadImage(Util.getRealPathFromCaptureURI(imageChangeUri), new CallbackString() {
-//                    @Override
-//                    public void Result(String s) {
-//                        updateProduct(s);
-//
-//                    }
-//                });
 
             } else {
                 if (product.getInt("id") == 0) {

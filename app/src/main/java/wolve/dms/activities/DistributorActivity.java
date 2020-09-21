@@ -23,7 +23,9 @@ import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.apiconnect.apiserver.UploadCloudaryMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
+import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
+import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -185,14 +187,6 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
 
             }).execute();
 
-//            SystemConnect.uploadImage(Util.getRealPathFromCaptureURI(imageChangeUri), new CallbackString() {
-//                @Override
-//                public void Result(String s) {
-//                    updateDistributor(s);
-//
-//                }
-//            });
-
         } else {
             updateDistributor(imgURL);
 
@@ -214,6 +208,7 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
         new GetPostMethod(param, new NewCallbackCustom() {
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
+                CustomSQL.setBaseModel(Constants.DISTRIBUTOR, result);
                 Transaction.gotoHomeActivityRight(true);
             }
 

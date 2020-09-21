@@ -208,4 +208,16 @@ public class CustomFixSQL {
 
     }
 
+//    public static boolean hasKey(String key){
+//        prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
+//        String value = prefs.getString(key,null);
+//        if (value == null){
+//            return false;
+//        }else {
+//            return true;
+//        }
+//    }
+
+
+
 }

@@ -24,6 +24,7 @@ public class CustomSQL {
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
         prefs.edit().putString(title, value.BaseModelstoString()).commit();
 
+
     }
 
     public static void setString(String title, String value) {
@@ -186,24 +187,6 @@ public class CustomSQL {
         }
         return listObject;
     }
-
-//    public static List<? extends Object> getListObject(String name, Class<?> type){
-//        prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
-//
-//        if (prefs != null){
-//            List<? extends Object> listResult = new ArrayList<>();
-//            String json = prefs.getString(name, "");
-//            listResult = (List<? extends Object>) new Gson().fromJson(json , type)
-//            Type type = new TypeToken<List<Product>>() {}.getType();
-//            return
-//        }
-//
-//
-//
-//        productFromShared = gson.fromJson(jsonPreferences, type);
-//
-//        return null;
-//    }
 
     public static void removeKey(String title) {
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);

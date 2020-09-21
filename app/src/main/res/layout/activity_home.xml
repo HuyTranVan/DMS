@@ -18,104 +18,94 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true">
-
-                <ImageView
-                    android:id="@+id/home_image"
-                    android:layout_width="@dimen/_100sdp"
-                    android:layout_height="@dimen/_100sdp"
-                    android:src="@drawable/ic_app_red_transparent"
-                    android:layout_centerInParent="true"
-                    android:layout_marginBottom="@dimen/_30sdp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/bariol_regular"
-                    android:text="Lubsolution DMS"
-                    android:textSize="@dimen/_18sdp"
-                    android:layout_below="@id/home_image"
-                    android:layout_centerHorizontal="true"
-                    android:textColor="@color/colorRed" />
-
-            </RelativeLayout>
-
             <LinearLayout
-                android:id="@+id/home_user"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="?selectableItemBackground"
+                android:orientation="vertical"
                 android:gravity="center_vertical"
                 android:layout_alignParentRight="true"
                 android:padding="@dimen/_5sdp">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/home_icon"
-                    android:layout_width="@dimen/_30sdp"
-                    android:layout_height="@dimen/_30sdp"
-                    android:src="@drawable/ic_user"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="@dimen/_10sdp"
-                    android:scaleType="centerCrop"
-                    app:civ_border_width="1dip"
-                    app:civ_border_overlay="false"
-                    app:civ_fill_color="@color/colorWhite"
-                    app:civ_border_color="@color/colorLightGrey" />
-
-                <TextView
-                    android:id="@+id/home_fullname"
+                <LinearLayout
+                    android:id="@+id/home_user"
                     android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:background="@drawable/btn_transparent"
+                    android:padding="@dimen/_5sdp">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/home_icon"
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:src="@drawable/ic_user"
+                        android:layout_gravity="center"
+                        android:layout_marginRight="@dimen/_10sdp"
+                        android:scaleType="centerCrop"
+                        app:civ_border_width="1dip"
+                        app:civ_border_overlay="false"
+                        app:civ_fill_color="@color/colorWhite"
+                        app:civ_border_color="@color/colorLightGrey" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginRight="@dimen/_5sdp">
+
+                        <TextView
+                            android:id="@+id/home_fullname"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Huy Tran"
+                            android:textColor="@color/black_text_color"
+                            android:textSize="@dimen/_12sdp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:id="@+id/home_role"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Huy Tran"
+                            android:textColor="@color/black_text_color_hint"
+                            android:textSize="@dimen/_10sdp"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Huy Tran"
-                    android:textColor="@color/black_text_color_hint"
-                    android:textSize="@dimen/_12sdp"
-                    android:layout_marginLeft="@dimen/_5sdp"
-                    android:layout_marginRight="@dimen/_10sdp" />
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_corner5_lighgrey"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:paddingLeft="@dimen/_10sdp"
+                    android:paddingTop="@dimen/_5sdp"
+                    android:paddingBottom="@dimen/_5sdp">
 
-            </LinearLayout>
+                    <TextView
+                        android:id="@+id/home_month"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/font_awesome"
+                        android:text="Tổng bán hàng:"
+                        android:textSize="@dimen/_10sdp"
+                        android:textColor="@color/black_text_color_hint"
+                        android:textStyle="italic"
+                        android:layout_marginBottom="@dimen/_5sdp" />
 
-            <LinearLayout
-                android:id="@+id/home_relogin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentBottom="true"
-                android:layout_margin="@dimen/_10sdp"
-                android:gravity="right">
+                    <TextView
+                        android:id="@+id/home_cash"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/font_awesome"
+                        android:text="đ"
+                        android:textSize="@dimen/_12sdp"
+                        android:textColor="@color/colorBlue" />
 
-                <TextView
-                    android:id="@+id/home_distributor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/font_awesome"
-                    android:text="xxx"
-                    android:textSize="@dimen/_10sdp"
-                    android:textColor="@color/black_text_color"
-                    android:layout_marginBottom="@dimen/_5sdp" />
+                </LinearLayout>
 
-                <TextView
-                    android:id="@+id/home_month"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/font_awesome"
-                    android:text="Tổng bán hàng:"
-                    android:textSize="@dimen/_10sdp"
-                    android:textColor="@color/black_text_color_hint"
-                    android:layout_marginBottom="@dimen/_5sdp" />
-
-                <TextView
-                    android:id="@+id/home_cash"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/font_awesome"
-                    android:text="đ"
-                    android:textSize="@dimen/_10sdp"
-                    android:textColor="@color/colorBlue" />
 
 
             </LinearLayout>
@@ -124,16 +114,17 @@
                 android:id="@+id/home_new_product"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/font_awesome"
                 android:background="@drawable/btn_round_blue"
-                android:text="Có sản phẩm mới"
-                android:textSize="@dimen/_8sdp"
+                android:text="&#xf01e;    Đồng bộ sán phẩm"
+                android:textSize="@dimen/_10sdp"
                 android:textColor="@color/white_text_color"
-                android:paddingLeft="@dimen/_15sdp"
+                android:paddingLeft="@dimen/_10sdp"
                 android:paddingRight="@dimen/_15sdp"
-                android:paddingTop="@dimen/_2sdp"
-                android:paddingBottom="@dimen/_2sdp"
+                android:paddingTop="@dimen/_5sdp"
+                android:paddingBottom="@dimen/_5sdp"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@+id/home_user"
+                android:layout_marginTop="@dimen/_20sdp"
                 android:visibility="gone" />
 
             <LinearLayout
@@ -217,10 +208,11 @@
 
 
                 </RelativeLayout>
+
             </LinearLayout>
 
-
         </RelativeLayout>
+
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
@@ -228,6 +220,48 @@
         android:id="@+id/home_rvitems"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/_10sdp"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/_15sdp"
+        android:orientation="horizontal"
+        android:background="?selectableItemBackground"
+        android:gravity="center_vertical"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/_5sdp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/bariol_regular"
+            android:text="Lubsolution Project"
+            android:textSize="@dimen/_10sdp"
+            android:gravity="center"
+            android:textColor="@color/black_text_color_hint"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/font_awesome"
+            android:text="@string/icon_registed"
+            android:textSize="@dimen/_6sdp"
+            android:paddingBottom="@dimen/_5sdp"
+            android:paddingLeft="@dimen/_2sdp"
+            android:textColor="@color/black_text_color_hint"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/bariol_regular"
+            android:text="DMS"
+            android:textSize="@dimen/_10sdp"
+            android:gravity="center"
+            android:textColor="@color/black_text_color_hint"
+            android:layout_marginLeft="@dimen/_5sdp"/>
+
+    </LinearLayout>
 
 </RelativeLayout>

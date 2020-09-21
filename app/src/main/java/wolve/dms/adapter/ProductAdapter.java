@@ -82,7 +82,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
         holder.tvBasePrice.setText(Util.FormatMoney(mData.get(position).getDouble("purchasePrice")) + baseprice);
 
 
-        holder.tvGift.setVisibility(mData.get(position).getBoolean("promotion") ? View.VISIBLE : View.GONE);
+        holder.tvGift.setVisibility(mData.get(position).getInt("promotion") == 1 ? View.VISIBLE : View.GONE);
         if (!Util.checkImageNull(mData.get(position).getString("image"))) {
             Glide.with(mContext).load(mData.get(position).getString("image")).centerCrop().into(holder.imageProduct);
 

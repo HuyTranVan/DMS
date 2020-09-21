@@ -8,6 +8,7 @@ import java.util.List;
 
 import wolve.dms.BuildConfig;
 import wolve.dms.R;
+import wolve.dms.libraries.Security;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Util;
 
@@ -17,12 +18,15 @@ import wolve.dms.utils.Util;
 
 public class ApiUtil {
     public final static String DEFAULT_RANGE = "?page=%d&size=%d";
-//
-    public final static String BASE_URL = BuildConfig.DEBUG_FLAG ? "http://192.168.1.29/" : BuildConfig.SERVER_URL;
-    public final static String LUB_LINK = "http://dmslub.com?";
+
+//    public final static String BASE_URL = BuildConfig.DEBUG_FLAG ? "http://192.168.1.29/" : BuildConfig.SERVER_URL;
+    public final static String BASE_URL = BuildConfig.SERVER_URL;
+    public final static String DMS_HOST_LINK(String id){
+        return "http://dmslub.com?id=" + id;
+    }
     public final static String MAP_API = "https://maps.googleapis.com/maps/api/";
 
-    public final static String BASE_PHOTO_URL = BuildConfig.UPLOAD_URL;
+    //public final static String BASE_PHOTO_URL = BuildConfig.UPLOAD_URL;
     public final static String HOST_IMAGE = "http://lubsolution.com:8800";
     public final static String HOST_IMAGE_USER = "paramaxgo";
     public final static String HOST_IMAGE_PASS = "paramaxgo@1";
@@ -31,7 +35,6 @@ public class ApiUtil {
     public final static String MAP_GET_ADDRESS() {
         return MAP_API + "geocode/json?latlng=%1$f,%2$f&sensor=false&language=vi&key=" +
                 Util.getInstance().getCurrentActivity().getResources().getString(R.string.map_id);
-
     }
 
     public final static String GOOGLESHEET_CREDENTIALS_FILE_PATH = "/credentials.json";
@@ -87,7 +90,7 @@ public class ApiUtil {
         return BASE_URL + "dms/token/product/ProductDelete?id=";
     }
     public final static String PRODUCT_LASTEST(){
-        return BASE_URL + "dms/token/system/LastProductUpdate";
+        return BASE_URL + "dms/token/system/LastProductUpdate?from=%s&to=%s";
     }
 
     public final static String WAREHOUSES(){
@@ -233,8 +236,7 @@ public class ApiUtil {
     public final static String PAYMENTS(){
         return BASE_URL + "dms/token/bill/PaymentList?from=%s&to=%s";
     }
-    //public final static String PAY_PARAM = "customerId=%d&paid=%s&billId=%d&userId=%d&note=%s&payByReturn=%d&user_collect=%d";
-    //public final static String PAYMENTS_PARAM = "?from=%s&to=%s";
+
     public final static String PAYMENT_DELETE(){
         return BASE_URL + "dms/token/bill/PaymentDelete?id=";
     }

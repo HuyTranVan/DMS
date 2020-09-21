@@ -210,8 +210,8 @@ public class CustomBottomDialog {
 
 
     public static void choiceListObject(String title, final List<BaseModel> list, String key, final CallbackObject mListener, CallbackBoolean dismiss) {
-        int heigh = list.size() > 5 ? Util.convertSdpToInt(R.dimen._300sdp) :
-                (list.size() + 1) * Util.convertSdpToInt(R.dimen._35sdp) + Util.convertSdpToInt(R.dimen._5sdp); //+Util.convertSdpToInt(R.dimen._30sdp);
+        int heigh = list.size() > 5 ? Util.convertSdpToInt(R.dimen._350sdp) :
+                (list.size() + 1) * Util.convertSdpToInt(R.dimen._40sdp) + Util.convertSdpToInt(R.dimen._5sdp); //+Util.convertSdpToInt(R.dimen._30sdp);
         final DialogPlus dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
                 .setContentHolder(new ViewHolder(R.layout.view_choice_listmethod))
                 .setGravity(Gravity.BOTTOM)

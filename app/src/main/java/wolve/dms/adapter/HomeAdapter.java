@@ -1,6 +1,9 @@
 package wolve.dms.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,13 +12,20 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.R;
 import wolve.dms.callback.CallbackClickAdapter;
+import wolve.dms.models.BaseModel;
+import wolve.dms.models.Distributor;
+import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
 
@@ -25,7 +35,7 @@ import wolve.dms.utils.Util;
  */
 
 public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterViewHolder> {
-    private ArrayList<JSONObject> mData = new ArrayList<>();
+    private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackClickAdapter mListener;
@@ -44,7 +54,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
         return new ItemAdapterViewHolder(itemView);
     }
 
-    public void addItems(ArrayList<JSONObject> list) {
+    public void addItems(List<BaseModel> list) {
         mData = new ArrayList<>();
         mData.addAll(list);
         notifyDataSetChanged();
@@ -53,12 +63,20 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
 
     @Override
     public void onBindViewHolder(final ItemAdapterViewHolder holder, final int position) {
-        try {
+        if (mData.get(position).getBoolean("isDistributor")){
+            holder.tvIcon.setVisibility(View.GONE);
+            holder.imgItem.setVisibility(View.VISIBLE);
+            holder.tvTitle.setText(Distributor.getName());
+            holder.tvTitle.setTextColor(mContext.getResources().getColor(R.color.colorBlue));
+            Glide.with(mContext).load(Distributor.getImage()).placeholder(R.drawable.lub_logo_grey).fitCenter().into(holder.imgItem);
+
+        }else {
+            holder.tvIcon.setVisibility(View.VISIBLE);
+            holder.imgItem.setVisibility(View.GONE);
             holder.tvIcon.setText(mData.get(position).getString("icon"));
             holder.tvTitle.setText(mData.get(position).getString("text"));
+            holder.tvTitle.setTextColor(mContext.getResources().getColor(R.color.black_text_color));
 
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
 
         holder.rlParent.setOnClickListener(new View.OnClickListener() {
@@ -80,12 +98,14 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
     public class ItemAdapterViewHolder extends RecyclerView.ViewHolder {
         private TextView tvTitle, tvIcon;
         private LinearLayout rlParent;
+        private CircleImageView imgItem;
 
         public ItemAdapterViewHolder(View itemView) {
             super(itemView);
             tvIcon = (TextView) itemView.findViewById(R.id.item_home_icon);
             tvTitle = (TextView) itemView.findViewById(R.id.item_home_text);
             rlParent = (LinearLayout) itemView.findViewById(R.id.item_home_parent);
+            imgItem = itemView.findViewById(R.id.item_home_image);
         }
 
     }

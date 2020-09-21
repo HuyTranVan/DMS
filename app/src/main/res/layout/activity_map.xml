@@ -379,6 +379,7 @@
                     </LinearLayout>
 
 
+
                 </LinearLayout>
 
 
@@ -411,11 +412,12 @@
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
                             android:layout_marginRight="@dimen/_10sdp"
-                            app:iconText="@string/icon_plus"
-                            app:text="DS Chờ"
+                            app:iconText="@string/icon_contact"
+                            app:text="Danh bạ"
                             app:iconColor="@color/colorBlue"
                             app:textColor="@color/black_text_color"
-                            app:backgroundLayout="@drawable/btn_round_white_border_blue" />
+                            app:backgroundLayout="@drawable/btn_round_white_border_blue"
+                            android:visibility="gone"/>
 
                         <wolve.dms.customviews.CButton
                             android:id="@+id/map_detail_call"
@@ -428,6 +430,18 @@
                             app:iconColor="@color/colorBlue"
                             app:textColor="@color/black_text_color"
                             app:backgroundLayout="@drawable/btn_round_white_border_blue" />
+
+                        <wolve.dms.customviews.CButton
+                            android:id="@+id/map_detail_contact"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            android:orientation="horizontal"
+                            app:backgroundLayout="@drawable/btn_round_white_border_blue"
+                            app:iconColor="@color/colorBlue"
+                            app:iconText="@string/icon_contact"
+                            app:text="Lưu"
+                            app:textColor="@color/black_text_color" />
 
                         <wolve.dms.customviews.CButton
                             android:id="@+id/map_detail_share"

@@ -1648,7 +1648,7 @@ public class Util {
     }
 
     public static boolean isAdmin() {
-        return CustomSQL.getBoolean(Constants.IS_ADMIN);
+        return CustomSQL.getBaseModel(Constants.USER).getInt("role") == Constants.ROLE_ADMIN;
     }
 
     public static String getIcon(int name) {

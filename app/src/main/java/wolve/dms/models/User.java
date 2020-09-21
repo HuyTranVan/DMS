@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Util;
 
@@ -170,22 +171,17 @@ public class User extends BaseModel {
         return CustomSQL.getBaseModel(Constants.USER);
     }
 
-    public static JSONObject getCurrentUserString() {
-        BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
-        JSONObject user = new JSONObject();
-        try {
-            user.put("id", currentUser.getInt("id"));
-            user.put("displayName", currentUser.getString("displayName"));
-            user.put("phone", currentUser.getString("phone"));
-            user.put("role", currentUser.getString("role"));
-            user.put("currentTime", Util.CurrentMonthYearHour());
+    public static String getCurrentUserString() {
+        return CustomSQL.getString(Constants.USER);
+    }
 
-
-        } catch (JSONException e) {
-            //e.printStackTrace();
+    public static boolean checkUserWarehouse() {
+        if (getCurrentUser().getInt("warehouse_id") == 0) {
+            CustomCenterDialog.alert(null, "Cập nhật thông tin kho hàng nhân viên để tiếp tục thao tác", "đồng ý");
+            return false;
+        } else {
+            return true;
         }
-
-        return user;
     }
 
 

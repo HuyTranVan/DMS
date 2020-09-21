@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_save_contact_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/dialog_save_contact_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_25sdp"
+        android:background="@drawable/bg_img_header"
+        android:text="lưu danh bạ"
+        android:textAllCaps="true"
+        android:textSize="@dimen/_12sdp"
+        android:textColor="@color/black_text_color"
+        android:gravity="center" />
+
+    <LinearLayout
+        android:id="@+id/dialog_save_contact_body"
+        android:layout_below="@+id/dialog_save_contact_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/dialog_save_contact_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="acb"
+            android:padding="@dimen/_10sdp"
+            android:textSize="@dimen/_12sdp"
+            android:gravity="center"/>
+
+        <CheckBox
+            android:id="@+id/dialog_save_contact_checkbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:text="Ghi nhớ lựa chọn"
+            android:paddingLeft="@dimen/_10sdp"
+            android:checked="true"
+            android:buttonTint="@color/colorBlue"/>
+
+        <include
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            layout="@layout/view_bottom_dialog_button" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

@@ -63,8 +63,7 @@ public class ViewpagerDatePickerAdapter extends PagerAdapter {
         switch (position) {
             case 0:
                 view = inflater.inflate(R.layout.view_tab_item_datepicker, container, false);
-                dateSetup(view,
-                        mPosition == position? new Date(startTime) : new Date());
+                dateSetup(view, mPosition == position? new Date(startTime) : new Date());
                 break;
 
             case 1:
@@ -121,7 +120,7 @@ public class ViewpagerDatePickerAdapter extends PagerAdapter {
         ArrayList<Integer> list = new ArrayList<>();
         list.add(1);
 
-        datePickerView.init(lastYear.getTime(), nextYear.getTime(), new SimpleDateFormat("MMMM, YYYY", Locale.getDefault()))
+        datePickerView.init(lastYear.getTime(), nextYear.getTime(), new SimpleDateFormat("MM, YYYY", Locale.getDefault()))
                 .inMode(CalendarPickerView.SelectionMode.RANGE)
                 .withSelectedDate(date);
 

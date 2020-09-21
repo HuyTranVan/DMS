@@ -31,6 +31,7 @@ import wolve.dms.activities.PrintBillActivity;
 import wolve.dms.activities.ProductActivity;
 import wolve.dms.activities.ProductGroupActivity;
 import wolve.dms.activities.ScannerActivity;
+import wolve.dms.activities.SettingActivity;
 import wolve.dms.activities.ShopCartActivity;
 import wolve.dms.activities.StatisticalActivity;
 import wolve.dms.activities.StatusActivity;
@@ -124,6 +125,14 @@ public class Transaction {
 
     }
 
+    public static void gotoSettingActivity() {
+        Context context = Util.getInstance().getCurrentActivity();
+        Intent intent = new Intent(context, SettingActivity.class);
+        context.startActivity(intent);
+        ((AppCompatActivity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        ((AppCompatActivity) context).finish();
+    }
+
     public static void gotoProductActivity() {
         Context context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(context, ProductActivity.class);
@@ -155,6 +164,7 @@ public class Transaction {
         context.startActivity(intent);
         ((AppCompatActivity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         ((AppCompatActivity) context).finish();
+
     }
 
     public static void gotoCustomerActivity() {
@@ -271,25 +281,6 @@ public class Transaction {
         ((AppCompatActivity) context).finish();
     }
 
-
-    public static void gotoImageChooser() {
-        // Kiểm tra permission với android sdk >= 23
-        //imageChangeUri = Uri.fromFile(Util.getOutputMediaFile());
-        Activity context = Util.getInstance().getCurrentActivity();
-        if (Build.VERSION.SDK_INT <= 19) {
-            Intent i = new Intent();
-            i.setType("image/*");
-            i.setAction(Intent.ACTION_GET_CONTENT);
-            i.addCategory(Intent.CATEGORY_OPENABLE);
-            context.startActivityForResult(i, REQUEST_CHOOSE_IMAGE);
-
-        } else if (Build.VERSION.SDK_INT > 19) {
-            Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            context.startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
-
-        }
-    }
-
     public static void sendEmailReport(String content) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         Uri data = Uri.parse(String.format("mailto:%s?subject=%s&body=%s",
@@ -301,7 +292,7 @@ public class Transaction {
 
     }
 
-    public static void shareViaZalo(String content) {
+    public static void shareViaOtherApp(String content) {
 //        ShareCompat.IntentBuilder.from(Util.getInstance().getCurrentActivity())
 //                .setType("text/plain")
 //                .setChooserTitle("Chia sẻ thông qua")
@@ -313,12 +304,39 @@ public class Transaction {
         sendIntent.putExtra(Intent.EXTRA_TEXT,content);
 //        sendIntent.setPackage("com.facebook.orca");
         sendIntent.setType("text/plain");
-        sendIntent.setPackage("com.zing.zalo");
+
+        switch (CustomFixSQL.getInt(Constants.PACKAGE_DEFAULT)){
+            case 1:
+                sendIntent.setPackage("com.zing.zalo");
+                break;
+
+            case 2:
+                sendIntent.setPackage("com.viber.voip");
+                break;
+
+            case 3:
+                sendIntent.setPackage("com.facebook.orca");
+                break;
+        }
+
         try {
             Util.getInstance().getCurrentActivity().startActivity(sendIntent);
         }
         catch (android.content.ActivityNotFoundException ex) {
-            Util.showToast("Please Install Zalo");
+            switch (CustomFixSQL.getInt(Constants.PACKAGE_DEFAULT)){
+                case 1:
+                    Util.showToast("Please Install Zalo");
+                    break;
+
+                case 2:
+                    Util.showToast("Please Install Viber");
+                    break;
+
+                case 3:
+                    Util.showToast("Please Install Facebook Messenger");
+                    break;
+            }
+
         }
 
     }

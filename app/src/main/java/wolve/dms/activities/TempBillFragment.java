@@ -204,7 +204,7 @@ public class TempBillFragment extends Fragment implements View.OnClickListener {
                 BaseModel customer = DataUtil.rebuiltCustomer(result, true);
                 CustomSQL.setBaseModel(Constants.CUSTOMER, customer);
 
-                if (mActivity.checkWarehouse())
+                if (User.checkUserWarehouse())
                     Transaction.checkInventoryBeforePrintBill(customer.getBaseModel("temp_bill"),
                             DataUtil.array2ListObject(customer.getBaseModel("temp_bill").getString(Constants.BILL_DETAIL)),
                             User.getCurrentUser().getInt("warehouse_id"));
