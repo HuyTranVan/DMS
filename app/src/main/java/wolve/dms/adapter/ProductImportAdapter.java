@@ -60,12 +60,14 @@ public class ProductImportAdapter extends RecyclerView.Adapter<ProductImportAdap
         }
         if (mData.get(position).hasKey("quantity") && mData.get(position).getInt("quantity") > 0) {
             holder.tvMinus.setVisibility(View.VISIBLE);
+            holder.tvPlus.setVisibility(View.GONE);
             holder.edQuantity.setVisibility(View.VISIBLE);
             holder.edQuantity.setText(mData.get(position).getString("quantity"));
             holder.lnParent.setBackgroundResource(R.color.colorLightGrey);
 
         } else {
             holder.tvMinus.setVisibility(View.GONE);
+            holder.tvPlus.setVisibility(View.VISIBLE);
             holder.edQuantity.setVisibility(View.GONE);
             holder.lnParent.setBackgroundResource(R.color.colorWhite);
         }
@@ -74,17 +76,29 @@ public class ProductImportAdapter extends RecyclerView.Adapter<ProductImportAdap
             @Override
             public void onClick(View view) {
                 int quantity = mData.get(position).hasKey("quantity") ? mData.get(position).getInt("quantity") : 0;
+                mData.get(position).put("quantity", quantity + 1);
+                notifyItemChanged(position);
+                mListener.onResponse(mData.get(position));
 
-                if (!mData.get(position).hasKey("currentQuantity") || mData.get(position).getInt("currentQuantity") > quantity) {
-                    mData.get(position).put("quantity", quantity + 1);
-                    notifyItemChanged(position);
-                    mListener.onResponse(mData.get(position));
+//                if (!mData.get(position).hasKey("currentQuantity") || mData.get(position).getInt("currentQuantity") > quantity) {
+//                    mData.get(position).put("quantity", quantity + 1);
+//                    notifyItemChanged(position);
+//                    mListener.onResponse(mData.get(position));
+//
+//                } else {
+//                    Util.showToast("Sản phẩm hết tồn kho");
+//                }
 
-                } else {
-                    Util.showToast("Sản phẩm hết tồn kho");
-                }
 
+            }
+        });
 
+        holder.tvMinus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mData.get(position).put("quantity", mData.get(position).getInt("quantity") - 1);
+                notifyItemChanged(position);
+                mListener.onResponse(mData.get(position));
             }
         });
 
@@ -107,14 +121,7 @@ public class ProductImportAdapter extends RecyclerView.Adapter<ProductImportAdap
         });
 
 
-        holder.tvMinus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mData.get(position).put("quantity", mData.get(position).getInt("quantity") - 1);
-                notifyItemChanged(position);
-                mListener.onResponse(mData.get(position));
-            }
-        });
+
 
 
     }
@@ -195,6 +202,10 @@ public class ProductImportAdapter extends RecyclerView.Adapter<ProductImportAdap
         mData = baseData;
         notifyDataSetChanged();
 
+    }
+
+    public List<BaseModel> getBaseData(){
+        return baseData;
     }
 
 }

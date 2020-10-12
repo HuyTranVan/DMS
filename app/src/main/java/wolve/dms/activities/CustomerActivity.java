@@ -417,9 +417,10 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         }
     }
 
-    protected void returnPreviousScreen(String customer) {
+    protected void returnPreviousScreen(BaseModel customer) {
         Intent returnIntent = new Intent();
-        returnIntent.putExtra(Constants.CUSTOMER, customer != null ? customer : null);
+        customer.removeKey("bills");
+        returnIntent.putExtra(Constants.CUSTOMER, customer != null ? customer.BaseModelstoString() : null);
         returnIntent.putExtra(Constants.RELOAD_DATA, haschange);
         setResult(Constants.RESULT_CUSTOMER_ACTIVITY, returnIntent);
         Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.nothing, R.anim.slide_down);
@@ -444,7 +445,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                         CustomSQL.setString(Constants.CUSTOMER, currentCustomer.BaseModelstoString());
 
                         Util.showToast("Xóa thành công!");
-                        returnPreviousScreen(currentCustomer.BaseModelstoString());
+                        returnPreviousScreen(currentCustomer);
                     }
 
                     @Override
@@ -481,7 +482,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
             tab.select();
 
         } else {
-            returnPreviousScreen(currentCustomer.BaseModelstoString());
+            returnPreviousScreen(currentCustomer);
 
         }
     }

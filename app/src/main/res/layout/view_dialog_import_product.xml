@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_import_product_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorWhite">
+
+    <TextView
+        android:id="@+id/dialog_import_product_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_25sdp"
+        android:background="@drawable/bg_img_header"
+        android:text="NHẬP KHO"
+        android:textSize="@dimen/_12sdp"
+        android:textColor="@color/black_text_color"
+        android:gravity="center" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dialog_import_product_title">
+
+        <LinearLayout
+            android:id="@+id/dialog_import_product_body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorWhite"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorGrey"
+                android:orientation="horizontal"
+                android:paddingTop="@dimen/_10sdp"
+                android:paddingLeft="@dimen/_5sdp"
+                android:paddingRight="@dimen/_5sdp"
+                android:paddingBottom="@dimen/_10sdp">
+
+                <TextView
+                    android:fontFamily="@font/font_awesome"
+                    android:id="@+id/dialog_import_product_fromwarehouse"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_25sdp"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/bg_round_white"
+                    android:hint="Chọn kho nguồn   &#xf0d7;"
+                    android:textSize="@dimen/_12sdp"
+                    android:textColorHint="@color/black_text_color_hint"
+                    android:textColor="@color/black_text_color"
+                    android:gravity="center"
+                    android:paddingRight="@dimen/_15sdp"
+                    android:layout_marginLeft="@dimen/_5sdp" />
+
+                <TextView
+                    android:fontFamily="@font/font_awesome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/icon_forward"
+                    android:textColor="@color/black_text_color_hint"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:layout_marginRight="@dimen/_10sdp"
+                    android:textSize="@dimen/_14sdp" />
+
+                <TextView
+                    android:fontFamily="@font/font_awesome"
+                    android:id="@+id/dialog_import_product_towarehouse"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_25sdp"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/bg_round_white"
+                    android:textColor="@color/black_text_color"
+                    android:textColorHint="@color/black_text_color_hint"
+                    android:layout_marginRight="@dimen/_5sdp"
+                    android:textSize="@dimen/_12sdp"
+                    android:gravity="center"
+                    android:paddingRight="@dimen/_15sdp" />
+
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/dialog_import_product_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:padding="@dimen/_10sdp"/>
+
+
+            <include
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                layout="@layout/view_bottom_dialog_button" />
+
+        </LinearLayout>
+    </ScrollView>
+
+
+</RelativeLayout>

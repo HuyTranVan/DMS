@@ -90,7 +90,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         tvLogout.setText(Util.getIconString(R.string.icon_logout, "    ", "Đăng xuất"));
         tvInfo.setText(Util.getIconString(R.string.icon_info, "      ", "Thông tin tài khoản"));
         tvContact.setText(Util.getIconString(R.string.icon_contact, "      ", "Tự động lưu danh bạ"));
-        tvShare.setText(Util.getIconString(R.string.icon_share, "      ", "Chia sẻ mặc định"));
+        tvShare.setText(Util.getIconString(R.string.icon_share, "      ", "Ứng dụng chia sẻ mặc định"));
         swSaveContact.setChecked(CustomFixSQL.getInt(Constants.AUTO_SAVE_CONTACT) == 1 ? true : false);
         switch (CustomFixSQL.getInt(Constants.PACKAGE_DEFAULT)){
             case 0:

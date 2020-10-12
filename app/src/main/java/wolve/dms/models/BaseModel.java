@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import wolve.dms.utils.DataUtil;
@@ -214,6 +215,19 @@ public class BaseModel implements Serializable {
     public void removeKey(String key) {
         jsonObject.remove(key);
 
+    }
+
+    public static BaseModel copyToNewBaseModel(BaseModel item){
+        BaseModel object = new BaseModel();
+
+        Iterator<String> keys  = item.BaseModelJSONObject().keys();
+        while (keys.hasNext()) {
+            String ke = keys.next();
+            object.put(ke, item.get(ke));
+
+        }
+
+        return object;
     }
 
 

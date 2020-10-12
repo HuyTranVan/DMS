@@ -75,14 +75,16 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:background="@drawable/bg_corner5_lighgrey"
+                    android:background="@drawable/bg_corner5_lightgrey"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:paddingLeft="@dimen/_10sdp"
+                    android:paddingRight="@dimen/_10sdp"
                     android:paddingTop="@dimen/_5sdp"
-                    android:paddingBottom="@dimen/_5sdp">
+                    android:paddingBottom="@dimen/_5sdp"
+                    android:layout_gravity="right">
 
                     <TextView
                         android:id="@+id/home_month"
@@ -91,7 +93,7 @@
                         android:fontFamily="@font/font_awesome"
                         android:text="Tổng bán hàng:"
                         android:textSize="@dimen/_10sdp"
-                        android:textColor="@color/black_text_color_hint"
+                        android:textColor="@color/black_text_color"
                         android:textStyle="italic"
                         android:layout_marginBottom="@dimen/_5sdp" />
 

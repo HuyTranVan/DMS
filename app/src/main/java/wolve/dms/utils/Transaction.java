@@ -227,6 +227,9 @@ public class Transaction {
             @Override
             public void onResponse(List<BaseModel> list) {
                 if (list.size() > 0) {
+
+
+
                     CustomCenterDialog.showListProductWithDifferenceQuantity(User.getCurrentUser().getBaseModel("warehouse").getString("name") + ": KHÔNG ĐỦ TỒN KHO ",
                             list,
                             new CallbackBoolean() {
@@ -341,7 +344,7 @@ public class Transaction {
 
     }
 
-    public static void shareImageViaZalo(Uri uri, BaseModel currentCustomer) {
+    public static void shareImage(Uri uri, BaseModel currentCustomer) {
         String message = String.format("%s %s ::: %s",
                 Constants.shopName[currentCustomer.getInt("shopType")].toUpperCase(),
                 currentCustomer.getString("signBoard").toUpperCase(),
@@ -350,14 +353,40 @@ public class Transaction {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.setType("image/*");
-        sendIntent.setPackage("com.zing.zalo");
+//        sendIntent.setPackage("com.zing.zalo");
         sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
         sendIntent.putExtra(Intent.EXTRA_TEXT, message);
+        switch (CustomFixSQL.getInt(Constants.PACKAGE_DEFAULT)){
+            case 1:
+                sendIntent.setPackage("com.zing.zalo");
+                break;
+
+            case 2:
+                sendIntent.setPackage("com.viber.voip");
+                break;
+
+            case 3:
+                sendIntent.setPackage("com.facebook.orca");
+                break;
+        }
+
         try {
             Util.getInstance().getCurrentActivity().startActivity(sendIntent);
-        }
-        catch (android.content.ActivityNotFoundException ex) {
-            Util.showToast("Please Install Zalo");
+
+        } catch (android.content.ActivityNotFoundException ex) {
+            switch (CustomFixSQL.getInt(Constants.PACKAGE_DEFAULT)){
+                case 1:
+                    Util.showToast("Please Install Zalo");
+                    break;
+
+                case 2:
+                    Util.showToast("Please Install Viber");
+                    break;
+
+                case 3:
+                    Util.showToast("Please Install Facebook Messenger");
+                    break;
+            }
         }
 
     }
@@ -401,13 +430,6 @@ public class Transaction {
 
 
     }
-
-//    public static void startImageChooser(Fragment fragment) {
-//        //Activity context = Util.getInstance().getCurrentActivity();
-//        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//        fragment.startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
-//
-//    }
 
     public static void startCamera(Fragment fragment, CallbackUri callbackuri) {
 //        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);

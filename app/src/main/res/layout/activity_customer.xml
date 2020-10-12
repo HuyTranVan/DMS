@@ -27,7 +27,7 @@
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_arrow_back_black_18dp"
                 android:padding="@dimen/_8sdp"
-                android:background="?selectableItemBackgroundBorderless" />
+                android:background="@drawable/btn_transparent" />
 
 
             <LinearLayout

@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:fontFamily="@font/font_awesome"
     android:minHeight="@dimen/_30sdp"
-    android:minWidth="@dimen/_80sdp"
     android:textColor="@color/black_text_color"
-    android:gravity="center"
-    android:textSize="@dimen/_12sdp" />
+    android:gravity="center_vertical"
+    android:textSize="@dimen/_12sdp"
+    android:paddingLeft="@dimen/_10sdp"
+    android:paddingRight="@dimen/_20sdp"/>
+

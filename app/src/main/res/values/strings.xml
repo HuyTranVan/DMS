@@ -91,6 +91,7 @@
     <string name="icon_bomb" translatable="false">&#xf4fd;</string>
     <string name="icon_users" translatable="false">&#xf0c0;</string>
     <string name="icon_share" translatable="false">&#xf1e0;</string>
+    <string name="icon_share_square" translatable="false">&#xf14d;</string>
     <string name="icon_menu" translatable="false">&#xf142;</string>
     <string name="icon_pay" translatable="false">&#xf4c0;</string>
     <string name="icon_receipt" translatable="false">&#xf543;</string>
@@ -112,7 +113,7 @@
     <string name="icon_gender" translatable="false">&#xf228;</string>
     <string name="icon_role" translatable="false">&#xf507;</string>
     <string name="icon_calendar" translatable="false">&#xf272;</string>
-    <string name="icon_depot" translatable="false">&#xf480;</string>
+    <string name="icon_depot" translatable="false">&#xf468;</string>
     <string name="icon_transfer" translatable="false">&#xf079;</string>
     <string name="icon_inventory" translatable="false">&#xf4a1;</string>
     <string name="icon_usd" translatable="false">&#xf2e8;</string>
@@ -138,6 +139,7 @@
     <string name="icon_chat_noname" translatable="false">&#xf075;</string>
     <string name="icon_chat_viber">&#xf409;</string>
     <string name="icon_chat_messenger">&#xf39f;</string>
+    <string name="icon_reply">&#xf3e5;</string>
 
 
     <string name="login_username" translatable="false">Nhập tài khoản hoặc SĐT</string>

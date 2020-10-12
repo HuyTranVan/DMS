@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -30,6 +31,7 @@ import wolve.dms.utils.Util;
 
 import static wolve.dms.activities.BaseActivity.createGetParam;
 import static wolve.dms.activities.BaseActivity.createPostParam;
+import static wolve.dms.activities.ImportActivity.alertInventoryNotEnough;
 
 /**
  * Created by tranhuy on 5/24/17.
@@ -80,7 +82,7 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_ITEM) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_import_product_item, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_import_product_item1, parent, false);
             return new Import_ProductAdapter.ItemViewHolder(view);
         } else {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_loading, parent, false);
@@ -105,7 +107,7 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private void setItemRows(ItemViewHolder holder, int position) {
         holder.tvDate.setText(Util.DateHourString(mData.get(position).getLong("createAt")));
         holder.tvUser.setText(Util.getIconString(R.string.icon_username, "  ", mData.get(position).getBaseModel("user").getString("displayName")));
-
+        holder.lnParent.setBackgroundResource(position % 2 == 0 ? R.color.colorWhite : R.color.colorLightGrey);
         String warehouse = String.format("%s  %s%s%s  %s",
                 mData.get(position).getBaseModel("fr_warehouse").getString("name"),
                 Util.getIcon(R.string.icon_next),
@@ -164,11 +166,11 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public class ItemViewHolder extends RecyclerView.ViewHolder {
         private TextView tvDate, tvDelete, tvUser, tvWarehouse, tvAccept, tvCopy;
         private RecyclerView rvProduct;
-        private CardView lnParent;
+        private LinearLayout lnParent;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
-            lnParent = (CardView) itemView.findViewById(R.id.import_product_item_parent);
+            lnParent = (LinearLayout) itemView.findViewById(R.id.import_product_item_parent);
             tvDate = itemView.findViewById(R.id.import_product_item_title);
             tvDelete = itemView.findViewById(R.id.import_product_item_delete);
             tvCopy = itemView.findViewById(R.id.import_product_item_copy);
@@ -192,7 +194,7 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     private void submitAcceptImport(int position, List<BaseModel> importdetails) {
-        checkInventory(importdetails, mData.get(position).getBaseModel("fr_warehouse"), new CallbackBoolean() {
+        checkFromInventory(importdetails, mData.get(position).getBaseModel("fr_warehouse"), new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
                 if (result) {
@@ -301,28 +303,90 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     }
 
-    private void checkInventory(List<BaseModel> importdetails, BaseModel warehouse, CallbackBoolean listener) {
-        DataUtil.checkInventory(importdetails, warehouse.getInt("id"), new CallbackListObject() {
+    private void checkFromInventory(List<BaseModel> importdetails, BaseModel fromWarehouse, CallbackBoolean listener) {
+        DataUtil.listImportNotEnough(importdetails, fromWarehouse, new CallbackListObject() {
             @Override
-            public void onResponse(List<BaseModel> list) {
-                if (list.size() > 0) {
-                    CustomCenterDialog.showListProductWithDifferenceQuantity(warehouse.getString("name") + ": KHÔNG ĐỦ TỒN KHO ",
-                            list,
-                            new CallbackBoolean() {
-                                @Override
-                                public void onRespone(Boolean result) {
-                                    listener.onRespone(false);
+            public void onResponse(List<BaseModel> listNotEnough) {
+                if (listNotEnough.size() > 0){
+                    if (fromWarehouse.getInt("isMaster") == 2){
+                        alertInventoryNotEnough(fromWarehouse.getString("name"), new CallbackBoolean() {
+                            @Override
+                            public void onRespone(Boolean result) {
+                                CustomCenterDialog.importToTempWarehouse(listNotEnough.get(0).getBaseModel("masterWarehouse"),
+                                        fromWarehouse,
+                                        listNotEnough,
+                                        new CallbackBoolean() {
+                                            @Override
+                                            public void onRespone(Boolean result) {
+                                                if (result){
+                                                    CustomCenterDialog.alertWithButtonCanceled("Thành công",
+                                                            "Nhập từ kho tổng thành công, vui lòng nhập kho lại!",
+                                                            "Đồng ý",false,  new CallbackBoolean() {
+                                                                @Override
+                                                                public void onRespone(Boolean result) {
+                                                                    listener.onRespone(true);
+                                                                }
+                                                            });
 
+                                                }else {
+                                                    listener.onRespone(false);
+                                                }
+                                            }
+                                        });
+                            }
+                        });
 
-                                }
-                            });
+                    }else if (fromWarehouse.getInt("isMaster") == 3){
+                        listener.onRespone(false);
 
-                } else {
+                    }
+
+                }else {
                     listener.onRespone(true);
                 }
+
+
+
             }
         });
+
     }
+
+
+
+
+
+
+
+
+
+
+
+//        DataUtil.checkInventory(importdetails, warehouse.getInt("id"), new CallbackListObject() {
+//            @Override
+//            public void onResponse(List<BaseModel> list) {
+//                if (list.size() > 0 && fromWarehouse.getInt("isMaster") == 2) {
+//
+//
+//
+//
+//                    CustomCenterDialog.showListProductWithDifferenceQuantity(warehouse.getString("name") + ": KHÔNG ĐỦ TỒN KHO ",
+//                            list,
+//                            new CallbackBoolean() {
+//                                @Override
+//                                public void onRespone(Boolean result) {
+//                                    listener.onRespone(false);
+//
+//
+//                                }
+//                            });
+//
+//                } else {
+//                    listener.onRespone(true);
+//                }
+//            }
+//        });
+
 
     public void initScrollListener() {
         rvImport.addOnScrollListener(new RecyclerView.OnScrollListener() {

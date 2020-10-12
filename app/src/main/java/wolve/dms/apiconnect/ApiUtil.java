@@ -104,7 +104,7 @@ public class ApiUtil {
 
 
     public final static String INVENTORIES(){
-        return BASE_URL + "dms/token/warehouse/InventoryList?id=%d";
+        return BASE_URL + "dms/token/warehouse/InventoryList?id=%d&isGroup=%d";
     }
     public final static String INVENTORY_EDIT_QUANTITY(){
         return BASE_URL + "dms/token/warehouse/InventoryEditQuantity";

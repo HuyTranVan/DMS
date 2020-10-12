@@ -19,7 +19,7 @@
             android:layout_height="match_parent"
             android:src="@drawable/ic_arrow_back_black_18dp"
             android:padding="@dimen/_8sdp"
-            android:background="?selectableItemBackground" />
+            android:background="@drawable/btn_transparent" />
 
         <TextView
             android:id="@+id/import_title"
@@ -165,7 +165,7 @@
             android:id="@+id/import_viewpager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorWhite" />
+            android:background="@color/colorWhite"/>
 
     </LinearLayout>
 

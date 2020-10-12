@@ -54,7 +54,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
     private RelativeLayout coParent;
 
     private List<BaseModel> listWarehouse;
-    private BaseModel fromWarehouse = null, toWarehouse = null;
+    private BaseModel fromWarehouse = null, toWarehouse = null, masterWarehouse = null;
     private ViewpagerMultiListAdapter viewpagerAdapter;
     private List<RecyclerView.Adapter> listadapter;
     private ProductImportAdapter adapterProduct;
@@ -210,11 +210,11 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         adapterProduct = new ProductImportAdapter(listProduct, new CallbackObject() {
             @Override
             public void onResponse(BaseModel object) {
-                adapterChoosen.insertData(object);
+                adapterChoosen.insertData(object, fromWarehouse.getInt("isMaster") == 3? true : false);
             }
         });
 
-        adapterChoosen = new ProductImportChoosenAdapter(new ArrayList<>(), true, new CallbackInt() {
+        adapterChoosen = new ProductImportChoosenAdapter(new ArrayList<>(), true,  new CallbackInt() {
             @Override
             public void onResponse(int value) {
                 updateChoosenTitle(value);
@@ -312,23 +312,49 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
                 fromWarehouse.getInt("id"),
                 adapterChoosen.getmData(),
                 "");
-        postImport(param, new CallbackBoolean() {
-            @Override
-            public void onRespone(Boolean result) {
-                if (result) {
-                    DataUtil.saveProductPopular(adapterChoosen.getmData());
-                    reloadAllWarehouse(new CallbackBoolean() {
-                        @Override
-                        public void onRespone(Boolean result) {
-                            reloadListImport(false, false);
-                            returnPreviousActivity();
 
+            List<BaseModel> listDiff = DataUtil.listImportNotEnough( adapterChoosen.getmData());
+
+            if (listDiff.size() > 0 && fromWarehouse.getInt("isMaster") == 2 && Util.isAdmin()){
+                alertInventoryNotEnough(fromWarehouse.getString("name"), new CallbackBoolean() {
+                    @Override
+                    public void onRespone(Boolean result) {
+                        CustomCenterDialog.importToTempWarehouse(masterWarehouse, fromWarehouse, listDiff, new CallbackBoolean() {
+                            @Override
+                            public void onRespone(Boolean result) {
+                                if (result){
+                                    CustomCenterDialog.alert("Thành công",
+                                            "Nhập từ kho tổng thành công, vui lòng nhập kho lại!",
+                                            "Đồng ý");
+                                    reloadListImport(false, false);
+                                }
+                            }
+                        });
+                    }
+                });
+
+
+
+            }else {
+                postImport(param, new CallbackBoolean() {
+                    @Override
+                    public void onRespone(Boolean result) {
+                        if (result) {
+                            DataUtil.saveProductPopular(adapterChoosen.getmData());
+                            reloadAllWarehouse(new CallbackBoolean() {
+                                @Override
+                                public void onRespone(Boolean result) {
+                                    reloadListImport(false, false);
+                                    returnPreviousActivity();
+
+                                }
+                            });
+                            viewPager.setCurrentItem(Util.isAdmin()? 2 : 3, true);
                         }
-                    });
-                    viewPager.setCurrentItem(Util.isAdmin() ? 2 : 3, true);
-                }
+                    }
+                });
+
             }
-        });
 
     }
 
@@ -351,9 +377,6 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         getListImport(0, new CallbackListObject(){
             @Override
             public void onResponse(List<BaseModel> list) {
-//                if (list.size() > 0) {
-//                    updateImportTempTitle(list.size());
-//                }
                 adapterImport.reloadData(list);
                 if (setActive) {
                     viewPager.setCurrentItem(3, true);
@@ -410,7 +433,7 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void getInventory(int warehouse_id, CallbackListObject listener) {
-        BaseModel param = createGetParam(String.format(ApiUtil.INVENTORIES(), warehouse_id), true);
+        BaseModel param = createGetParam(String.format(ApiUtil.INVENTORIES(), warehouse_id, 0), true);
         new GetPostMethod(param, new NewCallbackCustom() {
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
@@ -430,11 +453,12 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         getListWarehouse(new CallbackListObject() {
             @Override
             public void onResponse(List<BaseModel> list) {
+                masterWarehouse = getMasterWarehouse(list);
                 dialogSelectWarehouse("CHỌN KHO XUẤT", filterListFromWarehouse(list), new CallbackObject() {
                     @Override
                     public void onResponse(BaseModel object) {
-
                         if (object.getInt("isMaster") == 1) {
+
                             if (toWarehouse.getInt("isMaster") != 2) {
                                 CustomCenterDialog.alert("Không thể thực hiện", "Chỉ có thể xuất từ kho tổng sang kho tạm. Vui lòng chọn kho đích là kho tạm", " đồng ý");
 
@@ -444,19 +468,20 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
                                 fromWarehouse = object;
                                 adapterProduct.updateData(Product.getProductList());
                                 adapterChoosen.emptyList();
+
                                 updateChoosenTitle(0);
                                 refreshSearchView(0, Product.getProductList().size() > 0 ? true : false);
 
                             }
 
-                        } else {
+                        }else {
                             getInventory(object.getInt("id"), new CallbackListObject() {
                                 @Override
                                 public void onResponse(List<BaseModel> list) {
                                     tvFromWarehouse.setText(Util.getStringIcon(object.getString("name"), "   ", R.string.icon_down));
                                     viewPager.setCurrentItem(0, true);
                                     fromWarehouse = object;
-                                    adapterProduct.updateData(list);
+                                    adapterProduct.updateData(object.getInt("isMaster") == 2? Product.getProductInventoryList(list) :list);
                                     adapterChoosen.emptyList();
 
                                     updateChoosenTitle(0);
@@ -474,6 +499,17 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
             }
         }, loadingtimes);
 
+    }
+
+    private BaseModel getMasterWarehouse(List<BaseModel> list) {
+        BaseModel object = new BaseModel();
+        for (BaseModel item: list){
+            if (item.getInt("isMaster") == 1){
+                object = item;
+                break;
+            }
+        }
+        return object;
     }
 
     private void refreshSearchView(int position, boolean isShow) {
@@ -643,6 +679,22 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
             });
 
         }
+    }
+
+    public static void alertInventoryNotEnough(String warehouseName, CallbackBoolean listener){
+        CustomCenterDialog.alertWithButton("Nhập kho!",
+                "Nhập thêm sản phẩm vào kho " + warehouseName.toUpperCase() + " để tiếp tục",
+                "đồng ý",
+                new CallbackBoolean() {
+                    @Override
+                    public void onRespone(Boolean result) {
+                        if (result){
+                            listener.onRespone(result);
+                        }
+
+
+                    }
+                });
     }
 
 

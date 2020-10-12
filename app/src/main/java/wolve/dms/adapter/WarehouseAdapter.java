@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -14,12 +15,14 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.callback.CallbackObject;
+import wolve.dms.callback.CallbackString;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.models.User;
+import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomDropdow;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
-
 
 /**
  * Created by tranhuy on 5/24/17.
@@ -29,7 +32,11 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
-    private CallbackObject mListener, mListenerInfo, mListenerReturn, mListenerEdit;
+    private CallbackObject mListenerImport, mListenerInfo, mListenerReturn, mListenerEdit;
+    public static String[] menu = new String[]{
+            Util.getIconString(R.string.icon_info, "    ", "Thông tin"),
+            Util.getIconString(R.string.icon_depot, "   ", "Tồn kho"),
+            Util.getIconString(R.string.icon_reply, "    ", "Trả hàng")};
 
     public WarehouseAdapter(List<BaseModel> list,
                             CallbackObject listener,
@@ -39,7 +46,7 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mData = list;
-        this.mListener = listener;
+        this.mListenerImport = listener;
         this.mListenerInfo = listenerinfo;
         this.mListenerReturn = listenerreturn;
         this.mListenerEdit = listeneredit;
@@ -67,9 +74,9 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
         holder.tvUsername.setText(Util.getIconString(R.string.icon_username, "   ", mData.get(position).getBaseModel("user").getString("displayName")));
 
         if (Util.isAdmin() || mData.get(position).getInt("user_id") == User.getId()) {
-            holder.tvInfo.setVisibility(View.VISIBLE);
+            holder.tvMenu.setVisibility(View.VISIBLE);
         } else {
-            holder.tvInfo.setVisibility(View.GONE);
+            holder.tvMenu.setVisibility(View.GONE);
         }
         if (mData.get(position).getInt("number_temp_import") > 0) {
             holder.tvTempImport.setVisibility(View.VISIBLE);
@@ -78,40 +85,43 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
         } else {
             holder.tvTempImport.setVisibility(View.GONE);
         }
+
+
+
         switch (mData.get(position).getInt("isMaster")) {
             case 1:
                 holder.tvType.setVisibility(View.VISIBLE);
                 holder.tvType.setText(Util.getIcon(R.string.icon_home));
-                holder.tvReturn.setVisibility(View.GONE);
+//                holder.tvReturn.setVisibility(View.GONE);
                 break;
 
             case 2:
                 holder.tvType.setVisibility(View.VISIBLE);
                 holder.tvType.setText(Util.getIcon(R.string.icon_depot));
-                if (Util.isAdmin() && mData.get(position).getInt("quantity") > 0) {
-                    holder.tvReturn.setVisibility(View.VISIBLE);
-                    holder.tvReturn.setText(Util.getIcon(R.string.icon_edit_pen));
-                    holder.tvReturn.setRotation(0);
-
-                } else {
-                    holder.tvReturn.setVisibility(View.GONE);
-                }
+//                if (Util.isAdmin() && mData.get(position).getInt("quantity") > 0) {
+//                    holder.tvReturn.setVisibility(View.VISIBLE);
+//                    holder.tvReturn.setText(Util.getIcon(R.string.icon_edit_pen));
+//                    holder.tvReturn.setRotation(0);
+//
+//                } else {
+//                    holder.tvReturn.setVisibility(View.GONE);
+//                }
 
                 break;
 
             case 3:
                 holder.tvType.setVisibility(View.GONE);
-                if (mData.get(position).getInt("quantity") > 0) {
-                    if (Util.isAdmin() || User.getId() == mData.get(position).getInt("user_id")) {
-                        holder.tvReturn.setVisibility(View.VISIBLE);
-                        holder.tvReturn.setText(Util.getIcon(R.string.icon_logout));
-                    } else {
-                        holder.tvReturn.setVisibility(View.GONE);
-                    }
-
-                } else {
-                    holder.tvReturn.setVisibility(View.GONE);
-                }
+//                if (mData.get(position).getInt("quantity") > 0) {
+//                    if (Util.isAdmin() || User.getId() == mData.get(position).getInt("user_id")) {
+//                        holder.tvReturn.setVisibility(View.VISIBLE);
+//                        holder.tvReturn.setText(Util.getIcon(R.string.icon_logout));
+//                    } else {
+//                        holder.tvReturn.setVisibility(View.GONE);
+//                    }
+//
+//                } else {
+//                    holder.tvReturn.setVisibility(View.GONE);
+//                }
 
                 break;
         }
@@ -119,28 +129,43 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
         holder.lnParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onResponse(mData.get(position));
+                mListenerImport.onResponse(mData.get(position));
 
             }
         });
 
-        holder.tvReturn.setOnClickListener(new View.OnClickListener() {
+//        holder.tvReturn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (mData.get(position).getInt("isMaster") == 2) {
+//                    mListenerEdit.onResponse(mData.get(position));
+//
+//                } else {
+//                    mListenerReturn.onResponse(mData.get(position));
+//                }
+//
+//            }
+//        });
+
+        holder.tvMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mData.get(position).getInt("isMaster") == 2) {
-                    mListenerEdit.onResponse(mData.get(position));
+                CustomDropdow.createListDropdown(holder.tvMenu, listMenu(position), new CallbackString() {
+                    @Override
+                    public void Result(String s) {
+                        if (s.equals(menu[0])){
+                            mListenerInfo.onResponse(mData.get(position));
 
-                } else {
-                    mListenerReturn.onResponse(mData.get(position));
-                }
+                        }else if (s.equals(menu[1])){
+                            mListenerEdit.onResponse(mData.get(position));
 
-            }
-        });
+                        }else if (s.equals(menu[2])){
+                            mListenerReturn.onResponse(mData.get(position));
+                        }
 
-        holder.tvInfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mListenerInfo.onResponse(mData.get(position));
+                    }
+                });
+
             }
         });
 
@@ -155,8 +180,8 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
 
 
     public class WarehouseAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvGroupName, tvType, tvTempImport, tvInfo, tvUsername, tvReturn;
-        private RelativeLayout lnParent;
+        private TextView tvGroupName, tvType, tvTempImport, tvMenu, tvUsername;
+        private LinearLayout lnParent;
         private View line;
 
         public WarehouseAdapterViewHolder(View itemView) {
@@ -164,9 +189,9 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
             tvGroupName = (TextView) itemView.findViewById(R.id.depot_item_name);
             tvUsername = (TextView) itemView.findViewById(R.id.depot_item_user);
             tvType = (TextView) itemView.findViewById(R.id.depot_item_depottype);
-            tvReturn = (TextView) itemView.findViewById(R.id.depot_item_depotreturn);
-            tvInfo = itemView.findViewById(R.id.depot_item_depotinfo);
-            lnParent = (RelativeLayout) itemView.findViewById(R.id.depot_item_parent);
+//            tvReturn = (TextView) itemView.findViewById(R.id.depot_item_depotreturn);
+            tvMenu = itemView.findViewById(R.id.depot_item_depotmenu);
+            lnParent = (LinearLayout) itemView.findViewById(R.id.depot_item_content);
             line = itemView.findViewById(R.id.depot_item_seperateline);
             tvTempImport = itemView.findViewById(R.id.depot_item_number_temp_import);
 
@@ -182,6 +207,22 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
         }
 
         return results;
+    }
+
+    private List<String> listMenu(int pos){
+        List<String> list = new ArrayList<>();
+        list.add(menu[0]);
+        if (mData.get(pos).getInt("isMaster") == 2 || mData.get(pos).getInt("quantity") > 0){
+            list.add(menu[1]);
+
+        }
+
+        if (mData.get(pos).getInt("isMaster") == 3 &&  mData.get(pos).getInt("quantity") > 0){
+            list.add(menu[2]);
+
+        }
+
+        return  list;
     }
 
 }

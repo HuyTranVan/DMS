@@ -118,17 +118,6 @@ public class TempImportFragment extends Fragment implements View.OnClickListener
             }
         }, 1).execute();
 
-//        CustomerConnect.ListImport(0,0, new CallbackCustomList() {
-//            @Override
-//            public void onResponse(List<BaseModel> results) {
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }, true, true);
     }
 
 

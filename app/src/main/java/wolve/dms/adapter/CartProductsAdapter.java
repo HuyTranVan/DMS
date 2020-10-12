@@ -17,8 +17,8 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackClickProduct;
 import wolve.dms.callback.CallbackDouble;
+import wolve.dms.callback.CallbackObject;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.utils.CustomCenterDialog;
@@ -79,24 +79,34 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
         holder.lnParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CustomCenterDialog.showDialogEditProduct(mData.get(position), listPriceSuggest(mData.get(position).getInt("id")), new CallbackClickProduct() {
+                CustomCenterDialog.showDialogEditProduct(mData.get(position), listPriceSuggest(mData.get(position).getInt("id")), new CallbackObject() {
                     @Override
-                    public void ProductChoice(BaseModel product) {
+                    public void onResponse(BaseModel product) {
                         mData.get(position).put("quantity", product.getInt("quantity"));
                         mData.get(position).put("discount", product.getDouble("discount"));
                         mData.get(position).put("totalMoney", product.getDouble("totalMoney"));
 
                         mChangePrice.Result(totalPrice());
                         notifyItemChanged(position);
-
                     }
 
-                    @Override
-                    public void ProductAdded(BaseModel newProduct) {
-                        mData.add(newProduct);
-                        mChangePrice.Result(totalPrice());
-                        notifyDataSetChanged();
-                    }
+//                    @Override
+//                    public void ProductChoice(BaseModel product) {
+//                        mData.get(position).put("quantity", product.getInt("quantity"));
+//                        mData.get(position).put("discount", product.getDouble("discount"));
+//                        mData.get(position).put("totalMoney", product.getDouble("totalMoney"));
+//
+//                        mChangePrice.Result(totalPrice());
+//                        notifyItemChanged(position);
+//
+//                    }
+//
+//                    @Override
+//                    public void ProductAdded(BaseModel newProduct) {
+//                        mData.add(newProduct);
+//                        mChangePrice.Result(totalPrice());
+//                        notifyDataSetChanged();
+//                    }
                 });
             }
         });

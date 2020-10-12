@@ -10,6 +10,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import wolve.dms.apiconnect.ApiUtil;
@@ -142,7 +143,7 @@ public class DataUtil {
     }
 
     public static void checkInventory(List<BaseModel> listproduct, int warehouse_id, CallbackListObject listener) {
-        BaseModel param = createGetParam(String.format(ApiUtil.INVENTORIES(), warehouse_id), true);
+        BaseModel param = createGetParam(String.format(ApiUtil.INVENTORIES(), warehouse_id, 0), true);
         new GetPostMethod(param, new NewCallbackCustom() {
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
@@ -160,23 +161,6 @@ public class DataUtil {
             }
         }, 1).execute();
 
-//        SystemConnect.GetInventoryList(warehouse_id, new CallbackListCustom() {
-//            @Override
-//            public void onResponse(List result) {
-//                List<BaseModel> listresult = compareBillAndInventory(DataUtil.mergeProductDetail(listproduct), result);
-//                if (checkNegative(listresult, "differenceQuantity")) {
-//                    listener.onResponse(listresult);
-//                } else {
-//                    listener.onResponse(new ArrayList<>());
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }, true);
     }
 
     public static List<BaseModel> compareBillAndInventory(List<BaseModel> listproduct, List<BaseModel> listinventory) {
@@ -235,7 +219,7 @@ public class DataUtil {
     }
 
     public static String createPostPaymentParam(int customerId, int user_id, double paid, int billId, String note, boolean payByReturn) {
-        String s = String.format(ApiUtil.PAY_PARAM,
+        return String.format(ApiUtil.PAY_PARAM,
                 customerId,
                 String.valueOf(Math.round(paid)),
                 billId,
@@ -245,7 +229,7 @@ public class DataUtil {
                 User.getId());
 
 
-        return s;
+
     }
 
 
@@ -840,18 +824,6 @@ public class DataUtil {
         return result;
     }
 
-    public static boolean checkDuplicateDouble(List<Double> list, double value) {
-        boolean check = false;
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).doubleValue() == value) {
-                check = true;
-                break;
-            }
-        }
-
-        return check;
-    }
-
     public static boolean checkDuplicateMarker(List<Marker> list, BaseModel object) {
         boolean check = false;
         for (int i = 0; i < list.size(); i++) {
@@ -907,242 +879,61 @@ public class DataUtil {
         return listResutl;
     }
 
-//    public static BaseModel createBillParam(long starDay, long lastDay) {
-//        BaseModel billparam = new BaseModel();
-//        billparam.put("url", Api_link.BILLS
-//                + String.format(Api_link.DEFAULT_RANGE, 1, 5000)
-//                + String.format(Api_link.BILL_RANGE_PARAM, starDay, lastDay));
-//        billparam.put("method", "GET");
-//        billparam.put("isjson", null);
-//        billparam.put("param", null);
-//
-//        return billparam;
-//
-//    }
+    public static List<BaseModel> listImportNotEnough(List<BaseModel> listSelect){
+        List<BaseModel> results = new ArrayList<>();
+        for (int i=0; i<listSelect.size(); i++){
+            if (listSelect.get(i).getInt("quantity") > listSelect.get(i).getInt("currentQuantity") ){
+                BaseModel item = BaseModel.copyToNewBaseModel(listSelect.get(i));
+                item.put("quantity",listSelect.get(i).getInt("quantity") - listSelect.get(i).getInt("currentQuantity") );
+                results.add(item);
 
-//    public static BaseModel createPaymentParam(long starDay, long lastDay) {
-//        BaseModel payparam = new BaseModel();
-//        payparam.put("url", Api_link.BILLS_HAVE_PAYMENT
-//                + String.format(Api_link.DEFAULT_RANGE, 1, 1500)
-//                + String.format(Api_link.BILL_HAVE_PAYMENT_RANGE_PARAM, starDay, lastDay));
-//        payparam.put("method", "GET");
-//        payparam.put("isjson", null);
-//        payparam.put("param", null);
-//
-//        return payparam;
-//
-//    }
+            }
 
+        }
 
-//    public static BaseModel createListPaymentParam(long starDay, long lastDay) {
-//        BaseModel payparam = new BaseModel();
-//        payparam.put("url", Api_link.PAYMENTS + String.format(Api_link.PAYMENTS_PARAM, starDay, lastDay));
-//        payparam.put("method", "GET");
-//        payparam.put("isjson", false);
-//        payparam.put("param", null);
-//
-//        return payparam;
-//
-//    }
+        return results;
+    }
 
-//    public static BaseModel createCustomerWaitingParam(String param) {
-//        BaseModel paramCustomer = new BaseModel();
-//        paramCustomer.put("url", Api_link.CUSTOMER_TEMP_NEW);
-//        paramCustomer.put("method", "POST");
-//        paramCustomer.put("isjson", false);
-//        paramCustomer.put("param", param);
-//
-//        return paramCustomer;
-//
-//    }
+    public static void listImportNotEnough(List<BaseModel> listRequest, BaseModel tempWarehouse, CallbackListObject listener){
+        List<BaseModel> results = new ArrayList<>();
+        BaseModel param = createGetParam(String.format(ApiUtil.INVENTORIES(), tempWarehouse.getInt("id"), 0), true);
+        new GetPostMethod(param, new NewCallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result, List<BaseModel> list) {
+                List<BaseModel> mProducts = mergeProductDetail(listRequest);
 
-//    public static BaseModel postCheckinParam(String param) {
-//        BaseModel paramCheckin = new BaseModel();
-//        paramCheckin.put("url", Api_link.CHECKIN_NEW);
-//        paramCheckin.put("method", "POST");
-//        paramCheckin.put("isjson", false);
-//        paramCheckin.put("param", param);
-//
-//        return paramCheckin;
-//
-//    }
-//
-//    public static BaseModel postBillParam(String param) {
-//        BaseModel paramCheckin = new BaseModel();
-//        paramCheckin.put("url", Api_link.BILL_NEW);
-//        paramCheckin.put("method", "POST");
-//        paramCheckin.put("isjson", true);
-//        paramCheckin.put("param", param);
-//
-//        return paramCheckin;
-//
-//    }
+                for (int i=0; i<mProducts.size(); i++){
+                    boolean check = false;
+                    BaseModel item = BaseModel.copyToNewBaseModel(mProducts.get(i));
+                    item.put("masterWarehouse", list.get(0).getBaseModel("masterWarehouse").BaseModelJSONObject());
+                    for (int ii=0; ii<list.size(); ii++){
+                        //if (!list.get(ii).hasKey("currentQuantity")){
+                        if (mProducts.get(i).getInt("product_id") == list.get(ii).getInt("product_id")){
+                            if (mProducts.get(i).getInt("quantity") > list.get(ii).getInt("currentQuantity")){
+                                item.put("quantity", mProducts.get(i).getInt("quantity") - list.get(ii).getInt("currentQuantity") );
+                                results.add(item);
 
-//    public static BaseModel postImportParam(String param) {
-//        BaseModel paramCheckin = new BaseModel();
-//        paramCheckin.put("url", Api_link.IMPORT_NEW);
-//        paramCheckin.put("method", "POST");
-//        paramCheckin.put("isjson", true);
-//        paramCheckin.put("param", param);
-//
-//        return paramCheckin;
-//
-//    }
+                            }
+                            check = true;
+                            break;
 
-//    public static BaseModel postInventoryQuantityParam(String param) {
-//        BaseModel paramCheckin = new BaseModel();
-//        paramCheckin.put("url", Api_link.INVENTORY_EDIT_QUANTITY);
-//        paramCheckin.put("method", "POST");
-//        paramCheckin.put("isjson", true);
-//        paramCheckin.put("param", param);
-//
-//        return paramCheckin;
-//
-//    }
+                        }
+                    }
+                    if (!check){
+                        item.put("quantity",mProducts.get(i).getInt("quantity") );
+                        results.add(item);
+                    }
 
-//    public static BaseModel getImportList() {
-//        BaseModel param = new BaseModel();
-//        param.put("url", Api_link.IMPORTS);
-//        param.put("method", "GET");
-//        param.put("isjson", null);
-//        param.put("param", null);
-//
-//        return param;
-//
-//    }
+                }
+                listener.onResponse(results);
+            }
 
+            @Override
+            public void onError(String error) {
+                listener.onResponse(new ArrayList<>());
+            }
+        }, 1).execute();
 
-//    public static BaseModel postDebtParam(String param) {
-//        BaseModel paramDebt = new BaseModel();
-//        paramDebt.put("url", Api_link.DEBT_NEW);
-//        paramDebt.put("method", "POST");
-//        paramDebt.put("isjson", true);
-//        paramDebt.put("param", param);
-//
-//        return paramDebt;
-//
-//    }
-
-//    public static BaseModel postPayParam(String param) {
-//        BaseModel paramCheckin = new BaseModel();
-//        paramCheckin.put("url", Api_link.PAY_NEW);
-//        paramCheckin.put("method", "POST");
-//        paramCheckin.put("isjson", false);
-//        paramCheckin.put("param", param);
-//
-//        return paramCheckin;
-//
-//    }
-//
-//    public static BaseModel postLoginParam(String param) {
-//        BaseModel paramCheckin = new BaseModel();
-////        paramCheckin.put("url", Api_link.LOGIN);
-////        paramCheckin.put("method", "POST");
-////        paramCheckin.put("isjson", false);
-////        paramCheckin.put("param", param);
-////
-//        return paramCheckin;
-//
-//    }
-
-//    public static BaseModel getLogoutParam() {
-//        BaseModel paramLogout = new BaseModel();
-//        paramLogout.put("url", Api_link.LOGOUT);
-//        paramLogout.put("method", "GET");
-//        paramLogout.put("isjson", null);
-//        paramLogout.put("param", null);
-//
-//        return paramLogout;
-//
-//    }
-
-//    public static BaseModel createNewDepotParam(String param) {
-//        BaseModel paramCustomer = new BaseModel();
-//        paramCustomer.put("url", Api_link.WAREHOUSE_NEW);
-//        paramCustomer.put("method", "POST");
-//        paramCustomer.put("isjson", false);
-//        paramCustomer.put("param", param);
-//
-//        return paramCustomer;
-//
-//    }
-
-//    public static BaseModel createNewProductParam(String param) {
-//        BaseModel paramCustomer = new BaseModel();
-//        paramCustomer.put("url", Api_link.PRODUCT_NEW);
-//        paramCustomer.put("method", "POST");
-//        paramCustomer.put("isjson", false);
-//        paramCustomer.put("param", param);
-//
-//        return paramCustomer;
-//
-//    }
-
-//    public static BaseModel createNewProductGroupParam(String param) {
-//        BaseModel paramCustomer = new BaseModel();
-//        paramCustomer.put("url", Api_link.PRODUCT_GROUP_NEW);
-//        paramCustomer.put("method", "POST");
-//        paramCustomer.put("isjson", false);
-//        paramCustomer.put("param", param);
-//
-//        return paramCustomer;
-//
-//    }
-
-//    public static BaseModel createNewStatusParam(String param) {
-//        BaseModel paramCustomer = new BaseModel();
-//        paramCustomer.put("url", Api_link.STATUS_NEW);
-//        paramCustomer.put("method", "POST");
-//        paramCustomer.put("isjson", false);
-//        paramCustomer.put("param", param);
-//
-//        return paramCustomer;
-//
-//    }
-
-//    public static BaseModel createNewDistributorParam(String param) {
-//        BaseModel paramDistributor = new BaseModel();
-//        paramDistributor.put("url", Api_link.DISTRIBUTOR_NEW);
-//        paramDistributor.put("method", "POST");
-//        paramDistributor.put("isjson", false);
-//        paramDistributor.put("param", param);
-//
-//        return paramDistributor;
-//
-//    }
-
-//    public static BaseModel createNewUserParam(String param) {
-//        BaseModel paramCustomer = new BaseModel();
-//        paramCustomer.put("url", Api_link.USER_NEW);
-//        paramCustomer.put("method", "POST");
-//        paramCustomer.put("isjson", false);
-//        paramCustomer.put("param", param);
-//
-//        return paramCustomer;
-//
-//    }
-//
-//    public static BaseModel createUserChangePassParam(String param) {
-//        BaseModel paramCustomer = new BaseModel();
-//        paramCustomer.put("url", Api_link.USER_CHANGE_PASS);
-//        paramCustomer.put("method", "POST");
-//        paramCustomer.put("isjson", false);
-//        paramCustomer.put("param", param);
-//
-//        return paramCustomer;
-//
-//    }
-
-//    public static BaseModel createUserDefaultPassParam(String param) {
-//        BaseModel paramCustomer = new BaseModel();
-//        paramCustomer.put("url", Api_link.USER_DEFAULT_PASS);
-//        paramCustomer.put("method", "POST");
-//        paramCustomer.put("isjson", false);
-//        paramCustomer.put("param", param);
-//
-//        return paramCustomer;
-//
-//    }
-
+    }
 
 }

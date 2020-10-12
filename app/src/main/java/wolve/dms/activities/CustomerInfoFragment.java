@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -191,6 +190,8 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 mActivity.saveCustomerToLocal("shopType", i);
+                updateTitle();
+
             }
 
             @Override
@@ -305,13 +306,13 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
                                                     mActivity.submitCustomer(mActivity.currentCustomer, mActivity.listCheckins.size() + 1, new CallbackBoolean() {
                                                         @Override
                                                         public void onRespone(Boolean result) {
-                                                            mActivity.returnPreviousScreen(mActivity.currentCustomer.BaseModelstoString());
+                                                            mActivity.returnPreviousScreen(mActivity.currentCustomer);
 
                                                         }
                                                     });
 
                                                 } else {
-                                                    mActivity.returnPreviousScreen(mActivity.currentCustomer.BaseModelstoString());
+                                                    mActivity.returnPreviousScreen(mActivity.currentCustomer);
 
                                                 }
 
@@ -348,7 +349,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
             @Override
             public void Result(String s) {
                 mActivity.saveCustomerToLocal("signBoard", s);
-                updateShopName();
+                updateTitle();
 
             }
         });
@@ -407,7 +408,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
     }
 
 
-    private void updateShopName() {
+    private void updateTitle() {
         mActivity.tvTitle.setText(String.format("%s %s",
                 Constants.shopName[mActivity.currentCustomer.getInt("shopType")],
                 mActivity.currentCustomer.getString("signBoard")));

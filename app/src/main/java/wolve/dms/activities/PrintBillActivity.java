@@ -311,7 +311,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
                                                         "SHARE",
                                                         true);
 
-                                                Transaction.shareImageViaZalo(currentImagePath, currentCustomer);
+                                                Transaction.shareImage(currentImagePath, currentCustomer);
                                             }
                                         }
                                     });
@@ -322,7 +322,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
                                             "SHARE",
                                             true);
 
-                                    Transaction.shareImageViaZalo(currentImagePath, currentCustomer);
+                                    Transaction.shareImage(currentImagePath, currentCustomer);
 
                                 }
 

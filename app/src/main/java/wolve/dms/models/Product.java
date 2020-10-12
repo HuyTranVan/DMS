@@ -92,6 +92,36 @@ public class Product extends BaseModel {
         return mProducts;
     }
 
+    public static List<BaseModel> getProductInventoryList(List<BaseModel> inventories) {
+        List<BaseModel> mProducts = new ArrayList<>();
+
+        try {
+            JSONArray array = new JSONArray(CustomSQL.getString(Constants.PRODUCT_LIST));
+            for (int i = 0; i < array.length(); i++) {
+                BaseModel product = new BaseModel(array.getJSONObject(i));
+                product.put("product_id", product.getInt("id"));
+
+                for (int ii=0; ii<inventories.size(); ii++){
+                    if (inventories.get(ii).getInt("product_id") == product.getInt("id")){
+                        product.put("currentQuantity", inventories.get(ii).getInt("currentQuantity"));
+                        inventories.remove(ii);
+                        break;
+                    }
+                }
+                mProducts.add(product);
+
+            }
+
+        } catch (JSONException e) {
+            return new ArrayList<>();
+        }
+
+
+        DataUtil.sortProduct(mProducts, false);
+
+        return mProducts;
+    }
+
     public static List<String> getProductListString() {
         List<String> mProducts = new ArrayList<>();
 
@@ -111,5 +141,7 @@ public class Product extends BaseModel {
 
         return mProducts;
     }
+
+
 
 }

@@ -11,12 +11,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.WarehouseAdapter;
 import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackListObject;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
@@ -39,7 +41,8 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
     private TextView btnAddPDepot;
     private LinearLayout btnImport;
 
-    public List<BaseModel> listDepot;
+    public List<BaseModel> listDepot = new ArrayList<>();
+    public List<BaseModel> listInventoryDetail = new ArrayList<>();
 
     @Override
     public int getResourceLayout() {
@@ -137,7 +140,7 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
         } else if (mFragment != null && mFragment instanceof ImportReturnFragment) {
             getSupportFragmentManager().popBackStack();
 
-        } else if (mFragment != null && mFragment instanceof InventoryEditFragment) {
+        } else if (mFragment != null && mFragment instanceof InventoryDetailFragment) {
             getSupportFragmentManager().popBackStack();
 
         } else {
@@ -202,7 +205,7 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
         }, new CallbackObject() {
             @Override
             public void onResponse(BaseModel object) {
-                openEditInventoryFragment(object);
+                openInventoryDetailFragment(object);
             }
         });
         Util.createLinearRV(rvDepot, adapter);
@@ -225,7 +228,7 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void openFragmentInventoryEdit(BaseModel temptWarehouse) {
-        InventoryEditFragment importReturnFragment = new InventoryEditFragment();
+        InventoryDetailFragment importReturnFragment = new InventoryDetailFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constants.TEMPWAREHOUSE, temptWarehouse.BaseModelstoString());
         changeFragment(importReturnFragment, bundle, true);
@@ -271,20 +274,50 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
 
     }
 
-    private void openEditInventoryFragment(BaseModel curentWarehouse) {
-        CustomCenterDialog.alertWithCancelButton("Hiệu chỉnh  tồn kho",
-                "Mở trang điều chỉnh số lượng tồn kho tạm",
-                "tiếp tục",
-                "hủy",
-                new CallbackBoolean() {
-                    @Override
-                    public void onRespone(Boolean result) {
-                        if (result) {
-                            openFragmentInventoryEdit(curentWarehouse);
-
-                        }
-
+    private void openInventoryDetailFragment(BaseModel curentWarehouse) {
+        BaseModel param = createGetParam(String.format(ApiUtil.INVENTORIES(), curentWarehouse.getInt("id"), 1), true);
+        new GetPostMethod(param, new NewCallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result, List<BaseModel> list) {
+                listInventoryDetail = new ArrayList<>();
+                for (int i=0; i<list.size(); i++){
+                    if (list.get(i).getList("inventories").size() >0){
+                        listInventoryDetail.add(list.get(i));
                     }
-                });
+                }
+                openFragmentInventoryEdit(curentWarehouse);
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        }, 1).execute();
+
+
+
+//        loadInventories(currrentWarehouse.getInt("id"), new CallbackListObject() {
+//            @Override
+//            public void onResponse(List<BaseModel> list) {
+//                listInventory = list;
+//                createRVInventory(listInventory);
+//
+//            }
+//        });
+//
+//        CustomCenterDialog.alertWithCancelButton("Hiệu chỉnh  tồn kho",
+//                "Mở trang điều chỉnh số lượng tồn kho tạm",
+//                "tiếp tục",
+//                "hủy",
+//                new CallbackBoolean() {
+//                    @Override
+//                    public void onRespone(Boolean result) {
+//                        if (result) {
+//                            openFragmentInventoryEdit(curentWarehouse);
+//
+//                        }
+//
+//                    }
+//                });
     }
 }

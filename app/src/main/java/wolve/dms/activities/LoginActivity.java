@@ -34,7 +34,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FitScrollWithFullscreen.assistActivity(this, 2);
+        FitScrollWithFullscreen.assistActivity(this, 1);
 
     }
 
@@ -94,15 +94,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
             case R.id.login_lost_password:
                 changeFragment(new ResetPasswordFragment(), true);
-
-//                CustomCenterDialog.alertWithButtonCanceled("Quên mật khẩu!",
-//                        "Liên hệ Admin để cài đặt lại mật khẩu",
-//                        "ĐỒNG Ý", false, new CallbackBoolean() {
-//                            @Override
-//                            public void onRespone(Boolean result) {
-//
-//                            }
-//                        });
 
                 break;
         }

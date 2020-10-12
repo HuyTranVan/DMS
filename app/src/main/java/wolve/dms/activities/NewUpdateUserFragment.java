@@ -418,15 +418,17 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
         new GetPostMethod(param, new NewCallbackCustom() {
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
-                if (result.getInt("id") == User.getId()) {
-                    //CustomSQL.setBaseModel(Constants.USER, result);
-                    onDataPass.onResponse(result);
-                    getActivity().getSupportFragmentManager().popBackStack();
+                onDataPass.onResponse(result);
+                getActivity().getSupportFragmentManager().popBackStack();
 
-                }else {
-                    getActivity().getSupportFragmentManager().popBackStack();
-
-                }
+//                if (result.getInt("id") == User.getId()) {
+//                    //CustomSQL.setBaseModel(Constants.USER, result);
+//
+//
+//                }else {
+//                    getActivity().getSupportFragmentManager().popBackStack();
+//
+//                }
 
 
 //                if (CustomSQL.getBoolean(Constants.IS_ADMIN)) {

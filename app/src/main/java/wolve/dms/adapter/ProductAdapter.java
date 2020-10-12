@@ -121,22 +121,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
                                     }
                                 }, 1).execute();
 
-//                                ProductConnect.DeleteProduct(param, new CallbackCustom() {
-//                                    @Override
-//                                    public void onResponse(BaseModel result) {
-//                                        Util.getInstance().stopLoading(true);
-//                                        mDeleteListener.onDelete(mData.get(position).BaseModelstoString(), position);
-//
-//
-//                                    }
-//
-//                                    @Override
-//                                    public void onError(String error) {
-//                                        Util.getInstance().stopLoading(true);
-//                                        Constants.throwError(error);
-//
-//                                    }
-//                                }, true);
                             }
 
                         }

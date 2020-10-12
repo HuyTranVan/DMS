@@ -60,7 +60,6 @@ import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.apiconnect.apiserver.GMapGetMethod;
 import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackLong;
 import wolve.dms.callback.CallbackObject;
@@ -926,10 +925,10 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     }
 
     private void createCustomerFast(int shoptype, String shopname, String phone, Double lat, Double lng) {
-        getAddressFromLatlng(lat, lng, new CallbackCustom() {
+        getAddressFromLatlng(lat, lng, new CallbackObject() {
             @Override
             public void onResponse(BaseModel result1) {
-                postCustomerFast(shoptype, shopname, phone, lat, lng, result1, new CallbackCustom() {
+                postCustomerFast(shoptype, shopname, phone, lat, lng, result1, new CallbackObject() {
                     @Override
                     public void onResponse(BaseModel result) {
                         reUpdateMarkerDetail(result);
@@ -940,23 +939,18 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
                     }
 
-                    @Override
-                    public void onError(String error) {
-                        Log.e("errrororr", error);
-                    }
+//                    @Override
+//                    public void onError(String error) {
+//                        Log.e("errrororr", error);
+//                    }
                 });
-            }
-
-            @Override
-            public void onError(String error) {
-
             }
 
         }, false);
 
     }
 
-    private void getAddressFromLatlng(Double lat, Double lng, final CallbackCustom mListener, Boolean stopLoading) {
+    private void getAddressFromLatlng(Double lat, Double lng, final CallbackObject mListener, Boolean stopLoading) {
         new GMapGetMethod(lat, lng, new NewCallbackCustom() {
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
@@ -972,7 +966,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     }
 
-    private void postCustomerFast(int shoptype, String shopName, String phone, Double lat, Double lng, BaseModel objectAdress, final CallbackCustom mListener) {
+    private void postCustomerFast(int shoptype, String shopName, String phone, Double lat, Double lng, BaseModel objectAdress, final CallbackObject mListener) {
         BaseModel param = createPostParam(ApiUtil.CUSTOMER_NEW(),String.format(ApiUtil.CUSTOMER_CREATE_PARAM,
                 "",
                 Util.encodeString("Anh " + shopName.substring(shopName.lastIndexOf(" ") + 1)),//name
@@ -1003,7 +997,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
                     @Override
                     public void onError(String error) {
-                        mListener.onError(error);
+                       // mListener.(error);
                     }
                 }, 1).execute();
 

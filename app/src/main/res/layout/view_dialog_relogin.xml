@@ -53,6 +53,7 @@
                 android:layout_height="wrap_content"
                 android:hint="Mật khẩu"
                 android:inputType="textPassword"
+                android:importantForAutofill="no"
                 app:backgroundTint="@color/colorBlueDark" />
 
         </com.google.android.material.textfield.TextInputLayout>

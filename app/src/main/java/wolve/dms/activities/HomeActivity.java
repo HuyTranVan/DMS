@@ -290,19 +290,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     private void choiceSetupItem() {
-        CustomBottomDialog.choiceListObject("cài đặt",
+        CustomBottomDialog.choiceListObject("danh mục",
                 Constants.homeSettingSetup(),
                 "text",
                 new CallbackObject() {
                     @Override
                     public void onResponse(BaseModel object) {
                         switch (object.getInt("position")) {
-//                            case 0:
-//                                if (CustomSQL.getBoolean(Constants.IS_ADMIN)) {
-//                                    Transaction.gotoDistributorActivity();
-//                                }
-//                                break;
-
                             case 0:
                                 if (User.getCurrentRoleId() == Constants.ROLE_ADMIN) {
                                     Transaction.gotoUserActivity(false);

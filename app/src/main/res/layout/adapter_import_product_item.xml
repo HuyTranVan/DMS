@@ -88,7 +88,7 @@
                     android:layout_height="match_parent"
                     android:background="?selectableItemBackgroundBorderless"
                     android:layout_centerVertical="true"
-                    android:text="@string/icon_copy"
+                    android:text="@string/icon_share_square"
                     android:textSize="@dimen/_10sdp"
                     android:textColor="@color/black_text_color_hint"
                     android:gravity="center"/>
@@ -121,12 +121,13 @@
             android:id="@+id/import_product_item_accept"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
+            android:background="@drawable/btn_transparent"
             android:text="&#xf00d;  CHƯA DUYỆT"
             android:textStyle="italic"
             android:layout_gravity="center"
             android:padding="@dimen/_5sdp"
-            android:textColor="@color/black_text_color_hint" />
+            android:textColor="@color/black_text_color_hint"
+            android:layout_marginBottom="@dimen/_2sdp"/>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

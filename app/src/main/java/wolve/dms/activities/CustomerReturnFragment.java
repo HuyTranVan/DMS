@@ -24,10 +24,10 @@ import wolve.dms.adapter.ProductReturnAdapter;
 import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.apiconnect.apiserver.CustomGetPostListMethod;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
-import wolve.dms.callback.CallbackCustom;
 import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackListCustom;
+import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
@@ -264,16 +264,11 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
     }
 
     private void onlyPostUpdateBillReturn(List<BaseModel> listProductReturn, Double sumreturn, BaseModel currentBill) {
-        postUpdateBillReturn(listProductReturn, sumreturn, currentBill, new CallbackCustom() {
+        postUpdateBillReturn(listProductReturn, sumreturn, currentBill, new CallbackObject() {
             @Override
             public void onResponse(BaseModel result) {
                 Util.showToast("Trả hàng thành công");
                 finish();
-            }
-
-            @Override
-            public void onError(String error) {
-
             }
 
         }, true);
@@ -281,7 +276,7 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
     }
 
     private void postBillReturnUpdatePayment(List<BaseModel> listProductReturn, Double sumreturn, BaseModel currentBill) {
-        postUpdateBillReturn(listProductReturn, sumreturn, currentBill, new CallbackCustom() {
+        postUpdateBillReturn(listProductReturn, sumreturn, currentBill, new CallbackObject() {
             @Override
             public void onResponse(BaseModel result) {
                 postListPayment(DataUtil.createListPaymentParam(mActivity.currentCustomer.getInt("id"),
@@ -300,17 +295,13 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
 
             }
 
-            @Override
-            public void onError(String error) {
-
-            }
 
         }, false);
 
     }
 
     private void postBillReturnUpdatePaymentAndCash(List<BaseModel> listProductReturn, List<BaseModel> listpay, Double sumreturn, BaseModel currentBill) {
-        postUpdateBillReturn(listProductReturn, sumreturn, currentBill, new CallbackCustom() {
+        postUpdateBillReturn(listProductReturn, sumreturn, currentBill, new CallbackObject() {
             @Override
             public void onResponse(BaseModel result) {
                 List<BaseModel> listpayment = adapterDebt.getListBillPayment();
@@ -396,11 +387,6 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
 //                }
             }
 
-            @Override
-            public void onError(String error) {
-
-            }
-
         }, false);
 
     }
@@ -448,7 +434,7 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
 //
 //    }
 
-    private void postUpdateBillReturn(List<BaseModel> listProductReturn, Double sumreturn, BaseModel currentBill, CallbackCustom listener, boolean loading) {
+    private void postUpdateBillReturn(List<BaseModel> listProductReturn, Double sumreturn, BaseModel currentBill, CallbackObject listener, boolean loading) {
         BaseModel param = createPostParam(ApiUtil.BILL_NEW(),
                 DataUtil.newBillJsonParam(mActivity.currentCustomer.getInt("id"),
                 User.getId(),

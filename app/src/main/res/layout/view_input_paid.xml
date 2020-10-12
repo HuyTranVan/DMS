@@ -77,13 +77,15 @@
                     android:background="@drawable/btn_corner5_white_border_red"
                     android:hint="0"
                     android:textSize="@dimen/_18sdp"
-                    android:inputType="number"
+                    android:inputType="number|textFilter|textNoSuggestions"
+                    android:importantForAutofill="no"
                     android:gravity="center_vertical|right"
                     android:maxLength="12"
                     android:paddingRight="@dimen/_10sdp"
                     android:paddingTop="@dimen/_5sdp"
                     android:paddingBottom="@dimen/_5sdp"
-                    android:layout_margin="@dimen/_4sdp" />
+                    android:layout_margin="@dimen/_4sdp"
+                    />
 
             </LinearLayout>
 

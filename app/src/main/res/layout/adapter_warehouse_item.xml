@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/depot_item_parent"
-
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/btn_none_white">
+    >
 
     <LinearLayout
+        android:id="@+id/depot_item_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:background="@drawable/btn_transparent"
         android:layout_toLeftOf="@+id/depot_item_right">
 
         <LinearLayout
@@ -53,7 +54,6 @@
                 android:paddingBottom="@dimen/_2sdp" />
         </LinearLayout>
 
-
         <TextView
             android:fontFamily="@font/font_awesome"
             android:id="@+id/depot_item_user"
@@ -71,34 +71,34 @@
     <LinearLayout
         android:id="@+id/depot_item_right"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="horizontal"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true">
 
-        <TextView
-            android:fontFamily="@font/font_awesome"
-            android:id="@+id/depot_item_depotreturn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?selectableItemBackgroundBorderless"
-            android:text="@string/icon_logout"
-            android:layout_centerVertical="true"
-            android:padding="@dimen/_10sdp"
-            android:textSize="@dimen/_14sdp"
-            android:rotation="180"
-            android:visibility="gone" />
+<!--        <TextView-->
+<!--            android:fontFamily="@font/font_awesome"-->
+<!--            android:id="@+id/depot_item_depotreturn"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="?selectableItemBackgroundBorderless"-->
+<!--            android:text="@string/icon_logout"-->
+<!--            android:layout_centerVertical="true"-->
+<!--            android:padding="@dimen/_10sdp"-->
+<!--            android:textSize="@dimen/_14sdp"-->
+<!--            android:rotation="180"-->
+<!--            android:visibility="gone" />-->
 
         <TextView
             android:fontFamily="@font/font_awesome"
-            android:id="@+id/depot_item_depotinfo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/depot_item_depotmenu"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="match_parent"
             android:background="?selectableItemBackgroundBorderless"
-            android:text="@string/icon_info"
+            android:text="@string/icon_menu"
             android:layout_centerVertical="true"
-            android:padding="@dimen/_10sdp"
-            android:textSize="@dimen/_14sdp" />
+            android:gravity="center"
+            android:textSize="@dimen/_18sdp" />
 
     </LinearLayout>
 

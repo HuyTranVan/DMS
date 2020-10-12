@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_margin="@dimen/_5sdp">
+        android:layout_margin="@dimen/_2sdp">
 
         <!--        <CheckBox-->
         <!--            android:id="@+id/statistical_product_item_check"-->
@@ -36,7 +36,7 @@
             android:layout_centerVertical="true"
             android:text="a"
             android:textColor="@color/black"
-            android:paddingRight="@dimen/_5sdp"
+            android:paddingRight="@dimen/_10sdp"
             android:gravity="right" />
     </LinearLayout>
 

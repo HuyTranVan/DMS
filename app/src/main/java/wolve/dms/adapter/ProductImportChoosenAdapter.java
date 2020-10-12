@@ -34,8 +34,7 @@ public class ProductImportChoosenAdapter extends RecyclerView.Adapter<ProductImp
     private CallbackInt mListener;
     private CallbackObject mListenerObject;
     private boolean flagRemove;
-    //private View mView;
-    private Timer mTimer;
+    private boolean isLimit = false;
 
     public ProductImportChoosenAdapter(List<BaseModel> list, boolean flag_remove, CallbackInt listener, CallbackObject listenerOb) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
@@ -78,16 +77,47 @@ public class ProductImportChoosenAdapter extends RecyclerView.Adapter<ProductImp
             @Override
             public void onClick(View view) {
                 int quantity = mData.get(position).hasKey("quantity") ? mData.get(position).getInt("quantity") : 0;
-                if (!mData.get(position).hasKey("currentQuantity") || mData.get(position).getInt("currentQuantity") > quantity) {
+//                mData.get(position).put("quantity", quantity + 1);
+//                notifyItemChanged(position);
+//                mListenerObject.onResponse(mData.get(position));
+
+                if (!mData.get(position).hasKey("currentQuantity")
+                        || mData.get(position).getInt("currentQuantity") > quantity){
                     mData.get(position).put("quantity", quantity + 1);
                     notifyItemChanged(position);
                     mListenerObject.onResponse(mData.get(position));
 
                 } else {
-                    Util.showToast("Sản phẩm hết tồn kho");
+                    if (isLimit){
+                        Util.showToast("Sản phẩm hết tồn kho");
+
+                    }else {
+                        mData.get(position).put("quantity", quantity + 1);
+                        notifyItemChanged(position);
+                        mListenerObject.onResponse(mData.get(position));
+
+                    }
+
                 }
                 mListener.onResponse(mData.size());
 
+            }
+        });
+
+        holder.tvMinus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mData.get(position).put("quantity", mData.get(position).getInt("quantity") - 1);
+                mListenerObject.onResponse(mData.get(position));
+                if (mData.get(position).getInt("quantity") == 0) {
+                    if (flagRemove) {
+                        mData.remove(position);
+
+                    }
+
+                }
+                notifyDataSetChanged();
+                mListener.onResponse(mData.size());
             }
         });
 
@@ -109,11 +139,19 @@ public class ProductImportChoosenAdapter extends RecyclerView.Adapter<ProductImp
                                     mListener.onResponse(mData.size());
 
                                 } else {
+
                                     if (!mData.get(position).hasKey("currentQuantity") || mData.get(position).getInt("currentQuantity") >= Integer.parseInt(s)) {
                                         mListenerObject.onResponse(mData.get(position));
                                         mData.get(position).put("quantity", Integer.parseInt(s));
+
                                     } else {
-                                        Util.showSnackbar("Vui lòng nhập giá trị nhỏ hơn số tồn", null, null);
+                                        if (isLimit){
+                                            Util.showSnackbar("Vui lòng nhập giá trị nhỏ hơn số tồn", null, null);
+                                        }else {
+                                            mListenerObject.onResponse(mData.get(position));
+                                            mData.get(position).put("quantity", Integer.parseInt(s));
+                                        }
+
                                     }
 
                                 }
@@ -125,22 +163,7 @@ public class ProductImportChoosenAdapter extends RecyclerView.Adapter<ProductImp
 
         });
 
-        holder.tvMinus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mData.get(position).put("quantity", mData.get(position).getInt("quantity") - 1);
-                mListenerObject.onResponse(mData.get(position));
-                if (mData.get(position).getInt("quantity") == 0) {
-                    if (flagRemove) {
-                        mData.remove(position);
 
-                    }
-
-                }
-                notifyDataSetChanged();
-                mListener.onResponse(mData.size());
-            }
-        });
 
 
     }
@@ -170,7 +193,8 @@ public class ProductImportChoosenAdapter extends RecyclerView.Adapter<ProductImp
 
     }
 
-    public void insertData(BaseModel model) {
+    public void insertData(BaseModel model, boolean limit) {
+        isLimit = limit;
         boolean checkDup = false;
         for (int i = 0; i < mData.size(); i++) {
             if (model.getInt("id") == mData.get(i).getInt("id")) {

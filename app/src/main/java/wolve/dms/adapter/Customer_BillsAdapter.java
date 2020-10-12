@@ -211,13 +211,13 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
             @Override
             public void onClick(View v) {
                 List<String> list = new ArrayList<>();
-                list.add("Trả hàng");
+                list.add(Util.getIconString(R.string.icon_reply, "  ", "Trả hàng"));
 
                 if (User.getCurrentRoleId() == Constants.ROLE_ADMIN) {
-                    list.add("Xóa hóa đơn");
+                    list.add(Util.getIconString(R.string.icon_delete, "   ", "Xóa hóa đơn"));
                 }
 
-                CustomDropdow.createDropdown(holder.btnMenu, list, new CallbackString() {
+                CustomDropdow.createListDropdown(holder.btnMenu, list, new CallbackString() {
                     @Override
                     public void Result(String s) {
                         if (s.equals(list.get(0))) {

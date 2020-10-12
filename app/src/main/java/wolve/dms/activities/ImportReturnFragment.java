@@ -76,7 +76,7 @@ public class ImportReturnFragment extends Fragment implements View.OnClickListen
                 @Override
                 public void onResponse(List<BaseModel> list) {
                     listInventory = list;
-                    createRVInventory(listInventory);
+                    createRVInventory(listInventory );
 
                 }
             });
@@ -118,7 +118,7 @@ public class ImportReturnFragment extends Fragment implements View.OnClickListen
     }
 
     private void loadListInventory(int warehouse_id, CallbackListObject listener) {
-        BaseModel param = createGetParam(String.format(ApiUtil.INVENTORIES(), warehouse_id), true);
+        BaseModel param = createGetParam(String.format(ApiUtil.INVENTORIES(), warehouse_id, 0), true);
         new GetPostMethod(param, new NewCallbackCustom() {
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
@@ -136,7 +136,7 @@ public class ImportReturnFragment extends Fragment implements View.OnClickListen
     }
 
     private void createRVInventory(List<BaseModel> list) {
-        adapter = new ProductImportChoosenAdapter(list, false, new CallbackInt() {
+        adapter = new ProductImportChoosenAdapter(list, false,  new CallbackInt() {
             @Override
             public void onResponse(int value) {
                 btnSubmit.setVisibility(adapter.getAllSelected() >= 0 ? View.VISIBLE : View.GONE);

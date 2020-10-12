@@ -901,7 +901,7 @@ public class Util {
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         //cal.setTimeInMillis(timestamp*1000);
         cal.setTimeInMillis(timestamp);
-        date = DateFormat.format("dd-MM-yyyy (HH:mm)", cal).toString();
+        date = DateFormat.format("dd-MM-yyyy | HH:mm", cal).toString();
 
         return date;
 

@@ -77,9 +77,8 @@ public class ListUserChangeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     private void setItemRows(ListUserChangeAdapter.ItemViewHolder holder, int position) {
-        holder.tvName.setText(String.format("%s _ %s", mData.get(position).getString("displayName"),
-                mData.get(position).getBaseModel("distributor").getString("name")));
-        holder.tvPhone.setText(mData.get(position).getString("phone"));
+        holder.tvName.setText( mData.get(position).getString("displayName"));
+        holder.tvPhone.setText(mData.get(position).getBaseModel("distributor").getString("name"));
         holder.tvRole.setText(User.getRoleString(mData.get(position).getInt("role")));
 
         if (!Util.checkImageNull(mData.get(position).getString("image"))) {

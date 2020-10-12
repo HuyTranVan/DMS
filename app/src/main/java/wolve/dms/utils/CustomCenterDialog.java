@@ -39,9 +39,9 @@ import wolve.dms.adapter.ProductCompareInventoryAdapter;
 import wolve.dms.adapter.ProductQuantityAdapter;
 import wolve.dms.adapter.ProductSelectAdapter;
 import wolve.dms.adapter.WaitingListAdapter;
+import wolve.dms.adapter.WarehouseImportAdapter;
 import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackClickProduct;
 import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackListCustom;
@@ -256,7 +256,7 @@ public class CustomCenterDialog {
         });
     }
 
-    public static void showDialogEditProduct(final BaseModel product, List<BaseModel> listBillDetail, final CallbackClickProduct callbackClickProduct) {
+    public static void showDialogEditProduct(final BaseModel product, List<BaseModel> listBillDetail, final CallbackObject callbackClickProduct) {
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_edit_product);
 
         final Button btnCancel = dialogResult.findViewById(R.id.btn_cancel);
@@ -351,7 +351,7 @@ public class CustomCenterDialog {
                     newProduct.put("discount", edDiscount.getText().toString().equals("") ? 0 : Util.valueMoney(edDiscount));
                     newProduct.put("totalMoney", tvTotal.getText().toString().replace(".", ""));
 
-                    callbackClickProduct.ProductChoice(newProduct);
+                    callbackClickProduct.onResponse(newProduct);
                     dialogResult.dismiss();
 
 
@@ -1181,42 +1181,64 @@ public class CustomCenterDialog {
 
     }
 
-    public static void dialogSaveContact(BaseModel customer, CallbackBoolean mListener) {
-        final Dialog dialogResult = CustomCenterDialog.showCustomDialogWithMargin(R.layout.view_dialog_save_contact);
-        final Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
-        final Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
-        TextView tvContent = dialogResult.findViewById(R.id.dialog_save_contact_content);
-        CheckBox checkBox = dialogResult.findViewById(R.id.dialog_save_contact_checkbox);
+    public static void importToTempWarehouse(BaseModel masterWarehouse, BaseModel tempWarehouse, List<BaseModel> list, CallbackBoolean mListener) {
+        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_import_product);
+        final TextView tvTitle = dialogResult.findViewById(R.id.dialog_import_product_title);
+        final TextView tvFromWarehouse = dialogResult.findViewById(R.id.dialog_import_product_fromwarehouse);
+        final TextView tvToWarehouse = dialogResult.findViewById(R.id.dialog_import_product_towarehouse);
+        final RecyclerView rvImport = dialogResult.findViewById(R.id.dialog_import_product_rv);
 
+        Button btnCancel = dialogResult.findViewById(R.id.btn_cancel);
+        Button btnConfirm = dialogResult.findViewById(R.id.btn_submit);
 
-        btnCancel.setText("Không");
-        btnSubmit.setText("đồng ý");
-        tvContent.setText("Lưu thông tin khách hàng vào danh bạ điện thoại");
+        tvFromWarehouse.setText(masterWarehouse.getString("name"));
+        tvToWarehouse.setText(tempWarehouse.getString("name"));
+        btnConfirm.setText("nhập kho");
+        btnCancel.setText("quay lại");
 
-        dialogResult.setCanceledOnTouchOutside(true);
+        dialogResult.setCanceledOnTouchOutside(false);
 
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (checkBox.isChecked()){
-                    CustomFixSQL.setInt(Constants.AUTO_SAVE_CONTACT, 1);
-                }
-                mListener.onRespone(true);
-                dialogResult.dismiss();
-            }
-        });
+        WarehouseImportAdapter adapter = new WarehouseImportAdapter(list);
+        Util.createLinearRV(rvImport, adapter);
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                if (checkBox.isChecked()){
-                    CustomFixSQL.setInt(Constants.AUTO_SAVE_CONTACT, 0);
-                }
-                mListener.onRespone(false);
+            public void onClick(View view) {
                 dialogResult.dismiss();
             }
         });
 
+        btnConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String param = DataUtil.createPostImportJsonParam(tempWarehouse.getInt("id"),
+                        masterWarehouse.getInt("id"),
+                        adapter.getmData(),
+                        "");
+
+                BaseModel mParam = createPostParam(ApiUtil.IMPORT_NEW(),
+                        param, true, false);
+
+                new GetPostMethod(mParam, new NewCallbackCustom() {
+                    @Override
+                    public void onResponse(BaseModel result, List<BaseModel> list) {
+                        DataUtil.saveProductPopular(adapter.getmData());
+                        mListener.onRespone(true);
+                        dialogResult.dismiss();
+
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        mListener.onRespone(false);
+                        dialogResult.dismiss();
+
+                    }
+                }, 1).execute();
+
+
+            }
+        });
     }
 
 

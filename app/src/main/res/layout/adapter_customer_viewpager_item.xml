@@ -49,7 +49,7 @@
         android:layout_height="wrap_content"
         android:clipToPadding="false"
         android:paddingBottom="@dimen/_50sdp"
-
+        android:paddingTop="@dimen/_5sdp"
         />
 
 </LinearLayout>

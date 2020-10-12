@@ -37,7 +37,7 @@
             android:layout_height="match_parent"
             android:src="@drawable/ic_arrow_back_black_18dp"
             android:padding="@dimen/_8sdp"
-            android:background="?selectableItemBackground" />
+            android:background="@drawable/btn_transparent" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -118,7 +118,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="0.3"
-                    android:background="@drawable/bg_corner5_lighgrey"
+                    android:background="@drawable/bg_corner5_grey"
                     android:minHeight="@dimen/_25sdp"
                     android:textSize="@dimen/_12sdp"
                     android:layout_margin="@dimen/_5sdp"
@@ -146,7 +146,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="0.3"
-                    android:background="@drawable/bg_corner5_lighgrey"
+                    android:background="@drawable/bg_corner5_grey"
                     android:minHeight="@dimen/_25sdp"
                     android:layout_margin="@dimen/_5sdp"
                     android:paddingLeft="@dimen/_10sdp"
@@ -174,7 +174,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="0.3"
-                    android:background="@drawable/bg_corner5_lighgrey"
+                    android:background="@drawable/bg_corner5_grey"
                     android:minHeight="@dimen/_25sdp"
                     android:layout_margin="@dimen/_5sdp"
                     android:paddingLeft="@dimen/_10sdp"
@@ -203,7 +203,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="0.3"
-                    android:background="@drawable/bg_corner5_lighgrey"
+                    android:background="@drawable/bg_corner5_grey"
                     android:minHeight="@dimen/_25sdp"
                     android:layout_margin="@dimen/_5sdp"
                     android:paddingLeft="@dimen/_10sdp"

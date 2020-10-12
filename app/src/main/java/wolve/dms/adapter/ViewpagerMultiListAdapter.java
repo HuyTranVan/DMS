@@ -39,9 +39,17 @@ public class ViewpagerMultiListAdapter extends PagerAdapter {
     public ViewpagerMultiListAdapter(List<RecyclerView.Adapter> listAdapter, List<String> listtitle, boolean[] viewsearch, CallbackClickAdapter listener) {
         this.mContext = Util.getInstance().getCurrentActivity();
         this.listAdapter = listAdapter;
-        this.listTitle = listtitle;
-        this.showSearches = viewsearch;
-        this.mListener = listener;
+
+        if (listtitle != null){
+            this.listTitle = listtitle;
+        }
+        if (viewsearch != null){
+            this.showSearches = viewsearch;
+        }
+        if (listener != null){
+            this.mListener = listener;
+        }
+
 
     }
 
@@ -75,7 +83,7 @@ public class ViewpagerMultiListAdapter extends PagerAdapter {
         EditText edSearch = view.findViewById(R.id.search_text);
         TextView tvIconSearch = view.findViewById(R.id.search_icon);
 
-        lnSearch.setVisibility(showSearches[position] ? View.VISIBLE : View.GONE);
+        lnSearch.setVisibility(showSearches != null && showSearches[position] ? View.VISIBLE : View.GONE);
         Util.createLinearRV(rvList, listAdapter.get(position));
 
         edSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -90,7 +98,10 @@ public class ViewpagerMultiListAdapter extends PagerAdapter {
             @Override
             public void Result(String s) {
                 tvIconSearch.setText(Util.isEmpty(s) ? mContext.getResources().getString(R.string.icon_search) : mContext.getResources().getString(R.string.icon_x));
-                mListener.onRespone(s, position);
+                if (mListener != null){
+                    mListener.onRespone(s, position);
+                }
+
 
             }
         });
@@ -116,7 +127,7 @@ public class ViewpagerMultiListAdapter extends PagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return listTitle.get(position);
+        return null;
     }
 
     //fix recyclerview scroll

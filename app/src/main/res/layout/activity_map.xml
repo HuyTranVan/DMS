@@ -254,7 +254,7 @@
                 <View
                     android:layout_width="@dimen/_25sdp"
                     android:layout_height="@dimen/_2sdp"
-                    android:background="@drawable/bg_corner5_lighgrey"
+                    android:background="@drawable/bg_corner5_grey"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginBottom="@dimen/_2sdp" />
 
