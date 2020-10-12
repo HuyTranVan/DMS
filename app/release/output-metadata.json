@@ -11,10 +11,10 @@
       "type": "SINGLE",
       "filters": [],
       "properties": [],
-      "versionCode": 14,
-      "versionName": "1.5",
+      "versionCode": 16,
+      "versionName": "1.6",
       "enabled": true,
-      "outputFile": "DMSRELEASE_081020.apk"
+      "outputFile": "DMSRELEASE_121020.apk"
     }
   ]
 }

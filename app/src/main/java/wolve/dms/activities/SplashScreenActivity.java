@@ -3,7 +3,6 @@ package wolve.dms.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -14,13 +13,14 @@ import wolve.dms.BuildConfig;
 import wolve.dms.R;
 import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
-import wolve.dms.libraries.Security;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomSQL;
+import wolve.dms.apiconnect.apiserver.VersionChecker;
 import wolve.dms.utils.Transaction;
 
 public class SplashScreenActivity extends BaseActivity {
@@ -50,6 +50,7 @@ public class SplashScreenActivity extends BaseActivity {
         openUri();
         tvVersion.setText(String.format("Version %s", BuildConfig.VERSION_NAME));
         progressBar.setVisibility(View.VISIBLE);
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -96,21 +97,19 @@ public class SplashScreenActivity extends BaseActivity {
     }
 
     private void checkLogin(CallbackBoolean listener) {
-        BaseModel param = createGetParam(ApiUtil.CHECK_LOGIN(), false);
-
-        new GetPostMethod(param, new NewCallbackCustom() {
+        new VersionChecker(new CallbackString() {
             @Override
-            public void onResponse(BaseModel result, List<BaseModel> list) {
-                if (result.getInt("version") > BuildConfig.VERSION_CODE) {
+            public void Result(String s) {
+                if (Float.parseFloat(s) > Float.parseFloat(BuildConfig.VERSION_NAME)){
                     progressBar.setVisibility(View.GONE);
                     CustomCenterDialog.alertWithCancelButton("PHIÊN BẢN MỚI",
                             "Có 1 bản cập nhật mới trên Store \nVui lòng cập nhật",
-                            "đồng ý",
-                            "không", new CallbackBoolean() {
+                            "Cập nhật",
+                            "Tiếp tục", new CallbackBoolean() {
                                 @Override
                                 public void onRespone(Boolean result) {
                                     if (!result) {
-                                        finish();
+                                        listener.onRespone(false);
 
                                     } else {
                                         Transaction.openGooglePlay();
@@ -122,21 +121,78 @@ public class SplashScreenActivity extends BaseActivity {
 
 
                 } else {
-                    if (result.getBoolean("success")) {
-                        listener.onRespone(true);
-                    } else {
-                        listener.onRespone(false);
-                    }
+                    BaseModel param = createGetParam(ApiUtil.CHECK_LOGIN(), false);
+                    new GetPostMethod(param, new NewCallbackCustom() {
+                        @Override
+                        public void onResponse(BaseModel result, List<BaseModel> list) {
+                            if (result.getBoolean("success")) {
+                                listener.onRespone(true);
+                            } else {
+                                listener.onRespone(false);
+                            }
+
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            listener.onRespone(false);
+                        }
+                    }, 0).execute();
 
                 }
-
             }
+        }).execute();
 
-            @Override
-            public void onError(String error) {
 
-            }
-        }, 0).execute();
+
+
+
+
+
+
+
+
+//        BaseModel param = createGetParam(ApiUtil.CHECK_LOGIN(), false);
+//
+//        new GetPostMethod(param, new NewCallbackCustom() {
+//            @Override
+//            public void onResponse(BaseModel result, List<BaseModel> list) {
+//                if (result.getInt("version") > BuildConfig.VERSION_CODE) {
+//                    progressBar.setVisibility(View.GONE);
+//                    CustomCenterDialog.alertWithCancelButton("PHIÊN BẢN MỚI",
+//                            "Có 1 bản cập nhật mới trên Store \nVui lòng cập nhật",
+//                            "đồng ý",
+//                            "không", new CallbackBoolean() {
+//                                @Override
+//                                public void onRespone(Boolean result) {
+//                                    if (!result) {
+//                                        finish();
+//
+//                                    } else {
+//                                        Transaction.openGooglePlay();
+//
+//
+//                                    }
+//                                }
+//                            });
+//
+//
+//                } else {
+//                    if (result.getBoolean("success")) {
+//                        listener.onRespone(true);
+//                    } else {
+//                        listener.onRespone(false);
+//                    }
+//
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        }, 0).execute();
 
 
     }
