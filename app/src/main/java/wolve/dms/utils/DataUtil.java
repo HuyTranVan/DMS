@@ -103,13 +103,14 @@ public class DataUtil {
     public static String createPostImportJsonParam(int warehouse_id,
                                                    int from_warehouse,
                                                    List<BaseModel> listProduct,
+                                                   int userAccept,
                                                    String note) {
         final JSONObject params = new JSONObject();
         try {
             params.put("warehouse_id", warehouse_id);
             params.put("from_warehouse", from_warehouse);
             params.put("note", Util.encodeString(note));
-            params.put("acceptBy", Util.isAdmin() ? User.getId() : 0);
+            params.put("acceptBy", userAccept);
 
             JSONArray array = new JSONArray();
             for (int i = 0; i < listProduct.size(); i++) {

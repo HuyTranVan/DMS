@@ -1214,6 +1214,7 @@ public class CustomCenterDialog {
                 String param = DataUtil.createPostImportJsonParam(tempWarehouse.getInt("id"),
                         masterWarehouse.getInt("id"),
                         adapter.getmData(),
+                        Util.isAdmin() ? User.getId() : 0,
                         "");
 
                 BaseModel mParam = createPostParam(ApiUtil.IMPORT_NEW(),

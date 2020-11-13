@@ -75,6 +75,7 @@ public class ProductImportAdapter extends RecyclerView.Adapter<ProductImportAdap
         holder.tvPlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                holder.tvPlus.setVisibility(View.GONE);
                 int quantity = mData.get(position).hasKey("quantity") ? mData.get(position).getInt("quantity") : 0;
                 mData.get(position).put("quantity", quantity + 1);
                 notifyItemChanged(position);

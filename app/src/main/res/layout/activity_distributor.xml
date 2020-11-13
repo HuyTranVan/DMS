@@ -26,127 +26,31 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="THÔNG TIN NHÀ PHÂN PHỐI"
-            android:textSize="@dimen/_12sdp"
+            android:text="DANH SÁCH NHÀ PHÂN PHỐI"
+            android:textSize="@dimen/_14sdp"
             android:textColor="@color/black_text_color" />
 
     </RelativeLayout>
 
-    <androidx.core.widget.NestedScrollView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/distributor_rvgroup"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/distributor_header">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/distributor_header"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/_60sdp"
+        android:paddingTop="@dimen/_5sdp"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <RelativeLayout
-                android:id="@+id/distributor_image_parent"
-                android:layout_width="@dimen/_100sdp"
-                android:layout_height="@dimen/_100sdp"
-                android:background="@drawable/bg_white_corner_stroke_grey"
-                android:layout_gravity="center"
-                android:layout_marginTop="@dimen/_10sdp">
-
-                <ImageView
-                    android:id="@+id/distributor_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/lub_logo_red"
-                    android:padding="@dimen/_10sdp"
-                    android:layout_centerInParent="true" />
-
-                <TextView
-                    android:fontFamily="@font/font_awesome"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/icon_edit_pen"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_margin="@dimen/_5sdp" />
-
-            </RelativeLayout>
-
-
-            <!--            <de.hdodenhof.circleimageview.CircleImageView-->
-            <!--                android:id="@+id/add_product_image"-->
-            <!--                android:layout_width="@dimen/_100sdp"-->
-            <!--                android:layout_height="@dimen/_100sdp"-->
-            <!--                android:src="@drawable/lub_logo_red"-->
-            <!--                android:layout_marginTop="@dimen/_10sdp"-->
-            <!--                android:layout_gravity="center"-->
-            <!--                android:fit="true"-->
-            <!--                app:civ_border_width="4dp"-->
-            <!--                app:civ_border_color="@color/colorLightGrey"/>-->
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="(Chọn logo có nền trắng)"
-                android:textStyle="italic"
-                android:gravity="center"
-                android:textSize="@dimen/_10sdp"
-                android:layout_marginBottom="@dimen/_10sdp" />
-
-            <wolve.dms.customviews.CInputForm
-                android:id="@+id/distributor_company_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textCapCharacters"
-                app:textHint="Tên công ty"
-                app:iconText="@string/icon_building" />
-
-            <wolve.dms.customviews.CInputForm
-                android:id="@+id/distributor_company_add"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textCapWords"
-                app:textHint="Địa chỉ"
-                app:iconText="@string/icon_adress" />
-
-            <wolve.dms.customviews.CInputForm
-                android:id="@+id/distributor_company_hotline"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                app:textHint="Hotline"
-                app:iconText="@string/icon_phone" />
-
-            <wolve.dms.customviews.CInputForm
-                android:id="@+id/distributor_company_web"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                app:textHint="Website"
-                app:iconText="@string/icon_global" />
-
-            <wolve.dms.customviews.CInputForm
-                android:id="@+id/distributor_company_thanks"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:textHint="Lời chào"
-                app:iconText="@string/icon_smile" />
-
-            <Button
-                android:id="@+id/distributor_submit"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/_30sdp"
-                android:minWidth="@dimen/_150sdp"
-                android:background="@drawable/btn_confirm_blue"
-                android:layout_margin="@dimen/_10sdp"
-                android:text="CẬP NHẬT"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_14sdp"
-                android:layout_gravity="center_horizontal" />
-
-
-        </LinearLayout>
-
-
-    </androidx.core.widget.NestedScrollView>
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/distributor_add_new"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_add_white_18dp"
+        android:layout_margin="@dimen/_15sdp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        app:fab_size="normal"
+        style="@style/MenuButtonsBlue" />
 
 
 </RelativeLayout>

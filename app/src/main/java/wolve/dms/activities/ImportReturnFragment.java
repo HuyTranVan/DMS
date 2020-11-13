@@ -27,6 +27,7 @@ import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.models.BaseModel;
+import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
@@ -170,6 +171,7 @@ public class ImportReturnFragment extends Fragment implements View.OnClickListen
         String param = DataUtil.createPostImportJsonParam(returnWarehouse.getInt("id"),
                 currrentWarehouse.getInt("id"),
                 adapter.getAllDataHaveQuantity(),
+                Util.isAdmin() ? User.getId() : 0,
                 "");
         postImport(param, new CallbackBoolean() {
             @Override

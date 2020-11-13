@@ -39,7 +39,6 @@ public class InventoryDetailFragment extends Fragment implements View.OnClickLis
     private TabLayout tabLayout;
 
     private WarehouseActivity mActivity;
-    //private InventoryDetailAdapter adapter;
     private BaseModel currrentWarehouse;
     private List<RecyclerView.Adapter> listadapter;
     private ViewpagerMultiListAdapter viewpagerAdapter;

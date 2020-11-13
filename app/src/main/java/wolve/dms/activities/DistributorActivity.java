@@ -1,52 +1,42 @@
 package wolve.dms.activities;
 
-import android.content.Intent;
-import android.net.Uri;
+import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.theartofdev.edmodo.cropper.CropImage;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.clans.fab.FloatingActionButton;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.adapter.DistributorAdapter;
+import wolve.dms.adapter.ProductGroupAdapter;
 import wolve.dms.apiconnect.ApiUtil;
-import wolve.dms.callback.CallbackString;
-import wolve.dms.callback.CallbackUri;
-import wolve.dms.callback.NewCallbackCustom;
-import wolve.dms.customviews.CInputForm;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
-import wolve.dms.apiconnect.apiserver.UploadCloudaryMethod;
+import wolve.dms.callback.CallbackClickAdapter;
+import wolve.dms.callback.CallbackDeleteAdapter;
+import wolve.dms.callback.CallbackObject;
+import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Distributor;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomBottomDialog;
-import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
-
-import static wolve.dms.utils.Constants.REQUEST_CHOOSE_IMAGE;
-import static wolve.dms.utils.Constants.REQUEST_IMAGE_CAPTURE;
 
 /**
  * Created by macos on 9/16/17.
  */
 
-public class DistributorActivity extends BaseActivity implements View.OnClickListener {
+public class DistributorActivity extends BaseActivity implements View.OnClickListener, CallbackObject {
     private ImageView btnBack;
-    private CInputForm tvCompany, tvPhone, tvAddress, tvSite, tvThanks;
-    private Button btnSubmit;
-    private TextView tvTitle;
-    private RelativeLayout rlImage;
-    private ImageView image;
+    private RecyclerView rvDistributor;
+    private DistributorAdapter distributorAdapter;
+    private FloatingActionButton btnAddDistributor;
 
-    private BaseModel currentDistributor;
-    private Uri imageChangeUri;
-    private String imgURL;
+    public List<BaseModel> listDistributor;
 
     @Override
     public int getResourceLayout() {
@@ -61,155 +51,57 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void findViewById() {
         btnBack = (ImageView) findViewById(R.id.icon_back);
-        tvCompany = findViewById(R.id.distributor_company_name);
-        tvAddress = findViewById(R.id.distributor_company_add);
-        tvPhone = findViewById(R.id.distributor_company_hotline);
-        tvSite = findViewById(R.id.distributor_company_web);
-        tvThanks = findViewById(R.id.distributor_company_thanks);
-        btnSubmit = findViewById(R.id.distributor_submit);
-        tvTitle = findViewById(R.id.distributor_title);
-        rlImage = findViewById(R.id.distributor_image_parent);
-        image = findViewById(R.id.distributor_image);
+        rvDistributor = (RecyclerView) findViewById(R.id.distributor_rvgroup);
+        btnAddDistributor = findViewById(R.id.distributor_add_new);
 
     }
 
     @Override
     public void initialData() {
-        BaseModel param = createGetParam(ApiUtil.DISTRIBUTOR_DETAIL() + Distributor.getDistributorId(), false);
-        new GetPostMethod(param, new NewCallbackCustom() {
-            @Override
-            public void onResponse(BaseModel result, List<BaseModel> list) {
-                currentDistributor = result;
-                updateView(currentDistributor);
-            }
-
-            @Override
-            public void onError(String error) {
-
-            }
-        }, 1).execute();
-
-
-    }
-
-    private void updateView(BaseModel content) {
-        tvCompany.setText(content.getString("company"));
-        tvAddress.setText(content.getString("address"));
-        tvPhone.setText(Util.FormatPhone(content.getString("phone")));
-        tvSite.setText(content.getString("website"));
-        tvThanks.setText(content.getString("thanks"));
-        tvTitle.setText(content.getString("name"));
-        if (!Util.checkImageNull(content.getString("image"))){
-            Glide.with(this).load(content.getString("image")).fitCenter().into(image);
-            imgURL = content.getString("image");
-
-        } else {
-            Glide.with(this).load(R.drawable.lub_logo_red).fitCenter().into(image);
-            imgURL = "";
-
-        }
+        loadDistributors();
 
     }
 
     @Override
     public void addEvent() {
         btnBack.setOnClickListener(this);
-        btnSubmit.setOnClickListener(this);
-        rlImage.setOnClickListener(this);
-        phoneEvent();
+        btnAddDistributor.setOnClickListener(this);
 
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Transaction.gotoHomeActivityRight(true);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.icon_back:
+//                Transaction.gotoHomeActivityRight(true);
                 onBackPressed();
                 break;
 
-            case R.id.distributor_submit:
-                submitDistributor();
+            case R.id.distributor_add_new:
+                openFragmentNewDistributor(null);
+
                 break;
-
-            case R.id.distributor_image_parent:
-                CustomBottomDialog.choiceThreeOption(getString(R.string.icon_image),
-                        "Chọn ảnh thư viện",
-                        getString(R.string.icon_camera),
-                        "Chụp ảnh",
-                        getString(R.string.icon_empty),
-                        "Mặc định",
-                        new CustomBottomDialog.ThreeMethodListener() {
-                            @Override
-                            public void Method1(Boolean one) {
-                                Transaction.startImageChooser(null, new CallbackUri() {
-                                    @Override
-                                    public void uriRespone(Uri uri) {
-                                        imageChangeUri = uri;
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void Method2(Boolean two) {
-                                Transaction.startCamera(null, new CallbackUri() {
-                                    @Override
-                                    public void uriRespone(Uri uri) {
-                                        imageChangeUri = uri;
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void Method3(Boolean three) {
-                                imgURL = "";
-                                Glide.with(DistributorActivity.this).load(R.drawable.lub_logo_red).fitCenter().into(image);
-                            }
-                        });
-                break;
-
 
         }
     }
 
-    private void submitDistributor() {
-        if (imageChangeUri != null) {
-            new UploadCloudaryMethod(Util.getRealPathFromCaptureURI(imageChangeUri), new CallbackString() {
-                @Override
-                public void Result(String url) {
-                    updateDistributor(url);
-                }
-
-            }).execute();
+    @Override
+    public void onBackPressed() {
+        Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.distributor_parent);
+        if (mFragment != null && mFragment instanceof NewUpdateDistributorFragment) {
+            getSupportFragmentManager().popBackStack();
 
         } else {
-            updateDistributor(imgURL);
-
+            Transaction.gotoHomeActivityRight(true);
         }
-
     }
 
-    private void updateDistributor(String imageLink) {
-        BaseModel param = createPostParam(ApiUtil.DISTRIBUTOR_NEW(),
-                String.format(ApiUtil.DISTRIBUTOR_CREATE_PARAM, currentDistributor.getInt("id") == 0 ? "" : String.format("id=%s&", currentDistributor.getString("id")),
-                        Util.encodeString(tvCompany.getText().toString()),
-                        Util.encodeString(tvAddress.getText().toString()),
-                        Util.encodeString(tvPhone.getText().toString().replace(".", "")),
-                        Util.encodeString(tvSite.getText().toString()),
-                        Util.encodeString(tvThanks.getText().toString()),
-                        imageLink),
-                false,
-                false);
+    protected void loadDistributors() {
+        BaseModel param = createGetParam(ApiUtil.DISTRIBUTORS(), true);
         new GetPostMethod(param, new NewCallbackCustom() {
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
-                CustomSQL.setBaseModel(Constants.DISTRIBUTOR, result);
-                Transaction.gotoHomeActivityRight(true);
+                createRVDistributor(list);
             }
 
             @Override
@@ -218,81 +110,36 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
             }
         }, 1).execute();
 
+
+    }
+
+
+    private void createRVDistributor(List<BaseModel> list) {
+        listDistributor = new ArrayList<>();
+
+        for (int i = 0; i < list.size(); i++) {
+            listDistributor.add(list.get(i));
+
+        }
+        distributorAdapter = new DistributorAdapter(listDistributor, new CallbackObject() {
+            @Override
+            public void onResponse(BaseModel object) {
+                openFragmentNewDistributor(object.BaseModelstoString());
+            }
+        });
+        Util.createLinearRV(rvDistributor, distributorAdapter);
+
+    }
+
+    private void openFragmentNewDistributor(String distributor) {
+        NewUpdateDistributorFragment groupFragment = new NewUpdateDistributorFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.DISTRIBUTOR, distributor);
+        changeFragment(groupFragment, bundle, true);
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CHOOSE_IMAGE) {
-            if (data != null) {
-                CropImage.activity(Uri.parse(data.getData().toString()))
-                        .setAspectRatio(1,1)
-                        .setMaxZoom(10)
-                        .setRequestedSize(512, 512)
-                        .start(this);
-
-            }
-
-        } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
-            CropImage.activity(imageChangeUri)
-                    .setAspectRatio(1,1)
-                    .setMaxZoom(10)
-                    .setRequestedSize(512, 512)
-                    .start(this);
-
-        }else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if (resultCode == RESULT_OK) {
-                imageChangeUri = result.getUri();
-                Glide.with(this).load(imageChangeUri).centerCrop().into(image);
-
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Util.showToast(result.getError().getMessage());
-
-            }
-        }
-//        else if (data != null && requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
-//            Glide.with(this).load(imageChangeUri).centerCrop().into(image);
-
-//        }
-
-
-
+    public void onResponse(BaseModel object) {
+        distributorAdapter.updateDistributor(object);
     }
-
-//    private void startImageChooser() {
-//        imageChangeUri = Uri.fromFile(Util.getOutputMediaFile());
-//        if (Build.VERSION.SDK_INT <= 19) {
-//            Intent i = new Intent();
-//            i.setType("image/*");
-//            i.setAction(Intent.ACTION_GET_CONTENT);
-//            i.addCategory(Intent.CATEGORY_OPENABLE);
-//            startActivityForResult(i, REQUEST_CHOOSE_IMAGE);
-//
-//        } else if (Build.VERSION.SDK_INT > 19) {
-//            Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//            startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
-//        }
-//    }
-
-//    public void startCamera() {
-//        imageChangeUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", Util.getOutputMediaFile());
-//
-//        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        intent.putExtra(MediaStore.EXTRA_OUTPUT,imageChangeUri );
-//        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-//
-//    }
-
-
-    private void phoneEvent() {
-        tvPhone.addTextChangePhone(new CallbackString() {
-            @Override
-            public void Result(String s) {
-
-            }
-        });
-    }
-
-
 }

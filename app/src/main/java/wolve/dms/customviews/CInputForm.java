@@ -2,6 +2,7 @@ package wolve.dms.customviews;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Typeface;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -172,6 +173,10 @@ public class CInputForm extends FrameLayout {
     public void setInputType(int type) {
         edInput.setInputType(type);
 
+    }
+
+    public void setBoldStyle(){
+        edInput.setTypeface(null, Typeface.BOLD);
     }
 
     public void setFocusable(boolean value) {

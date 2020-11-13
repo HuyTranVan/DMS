@@ -228,7 +228,6 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             }
         });
 
-
     }
 
     private void deleteImport(int position) {

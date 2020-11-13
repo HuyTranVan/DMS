@@ -53,7 +53,7 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/15/17.
  */
 
-public class HomeActivity extends BaseActivity implements View.OnClickListener, CallbackClickAdapter, SwipeRefreshLayout.OnRefreshListener {
+public class HomeActivity extends BaseActivity implements View.OnClickListener, CallbackClickAdapter, SwipeRefreshLayout.OnRefreshListener, CallbackObject {
     private RecyclerView rvItems;
     private CircleImageView imgUser;
     private TextView tvFullname, tvRole, tvCash, tvMonth, tvHaveNewProduct,
@@ -66,7 +66,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     protected List<BaseModel> listTempImport = new ArrayList<>();
     private boolean doubleBackToExitPressedOnce = false;
     private Fragment mFragment;
-    private CallbackBoolean permissionListener;
+    private HomeAdapter adapterHome;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,8 +119,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     private void createMainItem() {
-        HomeAdapter adapter = new HomeAdapter(HomeActivity.this);
-        Util.createGridRV(rvItems, adapter, 3);
+        adapterHome = new HomeAdapter(HomeActivity.this);
+        Util.createGridRV(rvItems, adapterHome, 3);
 
         if (CustomSQL.getBoolean(Constants.LOGIN_SUCCESS)) {
             CustomSQL.setBoolean(Constants.LOGIN_SUCCESS, false);
@@ -203,6 +203,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         } else if (mFragment != null && mFragment instanceof TempImportFragment) {
             getSupportFragmentManager().popBackStack();
 
+        }else if (mFragment != null && mFragment instanceof NewUpdateDistributorFragment) {
+            getSupportFragmentManager().popBackStack();
+
         }else {
             if (doubleBackToExitPressedOnce) {
                 this.finish();
@@ -254,7 +257,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
             case 5:
                 if (CustomSQL.getBoolean(Constants.IS_ADMIN)) {
-                    Transaction.gotoDistributorActivity();
+                    NewUpdateDistributorFragment groupFragment = new NewUpdateDistributorFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Constants.DISTRIBUTOR, Distributor.getObjectString());
+                    changeFragment(groupFragment, bundle, true);
+
                 }
 
                 break;
@@ -317,6 +324,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                                 if (User.getCurrentRoleId() == Constants.ROLE_ADMIN) {
                                     Transaction.gotoStatusActivity();
                                 }
+
+                                break;
+
+                            case 4:
+                                Transaction.gotoDistributorActivity();
 
                                 break;
 
@@ -557,4 +569,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     }
 
+    @Override
+    public void onResponse(BaseModel object) {
+        adapterHome.reloadItem();
+    }
 }

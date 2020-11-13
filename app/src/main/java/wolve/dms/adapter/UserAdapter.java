@@ -95,13 +95,21 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserAdapterVie
     }
 
     public void updateUser(BaseModel user){
+        boolean checkExist = false;
         for (int i=0; i< mData.size(); i++){
+
             if (mData.get(i).getInt("id") == user.getInt("id")){
                 mData.remove(i);
                 mData.add(i, user);
+                checkExist = true;
                 notifyItemChanged(i);
                 break;
             }
+        }
+
+        if (!checkExist){
+            mData.add(user);
+            notifyItemInserted(mData.size() -1);
         }
     }
 

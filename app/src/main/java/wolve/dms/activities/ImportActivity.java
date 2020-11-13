@@ -34,6 +34,7 @@ import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
+import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
@@ -308,54 +309,83 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void submitEvent() {
-        String param = DataUtil.createPostImportJsonParam(toWarehouse.getInt("id"),
-                fromWarehouse.getInt("id"),
-                adapterChoosen.getmData(),
-                "");
+//        String param = DataUtil.createPostImportJsonParam(toWarehouse.getInt("id"),
+//                fromWarehouse.getInt("id"),
+//                adapterChoosen.getmData(),
+//                Util.isAdmin() ? User.getId() : 0,
+//                "");
 
             List<BaseModel> listDiff = DataUtil.listImportNotEnough( adapterChoosen.getmData());
 
             if (listDiff.size() > 0 && fromWarehouse.getInt("isMaster") == 2 && Util.isAdmin()){
-                alertInventoryNotEnough(fromWarehouse.getString("name"), new CallbackBoolean() {
-                    @Override
-                    public void onRespone(Boolean result) {
-                        CustomCenterDialog.importToTempWarehouse(masterWarehouse, fromWarehouse, listDiff, new CallbackBoolean() {
+                CustomCenterDialog.alertWithButton("Thiếu tồn kho!",
+                        "Tồn kho " + fromWarehouse.getString("name").toUpperCase() + " hiện tại không đủ, chọn 'Chờ nhập kho' để hoàn tất sau",
+                        "đồng ý",
+                        new CallbackBoolean() {
                             @Override
                             public void onRespone(Boolean result) {
                                 if (result){
-                                    CustomCenterDialog.alert("Thành công",
-                                            "Nhập từ kho tổng thành công, vui lòng nhập kho lại!",
-                                            "Đồng ý");
-                                    reloadListImport(false, false);
+                                    postImport(0);
                                 }
+
+
                             }
                         });
-                    }
-                });
+
+//                alertInventoryNotEnough(fromWarehouse.getString("name"), new CallbackBoolean() {
+//                    @Override
+//                    public void onRespone(Boolean result) {
 
 
 
-            }else {
-                postImport(param, new CallbackBoolean() {
-                    @Override
-                    public void onRespone(Boolean result) {
-                        if (result) {
-                            DataUtil.saveProductPopular(adapterChoosen.getmData());
-                            reloadAllWarehouse(new CallbackBoolean() {
-                                @Override
-                                public void onRespone(Boolean result) {
-                                    reloadListImport(false, false);
-                                    returnPreviousActivity();
+//                        CustomCenterDialog.importToTempWarehouse(masterWarehouse, fromWarehouse, listDiff, new CallbackBoolean() {
+//                            @Override
+//                            public void onRespone(Boolean result) {
+//                                if (result){
+//                                    CustomCenterDialog.alert("Thành công",
+//                                            "Nhập từ kho tổng thành công, vui lòng nhập kho lại!",
+//                                            "Đồng ý");
+//                                    reloadListImport(false, false);
+//                                }
+//                            }
+//                        });
+//                    }
+//                });
 
-                                }
-                            });
-                            viewPager.setCurrentItem(Util.isAdmin()? 2 : 3, true);
-                        }
-                    }
-                });
+
+
+            } else {
+                postImport(Util.isAdmin() ? User.getId() : 0);
+
 
             }
 
+    }
+
+    private void postImport(int accepUser){
+        String param = DataUtil.createPostImportJsonParam(toWarehouse.getInt("id"),
+                fromWarehouse.getInt("id"),
+                adapterChoosen.getmData(),
+                accepUser,
+                "");
+
+        postImport(param, new CallbackBoolean() {
+            @Override
+            public void onRespone(Boolean result) {
+                if (result) {
+                    DataUtil.saveProductPopular(adapterChoosen.getmData());
+                    reloadAllWarehouse(new CallbackBoolean() {
+                        @Override
+                        public void onRespone(Boolean result) {
+                            reloadListImport(false, false);
+                            returnPreviousActivity();
+
+                        }
+                    });
+                    viewPager.setCurrentItem(Util.isAdmin()? 2 : 3, true);
+                }
+            }
+        });
     }
 
     private void returnPreviousActivity() {
@@ -452,9 +482,9 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         //todo: show all include Master Warehouse
         getListWarehouse(new CallbackListObject() {
             @Override
-            public void onResponse(List<BaseModel> list) {
-                masterWarehouse = getMasterWarehouse(list);
-                dialogSelectWarehouse("CHỌN KHO XUẤT", filterListFromWarehouse(list), new CallbackObject() {
+            public void onResponse(List<BaseModel> listWa) {
+                masterWarehouse = getMasterWarehouse(listWa);
+                dialogSelectWarehouse("CHỌN KHO XUẤT", filterListFromWarehouse(listWa), new CallbackObject() {
                     @Override
                     public void onResponse(BaseModel object) {
                         if (object.getInt("isMaster") == 1) {
@@ -477,15 +507,17 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
                         }else {
                             getInventory(object.getInt("id"), new CallbackListObject() {
                                 @Override
-                                public void onResponse(List<BaseModel> list) {
+                                public void onResponse(List<BaseModel> listIn) {
+                                    int size = listIn.size();
                                     tvFromWarehouse.setText(Util.getStringIcon(object.getString("name"), "   ", R.string.icon_down));
                                     viewPager.setCurrentItem(0, true);
                                     fromWarehouse = object;
-                                    adapterProduct.updateData(object.getInt("isMaster") == 2? Product.getProductInventoryList(list) :list);
+                                    adapterProduct.updateData(object.getInt("isMaster") == 2? Product.getProductInventoryList(listIn) :listIn);
                                     adapterChoosen.emptyList();
 
                                     updateChoosenTitle(0);
-                                    refreshSearchView(0, list.size() > 0 ? true : false);
+                                    refreshSearchView(0, size > 0 ? true : false);
+                                    adapterProduct.notifyDataSetChanged();
 
                                 }
                             });

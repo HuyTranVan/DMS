@@ -6,23 +6,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.provider.MediaStore;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ShareCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.Fragment;
 
-import java.io.File;
 import java.util.List;
 
 import wolve.dms.BuildConfig;
 import wolve.dms.R;
 import wolve.dms.activities.CustomerActivity;
 import wolve.dms.activities.DistributorActivity;
+import wolve.dms.activities.NewUpdateDistributorFragment;
 import wolve.dms.activities.HomeActivity;
 import wolve.dms.activities.ImportActivity;
 import wolve.dms.activities.LoginActivity;

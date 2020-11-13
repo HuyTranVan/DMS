@@ -228,7 +228,7 @@ public class Constants {
     }
 
 
-    public static List<BaseModel> homeSettingSetup() {
+    public static List<BaseModel> homeSettingSetup(){
         List<BaseModel> list = new ArrayList<>();
 
         BaseModel item1 = new BaseModel();
@@ -254,6 +254,16 @@ public class Constants {
         item4.put("icon", Util.getIcon(R.string.icon_status));
         item4.put("text", "Trạng thái");
         list.add(3, item4);
+
+        BaseModel item5 = new BaseModel();
+        item5.put("position", 4);
+        item5.put("icon", Util.getIcon(R.string.icon_list_check));
+        item5.put("text", "Danh sách nhà phân phối");
+
+        if (User.getId() ==  2){
+            list.add(4, item5);
+        }
+
 
         return list;
     }

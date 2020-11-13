@@ -47,7 +47,9 @@ public class ApiUtil {
     public final static String SCANNER_DISTRIBUTOR_TAB = "DISTRIBUTOR!A1:z";
     public final static String SCANNER_CODE_TAB = "CODE!A%d:z";
 
-    public final static String PROVINCES = BASE_URL + "dms/token/util/provinces";
+    public final static String PROVINCES(){
+        return BASE_URL + "dms/token/util/provinces";
+    }
     public final static String DISTRICTS = BASE_URL + "dms/token/util/districts?provinceid=";
 //Login
     public final static String LOGIN_PARAM = "phone=%s&password=%s&fcm_token=%s";
@@ -194,11 +196,15 @@ public class ApiUtil {
     }
     //public final static String CUSTOMER_ORDERED = BASE_URL + "dms/token/customer/CustomerOrderedList";
 
+    //DISTRIBUTOR
     public final static String DISTRIBUTOR_DETAIL(){
         return BASE_URL + "dms/token/distributor/DistributorDetail?id=";
     }
+    public final static String DISTRIBUTORS(){
+        return BASE_URL + "dms/token/distributor/DistributorList";
+    }
 
-    public final static String DISTRIBUTOR_CREATE_PARAM = "%scompany=%s&address=%s&phone=%s&website=%s&thanks=%s&image=%s";
+    public final static String DISTRIBUTOR_CREATE_PARAM = "%sname=%s&province_id=%d&company=%s&address=%s&phone=%s&website=%s&thanks=%s&image=%s";
     public final static String DISTRIBUTOR_NEW(){
         return BASE_URL + "dms/token/distributor/DistributorNew";
     }

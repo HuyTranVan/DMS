@@ -124,43 +124,26 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.PrintBil
                 "ĐỒNG Ý", "HỦY", new CallbackBoolean() {
                     @Override
                     public void onRespone(Boolean result) {
-                        BaseModel param = createGetParam(ApiUtil.PAYMENT_DELETE() + mData.get(pos).getString("id"), false);
-                        new GetPostMethod(param, new NewCallbackCustom() {
-                            @Override
-                            public void onResponse(BaseModel result, List<BaseModel> list) {
-                                if (result.getBoolean("deleted")) {
-                                    Util.getInstance().stopLoading(true);
-                                    Util.showToast("Xóa thành công!");
-                                    mListener.onRespone(true);
+                        if (result){
+                            BaseModel param = createGetParam(ApiUtil.PAYMENT_DELETE() + mData.get(pos).getString("id"), false);
+                            new GetPostMethod(param, new NewCallbackCustom() {
+                                @Override
+                                public void onResponse(BaseModel result, List<BaseModel> list) {
+                                    if (result.getBoolean("deleted")) {
+                                        Util.getInstance().stopLoading(true);
+                                        Util.showToast("Xóa thành công!");
+                                        mListener.onRespone(true);
+                                    }
                                 }
-                            }
 
-                            @Override
-                            public void onError(String error) {
+                                @Override
+                                public void onError(String error) {
 
-                            }
-                        }, 1).execute();
-//                        CustomerConnect.DeletePayment(mData.get(pos).getString("id"), new CallbackCustom() {
-//                            @Override
-//                            public void onResponse(BaseModel result) {
-//                                if (result.getBoolean("deleted")) {
-//                                    Util.getInstance().stopLoading(true);
-//                                    Util.showToast("Xóa thành công!");
-//                                    mListener.onRespone(true);
-//                                }
-//
-//
-//                            }
-//
-//                            @Override
-//                            public void onError(String error) {
-//                                Util.getInstance().stopLoading(true);
-//                                Constants.throwError(error);
-//
-//                            }
-//
-//
-//                        }, true);
+                                }
+                            }, 1).execute();
+                        }
+
+
                     }
                 });
 
