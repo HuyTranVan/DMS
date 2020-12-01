@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_toRightOf="@+id/distributor_item_image"
-        android:layout_marginLeft="@dimen/_20sdp"
+        android:layout_marginLeft="@dimen/_10sdp"
         android:layout_marginTop="@dimen/_10sdp"
         android:layout_marginBottom="@dimen/_10sdp">
 
@@ -41,6 +41,43 @@
             android:layout_marginTop="@dimen/_5sdp" />
 
     </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true">
+
+        <TextView
+            android:id="@+id/distributor_item_active_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="6.2020"
+            android:textSize="@dimen/_10sdp"
+            android:layout_centerVertical="true"
+            android:textColor="@color/colorBlue"
+            android:layout_marginRight="@dimen/_5sdp"
+            android:layout_toLeftOf="@+id/distributor_item_active"/>
+
+        <com.suke.widget.SwitchButton
+            android:id="@+id/distributor_item_active"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_25sdp"
+            app:sb_checked="true"
+            app:sb_checked_color="@color/colorBlue"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_alignParentRight="true"/>
+
+        <TextView
+            android:id="@+id/distributor_item_active_cover"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_alignParentRight="true"/>
+
+    </RelativeLayout>
+
+
 
     <View
         android:id="@+id/line"

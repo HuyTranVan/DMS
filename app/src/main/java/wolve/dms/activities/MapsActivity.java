@@ -1,6 +1,8 @@
 package wolve.dms.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -29,6 +31,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -92,8 +95,7 @@ import wolve.dms.utils.Util;
 public class MapsActivity extends BaseActivity implements OnMapReadyCallback, View.OnClickListener,
         GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, GoogleMap.OnCameraIdleListener,
         GoogleMap.OnMapLongClickListener, RadioGroup.OnCheckedChangeListener,
-        GoogleMap.OnInfoWindowLongClickListener, GoogleMap.OnCameraMoveListener,
-        ViewTreeObserver.OnGlobalLayoutListener {
+        GoogleMap.OnCameraMoveListener, ViewTreeObserver.OnGlobalLayoutListener {
     public GoogleMap mMap;
     private FloatingActionMenu btnNewCustomer;
     private CardView btnLocation;
@@ -108,9 +110,9 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     private RelativeLayout rlSearchLayout;
     private RecyclerView rvSearch;
     private LinearLayout lnSheetBody, lnBottomSheet;
-    private CButton btnDirection, btnCall, btnShare, btnAddList, btnContact;
+    private CButton btnDirection, btnCall, btnShare, btnAddList ;
     private TextView tvShopname, tvAddress, tvTempBill, tvListWating,
-            tvLocation, tvReload, tvStatusDot, tvStatus, tvCheckin, tvDistance, btnClose;
+            tvLocation, tvReload, tvStatusDot, tvStatus, tvCheckin, tvDistance, btnClose, btnContact;
 
     private Handler mHandlerMoveMap = new Handler();
     private Handler mHandlerSearch = new Handler();
@@ -126,6 +128,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     protected List<BaseModel> listCustomerWaiting = new ArrayList<>();
     private List<Marker> listMarker = new ArrayList<>();
     private Fragment mFragment;
+    private BaseModel currentCustomer;
 
     @Override
     public int getResourceLayout() {
@@ -185,7 +188,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style_map));
         mMap.setOnCameraMoveListener(this);
         mMap.setOnCameraIdleListener(this);
-        mMap.setOnInfoWindowLongClickListener(this);
+        //mMap.setOnInfoWindowLongClickListener(this);
         mMap.setOnMapLongClickListener(this);
         mMap.setOnMarkerClickListener(this);
         mMap.setOnMapClickListener(this);
@@ -629,25 +632,25 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     }
 
-    @Override
-    public void onInfoWindowLongClick(Marker marker) {
-        final Customer customer = new Customer((JSONObject) marker.getTag());
-        currentPhone = customer.getString("phone");
-
-        if (!currentPhone.equals("")) {
-            CustomCenterDialog.alertWithCancelButton(null, "Gọi điện thoại cho " + customer.getString("name") + " (" + customer.getString("phone") + ")", "ĐỒNG Ý", "HỦY", new CallbackBoolean() {
-                @Override
-                public void onRespone(Boolean result) {
-                    Transaction.openCallScreen(currentPhone);
-
-                }
-            });
-        } else {
-            Util.showSnackbar("Khách hàng chưa có số điện thoại", null, null);
-        }
-
-
-    }
+//    @Override
+//    public void onInfoWindowLongClick(Marker marker) {
+//        final Customer customer = new Customer((JSONObject) marker.getTag());
+//        currentPhone = customer.getString("phone");
+//
+//        if (!currentPhone.equals("")) {
+//            CustomCenterDialog.alertWithCancelButton(null, "Gọi điện thoại cho " + customer.getString("name") + " (" + customer.getString("phone") + ")", "ĐỒNG Ý", "HỦY", new CallbackBoolean() {
+//                @Override
+//                public void onRespone(Boolean result) {
+//                    Transaction.openCallScreen(currentPhone);
+//
+//                }
+//            });
+//        } else {
+//            Util.showSnackbar("Khách hàng chưa có số điện thoại", null, null);
+//        }
+//
+//
+//    }
 
     @Override
     public void onCameraMove() {
@@ -1070,6 +1073,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     }
 
     private void updateBottomDetail(final BaseModel customer, long distance) {
+        currentCustomer = customer;
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
         final String title = Constants.shopName[customer.getInt("shopType")] + " " + customer.getString("signBoard");
@@ -1089,6 +1093,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
         BaseModel param = createGetParam(ApiUtil.CUSTOMER_GETDETAIL() + customer.getString("id"), false);
         new GetPostMethod(param, new NewCallbackCustom() {
+            @SuppressLint("WrongConstant")
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
                 progressLoadCustomer.setVisibility(View.GONE);
@@ -1140,7 +1145,54 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                     }
                 });
 
-                saveContactEvent(customer);
+                if (Util.isPhoneFormat(customer.getString("phone")) != null){
+                    btnContact.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (PermissionChecker.checkSelfPermission(Util.getInstance().getCurrentActivity(), Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED &&
+                                    PermissionChecker.checkSelfPermission(Util.getInstance().getCurrentActivity(), Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED){
+
+                                if (Contacts.contactExists(Util.getPhoneValue(customer.getString("phone")))){
+                                    btnContact.setVisibility(View.GONE);
+                                }else {
+                                    saveContactEvent(customer);
+
+                                }
+
+                            }else {
+                                ActivityCompat.requestPermissions(Util.getInstance().getCurrentActivity(), new String[]{
+                                                android.Manifest.permission.READ_CONTACTS,
+                                                android.Manifest.permission.WRITE_CONTACTS},
+                                        Constants.REQUEST_PERMISSION);
+
+                            }
+
+                        }
+                    });
+
+                    if (PermissionChecker.checkSelfPermission(Util.getInstance().getCurrentActivity(), Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED &&
+                            PermissionChecker.checkSelfPermission(Util.getInstance().getCurrentActivity(), Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED){
+
+                        if (Contacts.contactExists(Util.getPhoneValue(customer.getString("phone")))){
+                            btnContact.setVisibility(View.GONE);
+                        }else {
+                            if (CustomFixSQL.getInt(Constants.AUTO_SAVE_CONTACT) == 1){
+                                saveContactEvent(customer);
+
+                            }else {
+                                btnContact.setVisibility(View.VISIBLE);
+                            }
+                        }
+
+                    }else {
+                        btnContact.setVisibility(View.VISIBLE);
+
+                    }
+
+                }else {
+                    btnContact.setVisibility(View.GONE);
+                }
+
 
 
             }
@@ -1155,7 +1207,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         btnCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Transaction.openCallScreen(currentPhone);
+                checkPhonePermission();
+
             }
         });
 
@@ -1211,28 +1264,65 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     }
 
-    private void saveContactEvent(BaseModel customer) {
-        btnContact.setOnClickListener(new View.OnClickListener() {
+    @SuppressLint("WrongConstant")
+    private void  saveContactEvent(BaseModel customer) {
+        Contacts.InsertContact(customer, new CallbackBoolean() {
             @Override
-            public void onClick(View view) {
+            public void onRespone(Boolean result) {
+                if (result){
+                    btnContact.setVisibility(View.GONE);
+                    if (result){
+                        CustomFixSQL.setInt(Constants.AUTO_SAVE_CONTACT, 1);
 
-                btnContact.setVisibility(View.GONE);
-                Contacts.InsertContact(customer);
+                    }else {
+                        CustomFixSQL.setInt(Constants.AUTO_SAVE_CONTACT, 0);
+                    }
+
+                }
             }
         });
-        if (Util.isPhoneFormat(customer.getString("phone")) != null){
-//            if (CustomFixSQL.hasKey(Constants.AUTO_SAVE_CONTACT)){
-                if (CustomFixSQL.getInt(Constants.AUTO_SAVE_CONTACT) == 1){
-                    btnContact.setVisibility(View.GONE);
-                    Contacts.InsertContact(customer);
 
-                }else {
-                    if (Contacts.contactExists(Util.getPhoneValue(customer.getString("phone")))){
-                        btnContact.setVisibility(View.GONE);
-                    }else {
-                        btnContact.setVisibility(View.VISIBLE);
-                    }
-                }
+
+        if (PermissionChecker.checkSelfPermission(Util.getInstance().getCurrentActivity(), Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED &&
+                PermissionChecker.checkSelfPermission(Util.getInstance().getCurrentActivity(), Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED){
+
+
+
+//            if (CustomFixSQL.getInt(Constants.AUTO_SAVE_CONTACT) == 1){
+//                btnContact.setVisibility(View.GONE);
+//
+//
+//            }else {
+//                if (Contacts.contactExists(Util.getPhoneValue(customer.getString("phone")))){
+//                    btnContact.setVisibility(View.GONE);
+//                }else {
+//                    btnContact.setVisibility(View.VISIBLE);
+//                }
+//            }
+
+        }else {
+            ActivityCompat.requestPermissions(Util.getInstance().getCurrentActivity(), new String[]{
+                    android.Manifest.permission.READ_CONTACTS,
+                    android.Manifest.permission.WRITE_CONTACTS},
+                    Constants.REQUEST_PERMISSION);
+
+        }
+
+
+
+//        btnContact.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                btnContact.setVisibility(View.GONE);
+//                Contacts.InsertContact(customer);
+//            }
+//        });
+
+
+
+//            if (CustomFixSQL.hasKey(Constants.AUTO_SAVE_CONTACT)){
+
 
 //            }else {
 //                if (Contacts.contactExists(Util.getPhoneValue(customer.getString("phone")))){
@@ -1243,9 +1333,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 //
 //            }
 
-        }else {
-           btnContact.setVisibility(View.GONE);
-        }
+
 
 //        else {
 //            if (Util.isPhoneFormat(customer.getString("phone")) != null &&
@@ -1356,6 +1444,49 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                         });
             }
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == Constants.REQUEST_PERMISSION) {
+            if (grantResults.length > 0) {
+                boolean hasDenied = false;
+                for (int i = 0; i < grantResults.length; i++) {
+                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED){
+                        hasDenied = true;
+                        break;
+                    }
+                }
+
+                if (!hasDenied){
+                    if (permissions[0].equals(android.Manifest.permission.CALL_PHONE)){
+                        Transaction.openCallScreen(currentPhone);
+
+                    }else if (permissions[0].equals(android.Manifest.permission.READ_CONTACTS) ||
+                            permissions[0].equals(Manifest.permission.WRITE_CONTACTS)){
+
+                        saveContactEvent(currentCustomer);
+
+                    }
+
+
+                }
+
+            }
+        }
+
+    }
+
+    @SuppressLint("WrongConstant")
+    private void checkPhonePermission(){
+        if (PermissionChecker.checkSelfPermission(Util.getInstance().getCurrentActivity(), Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED){
+            Transaction.openCallScreen(currentPhone);
+
+        }else {
+            ActivityCompat.requestPermissions(Util.getInstance().getCurrentActivity(), new String[]{
+                            Manifest.permission.CALL_PHONE}, Constants.REQUEST_PERMISSION);
+
+        }
     }
 
 //    private void setWatingListVisibilityScreen(boolean isShow){

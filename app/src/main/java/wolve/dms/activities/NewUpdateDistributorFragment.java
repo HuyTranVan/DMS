@@ -9,12 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -26,8 +29,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.adapter.AdminsAdapter;
+import wolve.dms.adapter.UserAdapter;
 import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackListObject;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
@@ -62,15 +68,22 @@ public class NewUpdateDistributorFragment extends Fragment implements View.OnCli
     private ImageView btnBack;
     private CInputForm tvCompany, tvPhone, tvAddress, tvSite, tvThanks, tvName, tvProvince;
     private Button btnSubmit;
-    private TextView tvTitle;
+    private TextView tvTitle, tvAddTitle, tvExpire;
     private RelativeLayout rlImage;
     private ImageView image;
+    private LinearLayout btnAdminNew, rlAdmin;
+    private RecyclerView rvAdmin;
+    private ProgressBar progressBar;
 
     private BaseModel currentDistributor;
     private Uri imageChangeUri;
     private String imgURL;
     private List<BaseModel> mProvinces = new ArrayList<>();
+    private List<BaseModel> mUsers = new ArrayList<>();
     private CallbackObject onDataPass;
+    private AdminsAdapter adminAdapter;
+    private String TEXT_NEW_ADMIN = "tạo quản trị viên";
+    private String TEXT_NEW_USER = "tạo nhân viên";
 
     @Override
     public void onAttach(Context context) {
@@ -104,6 +117,12 @@ public class NewUpdateDistributorFragment extends Fragment implements View.OnCli
         tvName = view.findViewById(R.id.add_distributor_name);
         tvProvince = view.findViewById(R.id.add_distributor_province);
         image = view.findViewById(R.id.add_distributor_image);
+        btnAdminNew = view.findViewById(R.id.add_distributor_add_admin);
+        rvAdmin = view.findViewById(R.id.add_distributor_rvadmin);
+        rlAdmin = view.findViewById(R.id.add_distributor_admin_group);
+        progressBar = view.findViewById(R.id.add_distributor_progress);
+        tvAddTitle = view.findViewById(R.id.add_distributor_add_admin_title);
+        tvExpire = view.findViewById(R.id.add_distributor_expire_to);
 
     }
 
@@ -111,7 +130,6 @@ public class NewUpdateDistributorFragment extends Fragment implements View.OnCli
         String bundle = getArguments().getString(Constants.DISTRIBUTOR);
         if (bundle != null) {
             currentDistributor = new BaseModel(bundle);
-            updateView(currentDistributor);
 
         }else {
             currentDistributor = new BaseModel();
@@ -119,43 +137,63 @@ public class NewUpdateDistributorFragment extends Fragment implements View.OnCli
             currentDistributor.put("province_id", 0);
         }
 
-//        BaseModel param = createGetParam(ApiUtil.DISTRIBUTOR_DETAIL() + Distributor.getDistributorId(), false);
-//        new GetPostMethod(param, new NewCallbackCustom() {
-//            @Override
-//            public void onResponse(BaseModel result, List<BaseModel> list) {
-//                currentDistributor = result;
-//                updateView(currentDistributor);
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }, 1).execute();
-
+        updateView(currentDistributor);
 
     }
 
-    private void updateView(BaseModel content) {
+    private void updateView(BaseModel distributor) {
+        //mAdmins = distributor.getList("admins");
+
         tvName.setBoldStyle();
         tvProvince.setBoldStyle();
-        tvName.setText(content.getString("name"));
-        tvProvince.setText(content.getBaseModel("province").getString("name"));
-        tvCompany.setText(content.getString("company"));
-        tvAddress.setText(content.getString("address"));
-        tvPhone.setText(Util.FormatPhone(content.getString("phone")));
-        tvSite.setText(content.getString("website"));
-        tvThanks.setText(content.getString("thanks"));
-        tvTitle.setText(content.getString("name"));
-        if (!Util.checkImageNull(content.getString("image"))){
-            Glide.with(this).load(content.getString("image")).fitCenter().into(image);
-            imgURL = content.getString("image");
+        tvName.setText(distributor.getString("name"));
+        tvProvince.setText(distributor.getBaseModel("province").getString("name"));
+        tvCompany.setText(distributor.getString("company"));
+        tvAddress.setText(distributor.getString("address"));
+        tvPhone.setText(Util.FormatPhone(distributor.getString("phone")));
+        tvSite.setText(distributor.getString("website"));
+        tvThanks.setText(distributor.getString("thanks"));
+        tvTitle.setText(distributor.getString("name"));
+        if (!Util.checkImageNull(distributor.getString("image"))){
+            Glide.with(this).load(distributor.getString("image")).fitCenter().into(image);
+            imgURL = distributor.getString("image");
 
         } else {
             Glide.with(this).load(R.drawable.lub_logo_red).fitCenter().into(image);
             imgURL = "";
 
         }
+
+        if (distributor.hasKey("valid_to")){
+            tvExpire.setVisibility(View.VISIBLE);
+            if (distributor.getLong("valid_to") > Util.CurrentTimeStamp()){
+                tvExpire.setText(String.format("Được kích hoạt đến %s", Util.DateHourString(distributor.getLong("valid_to"))));
+                tvExpire.setBackgroundColor(getResources().getColor(R.color.colorBlue));
+            }else {
+                tvExpire.setText("Tải khoản hết hạn");
+                tvExpire.setBackgroundColor(getResources().getColor(R.color.colorRedTransparent));
+            }
+
+
+        }else {
+            tvExpire.setVisibility(View.GONE);
+        }
+
+        if (User.getId() == 2){
+            if (currentDistributor.getInt("id") >0){
+                loadUsers();
+                rlAdmin.setVisibility(View.VISIBLE);
+
+            }else {
+                rlAdmin.setVisibility(View.GONE);
+            }
+
+        }else {
+            rlAdmin.setVisibility(View.GONE);
+
+        }
+
+
 
 
         tvName.setFocusable(User.getId() != 2 ? false : true);
@@ -188,6 +226,7 @@ public class NewUpdateDistributorFragment extends Fragment implements View.OnCli
         btnBack.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
         rlImage.setOnClickListener(this);
+        btnAdminNew.setOnClickListener(this);
         phoneEvent();
 
     }
@@ -201,6 +240,10 @@ public class NewUpdateDistributorFragment extends Fragment implements View.OnCli
 
             case R.id.add_distributor_submit:
                 submitDistributor();
+                break;
+
+            case R.id.add_distributor_add_admin:
+                dialogNewAdmin();
                 break;
 
             case R.id.add_distributor_image_parent:
@@ -284,13 +327,33 @@ public class NewUpdateDistributorFragment extends Fragment implements View.OnCli
         new GetPostMethod(param, new NewCallbackCustom() {
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
+                currentDistributor = result;
                 if (result.getInt("id") == Distributor.getId()){
                     CustomSQL.setBaseModel(Constants.DISTRIBUTOR, result);
-
                 }
-                onDataPass.onResponse(result);
-                getActivity().onBackPressed();
-                //Transaction.gotoHomeActivityRight(true);
+                updateView(currentDistributor);
+                if (result.getInt("user") < 1){
+                    CustomCenterDialog.alertWithCancelButton("Admin!!!",
+                            "Tạo tài khoản Admin để kích hoạt NPP " + currentDistributor.getString("name"),
+                            "đồng ý",
+                            "để sau", new CallbackBoolean() {
+                                @Override
+                                public void onRespone(Boolean result) {
+                                    if (!result){
+                                        onDataPass.onResponse(currentDistributor);
+                                        getActivity().onBackPressed();
+                                    }
+                                }
+                            });
+
+                }else {
+                    onDataPass.onResponse(currentDistributor);
+                    getActivity().onBackPressed();
+                }
+
+
+
+
             }
 
             @Override
@@ -371,6 +434,53 @@ public class NewUpdateDistributorFragment extends Fragment implements View.OnCli
             }
         }, 0).execute();
 
+    }
+
+    private void dialogNewAdmin(){
+        CustomCenterDialog.showDialogNewAdmin(mUsers.size() >0 ? "tạo nhân viên" : "tạo quản trị viên",
+                currentDistributor.getInt("id"),
+                mUsers.size() >0 ? 3 : 1,
+                mUsers.size() >0?  false : true,
+                new CallbackObject() {
+            @Override
+            public void onResponse(BaseModel object) {
+                mUsers.add(object);
+                updateView(currentDistributor);
+                Util.showToast("Tạo nhân viên thành công");
+
+
+            }
+        });
+    }
+
+    private void loadUsers(){
+        progressBar.setVisibility(View.VISIBLE);
+        BaseModel param = createGetParam(String.format("%s?distributor_id=%d", ApiUtil.USERS(), currentDistributor.getInt("id")), true);
+        new GetPostMethod(param, new NewCallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result, List<BaseModel> list) {
+                progressBar.setVisibility(View.GONE);
+                mUsers = list;
+
+                if (mUsers.size() >0){
+                    tvAddTitle.setText(TEXT_NEW_USER);
+                    rvAdmin.setVisibility(View.VISIBLE);
+                    adminAdapter = new AdminsAdapter(mUsers);
+                    Util.createLinearRV(rvAdmin, adminAdapter);
+
+                }else {
+                    tvAddTitle.setText(TEXT_NEW_ADMIN);
+                    rvAdmin.setVisibility(View.GONE);
+
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                progressBar.setVisibility(View.GONE);
+            }
+        }, 0).execute();
     }
 
 

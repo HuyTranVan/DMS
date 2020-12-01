@@ -9,8 +9,8 @@ android {
         multiDexEnabled true
         minSdkVersion 21
 //        targetSdkVersion 27
-        versionCode 16
-        versionName "1.6"
+        versionCode 18
+        versionName "1.8"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
@@ -31,7 +31,7 @@ android {
             buildConfigField "boolean", "DEBUG_FLAG", 'true'
             buildConfigField "Boolean", "FLAG", 'false'
             buildConfigField "String", "SERVER_URL", '"http://10.0.2.2/"'
-//            buildConfigField "String", "SERVER_URL", '"http://192.168.1.4/"'
+//            buildConfigField "String", "SERVER_URL", '"http://localhost/"'
 
         }
 

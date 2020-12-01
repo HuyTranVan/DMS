@@ -1,20 +1,18 @@
 {
-  "version": 1,
+  "version": 2,
   "artifactType": {
     "type": "APK",
     "kind": "Directory"
   },
   "applicationId": "wolve.dms",
-  "variantName": "release",
+  "variantName": "processReleaseResources",
   "elements": [
     {
       "type": "SINGLE",
       "filters": [],
-      "properties": [],
-      "versionCode": 16,
-      "versionName": "1.6",
-      "enabled": true,
-      "outputFile": "DMSRELEASE_121020.apk"
+      "versionCode": 18,
+      "versionName": "1.8",
+      "outputFile": "DMSRELEASE_011220.apk"
     }
   ]
 }

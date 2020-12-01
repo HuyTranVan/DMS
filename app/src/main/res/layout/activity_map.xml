@@ -267,8 +267,20 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="@dimen/_20sdp"
                         android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/map_detail_contact"
+                            android:layout_width="@dimen/_20sdp"
+                            android:layout_height="match_parent"
+                            android:fontFamily="@font/font_awesome"
+                            android:background="?selectableItemBackgroundBorderless"
+                            android:text="@string/icon_contact"
+                            android:textSize="@dimen/_12sdp"
+                            android:textColor="@color/colorGreen"
+                            android:gravity="center"
+                            android:layout_marginRight="@dimen/_5sdp"/>
 
                         <TextView
                             android:id="@+id/map_detail_shopname"
@@ -278,7 +290,9 @@
                             android:textAllCaps="true"
                             android:textColor="@color/black_text_color"
                             android:textSize="@dimen/_14sdp"
-                            android:layout_centerInParent="true" />
+                            android:textStyle="bold"
+                            android:layout_gravity="center_vertical"
+                            android:singleLine="true"/>
 
                         <TextView
                             android:id="@+id/map_detail_tempbill"
@@ -431,17 +445,17 @@
                             app:textColor="@color/black_text_color"
                             app:backgroundLayout="@drawable/btn_round_white_border_blue" />
 
-                        <wolve.dms.customviews.CButton
-                            android:id="@+id/map_detail_contact"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginRight="@dimen/_10sdp"
-                            android:orientation="horizontal"
-                            app:backgroundLayout="@drawable/btn_round_white_border_blue"
-                            app:iconColor="@color/colorBlue"
-                            app:iconText="@string/icon_contact"
-                            app:text="Lưu"
-                            app:textColor="@color/black_text_color" />
+<!--                        <wolve.dms.customviews.CButton-->
+<!--                            android:id="@+id/map_detail_contact"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_marginRight="@dimen/_10sdp"-->
+<!--                            android:orientation="horizontal"-->
+<!--                            app:backgroundLayout="@drawable/btn_round_white_border_blue"-->
+<!--                            app:iconColor="@color/colorBlue"-->
+<!--                            app:iconText="@string/icon_contact"-->
+<!--                            app:text="Lưu"-->
+<!--                            app:textColor="@color/black_text_color" />-->
 
                         <wolve.dms.customviews.CButton
                             android:id="@+id/map_detail_share"

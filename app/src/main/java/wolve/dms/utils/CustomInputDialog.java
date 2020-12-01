@@ -196,7 +196,7 @@ public class CustomInputDialog {
                 int margin = Util.getInstance().getCurrentActivity().getResources().getDimensionPixelSize(R.dimen._2sdp);
 
                 FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                params.setMargins(margin, 0, margin, heightDifference);
+                params.setMargins(margin, 0, margin, margin);
                 lnParent.setLayoutParams(params);
 
 

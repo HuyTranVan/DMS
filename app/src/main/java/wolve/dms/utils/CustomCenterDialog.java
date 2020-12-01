@@ -54,6 +54,7 @@ import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.models.User;
 
+import static wolve.dms.activities.BaseActivity.createGetParam;
 import static wolve.dms.activities.BaseActivity.createPostParam;
 
 /**
@@ -962,8 +963,10 @@ public class CustomCenterDialog {
         btnSubmit.setText("ĐĂNG NHẬP");
         tvTitle.setText(title);
 
+        Util.textPhoneEvent(edPhone, null);
         edPhone.setText(user == null ? "" : user.getString("phone"));
         Util.showKeyboardDelay(user == null || user.getString("phone").equals("") ? edPhone : edPass);
+
 
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -972,72 +975,65 @@ public class CustomCenterDialog {
                 dialogResult.dismiss();
             }
         });
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
+        btnSubmit.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 Util.hideKeyboard(edPass);
 
                 if (!edPhone.getText().toString().equals("") && !edPass.getText().toString().equals("")) {
-                    dialogResult.dismiss();
                     String fcm_token = User.getFCMToken();
                     BaseActivity activity = (BaseActivity) Util.getInstance().getCurrentActivity();
-                    activity.logout(new CallbackBoolean() {
+
+                    BaseModel paramCheck = createGetParam(String.format(ApiUtil.CHECK_RIGHT_USER(),
+                            Util.getPhoneValue(edPhone),
+                            edPass.getText().toString()), false);
+
+                    new GetPostMethod(paramCheck, new NewCallbackCustom() {
                         @Override
-                        public void onRespone(Boolean result) {
-                            if (result){
-                                activity.login(edPhone.getText().toString().trim(),
-                                        edPass.getText().toString().trim(),
-                                        fcm_token,
-                                        new CallbackBoolean() {
-                                            @Override
-                                            public void onRespone(Boolean result) {
-                                                if (result){
-                                                    if (result) {
-                                                        CustomSQL.setBoolean(Constants.LOGIN_SUCCESS, true);
-                                                        Util.showToast("Đăng nhập thành công");
-                                                        mlistener.onRespone(true);
+                        public void onResponse(BaseModel result, List<BaseModel> list) {
+                            if (result.getBoolean("success")){
+                                dialogResult.dismiss();
+                                activity.logout(new CallbackBoolean() {
+                                    @Override
+                                    public void onRespone(Boolean result) {
+                                        if (result){
+                                            activity.login(Util.getPhoneValue(edPhone),
+                                                    edPass.getText().toString().trim(),
+                                                    fcm_token,
+                                                    new CallbackBoolean() {
+                                                        @Override
+                                                        public void onRespone(Boolean result) {
+                                                            if (result){
+                                                                if (result) {
+                                                                    CustomSQL.setBoolean(Constants.LOGIN_SUCCESS, true);
+                                                                    Util.showToast("Đăng nhập thành công");
+                                                                    mlistener.onRespone(true);
 
-                                                    } else {
-                                                        mlistener.onRespone(false);
-                                                    }
+                                                                } else {
+                                                                    mlistener.onRespone(false);
+                                                                }
 
-                                                }
-                                            }
-                                        });
+                                                            }
+                                                        }
+                                                    });
+
+                                        }
+                                    }
+                                });
 
                             }
                         }
-                    });
-//                    UserConnect.Logout(new CallbackCustom() {
-//                        @Override
-//                        public void onResponse(BaseModel result) {
-//                            if (result.getBoolean("success")) {
-//
-//                                UserConnect.doLogin(edPhone.getText().toString().trim(),
-//                                        edPass.getText().toString().trim(),
-//                                        fcm_token,
-//                                        new CallbackBoolean() {
-//                                            @Override
-//                                            public void onRespone(Boolean result) {
-//                                                if (result) {
-//                                                    CustomSQL.setBoolean(Constants.LOGIN_SUCCESS, true);
-//                                                    Util.showToast("Đăng nhập thành công");
-//                                                    mlistener.onRespone(true);
-//
-//                                                } else {
-//                                                    mlistener.onRespone(false);
-//                                                }
-//                                            }
-//                                        });
-//
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void onError(String error) {
-//
-//                        }
-//                    }, true);
+
+                        @Override
+                        public void onError(String error) {
+
+                        }
+                    },1).execute();
+
+
+
+
+
 
                 } else {
                     Util.showToast("Nhập đầy đủ username và password");
@@ -1240,6 +1236,78 @@ public class CustomCenterDialog {
 
             }
         });
+    }
+
+    public static void showDialogNewAdmin(String title, int distributor_id, int role, boolean isCreateAdmin, final CallbackObject mListener) {
+        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_new_admin);
+
+        final Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
+        final Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
+        TextView tvTitle = (TextView) dialogResult.findViewById(R.id.dialog_newadmin_title);
+        final EditText edName = (EditText) dialogResult.findViewById(R.id.dialog_newadmin_name);
+        final EditText edPhone = (EditText) dialogResult.findViewById(R.id.dialog_newadmin_phone);
+
+        btnCancel.setText("QUAY LẠI");
+        btnSubmit.setText("TẠO MỚI");
+        tvTitle.setText(title);
+
+        Util.showKeyboardDelay(edPhone);
+        Util.textPhoneEvent(edPhone, new CallbackString() {
+            @Override
+            public void Result(String s) {
+
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogResult.dismiss();
+
+            }
+        });
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.hideKeyboard(v);
+                if (Util.isEmpty(edName)){
+                    Util.showToast("Tên hiển thị không để trống");
+
+                }else if (Util.isPhoneFormat(edPhone.getText().toString()) == null){
+                    Util.showToast("Sai số điện thoại");
+
+                }else {
+                    BaseModel param = createPostParam(ApiUtil.ADMIN_NEW(),
+                            String.format(ApiUtil.ADMIN_CREATE_PARAM,
+                                    Util.encodeString(edName.getText().toString()),
+                                    Util.getPhoneValue(edPhone),
+                                    Util.encodeString(isCreateAdmin? "KHO TỔNG" : edName.getText().toString().substring(edName.getText().toString().lastIndexOf(" ") + 1)),
+                                    distributor_id,
+                                    role),
+                            false,
+                            false);
+                    new GetPostMethod(param, new NewCallbackCustom() {
+                        @Override
+                        public void onResponse(BaseModel result, List<BaseModel> list) {
+                            dialogResult.dismiss();
+                            mListener.onResponse(result);
+
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            dialogResult.dismiss();
+                        }
+                    },1).execute();
+
+                }
+
+
+
+            }
+        });
+
+
     }
 
 

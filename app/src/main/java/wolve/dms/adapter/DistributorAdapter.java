@@ -11,28 +11,24 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.suke.widget.SwitchButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.R;
 import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackClickAdapter;
-import wolve.dms.callback.CallbackDeleteAdapter;
+import wolve.dms.callback.CallbackLong;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Product;
-import wolve.dms.models.ProductGroup;
-import wolve.dms.models.User;
-import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
 
-import static wolve.dms.activities.BaseActivity.createGetParam;
+import static wolve.dms.activities.BaseActivity.createPostParam;
 
 
 /**
@@ -74,6 +70,85 @@ public class DistributorAdapter extends RecyclerView.Adapter<DistributorAdapter.
 
         }
 
+        if (mData.get(position).getLong("valid_to") - Util.CurrentTimeStamp() >0){
+            holder.swActive.setChecked(true);
+            holder.tvDate.setVisibility(View.VISIBLE);
+            holder.tvDate.setText(Util.DateDisplay(mData.get(position).getLong("valid_to") , "dd.MM.yyyy"));
+
+        }else {
+            holder.swActive.setChecked(false);
+            holder.tvDate.setVisibility(View.GONE);
+
+        }
+        holder.mCover.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!holder.swActive.isChecked()){
+                    CustomBottomDialog.selectDate(String.format("%s >>> ACTIVE", mData.get(position).getString("name")),
+                            new CallbackLong() {
+                                @Override
+                                public void onResponse(Long value) {
+                                    if (value <= Util.CurrentTimeStamp()){
+                                        Util.showToast("Chọn sai thời gian");
+
+                                    }else {
+                                        String message = String.format("Kích hoạt tài khoản %s đến %s",
+                                                mData.get(position).getString("name"),
+                                                Util.DateHourString(value));
+                                        CustomCenterDialog.alertWithCancelButton(null,
+                                                message,
+                                                "đồng ý",
+                                                "quay lại",
+                                                new CallbackBoolean() {
+                                                    @Override
+                                                    public void onRespone(Boolean result) {
+                                                        if (result){
+                                                            updateActiveDistributor(mData.get(position),value,  new CallbackObject() {
+                                                                @Override
+                                                                public void onResponse(BaseModel object) {
+                                                                    mData.get(position).put("valid_to", object.getLong("valid_to"));
+                                                                    notifyItemChanged(position);
+                                                                }
+                                                            });
+
+                                                        }
+                                                    }
+                                                });
+                                    }
+
+                                }
+                            });
+
+
+
+
+                }else {
+                    CustomCenterDialog.alertWithCancelButton("Deactive!!",
+                            String.format("Tạm ngừng hoạt động %s từ %s", mData.get(position).getString("name"), Util.CurrentMonthYearHour()),
+                            "đồng ý",
+                            "quay lại",
+                            new CallbackBoolean() {
+                                @Override
+                                public void onRespone(Boolean result) {
+                                    if (result){
+                                        updateActiveDistributor(mData.get(position),0,  new CallbackObject() {
+                                            @Override
+                                            public void onResponse(BaseModel object) {
+                                                mData.get(position).put("valid_to", object.getLong("valid_to"));
+                                                notifyItemChanged(position);
+                                            }
+                                        });
+
+                                    }
+                                }
+                            });
+
+
+                }
+
+            }
+        });
+
         holder.rlParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,9 +168,10 @@ public class DistributorAdapter extends RecyclerView.Adapter<DistributorAdapter.
 
     public class ProductAdapterViewHolder extends RecyclerView.ViewHolder {
         private View line;
-        private TextView tvName, tvLocation;
+        private TextView tvName, tvLocation, mCover, tvDate;
         private RelativeLayout rlParent;
         private ImageView imageDistributor;
+        private SwitchButton swActive;
 
         public ProductAdapterViewHolder(View itemView) {
             super(itemView);
@@ -104,6 +180,9 @@ public class DistributorAdapter extends RecyclerView.Adapter<DistributorAdapter.
             tvLocation = (TextView) itemView.findViewById(R.id.distributor_item_location);
             rlParent = (RelativeLayout) itemView.findViewById(R.id.distributor_item_parent);
             imageDistributor = itemView.findViewById(R.id.distributor_item_image);
+            swActive = itemView.findViewById(R.id.distributor_item_active);
+            mCover = itemView.findViewById(R.id.distributor_item_active_cover);
+            tvDate = itemView.findViewById(R.id.distributor_item_active_date);
         }
 
     }
@@ -128,6 +207,25 @@ public class DistributorAdapter extends RecyclerView.Adapter<DistributorAdapter.
             mData.add(distributor);
             notifyItemInserted(mData.size() -1);
         }
+    }
+
+    private void updateActiveDistributor(BaseModel distributor, long time, CallbackObject listener){
+        BaseModel param = createPostParam(ApiUtil.ACTIVE_NEW(),
+                String.format(ApiUtil.ACTIVE_CREATE_PARAM, distributor.getInt("id"), time),
+                false,
+                false);
+        new GetPostMethod(param, new NewCallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result, List<BaseModel> list) {
+                listener.onResponse(result);
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        },1).execute();
+
     }
 
 }

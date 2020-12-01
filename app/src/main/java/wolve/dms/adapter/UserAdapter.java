@@ -20,6 +20,7 @@ import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 
@@ -39,7 +40,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserAdapterVie
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mData = list;
-        mListener = callbackClickAdapter;
+        if (callbackClickAdapter != null){
+            mListener = callbackClickAdapter;
+        }
+
+        DataUtil.sortbyStringKey("role", mData, false);
+        DataUtil.sortbyStringKey("active", mData, true);
+
+
 
     }
 
@@ -56,6 +64,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserAdapterVie
         holder.tvRole.setText(User.getRoleString(mData.get(position).getInt("role")));
 
         holder.line.setVisibility(position == mData.size() - 1 ? View.GONE : View.VISIBLE);
+        holder.tvCover.setVisibility(mData.get(position).getInt("active") == 1? View.GONE : View.VISIBLE);
         if (!Util.checkImageNull(mData.get(position).getString("image"))) {
             Glide.with(mContext).load(mData.get(position).getString("image")).centerCrop().into(holder.imageUser);
 
@@ -63,9 +72,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserAdapterVie
         holder.rlParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mListener.onRespone(mData.get(position).BaseModelstoString(), mData.get(position).getInt("id"));
+                if (mListener != null){
+                    mListener.onRespone(mData.get(position).BaseModelstoString(), mData.get(position).getInt("id"));
+
+                }
             }
         });
+        holder.tvCover.setOnClickListener(null);
 
     }
 
@@ -76,7 +89,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserAdapterVie
 
 
     public class UserAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvName, tvRole, tvPhone;
+        private TextView tvName, tvRole, tvPhone, tvCover;
         private RelativeLayout rlParent;
         private CircleImageView imageUser;
         private View line;
@@ -86,6 +99,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserAdapterVie
             tvName = itemView.findViewById(R.id.user_item_name);
             tvRole = itemView.findViewById(R.id.user_item_role);
             tvPhone = itemView.findViewById(R.id.user_item_phone);
+            tvCover = itemView.findViewById(R.id.user_item_cover);
             rlParent = (RelativeLayout) itemView.findViewById(R.id.user_item_parent);
             imageUser = itemView.findViewById(R.id.user_item_image);
             line = itemView.findViewById(R.id.user_item_seperateline);

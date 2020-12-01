@@ -26,6 +26,7 @@ import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomFixSQL;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.CustomTopDialog;
@@ -274,6 +275,31 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
         }, 1).execute();
 
+
+    }
+
+    public void changePassword() {
+        CustomCenterDialog.showDialogChangePass("Đổi mật khẩu", new CallbackBoolean() {
+            @Override
+            public void onRespone(Boolean result) {
+                if (result) {
+                    CustomCenterDialog.alertWithButtonCanceled("",
+                            "Đổi mật khẩu thành công , vui lòng đăng nhập lại",
+                            "ĐỒNG Ý",
+                            false,
+                            new CallbackBoolean() {
+                                @Override
+                                public void onRespone(Boolean result) {
+                                    if (result) {
+                                        logout(null);
+                                    }
+
+                                }
+                            });
+
+                }
+            }
+        });
 
     }
 

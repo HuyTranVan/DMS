@@ -12,12 +12,13 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.Util;
 
 public class Contacts {
-    public static void InsertContact(BaseModel customer){
+    public static void InsertContact(BaseModel customer, CallbackBoolean listener){
         if (Util.isPhoneFormat(customer.getString("phone")) != null){
             if (!Contacts.contactExists(Util.getPhoneValue(customer.getString("phone")))){
                 String name = String.format("DMS.%s %s (%s)",
@@ -57,15 +58,18 @@ public class Contacts {
                 try {
                     Util.getInstance().getCurrentActivity().getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
                     Util.showToast("Đã lưu danh bạ "+ name);
-                } catch (
-                        RemoteException e) {
+                    listener.onRespone(true);
+                } catch (RemoteException e) {
                     // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (
-                        OperationApplicationException e) {
+//                    e.printStackTrace();
+                    listener.onRespone(false);
+                } catch (OperationApplicationException e) {
                     // TODO Auto-generated catch block
-                    e.printStackTrace();
+//                    e.printStackTrace();
+                    listener.onRespone(false);
                 }
+            }else {
+                listener.onRespone(true);
             }
 
         }
@@ -78,7 +82,7 @@ public class Contacts {
 
         while (curContacts.moveToNext()) {
             String contactNumber = curContacts.getString(curContacts.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-            if (number.equals(contactNumber)) {
+            if (number.equals(contactNumber.replace(" ", ""))) {
                 return true;
             }
         }

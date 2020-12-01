@@ -32,10 +32,22 @@
 
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/add_distributor_expire_to"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorBlue"
+        android:text="0000"
+        android:textSize="@dimen/_8sdp"
+        android:textColor="@color/white_text_color"
+        android:layout_below="@+id/add_distributor_header"
+        android:gravity="center"
+        android:padding="@dimen/_2sdp"/>
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/add_distributor_header">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/add_distributor_expire_to">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -152,19 +164,37 @@
                 android:textSize="@dimen/_14sdp"
                 android:layout_gravity="center_horizontal" />
 
-            <RelativeLayout
+            <LinearLayout
+                android:id="@+id/add_distributor_admin_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/_10sdp">
+                android:orientation="vertical">
+
+                <ProgressBar
+                    android:id="@+id/add_distributor_progress"
+                    android:layout_width="@dimen/_15sdp"
+                    android:layout_height="@dimen/_15sdp"
+                    android:layout_gravity="center"
+                    android:indeterminateTint="@color/colorBlue"
+                    android:visibility="gone"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/add_distributor_rvadmin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:paddingBottom="@dimen/_5sdp"
+                    android:visibility="visible"/>
 
                 <LinearLayout
                     android:id="@+id/add_distributor_add_admin"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/_25sdp"
                     android:orientation="horizontal"
-                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center_horizontal"
                     android:background="@drawable/btn_round_white_border_grey"
-                    android:gravity="center_vertical">
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="@dimen/_40sdp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -175,6 +205,7 @@
                         android:layout_marginRight="@dimen/_10sdp"/>
 
                     <TextView
+                        android:id="@+id/add_distributor_add_admin_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Tạo quản trị viên"
@@ -184,12 +215,8 @@
 
                 </LinearLayout>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/add_distributor_rvadmin"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"/>
-            </RelativeLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
 

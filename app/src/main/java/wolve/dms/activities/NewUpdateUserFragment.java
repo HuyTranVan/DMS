@@ -306,6 +306,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
                         public void onResponse(BaseModel result, List<BaseModel> list) {
                             listWarehouse = list;
                             choiceWarehouse(filterListWarehouse(listWarehouse));
+
                         }
 
                         @Override

@@ -26,6 +26,7 @@ import android.os.Handler;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.ArrayMap;
@@ -848,6 +849,7 @@ public class Util {
         return new SimpleDateFormat("dd-MM-yyyy  HH:mm").format(Calendar.getInstance().getTime());
     }
 
+
     public static String CurrentMonthYearHourNotBlank() {
         return new SimpleDateFormat("ddMMyyyy_HHmm").format(Calendar.getInstance().getTime());
     }
@@ -902,6 +904,18 @@ public class Util {
         //cal.setTimeInMillis(timestamp*1000);
         cal.setTimeInMillis(timestamp);
         date = DateFormat.format("dd-MM-yyyy | HH:mm", cal).toString();
+
+        return date;
+
+    }
+
+    public static String DateDisplay(long timestamp, String format) {
+        String date = "";
+
+        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+        //cal.setTimeInMillis(timestamp*1000);
+        cal.setTimeInMillis(timestamp);
+        date = DateFormat.format(format, cal).toString();
 
         return date;
 
@@ -1321,10 +1335,13 @@ public class Util {
             @Override
             public void afterTextChanged(Editable s) {
                 edText.removeTextChangedListener(this);
+                int currentSelection = edText.getSelectionStart();
+                int prevStringLength = edText.getText().length();
+
                 try {
                     if (limitMoney == null) {
                         edText.setText(Util.FormatMoney(Util.valueMoney(edText)));
-                        edText.setSelection(edText.getText().toString().length());
+                        edText.setSelection(currentSelection + (edText.getText().toString().length() - prevStringLength));
 
                         mlistener.Result(Util.valueMoney(edText));
                         edText.addTextChangedListener(this);
@@ -1335,14 +1352,14 @@ public class Util {
                             String text = Util.valueMoneyString(edText).replaceFirst(".$", "");
 
                             edText.setText(Util.FormatMoney(Double.valueOf(text)));
-                            edText.setSelection(edText.getText().toString().length());
+                            edText.setSelection(currentSelection + (edText.getText().toString().length() - prevStringLength));
 
                             mlistener.Result(Util.valueMoney(edText));
                             edText.addTextChangedListener(this);
 
                         } else {
                             edText.setText(Util.FormatMoney(Util.valueMoney(edText)));
-                            edText.setSelection(edText.getText().toString().length());
+                            edText.setSelection(currentSelection + (edText.getText().toString().length() - prevStringLength));
 
                             mlistener.Result(Util.valueMoney(edText));
                             edText.addTextChangedListener(this);
@@ -1355,14 +1372,14 @@ public class Util {
                             String text = Util.valueMoneyString(edText).replaceFirst(".$", "");
 
                             edText.setText(Util.FormatMoney(Double.valueOf(text)));
-                            edText.setSelection(edText.getText().toString().length());
+                            edText.setSelection(currentSelection + (edText.getText().toString().length() - prevStringLength));
 
                             mlistener.Result(Util.valueMoney(edText) * -1);
                             edText.addTextChangedListener(this);
 
                         } else {
                             edText.setText(Util.FormatMoney(Util.valueMoney(edText)));
-                            edText.setSelection(edText.getText().toString().length());
+                            edText.setSelection(currentSelection + (edText.getText().toString().length() - prevStringLength));
 
                             mlistener.Result(Util.valueMoney(edText) * -1);
                             edText.addTextChangedListener(this);
@@ -1396,21 +1413,31 @@ public class Util {
 
             @Override
             public void afterTextChanged(Editable s) {
-
                 edText.removeTextChangedListener(this);
-                mlistener.Result(edText.getText().toString().replace(".", ""));
-                try {
-                    edText.setText(Util.FormatPhone(edText.getText().toString().replace(".", "")));
-                    edText.setSelection(edText.getText().toString().length());
 
-                    //listener.Result(edInput.getText().toString().replace(".", ""));
-                    edText.addTextChangedListener(this);
+                int currentSelection = edText.getSelectionStart();
+                int prevStringLength = edText.getText().length();
 
+                String newString = Util.FormatPhone(edText.getText().toString().replace(".", ""));
+                edText.setText(newString);
+                int selection = currentSelection + (newString.length() - prevStringLength);
+                edText.setSelection(selection);
 
-                } catch (Exception ex) {
-//                    ex.printStackTrace();
-                    edText.addTextChangedListener(this);
+                if (mlistener != null){
+                    mlistener.Result(edText.getText().toString().replace(".", ""));
                 }
+                edText.addTextChangedListener(this);
+
+//                try {
+
+
+
+//                } catch (Exception ex) {
+//                    edText.addTextChangedListener(this);
+//                }
+
+
+
 
             }
         });

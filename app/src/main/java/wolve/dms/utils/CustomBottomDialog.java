@@ -12,12 +12,15 @@ import com.orhanobut.dialogplus.OnBackPressListener;
 import com.orhanobut.dialogplus.OnDismissListener;
 import com.orhanobut.dialogplus.ViewHolder;
 
+import java.util.Calendar;
 import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.ItemAdapter;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackLong;
 import wolve.dms.callback.CallbackObject;
+import wolve.dms.libraries.calendarpicker.SimpleDatePickerDelegate;
 import wolve.dms.models.BaseModel;
 
 /**
@@ -258,5 +261,64 @@ public class CustomBottomDialog {
 
         dialog.show();
     }
+
+    public static void selectDate(String title , CallbackLong listener) {
+        final DialogPlus dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
+                .setContentHolder(new ViewHolder(R.layout.view_choice_date))
+                .setGravity(Gravity.BOTTOM)
+                .setBackgroundColorResId(R.drawable.bg_corner5_white)
+                .setMargin(10, 10, 10, 10)
+                .setInAnimation(R.anim.slide_up)
+                .setOnBackPressListener(new OnBackPressListener() {
+                    @Override
+                    public void onBackPressed(DialogPlus dialogPlus) {
+                        dialogPlus.dismiss();
+                    }
+                }).create();
+        TextView tvTitle = (TextView) dialog.findViewById(R.id.view_choicedate_title);
+        TextView btnSubmit = (TextView) dialog.findViewById(R.id.view_choicedate_submit);
+
+        tvTitle.setText(title);
+
+        SimpleDatePickerDelegate monthPickerView = new SimpleDatePickerDelegate(dialog.getHolderView());
+        monthPickerView.init(Calendar.getInstance().get(Calendar.YEAR),
+                Calendar.getInstance().get(Calendar.MONTH),
+                new SimpleDatePickerDelegate.OnDateChangedListener() {
+            @Override
+            public void onDateChanged(int year, int monthOfYear){
+
+            }
+        });
+
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int month = monthPickerView.getMonth() +1 ;
+                int year = monthPickerView.getYear();
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, monthPickerView.getMonth());
+                int day = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+                String value  =  String.format("%s-%s-%s 23:59:59",
+                        day <10 ? "0"+String.valueOf(day) : String.valueOf(day),
+                        month <10 ? "0"+String.valueOf(month) : String.valueOf(month),
+                        String.valueOf(year));
+
+                dialog.dismiss();
+                long result = Util.TimeStamp2(value);
+                listener.onResponse(result);
+
+
+            }
+        });
+
+
+
+
+        dialog.show();
+    }
+
 
 }

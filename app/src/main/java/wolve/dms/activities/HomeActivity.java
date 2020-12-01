@@ -124,11 +124,16 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
         if (CustomSQL.getBoolean(Constants.LOGIN_SUCCESS)) {
             CustomSQL.setBoolean(Constants.LOGIN_SUCCESS, false);
+
+            swipeRefreshLayout.setRefreshing(true);
             loadCurrentData(new CallbackBoolean() {
                 @Override
                 public void onRespone(Boolean result) {
                     checkNewProductUpdated(null, 0, true);
+                    suggestChangePassword();
+
                 }
+
             },2);
 
 
@@ -163,7 +168,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                     @Override
                     public void onRespone(Boolean result) {
                         if (result){
-                            Util.showToast("Đồng bộ sản phẩm thành công");
+                            Util.showToast("Đồng bộ thành công");
                         }
                     }
                 }, 1);
@@ -277,6 +282,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             public void onResponse(BaseModel result, List<BaseModel> list) {
                 Status.saveStatusList(result.getJSONArray("Status"));
                 ProductGroup.saveProductGroupList(result.getJSONArray("ProductGroup"));
+                CustomSQL.setString(Constants.DISTRIBUTOR, result.getString("Distributor"));
 
                 CustomSQL.setLong(Constants.LAST_PRODUCT_UPDATE, result.getLong("LastProductUpdate"));
                 tvHaveNewProduct.setVisibility(View.GONE);
@@ -306,7 +312,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                         switch (object.getInt("position")) {
                             case 0:
                                 if (User.getCurrentRoleId() == Constants.ROLE_ADMIN) {
-                                    Transaction.gotoUserActivity(false);
+                                    Transaction.gotoUserActivity();
                                 }
                                 break;
 
@@ -375,10 +381,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 updateTempImportVisibility(DataUtil.filterListTempImport(DataUtil.array2ListObject(result.getString("tempImport"))));
                 tvCash.setText(String.format("%s đ", Util.FormatMoney(result.getDouble("paymentInMonth"))));
 
-                if (result.getLong("lastProductUpdate") > CustomSQL.getLong(Constants.LAST_PRODUCT_UPDATE)) {
+                if (result.getLong("lastProductUpdate") != null && result.getLong("lastProductUpdate") > CustomSQL.getLong(Constants.LAST_PRODUCT_UPDATE)) {
                     tvHaveNewProduct.setVisibility(View.VISIBLE);
-                    CustomCenterDialog.alertWithButtonCanceled("CÓ SẢN PHẨM MỚI",
-                            "Đồng bộ danh mục sản phẩm với thiết bị của bạn",
+                    CustomCenterDialog.alertWithButtonCanceled("Thông tin thay đổi",
+                            "Cài đặt hệ thống vừa được điều chỉnh! \n Đồng bộ lại hệ thống với thiết bị của bạn",
                             "ĐỒNG Ý",
                             true,
                             null);
@@ -448,12 +454,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         Activity context = Util.getInstance().getCurrentActivity();
         if (PermissionChecker.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
                 PermissionChecker.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-                PermissionChecker.checkSelfPermission(context, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED ||
+                //PermissionChecker.checkSelfPermission(context, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED ||
                 PermissionChecker.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
                 PermissionChecker.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
-                PermissionChecker.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED||
-                PermissionChecker.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED||
-                PermissionChecker.checkSelfPermission(context, Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED){
+                PermissionChecker.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+                //PermissionChecker.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED||
+                //PermissionChecker.checkSelfPermission(context, Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED){
 
 
             CustomCenterDialog.alertWithCancelButton("Cấp quyền truy cập!",
@@ -467,12 +473,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                                 ActivityCompat.requestPermissions(context, new String[]{
                                         android.Manifest.permission.ACCESS_FINE_LOCATION,
                                         android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                                        android.Manifest.permission.CALL_PHONE,
+                                        //android.Manifest.permission.CALL_PHONE,
                                         android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
                                         android.Manifest.permission.READ_EXTERNAL_STORAGE,
-                                        android.Manifest.permission.CAMERA,
-                                        android.Manifest.permission.READ_CONTACTS,
-                                        android.Manifest.permission.WRITE_CONTACTS
+                                        android.Manifest.permission.CAMERA
+                                        //android.Manifest.permission.READ_CONTACTS,
+                                        //android.Manifest.permission.WRITE_CONTACTS
 
                                 }, Constants.REQUEST_PERMISSION);
 
@@ -572,5 +578,25 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     public void onResponse(BaseModel object) {
         adapterHome.reloadItem();
+    }
+
+    private void suggestChangePassword(){
+        if (User.getCurrentUser().hasKey("password") && CustomSQL.getString(Constants.USER_PASSWORD).equals("Aa123456")){
+            CustomCenterDialog.alertWithCancelButton("Đổi mật khẩu!",
+                    "Bạn đang sử dụng mật khẩu mặc định. Vui lòng đổi sang mật khẩu khác để bảo mật hơn!!!",
+                    "đồng ý",
+                    "lúc khác",
+                    new CallbackBoolean() {
+                        @Override
+                        public void onRespone(Boolean result) {
+                            if (result){
+                                changePassword();
+                            }
+                        }
+                    });
+
+        }else {
+            CustomSQL.removeKey(Constants.USER_PASSWORD);
+        }
     }
 }

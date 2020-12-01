@@ -166,30 +166,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         }
     }
 
-    private void changePassword() {
-        CustomCenterDialog.showDialogChangePass("Đổi mật khẩu", new CallbackBoolean() {
-            @Override
-            public void onRespone(Boolean result) {
-                if (result) {
-                    CustomCenterDialog.alertWithButtonCanceled("",
-                            "Đổi mật khẩu thành công , vui lòng đăng nhập lại",
-                            "ĐỒNG Ý",
-                            false,
-                            new CallbackBoolean() {
-                        @Override
-                        public void onRespone(Boolean result) {
-                            if (result) {
-                                logout(null);
-                            }
 
-                        }
-                    });
-
-                }
-            }
-        });
-
-    }
 
     private void changeUser() {
         List<BaseModel> users = CustomFixSQL.getListObject(Constants.USER_LIST);

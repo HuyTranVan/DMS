@@ -61,14 +61,17 @@ public class UserActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void initialData() {
-        gotoUserDetail = getIntent().getExtras().getBoolean(Constants.FLAG);
-        if (!gotoUserDetail) {
-            loadUser();
+        loadUser();
+        btnNew.setVisibility(View.GONE);
 
-        } else {
-            openFragment(User.getCurrentUser().BaseModelstoString());
-
-        }
+//        gotoUserDetail = getIntent().getExtras().getBoolean(Constants.FLAG);
+//        if (!gotoUserDetail) {
+//
+//
+//        } else {
+//            openFragment(User.getCurrentUser().BaseModelstoString());
+//
+//        }
 
     }
 
@@ -109,19 +112,7 @@ public class UserActivity extends BaseActivity implements View.OnClickListener, 
             }
         }, 1).execute();
 
-//        UserConnect.ListUser(new CallbackCustomList() {
-//            @Override
-//            public void onResponse(List<BaseModel> results) {
-//                listUser = new ArrayList<>(results);
-//                createRVUser(listUser);
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }, true);
+
     }
 
     private void createRVUser(List<BaseModel> list) {

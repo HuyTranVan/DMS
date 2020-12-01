@@ -146,10 +146,10 @@ public class Transaction {
         ((AppCompatActivity) context).finish();
     }
 
-    public static void gotoUserActivity(boolean userdetail) {
+    public static void gotoUserActivity() {
         Context context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(context, UserActivity.class);
-        intent.putExtra(Constants.FLAG, userdetail);
+        //intent.putExtra(Constants.FLAG, userdetail);
         context.startActivity(intent);
         ((AppCompatActivity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         ((AppCompatActivity) context).finish();

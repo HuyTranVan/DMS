@@ -60,7 +60,9 @@ public class ApiUtil {
     public final static String CHECK_LOGIN(){
         return BASE_URL + "dms/token/system/CheckLogin";
     }
-
+    public final static String CHECK_RIGHT_USER(){
+        return BASE_URL + "dms/token/system/CheckUserAndPassword?phone=%s&password=%s";
+    }
 //Logout
     public final static String LOGOUT(){
         return BASE_URL + "dms/token/system/Logout";
@@ -132,6 +134,11 @@ public class ApiUtil {
         return BASE_URL + "dms/token/user/UserNew";
     }
 
+    public final static String ADMIN_CREATE_PARAM = "displayName=%s&phone=%s&warehouse_name=%s&distributor_id=%d&role=%d";
+    public final static String ADMIN_NEW(){
+        return BASE_URL + "dms/token/user/UserNewAdmin";
+    }
+
     public final static String USER_CHANGE_PASS_PARAM = "id=%d&current_password=%s&new_password=%s";
     public final static String USER_CHANGE_PASS(){
         return BASE_URL + "dms/token/user/UserChangePassword";
@@ -140,7 +147,10 @@ public class ApiUtil {
         return BASE_URL + "dms/token/user/UserDefaultPassword?user_id=%d";
     }
 
-    public final static String USER_DEFAULT_PASS_PARAM = "user_id=%d";
+    public final static String USER_ACTIVE(){
+        return BASE_URL + "dms/token/user/UserActiveNew";
+    }
+    public final static String USER_ACTIVE_PARAM = "user_id=%d&active=%d";
 
     public final static String STATUS(){
         return BASE_URL + "dms/token/statu/StatusList";
@@ -195,19 +205,19 @@ public class ApiUtil {
         return BASE_URL + "dms/token/customer/WaitingList";
     }
     //public final static String CUSTOMER_ORDERED = BASE_URL + "dms/token/customer/CustomerOrderedList";
-
-    //DISTRIBUTOR
+//DISTRIBUTOR
     public final static String DISTRIBUTOR_DETAIL(){
         return BASE_URL + "dms/token/distributor/DistributorDetail?id=";
     }
     public final static String DISTRIBUTORS(){
         return BASE_URL + "dms/token/distributor/DistributorList";
     }
-
     public final static String DISTRIBUTOR_CREATE_PARAM = "%sname=%s&province_id=%d&company=%s&address=%s&phone=%s&website=%s&thanks=%s&image=%s";
-    public final static String DISTRIBUTOR_NEW(){
-        return BASE_URL + "dms/token/distributor/DistributorNew";
-    }
+    public final static String DISTRIBUTOR_NEW(){ return BASE_URL + "dms/token/distributor/DistributorNew"; }
+
+//ACTIVE
+    public final static String ACTIVE_CREATE_PARAM = "distributor_id=%d&to=%s";
+    public final static String ACTIVE_NEW(){ return BASE_URL + "dms/token/distributor/ActiveNew"; }
 
     public final static String SCHECKIN_CREATE_PARAM = "customer_id=%d&rating=%d&note=%s&user_id=%d&nextVisit=%d&meetOwner=%d";
     public final static String CHECKIN_NEW(){

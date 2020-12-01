@@ -18,6 +18,7 @@ public class SimpleDatePickerDelegate {
     private static final int DEFAULT_START_YEAR = 1900;
     private static final int DEFAULT_END_YEAR = 2100;
 
+    //private final NumberPicker mDateSpinner;
     private final NumberPicker mMonthSpinner;
     private final NumberPicker mYearSpinner;
 
@@ -28,6 +29,7 @@ public class SimpleDatePickerDelegate {
 
     private String[] mShortMonths;
     private int mNumberOfMonths;
+    //private int mNumberOfDates;
 
     private Locale mCurrentLocale;
 
@@ -64,6 +66,13 @@ public class SimpleDatePickerDelegate {
                 notifyDateChanged();
             }
         };
+        //date
+//        mDateSpinner = (NumberPicker) parent.findViewById(R.id.day);
+//        mDateSpinner.setMinValue(0);
+//        mDateSpinner.setMaxValue(mNumberOfDates - 1);
+//        mDateSpinner.setDisplayedValues(mShortMonths);
+//        mDateSpinner.setOnLongPressUpdateInterval(200);
+//        mDateSpinner.setOnValueChangedListener(onChangeListener);
 
         // month
         mMonthSpinner = (NumberPicker) parent.findViewById(R.id.month);
@@ -150,6 +159,8 @@ public class SimpleDatePickerDelegate {
 
         mNumberOfMonths = mTempDate.getActualMaximum(Calendar.MONTH) + 1;
         mShortMonths = new DateFormatSymbols().getShortMonths();
+
+        //mNumberOfDates = mTempDate.getActualMaximum(Calendar.DAY_OF_MONTH) + 1;
 
         if (usingNumericMonths()) {
             // We're in a locale where a date should either be all-numeric, or all-text.

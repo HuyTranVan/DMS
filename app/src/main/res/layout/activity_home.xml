@@ -118,7 +118,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/font_awesome"
                 android:background="@drawable/btn_round_blue"
-                android:text="&#xf01e;    Đồng bộ sán phẩm"
+                android:text="&#xf01e;    Đồng bộ hệ thống"
                 android:textSize="@dimen/_10sdp"
                 android:textColor="@color/white_text_color"
                 android:paddingLeft="@dimen/_10sdp"

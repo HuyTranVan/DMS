@@ -148,7 +148,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         rlStatusGroup = findViewById(R.id.customer_checkin_status_group);
         viewPager = findViewById(R.id.customer_viewpager);
         tabLayout = findViewById(R.id.customer_tabs);
-        tvDebt = findViewById(R.id.customer_debt);
+        //tvDebt = findViewById(R.id.customer_debt);
         tvPaid = findViewById(R.id.customer_paid);
         tvTotal = findViewById(R.id.customer_total);
         tvBDF = findViewById(R.id.customer_bdf);

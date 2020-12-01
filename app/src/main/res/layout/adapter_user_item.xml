@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/user_item_parent"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/_50sdp"
     android:background="@drawable/btn_none_white">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -70,5 +70,18 @@
         android:layout_height="1dip"
         android:background="#0d000000"
         android:layout_alignParentBottom="true" />
+
+    <TextView
+        android:id="@+id/user_item_cover"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black_text_color_hint"
+        android:text="Disable"
+        android:textColor="@color/white_text_color_hint"
+        android:textSize="@dimen/_20sdp"
+        android:gravity="center"
+        android:focusable="true"
+        android:layout_marginBottom="@dimen/_1sdp"
+        android:visibility="visible"/>
 
 </RelativeLayout>
