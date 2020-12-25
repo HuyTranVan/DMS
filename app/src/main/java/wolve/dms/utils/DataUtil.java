@@ -233,6 +233,18 @@ public class DataUtil {
 
     }
 
+    public static List<String> convertListObject2AString(List<BaseModel> list, String key) {
+        List<String> results = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            results.add(list.get(i).getString(key));
+
+        }
+
+        return results;
+
+    }
+
+
 
     public static JSONArray convertListObject2Array(List<BaseModel> list) {
         JSONArray array = new JSONArray();

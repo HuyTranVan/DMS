@@ -69,15 +69,15 @@ public class ViewpagerDatePickerAdapter extends PagerAdapter {
             case 1:
                 view = inflater.inflate(R.layout.view_tab_item_monthpicker, container, false);
                 monthSetup(view,
-                        mPosition == position? Util.MonthString(startTime) : Calendar.getInstance().get(Calendar.MONTH),
-                        mPosition == position? Util.YearString(startTime) : Calendar.getInstance().get(Calendar.YEAR));
+                        mPosition == position? Util.Month(startTime) : Calendar.getInstance().get(Calendar.MONTH),
+                        mPosition == position? Util.Year(startTime) : Calendar.getInstance().get(Calendar.YEAR));
 
                 break;
 
             case 2:
                 view = inflater.inflate(R.layout.view_tab_item_yearpicker, container, false);
                 yearSetup(view,
-                        mPosition == position? Util.YearString(startTime) : Calendar.getInstance().get(Calendar.YEAR));
+                        mPosition == position? Util.Year(startTime) : Calendar.getInstance().get(Calendar.YEAR));
                 break;
         }
 

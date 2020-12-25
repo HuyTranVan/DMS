@@ -4,8 +4,10 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.graphics.drawable.ColorDrawable;
 import android.text.InputFilter;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.autofill.AutofillId;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -17,6 +19,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -1302,6 +1305,96 @@ public class CustomCenterDialog {
 
                 }
 
+            }
+        });
+
+    }
+
+    public static void dialogNewCashFlow(String title, List<BaseModel> listType, CallbackObject listener) {
+        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_new_cashflow);
+        final TextView tvTitle = dialogResult.findViewById(R.id.dialog_cashflow_title);
+        Spinner spType = dialogResult.findViewById(R.id.dialog_cashflow_type);
+        EditText edTotal = dialogResult.findViewById(R.id.dialog_cashflow_total);
+        EditText edNote = dialogResult.findViewById(R.id.dialog_cashflow_note);
+
+        final Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
+        final Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
+
+        btnCancel.setText("QUAY LẠI");
+        btnSubmit.setText("CẬP NHẬT");
+        tvTitle.setText(title);
+        dialogResult.setCanceledOnTouchOutside(false);
+
+        final int[] currentType = {0};
+
+        List<String> types = DataUtil.convertListObject2AString(listType, "name");
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(Util.getInstance().getCurrentActivity(), R.layout.view_spinner_text, types);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spType.setAdapter(dataAdapter);
+
+        spType.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                Util.hideKeyboard(view);
+                return false;
+            }
+        });
+
+        spType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                currentType[0] = i;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+
+
+        });
+
+        Util.textMoneyEvent(edTotal, null, null);
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.hideKeyboard(v);
+                dialogResult.dismiss();
+            }
+        });
+
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.hideKeyboard(v);
+                if (Util.isEmpty(edTotal)){
+                    Util.showToast("Chưa nhập số tiền");
+
+                }else {
+                    BaseModel param = createPostParam(ApiUtil.CASHFLOW_NEW(),
+                            String.format(ApiUtil.CASHFLOW_CREATE_PARAM,
+                                    listType.get(currentType[0]).getInt("id"),
+                                    listType.get(currentType[0]).getInt("isIncome") == 1? Util.valueMoneyString(edTotal) : "-"+Util.valueMoneyString(edTotal) ,
+                                    Util.encodeString(edNote.getText().toString())),
+                            false,
+                            false);
+                    new GetPostMethod(param, new NewCallbackCustom() {
+                        @Override
+                        public void onResponse(BaseModel result, List<BaseModel> list) {
+                            dialogResult.dismiss();
+                            listener.onResponse(result);
+
+                        }
+
+                        @Override
+                        public void onError(String error) {
+
+                        }
+                    }, 1).execute();
+
+
+
+                }
 
 
             }
@@ -1309,6 +1402,7 @@ public class CustomCenterDialog {
 
 
     }
+
 
 
 }

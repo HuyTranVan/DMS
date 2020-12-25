@@ -10,9 +10,9 @@
     {
       "type": "SINGLE",
       "filters": [],
-      "versionCode": 18,
-      "versionName": "1.8",
-      "outputFile": "DMSRELEASE_011220.apk"
+      "versionCode": 19,
+      "versionName": "1.9",
+      "outputFile": "DMSRELEASE_251220.apk"
     }
   ]
 }

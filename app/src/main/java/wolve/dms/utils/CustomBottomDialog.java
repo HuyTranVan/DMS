@@ -254,6 +254,12 @@ public class CustomBottomDialog {
             public void onResponse(int pos) {
                 dialog.dismiss();
                 mListener.onResponse(list.get(pos));
+//                if (list.get(pos).hasKey("invisible") && list.get(pos).getBoolean("invisible")){
+//                    Util.showToast("Không thể chọn !");
+//                }else {
+//                    mListener.onResponse(list.get(pos));
+//                }
+
             }
 
         });
@@ -262,7 +268,7 @@ public class CustomBottomDialog {
         dialog.show();
     }
 
-    public static void selectDate(String title , CallbackLong listener) {
+    public static void selectDate(String title , long currentDay, CallbackLong listener) {
         final DialogPlus dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
                 .setContentHolder(new ViewHolder(R.layout.view_choice_date))
                 .setGravity(Gravity.BOTTOM)
@@ -281,8 +287,10 @@ public class CustomBottomDialog {
         tvTitle.setText(title);
 
         SimpleDatePickerDelegate monthPickerView = new SimpleDatePickerDelegate(dialog.getHolderView());
-        monthPickerView.init(Calendar.getInstance().get(Calendar.YEAR),
-                Calendar.getInstance().get(Calendar.MONTH),
+        monthPickerView.init(Util.Year(currentDay),
+                            Util.Month(currentDay),
+//                Calendar.getInstance().get(Calendar.YEAR),
+//                Calendar.getInstance().get(Calendar.MONTH),
                 new SimpleDatePickerDelegate.OnDateChangedListener() {
             @Override
             public void onDateChanged(int year, int monthOfYear){

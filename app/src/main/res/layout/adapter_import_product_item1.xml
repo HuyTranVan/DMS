@@ -66,22 +66,6 @@
 
             </RelativeLayout>
 
-<!--            <LinearLayout-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="horizontal"-->
-<!--                android:layout_marginTop="@dimen/_2sdp"-->
-<!--                android:layout_below="@+id/import_product_item_title_group">-->
-
-<!--                <TextView-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:textSize="@dimen/_10sdp"-->
-<!--                    android:text="Chuyển từ kho: " />-->
-
-<!--                -->
-<!--            </LinearLayout>-->
-
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -115,13 +99,32 @@
 
         </RelativeLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/import_product_item_rvproduct"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clipToPadding="true"
-            />
+            android:layout_toLeftOf="@+id/import_product_item_total"/>
+
+        <TextView
+            android:id="@+id/import_product_item_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="ádfasdf"
+            android:textSize="@dimen/_12sdp"
+            android:textColor="@color/black_text_color_hint"
+            android:textStyle="bold"
+            android:layout_marginRight="@dimen/_10sdp"/>
+
+    </RelativeLayout>
+
+
 
         <TextView
             android:fontFamily="@font/font_awesome"

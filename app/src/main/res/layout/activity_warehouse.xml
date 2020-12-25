@@ -38,7 +38,8 @@
             android:layout_alignParentRight="true"
             android:text="@string/icon_plus"
             android:gravity="center"
-            android:textSize="@dimen/_14sdp" />
+            android:textSize="@dimen/_14sdp"
+            android:visibility="gone"/>
 
     </RelativeLayout>
 

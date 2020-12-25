@@ -17,9 +17,9 @@ import java.util.List;
 
 import wolve.dms.BuildConfig;
 import wolve.dms.R;
+import wolve.dms.activities.AccountActivity;
 import wolve.dms.activities.CustomerActivity;
 import wolve.dms.activities.DistributorActivity;
-import wolve.dms.activities.NewUpdateDistributorFragment;
 import wolve.dms.activities.HomeActivity;
 import wolve.dms.activities.ImportActivity;
 import wolve.dms.activities.LoginActivity;
@@ -31,7 +31,7 @@ import wolve.dms.activities.ScannerActivity;
 import wolve.dms.activities.SettingActivity;
 import wolve.dms.activities.ShopCartActivity;
 import wolve.dms.activities.StatisticalActivity;
-import wolve.dms.activities.StatusActivity;
+import wolve.dms.activities.CashFlowTypeActivity;
 import wolve.dms.activities.TestActivity;
 import wolve.dms.activities.UserActivity;
 import wolve.dms.activities.WarehouseActivity;
@@ -111,6 +111,15 @@ public class Transaction {
         ((AppCompatActivity) context).finish();
     }
 
+    public static void gotoAccountActivity() {
+        Context context = Util.getInstance().getCurrentActivity();
+        Intent intent = new Intent(context, AccountActivity.class);
+        context.startActivity(intent);
+        ((AppCompatActivity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        ((AppCompatActivity) context).finish();
+
+    }
+
     public static void gotoImportActivity(BaseModel curentwarehouse, boolean flag) {
         Activity context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(context, ImportActivity.class);
@@ -155,9 +164,9 @@ public class Transaction {
         ((AppCompatActivity) context).finish();
     }
 
-    public static void gotoStatusActivity() {
+    public static void gotoCashFlowTypeActivity() {
         Context context = Util.getInstance().getCurrentActivity();
-        Intent intent = new Intent(context, StatusActivity.class);
+        Intent intent = new Intent(context, CashFlowTypeActivity.class);
         context.startActivity(intent);
         ((AppCompatActivity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         ((AppCompatActivity) context).finish();

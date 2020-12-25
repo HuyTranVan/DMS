@@ -152,16 +152,20 @@ public class ApiUtil {
     }
     public final static String USER_ACTIVE_PARAM = "user_id=%d&active=%d";
 
-    public final static String STATUS(){
-        return BASE_URL + "dms/token/statu/StatusList";
+    public final static String CASHFLOWTYPES(){
+        return BASE_URL + "dms/token/cashflow/CashFlowTypeList";
     }
-    public final static String STATUS_CREATE_PARAM = "%sname=%s&color=%s&defaultStatus=%s";
+    public final static String CFTYPE_CREATE_PARAM = "%sname=%s&isIncome=%d&kind=%d";
+    public final static String CASHFLOWTYPE_NEW(){
+        return BASE_URL + "dms/token/cashflow/CashFlowTypeNew";
+    }
+    public final static String CASHFLOWTYPE_DELETE(){
+        return BASE_URL + "dms/token/cashflow/CashFlowTypeDelete?id=";
+    }
 
-    public final static String STATUS_NEW(){
-        return BASE_URL + "dms/token/statu/StatusNew";
-    }
-    public final static String STATUS_DELETE(){
-        return BASE_URL + "dms/token/statu/StatusDelete?id=";
+    public final static String CASHFLOW_CREATE_PARAM = "type_id=%d&total=%s&note=%s";
+    public final static String CASHFLOW_NEW(){
+        return BASE_URL + "dms/token/cashflow/CashFlowNew";
     }
     
     public final static String CUSTOMERS(int page, int size){
@@ -256,16 +260,14 @@ public class ApiUtil {
     public final static String PAYMENT_DELETE(){
         return BASE_URL + "dms/token/bill/PaymentDelete?id=";
     }
+    public final static String CASHFLOWS(){
+        return BASE_URL + "dms/token/cashflow/CashFlowList?from=%s&to=%s";
+    }
 
     public final static String RESET_PASSWORD_PARAM = "phone=%s&email=%s";
     public final static String RESET_PASSWORD(){
         return BASE_URL + "dms/token/system/ResetPassword";
     }
-
-
-//    public final static String DEBT_NEW = BASE_URL + "dms/token/bill/DebtNew";
-//    public final static String DEBT_PARAM = "debt=%s&user_id=%d&customer_id=%d&distributor_id=%d";
-
 
     public static boolean responeIsSuccess(BaseModel respone) {
         if (!respone.isNull("status") && respone.getInt("status") == 200) {

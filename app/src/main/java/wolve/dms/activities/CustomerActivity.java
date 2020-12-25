@@ -661,13 +661,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                                 false,
                                 false);
 
-//                                DataUtil.createPostPaymentParam(currentCustomer.getInt("id"),
-//                                User.getId(),
-//                                d * -1,
-//                                0,
-//                                "Trả chiết khấu",
-//                                false);
-
                         new GetPostMethod(param, new NewCallbackCustom() {
                             @Override
                             public void onResponse(BaseModel result, List<BaseModel> list) {
@@ -680,17 +673,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                             }
                         }, 1).execute();
 
-//                        CustomerConnect.PostPay(param, new CallbackCustom() {
-//                            @Override
-//                            public void onResponse(BaseModel result) {
-//
-//                            }
-//
-//                            @Override
-//                            public void onError(String error) {
-//
-//                            }
-//                        }, true);
                     }
                 });
     }
@@ -714,18 +696,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
             }
         }, 1).execute();
-//        CustomerConnect.PostListPay(listParam, new CallbackListCustom() {
-//            @Override
-//            public void onResponse(List result) {
-//                reloadCustomer(currentCustomer.getString("id"));
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }//
-//        }, true);
+
     }
 
     protected void printDebtBills() {

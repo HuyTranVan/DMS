@@ -85,6 +85,7 @@ public class DistributorAdapter extends RecyclerView.Adapter<DistributorAdapter.
             public void onClick(View view) {
                 if (!holder.swActive.isChecked()){
                     CustomBottomDialog.selectDate(String.format("%s >>> ACTIVE", mData.get(position).getString("name")),
+                            Util.CurrentTimeStamp(),
                             new CallbackLong() {
                                 @Override
                                 public void onResponse(Long value) {

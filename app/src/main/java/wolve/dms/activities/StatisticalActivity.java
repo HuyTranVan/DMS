@@ -363,8 +363,11 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
 
     private void updateListUser(List<BaseModel> list) {
         for (int i = 0; i < list.size(); i++) {
-            if (!DataUtil.checkDuplicate(listUser, "displayName", list.get(i).getBaseModel("user"))) {
-                listUser.add(list.get(i).getBaseModel("user"));
+            if (list.get(i).getBaseModel("user").getInt("active") == 1){
+                if (!DataUtil.checkDuplicate(listUser, "displayName", list.get(i).getBaseModel("user"))) {
+                    listUser.add(list.get(i).getBaseModel("user"));
+                }
+
             }
 
         }

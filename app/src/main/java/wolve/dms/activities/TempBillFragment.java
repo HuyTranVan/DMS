@@ -216,19 +216,6 @@ public class TempBillFragment extends Fragment implements View.OnClickListener {
             }
         }, 1).execute();
 
-
-//        CustomerConnect.GetCustomerDetail(model.getString("customer_id"), new CallbackCustom() {
-//            @Override
-//            public void onResponse(BaseModel result) {
-//
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }, false, true);
     }
 
     private void checkLocation(LocationListener listener, boolean stopLoading) {

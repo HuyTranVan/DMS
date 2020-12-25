@@ -120,6 +120,10 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         Import_ProductDetailAdapter adapter = new Import_ProductDetailAdapter(importdetails);
         Util.createLinearRV(holder.rvProduct, adapter);
 
+        holder.tvTotal.setText(Util.FormatMoney(DataUtil.sumMoneyFromList(importdetails,
+                mData.get(position).getBaseModel("fr_warehouse").getInt("isMaster") == 1 ? "basePrice" : "purchasePrice",
+                "quantity")));
+
         holder.tvDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -164,7 +168,7 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     public class ItemViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvDate, tvDelete, tvUser, tvWarehouse, tvAccept, tvCopy;
+        private TextView tvDate, tvDelete, tvUser, tvWarehouse, tvAccept, tvCopy, tvTotal;
         private RecyclerView rvProduct;
         private LinearLayout lnParent;
 
@@ -178,7 +182,7 @@ public class Import_ProductAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             tvWarehouse = itemView.findViewById(R.id.import_product_item_warehouse);
             tvAccept = itemView.findViewById(R.id.import_product_item_accept);
             rvProduct = itemView.findViewById(R.id.import_product_item_rvproduct);
-
+            tvTotal = itemView.findViewById(R.id.import_product_item_total);
 
         }
 

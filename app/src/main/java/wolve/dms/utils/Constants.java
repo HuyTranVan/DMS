@@ -19,6 +19,7 @@ public class Constants {
     public final static String DEPOT = "depot";
     public final static String PRODUCT = "product";
     public final static String STATUS = "status";
+    public final static String CFTYPE = "cftype";
     public final static String CUSTOMER = "customer";
     public final static String CUSTOMER_RECEIVE = "customer_receive";
     public final static String CUSTOMER_ID = "customer_id";
@@ -151,6 +152,10 @@ public class Constants {
     public static final String IMAGES = "images";
     public static final String LOADING_TIMES = "loading_times";
     public static final String AUTO_SAVE_CONTACT = "auto_save_contact";
+    public static final String PAY_DISTRIBUTOR = "pay_distributor";
+    public static final String IN_COME = "in_come";
+    public static final String OUT_COME = "out_come";
+    public static final String OTHERS = "others";
 
     public static final String CHECK_ALL = Util.getInstance().getCurrentActivity().getResources().getString(R.string.icon_check) + " CHỌN TẤT CẢ";
     public static final String UNCHECK = "BỎ CHỌN";
@@ -169,15 +174,15 @@ public class Constants {
                 Util.getIcon(R.string.icon_edit_map),
                 Util.getIcon(R.string.icon_chart),
                 Util.getIcon(R.string.icon_depot),
+                Util.getIcon(R.string.icon_hand_on_money),
                 Util.getIcon(R.string.icon_setting),
-                Util.getIcon(R.string.icon_barcode),
                 ""};
         String[] texts = new String[]{
                 "Bán hàng",
                 "Thống kê",
                 "Nhập - Tồn kho",
+                "Thu chi",
                 "Danh mục",
-                "Quét mã",
                 ""};
         boolean[] isDistributor = new boolean[]{
                 false,
@@ -221,6 +226,13 @@ public class Constants {
             "SH",
             "KL"};
 
+    public static String[] sortGroups = new String[]{
+            "Tất cả",
+            "Khác",
+            "Trả tiền NPP",
+            "Tiền hàng",
+            "Trả chiết khấu"};
+
 
     public static void throwError(String err) {
         Util.showSnackbarError(err);
@@ -237,23 +249,23 @@ public class Constants {
         item1.put("text", "Nhân viên");
         list.add(0, item1);
 
+        BaseModel item4 = new BaseModel();
+        item4.put("position", 1);
+        item4.put("icon", Util.getIcon(R.string.icon_hand_on_money));
+        item4.put("text", "Thu - chi");
+        list.add(1, item4);
+
         BaseModel item2 = new BaseModel();
-        item2.put("position", 1);
+        item2.put("position", 2);
         item2.put("icon", Util.getIcon(R.string.icon_product_group));
         item2.put("text", "Nhóm sản phẩm");
-        list.add(1, item2);
+        list.add(2, item2);
 
         BaseModel item3 = new BaseModel();
-        item3.put("position", 2);
+        item3.put("position", 3);
         item3.put("icon", Util.getIcon(R.string.icon_product));
         item3.put("text", "Sản phẩm");
-        list.add(2, item3);
-
-        BaseModel item4 = new BaseModel();
-        item4.put("position", 3);
-        item4.put("icon", Util.getIcon(R.string.icon_status));
-        item4.put("text", "Trạng thái");
-        list.add(3, item4);
+        list.add(3, item3);
 
         BaseModel item5 = new BaseModel();
         item5.put("position", 4);
@@ -297,4 +309,67 @@ public class Constants {
 
         return list;
     }
+
+    public static List<BaseModel> listCashFlowKind(boolean addDefault){
+        List<BaseModel> list = new ArrayList<>();
+
+        BaseModel item = new BaseModel();
+        item.put("kind", 0);
+        item.put("icon", Util.getIcon(R.string.icon_money_check));
+        item.put("text", "Trả tiền hàng NPP");
+        if (User.getId() == 2 && addDefault){
+            list.add(0, item);
+        }
+
+        BaseModel item0 = new BaseModel();
+        item0.put("kind", 1);
+        item0.put("icon", Util.getIcon(R.string.icon_bill));
+        item0.put("text", "Khách trả tiền");
+        if (User.getId() == 2 && addDefault){
+            list.add(item0);
+        }
+
+
+        BaseModel item1 = new BaseModel();
+        item1.put("kind", 2);
+        item1.put("icon", Util.getIcon(R.string.icon_hand_on_money));
+        item1.put("text", "Trả chiết khấu");
+        if (User.getId() ==  2 && addDefault){
+            list.add(item1);
+        }
+
+
+
+        BaseModel item2 = new BaseModel();
+        item2.put("kind", 3);
+        item2.put("icon", Util.getIcon(R.string.icon_protect));
+        item2.put("text", "Mặc định");
+        if (User.getId() ==  2 && addDefault){
+            list.add(item2);
+        }
+
+
+        BaseModel item3 = new BaseModel();
+        item3.put("kind", 4);
+        item3.put("icon", Util.getIcon(R.string.icon_detail));
+        item3.put("text", "Khác");
+        list.add(item3);
+
+
+
+        return list;
+    }
+
+    public static BaseModel cashFlowKind(int kind){
+        List<BaseModel> list = listCashFlowKind(true);
+        BaseModel model = new BaseModel();
+        for (int i = 0; i<list.size(); i++){
+            if (list.get(i).getInt("kind") == kind){
+                model = list.get(i);
+                break;
+            }
+        }
+        return model;
+    }
+
 }

@@ -945,7 +945,7 @@ public class Util {
 
     }
 
-    public static int YearString(long timestamp) {
+    public static int Year(long timestamp) {
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         cal.setTimeInMillis(timestamp);
         int year =cal.get(Calendar.YEAR);
@@ -954,7 +954,7 @@ public class Util {
 
     }
 
-    public static int MonthString(long timestamp) {
+    public static int Month(long timestamp) {
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         cal.setTimeInMillis(timestamp);
         int monthOfYear = cal.get(Calendar.MONTH);
@@ -1007,6 +1007,29 @@ public class Util {
 
         return String.format("%s%s", minute, second);
 
+    }
+
+    public static BaseModel getMonthRange(long timestamp) {
+        int year = Year(timestamp);
+        int month = Month(timestamp) + 1;
+        BaseModel result = new BaseModel();
+
+        String startMonth = month < 10 ? "0" + month : String.valueOf(month);
+        String endMonth = "";
+        int endYear = 0;
+        if (month == 12) {
+            endMonth = "01";
+            endYear = year + 1;
+        } else {
+            endMonth = month + 1 < 10 ? "0" + String.valueOf(month + 1) : String.valueOf(month + 1);
+            endYear = year;
+        }
+        result.put("start", Util.TimeStamp2(String.format("01-%s-%d 00:00:00", startMonth, year)));
+        result.put("end", Util.TimeStamp2(String.format("01-%s-%d 00:00:00", endMonth, endYear)));
+        result.put("text", month + "-" + year);
+        result.put("position", 1);
+
+        return result;
     }
 
     public static String formatTimeDate(long timestamp) {
@@ -1343,7 +1366,9 @@ public class Util {
                         edText.setText(Util.FormatMoney(Util.valueMoney(edText)));
                         edText.setSelection(currentSelection + (edText.getText().toString().length() - prevStringLength));
 
-                        mlistener.Result(Util.valueMoney(edText));
+                        if (mlistener != null){
+                            mlistener.Result(Util.valueMoney(edText));
+                        }
                         edText.addTextChangedListener(this);
 
                     } else if (limitMoney > 0) {
@@ -1354,14 +1379,18 @@ public class Util {
                             edText.setText(Util.FormatMoney(Double.valueOf(text)));
                             edText.setSelection(currentSelection + (edText.getText().toString().length() - prevStringLength));
 
-                            mlistener.Result(Util.valueMoney(edText));
+                            if (mlistener != null){
+                                mlistener.Result(Util.valueMoney(edText));
+                            }
                             edText.addTextChangedListener(this);
 
                         } else {
                             edText.setText(Util.FormatMoney(Util.valueMoney(edText)));
                             edText.setSelection(currentSelection + (edText.getText().toString().length() - prevStringLength));
 
-                            mlistener.Result(Util.valueMoney(edText));
+                            if (mlistener != null){
+                                mlistener.Result(Util.valueMoney(edText));
+                            }
                             edText.addTextChangedListener(this);
 
                         }
@@ -1374,14 +1403,19 @@ public class Util {
                             edText.setText(Util.FormatMoney(Double.valueOf(text)));
                             edText.setSelection(currentSelection + (edText.getText().toString().length() - prevStringLength));
 
-                            mlistener.Result(Util.valueMoney(edText) * -1);
+                            if (mlistener != null){
+                                mlistener.Result(Util.valueMoney(edText) * -1);
+                            }
+
                             edText.addTextChangedListener(this);
 
                         } else {
                             edText.setText(Util.FormatMoney(Util.valueMoney(edText)));
                             edText.setSelection(currentSelection + (edText.getText().toString().length() - prevStringLength));
 
-                            mlistener.Result(Util.valueMoney(edText) * -1);
+                            if (mlistener != null){
+                                mlistener.Result(Util.valueMoney(edText) * -1);
+                            }
                             edText.addTextChangedListener(this);
 
                         }

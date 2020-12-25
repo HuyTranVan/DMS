@@ -10,34 +10,26 @@
         android:orientation="horizontal"
         android:layout_margin="@dimen/_2sdp">
 
-        <!--        <CheckBox-->
-        <!--            android:id="@+id/statistical_product_item_check"-->
-        <!--            android:layout_width="@dimen/_18sdp"-->
-        <!--            android:layout_height="@dimen/_18sdp"-->
-        <!--            android:backgroundTint="@color/black_text_color_hint"-->
-        <!--            android:buttonTint="@color/black_text_color_hint"-->
-        <!--            android:checked="true"/>-->
+        <TextView
+            android:id="@+id/import_product_detail_item_quantity"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.1"
+            android:layout_centerVertical="true"
+            android:text="6000"
+            android:textColor="@color/black"
+            android:paddingLeft="@dimen/_5sdp" />
 
         <TextView
             android:id="@+id/import_product_detail_item_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.7"
+            android:layout_weight="0.8"
             android:layout_centerVertical="true"
             android:text="a"
-            android:textColor="@color/black"
-            android:layout_marginLeft="@dimen/_5sdp" />
+            android:textColor="@color/black" />
 
-        <TextView
-            android:id="@+id/import_product_detail_item_quantity"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.3"
-            android:layout_centerVertical="true"
-            android:text="a"
-            android:textColor="@color/black"
-            android:paddingRight="@dimen/_10sdp"
-            android:gravity="right" />
+
     </LinearLayout>
 
 </RelativeLayout>

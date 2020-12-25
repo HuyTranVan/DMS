@@ -69,8 +69,13 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
 
     @Override
     public void onBindViewHolder(final WarehouseAdapterViewHolder holder, final int position) {
-        holder.tvGroupName.setText(String.format("%s (%d)", mData.get(position).getString("name"),
-                mData.get(position).getInt("quantity")));
+        if (mData.get(position).getInt("isMaster") == 1){
+            holder.tvGroupName.setText(mData.get(position).getString("name"));
+        }else {
+            holder.tvGroupName.setText(String.format("%s (%d)", mData.get(position).getString("name"),
+                    mData.get(position).getInt("quantity")));
+        }
+
         holder.tvUsername.setText(Util.getIconString(R.string.icon_username, "   ", mData.get(position).getBaseModel("user").getString("displayName")));
 
         if (Util.isAdmin() || mData.get(position).getInt("user_id") == User.getId()) {

@@ -382,7 +382,13 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
                             new CustomGetPostListMethod(params, new CallbackCustomList() {
                                 @Override
                                 public void onResponse(List<BaseModel> results) {
-//                                    reloadCustomer(currentCustomer.getString("id"));
+                                    if (results.size() >0){
+                                        BaseModel respone = new BaseModel();
+                                        respone.put(Constants.TYPE, Constants.BILL_PAY);
+                                        respone.putBaseModel(Constants.RESULT, mData.get(currentPosition));
+                                        mListener.onResponse(respone);
+                                    }
+
                                 }
 
                                 @Override

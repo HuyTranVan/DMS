@@ -184,7 +184,7 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
-            android:name=".activities.StatusActivity"
+            android:name=".activities.CashFlowTypeActivity"
             android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
@@ -234,6 +234,13 @@
 
         <activity
             android:name=".activities.TestActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="unspecified"
+            android:theme="@style/FullScreen"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+
+        <activity
+            android:name=".activities.AccountActivity"
             android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"

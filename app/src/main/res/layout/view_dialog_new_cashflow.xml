@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/dialog_edit_product_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorWhite">
+
+    <TextView
+        android:id="@+id/dialog_cashflow_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_25sdp"
+        android:background="@drawable/bg_img_header"
+        android:text=""
+        android:textSize="@dimen/_12sdp"
+        android:textColor="@color/black_text_color"
+        android:gravity="center"
+        android:textAllCaps="true" />
+
+    <LinearLayout
+        android:id="@+id/dialog_cashflow_body"
+        android:layout_below="@+id/dialog_cashflow_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:orientation="vertical"
+        android:layout_marginBottom="@dimen/_5sdp"
+        android:layout_marginLeft="@dimen/_10sdp"
+        android:layout_marginRight="@dimen/_10sdp">
+
+        <Spinner
+            android:id="@+id/dialog_cashflow_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:background="@color/colorWhite"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/_5sdp" />
+
+        <EditText
+            android:id="@+id/dialog_cashflow_total"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:background="@drawable/bg_white_corner_stroke_grey"
+            android:layout_margin="@dimen/_5sdp"
+            android:hint="Số tiền (đ)"
+            android:paddingLeft="@dimen/_10sdp"
+            android:inputType="number"/>
+
+        <EditText
+            android:id="@+id/dialog_cashflow_note"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/_50sdp"
+            android:background="@drawable/bg_white_corner_stroke_grey"
+            android:contextClickable="false"
+            android:gravity="top"
+            android:imeOptions="actionNext"
+            android:paddingLeft="@dimen/_10sdp"
+            android:paddingRight="@dimen/_15sdp"
+            android:paddingTop="@dimen/_5sdp"
+            android:paddingBottom="@dimen/_5sdp"
+            android:textColor="@color/black_text_color"
+            android:textSize="@dimen/_12sdp"
+            android:hint="Ghi chú"
+            android:layout_margin="@dimen/_5sdp"
+            android:inputType="textCapSentences|textMultiLine"
+            android:textCursorDrawable="@drawable/custom_cursor" />
+
+
+        <include
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            layout="@layout/view_bottom_dialog_button" />
+
+    </LinearLayout>
+
+</RelativeLayout>

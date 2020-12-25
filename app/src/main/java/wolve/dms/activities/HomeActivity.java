@@ -9,7 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -39,7 +38,6 @@ import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.ProductGroup;
-import wolve.dms.models.Status;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
@@ -251,12 +249,17 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 break;
 
             case 3:
-                choiceSetupItem();
+                if (Util.isAdmin()){
+                    Transaction.gotoAccountActivity();
+                }else {
+                    Util.showToast("Không hỗ trợ");
+                }
+
 
                 break;
 
             case 4:
-                Util.showToast("Chưa hỗ trợ");
+                choiceSetupItem();
 
                 break;
 
@@ -280,7 +283,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         new GetPostMethod(param, new NewCallbackCustom() {
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
-                Status.saveStatusList(result.getJSONArray("Status"));
+                //Status.saveStatusList(result.getJSONArray("Status"));
                 ProductGroup.saveProductGroupList(result.getJSONArray("ProductGroup"));
                 CustomSQL.setString(Constants.DISTRIBUTOR, result.getString("Distributor"));
 
@@ -318,20 +321,22 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
                             case 1:
                                 if (User.getCurrentRoleId() == Constants.ROLE_ADMIN) {
+                                    Transaction.gotoCashFlowTypeActivity();
+                                }
+
+                                break;
+
+                            case 2:
+                                if (User.getCurrentRoleId() == Constants.ROLE_ADMIN) {
                                     Transaction.gotoProductGroupActivity();
                                 }
                                 break;
 
-                            case 2:
+                            case 3:
                                 Transaction.gotoProductActivity();
                                 break;
 
-                            case 3:
-                                if (User.getCurrentRoleId() == Constants.ROLE_ADMIN) {
-                                    Transaction.gotoStatusActivity();
-                                }
 
-                                break;
 
                             case 4:
                                 Transaction.gotoDistributorActivity();

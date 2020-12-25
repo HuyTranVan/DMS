@@ -68,6 +68,8 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
         btnAddPDepot.setVisibility(Util.isAdmin() ? View.VISIBLE : View.GONE);
         loadDepot();
 
+
+
     }
 
     @Override
@@ -87,38 +89,39 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
 
             case R.id.depot_add_new:
                 BaseModel baseModel = new BaseModel();
+                CustomBottomDialog.choiceTwoOption(null, "Kho tổng", null, "Kho tạm", new CustomBottomDialog.TwoMethodListener() {
+                    @Override
+                    public void Method1(Boolean one) {
+                        baseModel.put("isMaster", 1);
+                        openFragmentNewDepot(baseModel.BaseModelstoString());
+                    }
 
-                if (checkMasterWarehouseExist(listDepot)) {
-                    CustomCenterDialog.alertWithButton("Tạo kho hàng",
-                            "Đã tồn tại kho tổng, bạn chỉ có thể tạo kho hàng tạm", "đồng ý", new CallbackBoolean() {
-                                @Override
-                                public void onRespone(Boolean result) {
-                                    if (result) {
-                                        baseModel.put("isMaster", 2);
-                                        openFragmentNewDepot(baseModel.BaseModelstoString());
+                    @Override
+                    public void Method2(Boolean two) {
+                        baseModel.put("isMaster", 2);
+                        openFragmentNewDepot(baseModel.BaseModelstoString());
+                    }
+                });
 
-                                    }
-                                }
-                            });
-
-
-                } else {
-                    CustomBottomDialog.choiceTwoOption(null, "Kho tổng", null, "Kho tạm", new CustomBottomDialog.TwoMethodListener() {
-                        @Override
-                        public void Method1(Boolean one) {
-                            baseModel.put("isMaster", 1);
-                            openFragmentNewDepot(baseModel.BaseModelstoString());
-                        }
-
-                        @Override
-                        public void Method2(Boolean two) {
-                            baseModel.put("isMaster", 2);
-                            openFragmentNewDepot(baseModel.BaseModelstoString());
-                        }
-                    });
-
-
-                }
+//                if (checkMasterWarehouseExist(listDepot)){
+//                    CustomCenterDialog.alertWithButton("Tạo kho hàng",
+//                            "Đã tồn tại kho tổng, bạn chỉ có thể tạo kho hàng tạm", "đồng ý", new CallbackBoolean() {
+//                                @Override
+//                                public void onRespone(Boolean result) {
+//                                    if (result) {
+//                                        baseModel.put("isMaster", 2);
+//                                        openFragmentNewDepot(baseModel.BaseModelstoString());
+//
+//                                    }
+//                                }
+//                            });
+//
+//
+//                } else {
+//
+//
+//
+//                }
 
 
                 break;
@@ -153,6 +156,7 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
         new GetPostMethod(param, new NewCallbackCustom() {
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
+
                 createRVDepot(list);
             }
 
@@ -167,6 +171,7 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
 
     private void createRVDepot(List<BaseModel> list) {
         listDepot = list;
+        showAddNewButton();
         adapter = new WarehouseAdapter(listDepot, new CallbackObject() {
             @Override
             public void onResponse(BaseModel object) {
@@ -238,6 +243,18 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
         boolean check = false;
         for (BaseModel model : list) {
             if (model.getInt("isMaster") == 1) {
+                check = true;
+                break;
+            }
+        }
+        return check;
+
+    }
+
+    private boolean checkTempWarehouseExist(List<BaseModel> list) {
+        boolean check = false;
+        for (BaseModel model : list) {
+            if (model.getInt("isMaster") == 2) {
                 check = true;
                 break;
             }
@@ -319,5 +336,13 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
 //
 //                    }
 //                });
+    }
+
+    private void showAddNewButton(){
+        if (checkMasterWarehouseExist(listDepot) && checkTempWarehouseExist(listDepot)){
+            btnAddPDepot.setVisibility(View.GONE);
+        }else {
+            btnAddPDepot.setVisibility(View.VISIBLE);
+        }
     }
 }
