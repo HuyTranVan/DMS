@@ -238,7 +238,10 @@ public class ApiUtil {
     public final static String STATISTICALS(){
         return BASE_URL + "dms/token/system/StatisticalList?from=%s&to=%s";
     }
-    //public final static String STATISTICAL_PARAM = "?from=%s&to=%s";
+
+    public final static String SUMMARIES(){
+        return BASE_URL + "dms/token/system/Summary?from=%s&to=%s";
+    }
 
 //    public final static String BILLS = BASE_URL + "dms/token/bill/BillList";
 //    public final static String BILLS_HAVE_PAYMENT = BASE_URL + "dms/token/bill/BillListHavePayment";

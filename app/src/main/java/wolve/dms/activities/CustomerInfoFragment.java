@@ -129,7 +129,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 
         }
         mCall.setVisibility(mActivity.currentCustomer.getString("phone").equals("") ? View.GONE : View.VISIBLE);
-        updateStatus(mActivity.currentCustomer.getBaseModel("status").getInt("id"));
+        updateStatus(mActivity.currentCustomer.getInt("status_id"));
 
 //todo addevent after setdata
         phoneEvent();
@@ -292,7 +292,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
                             1;
                     CustomCenterDialog.showCheckinDialog("chi tiết ghé thăm cửa hàng",
                             mActivity.currentCustomer.getInt("id"),
-                            mActivity.currentCustomer.getBaseModel("status").getInt("id"),
+                            mActivity.currentCustomer.getInt("status_id"),
                             currentRating,
                             new CallbackObject() {
                                 @Override

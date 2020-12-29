@@ -20,12 +20,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.R;
 import wolve.dms.adapter.Statistical_ViewpagerAdapter;
 import wolve.dms.apiconnect.ApiUtil;
-import wolve.dms.apiconnect.apiserver.GDriveMethod;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.customviews.CustomTabLayout;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
-import wolve.dms.apiconnect.apigooglesheet.GoogleSheetGetData;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
@@ -40,7 +38,7 @@ import wolve.dms.utils.Util;
 
 public class StatisticalActivity extends BaseActivity implements View.OnClickListener, CallbackObject {
     private ImageView btnBack;
-    protected TextView tvTitle, tvEmployeeName, btnExport, btnReload, tvCalendar;
+    protected TextView tvTitle, tvEmployeeName, btnReport, btnReload, tvCalendar;
     protected ViewPager viewPager;
     private CustomTabLayout tabLayout;
     private LinearLayout btnEmployeeFilter;
@@ -65,7 +63,8 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
             R.string.icon_district,
             R.string.icon_bomb};
     private long start, end;
-    private int currentCheckedTime;
+    private BaseModel currentRangeTime;
+    private int currentTabPosition;
 
 
     @Override
@@ -85,7 +84,7 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
         viewPager = (ViewPager) findViewById(R.id.statistical_viewpager);
         tabLayout = (CustomTabLayout) findViewById(R.id.statistical_tabs);
         btnEmployeeFilter = findViewById(R.id.statistical_filter_by_employee);
-        btnExport = findViewById(R.id.statistical_export);
+        btnReport = findViewById(R.id.statistical_export);
         btnReload = findViewById(R.id.statistical_reload);
         tvEmployeeName = findViewById(R.id.statistical_filter_by_employee_name);
         tvCalendar = findViewById(R.id.statistical_calendar);
@@ -97,7 +96,7 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
     public void initialData() {
         listUser = new ArrayList<>();
         listUser.add(0, getAllFilterUser());
-        tvCalendar.setText(Util.getIconString(R.string.icon_calendar, "   ", Util.CurrentMonthYear()));
+//        tvCalendar.setText(Util.getIconString(R.string.icon_calendar, "   ", Util.CurrentMonthYear()));
 
         if (User.getCurrentRoleId() == Constants.ROLE_ADMIN){
             tvEmployeeName.setText( Constants.ALL_FILTER);
@@ -108,9 +107,7 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
             Glide.with(this).load(User.getImage()).placeholder(R.drawable.ic_user).fitCenter().into(employeeImage);
 
         }
-        loadInitialData(Util.TimeStamp1(Util.Current01MonthYear()),
-                Util.TimeStamp1(Util.Next01MonthYear()),
-                1);
+        loadInitialData(currentMonth(), 1);
 
         setupViewPager(viewPager);
         setupTabLayout(tabLayout);
@@ -121,7 +118,7 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
     public void addEvent() {
         btnBack.setOnClickListener(this);
         btnEmployeeFilter.setOnClickListener(this);
-        btnExport.setOnClickListener(this);
+        btnReport.setOnClickListener(this);
         btnReload.setOnClickListener(this);
         tvCalendar.setOnClickListener(this);
 
@@ -177,17 +174,21 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
                 break;
 
             case R.id.statistical_export:
-                //updateSheetTab();
+                if (Util.isAdmin()){
+                    openSummaryFragment();
+                }else {
+                    Util.showToast("Không thể thực hiện!");
+                }
 
                 break;
 
             case R.id.statistical_reload:
-                loadInitialData(start, end, currentCheckedTime);
+                loadInitialData(currentRangeTime, currentTabPosition);
                 break;
 
             case R.id.statistical_calendar:
                 Bundle bundle = new Bundle();
-                bundle.putInt("position", currentCheckedTime);
+                bundle.putInt("position", currentTabPosition);
                 bundle.putLong("start_time", start);
                 changeFragment(new DatePickerFragment(), bundle, true);
                 break;
@@ -207,17 +208,21 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
         } else if (mFragment != null && mFragment instanceof DatePickerFragment) {
             getSupportFragmentManager().popBackStack();
 
+        } else if (mFragment != null && mFragment instanceof SummaryFragment) {
+            getSupportFragmentManager().popBackStack();
+
         } else {
             Transaction.gotoHomeActivityRight(true);
         }
 
     }
 
-    private void loadInitialData(long starDay, long lastDay, int currentcheckedtime) {
-        start = starDay;
-        end = lastDay;
-        currentCheckedTime = currentcheckedtime;
-        BaseModel param = createGetParam(String.format(ApiUtil.STATISTICALS(), starDay, lastDay), false);
+    private void loadInitialData(BaseModel range, int tabPosition) {
+        tvCalendar.setText(Util.getIconString(R.string.icon_calendar, "   ", range.getString("text")));
+        currentRangeTime = range;
+        currentTabPosition = tabPosition;
+        BaseModel param = createGetParam(String.format(ApiUtil.STATISTICALS(), range.getLong("start"), range.getLong("end")), false);
+
         new GetPostMethod(param, new NewCallbackCustom() {
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
@@ -296,68 +301,10 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
         Util.getInstance().setCurrentActivity(this);
         if (data.hasExtra(Constants.RELOAD_DATA) && requestCode == Constants.RESULT_CUSTOMER_ACTIVITY) {
             if (data.getBooleanExtra(Constants.RELOAD_DATA, false)) {
-                loadInitialData(start, end, currentCheckedTime);
+                loadInitialData(currentRangeTime, currentTabPosition);
             }
 
         }
-
-    }
-
-//    private void updateSheetTab(){
-//        String startday = Util.DateString(getStartDay());
-//        String endday = Util.DateString(Util.CurrentTimeStamp()< getEndDay() ? Util.CurrentTimeStamp() : getEndDay());
-//        SheetConnect.getALlTab(Api_link.STATISTICAL_SHEET_KEY, new GoogleSheetGetAllTab.CallbackListSheet() {
-//            @Override
-//            public void onRespone(List<Sheet> results) {
-//                boolean check = false;
-//                for (Sheet sheet : results) {
-//                    if (sheet.getProperties().getTitle().equals(rdMonth.getText().toString())){
-//                        check = true;
-//                        break;
-//                    }
-//
-//                }
-//
-//                if (!check){
-//
-//                    SheetConnect.createNewTab(Api_link.STATISTICAL_SHEET_KEY, rdMonth.getText().toString(), new GoogleSheetGetData.CallbackListList() {
-//                        @Override
-//                        public void onRespone(List<List<Object>> results) {
-//                            updateSheetIncomeData(rdMonth.getText().toString() ,
-//                                            SHEET_COLUM,
-//                                            DataUtil.updateIncomeByUserToSheet(startday, endday, listUser, listInitialBill, listInitialBillDetail, listInitialPayment, listInitialDebt));
-//
-////                                            DataUtil.getCashByUser(listInitialBill, listInitialPayment, listUser)));
-//
-//                        }
-//                    },false);
-//
-//                }else {
-//                    updateSheetIncomeData(rdMonth.getText().toString(),
-//                                    SHEET_COLUM,
-//                                    DataUtil.updateIncomeByUserToSheet(startday, endday, listUser, listInitialBill, listInitialBillDetail, listInitialPayment, listInitialDebt));
-//
-////                                    DataUtil.getCashByUser(listInitialBill, listInitialPayment, listUser)));
-//
-//                }
-//
-//            }
-//        }, false);
-//    }
-
-    private void updateSheetIncomeData(final String tabtitle, String sheet_direction, final List<List<Object>> params) {
-        GDriveMethod.postValue(ApiUtil.STATISTICAL_SHEET_KEY,
-                String.format(ApiUtil.STATISTICAL_SHEET_TAB, tabtitle, 1),
-                params,
-                sheet_direction,
-                new GoogleSheetGetData.CallbackListList() {
-                    @Override
-                    public void onRespone(List<List<Object>> results) {
-
-
-                    }
-                }, true);
-
 
     }
 
@@ -394,11 +341,31 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
         return user_id;
     }
 
+    private BaseModel currentMonth(){
+        BaseModel result = new BaseModel();
+        result.put("start", Util.TimeStamp1(Util.Current01MonthYear()));
+        result.put("end", Util.TimeStamp1(Util.Next01MonthYear()));
+        result.put("text", Util.CurrentMonthYear());
+        result.put("type", Constants.MONTH);
+
+        return result;
+
+    }
+
     //data return from filter date fragment
     @Override
     public void onResponse(BaseModel object){
         tvCalendar.setText(Util.getIconString(R.string.icon_calendar, "   ", object.getString("text")));
-        loadInitialData(object.getLong("start"), object.getLong("end"), object.getInt("position"));
+        loadInitialData(object, object.getInt("position"));
+
+        btnReport.setVisibility(object.getString("type").equals(Constants.MONTH) ? View.VISIBLE : View.GONE);
+
+    }
+
+    private void openSummaryFragment(){
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.RANGE_TIME, currentRangeTime.BaseModelstoString());
+        changeFragment(new SummaryFragment(), bundle, true);
 
     }
 }

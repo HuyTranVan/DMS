@@ -1,7 +1,6 @@
 package wolve.dms.adapter;
 
 import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +10,6 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -59,7 +57,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.Statisti
 
     @Override
     public StatisticalBillsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(mContext).inflate(R.layout.adapter_account_item, parent, false);
+        View itemView = LayoutInflater.from(mContext).inflate(R.layout.adapter_accout_item, parent, false);
         return new StatisticalBillsViewHolder(itemView);
     }
 
@@ -204,21 +202,24 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.Statisti
 
                 }else if (charString.equals(Constants.IN_COME)){
                     for (BaseModel row : baseData) {
-                        if (row.getBaseModel("cashflowtype").getInt("kind") == 1) {
+                        if (row.getBaseModel("cashflowtype").getInt("kind") == 1 ||
+                                row.getBaseModel("cashflowtype").getInt("kind") == 2) {
                             mData.add(row);
                         }
 
                     }
 
-                }else if (charString.equals(Constants.OUT_COME)){
-                    for (BaseModel row : baseData) {
-                        if (row.getBaseModel("cashflowtype").getInt("kind") == 2) {
-                            mData.add(row);
-                        }
-
-                    }
-
-                } else {
+                }
+//                else if (charString.equals(Constants.OUT_COME)){
+//                    for (BaseModel row : baseData) {
+//                        if (row.getBaseModel("cashflowtype").getInt("kind") == 2) {
+//                            mData.add(row);
+//                        }
+//
+//                    }
+//
+//                }
+                else {
                     for (BaseModel row : baseData) {
                         if (row.getBaseModel("cashflowtype").getInt("kind") > 2 ) {
                             mData.add(row);

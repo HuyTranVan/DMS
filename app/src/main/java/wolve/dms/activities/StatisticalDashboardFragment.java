@@ -146,7 +146,7 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
                                 double debt, int countdebt,
                                 double profit,
                                 double baseprofit,
-                                BaseModel warehouse) {
+                                BaseModel warehouse){
 
         vRevenue.setTitleText(String.format("Tổng bán hàng (%d)", bills.size()));
         vRevenue.setText(Util.FormatMoney(total));
@@ -169,13 +169,11 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         vBaseProfit.setTitleText("Chênh lệch giá NPP");
         vBaseProfit.setText(Util.FormatMoney(baseprofit));
 
-
         vtotalNet.setVisibility(username.equals(Constants.ALL_FILTER) ? View.GONE : View.VISIBLE);
         vTemp.setVisibility(username.equals(Constants.ALL_FILTER) ? View.GONE : View.VISIBLE);
         vInventory.setVisibility(Util.isAdmin() ? View.VISIBLE : View.GONE);
         vBaseProfit.setVisibility(Util.isAdmin() ? View.VISIBLE : View.GONE);
     }
-
 
     private void setupDistrictChart(List<BaseModel> list) {
         //repair data for Chart

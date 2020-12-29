@@ -351,7 +351,7 @@ public class Transaction {
     }
 
     public static void shareImage(Uri uri, BaseModel currentCustomer) {
-        String message = String.format("%s %s ::: %s",
+        String message = currentCustomer == null? "" : String.format("%s %s ::: %s",
                 Constants.shopName[currentCustomer.getInt("shopType")].toUpperCase(),
                 currentCustomer.getString("signBoard").toUpperCase(),
                 Util.CurrentMonthYearHourNotBlank());

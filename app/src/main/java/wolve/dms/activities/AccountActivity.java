@@ -150,9 +150,9 @@ public class AccountActivity extends BaseActivity implements View.OnClickListene
                         adapter.getFilter().filter(Constants.IN_COME);
                         break;
 
-                    case 4:
-                        adapter.getFilter().filter(Constants.OUT_COME);
-                        break;
+//                    case 4:
+//                        adapter.getFilter().filter(Constants.OUT_COME);
+//                        break;
 
 
                 }

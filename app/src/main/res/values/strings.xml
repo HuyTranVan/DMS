@@ -145,6 +145,7 @@
     <string name="icon_store">&#xf54e;</string>
     <string name="icon_tag">&#xf02b;</string>
     <string name="icon_money_check">&#xf873;</string>
+    <string name="icon_report">&#xf659;</string>
 
 
     <string name="login_username" translatable="false">Nhập tài khoản hoặc SĐT</string>

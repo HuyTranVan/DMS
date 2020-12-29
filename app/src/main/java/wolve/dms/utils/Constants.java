@@ -83,6 +83,10 @@ public class Constants {
     public static final String MONTH_DEFAULT = "Chọn tháng";
     public static final String YEAR_DEFAULT = "Chọn năm";
 
+    public static final String DATE = "date";
+    public static final String MONTH = "month";
+    public static final String YEAR = "year";
+
     public final static String IS_PROMOTION = "BÁN VÀ KHUYẾN MÃI";
     public final static String NO_PROMOTION = "CHỈ BÁN";
 
@@ -167,6 +171,7 @@ public class Constants {
     public final static String VIBER_PACKAGE = "com.viber.voip";
     public final static String MESSENGER_PACKAGE = "com.facebook.orca";
     public static final String PACKAGE_DEFAULT = "package_default";
+    public static final String RANGE_TIME = "range_time";
 
     //Home constant
     public static List<BaseModel> HomeItemList() {
@@ -227,11 +232,11 @@ public class Constants {
             "KL"};
 
     public static String[] sortGroups = new String[]{
+
             "Tất cả",
             "Khác",
             "Trả tiền NPP",
-            "Tiền hàng",
-            "Trả chiết khấu"};
+            "Bán hàng"};
 
 
     public static void throwError(String err) {
