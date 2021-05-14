@@ -1,5 +1,6 @@
 package wolve.dms.activities;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,17 +35,24 @@ import static wolve.dms.activities.BaseActivity.createPostParam;
  * Created by macos on 9/16/17.
  */
 
-public class NewUpdateWarehouseFragment extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
+public class NewUpdateWarehouseFragment extends Fragment implements View.OnClickListener {
     private View view;
     private ImageView btnBack;
     private CInputForm edInput, edUser;
     private Button btnSubmit;
     private BaseModel currentDepot;
-    private WarehouseActivity mActivity;
-    private RadioGroup rdDepotType;
-    private RadioButton rdUser;
+    //private WarehouseActivity mActivity;
+//    private RadioGroup rdDepotType;
+//    private RadioButton rdUser;
 
     private List<BaseModel> listUser = new ArrayList<>();
+    private CallbackObject onDataPass;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        onDataPass = (CallbackObject) context;
+    }
 
 
     @Nullable
@@ -64,24 +72,31 @@ public class NewUpdateWarehouseFragment extends Fragment implements View.OnClick
         if (bundle != null) {
             currentDepot = new BaseModel(bundle);
             edInput.setText(currentDepot.getString("name"));
-            edUser.setText(currentDepot.getBaseModel("user").getString("displayName"));
-            switch (currentDepot.getInt("isMaster")) {
-                case 1:
-                    rdDepotType.check(R.id.add_depot_rdmain);
-                    rdUser.setVisibility(View.GONE);
-                    break;
-
-                case 2:
-                    rdDepotType.check(R.id.add_depot_rdtemp);
-                    rdUser.setVisibility(View.GONE);
-                    break;
-
-                case 3:
-                    rdDepotType.check(R.id.add_depot_rduser);
-                    rdUser.setVisibility(View.VISIBLE);
-                    break;
-
+            if (currentDepot.getInt("isMaster") == 2){
+                edUser.setVisibility(View.GONE);
+            }else {
+                edUser.setVisibility(View.VISIBLE);
+                edUser.setFocusable(false);
+                edUser.setText(currentDepot.getBaseModel("user").getString("displayName"));
             }
+
+//            switch (currentDepot.getInt("isMaster")) {
+//                case 1:
+//                    rdDepotType.check(R.id.add_depot_rdmain);
+//                    rdUser.setVisibility(View.GONE);
+//                    break;
+//
+//                case 2:
+//                    rdDepotType.check(R.id.add_depot_rdtemp);
+//                    rdUser.setVisibility(View.GONE);
+//                    break;
+//
+//                case 3:
+//                    rdDepotType.check(R.id.add_depot_rduser);
+//                    rdUser.setVisibility(View.VISIBLE);
+//                    break;
+//
+//            }
 
         }
 
@@ -93,18 +108,18 @@ public class NewUpdateWarehouseFragment extends Fragment implements View.OnClick
     private void addEvent() {
         btnBack.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
-        rdDepotType.setOnCheckedChangeListener(this);
-        userEvent();
+        //rdDepotType.setOnCheckedChangeListener(this);
+        //userEvent();
     }
 
     private void initializeView() {
-        mActivity = (WarehouseActivity) getActivity();
+        //mActivity = (WarehouseActivity) getActivity();
         edInput = (CInputForm) view.findViewById(R.id.add_depot_input);
         edUser = (CInputForm) view.findViewById(R.id.add_depot_user);
         btnSubmit = (Button) view.findViewById(R.id.add_depot_submit);
         btnBack = (ImageView) view.findViewById(R.id.icon_back);
-        rdDepotType = view.findViewById(R.id.add_depot_rd);
-        rdUser = view.findViewById(R.id.add_depot_rduser);
+//        rdDepotType = view.findViewById(R.id.add_depot_rd);
+//        rdUser = view.findViewById(R.id.add_depot_rduser);
 
     }
 
@@ -113,7 +128,8 @@ public class NewUpdateWarehouseFragment extends Fragment implements View.OnClick
         switch (v.getId()) {
             case R.id.icon_back:
                 Util.hideKeyboard(v);
-                mActivity.onBackPressed();
+                getActivity().getSupportFragmentManager().popBackStack();
+                //mActivity.onBackPressed();
                 break;
 
             case R.id.add_depot_submit:
@@ -121,6 +137,7 @@ public class NewUpdateWarehouseFragment extends Fragment implements View.OnClick
                     CustomCenterDialog.alert(null, "Vui lòng điền đầy đủ thông tin", "đồng ý");
 
                 } else {
+                    Util.hideKeyboard(v);
                     BaseModel param = createPostParam(ApiUtil.WAREHOUSE_NEW(),
                             String.format(ApiUtil.WAREHOUSE_CREATE_PARAM, !currentDepot.hasKey("id") ? "" : "id=" + currentDepot.getString("id") + "&",
                             Util.encodeString(edInput.getText().toString()),
@@ -132,8 +149,9 @@ public class NewUpdateWarehouseFragment extends Fragment implements View.OnClick
                     new GetPostMethod(param, new NewCallbackCustom() {
                         @Override
                         public void onResponse(BaseModel result, List<BaseModel> list) {
+
                             getActivity().getSupportFragmentManager().popBackStack();
-                            mActivity.loadDepot();
+                            //mActivity.loadDepot();
                         }
 
                         @Override
@@ -147,34 +165,34 @@ public class NewUpdateWarehouseFragment extends Fragment implements View.OnClick
         }
     }
 
-    private void userEvent() {
-        edUser.setDropdown(true, new CInputForm.ClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (listUser.size() > 0) {
-                    dialogChoiceUser(filterListBaseModel(listUser));
-
-                } else {
-                    BaseModel param = createGetParam(ApiUtil.USERS(), true);
-                    new GetPostMethod(param, new NewCallbackCustom() {
-                        @Override
-                        public void onResponse(BaseModel result, List<BaseModel> list) {
-                            listUser = list;
-                            dialogChoiceUser(filterListBaseModel(listUser));
-                        }
-
-                        @Override
-                        public void onError(String error) {
-
-                        }
-                    }, 1).execute();
-
-
-                }
-
-            }
-        });
-    }
+//    private void userEvent() {
+//        edUser.setDropdown(true, new CInputForm.ClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (listUser.size() > 0) {
+//                    dialogChoiceUser(filterListBaseModel(listUser));
+//
+//                } else {
+//                    BaseModel param = createGetParam(ApiUtil.USERS(), true);
+//                    new GetPostMethod(param, new NewCallbackCustom() {
+//                        @Override
+//                        public void onResponse(BaseModel result, List<BaseModel> list) {
+//                            listUser = list;
+//                            dialogChoiceUser(filterListBaseModel(listUser));
+//                        }
+//
+//                        @Override
+//                        public void onError(String error) {
+//
+//                        }
+//                    }, 1).execute();
+//
+//
+//                }
+//
+//            }
+//        });
+//    }
 
     private void dialogChoiceUser(List<BaseModel> list) {
         CustomBottomDialog.choiceListObject("CHỌN NHÂN VIÊN", list, "displayName", new CallbackObject() {
@@ -187,36 +205,14 @@ public class NewUpdateWarehouseFragment extends Fragment implements View.OnClick
         }, null);
     }
 
-    @Override
-    public void onCheckedChanged(RadioGroup radioGroup, int i) {
-        switch (i) {
-            case R.id.add_depot_rdmain:
-                currentDepot.put("isMaster", 1);
-                break;
-
-            case R.id.add_depot_rdtemp:
-                currentDepot.put("isMaster", 2);
-                break;
-
-            case R.id.add_depot_rduser:
-                currentDepot.put("isMaster", 3);
-                break;
-        }
-    }
-
-    private List<BaseModel> filterListBaseModel(List<BaseModel> list) {
-        List<BaseModel> results = new ArrayList<>();
-        for (BaseModel model : list) {
-            if (model.getInt("role") == 1) {
-                results.add(model);
-            }
-
-        }
-//        BaseModel defaultUser = new BaseModel();
-//        defaultUser.put("id", 0);
-//        defaultUser.put("displayName", "Mặc định");
-//        results.add(0, defaultUser);
-
-        return results;
-    }
+//    private List<BaseModel> filterListBaseModel(List<BaseModel> list) {
+//        List<BaseModel> results = new ArrayList<>();
+//        for (BaseModel model : list) {
+//            if (model.getInt("role") == 1) {
+//                results.add(model);
+//            }
+//
+//        }
+//        return results;
+//    }
 }

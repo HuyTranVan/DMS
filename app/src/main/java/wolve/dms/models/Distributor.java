@@ -83,8 +83,6 @@ public class Distributor extends BaseModel {
     public static String getObjectString() {
         return CustomSQL.getString(Constants.DISTRIBUTOR);
 
-
-
     }
 
 

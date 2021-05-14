@@ -3,8 +3,10 @@ package wolve.dms.activities;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -13,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
+import com.suke.widget.SwitchButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +35,7 @@ import wolve.dms.callback.CallbackListObject;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
+import wolve.dms.libraries.CustomSwitchButton;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.models.User;
@@ -52,17 +56,16 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
     private TabLayout tabLayout;
     private TextView tvTitle, tvFromWarehouse, tvToWarehouse;
     private Button btnSubmit;
-    private RelativeLayout coParent;
 
     private List<BaseModel> listWarehouse;
-    private BaseModel fromWarehouse = null, toWarehouse = null, masterWarehouse = null;
+    private BaseModel fromWarehouse = null,
+            toWarehouse = null;
     private ViewpagerMultiListAdapter viewpagerAdapter;
     private List<RecyclerView.Adapter> listadapter;
     private ProductImportAdapter adapterProduct;
     private ProductImportChoosenAdapter adapterChoosen;
     private ProductInventoryAdapter adapterInventory;
     private Import_ProductAdapter adapterImport;
-    //private List<BaseModel> listCurrentInventory = new ArrayList<>();
     private int currentPosition = 0;
     private List<String> mTitle = new ArrayList<>();
     private boolean[] searches = new boolean[]{false, false, false, false};
@@ -79,7 +82,6 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public void findViewById() {
-        coParent = findViewById(R.id.import_parent);
         btnBack = (ImageView) findViewById(R.id.icon_back);
         viewPager = findViewById(R.id.import_viewpager);
         tabLayout = findViewById(R.id.import_tabs);
@@ -94,36 +96,36 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
     public void initialData() {
         listWarehouse = new ArrayList<>();
         toWarehouse = new BaseModel(getIntent().getStringExtra(Constants.WAREHOUSE));
-        mTitle = createTabTitle();
-
-        tvTitle.setText("nhập kho");
-        tvToWarehouse.setText(Util.getStringIcon(toWarehouse.getString("name"), "   ", R.string.icon_down));
-        if (Util.isAdmin()) {
-            tvToWarehouse.setFocusable(true);
-            tvToWarehouse.setFocusableInTouchMode(true);
-
-        } else {
-            tvToWarehouse.setFocusable(false);
-        }
+        mTitle = createTabTitle(toWarehouse);
+        tvTitle.setText(String.format("nhập kho (%s)" , toWarehouse.getString("name")));
+        setToWarehouse(toWarehouse, false);
 
         tabLayout.setupWithViewPager(viewPager);
-        getListImport(0, new CallbackListObject() {
+
+        getListWarehouse(new CallbackListObject() {
             @Override
             public void onResponse(List<BaseModel> list) {
-                setupViewPager(new ArrayList<>(), list);
-                getInventory(toWarehouse.getInt("id"), new CallbackListObject() {
+                getListImport(0, new CallbackListObject(){
                     @Override
                     public void onResponse(List<BaseModel> list) {
-                        updateInventoryTitle(list);
-                        if (list.size() > 0) {
-                            viewPager.setCurrentItem(2, true);
-                        }
+                        setupViewPager(new ArrayList<>(), list);
+                        getInventory(toWarehouse.getInt("id"), new CallbackListObject() {
+                            @Override
+                            public void onResponse(List<BaseModel> list) {
+                                updateInventoryTitle(list);
+                                if (list.size() > 0) {
+                                    viewPager.setCurrentItem(2, true);
+                                }
 
-                        selectFromWarehouse(0);
+                                selectFromWarehouse(0);
+                            }
+                        });
                     }
-                });
+                }, 0);
             }
-        }, 3);
+        }, 4);
+
+
 
 
     }
@@ -132,7 +134,6 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
     public void addEvent() {
         btnBack.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
-        tvToWarehouse.setOnClickListener(this);
         tvFromWarehouse.setOnClickListener(this);
 
     }
@@ -154,25 +155,15 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
 
                 break;
 
-            case R.id.import_towarehouse:
-                if (Util.isAdmin()) {
-                    selectToWarehouse(1);
-
-                } else {
-                    Util.showSnackbar("Không thể chọn kho hàng khác", null, null);
-
-                }
-
-                break;
 
         }
     }
 
-    private List<String> createTabTitle() {
+    private List<String> createTabTitle(BaseModel warehouse) {
         List<String> titles = new ArrayList<>();
         titles.add(0, "DANH SÁCH");
         titles.add(1, "ĐÃ CHỌN");
-        titles.add(2, "TỒN " + toWarehouse.getString("name"));
+        titles.add(2, "TỒN " + warehouse.getString("name"));
         titles.add(3, "LỊCH SỬ");
         return titles;
     }
@@ -309,12 +300,6 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void submitEvent() {
-//        String param = DataUtil.createPostImportJsonParam(toWarehouse.getInt("id"),
-//                fromWarehouse.getInt("id"),
-//                adapterChoosen.getmData(),
-//                Util.isAdmin() ? User.getId() : 0,
-//                "");
-
             List<BaseModel> listDiff = DataUtil.listImportNotEnough( adapterChoosen.getmData());
 
             if (listDiff.size() > 0 && fromWarehouse.getInt("isMaster") == 2 && Util.isAdmin()){
@@ -331,28 +316,6 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
 
                             }
                         });
-
-//                alertInventoryNotEnough(fromWarehouse.getString("name"), new CallbackBoolean() {
-//                    @Override
-//                    public void onRespone(Boolean result) {
-
-
-
-//                        CustomCenterDialog.importToTempWarehouse(masterWarehouse, fromWarehouse, listDiff, new CallbackBoolean() {
-//                            @Override
-//                            public void onRespone(Boolean result) {
-//                                if (result){
-//                                    CustomCenterDialog.alert("Thành công",
-//                                            "Nhập từ kho tổng thành công, vui lòng nhập kho lại!",
-//                                            "Đồng ý");
-//                                    reloadListImport(false, false);
-//                                }
-//                            }
-//                        });
-//                    }
-//                });
-
-
 
             } else {
                 postImport(Util.isAdmin() ? User.getId() : 0);
@@ -374,11 +337,16 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
             public void onRespone(Boolean result) {
                 if (result) {
                     DataUtil.saveProductPopular(adapterChoosen.getmData());
+                    double total = DataUtil.sumMoneyFromList(adapterChoosen.getmData(), "basePrice", "quantity");
                     reloadAllWarehouse(new CallbackBoolean() {
                         @Override
                         public void onRespone(Boolean result) {
                             reloadListImport(false, false);
-                            returnPreviousActivity();
+                            if (fromWarehouse.getInt("isMaster") == 1){
+                                updateDebitNote(total);
+                            }else {
+                                returnPreviousActivity();
+                            }
 
                         }
                     });
@@ -401,6 +369,39 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
                         }
                     }
                 });
+    }
+
+    private void updateDebitNote(double total){
+        CustomCenterDialog.alertWithCancelButton("Cập nhật công nợ",
+                "Cập nhật đơn nhập kho này vào công nợ của nhà cung cấp",
+                "Đồng ý",
+                "Không",
+                new CallbackBoolean() {
+                    @Override
+                    public void onRespone(Boolean result) {
+                        if (result) {
+                            BaseModel param = createPostParam(ApiUtil.DEBITNOTE_NEW(),
+                                    String.format(ApiUtil.DEBITNOTE_CREATE_PARAM, total),
+                                    false, false);
+                            new GetPostMethod(param, new NewCallbackCustom() {
+                                @Override
+                                public void onResponse(BaseModel result, List<BaseModel> list) {
+                                    returnPreviousActivity();
+                                }
+
+                                @Override
+                                public void onError(String error) {
+
+                                }
+                            }, 1).execute();
+
+
+                        }else {
+                            returnPreviousActivity();
+                        }
+                    }
+                });
+
     }
 
     public void reloadListImport(boolean setActive, boolean reloadToWarehouse) {
@@ -479,50 +480,14 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void selectFromWarehouse(int loadingtimes) {
-        //todo: show all include Master Warehouse
-        getListWarehouse(new CallbackListObject() {
+        getListWarehouse(new CallbackListObject(){
             @Override
             public void onResponse(List<BaseModel> listWa) {
-                masterWarehouse = getMasterWarehouse(listWa);
+
                 dialogSelectWarehouse("CHỌN KHO XUẤT", filterListFromWarehouse(listWa), new CallbackObject() {
                     @Override
-                    public void onResponse(BaseModel object) {
-                        if (object.getInt("isMaster") == 1) {
-
-                            if (toWarehouse.getInt("isMaster") != 2) {
-                                CustomCenterDialog.alert("Không thể thực hiện", "Chỉ có thể xuất từ kho tổng sang kho tạm. Vui lòng chọn kho đích là kho tạm", " đồng ý");
-
-                            } else {
-                                tvFromWarehouse.setText(Util.getStringIcon(object.getString("name"), "   ", R.string.icon_down));
-                                viewPager.setCurrentItem(0, true);
-                                fromWarehouse = object;
-                                adapterProduct.updateData(Product.getProductList());
-                                adapterChoosen.emptyList();
-
-                                updateChoosenTitle(0);
-                                refreshSearchView(0, Product.getProductList().size() > 0 ? true : false);
-
-                            }
-
-                        }else {
-                            getInventory(object.getInt("id"), new CallbackListObject() {
-                                @Override
-                                public void onResponse(List<BaseModel> listIn) {
-                                    int size = listIn.size();
-                                    tvFromWarehouse.setText(Util.getStringIcon(object.getString("name"), "   ", R.string.icon_down));
-                                    viewPager.setCurrentItem(0, true);
-                                    fromWarehouse = object;
-                                    adapterProduct.updateData(object.getInt("isMaster") == 2? Product.getProductInventoryList(listIn) :listIn);
-                                    adapterChoosen.emptyList();
-
-                                    updateChoosenTitle(0);
-                                    refreshSearchView(0, size > 0 ? true : false);
-                                    adapterProduct.notifyDataSetChanged();
-
-                                }
-                            });
-
-                        }
+                    public void onResponse(BaseModel object){
+                        setFromWarehouse(object);
 
                     }
                 });
@@ -533,10 +498,10 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
 
     }
 
-    private BaseModel getMasterWarehouse(List<BaseModel> list) {
+    private BaseModel getisMasterWarehouse(List<BaseModel> list, int isMaster) {
         BaseModel object = new BaseModel();
         for (BaseModel item: list){
-            if (item.getInt("isMaster") == 1){
+            if (item.getInt("isMaster") == isMaster){
                 object = item;
                 break;
             }
@@ -553,68 +518,50 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
 
     }
 
-    private void selectToWarehouse(int loadingtimes) {
-        //todo: show all include Master Warehouse
-        getListWarehouse(new CallbackListObject() {
-            @Override
-            public void onResponse(List<BaseModel> list) {
-
-                dialogSelectWarehouse("CHỌN KHO NHẬP", filterListToWarehouse(list), new CallbackObject() {
-                    @Override
-                    public void onResponse(BaseModel object) {
-                        toWarehouse = object;
-                        tvToWarehouse.setText(Util.getStringIcon(object.getString("name"), "   ", R.string.icon_down));
-
-                        reloadAllWarehouse(null);
-
-                    }
-                });
-
-            }
-        }, loadingtimes);
-
-
-    }
-
-    private List<BaseModel> filterListToWarehouse(List<BaseModel> list) {
-        List<BaseModel> results = new ArrayList<>();
-        for (BaseModel model : list) {
-            if (model.getInt("isMaster") != 1) {
-                if (fromWarehouse != null && model.getInt("id") != fromWarehouse.getInt("id")) {
-                    results.add(model);
-
-                } else if (fromWarehouse == null) {
-                    results.add(model);
-
-                }
-
-            }
-        }
-        DataUtil.sortbyStringKey("isMaster", results, false);
-        return results;
-    }
-
     private List<BaseModel> filterListFromWarehouse(List<BaseModel> list) {
         List<BaseModel> listResutl = new ArrayList<>();
         for (BaseModel model : list) {
             if (Util.isAdmin()) {
-                if (model.getInt("id") != toWarehouse.getInt("id")) {
-                    if (toWarehouse.getInt("isMaster") == 2) {
+                if (fromWarehouse != null) {
+                    if (toWarehouse.getInt("isMaster") == 2
+                            && model.getInt("id") != toWarehouse.getInt("id")
+                            && model.getInt("id") != fromWarehouse.getInt("id")){
                         listResutl.add(model);
-
-                    } else if (model.getInt("isMaster") != 1) {
+                    }else if (model.getInt("isMaster") != 1
+                            && model.getInt("id") != toWarehouse.getInt("id")
+                            && model.getInt("id") != fromWarehouse.getInt("id")){
                         listResutl.add(model);
 
                     }
 
+                }else {
+                    if (toWarehouse.getInt("isMaster") == 2
+                            && model.getInt("id") != toWarehouse.getInt("id")){
+                        listResutl.add(model);
+                    }else if (model.getInt("isMaster") != 1
+                            && model.getInt("id") != toWarehouse.getInt("id")){
+                        listResutl.add(model);
+
+                    }
 
                 }
 
             } else {
-                if (model.getInt("id") != toWarehouse.getInt("id")
-                        && model.getInt("isMaster") != 1) {
-                    listResutl.add(model);
+                if (fromWarehouse != null){
+                    if (model.getInt("id") != toWarehouse.getInt("id")
+                            && model.getInt("id") != fromWarehouse.getInt("id")
+                            && model.getInt("isMaster") != 1) {
+                        listResutl.add(model);
+                    }
+
+                }else {
+                    if (model.getInt("id") != toWarehouse.getInt("id")
+                            && model.getInt("isMaster") != 1) {
+                        listResutl.add(model);
+                    }
+
                 }
+
             }
         }
         DataUtil.sortbyStringKey("isMaster", listResutl, false);
@@ -729,5 +676,116 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
                 });
     }
 
+    private void setToWarehouse(BaseModel object, boolean haveReset){
+        toWarehouse = new BaseModel(object.BaseModelJSONObject());
+        tvToWarehouse.setText(Util.getStringIcon(toWarehouse.getString("name"), "   ", R.string.icon_down));
+        if (haveReset){
+            reloadAllWarehouse(null);
+        }
 
+    }
+
+    private void setFromWarehouse(BaseModel object){
+        fromWarehouse = new BaseModel(object.BaseModelJSONObject());
+        if (object.getInt("isMaster") == 1) {
+            tvFromWarehouse.setText(Util.getStringIcon(object.getString("name"), "   ", R.string.icon_down));
+            viewPager.setCurrentItem(0, true);
+            adapterProduct.updateData(Product.getProductList());
+            adapterChoosen.emptyList();
+
+            updateChoosenTitle(0);
+            refreshSearchView(0, Product.getProductList().size() > 0 ? true : false);
+
+        }else {
+            getInventory(object.getInt("id"), new CallbackListObject() {
+                @Override
+                public void onResponse(List<BaseModel> listIn) {
+                    int size = listIn.size();
+                    tvFromWarehouse.setText(Util.getStringIcon(object.getString("name"), "   ", R.string.icon_down));
+                    viewPager.setCurrentItem(0, true);
+                    //fromWarehouse = object;
+                    adapterProduct.updateData(object.getInt("isMaster") == 2? Product.getProductInventoryList(listIn) :listIn);
+                    adapterChoosen.emptyList();
+
+                    updateChoosenTitle(0);
+                    refreshSearchView(0, size > 0 ? true : false);
+                    //adapterProduct.notifyDataSetChanged();
+
+                }
+            });
+
+        }
+    }
+
+//    private void selectToWarehouse(int loadingtimes) {
+//        //todo: show all include Master Warehouse
+//        getListWarehouse(new CallbackListObject() {
+//            @Override
+//            public void onResponse(List<BaseModel> list) {
+//                dialogSelectWarehouse("CHỌN KHO NHẬP", filterListToWarehouse(list), new CallbackObject() {
+//                    @Override
+//                    public void onResponse(BaseModel object) {
+//                        setToWarehouse(object, true);
+////                        toWarehouse = object;
+////                        tvToWarehouse.setText(Util.getStringIcon(object.getString("name"), "   ", R.string.icon_down));
+////
+////                        reloadAllWarehouse(null);
+//
+//                    }
+//                });
+//
+//            }
+//        }, loadingtimes);
+//
+//
+//    }
+
+//    private List<BaseModel> filterListToWarehouse(List<BaseModel> list) {
+//        List<BaseModel> results = new ArrayList<>();
+//        for (BaseModel model : list) {
+//            if (model.getInt("isMaster") != 1) {
+//                if (fromWarehouse != null && model.getInt("id") != fromWarehouse.getInt("id")) {
+//                    results.add(model);
+//
+//                } else if (fromWarehouse == null) {
+//                    results.add(model);
+//
+//                }
+//
+//            }
+//        }
+//        DataUtil.sortbyStringKey("isMaster", results, false);
+//        return results;
+//    }
+
+//    @Override
+//    public void onCheckedChanged(SwitchButton view, boolean isChecked) {
+//        if (statecheckevent){
+//            if (isChecked){
+//                setFromWarehouse(masterWarehouse);
+//                setToWarehouse(tempWarehouse, false);
+//                getInventory(toWarehouse.getInt("id"), new CallbackListObject() {
+//                    @Override
+//                    public void onResponse(List<BaseModel> list2) {
+//                        updateInventoryTitle(list2);
+//                    }
+//                });
+//
+//            }else {
+//                setFromWarehouse(tempWarehouse);
+//                setToWarehouse(userWarehouse, false);
+//                getInventory(toWarehouse.getInt("id"), new CallbackListObject() {
+//                    @Override
+//                    public void onResponse(List<BaseModel> list2) {
+//                        updateInventoryTitle(list2);
+//
+//                    }
+//                });
+//
+//            }
+//        }else {
+//            statecheckevent = true;
+//        }
+//
+//    }
 }

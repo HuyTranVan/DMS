@@ -290,7 +290,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 break;
 
             case R.id.custom_search_location:
-                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                unsetCurrentMarker(true);
+                //mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 showListDistrict();
                 break;
 
@@ -699,6 +700,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     private void unsetCurrentMarker(boolean hidedetail) {
         if (currentMarker != null) {
+
             final BaseModel cust = new BaseModel(currentMarker.getTag().toString());
             Bitmap bitmap = MapUtil.GetBitmapMarker(this, cust.getInt("icon"), cust.getString("checkincount"), R.color.pin_waiting);
             currentMarker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
@@ -808,7 +810,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 if (!TextUtils.isEmpty(s.toString())) {
                     btnClose.setVisibility(View.VISIBLE);
 
-                    if (!s.toString().isEmpty() && s.toString().length() > 1) {
+                    if (!s.toString().isEmpty()) {
                         mSearchText = s.toString();
                         mHandlerSearch.removeCallbacks(delayForSerch);
                         mHandlerSearch.postDelayed(delayForSerch, 500);
@@ -817,6 +819,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
                 } else {
                     btnClose.setVisibility(View.GONE);
+                    createRVList(new ArrayList<>());
+
                 }
             }
         });
@@ -829,11 +833,12 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         edSearch.setSelection(edSearch.getText().toString().isEmpty() ? 0 : edSearch.getText().toString().length());
         Util.showKeyboard(edSearch);
         tvLocation.setVisibility(View.GONE);
+        btnLocation.setVisibility(View.GONE);
         tvReload.setVisibility(View.GONE);
         tvListWating.setVisibility(View.GONE);
 
         unsetCurrentMarker(true);
-        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        //mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         setNullButton();
 
     }
@@ -844,6 +849,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         Util.hideKeyboard(edSearch);
         edSearch.setFocusable(false);
         tvLocation.setVisibility(View.VISIBLE);
+        btnLocation.setVisibility(View.VISIBLE);
         tvReload.setVisibility(loadCustomer ? View.VISIBLE : View.GONE);
         tvListWating.setVisibility(View.VISIBLE);
 
@@ -884,18 +890,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 }
             }, 0).execute();
 
-
-//            CustomerConnect.ListCustomer(param, 10, new CallbackCustomList() {
-//                @Override
-//                public void onResponse(List<BaseModel> results) {
-//                    createRVList(results);
-//                }
-//
-//                @Override
-//                public void onError(String error) {
-//
-//                }
-//            }, false, true);
         }
     };
 
@@ -914,6 +908,14 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             }
 
 
+        }, new CallbackString() {
+            @Override
+            public void Result(String s) {
+                closeSearch();
+                currentPhone = s;
+                checkPhonePermission();
+
+            }
         });
         Util.createLinearRV(rvSearch, mSearchAdapter);
     }
@@ -941,11 +943,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
 
                     }
-
-//                    @Override
-//                    public void onError(String error) {
-//                        Log.e("errrororr", error);
-//                    }
                 });
             }
 

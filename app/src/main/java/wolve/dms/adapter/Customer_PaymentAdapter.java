@@ -141,7 +141,6 @@ public class Customer_PaymentAdapter extends RecyclerView.Adapter<Customer_Payme
                         holder.tvTotal.setText("- " + Util.FormatMoney(mData.get(position).getDouble("total") * -1));
                     }
 
-
                     break;
 
             }

@@ -25,19 +25,19 @@ public class PrintOldBillAdapter extends RecyclerView.Adapter<PrintOldBillAdapte
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
-    private int printSize;
+    //private int printSize;
 
-    public PrintOldBillAdapter(int printSize, List<BaseModel> list) {
+    public PrintOldBillAdapter(List<BaseModel> list) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mData = list;
-        this.printSize = printSize;
+        //this.printSize = printSize;
 
     }
 
     @Override
     public PrintBillViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mLayoutInflater.inflate(printSize == 57 ? R.layout.adapter_print_oldbill_item : R.layout.adapter_print_oldbill_item, parent, false);
+        View itemView = mLayoutInflater.inflate(R.layout.adapter_print_oldbill_item , parent, false);
         return new PrintBillViewHolder(itemView);
     }
 
@@ -51,7 +51,7 @@ public class PrintOldBillAdapter extends RecyclerView.Adapter<PrintOldBillAdapte
 
         List<BaseModel> list = DataUtil.array2ListObject(mData.get(position).getString("billDetails"));
 
-        PrintBillAdapter adapterBill = new PrintBillAdapter(printSize, list);
+        PrintBillAdapter adapterBill = new PrintBillAdapter(list);
         Util.createLinearRV(holder.rvBill, adapterBill);
 
     }

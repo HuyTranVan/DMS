@@ -25,11 +25,12 @@
             android:id="@+id/import_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
             android:text="NHẬP KHO"
             android:textAllCaps="true"
             android:textSize="@dimen/_12sdp"
-            android:textColor="@color/black_text_color" />
+            android:textColor="@color/black_text_color"
+            android:layout_centerInParent="true"/>
 
     </RelativeLayout>
 
@@ -68,7 +69,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/icon_forward"
-                android:textColor="@color/black_text_color_hint"
+                android:textColor="@color/black_text_color"
                 android:layout_gravity="center"
                 android:layout_marginLeft="@dimen/_10sdp"
                 android:layout_marginRight="@dimen/_10sdp"
@@ -80,7 +81,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.5"
-                android:background="@drawable/bg_round_white"
+                android:background="@drawable/bg_round_transparent_border_grey"
                 android:textColor="@color/black_text_color"
                 android:textColorHint="@color/black_text_color_hint"
                 android:layout_marginRight="@dimen/_5sdp"

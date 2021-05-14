@@ -28,11 +28,16 @@ public class BaseModel implements Serializable {
     }
 
     public BaseModel(String objOrder) {
-        try {
-            jsonObject = new JSONObject(objOrder);
-        } catch (JSONException e) {
+        if (objOrder == null){
             jsonObject = new JSONObject();
+        }else {
+            try {
+                jsonObject = new JSONObject(objOrder);
+            } catch (JSONException e) {
+                jsonObject = new JSONObject();
+            }
         }
+
     }
 
     public String BaseModelstoString() {
@@ -139,6 +144,14 @@ public class BaseModel implements Serializable {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public float getFloat(String key) {
+        try {
+            return (float) jsonObject.getDouble(key);
+        } catch (JSONException e) {
+            return 0;
+        }
     }
 
     public double getDoubleValue(String key) {

@@ -2,10 +2,12 @@ package wolve.dms.adapter;
 
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,12 +28,14 @@ public class BluetoothListAdapter extends RecyclerView.Adapter<BluetoothListAdap
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackBluetooth mListener;
+    private BluetoothDevice mDevice;
 
-    public BluetoothListAdapter(List<BluetoothDevice> list, CallbackBluetooth callbackBluetooth) {
+    public BluetoothListAdapter(List<BluetoothDevice> list, BluetoothDevice currentdevice, CallbackBluetooth callbackBluetooth) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mData = list;
         this.mListener = callbackBluetooth;
+        this.mDevice = currentdevice;
 
     }
 
@@ -63,6 +67,26 @@ public class BluetoothListAdapter extends RecyclerView.Adapter<BluetoothListAdap
             }
         });
 
+        if (mDevice != null){
+            if (mData.get(position).getName() != null &&
+                    mData.get(position).getName().equals(mDevice.getName()) &&
+                    mData.get(position).getAddress().equals(mDevice.getAddress()) ){
+                holder.tvName.setTypeface(null, Typeface.BOLD);
+                holder.tvConnected.setVisibility(View.VISIBLE);
+
+            }else {
+                holder.tvName.setTypeface(null, Typeface.NORMAL);
+                holder.tvConnected.setVisibility(View.GONE);
+
+            }
+
+        }else {
+            holder.tvName.setTypeface(null, Typeface.NORMAL);
+            holder.tvConnected.setVisibility(View.GONE);
+
+        }
+
+
     }
 
     @Override
@@ -72,8 +96,8 @@ public class BluetoothListAdapter extends RecyclerView.Adapter<BluetoothListAdap
 
 
     public class BluetoothListViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvName, tvMac, tvLine;
-        private LinearLayout lnParent;
+        private TextView tvName, tvMac, tvLine, tvConnected;
+        private RelativeLayout lnParent;
 
 
         public BluetoothListViewHolder(View itemView) {
@@ -82,11 +106,36 @@ public class BluetoothListAdapter extends RecyclerView.Adapter<BluetoothListAdap
             tvMac = itemView.findViewById(R.id.bluetooth_list_item_mac);
             tvLine = itemView.findViewById(R.id.bluetooth_list_item_line);
             lnParent = itemView.findViewById(R.id.bluetooth_list_item_parent);
+            tvConnected = itemView.findViewById(R.id.bluetooth_list_item_connected);
 
         }
 
     }
 
+    public void updateItem(BluetoothDevice device, boolean connected){
+        mDevice = connected? device: null;
+        notifyDataSetChanged();
+
+//        for (int i=0; i<mData.size(); i++){
+//            if (mData.get(i).getName() != null &&
+//                mData.get(i).getName().equals(device.getName()) &&
+//                mData.get(i).getAddress().equals(device.getAddress()) ){
+//
+//                holder.tvName.setTypeface(null, Typeface.BOLD);
+//                holder.tvConnected.setVisibility(View.VISIBLE);
+//
+//            }else {
+//                holder.tvName.setTypeface(null, Typeface.NORMAL);
+//                holder.tvConnected.setVisibility(View.GONE);
+//
+//            }
+//
+//
+//
+//
+//        }
+
+    }
     public interface CallbackBluetooth {
         void OnDevice(BluetoothDevice device);
     }

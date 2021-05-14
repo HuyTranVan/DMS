@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/dialog_edit_product_parent"
+    android:id="@+id/bluetooth_list_parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_corner5_white">
@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/_25sdp"
         android:background="@drawable/bg_img_header"
-        android:text="DANH SÁCH THIẾT BỊ"
+        android:text="THIẾT LẬP MÁY IN"
         android:textSize="@dimen/_12sdp"
         android:textColor="@color/black_text_color"
         android:gravity="center" />
@@ -23,10 +23,54 @@
         android:background="@color/colorWhite"
         android:orientation="vertical">
 
+        <RadioGroup
+            android:checkedButton="@+id/bluetooth_list_size_80"
+            android:id="@+id/bluetooth_list_size_all"
+            android:layout_width="@dimen/_150sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:background="@drawable/pink_out_line"
+            android:orientation="horizontal"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_margin="@dimen/_10sdp">
+
+            <RadioButton
+                android:id="@+id/bluetooth_list_size_58"
+                android:layout_marginTop="1dp"
+                android:layout_marginBottom="1dp"
+                android:layout_marginLeft="1dp"
+                android:background="@drawable/toggle_widget_background_left"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:button="@null"
+                android:gravity="center"
+                android:text="58 mm"
+                android:textColor="@drawable/text_white_selected"
+                android:textSize="@dimen/_10sdp" />
+
+            <RadioButton
+                android:id="@+id/bluetooth_list_size_80"
+                android:layout_marginRight="1dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginBottom="1dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/toggle_widget_background_right"
+                android:button="@null"
+                android:gravity="center"
+                android:text="80 mm"
+                android:textColor="@drawable/text_white_selected"
+                android:textSize="@dimen/_10sdp" />
+
+        </RadioGroup>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/dialog_bluetooth_list_rv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/_5sdp"/>
 
         <View
             android:layout_width="match_parent"

@@ -53,7 +53,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 initialData();
 
             }
-        }, 200);
+        }, 300);
 
         addEvent();
 
@@ -158,7 +158,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             CustomTopDialog.dialog.dismiss();
 
         } else {
-            if (Util.isJSONObject(tag)) {
+              if (Util.isJSONObject(tag)) {
                 BaseModel content = new BaseModel(tag);
                 CustomTopDialog.showTextNotify(Util.getIconString(R.string.icon_username, " ", content.getString("title")),
                         content.getString("message"), new CallbackBoolean() {

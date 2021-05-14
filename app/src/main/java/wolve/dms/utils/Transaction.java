@@ -120,11 +120,11 @@ public class Transaction {
 
     }
 
-    public static void gotoImportActivity(BaseModel curentwarehouse, boolean flag) {
+    public static void gotoImportActivity(BaseModel curentwarehouse) {
         Activity context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(context, ImportActivity.class);
         intent.putExtra(Constants.WAREHOUSE, curentwarehouse.BaseModelstoString());
-        intent.putExtra(Constants.FLAG, flag);
+        //intent.putExtra(Constants.FLAG, flag);
         context.startActivityForResult(intent, Constants.RESULT_IMPORT_ACTIVITY);
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 
@@ -231,10 +231,8 @@ public class Transaction {
     public static void checkInventoryBeforePrintBill(BaseModel bill, List<BaseModel> listproduct, int warehouse_id) {
         DataUtil.checkInventory(listproduct, warehouse_id, new CallbackListObject() {
             @Override
-            public void onResponse(List<BaseModel> list) {
+            public void onResponse(List<BaseModel> list){
                 if (list.size() > 0) {
-
-
 
                     CustomCenterDialog.showListProductWithDifferenceQuantity(User.getCurrentUser().getBaseModel("warehouse").getString("name") + ": KHÔNG ĐỦ TỒN KHO ",
                             list,
@@ -243,7 +241,7 @@ public class Transaction {
                                 public void onRespone(Boolean result) {
                                     if (result) {
                                         CustomSQL.setListBaseModel(Constants.PRODUCT_SUGGEST_LIST, listproduct);
-                                        gotoImportActivity(User.getCurrentUser().getBaseModel("warehouse"), true);
+                                        gotoImportActivity(User.getCurrentUser().getBaseModel("warehouse"));
 
                                     }
 
@@ -267,9 +265,10 @@ public class Transaction {
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
-    public static void gotoStatisticalActivity() {
+    public static void gotoStatisticalActivity(String user) {
         Activity context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(context, StatisticalActivity.class);
+        intent.putExtra(Constants.USER, user);
         context.startActivity(intent);
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         ((AppCompatActivity) context).finish();

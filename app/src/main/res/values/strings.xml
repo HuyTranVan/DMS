@@ -39,8 +39,10 @@
     <string name="icon_dashboard" translatable="false">&#xf0e4;</string>
     <string name="icon_group" translatable="false">&#xf0c0;</string>
     <string name="icon_setting" translatable="false">&#xf085;</string>
+    <string name="icon_setting_singgle" translatable="false">&#xf013;</string>
     <string name="icon_logout" translatable="false">&#xf2f5;</string>
     <string name="icon_info" translatable="false">&#xf05a;</string>
+    <string name="icon_info_not_circle" translatable="false">&#xf129;</string>
     <string name="icon_invite" translatable="false">&#xf0a1;</string>
     <string name="icon_qrcode" translatable="false">&#xf029;</string>
     <string name="icon_up" translatable="false">&#xf0de;</string>
@@ -146,7 +148,8 @@
     <string name="icon_tag">&#xf02b;</string>
     <string name="icon_money_check">&#xf873;</string>
     <string name="icon_report">&#xf659;</string>
-
+    <string name="icon_link">&#xf0c1;</string>
+    <string name="icon_pickup">&#xf63c;</string>
 
     <string name="login_username" translatable="false">Nhập tài khoản hoặc SĐT</string>
     <string name="login_password" translatable="false">Nhập mật khẩu</string>

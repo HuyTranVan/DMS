@@ -13,6 +13,7 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.callback.CallbackBaseModel;
+import wolve.dms.callback.CallbackString;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.Util;
@@ -29,13 +30,14 @@ public class Customer_SearchAdapter extends RecyclerView.Adapter<Customer_Search
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackBaseModel mListener;
-    private CustomBottomDialog.FourMethodListener mListerner;
+    private CallbackString mPhoneListener;
 
-    public Customer_SearchAdapter(List<BaseModel> data, CallbackBaseModel listener) {
+    public Customer_SearchAdapter(List<BaseModel> data, CallbackBaseModel listener, CallbackString phone) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mData = data;
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mListener = listener;
+        this.mPhoneListener = phone;
 
     }
 
@@ -50,8 +52,15 @@ public class Customer_SearchAdapter extends RecyclerView.Adapter<Customer_Search
         holder.tvMainText.setText(String.format("%s - %s", mData.get(position).getString("signBoard"), mData.get(position).getString("name")));
         String address = String.format("%s %s - %s", mData.get(position).getString("address"), mData.get(position).getString("street"), mData.get(position).getString("district"));
         holder.tvSecondText.setText(address);
-        holder.tvPhone.setText(mData.get(position).getString("phone"));
+        //holder.tvPhone.setText(mData.get(position).getString("phone"));
+        holder.tvPhone.setVisibility(Util.isPhoneFormat(mData.get(position).getString("phone")) != null ? VISIBLE : GONE);
         holder.tvLine.setVisibility(position == mData.size() - 1 ? GONE : VISIBLE);
+        holder.tvPhone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPhoneListener.Result(mData.get(position).getString("phone"));
+            }
+        });
 
     }
 

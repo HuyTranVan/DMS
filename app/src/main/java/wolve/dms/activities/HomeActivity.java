@@ -29,6 +29,7 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.R;
 import wolve.dms.adapter.HomeAdapter;
+import wolve.dms.adapter.WarehouseAdapter;
 import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickAdapter;
@@ -55,8 +56,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     private RecyclerView rvItems;
     private CircleImageView imgUser;
     private TextView tvFullname, tvRole, tvCash, tvMonth, tvHaveNewProduct,
-            tvNumberTemp, tvNumberTempImport;
-    private LinearLayout lnUser;
+            tvNumberTemp, tvNumberTempImport, tvWarehouseName, tvInventoryValue;
+    private LinearLayout lnUser, lnCash, lnInventory;
     private RelativeLayout lnTempGroup, lnTempImport;
     private SwipeRefreshLayout swipeRefreshLayout;
 
@@ -65,6 +66,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     private boolean doubleBackToExitPressedOnce = false;
     private Fragment mFragment;
     private HomeAdapter adapterHome;
+    private BaseModel tempWarehouse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +98,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         swipeRefreshLayout = findViewById(R.id.home_refresh);
         lnTempImport = findViewById(R.id.home_tempimport_group);
         tvNumberTempImport = findViewById(R.id.home_tempimport_number);
+        lnCash = findViewById(R.id.home_cash_parent);
+        lnInventory = findViewById(R.id.home_inventory_parent);
+        tvInventoryValue = findViewById(R.id.home_inventory_value);
+        tvWarehouseName = findViewById(R.id.home_warehouse_name);
 
     }
 
@@ -117,7 +123,27 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     private void createMainItem() {
-        adapterHome = new HomeAdapter(HomeActivity.this);
+        adapterHome = new HomeAdapter(HomeActivity.this, new WarehouseAdapter.CallbackWarehouseOption() {
+            @Override
+            public void onInfo(BaseModel objInfo) {
+            }
+
+            @Override
+            public void onInventory(BaseModel objInventory) {
+                CustomSQL.setBaseModel(Constants.CURRENT_WAREHOUSE, User.getCurrentUser().getBaseModel("warehouse"));
+                changeFragment(new InventoryDetailFragment(), true);
+
+
+            }
+
+            @Override
+            public void onReturn(BaseModel objReturn){
+                CustomSQL.setBaseModel(Constants.CURRENT_WAREHOUSE, User.getCurrentUser().getBaseModel("warehouse"));
+                changeFragment(new ImportReturnFragment(), true);
+
+
+            }
+        });
         Util.createGridRV(rvItems, adapterHome, 3);
 
         if (CustomSQL.getBoolean(Constants.LOGIN_SUCCESS)) {
@@ -150,6 +176,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         lnTempGroup.setOnClickListener(this);
         lnTempImport.setOnClickListener(this);
         swipeRefreshLayout.setOnRefreshListener(this);
+        lnInventory.setOnClickListener(this);
 
     }
 
@@ -178,6 +205,16 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
             case R.id.home_tempimport_group:
                 changeFragment(new TempImportFragment(), true);
+                break;
+
+            case R.id.home_cash_parent:
+                Transaction.gotoStatisticalActivity(User.getCurrentUserString());
+
+                break;
+
+            case R.id.home_inventory_parent:
+                Transaction.gotoImportActivity(tempWarehouse);
+
                 break;
 
         }
@@ -209,6 +246,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         }else if (mFragment != null && mFragment instanceof NewUpdateDistributorFragment) {
             getSupportFragmentManager().popBackStack();
 
+        }else if (mFragment != null && mFragment instanceof InventoryDetailFragment) {
+            getSupportFragmentManager().popBackStack();
+
         }else {
             if (doubleBackToExitPressedOnce) {
                 this.finish();
@@ -238,13 +278,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 break;
 
             case 1:
-                if (User.checkUserWarehouse())
-                    Transaction.gotoStatisticalActivity();
+                Transaction.gotoStatisticalActivity(Util.isAdmin()? "" : User.getCurrentUserString());
 
                 break;
 
             case 2:
-                Transaction.gotoWarehouseActivity();
+                Transaction.gotoImportActivity(User.getCurrentUser().getBaseModel("warehouse"));
+                    //Transaction.gotoWarehouseActivity();
 
                 break;
 
@@ -283,7 +323,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         new GetPostMethod(param, new NewCallbackCustom() {
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
-                //Status.saveStatusList(result.getJSONArray("Status"));
                 ProductGroup.saveProductGroupList(result.getJSONArray("ProductGroup"));
                 CustomSQL.setString(Constants.DISTRIBUTOR, result.getString("Distributor"));
 
@@ -321,24 +360,30 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
                             case 1:
                                 if (User.getCurrentRoleId() == Constants.ROLE_ADMIN) {
+                                    Transaction.gotoWarehouseActivity();
+                                }
+                                break;
+
+                            case 2:
+                                if (User.getCurrentRoleId() == Constants.ROLE_ADMIN) {
                                     Transaction.gotoCashFlowTypeActivity();
                                 }
 
                                 break;
 
-                            case 2:
+                            case 3:
                                 if (User.getCurrentRoleId() == Constants.ROLE_ADMIN) {
                                     Transaction.gotoProductGroupActivity();
                                 }
                                 break;
 
-                            case 3:
+                            case 4:
                                 Transaction.gotoProductActivity();
                                 break;
 
 
 
-                            case 4:
+                            case 5:
                                 Transaction.gotoDistributorActivity();
 
                                 break;
@@ -382,10 +427,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
                 swipeRefreshLayout.setRefreshing(false);
+                adapterHome.updateInventoryDetail(result.getInt("inventories"));
                 updateTempBillVisibility(DataUtil.listTempBill(DataUtil.array2ListObject(result.getString("tempBills"))));
                 updateTempImportVisibility(DataUtil.filterListTempImport(DataUtil.array2ListObject(result.getString("tempImport"))));
                 tvCash.setText(String.format("%s đ", Util.FormatMoney(result.getDouble("paymentInMonth"))));
-
+                lnCash.setOnClickListener(result.getDouble("paymentInMonth") >0.0 ? HomeActivity.this: null );
+                updateTempWahouseInventory(result.getBaseModel("tempwarehouse"));
                 if (result.getLong("lastProductUpdate") != null && result.getLong("lastProductUpdate") > CustomSQL.getLong(Constants.LAST_PRODUCT_UPDATE)) {
                     tvHaveNewProduct.setVisibility(View.VISIBLE);
                     CustomCenterDialog.alertWithButtonCanceled("Thông tin thay đổi",
@@ -604,4 +651,59 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             CustomSQL.removeKey(Constants.USER_PASSWORD);
         }
     }
+
+    private void openFragmentNewDepot(int warehouse_id){
+        BaseModel param = createGetParam(ApiUtil.WAREHOUSE_DETAIL() + warehouse_id, false);
+        new GetPostMethod(param, new NewCallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result, List<BaseModel> list) {
+                NewUpdateWarehouseFragment depotFragment = new NewUpdateWarehouseFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(Constants.DEPOT, result.BaseModelstoString());
+                changeFragment(depotFragment, bundle, true);
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        },1).execute();
+
+
+
+
+
+    }
+
+    private void openFragmentImportReturn(BaseModel warehouse, BaseModel temptWarehouse) {
+        ImportReturnFragment importReturnFragment = new ImportReturnFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.WAREHOUSE, warehouse.BaseModelstoString());
+        bundle.putString(Constants.TEMPWAREHOUSE, temptWarehouse.BaseModelstoString());
+        changeFragment(importReturnFragment, bundle, true);
+    }
+
+    private void openFragmentInventoryEdit(BaseModel temptWarehouse) {
+        InventoryDetailFragment importReturnFragment = new InventoryDetailFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.TEMPWAREHOUSE, temptWarehouse.BaseModelstoString());
+        changeFragment(importReturnFragment, bundle, true);
+    }
+
+    private void updateTempWahouseInventory(BaseModel warehouse){
+        tempWarehouse = warehouse;
+        if (Util.isAdmin()){
+            lnInventory.setVisibility(View.VISIBLE);
+            tvWarehouseName.setText(String.format("%s (%s)",
+                    warehouse.getString("name"),
+                    warehouse.getInt("quantity")));
+            tvInventoryValue.setText(Util.FormatMoney(warehouse.getDouble("total")));
+
+        }else {
+            lnInventory.setVisibility(View.GONE);
+
+        }
+    }
+
+
 }

@@ -6,7 +6,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
@@ -17,21 +22,27 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.BluetoothListAdapter;
+import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Util;
 
 //import static wolve.dms.activities.BaseActivity.btsocket;
 //import static wolve.dms.activities.BaseActivity.mBluetoothAdapter;
 
 
-public class BluetoothListFragment extends DialogFragment implements View.OnClickListener {
+public class BluetoothListFragment extends DialogFragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
     private Button btnCancel;
     private RecyclerView rvBluetooth;
     private View view;
+    private RadioGroup rdSize;
+    private RadioButton rd58, rd80;
+    private RelativeLayout lnParent;
 
     //private List<BluetoothDevice> listDevice = new ArrayList<>();
     private BluetoothListAdapter adapter;
     private PrintBillActivity mActivity;
     private OnDataPass mListener;
+
 
     public interface OnDataPass {
         void dataReturnFromFragment(String data1, String data2);
@@ -57,19 +68,34 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
 
     private void initializeView() {
         mActivity = (PrintBillActivity) getActivity();
+        lnParent =  view.findViewById(R.id.bluetooth_list_parent);
         btnCancel = view.findViewById(R.id.btn_cancel);
         rvBluetooth = view.findViewById(R.id.dialog_bluetooth_list_rv);
+        rdSize = view.findViewById(R.id.bluetooth_list_size_all);
+        rd58 = view.findViewById(R.id.bluetooth_list_size_58);
+        rd80 = view.findViewById(R.id.bluetooth_list_size_80);
+
 
     }
 
     private void intitialData() {
         createRVBluetoothList(mActivity.listDevice);
+        if (CustomSQL.getString(Constants.PRINTER_SIZE).equals("") || CustomSQL.getString(Constants.PRINTER_SIZE).equals(Constants.PRINTER_80)) {
+            rd80.setChecked(true);
+        } else {
+            rd58.setChecked(true);
+        }
+        Window window = getDialog().getWindow();
+        window.setBackgroundDrawableResource(R.drawable.bg_corner5_white);
+
+
         //registerBluetooth();
     }
 
 
     private void addEvent() {
         btnCancel.setOnClickListener(this);
+        rdSize.setOnCheckedChangeListener(this);
     }
 
     @Override
@@ -86,7 +112,7 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
     }
 
     private void createRVBluetoothList(List<BluetoothDevice> list) {
-        adapter = new BluetoothListAdapter(mActivity.listDevice, new BluetoothListAdapter.CallbackBluetooth() {
+        adapter = new BluetoothListAdapter(mActivity.listDevice, mActivity.currentBluetooth,  new BluetoothListAdapter.CallbackBluetooth() {
             @Override
             public void OnDevice(final BluetoothDevice device) {
                 if (mActivity.btsocket != null) {
@@ -109,6 +135,15 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
 
     }
 
+    @Override
+    public void onCheckedChanged(RadioGroup radioGroup, int i) {
+        CustomSQL.setString(Constants.PRINTER_SIZE, i == R.id.bluetooth_list_size_80? Constants.PRINTER_80: Constants.PRINTER_57);
+    }
+
+    public void updateItem(BluetoothDevice device, boolean connected){
+        adapter.updateItem(device, connected);
+
+    }
 
     //    public void registerBluetooth() {
 //        try {

@@ -66,7 +66,7 @@
 
     <application
         android:name=".DMSApplication"
-        android:configChanges="layoutDirection|locale"
+        android:configChanges="locale|layoutDirection"
         android:icon="@drawable/lub_icon"
         android:roundIcon="@drawable/lub_icon_round"
         android:label="@string/app_name"

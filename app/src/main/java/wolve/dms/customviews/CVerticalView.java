@@ -8,13 +8,14 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import wolve.dms.R;
 
 
-public class CVerticalView extends RelativeLayout {
+public class CVerticalView extends LinearLayout {
     private TextView tvTitle, tvValue, tvIcon;
     private Context mContext;
     private View mLayout;

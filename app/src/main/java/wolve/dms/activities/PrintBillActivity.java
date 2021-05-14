@@ -64,8 +64,8 @@ import static wolve.dms.utils.Constants.REQUEST_ENABLE_BT;
 public class PrintBillActivity extends BaseActivity implements View.OnClickListener, BluetoothListFragment.OnDataPass {
     private ImageView imgLogo, btnBack, imgOrderPhone;
     private TextView tvCompany, tvAdress, tvHotline, tvWebsite, tvTitle, tvShopName, tvCustomerName, tvCustomerAddress, tvDate, tvEmployee,
-            tvSumCurrentBill, tvOrderPhone, tvThanks, tvPrintSize, tvPrinterMainText, tvPrinterName, tvTotal, tvPaid, tvRemain, tvTotalTitle,
-            tvEmployeeSign, tvDeliver, tvDeliverTitle, tvListPrinter, tvShare;
+            tvSumCurrentBill, tvOrderPhone, tvThanks, tvPrinterMainText, tvPrinterName, tvTotal, tvPaid, tvRemain, tvTotalTitle,
+            tvEmployeeSign, tvDeliver, tvDeliverTitle, tvListPrinter;
     private RecyclerView rvBills, rvDebts;
     private LinearLayout lnMain, lnBottom, lnSubmit, lnTotalGroup, lnPaidGroup, lnRemainGroup, lnSignature;
     private View line1, line2, line3, line4;
@@ -86,6 +86,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     protected BluetoothAdapter mBluetoothAdapter = null;
     protected BluetoothSocket btsocket;
     protected OutputStream outputStream;
+    protected BluetoothDevice currentBluetooth = null;
     protected List<BluetoothDevice> listDevice = new ArrayList<>();
 
     @Override
@@ -130,9 +131,9 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         lnMain = findViewById(R.id.print_bill_mainlayout);
         tvPrinterMainText = findViewById(R.id.print_bill_bottom_maintext);
         tvPrinterName = findViewById(R.id.print_bill_bottom_secondtext);
-        tvPrintSize = findViewById(R.id.print_bill_bottom_printersize);
+        //tvPrintSize = findViewById(R.id.print_bill_bottom_printersize);
         tvListPrinter = findViewById(R.id.print_bill_bottom_printerselect);
-        tvShare = findViewById(R.id.print_bill_bottom_share);
+        //tvShare = findViewById(R.id.print_bill_bottom_share);
         tvEmployeeSign = findViewById(R.id.print_bill_employee_sign);
         lnBottom = findViewById(R.id.print_bill_bottom);
         rvDebts = findViewById(R.id.print_bill_rvdebt);
@@ -236,11 +237,11 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
         }
 
-        if (CustomSQL.getString(Constants.PRINTER_SIZE).equals("") || CustomSQL.getString(Constants.PRINTER_SIZE).equals(Constants.PRINTER_80)) {
-            tvPrintSize.setText(Constants.PRINTER_80);
-        } else {
-            tvPrintSize.setText(Constants.PRINTER_57);
-        }
+//        if (CustomSQL.getString(Constants.PRINTER_SIZE).equals("") || CustomSQL.getString(Constants.PRINTER_SIZE).equals(Constants.PRINTER_80)) {
+//            tvPrintSize.setText(Constants.PRINTER_80);
+//        } else {
+//            tvPrintSize.setText(Constants.PRINTER_57);
+//        }
 
 
     }
@@ -250,10 +251,10 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         btnBack.setOnClickListener(this);
         lnBottom.setOnClickListener(this);
         tvListPrinter.setOnClickListener(this);
-        tvPrintSize.setOnClickListener(this);
+        //tvPrintSize.setOnClickListener(this);
         lnSubmit.setOnClickListener(this);
         imgLogo.setOnClickListener(this);
-        tvShare.setOnClickListener(this);
+        //tvShare.setOnClickListener(this);
 
     }
 
@@ -275,13 +276,33 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
                 break;
 
-            case R.id.print_bill_bottom_printersize:
-                choicePrinterSize();
-                break;
+//            case R.id.print_bill_bottom_printersize:
+//                choicePrinterSize();
+//                break;
 
             case R.id.print_bill_submit:
                 if (rePrint) {
-                    doPrintOldBill();
+                    if (isPrinterConnected()) {
+                        doPrintOldBill();
+
+                    } else {
+                        returnPreActivity(true);
+//                        CustomCenterDialog.alertWithCancelButton(null,
+//                                "Chưa kết nối máy in. Bạn muốn tiếp tục lưu hóa đơn",
+//                                "Lưu hóa đơn",
+//                                "Quay lại", new CallbackBoolean() {
+//                            @Override
+//                            public void onRespone(Boolean bool) {
+//                                if (bool) {
+//                                    sad
+//
+//                                }
+//
+//
+//                            }
+//                        });
+                    }
+
 
                 } else {
                     showDialogPayment(null);
@@ -289,76 +310,76 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
                 break;
 
-            case R.id.print_bill_bottom_share:
-                CustomCenterDialog.alertWithCancelButton2("Chia sẻ",
-                        "Gửi hình chụp hóa đơn thông qua ZALO",
-                        "Tiếp tục",
-                        "Hủy",
-                        new CustomCenterDialog.ButtonCallback() {
-                            @Override
-                            public void Submit(Boolean boolSubmit) {
-                                if (!rePrint){
-                                    showDialogPayment(new CallbackBoolean() {
-                                        @Override
-                                        public void onRespone(Boolean result) {
-                                            if (result){
-//                                                currentImagePath = Uri.parse(Util.storeImage(BitmapView.ResizeBitMapDependWidth(BitmapView.getBitmapFromView(scContentParent), 512) ,
+//            case R.id.print_bill_bottom_share:
+//                CustomCenterDialog.alertWithCancelButton2("Chia sẻ",
+//                        "Gửi hình chụp hóa đơn thông qua ZALO",
+//                        "Tiếp tục",
+//                        "Hủy",
+//                        new CustomCenterDialog.ButtonCallback() {
+//                            @Override
+//                            public void Submit(Boolean boolSubmit) {
+//                                if (!rePrint){
+//                                    showDialogPayment(new CallbackBoolean() {
+//                                        @Override
+//                                        public void onRespone(Boolean result) {
+//                                            if (result){
+////                                                currentImagePath = Uri.parse(Util.storeImage(BitmapView.ResizeBitMapDependWidth(BitmapView.getBitmapFromView(scContentParent), 512) ,
+////                                                        "SHARE",
+////                                                        "SHARE",
+////                                                        true));
+//                                                currentImagePath = Util.storeImage(BitmapView.ResizeBitMapDependWidth(BitmapView.getBitmapFromView(scContentParent), 512) ,
 //                                                        "SHARE",
 //                                                        "SHARE",
-//                                                        true));
-                                                currentImagePath = Util.storeImage(BitmapView.ResizeBitMapDependWidth(BitmapView.getBitmapFromView(scContentParent), 512) ,
-                                                        "SHARE",
-                                                        "SHARE",
-                                                        true);
-
-                                                Transaction.shareImage(currentImagePath, currentCustomer);
-                                            }
-                                        }
-                                    });
-
-                                }else {
-                                    currentImagePath = Util.storeImage(BitmapView.ResizeBitMapDependWidth(BitmapView.getBitmapFromView(scContentParent), 512) ,
-                                            "SHARE",
-                                            "SHARE",
-                                            true);
-
-                                    Transaction.shareImage(currentImagePath, currentCustomer);
-
-                                }
-
-
-
-                            }
-
-                            @Override
-                            public void Cancel(Boolean boolCancel) {
-
-                            }
-                        });
-
-
-                break;
+//                                                        true);
+//
+//                                                Transaction.shareImage(currentImagePath, currentCustomer);
+//                                            }
+//                                        }
+//                                    });
+//
+//                                }else {
+//                                    currentImagePath = Util.storeImage(BitmapView.ResizeBitMapDependWidth(BitmapView.getBitmapFromView(scContentParent), 512) ,
+//                                            "SHARE",
+//                                            "SHARE",
+//                                            true);
+//
+//                                    Transaction.shareImage(currentImagePath, currentCustomer);
+//
+//                                }
+//
+//
+//
+//                            }
+//
+//                            @Override
+//                            public void Cancel(Boolean boolCancel) {
+//
+//                            }
+//                        });
+//
+//
+//                break;
         }
     }
 
-    private void choicePrinterSize() {
-        CustomBottomDialog.choiceTwoOption(getString(R.string.icon_print), "Khổ giấy 57mm",
-                getString(R.string.icon_print), "Khổ giấy 80mm", new CustomBottomDialog.TwoMethodListener() {
-                    @Override
-                    public void Method1(Boolean one) {
-                        tvPrintSize.setText("57mm");
-                        CustomSQL.setString(Constants.PRINTER_SIZE, Constants.PRINTER_57);
-
-                    }
-
-                    @Override
-                    public void Method2(Boolean two) {
-                        tvPrintSize.setText("80mm");
-                        CustomSQL.setString(Constants.PRINTER_SIZE, Constants.PRINTER_80);
-
-                    }
-                });
-    }
+//    private void choicePrinterSize() {
+//        CustomBottomDialog.choiceTwoOption(getString(R.string.icon_print), "Khổ giấy 57mm",
+//                getString(R.string.icon_print), "Khổ giấy 80mm", new CustomBottomDialog.TwoMethodListener() {
+//                    @Override
+//                    public void Method1(Boolean one) {
+//                        tvPrintSize.setText("57mm");
+//                        CustomSQL.setString(Constants.PRINTER_SIZE, Constants.PRINTER_57);
+//
+//                    }
+//
+//                    @Override
+//                    public void Method2(Boolean two) {
+//                        tvPrintSize.setText("80mm");
+//                        CustomSQL.setString(Constants.PRINTER_SIZE, Constants.PRINTER_80);
+//
+//                    }
+//                });
+//    }
 
     private List<BaseModel> getAllDebt() {
         List<BaseModel> list = new ArrayList<>();
@@ -417,7 +438,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
                                         doPrintCurrentBill(result);
 
                                     } else {
-                                        CustomCenterDialog.alertWithCancelButton(null, "Chưa kết nối máy in. Bạn muốn tiếp tục thanh toán không xuất hóa đơn", "Tiếp tục", "hủy", new CallbackBoolean() {
+                                        CustomCenterDialog.alertWithCancelButton(null, "Chưa kết nối máy in. Bạn muốn tiếp tục thanh toán không xuất hóa đơn", "Tiếp tục", "Quay lại", new CallbackBoolean() {
                                             @Override
                                             public void onRespone(Boolean bool) {
                                                 if (bool) {
@@ -450,12 +471,56 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Transaction.returnPreviousActivity(Constants.PRINT_BILL_ACTIVITY, new BaseModel(), Constants.RESULT_PRINTBILL_ACTIVITY);
+        returnPreActivity(false);
+
+    }
+    private void returnPreActivity(boolean loadData){
+        BaseModel modelResult = new BaseModel();
+        if (loadData){
+            modelResult.put(Constants.RELOAD_DATA, true);
+            CustomCenterDialog.alertWithCancelButton(null,
+                    !rePrint? "Cập nhật hóa đơn lên hệ thống thành công. Bạn muốn lưu hóa đơn không?":
+                            "Chưa kết nối máy in. Bạn muốn tiếp tục lưu hóa đơn",
+                    "Lưu hóa đơn", "Không",
+                    new CallbackBoolean(){
+                @Override
+                public void onRespone(Boolean bool){
+                    if (bool) {
+                        Util.storeImage(BitmapView.ResizeBitMapDependWidth(BitmapView.getBitmapFromView(scContentParent)) ,
+                                "SHARE",
+                                "SHARE",
+                                true);
+
+                        Transaction.returnPreviousActivity(Constants.PRINT_BILL_ACTIVITY,
+                                modelResult,
+                                Constants.RESULT_PRINTBILL_ACTIVITY);
+
+                    }else {
+                        Transaction.returnPreviousActivity(Constants.PRINT_BILL_ACTIVITY,
+                                modelResult,
+                                Constants.RESULT_PRINTBILL_ACTIVITY);
+
+                    }
+
+                }
+            });
+
+
+
+
+        }else {
+            Transaction.returnPreviousActivity(Constants.PRINT_BILL_ACTIVITY, modelResult, Constants.RESULT_PRINTBILL_ACTIVITY);
+
+        }
+
+
+
+
 
     }
 
     private void createCurrentRVBill(BaseModel bill) {
-        adapterBill = new PrintBillAdapter(tvPrintSize.getText().toString().equals(Constants.PRINTER_80) ? 80 : 57, DataUtil.array2ListObject(bill.getString(Constants.BILL_DETAIL)));
+        adapterBill = new PrintBillAdapter( DataUtil.array2ListObject(bill.getString(Constants.BILL_DETAIL)));
         Util.createLinearRV(rvBills, adapterBill);
 
     }
@@ -468,7 +533,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void createOldRVBill(final List<BaseModel> list) {
-        adapterOldBill = new PrintOldBillAdapter(tvPrintSize.getText().toString().equals(Constants.PRINTER_80) ? 80 : 57, list);
+        adapterOldBill = new PrintOldBillAdapter( list);
         Util.createLinearRV(rvBills, adapterOldBill);
 
     }
@@ -509,13 +574,13 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void doPrintCurrentBill(final List<BaseModel> listPayments) {
-        int printSize = tvPrintSize.getText().toString().equals(Constants.PRINTER_80) ? Constants.PRINTER_80_WIDTH : Constants.PRINTER_57_WIDTH;
+        //int printSize = tvPrintSize.getText().toString().equals(Constants.PRINTER_80) ? Constants.PRINTER_80_WIDTH : Constants.PRINTER_57_WIDTH;
         if (!Util.getInstance().isLoading()){
             Util.getInstance().showLoading("Đang in...");
         }
 
         new BluetoothPrintBitmap(outputStream,
-                BitmapView.ResizeBitMapDependWidth(BitmapView.getBitmapFromView(scContentParent), printSize),
+                BitmapView.ResizeBitMapDependWidth(BitmapView.getBitmapFromView(scContentParent)),
                 new CallbackBoolean() {
                     @Override
                     public void onRespone(Boolean result) {
@@ -551,11 +616,11 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void doPrintOldBill() {
-        int printSize = tvPrintSize.getText().toString().equals(Constants.PRINTER_80) ? Constants.PRINTER_80_WIDTH : Constants.PRINTER_57_WIDTH;
+        //int printSize = tvPrintSize.getText().toString().equals(Constants.PRINTER_80) ? Constants.PRINTER_80_WIDTH : Constants.PRINTER_57_WIDTH;
         Util.getInstance().showLoading("Đang in...");
 
         new BluetoothPrintBitmap(outputStream,
-                BitmapView.ResizeBitMapDependWidth(BitmapView.getBitmapFromView(scContentParent), printSize),
+                BitmapView.ResizeBitMapDependWidth(BitmapView.getBitmapFromView(scContentParent)),
                 new CallbackBoolean() {
                     @Override
                     public void onRespone(Boolean result) {
@@ -620,12 +685,19 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
                         listPayments.get(0).put("billTotal", result.getDouble("total"));
 
                     }
-                    postPayToServer(DataUtil.createListPaymentParam(currentCustomer.getInt("id"), listPayments, false), true);
+                    postPayToServer(DataUtil.createListPaymentParam(currentCustomer.getInt("id"), listPayments, false),
+                            new CallbackBoolean() {
+                                @Override
+                                public void onRespone(Boolean result) {
+                                    if (result){
+                                        returnPreActivity(true);
+                                    }
+                                }
+                            });
 
                 } else {
-                    BaseModel modelResult = new BaseModel();
-                    modelResult.put(Constants.RELOAD_DATA, true);
-                    Transaction.returnPreviousActivity(Constants.PRINT_BILL_ACTIVITY, modelResult, Constants.RESULT_PRINTBILL_ACTIVITY);
+                    returnPreActivity(true);
+
 
                 }
             }
@@ -635,34 +707,11 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
             }
         }, 1).execute();
-//        CustomerConnect.PostBill(params, new CallbackCustom() {
-//            @Override
-//            public void onResponse(BaseModel result) {
-//                if (listPayments.size() > 0) {
-//                    if (listPayments.get(0).getInt("billId") == 0) {
-//                        listPayments.get(0).put("billId", result.getInt("id"));
-//                        listPayments.get(0).put("billTotal", result.getDouble("total"));
-//
-//                    }
-//                    postPayToServer(DataUtil.createListPaymentParam(currentCustomer.getInt("id"), listPayments, false), true);
-//
-//                } else {
-//                    BaseModel modelResult = new BaseModel();
-//                    modelResult.put(Constants.RELOAD_DATA, true);
-//                    Transaction.returnPreviousActivity(Constants.PRINT_BILL_ACTIVITY, modelResult, Constants.RESULT_PRINTBILL_ACTIVITY);
-//
-//                }
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//                Util.getInstance().stopLoading(true);
-//            }
-//        }, false);
+
 
     }
 
-    private void postPayToServer(List<String> listParam, Boolean stopLoading) {
+    private void postPayToServer(List<String> listParam, CallbackBoolean success) {
         List<BaseModel> params = new ArrayList<>();
 
         for (String itemdetail: listParam){
@@ -673,9 +722,10 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         new CustomGetPostListMethod(params, new CallbackCustomList() {
             @Override
             public void onResponse(List<BaseModel> results) {
-                BaseModel modelResult = new BaseModel();
-                modelResult.put(Constants.RELOAD_DATA, true);
-                Transaction.returnPreviousActivity(Constants.PRINT_BILL_ACTIVITY, modelResult, Constants.RESULT_PRINTBILL_ACTIVITY);
+                success.onRespone(true);
+//                BaseModel modelResult = new BaseModel();
+//                modelResult.put(Constants.RELOAD_DATA, true);
+//                Transaction.returnPreviousActivity(Constants.PRINT_BILL_ACTIVITY, modelResult, Constants.RESULT_PRINTBILL_ACTIVITY);
 
             }
 
@@ -685,22 +735,6 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
             }
         }, 1).execute();
 
-
-//        CustomerConnect.PostListPay(listParam, new CallbackListCustom() {
-//            @Override
-//            public void onResponse(List result) {
-//                BaseModel modelResult = new BaseModel();
-//                modelResult.put(Constants.RELOAD_DATA, true);
-//                Transaction.returnPreviousActivity(Constants.PRINT_BILL_ACTIVITY, modelResult, Constants.RESULT_PRINTBILL_ACTIVITY);
-//
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }//
-//        }, stopLoading);
     }
 
     //************** Todo Bluetooth SETUP
@@ -785,6 +819,12 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
             public void onStart() {
                 tvPrinterName.setText(Constants.CONNECTING_PRINTER);
                 lnBottom.setBackgroundColor(getResources().getColor(R.color.black_text_color_hint));
+                currentBluetooth = null;
+                if (bluFragment != null) {
+                    bluFragment.updateItem(currentBluetooth, false);
+
+                }
+
 
             }
 
@@ -794,16 +834,29 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
                 tvPrinterName.setText("Chưa kết nối được máy in");
                 Util.showToast(Constants.CONNECTED_PRINTER_ERROR);
                 lnBottom.setBackgroundColor(getResources().getColor(R.color.black_text_color_hint));
+                currentBluetooth = null;
+                if (bluFragment != null) {
+                    bluFragment.updateItem(currentBluetooth, false);
+
+                }
+
+
             }
 
             @Override
             public void onSuccess(String name) {
                 Util.getInstance().stopLoading(true);
-                tvPrinterName.setText(String.format(Constants.CONNECTED_PRINTER, device.getName()));
+                tvPrinterName.setText(String.format(Constants.CONNECTED_PRINTER,
+                        CustomSQL.getString(Constants.PRINTER_SIZE),
+                        device.getName(),
+                        device.getAddress()));
                 lnBottom.setBackgroundColor(getResources().getColor(R.color.colorBlue));
+                currentBluetooth = device;
+                //bluFragment.updateItem(currentBluetooth, false);
 
                 if (bluFragment != null) {
                     bluFragment.finish();
+
                 }
             }
         });

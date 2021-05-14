@@ -38,10 +38,13 @@
                 android:singleLine="true"
                 android:textColor="#212121"
                 android:textColorHint="#727272"
-                android:textSize="16sp"
-                android:layout_toRightOf="@+id/icon_back" />
+                android:textSize="@dimen/_12sdp"
+                android:layout_toRightOf="@+id/icon_back"
+                android:ellipsize="end"
+                android:layout_toLeftOf="@+id/filter_group"/>
 
             <LinearLayout
+                android:id="@+id/filter_group"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"

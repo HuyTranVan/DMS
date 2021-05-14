@@ -5,32 +5,37 @@
     android:layout_height="wrap_content"
     >
 
+    <TextView
+        android:id="@+id/depot_item_depottype"
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_20sdp"
+        android:background="@drawable/bg_round_transparent_border_grey"
+        android:fontFamily="@font/font_awesome"
+        android:text="@string/icon_home"
+        android:textColor="@color/colorBlue"
+        android:textSize="@dimen/_12sdp"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/_5sdp"
+        android:layout_marginLeft="@dimen/_5sdp"
+        android:gravity="center"/>
+
     <LinearLayout
         android:id="@+id/depot_item_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="@dimen/_45sdp"
         android:orientation="vertical"
         android:background="@drawable/btn_transparent"
-        android:layout_toLeftOf="@+id/depot_item_right">
+        android:layout_toLeftOf="@+id/depot_item_right"
+        android:layout_toRightOf="@+id/depot_item_depottype"
+        android:gravity="center_vertical">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="@dimen/_10sdp"
             android:layout_marginLeft="@dimen/_10sdp"
             android:layout_marginRight="@dimen/_10sdp">
-
-            <TextView
-                android:id="@+id/depot_item_depottype"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/font_awesome"
-                android:text="@string/icon_home"
-                android:textColor="@color/colorBlue"
-                android:textSize="@dimen/_12sdp"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/_5sdp" />
 
             <TextView
                 android:id="@+id/depot_item_name"
@@ -63,8 +68,7 @@
             android:textColor="@color/black_text_color_hint"
             android:textSize="@dimen/_10sdp"
             android:layout_marginLeft="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_marginBottom="@dimen/_5sdp" />
+            android:layout_marginTop="@dimen/_5sdp"/>
 
     </LinearLayout>
 

@@ -308,18 +308,7 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
 
             }
         },1).execute();
-//        ProductConnect.CreateProduct(param, new CallbackCustom() {
-//            @Override
-//            public void onResponse(BaseModel result) {
-//                getActivity().getSupportFragmentManager().popBackStack();
-//                mActivity.reupdateProduct(result);
-//            }
-//
-//            @Override
-//            public void onError(String error){
-//
-//            }
-//        }, true);
+
     }
 
     @Override

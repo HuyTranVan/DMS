@@ -14,6 +14,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Util;
 
 /**
@@ -67,7 +69,9 @@ public class BitmapView {
     }
 
 
-    public static Bitmap ResizeBitMapDependWidth(Bitmap bitmap, int w) {
+    public static Bitmap ResizeBitMapDependWidth(Bitmap bitmap) {
+        int w = CustomSQL.getString(Constants.PRINTER_SIZE).equals("") || CustomSQL.getString(Constants.PRINTER_SIZE).equals(Constants.PRINTER_80)?
+                Constants.PRINTER_80_WIDTH : Constants.PRINTER_57_WIDTH;
 
 //        float originalWidth = bitmap.getWidth();
 //        float originalHeight = bitmap.getHeight();
@@ -86,6 +90,7 @@ public class BitmapView {
 //        paint.setAntiAlias(true);
 //        canvas.drawBitmap(bitmap, transformation, paint);
 //        return background;
+
         Boolean ischecked = false;
         Bitmap BitmapOrg = bitmap;
         Bitmap resizedBitmap = null;

@@ -50,7 +50,7 @@ public class Statistical_BillsAdapter extends RecyclerView.Adapter<Statistical_B
         } else {
             baseData = new ArrayList<>();
             for (BaseModel row : data) {
-                if (row.getBaseModel("user").getString("displayName").equals(username)) {
+                if (row.getBaseModel("user").getString("displayName").equals(username)){
                     baseData.add(row);
                 }
             }
@@ -235,6 +235,20 @@ public class Statistical_BillsAdapter extends RecyclerView.Adapter<Statistical_B
         for (int i = 0; i < mData.size(); i++) {
             total += mData.get(i).getDouble("total");
 
+        }
+
+        return total;
+    }
+
+    public double sumNetTotal(){
+        double total = 0.0;
+        for (int i = 0; i < mData.size(); i++) {
+            List<BaseModel> details = mData.get(i).getList("billDetails");
+
+            for (int ii =0; ii<details.size(); ii++){
+                total += details.get(ii).getDouble("purchasePrice")*details.get(ii).getInt("quantity");
+
+            }
         }
 
         return total;

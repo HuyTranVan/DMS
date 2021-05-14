@@ -84,6 +84,7 @@ public class NewUpdateDistributorFragment extends Fragment implements View.OnCli
     private AdminsAdapter adminAdapter;
     private String TEXT_NEW_ADMIN = "tạo quản trị viên";
     private String TEXT_NEW_USER = "tạo nhân viên";
+    private boolean hasChange = false;
 
     @Override
     public void onAttach(Context context) {
@@ -235,6 +236,9 @@ public class NewUpdateDistributorFragment extends Fragment implements View.OnCli
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.icon_back:
+                if (hasChange){
+                    onDataPass.onResponse(currentDistributor);
+                }
                 getActivity().onBackPressed();
                 break;
 
@@ -327,6 +331,7 @@ public class NewUpdateDistributorFragment extends Fragment implements View.OnCli
         new GetPostMethod(param, new NewCallbackCustom() {
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
+                hasChange = true;
                 currentDistributor = result;
                 if (result.getInt("id") == Distributor.getId()){
                     CustomSQL.setBaseModel(Constants.DISTRIBUTOR, result);
@@ -443,7 +448,7 @@ public class NewUpdateDistributorFragment extends Fragment implements View.OnCli
                 mUsers.size() >0?  false : true,
                 new CallbackObject() {
             @Override
-            public void onResponse(BaseModel object) {
+            public void onResponse(BaseModel object){
                 mUsers.add(object);
                 updateView(currentDistributor);
                 Util.showToast("Tạo nhân viên thành công");

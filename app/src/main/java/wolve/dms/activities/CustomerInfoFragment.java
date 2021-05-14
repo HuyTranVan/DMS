@@ -170,6 +170,16 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
             }
         });
 
+        if (Util.isAdmin()){
+            tvCheckin.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    showDialogCheckin();
+                    return true;
+                }
+            });
+        }
+
 
     }
 
@@ -287,42 +297,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
                     showDialogNote();
 
                 } else {
-                    int currentRating = mActivity.listCheckins.size() > 0 ?
-                            mActivity.listCheckins.get(mActivity.listCheckins.size() - 1).getInt("rating") :
-                            1;
-                    CustomCenterDialog.showCheckinDialog("chi tiết ghé thăm cửa hàng",
-                            mActivity.currentCustomer.getInt("id"),
-                            mActivity.currentCustomer.getInt("status_id"),
-                            currentRating,
-                            new CallbackObject() {
-                                @Override
-                                public void onResponse(BaseModel object) {
-                                    submitCheckin(object.getString("param"), new CallbackBoolean() {
-                                        @Override
-                                        public void onRespone(Boolean result) {
-                                            if (result) {
-                                                if (object.getBoolean("updateStatus")) {
-                                                    mActivity.currentCustomer.put("status_id", object.getInt("status"));
-                                                    mActivity.submitCustomer(mActivity.currentCustomer, mActivity.listCheckins.size() + 1, new CallbackBoolean() {
-                                                        @Override
-                                                        public void onRespone(Boolean result) {
-                                                            mActivity.returnPreviousScreen(mActivity.currentCustomer);
-
-                                                        }
-                                                    });
-
-                                                } else {
-                                                    mActivity.returnPreviousScreen(mActivity.currentCustomer);
-
-                                                }
-
-
-                                            }
-                                        }
-                                    });
-
-                                }
-                            });
+                    showDialogCheckin();
 
                 }
 
@@ -457,6 +432,45 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
                     public void Result(String s) {
                         edNote.setText(s);
                         mActivity.saveCustomerToLocal("note", s);
+
+                    }
+                });
+    }
+
+    private void showDialogCheckin(){
+        int currentRating = mActivity.listCheckins.size() > 0 ?
+                mActivity.listCheckins.get(mActivity.listCheckins.size() - 1).getInt("rating") :
+                1;
+        CustomCenterDialog.showCheckinDialog("chi tiết ghé thăm cửa hàng",
+                mActivity.currentCustomer.getInt("id"),
+                mActivity.currentCustomer.getInt("status_id"),
+                currentRating,
+                new CallbackObject() {
+                    @Override
+                    public void onResponse(BaseModel object) {
+                        submitCheckin(object.getString("param"), new CallbackBoolean() {
+                            @Override
+                            public void onRespone(Boolean result) {
+                                if (result) {
+                                    if (object.getBoolean("updateStatus")) {
+                                        mActivity.currentCustomer.put("status_id", object.getInt("status"));
+                                        mActivity.submitCustomer(mActivity.currentCustomer, mActivity.listCheckins.size() + 1, new CallbackBoolean() {
+                                            @Override
+                                            public void onRespone(Boolean result) {
+                                                mActivity.returnPreviousScreen(mActivity.currentCustomer);
+
+                                            }
+                                        });
+
+                                    } else {
+                                        mActivity.returnPreviousScreen(mActivity.currentCustomer);
+
+                                    }
+
+
+                                }
+                            }
+                        });
 
                     }
                 });

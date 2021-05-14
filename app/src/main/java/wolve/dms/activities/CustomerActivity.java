@@ -84,6 +84,8 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     private int currentPosition = 0;
     private long start = Util.TimeStamp1(Util.Current01MonthYear());
     private int currentCheckedTime = 1;
+    protected static String CHECKIN = "Checkin - Ghi chú";
+    protected static String NOTE = "Thêm ghi chú";
 
     protected CustomerBillsFragment billsFragment;
     protected CustomerInfoFragment infoFragment;
@@ -725,11 +727,11 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 if (distance < Constants.CHECKIN_DISTANCE) {
                     tvCheckInStatus.setText(String.format("Đang trong phạm vi cửa hàng ~%sm", Math.round(distance)));
                     threadShowTime.start();
-                    infoFragment.tvCheckin.setText(Util.getIconString(R.string.icon_district, "   ", "Checkin - Ghi chú"));
+                    infoFragment.tvCheckin.setText(Util.getIconString(R.string.icon_district, "   ", CHECKIN));
 
                 } else {
                     tvCheckInStatus.setText(String.format("Đang bên ngoài cửa hàng ~%s", distance > 1000 ? Math.round(distance) / 1000 + "km" : Math.round(distance) + "m"));
-                    infoFragment.tvCheckin.setText(Util.getIconString(R.string.icon_note, "   ", "Thêm ghi chú"));
+                    infoFragment.tvCheckin.setText(Util.getIconString(R.string.icon_note, "   ", NOTE));
                 }
 
             }

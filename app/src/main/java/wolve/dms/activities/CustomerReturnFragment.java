@@ -316,10 +316,15 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
                         listpayment, true);
 
 
+//                payments.add(DataUtil.createPostPaymentParam(mActivity.currentCustomer.getInt("id"),
+//                        currentBill.getInt("user_id"),
+//                        mActivity.currentDebt - sumreturn,
+//                        currentBill.getInt("id"),
+//                        "", false));
                 payments.add(DataUtil.createPostPaymentParam(mActivity.currentCustomer.getInt("id"),
                         currentBill.getInt("user_id"),
                         mActivity.currentDebt - sumreturn,
-                        currentBill.getInt("id"),
+                        0,
                         "", false));
 
 
@@ -457,18 +462,6 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
 
             }
         }, 0).execute();
-//        CustomerConnect.PostBill(params, new CallbackCustom() {
-//            @Override
-//            public void onResponse(BaseModel billReturn) {
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//                Util.showSnackbarError(error);
-//                listener.onError(error);
-//            }
-//        }, false);
 
 
     }
@@ -495,19 +488,6 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
         }, 1).execute();
 
 
-
-//        CustomerConnect.PostListPay(listParam, new CallbackListCustom() {
-//            @Override
-//            public void onResponse(List result) {
-//                listener.onResponse(result);
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }//
-//        }, true);
     }
 
 

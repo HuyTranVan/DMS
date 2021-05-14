@@ -105,7 +105,12 @@ public class ApiUtil {
     public final static String WAREHOUSE_NEW(){
         return BASE_URL + "dms/token/warehouse/WarehouseNew";
     }
-
+    public final static String WAREHOUSE_DETAIL(){
+        return BASE_URL + "dms/token/warehouse/WarehouseDetail?id=";
+    }
+    public final static String WAREHOUSE_TEMP(){
+        return BASE_URL + "dms/token/warehouse/WarehouseTemp";
+    }
 
     public final static String INVENTORIES(){
         return BASE_URL + "dms/token/warehouse/InventoryList?id=%d&isGroup=%d";
@@ -166,6 +171,11 @@ public class ApiUtil {
     public final static String CASHFLOW_CREATE_PARAM = "type_id=%d&total=%s&note=%s";
     public final static String CASHFLOW_NEW(){
         return BASE_URL + "dms/token/cashflow/CashFlowNew";
+    }
+
+    public final static String DEBITNOTE_CREATE_PARAM = "total=%s";
+    public final static String DEBITNOTE_NEW(){
+        return BASE_URL + "dms/token/bill/DebitNoteNew";
     }
     
     public final static String CUSTOMERS(int page, int size){

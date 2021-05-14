@@ -1462,17 +1462,6 @@ public class Util {
                 }
                 edText.addTextChangedListener(this);
 
-//                try {
-
-
-
-//                } catch (Exception ex) {
-//                    edText.addTextChangedListener(this);
-//                }
-
-
-
-
             }
         });
     }

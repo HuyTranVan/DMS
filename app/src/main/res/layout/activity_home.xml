@@ -79,34 +79,86 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:background="@drawable/bg_corner5_lightgrey"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:paddingLeft="@dimen/_10sdp"
-                    android:paddingRight="@dimen/_10sdp"
-                    android:paddingTop="@dimen/_5sdp"
-                    android:paddingBottom="@dimen/_5sdp"
                     android:layout_gravity="right">
 
-                    <TextView
-                        android:id="@+id/home_month"
+                    <LinearLayout
+                        android:id="@+id/home_cash_parent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/font_awesome"
-                        android:text="Tổng bán hàng:"
-                        android:textSize="@dimen/_10sdp"
-                        android:textColor="@color/black_text_color"
-                        android:textStyle="italic"
-                        android:layout_marginBottom="@dimen/_5sdp" />
+                        android:orientation="vertical"
+                        android:background="?selectableItemBackground"
+                        android:paddingLeft="@dimen/_10sdp"
+                        android:paddingRight="@dimen/_10sdp"
+                        android:paddingTop="@dimen/_5sdp"
+                        android:paddingBottom="@dimen/_5sdp">
 
-                    <TextView
-                        android:id="@+id/home_cash"
+                        <TextView
+                            android:id="@+id/home_month"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/font_awesome"
+                            android:text="Tổng bán hàng:"
+                            android:textSize="@dimen/_10sdp"
+                            android:textColor="@color/black_text_color"
+                            android:textStyle="italic"
+                            android:layout_marginBottom="@dimen/_5sdp" />
+
+                        <TextView
+                            android:id="@+id/home_cash"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/font_awesome"
+                            android:text="đ"
+                            android:textSize="@dimen/_12sdp"
+                            android:textColor="@color/colorBlue" />
+
+                    </LinearLayout>
+
+
+
+                    <LinearLayout
+                        android:id="@+id/home_inventory_parent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/font_awesome"
-                        android:text="đ"
-                        android:textSize="@dimen/_12sdp"
-                        android:textColor="@color/colorBlue" />
+                        android:orientation="vertical"
+                        android:background="?selectableItemBackground"
+                        android:paddingBottom="@dimen/_5sdp">
 
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dip"
+                            android:background="@color/colorLightGrey"
+                            android:layout_marginLeft="@dimen/_5sdp"
+                            android:layout_marginRight="@dimen/_5sdp"/>
+
+                        <TextView
+                            android:id="@+id/home_warehouse_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/font_awesome"
+                            android:textSize="@dimen/_10sdp"
+                            android:textColor="@color/black_text_color_hint"
+                            android:textStyle="italic"
+                            android:layout_marginBottom="@dimen/_5sdp"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:paddingLeft="@dimen/_10sdp"
+                            android:paddingRight="@dimen/_10sdp"/>
+
+                        <TextView
+                            android:id="@+id/home_inventory_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/font_awesome"
+                            android:text="đ"
+                            android:textSize="@dimen/_12sdp"
+                            android:textColor="@color/colorBlueTransparent"
+                            android:paddingLeft="@dimen/_10sdp"
+                            android:paddingRight="@dimen/_10sdp"/>
+
+                    </LinearLayout>
                 </LinearLayout>
+
+
 
 
 

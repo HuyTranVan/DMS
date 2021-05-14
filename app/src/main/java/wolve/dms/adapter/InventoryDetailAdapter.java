@@ -16,6 +16,7 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.apiconnect.ApiUtil;
+import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
@@ -35,13 +36,14 @@ public class InventoryDetailAdapter extends RecyclerView.Adapter<InventoryDetail
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private BaseModel mWarehouse;
+    private CallbackBoolean mChange;
 
-    public InventoryDetailAdapter(BaseModel warehouse, List<BaseModel> list) {
+    public InventoryDetailAdapter(BaseModel warehouse, List<BaseModel> list, CallbackBoolean haschange) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mData = list;
         this.mWarehouse = warehouse;
-
+        this.mChange = haschange;
     }
 
     @Override
@@ -133,7 +135,7 @@ public class InventoryDetailAdapter extends RecyclerView.Adapter<InventoryDetail
                             public void onResponse(BaseModel result, List<BaseModel> list) {
                                 mData.get(pos).put("currentQuantity", result.getInt("quantity"));
                                 notifyItemChanged(pos);
-
+                                mChange.onRespone(true);
                                 Util.showToast("Cập nhật thành công");
                             }
 

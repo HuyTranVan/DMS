@@ -26,24 +26,6 @@
             android:layout_marginTop="@dimen/_5sdp">
 
             <wolve.dms.customviews.CVerticalView
-                android:id="@+id/statistical_dashboard_revenue"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:text="0"
-                app:iconText="@string/icon_truck"
-                app:layout_columnWeight="1"
-                android:layout_marginBottom="@dimen/_1sdp"
-                android:layout_marginRight="@dimen/_1sdp" />
-
-            <wolve.dms.customviews.CVerticalView
-                android:id="@+id/statistical_dashboard_debt"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:textColor="@color/colorRed"
-                app:iconText="@string/icon_money"
-                app:layout_columnWeight="1" />
-
-            <wolve.dms.customviews.CVerticalView
                 android:id="@+id/statistical_dashboard_cash"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -65,7 +47,27 @@
                 app:layout_columnWeight="1" />
 
             <wolve.dms.customviews.CVerticalView
-                android:id="@+id/statistical_dashboard_totalnet"
+                android:id="@+id/statistical_dashboard_revenue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:text="0"
+                app:iconText="@string/icon_truck"
+                app:layout_columnWeight="1"
+                android:layout_marginBottom="@dimen/_1sdp"
+                android:layout_marginRight="@dimen/_1sdp" />
+
+            <wolve.dms.customviews.CVerticalView
+                android:id="@+id/statistical_dashboard_debt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:textColor="@color/colorRed"
+                app:iconText="@string/icon_money"
+                app:layout_columnWeight="1" />
+
+
+
+            <wolve.dms.customviews.CVerticalView
+                android:id="@+id/statistical_dashboard_paidnet"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
@@ -77,12 +79,11 @@
                 android:layout_marginRight="@dimen/_1sdp" />
 
             <wolve.dms.customviews.CVerticalView
-                android:id="@+id/statistical_dashboard_temp"
+                android:id="@+id/statistical_dashboard_billnet"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 app:textColor="@color/black_text_color_hint"
-                app:titleColor="@color/black_text_color_hint"
                 app:text="###"
                 app:titleText="###"
                 app:iconText="#"
@@ -111,16 +112,10 @@
 
         </androidx.gridlayout.widget.GridLayout>
 
-        <FrameLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_10sdp">
-
-            <lecho.lib.hellocharts.view.ColumnChartView
-                android:id="@+id/statistical_dashboard_income"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_170sdp"
-                android:padding="@dimen/_10sdp" />
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -131,7 +126,70 @@
                 android:textStyle="italic"
                 android:textColor="@color/colorBlueTransparent" />
 
-        </FrameLayout>
+            <lecho.lib.hellocharts.view.ColumnChartView
+                android:id="@+id/statistical_dashboard_income"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_170sdp"
+                android:paddingLeft="@dimen/_10sdp"
+                android:paddingRight="@dimen/_10sdp"/>
+
+
+
+        </LinearLayout>
+
+<!--        <FrameLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="@dimen/_10sdp">-->
+
+<!--            <lecho.lib.hellocharts.view.ColumnChartView-->
+<!--                android:id="@+id/statistical_dashboard_income"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="@dimen/_170sdp"-->
+<!--                android:padding="@dimen/_10sdp" />-->
+
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Thống kê chung"-->
+<!--                android:layout_margin="@dimen/_5sdp"-->
+<!--                android:textSize="@dimen/_10sdp"-->
+<!--                android:textStyle="italic"-->
+<!--                android:textColor="@color/colorBlueTransparent" />-->
+
+<!--        </FrameLayout>-->
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            android:background="@color/colorGrey"
+            android:layout_margin="@dimen/_5sdp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bán hàng theo nhóm sản phẩm"
+                android:layout_margin="@dimen/_5sdp"
+                android:textSize="@dimen/_10sdp"
+                android:textStyle="italic"
+                android:textColor="@color/colorBlueTransparent" />
+
+            <lecho.lib.hellocharts.view.ColumnChartView
+                android:id="@+id/statistical_dashboard_netsale"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_170sdp"
+                android:paddingLeft="@dimen/_10sdp"
+                android:paddingRight="@dimen/_10sdp"/>
+
+
+
+        </LinearLayout>
 
 
         <View

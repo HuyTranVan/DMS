@@ -22,7 +22,6 @@ import wolve.dms.models.BaseModel;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
 
-
 /**
  * Created by tranhuy on 5/24/17.
  */
@@ -124,40 +123,43 @@ public class ProductImportChoosenAdapter extends RecyclerView.Adapter<ProductImp
         holder.lnParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CustomCenterDialog.showDialogInputQuantity(mData.get(position).getString("name"),
-                        mData.get(position).getString("quantity"),
-                        0,
-                        false,
-                        new CallbackString() {
-                            @Override
-                            public void Result(String s) {
-                                if (s.equals("") || Integer.parseInt(s) == 0) {
-                                    mData.get(position).put("quantity", 0);
+                if (mData.get(position).getInt("quantity") > 0){
+                    CustomCenterDialog.showDialogInputQuantity(mData.get(position).getString("name"),
+                            mData.get(position).getString("quantity"),
+                            0,
+                            false,
+                            new CallbackString() {
+                                @Override
+                                public void Result(String s) {
+                                    if (s.equals("") || Integer.parseInt(s) == 0) {
+                                        mData.get(position).put("quantity", 0);
 
-                                    mListenerObject.onResponse(mData.get(position));
-                                    mData.remove(position);
-                                    mListener.onResponse(mData.size());
-
-                                } else {
-
-                                    if (!mData.get(position).hasKey("currentQuantity") || mData.get(position).getInt("currentQuantity") >= Integer.parseInt(s)) {
                                         mListenerObject.onResponse(mData.get(position));
-                                        mData.get(position).put("quantity", Integer.parseInt(s));
+                                        mData.remove(position);
+                                        mListener.onResponse(mData.size());
 
                                     } else {
-                                        if (isLimit){
-                                            Util.showSnackbar("Vui lòng nhập giá trị nhỏ hơn số tồn", null, null);
-                                        }else {
+
+                                        if (!mData.get(position).hasKey("currentQuantity") || mData.get(position).getInt("currentQuantity") >= Integer.parseInt(s)) {
                                             mListenerObject.onResponse(mData.get(position));
                                             mData.get(position).put("quantity", Integer.parseInt(s));
+
+                                        } else {
+                                            if (isLimit){
+                                                Util.showSnackbar("Vui lòng nhập giá trị nhỏ hơn số tồn", null, null);
+                                            }else {
+                                                mListenerObject.onResponse(mData.get(position));
+                                                mData.get(position).put("quantity", Integer.parseInt(s));
+                                            }
+
                                         }
 
                                     }
-
+                                    notifyDataSetChanged();
                                 }
-                                notifyDataSetChanged();
-                            }
-                        });
+                            });
+                }
+
 
             }
 

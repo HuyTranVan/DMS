@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,11 +24,17 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.R;
 import wolve.dms.callback.CallbackClickAdapter;
+import wolve.dms.callback.CallbackInt;
+import wolve.dms.callback.CallbackString;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomDropdow;
+import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.utils.Constants.warehouseOptions;
 
 
 /**
@@ -39,12 +46,16 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackClickAdapter mListener;
+    private WarehouseAdapter.CallbackWarehouseOption mWarehouseOption;
+    private int inventoryQuantity;
 
-    public HomeAdapter(CallbackClickAdapter callbackClickAdapter) {
+    public HomeAdapter(CallbackClickAdapter callbackClickAdapter, WarehouseAdapter.CallbackWarehouseOption morelistener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mData = Constants.HomeItemList();
-        mListener = callbackClickAdapter;
+        this.mListener = callbackClickAdapter;
+        this.mWarehouseOption = morelistener;
+        this.inventoryQuantity = 0;
     }
 
     @Override
@@ -59,7 +70,6 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
         mData.addAll(list);
         notifyDataSetChanged();
     }
-
 
     @Override
     public void onBindViewHolder(final ItemAdapterViewHolder holder, final int position) {
@@ -79,6 +89,46 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
 
         }
 
+        holder.tvMore.setVisibility(mData.get(position).getBoolean("haveDetail")
+                && mData.get(position).hasKey("more_text")
+                && inventoryQuantity > 0
+                ? View.VISIBLE : View.GONE);
+        //holder.tvMore.setText(mData.get(position).hasKey("more_text") && inventoryQuantity > 0 ? Util.getIcon(R.string.icon_menu) : Util.getIcon(R.string.icon_info_not_circle));
+        holder.tvMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view){
+                if (User.checkUserWarehouse()){
+                    if (position == 2){
+                        CustomDropdow.createListDropdown(holder.tvMore,
+                                WarehouseAdapter.listMenu(false,
+                                        User.getCurrentUser().getBaseModel("warehouse"),
+                                        inventoryQuantity ),
+                                        new CallbackString() {
+                            @Override
+                            public void Result(String s) {
+                                if (s.equals(warehouseOptions[0])){
+                                    BaseModel warehouse = User.getCurrentUser().getBaseModel("warehouse");
+                                    warehouse.putBaseModel("user", User.getCurrentUser() );
+                                    mWarehouseOption.onInfo(warehouse);
+
+                                }else if (s.equals(warehouseOptions[1])){
+                                    mWarehouseOption.onInventory(mData.get(position));
+
+                                }else if (s.equals(warehouseOptions[2])){
+                                    mWarehouseOption.onReturn(mData.get(position));
+                                }
+
+                            }
+                        });
+
+                    }
+
+                }
+
+
+            }
+        });
+
         holder.rlParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,22 +146,31 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
 
 
     public class ItemAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvTitle, tvIcon;
-        private LinearLayout rlParent;
+        private TextView tvTitle, tvIcon, tvMore;
+        private RelativeLayout rlParent;
         private CircleImageView imgItem;
 
         public ItemAdapterViewHolder(View itemView) {
             super(itemView);
             tvIcon = (TextView) itemView.findViewById(R.id.item_home_icon);
             tvTitle = (TextView) itemView.findViewById(R.id.item_home_text);
-            rlParent = (LinearLayout) itemView.findViewById(R.id.item_home_parent);
+            tvMore = (TextView) itemView.findViewById(R.id.item_home_more);
+            rlParent = (RelativeLayout) itemView.findViewById(R.id.item_home_parent);
             imgItem = itemView.findViewById(R.id.item_home_image);
+
         }
 
     }
 
     public void reloadItem(){
         notifyDataSetChanged();
+    }
+
+    public void updateInventoryDetail(int inventory_no){
+        mData.get(2).put("more_text", inventory_no > 0? Util.getIcon(R.string.icon_menu) : R.string.icon_info);
+        inventoryQuantity = inventory_no;
+        notifyItemChanged(2);
+
     }
 
 

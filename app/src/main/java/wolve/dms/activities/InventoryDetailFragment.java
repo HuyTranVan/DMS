@@ -1,6 +1,8 @@
 package wolve.dms.activities;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +24,18 @@ import wolve.dms.adapter.CartProductDialogAdapter;
 import wolve.dms.adapter.InventoryDetailAdapter;
 import wolve.dms.adapter.ViewpagerMultiListAdapter;
 import wolve.dms.adapter.ViewpagerShopcartAdapter;
+import wolve.dms.apiconnect.ApiUtil;
+import wolve.dms.apiconnect.apiserver.GetPostMethod;
+import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackObject;
+import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.activities.BaseActivity.createGetParam;
 
 /**
  * Created by macos on 9/16/17.
@@ -38,10 +48,19 @@ public class InventoryDetailFragment extends Fragment implements View.OnClickLis
     private ViewPager viewPager;
     private TabLayout tabLayout;
 
-    private WarehouseActivity mActivity;
+    //private WarehouseActivity mActivity;
     private BaseModel currrentWarehouse;
     private List<RecyclerView.Adapter> listadapter;
     private ViewpagerMultiListAdapter viewpagerAdapter;
+    public List<BaseModel> listInventory = new ArrayList<>();
+    private CallbackObject onDataPass;
+    public boolean hasChange = false;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        onDataPass = (CallbackObject) context;
+    }
 
     @Nullable
     @Override
@@ -49,22 +68,58 @@ public class InventoryDetailFragment extends Fragment implements View.OnClickLis
         view = inflater.inflate(R.layout.fragment_inventory_detail, container, false);
         initializeView();
 
-        intitialData();
+        currrentWarehouse = CustomSQL.getBaseModel(Constants.CURRENT_WAREHOUSE);
+        tvTitle.setText(String.format("Tồn kho: %s", currrentWarehouse.getString("name")));
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                intitialData();
+
+            }
+        }, 400);
 
         addEvent();
         return view;
     }
 
-    private void intitialData() {
-        String bundle = getArguments().getString(Constants.TEMPWAREHOUSE);
-        if (bundle != null) {
-            currrentWarehouse = new BaseModel(bundle);
-            tvTitle.setText(String.format("Tồn kho: %s", currrentWarehouse.getString("name")));
+    private void intitialData(){
+        BaseModel param = createGetParam(String.format(ApiUtil.INVENTORIES(),
+                currrentWarehouse.getInt("id"),
+                1),
+                true);
+        new GetPostMethod(param, new NewCallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result, List<BaseModel> list) {
+                listInventory = new ArrayList<>();
+                for (int i=0; i<list.size(); i++){
+                    if (list.get(i).getList("inventories").size() >0){
+                        listInventory.add(list.get(i));
+                    }
+                }
 
-            tabLayout.setupWithViewPager(viewPager);
-            setupViewPager();
+                tabLayout.setupWithViewPager(viewPager);
+                setupViewPager(listInventory);
+                //openFragmentInventoryEdit(curentWarehouse);
+            }
 
-        }
+            @Override
+            public void onError(String error) {
+
+            }
+        }, 1).execute();
+
+
+//        String bundle = getArguments().getString(Constants.TEMPWAREHOUSE);
+//        if (bundle != null) {
+//            currrentWarehouse = new BaseModel(bundle);
+//            tvTitle.setText(String.format("Tồn kho: %s", currrentWarehouse.getString("name")));
+//
+//            tabLayout.setupWithViewPager(viewPager);
+//            setupViewPager();
+//
+//        }
 
 
     }
@@ -75,7 +130,7 @@ public class InventoryDetailFragment extends Fragment implements View.OnClickLis
     }
 
     private void initializeView() {
-        mActivity = (WarehouseActivity) getActivity();
+        //mActivity = (WarehouseActivity) getActivity();
         btnBack = view.findViewById(R.id.icon_back);
         tvTitle = view.findViewById(R.id.inventory_detail_title);
         viewPager = view.findViewById(R.id.inventory_detail_viewpager);
@@ -87,25 +142,27 @@ public class InventoryDetailFragment extends Fragment implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.icon_back:
-                mActivity.onBackPressed();
+                if (hasChange){
+                    onDataPass.onResponse(new BaseModel());
+                }
+                getActivity().getSupportFragmentManager().popBackStack();
                 break;
 
 
         }
     }
 
-
-//    private void createRVInventory(List<BaseModel> list) {
-//        adapter = new InventoryDetailAdapter(currrentWarehouse, list);
-//        Util.createLinearRV(rvInventory, adapter);
-//    }
-
-    private void setupViewPager() {
+    private void setupViewPager(List<BaseModel> inventories) {
         listadapter = new ArrayList<>();
-
-        for (int i = 0; i < mActivity.listInventoryDetail.size(); i++) {
+        for (int i = 0; i < inventories.size(); i++) {
             InventoryDetailAdapter productAdapters = new InventoryDetailAdapter(currrentWarehouse,
-                    mActivity.listInventoryDetail.get(i).getList("inventories"));
+                    inventories.get(i).getList("inventories"),
+                    new CallbackBoolean() {
+                        @Override
+                        public void onRespone(Boolean result) {
+                            hasChange = true;
+                        }
+                    });
 
             listadapter.add(productAdapters);
 
@@ -133,16 +190,16 @@ public class InventoryDetailFragment extends Fragment implements View.OnClickLis
             }
         });
 
-        for (int i = 0; i < mActivity.listInventoryDetail.size(); i++) {
+        for (int i = 0; i < inventories.size(); i++) {
             TabLayout.Tab tab = tabLayout.getTabAt(i);
-            View customView = LayoutInflater.from(mActivity).inflate(R.layout.view_tab_product, null);
+            View customView = LayoutInflater.from(getActivity()).inflate(R.layout.view_tab_product, null);
             TextView tabTextNotify = (TextView) customView.findViewById(R.id.tabNotify);
             TextView textTitle = (TextView) customView.findViewById(R.id.tabTitle);
 
-            textTitle.setText(mActivity.listInventoryDetail.get(i).getString("name"));
-            if (mActivity.listInventoryDetail.get(i).getList("inventories").size() >0){
+            textTitle.setText(inventories.get(i).getString("name"));
+            if (inventories.get(i).getList("inventories").size() >0){
                 tabTextNotify.setVisibility(View.VISIBLE);
-                tabTextNotify.setText(String.valueOf(mActivity.listInventoryDetail.get(i).getList("inventories").size()));
+                tabTextNotify.setText(String.valueOf(inventories.get(i).getList("inventories").size()));
             }else {
                 tabTextNotify.setVisibility(View.GONE);
             }

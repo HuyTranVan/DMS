@@ -26,7 +26,7 @@ public class PrintBillAdapter extends RecyclerView.Adapter<PrintBillAdapter.Prin
     private Context mContext;
     //private int printSize;
 
-    public PrintBillAdapter(int printSize, List<BaseModel> list) {
+    public PrintBillAdapter( List<BaseModel> list) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mData = list;

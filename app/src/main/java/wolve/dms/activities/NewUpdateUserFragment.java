@@ -64,8 +64,8 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
     private Uri imageChangeUri = null;
     private BaseModel currentUser;
     private BaseModel currentWarehouse;
-    private List<BaseModel> listWarehouse;
-    private String displayWarehouseFormat = "Kho mặc định: %s";
+    //private List<BaseModel> listWarehouse;
+    private String displayWarehouseFormat = "Kho: %s";
     private CallbackObject onDataPass;
 
     @Nullable
@@ -81,10 +81,11 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
     }
 
     private void intitialData() {
-        listWarehouse = new ArrayList<>();
+        //listWarehouse = new ArrayList<>();
         String bundle = getArguments().getString(Constants.USER);
         tvPasswordDefault.setVisibility(Util.isAdmin() ? View.VISIBLE : View.GONE);
         phoneEvent();
+        edWarehouse.setFocusable(false);
         if (bundle != null) {
             currentUser = new BaseModel(bundle);
             currentWarehouse = currentUser.hasKey("warehouse") ? currentUser.getBaseModel("warehouse") : new BaseModel();
@@ -120,7 +121,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
 
             tvPasswordDefault.setVisibility(View.VISIBLE);
         }
-        warehouseEvent();
+        //warehouseEvent();
 
     }
 
@@ -295,35 +296,35 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
         });
     }
 
-    private void warehouseEvent() {
-        edWarehouse.setDropdown(true, new CInputForm.ClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (listWarehouse.size() == 0) {
-                    BaseModel param = createGetParam(ApiUtil.WAREHOUSES(), true);
-                    new GetPostMethod(param, new NewCallbackCustom() {
-                        @Override
-                        public void onResponse(BaseModel result, List<BaseModel> list) {
-                            listWarehouse = list;
-                            choiceWarehouse(filterListWarehouse(listWarehouse));
-
-                        }
-
-                        @Override
-                        public void onError(String error) {
-
-                        }
-                    }, 1).execute();
-
-
-
-                } else {
-                    choiceWarehouse(filterListWarehouse(listWarehouse));
-                }
-
-            }
-        });
-    }
+//    private void warehouseEvent() {
+//        edWarehouse.setDropdown(true, new CInputForm.ClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (listWarehouse.size() == 0) {
+//                    BaseModel param = createGetParam(ApiUtil.WAREHOUSES(), true);
+//                    new GetPostMethod(param, new NewCallbackCustom() {
+//                        @Override
+//                        public void onResponse(BaseModel result, List<BaseModel> list) {
+//                            listWarehouse = list;
+//                            choiceWarehouse(filterListWarehouse(listWarehouse));
+//
+//                        }
+//
+//                        @Override
+//                        public void onError(String error) {
+//
+//                        }
+//                    }, 1).execute();
+//
+//
+//
+//                } else {
+//                    choiceWarehouse(filterListWarehouse(listWarehouse));
+//                }
+//
+//            }
+//        });
+//    }
 
     private void choiceWarehouse(List<BaseModel> list) {
         if (list.size() > 0) {

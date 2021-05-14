@@ -1,5 +1,6 @@
 package wolve.dms.activities;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +30,7 @@ import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
@@ -47,16 +49,24 @@ public class ImportReturnFragment extends Fragment implements View.OnClickListen
     private CheckBox cbAll;
     private Button btnSubmit;
 
-    private WarehouseActivity mActivity;
     private List<BaseModel> listInventory = new ArrayList<>();
     private ProductImportChoosenAdapter adapter;
     private BaseModel currrentWarehouse, returnWarehouse;
+    private CallbackObject onDataPass;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        onDataPass = (CallbackObject) context;
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_import_return, container, false);
         initializeView();
+
+        currrentWarehouse = CustomSQL.getBaseModel(Constants.CURRENT_WAREHOUSE);
 
         intitialData();
 
@@ -65,25 +75,22 @@ public class ImportReturnFragment extends Fragment implements View.OnClickListen
     }
 
     private void intitialData() {
-        String bundle1 = getArguments().getString(Constants.WAREHOUSE);
-        String bundle2 = getArguments().getString(Constants.TEMPWAREHOUSE);
-        if (bundle1 != null) {
-            currrentWarehouse = new BaseModel(bundle1);
-            returnWarehouse = new BaseModel(bundle2);
+        loadTempWarehouse(new CallbackObject() {
+            @Override
+            public void onResponse(BaseModel object) {
+                returnWarehouse = object;
+                tvTitle.setText(String.format("Trả hàng về %s", returnWarehouse.getString("name")));
 
-            tvTitle.setText(String.format("Trả hàng về %s", returnWarehouse.getString("name")));
+                loadListInventory(currrentWarehouse.getInt("id"), new CallbackListObject() {
+                    @Override
+                    public void onResponse(List<BaseModel> list){
+                        listInventory = list;
+                        createRVInventory(listInventory);
 
-            loadListInventory(currrentWarehouse.getInt("id"), new CallbackListObject() {
-                @Override
-                public void onResponse(List<BaseModel> list) {
-                    listInventory = list;
-                    createRVInventory(listInventory );
-
-                }
-            });
-
-        }
-
+                    }
+                }, 1);
+            }
+        }, 2);
 
     }
 
@@ -94,7 +101,6 @@ public class ImportReturnFragment extends Fragment implements View.OnClickListen
     }
 
     private void initializeView() {
-        mActivity = (WarehouseActivity) getActivity();
         btnBack = view.findViewById(R.id.icon_back);
         rvInventory = view.findViewById(R.id.import_return_rvcustomer);
         tvTitle = view.findViewById(R.id.import_return_title);
@@ -106,7 +112,7 @@ public class ImportReturnFragment extends Fragment implements View.OnClickListen
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.icon_back:
-                mActivity.onBackPressed();
+                getActivity().getSupportFragmentManager().popBackStack();
                 break;
 
             case R.id.import_return_submit:
@@ -118,11 +124,29 @@ public class ImportReturnFragment extends Fragment implements View.OnClickListen
         }
     }
 
-    private void loadListInventory(int warehouse_id, CallbackListObject listener) {
+    private void loadTempWarehouse(CallbackObject listener, int loadingtimes) {
+        BaseModel param = createGetParam(String.format(ApiUtil.WAREHOUSE_TEMP()), false);
+        new GetPostMethod(param, new NewCallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result, List<BaseModel> list){
+                listener.onResponse(result);
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        }, loadingtimes).execute();
+
+
+
+    }
+
+    private void loadListInventory(int warehouse_id, CallbackListObject listener, int loadingtimes) {
         BaseModel param = createGetParam(String.format(ApiUtil.INVENTORIES(), warehouse_id, 0), true);
         new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onResponse(BaseModel result, List<BaseModel> list) {
+            public void onResponse(BaseModel result, List<BaseModel> list){
                 listener.onResponse(list);
             }
 
@@ -130,7 +154,7 @@ public class ImportReturnFragment extends Fragment implements View.OnClickListen
             public void onError(String error) {
 
             }
-        }, 1).execute();
+        }, loadingtimes).execute();
 
 
 
@@ -178,8 +202,8 @@ public class ImportReturnFragment extends Fragment implements View.OnClickListen
             public void onRespone(Boolean result) {
                 if (result) {
                     DataUtil.saveProductPopular(adapter.getAllDataHaveQuantity());
-                    mActivity.initialData();
-                    mActivity.onBackPressed();
+                    getActivity().getSupportFragmentManager().popBackStack();
+                    onDataPass.onResponse(new BaseModel());
 
                 }
             }

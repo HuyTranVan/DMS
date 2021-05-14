@@ -31,6 +31,7 @@ import wolve.dms.R;
 import wolve.dms.customviews.CVerticalView;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.District;
+import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
@@ -42,8 +43,9 @@ import wolve.dms.utils.Util;
 public class StatisticalDashboardFragment extends Fragment implements View.OnClickListener {
     private View view;
     private ColumnChartView chartIncome;
+    private ColumnChartView chartNetGroup;
     private PieChartView chartDistrict;
-    private CVerticalView vRevenue, vCash, vDebt, vProfit, vInventory, vBaseProfit, vtotalNet, vTemp;
+    private CVerticalView vRevenue, vCash, vDebt, vProfit, vInventory, vBaseProfit, vPaidNet, vBillNet;
 
     private StatisticalActivity mActivity;
 
@@ -84,15 +86,15 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         mActivity = (StatisticalActivity) getActivity();
         chartIncome = (ColumnChartView) view.findViewById(R.id.statistical_dashboard_income);
         chartDistrict = (PieChartView) view.findViewById(R.id.statistical_dashboard_district);
-        //chartBDF = view.findViewById(R.id.statistical_dashboard_bdf);
+        chartNetGroup = view.findViewById(R.id.statistical_dashboard_netsale);
         vRevenue = view.findViewById(R.id.statistical_dashboard_revenue);
         vCash = view.findViewById(R.id.statistical_dashboard_cash);
         vDebt = view.findViewById(R.id.statistical_dashboard_debt);
         vProfit = view.findViewById(R.id.statistical_dashboard_profit);
         vInventory = view.findViewById(R.id.statistical_dashboard_inventory);
         vBaseProfit = view.findViewById(R.id.statistical_dashboard_base_profit);
-        vtotalNet = view.findViewById(R.id.statistical_dashboard_totalnet);
-        vTemp = view.findViewById(R.id.statistical_dashboard_temp);
+        vPaidNet = view.findViewById(R.id.statistical_dashboard_paidnet);
+        vBillNet = view.findViewById(R.id.statistical_dashboard_billnet);
     }
 
     @Override
@@ -110,6 +112,7 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
                            double debt, int countdebt,
                            double profit,
                            double base_profit,
+                           double net_total,
                            BaseModel temptWarehouse) {
         List<BaseModel> mList = new ArrayList<>();
         List<BaseModel> mListDetail = new ArrayList<>();
@@ -134,8 +137,9 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
             }
         }
         setupIncomeChart(mListDetail, total, paid, debt, profit);
+        setupNetGroupChart(mListDetail);
         setupDistrictChart(mList);
-        updateOverView(username, mList, paid, countpayment, total, debt, countdebt, profit, base_profit, temptWarehouse);
+        updateOverView(username, mList, paid, countpayment, total, debt, countdebt, profit, base_profit, net_total,temptWarehouse);
 
     }
 
@@ -146,6 +150,7 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
                                 double debt, int countdebt,
                                 double profit,
                                 double baseprofit,
+                                double nettotal,
                                 BaseModel warehouse){
 
         vRevenue.setTitleText(String.format("Tổng bán hàng (%d)", bills.size()));
@@ -160,8 +165,11 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         vProfit.setTitleText("Chiết khấu bán hàng");
         vProfit.setText(Util.FormatMoney(profit));
 
-        vtotalNet.setTitleText("Giá NET theo tiền thu");
-        vtotalNet.setText(Util.FormatMoney(paid - profit));
+        vPaidNet.setTitleText("Giá NET theo tiền thu");
+        vPaidNet.setText(Util.FormatMoney(paid - profit));
+
+        vBillNet.setTitleText("Giá NET bán hàng");
+        vBillNet.setText(Util.FormatMoney(nettotal));
 
         vInventory.setTitleText(String.format("Tồn kho NPP (%d)", warehouse.getInt("quantity")));
         vInventory.setText(Util.FormatMoney(warehouse.getDouble("total")));
@@ -169,8 +177,8 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         vBaseProfit.setTitleText("Chênh lệch giá NPP");
         vBaseProfit.setText(Util.FormatMoney(baseprofit));
 
-        vtotalNet.setVisibility(username.equals(Constants.ALL_FILTER) ? View.GONE : View.VISIBLE);
-        vTemp.setVisibility(username.equals(Constants.ALL_FILTER) ? View.GONE : View.VISIBLE);
+        vPaidNet.setVisibility(username.equals(Constants.ALL_FILTER) ? View.GONE : View.VISIBLE);
+        vBillNet.setVisibility(username.equals(Constants.ALL_FILTER) ? View.GONE : View.VISIBLE);
         vInventory.setVisibility(Util.isAdmin() ? View.VISIBLE : View.GONE);
         vBaseProfit.setVisibility(Util.isAdmin() ? View.VISIBLE : View.GONE);
     }
@@ -326,6 +334,141 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
 
             }
         });
+
+    }
+
+    private void setupNetGroupChart(List<BaseModel> details) {
+        List<BaseModel> listGroup = ProductGroup.getProductGroupList();
+        List<BaseModel> mValues = new ArrayList<>();
+        List<AxisValue> axisValues = new ArrayList<AxisValue>();
+
+        DataUtil.sortbyStringKey("name", listGroup, true);
+
+        for (int i = 0; i < listGroup.size(); i++) {
+            BaseModel group = new BaseModel();
+            group.put("id", listGroup.get(i).getInt("id"));
+            group.put("name", listGroup.get(i).getString("name").
+                    substring(0, listGroup.get(i).getString("name").length()>7 ? 6 : listGroup.get(i).getString("name").length()));
+
+            double total = 0.0;
+            for (int ii=0; ii<details.size(); ii++){
+                if (details.get(ii).getInt("productGroup_id") == listGroup.get(i).getInt("id")){
+                    total += details.get(ii).getDouble("purchasePrice") * details.get(ii).getInt("quantity");
+
+                }
+            }
+            group.put("total", total);
+
+            mValues.add(group);
+
+            axisValues.add(new AxisValue(i, group.getString("name").toCharArray()));
+        }
+
+
+
+        List<Column> columns = new ArrayList<Column>();
+        for (int a = 0; a < mValues.size(); a++){
+            List<SubcolumnValue> values = new ArrayList<SubcolumnValue>();
+            SubcolumnValue subcolumnValue = new SubcolumnValue(mValues.get(a).getFloat("total"), ChartUtils.nextColor());
+            subcolumnValue.setLabel(Util.FormatMoney(mValues.get(a).getDouble("total")));
+
+            values.add(subcolumnValue);
+
+            Column column = new Column(values);
+            column.setHasLabels(true);
+            columns.add(column);
+
+        }
+        Axis axisX = new Axis(axisValues);
+        ColumnChartData data = new ColumnChartData(columns);
+        data.setAxisXBottom(axisX);
+
+        chartNetGroup.setViewportCalculationEnabled(true);
+
+        chartNetGroup.setColumnChartData(data);
+
+
+
+
+
+//            double[] inputDataDouble = new double[]{total, paid, profit, debt, bdf};
+//        float[] inputData = new float[]{(float) total, (float) paid, (float) profit, (float) debt, (float) bdf};
+//
+//
+//
+//        for (int i = 0; i < inputData.length; ++i) {
+//            List<SubcolumnValue> values = new ArrayList<SubcolumnValue>();
+//            SubcolumnValue subcolumnValue = new SubcolumnValue(inputData[i], ChartUtils.nextColor());
+//            subcolumnValue.setLabel(Util.FormatMoney(inputDataDouble[i]));
+//
+//            values.add(subcolumnValue);
+//
+//            Column column = new Column(values);
+//            column.setHasLabels(true);
+//            columns.add(column);
+//
+//        }
+
+        //ColumnChartData data = new ColumnChartData(columns);
+
+        //List<AxisValue> axisValues = new ArrayList<AxisValue>();
+//        axisValues.add(new AxisValue(0, "Tổng bán hàng".toCharArray()));
+//
+//        axisValues.add(new AxisValue(1, "Tiền đã thu".toCharArray()));
+//
+//        String profitString = new DecimalFormat("#.##").format(profit * 100 / paid) + " %";
+//        axisValues.add(new AxisValue(2, String.format("### (%s)", profitString).toCharArray()));
+//
+//        axisValues.add(new AxisValue(3, "Công nợ".toCharArray()));
+//
+//        String bdfString = new DecimalFormat("#.##").format(bdf * 100 / total) + " %";
+//        axisValues.add(new AxisValue(4, String.format("BDF (%s)", bdfString).toCharArray()));
+
+
+
+//        data.setAxisYLeft(axisX);
+
+
+//        final Viewport v = new Viewport(chartIncome.getMaximumViewport());
+//        v.top = v.top + 30; //example max value
+//        chartIncome.setMaximumViewport(v);
+//        chartIncome.setCurrentViewport(v);
+//Optional step: disable viewport recalculations, thanks to this animations will not change viewport automatically.
+
+
+//        chartIncome.setOnValueTouchListener(new ColumnChartOnValueSelectListener() {
+//            @Override
+//            public void onValueSelected(int i, int i1, SubcolumnValue subcolumnValue) {
+//                switch (i) {
+//                    case 0:
+//                        mActivity.viewPager.setCurrentItem(1, true);
+//                        break;
+//
+//                    case 1:
+//                        mActivity.viewPager.setCurrentItem(3, true);
+//
+//                        break;
+//
+//                    case 2:
+//                        mActivity.viewPager.setCurrentItem(4, true);
+//                        break;
+//
+//                    case 3:
+//
+//                        break;
+//
+//
+//                }
+//
+//
+//                //Log.e("tag", "vị trí " + i + "  ... " + i1);
+//            }
+//
+//            @Override
+//            public void onValueDeselected() {
+//
+//            }
+//        });
 
     }
 

@@ -27,6 +27,8 @@ public class Constants {
     public final static String DEBTS = "debts";
     public final static String BILL = "bill";
     public final static String WAREHOUSE = "warehouse";
+    public final static String WAREHOUSE_ID = "warehouse_id";
+    public final static String CURRENT_WAREHOUSE = "current_warehouse";
     public static final String TEMPWAREHOUSE = "temp_warehouse";
     public final static String BILL_DETAIL = "billDetails";
     public final static String PAYMENT = "payment";
@@ -131,7 +133,7 @@ public class Constants {
     public static final String PROVINCE_LIST = "province_list";
 
     public static final String CONNECTING_PRINTER = "Đang kết nối máy in ....";
-    public static final String CONNECTED_PRINTER = "Đã kết nối máy in: %s";
+    public static final String CONNECTED_PRINTER = "[%s] %s: %s";
     public static final String CONNECTED_PRINTER_ERROR = "Không thể kết nối tới máy in";
 
     public static final String ON_MAP_SCREEN = "on_map";
@@ -172,6 +174,7 @@ public class Constants {
     public final static String MESSENGER_PACKAGE = "com.facebook.orca";
     public static final String PACKAGE_DEFAULT = "package_default";
     public static final String RANGE_TIME = "range_time";
+    public static final String ONLY_USER = "only_user";
 
     //Home constant
     public static List<BaseModel> HomeItemList() {
@@ -185,7 +188,7 @@ public class Constants {
         String[] texts = new String[]{
                 "Bán hàng",
                 "Thống kê",
-                "Nhập - Tồn kho",
+                "Nhập kho",
                 "Thu chi",
                 "Danh mục",
                 ""};
@@ -196,6 +199,13 @@ public class Constants {
                 false,
                 false,
                 true};
+        boolean[] haveDetail = new boolean[]{
+                false,
+                false,
+                true,
+                false,
+                false,
+                false};
 
 
         List<BaseModel> list = new ArrayList<>();
@@ -204,6 +214,7 @@ public class Constants {
             object.put("icon", icons[i]);
             object.put("text", texts[i]);
             object.put("isDistributor", isDistributor[i]);
+            object.put("haveDetail", haveDetail[i]);
 
 
             list.add(object);
@@ -252,33 +263,51 @@ public class Constants {
         item1.put("position", 0);
         item1.put("icon", Util.getIcon(R.string.icon_group));
         item1.put("text", "Nhân viên");
-        list.add(0, item1);
+        if (Util.isAdmin()){
+            list.add(item1);
+        }
+        //list.add(item1);
+
+        BaseModel item6 = new BaseModel();
+        item6.put("position", 1);
+        item6.put("icon", Util.getIcon(R.string.icon_depot));
+        item6.put("text", "Kho hàng");
+        if (Util.isAdmin()){
+            list.add(item6);
+        }
+
 
         BaseModel item4 = new BaseModel();
-        item4.put("position", 1);
+        item4.put("position", 2);
         item4.put("icon", Util.getIcon(R.string.icon_hand_on_money));
         item4.put("text", "Thu - chi");
-        list.add(1, item4);
+        if (Util.isAdmin()){
+            list.add(item4);
+        }
+        //list.add(2, item4);
 
         BaseModel item2 = new BaseModel();
-        item2.put("position", 2);
+        item2.put("position", 3);
         item2.put("icon", Util.getIcon(R.string.icon_product_group));
         item2.put("text", "Nhóm sản phẩm");
-        list.add(2, item2);
+        if (Util.isAdmin()){
+            list.add(item2);
+        }
+        //list.add(item2);
 
         BaseModel item3 = new BaseModel();
-        item3.put("position", 3);
+        item3.put("position", 4);
         item3.put("icon", Util.getIcon(R.string.icon_product));
         item3.put("text", "Sản phẩm");
-        list.add(3, item3);
+        list.add(item3);
 
         BaseModel item5 = new BaseModel();
-        item5.put("position", 4);
+        item5.put("position", 5);
         item5.put("icon", Util.getIcon(R.string.icon_list_check));
         item5.put("text", "Danh sách nhà phân phối");
 
         if (User.getId() ==  2){
-            list.add(4, item5);
+            list.add(5, item5);
         }
 
 
@@ -376,5 +405,10 @@ public class Constants {
         }
         return model;
     }
+
+    public static String[] warehouseOptions = new String[]{
+            Util.getIconString(R.string.icon_info, "    ", "Thông tin"),
+            Util.getIconString(R.string.icon_depot, "   ", "Tồn kho"),
+            Util.getIconString(R.string.icon_reply, "    ", "Trả hàng")};
 
 }

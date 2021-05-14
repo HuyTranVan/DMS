@@ -17,8 +17,6 @@ import java.util.List;
 import wolve.dms.R;
 import wolve.dms.adapter.WarehouseAdapter;
 import wolve.dms.apiconnect.ApiUtil;
-import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackListObject;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
@@ -26,7 +24,7 @@ import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
-import wolve.dms.utils.CustomCenterDialog;
+import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -34,15 +32,13 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class WarehouseActivity extends BaseActivity implements View.OnClickListener {
+public class WarehouseActivity extends BaseActivity implements View.OnClickListener, CallbackObject {
     private ImageView btnBack;
     private RecyclerView rvDepot;
     private WarehouseAdapter adapter;
-    private TextView btnAddPDepot;
     private LinearLayout btnImport;
 
     public List<BaseModel> listDepot = new ArrayList<>();
-    public List<BaseModel> listInventoryDetail = new ArrayList<>();
 
     @Override
     public int getResourceLayout() {
@@ -58,24 +54,19 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
     public void findViewById() {
         btnBack = (ImageView) findViewById(R.id.icon_back);
         rvDepot = (RecyclerView) findViewById(R.id.depot_rv);
-        btnAddPDepot = findViewById(R.id.depot_add_new);
         btnImport = findViewById(R.id.warehouse_import);
 
     }
 
     @Override
     public void initialData() {
-        btnAddPDepot.setVisibility(Util.isAdmin() ? View.VISIBLE : View.GONE);
         loadDepot();
-
-
 
     }
 
     @Override
     public void addEvent() {
         btnBack.setOnClickListener(this);
-        btnAddPDepot.setOnClickListener(this);
         btnImport.setOnClickListener(this);
 
     }
@@ -87,21 +78,21 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
                 onBackPressed();
                 break;
 
-            case R.id.depot_add_new:
-                BaseModel baseModel = new BaseModel();
-                CustomBottomDialog.choiceTwoOption(null, "Kho tổng", null, "Kho tạm", new CustomBottomDialog.TwoMethodListener() {
-                    @Override
-                    public void Method1(Boolean one) {
-                        baseModel.put("isMaster", 1);
-                        openFragmentNewDepot(baseModel.BaseModelstoString());
-                    }
-
-                    @Override
-                    public void Method2(Boolean two) {
-                        baseModel.put("isMaster", 2);
-                        openFragmentNewDepot(baseModel.BaseModelstoString());
-                    }
-                });
+//            case R.id.depot_add_new:
+//                BaseModel baseModel = new BaseModel();
+//                CustomBottomDialog.choiceTwoOption(null, "Kho tổng", null, "Kho tạm", new CustomBottomDialog.TwoMethodListener() {
+//                    @Override
+//                    public void Method1(Boolean one) {
+//                        baseModel.put("isMaster", 1);
+//                        openFragmentNewDepot(baseModel.BaseModelstoString());
+//                    }
+//
+//                    @Override
+//                    public void Method2(Boolean two) {
+//                        baseModel.put("isMaster", 2);
+//                        openFragmentNewDepot(baseModel.BaseModelstoString());
+//                    }
+//                });
 
 //                if (checkMasterWarehouseExist(listDepot)){
 //                    CustomCenterDialog.alertWithButton("Tạo kho hàng",
@@ -124,7 +115,7 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
 //                }
 
 
-                break;
+//                break;
 
             case R.id.warehouse_import:
 
@@ -144,6 +135,9 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
             getSupportFragmentManager().popBackStack();
 
         } else if (mFragment != null && mFragment instanceof InventoryDetailFragment) {
+            if (((InventoryDetailFragment) mFragment).hasChange){
+                loadDepot();
+            }
             getSupportFragmentManager().popBackStack();
 
         } else {
@@ -156,8 +150,8 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
         new GetPostMethod(param, new NewCallbackCustom() {
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
-
                 createRVDepot(list);
+
             }
 
             @Override
@@ -171,48 +165,75 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
 
     private void createRVDepot(List<BaseModel> list) {
         listDepot = list;
-        showAddNewButton();
+        //showAddNewButton();
         adapter = new WarehouseAdapter(listDepot, new CallbackObject() {
             @Override
             public void onResponse(BaseModel object) {
-                if (Util.isAdmin() || User.getId() == object.getInt("user_id")) {
-                    if (object.getInt("isMaster") == 1) {
-                        Util.showSnackbar("Không thể nhập kho tổng", null, null);
-
-                    } else if (object.getInt("isMaster") == 2 || object.getInt("isMaster") == 3) {
-                        Transaction.gotoImportActivity(object, false);
-
-                    }
-
-                } else {
-                    Util.showSnackbar("Chức năng này chỉ do admin thực thiện", null, null);
-                }
+                Transaction.gotoImportActivity(object);
+//                if (Util.isAdmin() || User.getId() == object.getInt("user_id")) {
+//                    if (object.getInt("isMaster") == 1) {
+//                        Util.showSnackbar("Không thể nhập kho tổng", null, null);
+//
+//                    } else if (object.getInt("isMaster") == 2 || object.getInt("isMaster") == 3) {
+//                        Transaction.gotoImportActivity(object);
+//
+//                    }
+//
+//                } else {
+//                    Util.showSnackbar("Chức năng này chỉ do admin thực thiện", null, null);
+//                }
+            }
+        }, new WarehouseAdapter.CallbackWarehouseOption() {
+            @Override
+            public void onInfo(BaseModel objInfo) {
+                openFragmentNewDepot(objInfo.BaseModelstoString());
 
             }
 
-        }, new CallbackObject() {
             @Override
-            public void onResponse(BaseModel object) {
-                if (Util.isAdmin()) {
-                    openFragmentNewDepot(object.BaseModelstoString());
-
-                } else {
-                    Util.showSnackbar("Không thể sửa thông tin", null, null);
-                }
+            public void onInventory(BaseModel objInventory) {
+                CustomSQL.setBaseModel(Constants.CURRENT_WAREHOUSE, objInventory);
+                changeFragment(new InventoryDetailFragment(), true);
+//                CustomSQL.setBaseModel(Constants.CURRENT_WAREHOUSE, objInventory);
+//                changeFragment(new InventoryDetailFragment(), true);
+//                selectTempWarehouseReturn(objInventory);
             }
 
-        }, new CallbackObject() {
             @Override
-            public void onResponse(BaseModel object) {
-                selectTempWarehouseReturn(object);
-
-            }
-        }, new CallbackObject() {
-            @Override
-            public void onResponse(BaseModel object) {
-                openInventoryDetailFragment(object);
+            public void onReturn(BaseModel objReturn) {
+                CustomSQL.setBaseModel(Constants.CURRENT_WAREHOUSE, objReturn);
+                changeFragment(new ImportReturnFragment(), true);
+//                CustomSQL.setBaseModel(Constants.CURRENT_WAREHOUSE, User.getCurrentUser().getBaseModel("warehouse"));
+//                changeFragment(new InventoryDetailFragment(), true);
+//                openInventoryDetailFragment(objReturn);
             }
         });
+
+//        adapter = new WarehouseAdapter(listDepot, new CallbackObject() {
+//            @Override
+//            public void onResponse(BaseModel object) {
+//
+//
+//            }
+//
+//        }, new CallbackObject() {
+//            @Override
+//            public void onResponse(BaseModel object) {
+//
+//            }
+//
+//        }, new CallbackObject() {
+//            @Override
+//            public void onResponse(BaseModel object) {
+//
+//
+//            }
+//        }, new CallbackObject() {
+//            @Override
+//            public void onResponse(BaseModel object) {
+//
+//            }
+//        });
         Util.createLinearRV(rvDepot, adapter);
 
     }
@@ -224,12 +245,12 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
         changeFragment(depotFragment, bundle, true);
     }
 
-    private void openFragmentImportReturn(BaseModel warehouse, BaseModel temptWarehouse) {
-        ImportReturnFragment importReturnFragment = new ImportReturnFragment();
+    public static Bundle createImportReturnBundle(BaseModel warehouse, BaseModel temptWarehouse) {
+        //ImportReturnFragment importReturnFragment = new ImportReturnFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constants.WAREHOUSE, warehouse.BaseModelstoString());
         bundle.putString(Constants.TEMPWAREHOUSE, temptWarehouse.BaseModelstoString());
-        changeFragment(importReturnFragment, bundle, true);
+        return bundle;
     }
 
     private void openFragmentInventoryEdit(BaseModel temptWarehouse) {
@@ -271,9 +292,12 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
 
     }
 
-    private void selectTempWarehouseReturn(BaseModel objectWarehouse) {
-        if (adapter.getAllTempWarehouse().size() == 1) {
-            openFragmentImportReturn(objectWarehouse, adapter.getAllTempWarehouse().get(0));
+    public void selectTempWarehouseReturn(BaseModel objectWarehouse) {
+        if (adapter.getAllTempWarehouse().size() == 1){
+            changeFragment(new ImportReturnFragment(),
+                    createImportReturnBundle(objectWarehouse, adapter.getAllTempWarehouse().get(0)),
+                    true);
+            ;
 
         } else {
             CustomBottomDialog.choiceListObject("chọn kho nhận hàng trả về",
@@ -282,7 +306,10 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
                     new CallbackObject() {
                         @Override
                         public void onResponse(BaseModel object) {
-                            openFragmentImportReturn(objectWarehouse, object);
+                            changeFragment(new ImportReturnFragment(),
+                                    createImportReturnBundle(objectWarehouse, object),
+                                    true);
+
 
                         }
                     }, null);
@@ -292,24 +319,24 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void openInventoryDetailFragment(BaseModel curentWarehouse) {
-        BaseModel param = createGetParam(String.format(ApiUtil.INVENTORIES(), curentWarehouse.getInt("id"), 1), true);
-        new GetPostMethod(param, new NewCallbackCustom() {
-            @Override
-            public void onResponse(BaseModel result, List<BaseModel> list) {
-                listInventoryDetail = new ArrayList<>();
-                for (int i=0; i<list.size(); i++){
-                    if (list.get(i).getList("inventories").size() >0){
-                        listInventoryDetail.add(list.get(i));
-                    }
-                }
-                openFragmentInventoryEdit(curentWarehouse);
-            }
-
-            @Override
-            public void onError(String error) {
-
-            }
-        }, 1).execute();
+//        BaseModel param = createGetParam(String.format(ApiUtil.INVENTORIES(), curentWarehouse.getInt("id"), 1), true);
+//        new GetPostMethod(param, new NewCallbackCustom() {
+//            @Override
+//            public void onResponse(BaseModel result, List<BaseModel> list) {
+//                listInventoryDetail = new ArrayList<>();
+//                for (int i=0; i<list.size(); i++){
+//                    if (list.get(i).getList("inventories").size() >0){
+//                        listInventoryDetail.add(list.get(i));
+//                    }
+//                }
+//                openFragmentInventoryEdit(curentWarehouse);
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        }, 1).execute();
 
 
 
@@ -338,11 +365,16 @@ public class WarehouseActivity extends BaseActivity implements View.OnClickListe
 //                });
     }
 
-    private void showAddNewButton(){
-        if (checkMasterWarehouseExist(listDepot) && checkTempWarehouseExist(listDepot)){
-            btnAddPDepot.setVisibility(View.GONE);
-        }else {
-            btnAddPDepot.setVisibility(View.VISIBLE);
-        }
+//    private void showAddNewButton(){
+//        if (checkMasterWarehouseExist(listDepot) && checkTempWarehouseExist(listDepot)){
+//            btnAddPDepot.setVisibility(View.GONE);
+//        }else {
+//            btnAddPDepot.setVisibility(View.VISIBLE);
+//        }
+//    }
+
+    @Override
+    public void onResponse(BaseModel object) {
+        loadDepot();
     }
 }

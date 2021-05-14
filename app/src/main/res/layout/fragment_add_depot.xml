@@ -54,49 +54,49 @@
             app:isDropdown="true"
             app:textColor="@color/colorBlue" />
 
-        <RadioGroup
-            android:id="@+id/add_depot_rd"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center_vertical"
-            android:layout_marginTop="@dimen/_10sdp">
+<!--        <RadioGroup-->
+<!--            android:id="@+id/add_depot_rd"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="vertical"-->
+<!--            android:gravity="center_vertical"-->
+<!--            android:layout_marginTop="@dimen/_10sdp">-->
 
-            <RadioButton
-                android:id="@+id/add_depot_rdmain"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Kho tổng"
-                android:textSize="@dimen/_12sdp"
-                android:paddingLeft="@dimen/_10sdp"
-                android:layout_marginBottom="@dimen/_5sdp"
-                android:buttonTint="@color/colorBlue"
-                android:enabled="false" />
+<!--            <RadioButton-->
+<!--                android:id="@+id/add_depot_rdmain"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Kho tổng"-->
+<!--                android:textSize="@dimen/_12sdp"-->
+<!--                android:paddingLeft="@dimen/_10sdp"-->
+<!--                android:layout_marginBottom="@dimen/_5sdp"-->
+<!--                android:buttonTint="@color/colorBlue"-->
+<!--                android:enabled="false" />-->
 
-            <RadioButton
-                android:id="@+id/add_depot_rdtemp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Kho tạm"
-                android:textSize="@dimen/_12sdp"
-                android:paddingLeft="@dimen/_10sdp"
-                android:layout_marginBottom="@dimen/_5sdp"
-                android:buttonTint="@color/colorBlue"
-                android:enabled="false" />
+<!--            <RadioButton-->
+<!--                android:id="@+id/add_depot_rdtemp"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Kho tạm"-->
+<!--                android:textSize="@dimen/_12sdp"-->
+<!--                android:paddingLeft="@dimen/_10sdp"-->
+<!--                android:layout_marginBottom="@dimen/_5sdp"-->
+<!--                android:buttonTint="@color/colorBlue"-->
+<!--                android:enabled="false" />-->
 
-            <RadioButton
-                android:id="@+id/add_depot_rduser"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Kho nhân viên"
-                android:textSize="@dimen/_12sdp"
-                android:paddingLeft="@dimen/_10sdp"
-                android:layout_marginBottom="@dimen/_5sdp"
-                android:checked="true"
-                android:buttonTint="@color/colorBlue"
-                android:enabled="false" />
+<!--            <RadioButton-->
+<!--                android:id="@+id/add_depot_rduser"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Kho nhân viên"-->
+<!--                android:textSize="@dimen/_12sdp"-->
+<!--                android:paddingLeft="@dimen/_10sdp"-->
+<!--                android:layout_marginBottom="@dimen/_5sdp"-->
+<!--                android:checked="true"-->
+<!--                android:buttonTint="@color/colorBlue"-->
+<!--                android:enabled="false" />-->
 
-        </RadioGroup>
+<!--        </RadioGroup>-->
 
     </LinearLayout>
 

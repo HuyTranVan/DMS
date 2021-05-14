@@ -62,10 +62,10 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
             R.string.icon_money,
             R.string.icon_district,
             R.string.icon_bomb};
-    private long start, end;
+   //private long start, end;
     private BaseModel currentRangeTime;
     private int currentTabPosition;
-
+    private BaseModel currentUser;
 
     @Override
     public int getResourceLayout() {
@@ -96,14 +96,14 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
     public void initialData() {
         listUser = new ArrayList<>();
         listUser.add(0, getAllFilterUser());
-//        tvCalendar.setText(Util.getIconString(R.string.icon_calendar, "   ", Util.CurrentMonthYear()));
+        currentUser = new BaseModel(getIntent().getStringExtra(Constants.USER));
 
-        if (User.getCurrentRoleId() == Constants.ROLE_ADMIN){
+        if (!currentUser.hasKey("id")){
             tvEmployeeName.setText( Constants.ALL_FILTER);
             Glide.with(this).load(R.drawable.ic_user).fitCenter().into(employeeImage);
 
         }else {
-            tvEmployeeName.setText(User.getFullName());
+            tvEmployeeName.setText(currentUser.getString("displayName"));
             Glide.with(this).load(User.getImage()).placeholder(R.drawable.ic_user).fitCenter().into(employeeImage);
 
         }
@@ -189,7 +189,7 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
             case R.id.statistical_calendar:
                 Bundle bundle = new Bundle();
                 bundle.putInt("position", currentTabPosition);
-                bundle.putLong("start_time", start);
+                bundle.putLong("start_time", currentRangeTime.getLong("start"));
                 changeFragment(new DatePickerFragment(), bundle, true);
                 break;
 
@@ -291,6 +291,7 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
                 Util.debtFragment.CoutList(),
                 Util.paymentFragment.getSumProfit(),
                 Util.paymentFragment.getSumBaseProfit(),
+                Util.billsFragment.getSumBillNetSale(),
                 temptWarehouse);
 
     }
@@ -352,7 +353,6 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
 
     }
 
-    //data return from filter date fragment
     @Override
     public void onResponse(BaseModel object){
         tvCalendar.setText(Util.getIconString(R.string.icon_calendar, "   ", object.getString("text")));

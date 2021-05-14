@@ -29,18 +29,6 @@
             android:textSize="@dimen/_12sdp"
             android:textColor="@color/black_text_color" />
 
-        <TextView
-            android:fontFamily="@font/font_awesome"
-            android:id="@+id/depot_add_new"
-            android:layout_width="@dimen/_35sdp"
-            android:layout_height="match_parent"
-            android:background="?selectableItemBackground"
-            android:layout_alignParentRight="true"
-            android:text="@string/icon_plus"
-            android:gravity="center"
-            android:textSize="@dimen/_14sdp"
-            android:visibility="gone"/>
-
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
