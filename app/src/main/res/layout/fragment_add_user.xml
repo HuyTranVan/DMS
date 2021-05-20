@@ -33,104 +33,129 @@
 
     </RelativeLayout>
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/add_user_image"
-        android:layout_width="@dimen/_80sdp"
-        android:layout_height="@dimen/_80sdp"
-        android:src="@drawable/ic_user"
-        android:layout_margin="@dimen/_10sdp"
-        android:layout_gravity="center"
-        android:scaleType="centerCrop"
-        app:civ_border_width="@dimen/_2sdp"
-        app:civ_border_overlay="true"
-        app:civ_fill_color="@color/colorWhite"
-        app:civ_border_color="@color/colorGrey"
-        />
-
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/add_user_scrollview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingLeft="@dimen/_10sdp"
-        android:paddingRight="@dimen/_10sdp">
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/_5sdp"
+        android:layout_below="@+id/add_user_header">
 
-
-        <wolve.dms.customviews.CInputForm
-            android:id="@+id/add_user_name"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textCapWords"
-            app:textHint="Tên hiển thị"
-            app:iconText="@string/icon_username" />
+            android:orientation="vertical">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/add_user_image"
+                android:layout_width="@dimen/_80sdp"
+                android:layout_height="@dimen/_80sdp"
+                android:src="@drawable/ic_user"
+                android:layout_margin="@dimen/_10sdp"
+                android:layout_gravity="center"
+                android:scaleType="centerCrop"
+                app:civ_border_width="@dimen/_2sdp"
+                app:civ_border_overlay="true"
+                app:civ_fill_color="@color/colorWhite"
+                app:civ_border_color="@color/colorGrey"
+                />
 
-        <wolve.dms.customviews.CInputForm
-            android:id="@+id/add_user_phone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="phone"
-            app:textHint="Số điện thoại"
-            app:iconText="@string/icon_phone" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/_10sdp"
+                android:paddingRight="@dimen/_10sdp">
 
-        <wolve.dms.customviews.CInputForm
-            android:id="@+id/add_user_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            app:textHint="Email"
-            app:iconText="@string/icon_email" />
 
-        <wolve.dms.customviews.CInputForm
-            android:id="@+id/add_user_gender"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:textHint="Giới tính"
-            app:iconText="@string/icon_gender"
-            app:isDropdown="true"
-            app:textColor="@color/colorBlue" />
+                <wolve.dms.customviews.CInputForm
+                    android:id="@+id/add_user_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapWords"
+                    app:textHint="Tên hiển thị"
+                    app:iconText="@string/icon_username" />
 
-        <wolve.dms.customviews.CInputForm
-            android:id="@+id/add_user_role"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:textHint="Vị trí"
-            app:iconText="@string/icon_role"
-            app:isDropdown="true"
-            app:textColor="@color/colorBlue" />
+                <wolve.dms.customviews.CInputForm
+                    android:id="@+id/add_user_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone"
+                    app:textHint="Điện thoại đăng nhập"
+                    app:iconText="@string/icon_phone" />
 
-        <wolve.dms.customviews.CInputForm
-            android:id="@+id/add_user_warehouse"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:textHint="Kho hàng mặc định"
-            app:iconText="@string/icon_depot"
-            app:isDropdown="true"
-            app:textColor="@color/colorBlue" />
+                <wolve.dms.customviews.CInputForm
+                    android:id="@+id/add_user_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"
+                    app:textHint="Email"
+                    app:iconText="@string/icon_email" />
 
-        <TextView
-            android:id="@+id/add_user_password_default"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
-            android:text="Mật khẩu mặc định?"
-            android:layout_gravity="center"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:padding="@dimen/_5sdp"
-            android:textStyle="italic"
-            android:textColor="@color/colorBlue" />
+                <wolve.dms.customviews.CInputForm
+                    android:id="@+id/add_user_contact"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone"
+                    app:textHint="Gọi đặt hàng"
+                    app:iconText="@string/icon_phone" />
 
-        <Button
-            android:id="@+id/add_user_submit"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/_30sdp"
-            android:minWidth="@dimen/_150sdp"
-            android:background="@drawable/btn_confirm_blue"
-            android:layout_margin="@dimen/_10sdp"
-            android:text="CẬP NHẬT"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_14sdp"
-            android:layout_gravity="center_horizontal" />
+                <wolve.dms.customviews.CInputForm
+                    android:id="@+id/add_user_gender"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:textHint="Giới tính"
+                    app:iconText="@string/icon_gender"
+                    app:isDropdown="true"
+                    app:textColor="@color/colorBlue" />
 
-    </LinearLayout>
+                <wolve.dms.customviews.CInputForm
+                    android:id="@+id/add_user_role"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:textHint="Vị trí"
+                    app:iconText="@string/icon_role"
+                    app:isDropdown="true"
+                    app:textColor="@color/colorBlue" />
+
+                <wolve.dms.customviews.CInputForm
+                    android:id="@+id/add_user_warehouse"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:textHint="Kho hàng mặc định"
+                    app:iconText="@string/icon_depot"
+                    app:isDropdown="true"
+                    app:textColor="@color/colorBlue" />
+
+                <TextView
+                    android:id="@+id/add_user_password_default"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?selectableItemBackground"
+                    android:text="Mật khẩu mặc định?"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:padding="@dimen/_5sdp"
+                    android:textStyle="italic"
+                    android:textColor="@color/colorBlue" />
+
+                <Button
+                    android:id="@+id/add_user_submit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_30sdp"
+                    android:minWidth="@dimen/_150sdp"
+                    android:background="@drawable/btn_confirm_blue"
+                    android:layout_margin="@dimen/_10sdp"
+                    android:text="CẬP NHẬT"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_14sdp"
+                    android:layout_gravity="center_horizontal" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+
 
 </LinearLayout>

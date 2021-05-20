@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -30,19 +30,52 @@
             android:textSize="@dimen/_14sdp"
             android:textColor="@color/black_text_color" />
 
+        <RelativeLayout
+            android:id="@+id/add_product_active_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingLeft="@dimen/_5sdp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:gravity="center">
+
+            <com.suke.widget.SwitchButton
+                android:id="@+id/add_product_active_sw"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_25sdp"
+                android:layout_marginRight="@dimen/_5sdp"
+                app:sb_checked="false"
+                app:sb_checked_color="@color/colorBlueDark"
+                app:sb_background="@color/black_text_color_hint"
+                android:layout_centerInParent="true"
+                />
+
+            <View
+                android:id="@+id/add_product_active"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="match_parent"
+                android:clickable="true"/>
+
+        </RelativeLayout>
+
+
+
+
+
     </RelativeLayout>
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/customer_scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false">
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/_5sdp"
+        android:layout_below="@+id/update_price_header">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="@dimen/_30sdp">
+            android:orientation="vertical">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/add_product_image"
@@ -50,7 +83,7 @@
                 android:layout_height="@dimen/_80sdp"
                 app:civ_border_width="4dp"
                 app:civ_border_color="@color/colorLightGrey"
-                android:src="@drawable/ic_wolver"
+                android:src="@drawable/lub_logo_grey"
                 android:layout_margin="@dimen/_10sdp"
                 android:layout_gravity="center" />
 
@@ -144,8 +177,16 @@
                 android:textSize="@dimen/_14sdp"
                 android:layout_gravity="center_horizontal" />
 
+
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
+    <View
+        android:id="@+id/add_product_cover"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black_text_color_hint"
+        android:layout_below="@+id/update_price_header"
+        android:clickable="true"/>
 
-</LinearLayout>
+</RelativeLayout>

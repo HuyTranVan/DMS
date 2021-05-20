@@ -81,13 +81,20 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
         String baseprice = Util.isAdmin() ? (String.format(" (%s)", Util.FormatMoney(mData.get(position).getDouble("basePrice")))) : "";
         holder.tvBasePrice.setText(Util.FormatMoney(mData.get(position).getDouble("purchasePrice")) + baseprice);
 
+        if (mData.get(position).getInt("deleted") == 1){
+            holder.tvHide.setVisibility(View.VISIBLE);
+            holder.tvPrice.setVisibility(View.GONE);
+        }else {
+            holder.tvHide.setVisibility(View.GONE);
+            holder.tvPrice.setVisibility(View.VISIBLE);
+        }
 
         holder.tvGift.setVisibility(mData.get(position).getInt("promotion") == 1 ? View.VISIBLE : View.GONE);
         if (!Util.checkImageNull(mData.get(position).getString("image"))) {
             Glide.with(mContext).load(mData.get(position).getString("image")).centerCrop().into(holder.imageProduct);
 
         } else {
-            Glide.with(mContext).load(R.drawable.ic_wolver).centerCrop().into(holder.imageProduct);
+            Glide.with(mContext).load(R.drawable.lub_logo_grey).centerCrop().into(holder.imageProduct);
 
         }
 
@@ -103,28 +110,28 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
             holder.rlParent.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    CustomCenterDialog.alertWithCancelButton(null, "Bạn muốn xóa sản phẩm " + mData.get(position).getString("name"), "ĐỒNG Ý", "HỦY", new CallbackBoolean() {
-                        @Override
-                        public void onRespone(Boolean result) {
-                            if (result) {
-                                BaseModel param = createGetParam(ApiUtil.PRODUCT_DELETE() + mData.get(position).getString("id"), false);
-                                new GetPostMethod(param, new NewCallbackCustom() {
-                                    @Override
-                                    public void onResponse(BaseModel result, List<BaseModel> list) {
-                                        Util.getInstance().stopLoading(true);
-                                        mDeleteListener.onDelete(mData.get(position).BaseModelstoString(), position);
-                                    }
-
-                                    @Override
-                                    public void onError(String error) {
-
-                                    }
-                                }, 1).execute();
-
-                            }
-
-                        }
-                    });
+//                    CustomCenterDialog.alertWithCancelButton(null, "Bạn muốn xóa sản phẩm " + mData.get(position).getString("name"), "ĐỒNG Ý", "HỦY", new CallbackBoolean() {
+//                        @Override
+//                        public void onRespone(Boolean result) {
+//                            if (result) {
+//                                BaseModel param = createGetParam(ApiUtil.PRODUCT_DELETE() + mData.get(position).getString("id"), false);
+//                                new GetPostMethod(param, new NewCallbackCustom() {
+//                                    @Override
+//                                    public void onResponse(BaseModel result, List<BaseModel> list) {
+//                                        Util.getInstance().stopLoading(true);
+//                                        mDeleteListener.onDelete(mData.get(position).BaseModelstoString(), position);
+//                                    }
+//
+//                                    @Override
+//                                    public void onError(String error) {
+//
+//                                    }
+//                                }, 1).execute();
+//
+//                            }
+//
+//                        }
+//                    });
 
                     return true;
                 }
@@ -141,7 +148,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
 
 
     public class ProductAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvName, tvBasePrice, tvPrice, tvGift;
+        private TextView tvName, tvBasePrice, tvPrice, tvGift,tvHide;
         private RelativeLayout rlParent;
         private CircleImageView imageProduct;
 
@@ -153,6 +160,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
             tvGift = (TextView) itemView.findViewById(R.id.product_item_gift);
             rlParent = (RelativeLayout) itemView.findViewById(R.id.product_item_parent);
             imageProduct = itemView.findViewById(R.id.product_item_image);
+            tvHide = itemView.findViewById(R.id.product_item_hide);
         }
 
     }

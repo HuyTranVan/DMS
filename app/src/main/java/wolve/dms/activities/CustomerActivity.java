@@ -1,6 +1,9 @@
 package wolve.dms.activities;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,7 +17,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
@@ -60,7 +66,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     private TextView tvCheckInStatus, tvTime, tvTrash, tvPrint;
     protected TextView tvTitle, tvAddress, tvDebt, tvPaid, tvTotal, tvBDF, btnShopCart, tvFilter, tvFilterIcon;
     private FrameLayout coParent;
-    //private RecyclerView rvFilterTitle;
     private ViewPager viewPager;
     private TabLayout tabLayout;
     private HorizontalScrollView scrollOverView;
@@ -606,22 +611,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
             }
         }, 1).execute();
 
-//        CustomerConnect.GetCustomerDetail(id, new CallbackCustom() {
-//            @Override
-//            public void onResponse(final BaseModel result) {
-//                BaseModel customer = DataUtil.rebuiltCustomer(result, false);
-//                CustomSQL.setBaseModel(Constants.CUSTOMER, customer);
-//                updateView(customer);
-//
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//                Util.showSnackbarError(error);
-//            }
-//        }, true, false);
-
     }
 
     private void showDialogPayment() {
@@ -781,7 +770,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     }
 
-    //get date return from fragment
     @Override
     public void onResponse(BaseModel object) {
         start = object.getLong("start");
@@ -794,4 +782,57 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         filterBillByRange(object.getLong("start"), object.getLong("end"));
 
     }
+
+    @SuppressLint("WrongConstant")
+    protected void checkPhonePermission(){
+        if (PermissionChecker.checkSelfPermission(Util.getInstance().getCurrentActivity(), Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED){
+            Transaction.openCallScreen(currentCustomer.getString("phone"));
+
+        }else {
+            ActivityCompat.requestPermissions(Util.getInstance().getCurrentActivity(), new String[]{
+                    Manifest.permission.CALL_PHONE}, Constants.REQUEST_PERMISSION);
+
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == Constants.REQUEST_PERMISSION) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED
+                    && permissions[0].equals(android.Manifest.permission.CALL_PHONE)){
+                Transaction.openCallScreen(currentCustomer.getString("phone"));
+
+            }
+
+
+//            if (grantResults.length > 0) {
+//                boolean hasDenied = false;
+//                for (int i = 0; i < grantResults.length; i++) {
+//                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED){
+//                        hasDenied = true;
+//                        break;
+//                    }
+//                }
+//
+//                if (!hasDenied){
+//                    if (permissions[0].equals(android.Manifest.permission.CALL_PHONE)){
+//                        Transaction.openCallScreen(currentPhone);
+//
+//                    }else if (permissions[0].equals(android.Manifest.permission.READ_CONTACTS) ||
+//                            permissions[0].equals(Manifest.permission.WRITE_CONTACTS)){
+//
+//                        saveContactEvent(currentCustomer);
+//
+//                    }
+//
+//
+//                }
+//
+//            }
+        }
+
+    }
+
+
+
 }

@@ -249,6 +249,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         }else if (mFragment != null && mFragment instanceof InventoryDetailFragment) {
             getSupportFragmentManager().popBackStack();
 
+        }else if (mFragment != null && mFragment instanceof ImportReturnFragment) {
+            getSupportFragmentManager().popBackStack();
+
         }else {
             if (doubleBackToExitPressedOnce) {
                 this.finish();
@@ -439,7 +442,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                             "Cài đặt hệ thống vừa được điều chỉnh! \n Đồng bộ lại hệ thống với thiết bị của bạn",
                             "ĐỒNG Ý",
                             true,
-                            null);
+                            new CallbackBoolean() {
+                                @Override
+                                public void onRespone(Boolean result) {
+                                    if (result){
+                                        loadCurrentData(null, 1);
+                                    }
+                                }
+                            });
 
                 } else {
                     tvHaveNewProduct.setVisibility(View.GONE);
@@ -704,6 +714,5 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
         }
     }
-
 
 }

@@ -8,8 +8,8 @@ import java.util.List;
 
 import wolve.dms.BuildConfig;
 import wolve.dms.R;
-import wolve.dms.libraries.Security;
 import wolve.dms.models.BaseModel;
+import wolve.dms.models.Distributor;
 import wolve.dms.utils.Util;
 
 /**
@@ -89,6 +89,10 @@ public class ApiUtil {
     public final static String PRODUCT_NEW(){
         return BASE_URL + "dms/token/product/ProductNew";
     }
+    public final static String PRODUCT_ACTIVE_PARAM = "id=%s&deleted=%d";
+    public final static String PRODUCT_ACTIVE(){
+        return BASE_URL + "dms/token/product/ProductActive";
+    }
 
     public final static String PRODUCT_DELETE(){
         return BASE_URL + "dms/token/product/ProductDelete?id=";
@@ -134,7 +138,7 @@ public class ApiUtil {
         return BASE_URL + "dms/token/user/UserList";
     }
 
-    public final static String USER_CREATE_PARAM = "%sdisplayName=%s&gender=%d&email=%s&phone=%s&role=%d&image=%s&warehouse_id=%d&warehouse_name=%s";
+    public final static String USER_CREATE_PARAM = "%sdisplayName=%s&gender=%d&email=%s&phone=%s&contact=%s&role=%d&image=%s&warehouse_id=%d&warehouse_name=%s";
     public final static String USER_NEW(){
         return BASE_URL + "dms/token/user/UserNew";
     }
@@ -185,7 +189,7 @@ public class ApiUtil {
     public final static String CUSTOMERS_NEAREST(String lat, String lng, int page, int size){
         return BASE_URL + "dms/token/customer/CustomerNearest"
                 + String.format(ApiUtil.DEFAULT_RANGE, page, size)
-                + String.format("&lat=%s&lng=%s", lat, lng);
+                + String.format("&lat=%s&lng=%s&province_id=%d", lat, lng, Distributor.getProvinceId());
     }
 
     public final static String CUSTOMER_ORDERED(int user_id, int page, int size){

@@ -122,7 +122,8 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:background="?selectableItemBackground"
-                        android:paddingBottom="@dimen/_5sdp">
+                        android:paddingBottom="@dimen/_5sdp"
+                        android:visibility="gone">
 
                         <View
                             android:layout_width="match_parent"

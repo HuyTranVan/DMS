@@ -56,7 +56,7 @@ import static wolve.dms.utils.Constants.REQUEST_IMAGE_CAPTURE;
 public class NewUpdateUserFragment extends Fragment implements View.OnClickListener {
     private View view;
     private ImageView btnBack;
-    private CInputForm edName, edPhone, edGender, edRole, edEmail, edWarehouse;
+    private CInputForm edName, edPhone, edGender, edRole, edEmail, edWarehouse, edContact;
     private TextView tvTitle, tvPasswordDefault;
     private Button btnSubmit;
     private CircleImageView imgUser;
@@ -81,16 +81,18 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
     }
 
     private void intitialData() {
-        //listWarehouse = new ArrayList<>();
         String bundle = getArguments().getString(Constants.USER);
         tvPasswordDefault.setVisibility(Util.isAdmin() ? View.VISIBLE : View.GONE);
         phoneEvent();
+        contactEvent();
         edWarehouse.setFocusable(false);
         if (bundle != null) {
             currentUser = new BaseModel(bundle);
             currentWarehouse = currentUser.hasKey("warehouse") ? currentUser.getBaseModel("warehouse") : new BaseModel();
             edName.setText(currentUser.getString("displayName"));
             edPhone.setText(currentUser.getString("phone"));
+            edContact.setVisibility(View.VISIBLE);
+            edContact.setText(currentUser.getString("contact"));
             edRole.setText(User.getRoleString(currentUser.getInt("role")));
             edGender.setText(currentUser.getInt("gender") == 0 ? "NAM" : "NỮ");
             edEmail.setText(currentUser.getString("email"));
@@ -102,17 +104,17 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
             }
 
         } else {
-            currentUser = new BaseModel();
-            currentWarehouse = new BaseModel();
-            edRole.setText(User.getRoleString(4));
-            edGender.setText("NAM");
+//            currentUser = new BaseModel();
+//            currentWarehouse = new BaseModel();
+//            edRole.setText(User.getRoleString(4));
+//            edGender.setText("NAM");
+//            edContact.setVisibility(View.GONE);
 
         }
 
         if (!Util.isAdmin()){
             edPhone.setFocusable(false);
             edRole.setFocusable(false);
-            //edWarehouse.setFocusable(false);
             tvPasswordDefault.setVisibility(View.GONE);
 
         } else {
@@ -121,7 +123,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
 
             tvPasswordDefault.setVisibility(View.VISIBLE);
         }
-        //warehouseEvent();
+
 
     }
 
@@ -137,10 +139,10 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
     }
 
     private void initializeView() {
-        //mActivity = (UserActivity) getActivity();
         btnBack = (ImageView) view.findViewById(R.id.icon_back);
         edName = view.findViewById(R.id.add_user_name);
         edPhone = view.findViewById(R.id.add_user_phone);
+        edContact = view.findViewById(R.id.add_user_contact);
         edGender = view.findViewById(R.id.add_user_gender);
         edRole = view.findViewById(R.id.add_user_role);
         btnSubmit = view.findViewById(R.id.add_user_submit);
@@ -167,7 +169,19 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
                 break;
 
             case R.id.add_user_password_default:
-                submitPasswordDefault();
+                CustomCenterDialog.alertWithCancelButton("Đổi mật khẩu",
+                        "Đổi về mật khẩu mặc định 'Aa123456'",
+                        "Đồng ý",
+                        "Quay lại",
+                        new CallbackBoolean() {
+                            @Override
+                            public void onRespone(Boolean result) {
+                                if (result){
+                                    submitPasswordDefault();
+                                }
+                            }
+                        });
+
 
                 break;
 
@@ -254,6 +268,17 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
             @Override
             public void Result(String s) {
                 currentUser.put("phone", Util.getPhoneValue(edPhone));
+
+            }
+        });
+
+    }
+
+    private void contactEvent() {
+        edContact.addTextChangePhone(new CallbackString() {
+            @Override
+            public void Result(String s) {
+                currentUser.put("contact", Util.getPhoneValue(edContact));
 
             }
         });
@@ -379,6 +404,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
                 @Override
                 public void Result(String url) {
                     updateUser(url);
+
                 }
 
             }).execute();
@@ -400,8 +426,8 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
             currentUser.put("warehouse_id", currentWarehouse.getInt("id"));
             currentUser.put("warehouse_name", currentWarehouse.getString("name"));
         } else {
-            currentUser.put("warehouse_id", 0);
-            currentUser.put("warehouse_name", currentWarehouse.getString("name"));
+//            currentUser.put("warehouse_id", 0);
+//            currentUser.put("warehouse_name", currentWarehouse.getString("name"));
 
         }
         BaseModel param = createPostParam(ApiUtil.USER_NEW(),
@@ -411,6 +437,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
                 edGender.getText().toString().equals("NAM") ? 0 : 1,
                 edEmail.getText().toString(),
                 Util.getPhoneValue(edPhone),
+                Util.getPhoneValue(edContact),
                 User.getIndex(edRole.getText().toString()),
                 url,
                 currentUser.getInt("warehouse_id"),
@@ -423,29 +450,6 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
                 onDataPass.onResponse(result);
                 getActivity().getSupportFragmentManager().popBackStack();
 
-//                if (result.getInt("id") == User.getId()) {
-//                    //CustomSQL.setBaseModel(Constants.USER, result);
-//
-//
-//                }else {
-//                    getActivity().getSupportFragmentManager().popBackStack();
-//
-//                }
-
-
-//                if (CustomSQL.getBoolean(Constants.IS_ADMIN)) {
-//                    if (result.getInt("id") == User.getId()) {
-//                        CustomSQL.setBaseModel(Constants.USER, result);
-//                    }else {
-//
-//                    }
-//
-//                    //mActivity.loadUser();
-//
-//                } else {
-//                    //Transaction.gotoHomeActivityRight(true);
-//
-//                }
             }
 
             @Override
@@ -456,16 +460,16 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
 
     }
 
-    private List<BaseModel> filterListWarehouse(List<BaseModel> list) {
-        List<BaseModel> results = new ArrayList<>();
-        for (BaseModel baseModel : list) {
-            if (baseModel.getInt("isMaster") == 3 && baseModel.getInt("user_id") == currentUser.getInt("id")) {
-                results.add(baseModel);
-
-            }
-        }
-        return results;
-    }
+//    private List<BaseModel> filterListWarehouse(List<BaseModel> list) {
+//        List<BaseModel> results = new ArrayList<>();
+//        for (BaseModel baseModel : list) {
+//            if (baseModel.getInt("isMaster") == 3 && baseModel.getInt("user_id") == currentUser.getInt("id")) {
+//                results.add(baseModel);
+//
+//            }
+//        }
+//        return results;
+//    }
 
     private void submitPasswordDefault() {
         BaseModel param = createGetParam(String.format(ApiUtil.USER_DEFAULT_PASS(),currentUser.getInt("id")), false);

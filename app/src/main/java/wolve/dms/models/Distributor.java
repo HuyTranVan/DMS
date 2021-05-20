@@ -57,15 +57,15 @@ public class Distributor extends BaseModel {
         return currentDistributor.getString("image");
     }
 
-    public static int getLocationId() {
-        int location = 0;
+    public static int getProvinceId() {
+        int province_id = 0;
         BaseModel currentDistributor = CustomSQL.getBaseModel(Constants.DISTRIBUTOR);
 
         if (currentDistributor != null) {
-            location = currentDistributor.getInt("location");
+            province_id = currentDistributor.getInt("province_id");
 //            location = 79;
         }
-        return location;
+        return province_id;
 
     }
 

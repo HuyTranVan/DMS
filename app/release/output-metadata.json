@@ -5,14 +5,14 @@
     "kind": "Directory"
   },
   "applicationId": "wolve.dms",
-  "variantName": "processReleaseResources",
+  "variantName": "release",
   "elements": [
     {
       "type": "SINGLE",
       "filters": [],
-      "versionCode": 23,
-      "versionName": "1.94",
-      "outputFile": "DMSRELEASE_010221.apk"
+      "versionCode": 25,
+      "versionName": "1.96",
+      "outputFile": "DMSRELEASE_200521.apk"
     }
   ]
 }

@@ -38,6 +38,7 @@ import java.util.List;
 import wolve.dms.R;
 import wolve.dms.libraries.DrawRoute;
 import wolve.dms.models.BaseModel;
+import wolve.dms.models.Distributor;
 
 /**
  * Created by Engine on 1/13/2017.
@@ -264,7 +265,9 @@ public class MapUtil {
         currentMarker.setTitle(customer.getString("id"));    //customer_id
         currentMarker.setSnippet(customer.getString("status_id"));     //status_id
 
-        //markers.add(currentMarker);
+        if (customer.getInt("distributor_id") != Distributor.getId()){
+            currentMarker.setAlpha(0.7f);
+        }
 
         switch (filter) {
             case Constants.MARKER_ALL:

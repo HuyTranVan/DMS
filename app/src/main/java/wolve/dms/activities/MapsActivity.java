@@ -291,7 +291,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
             case R.id.custom_search_location:
                 unsetCurrentMarker(true);
-                //mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 showListDistrict();
                 break;
 
@@ -313,9 +312,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
             case R.id.map_waiting_list_text:
                 Util.hideKeyboard(view);
-
                 showListWaiting();
-
 
                 break;
 
@@ -450,26 +447,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             }
         }, 0).execute();
 
-
-
-//        CustomerConnect.ListCustomerLocation(Util.encodeString(String.valueOf(lat)), Util.encodeString(String.valueOf(lng)), new CallbackCustomList() {
-//            @Override
-//            public void onResponse(List<BaseModel> results) {
-//                progressLoading.setVisibility(View.GONE);
-//                List<BaseModel> tempCustomers = new ArrayList<>();
-//                for (BaseModel model : results) {
-//                    tempCustomers.add(buildMarkerByCustomer(model));
-//                }
-//                addListMarkertoMap(mMap, clearMap, tempCustomers, false);
-//
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//                progressLoading.setVisibility(View.GONE);
-//            }
-//
-//        }, true);
     }
 
     private BaseModel buildMarkerByCustomer(BaseModel customer) {
@@ -1073,7 +1050,14 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         currentCustomer = customer;
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
-        final String title = Constants.shopName[customer.getInt("shopType")] + " " + customer.getString("signBoard");
+        final String title;
+        title = String.format("%s %s%s",
+                Constants.shopName[customer.getInt("shopType")] ,
+                customer.getString("signBoard"),
+                customer.hasKey("distributor")?
+                        String.format(" (%s)", customer.getBaseModel("distributor").getString("name")) :
+                        ""
+                );
         String add = String.format("%s %s, %s",
                 customer.getString("address"),
                 customer.getString("street"),
@@ -1132,15 +1116,23 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
                 tvTempBill.setVisibility(customer.hasKey(Constants.TEMPBILL) ? View.VISIBLE : View.GONE);
                 updatAddListStatus(customer);
-                lnSheetBody.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (progressLoadCustomer.getVisibility() == View.GONE){
-                            Transaction.gotoCustomerActivity();
 
+                lnSheetBody.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (progressLoadCustomer.getVisibility() == View.GONE){
+                                if (customer.getInt("distributor_id") != Distributor.getId()){
+                                    Util.showSnackbarError("Không thể thao tác!");
+
+                                }else {
+                                    Transaction.gotoCustomerActivity();
+                                }
+
+
+
+                            }
                         }
-                    }
-                });
+                    });
 
                 if (Util.isPhoneFormat(customer.getString("phone")) != null){
                     btnContact.setOnClickListener(new View.OnClickListener() {
@@ -1284,19 +1276,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 PermissionChecker.checkSelfPermission(Util.getInstance().getCurrentActivity(), Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED){
 
 
-
-//            if (CustomFixSQL.getInt(Constants.AUTO_SAVE_CONTACT) == 1){
-//                btnContact.setVisibility(View.GONE);
-//
-//
-//            }else {
-//                if (Contacts.contactExists(Util.getPhoneValue(customer.getString("phone")))){
-//                    btnContact.setVisibility(View.GONE);
-//                }else {
-//                    btnContact.setVisibility(View.VISIBLE);
-//                }
-//            }
-
         }else {
             ActivityCompat.requestPermissions(Util.getInstance().getCurrentActivity(), new String[]{
                     android.Manifest.permission.READ_CONTACTS,
@@ -1307,47 +1286,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
 
 
-//        btnContact.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                btnContact.setVisibility(View.GONE);
-//                Contacts.InsertContact(customer);
-//            }
-//        });
-
-
-
-//            if (CustomFixSQL.hasKey(Constants.AUTO_SAVE_CONTACT)){
-
-
-//            }else {
-//                if (Contacts.contactExists(Util.getPhoneValue(customer.getString("phone")))){
-//                    btnContact.setVisibility(View.GONE);
-//                }else {
-//                    btnContact.setVisibility(View.VISIBLE);
-//                }
-//
-//            }
-
-
-
-//        else {
-//            if (Util.isPhoneFormat(customer.getString("phone")) != null &&
-//                    !Contacts.contactExists(Util.getPhoneValue(customer.getString("phone")))) {
-//
-//                CustomCenterDialog.dialogSaveContact(customer, new CallbackBoolean() {
-//                    @Override
-//                    public void onRespone(Boolean result) {
-//                        if (result){
-//                            Contacts.InsertContact(customer);
-//
-//                        }
-//                    }
-//                });
-//            }
-//
-//        }
     }
 
     private void setNullButton() {

@@ -283,7 +283,8 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
                 break;
 
             case R.id.customer_info_call:
-                Transaction.openCallScreen(mActivity.currentCustomer.getString("phone"));
+                mActivity.checkPhonePermission();
+                //Transaction.openCallScreen(mActivity.currentCustomer.getString("phone"));
 
                 break;
 

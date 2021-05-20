@@ -237,13 +237,6 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
         }
 
-//        if (CustomSQL.getString(Constants.PRINTER_SIZE).equals("") || CustomSQL.getString(Constants.PRINTER_SIZE).equals(Constants.PRINTER_80)) {
-//            tvPrintSize.setText(Constants.PRINTER_80);
-//        } else {
-//            tvPrintSize.setText(Constants.PRINTER_57);
-//        }
-
-
     }
 
     @Override
@@ -251,10 +244,8 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         btnBack.setOnClickListener(this);
         lnBottom.setOnClickListener(this);
         tvListPrinter.setOnClickListener(this);
-        //tvPrintSize.setOnClickListener(this);
         lnSubmit.setOnClickListener(this);
         imgLogo.setOnClickListener(this);
-        //tvShare.setOnClickListener(this);
 
     }
 
@@ -479,17 +470,24 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         if (loadData){
             modelResult.put(Constants.RELOAD_DATA, true);
             CustomCenterDialog.alertWithCancelButton(null,
-                    !rePrint? "Cập nhật hóa đơn lên hệ thống thành công. Bạn muốn lưu hóa đơn không?":
-                            "Chưa kết nối máy in. Bạn muốn tiếp tục lưu hóa đơn",
-                    "Lưu hóa đơn", "Không",
+                    !rePrint? "Cập nhật hóa đơn lên hệ thống thành công. Bạn muốn chia sẻ hóa đơn không?":
+                            "Chưa kết nối máy in. Bạn muốn tiếp tục chia sẻ công nợ",
+                    "Chia sẻ", "Không",
                     new CallbackBoolean(){
                 @Override
                 public void onRespone(Boolean bool){
                     if (bool) {
-                        Util.storeImage(BitmapView.ResizeBitMapDependWidth(BitmapView.getBitmapFromView(scContentParent)) ,
+                        currentImagePath = Util.storeImage(BitmapView.ResizeBitMapDependWidth(BitmapView.getBitmapFromView(scContentParent)) ,
                                 "SHARE",
                                 "SHARE",
                                 true);
+
+                        Transaction.shareImage(currentImagePath, currentCustomer);
+
+//                        Util.storeImage(BitmapView.ResizeBitMapDependWidth(BitmapView.getBitmapFromView(scContentParent)) ,
+//                                "SHARE",
+//                                "SHARE",
+//                                true);
 
                         Transaction.returnPreviousActivity(Constants.PRINT_BILL_ACTIVITY,
                                 modelResult,

@@ -8,11 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.suke.widget.SwitchButton;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 import org.json.JSONObject;
@@ -52,12 +54,14 @@ import static wolve.dms.utils.Constants.REQUEST_IMAGE_CAPTURE;
  */
 
 public class NewUpdateProductFragment extends Fragment implements View.OnClickListener {
-    private View view;
+    private View view, vCover, vSwitch;
     private ImageView btnBack;
     private CInputForm edName, edUnitPrice, edPurchasePrice, edGroup, edVolume,
             edIsPromotion, edBasePrice, edUnitInCarton;
     private Button btnSubmit;
     private CircleImageView imgProduct;
+    private SwitchButton swActive;
+    private RelativeLayout lnActiveParent;
 
     private BaseModel product;
     private ProductActivity mActivity;
@@ -76,6 +80,26 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
 
         addEvent();
         return view;
+    }
+
+    private void initializeView() {
+        mActivity = (ProductActivity) getActivity();
+        edName = (CInputForm) view.findViewById(R.id.add_product_name);
+        edUnitPrice = (CInputForm) view.findViewById(R.id.add_product_unit_price);
+        edPurchasePrice = (CInputForm) view.findViewById(R.id.add_product_purchase_price);
+        edGroup = (CInputForm) view.findViewById(R.id.add_product_group);
+        edVolume = (CInputForm) view.findViewById(R.id.add_product_volume);
+        edIsPromotion = (CInputForm) view.findViewById(R.id.add_product_promotion);
+        edBasePrice = (CInputForm) view.findViewById(R.id.add_product_distributor_price);
+        edUnitInCarton = (CInputForm) view.findViewById(R.id.add_product_unit_in_carton);
+        btnSubmit = (Button) view.findViewById(R.id.add_product_submit);
+        btnBack = (ImageView) view.findViewById(R.id.icon_back);
+        imgProduct = (CircleImageView) view.findViewById(R.id.add_product_image);
+        swActive = view.findViewById(R.id.add_product_active_sw);
+        vCover = view.findViewById(R.id.add_product_cover);
+        vSwitch = view.findViewById(R.id.add_product_active);
+        lnActiveParent = view.findViewById(R.id.add_product_active_parent);
+
     }
 
     private void intitialData() {
@@ -142,7 +166,7 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
                 Glide.with(NewUpdateProductFragment.this).load(product.getString("image")).centerCrop().into(imgProduct);
 
             } else {
-                Glide.with(this).load(R.drawable.ic_wolver).centerCrop().into(imgProduct);
+                Glide.with(this).load(R.drawable.lub_logo_grey).centerCrop().into(imgProduct);
 
             }
 
@@ -153,6 +177,10 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
         }
 
         edBasePrice.setVisibility(Util.isAdmin() ? View.VISIBLE : View.GONE);
+        lnActiveParent.setVisibility(Util.isAdmin() && product.getInt("id") != 0? View.VISIBLE : View.GONE);
+        swActive.setChecked(product.getInt("deleted") == 0 ? true: false);
+        btnSubmit.setVisibility(product.getInt("deleted") == 0 ? View.VISIBLE : View.GONE);
+        vCover.setVisibility(product.getInt("deleted") == 0 ? View.GONE : View.VISIBLE);
 
     }
 
@@ -160,28 +188,14 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
         btnBack.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
         imgProduct.setOnClickListener(this);
-        edGroup.setOnClickListener(this);
         edUnitPrice.textMoneyEvent(null);
         edPurchasePrice.textMoneyEvent(null);
         edBasePrice.textMoneyEvent(null);
+        vSwitch.setOnClickListener(this);
 
     }
 
-    private void initializeView() {
-        mActivity = (ProductActivity) getActivity();
-        edName = (CInputForm) view.findViewById(R.id.add_product_name);
-        edUnitPrice = (CInputForm) view.findViewById(R.id.add_product_unit_price);
-        edPurchasePrice = (CInputForm) view.findViewById(R.id.add_product_purchase_price);
-        edGroup = (CInputForm) view.findViewById(R.id.add_product_group);
-        edVolume = (CInputForm) view.findViewById(R.id.add_product_volume);
-        edIsPromotion = (CInputForm) view.findViewById(R.id.add_product_promotion);
-        edBasePrice = (CInputForm) view.findViewById(R.id.add_product_distributor_price);
-        edUnitInCarton = (CInputForm) view.findViewById(R.id.add_product_unit_in_carton);
-        btnSubmit = (Button) view.findViewById(R.id.add_product_submit);
-        btnBack = (ImageView) view.findViewById(R.id.icon_back);
-        imgProduct = (CircleImageView) view.findViewById(R.id.add_product_image);
 
-    }
 
     @Override
     public void onClick(View v) {
@@ -199,8 +213,8 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
                 choiceGalleryCamera();
                 break;
 
-            case R.id.add_product_group:
-
+            case R.id.add_product_active:
+                switchEvent();
                 break;
 
         }
@@ -313,28 +327,6 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == REQUEST_CHOOSE_IMAGE) {
-//            if (data != null) {
-//                Crop.of(Uri.parse(data.getData().toString()), imageChangeUri).asSquare().withMaxSize(400, 400).start(getActivity(), NewUpdateProductFragment.this);
-//
-//            }
-//
-//        } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
-//            Crop.of(imageChangeUri, imageChangeUri).asSquare().withMaxSize(400, 400).start(getActivity(), NewUpdateProductFragment.this);
-//
-//        } else if (data != null && requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
-//            Glide.with(this).load(imageChangeUri).centerCrop().into(imgProduct);
-//
-//        } else if (requestCode == Crop.REQUEST_CROP) {
-//            if (resultCode == RESULT_OK) {
-//                Glide.with(this).load(imageChangeUri).centerCrop().into(imgProduct);
-//
-//            } else if (resultCode == Crop.RESULT_ERROR) {
-//                Util.showToast(Crop.getError(data).getMessage());
-//
-//            }
-//        }
-
         if (requestCode == REQUEST_CHOOSE_IMAGE) {
             if (data != null) {
                 CropImage.activity(Uri.parse(data.getData().toString()))
@@ -368,5 +360,69 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
 
     }
 
+    private void switchEvent(){
+        if (swActive.isChecked()){
+            CustomCenterDialog.alertWithCancelButton("Ẩn sản phẩm!",
+                    "Bạn muốn ẩn sản phẩm này khỏi danh sách",
+                    "đồng ý",
+                    "hủy",
+                    new CallbackBoolean() {
+                        @Override
+                        public void onRespone(Boolean result) {
+                            if (result){
+                                updateProductActive(product.getInt("id"), 1);
+
+                            }
+                        }
+                    });
+
+        }else {
+            CustomCenterDialog.alertWithCancelButton("Hiện sản phẩm!",
+                    "Bạn muốn khôi phục sản phẩm này vào danh sách",
+                    "đồng ý",
+                    "hủy",
+                    new CallbackBoolean() {
+                        @Override
+                        public void onRespone(Boolean result) {
+                            if (result){
+                                updateProductActive(product.getInt("id"), 0);
+
+                            }
+                        }
+                    });
+
+        }
+
+    }
+
+    private void updateProductActive(int product_id, int deleted){
+        BaseModel param = createPostParam(ApiUtil.PRODUCT_ACTIVE(),
+                String.format(ApiUtil.PRODUCT_ACTIVE_PARAM, product_id, deleted),
+                false, false);
+        new GetPostMethod(param, new NewCallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result, List<BaseModel> list) {
+                mActivity.reupdateProduct(result);
+                if (result.getInt("deleted") == 1){
+                    swActive.setChecked(false);
+                    vCover.setVisibility(View.VISIBLE);
+                    btnSubmit.setVisibility(View.GONE);
+
+                }else {
+                    swActive.setChecked(true);
+                    vCover.setVisibility(View.GONE);
+                    btnSubmit.setVisibility(View.VISIBLE);
+                }
+                //getActivity().getSupportFragmentManager().popBackStack();
+
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        },1).execute();
+
+    }
 
 }
