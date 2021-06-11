@@ -293,7 +293,7 @@ public class ShopCartActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void postBillAndSave() {
-        CustomCenterDialog.showReasonChoice("GHI CHÚ ĐƠN HÀNG",
+        CustomCenterDialog.showReasonChoice("Ghi chú đơn hàng",
                 "Ghi chú để lưu ý cho nhân viên giao hàng",
                 "",
                 "Quay lại",

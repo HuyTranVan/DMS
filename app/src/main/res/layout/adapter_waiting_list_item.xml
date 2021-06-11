@@ -1,79 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/statistical_checkin_item_parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
-
-    <TextView
-        android:id="@+id/waiting_list_item_number"
-        android:layout_width="@dimen/_20sdp"
-        android:layout_height="@dimen/_20sdp"
-        android:background="@drawable/btn_oval_denim"
-        android:textColor="@color/colorWhite"
-        android:text="0"
-        android:textSize="@dimen/_10sdp"
-        android:gravity="center"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/_10sdp"
-        android:layout_marginRight="@dimen/_15sdp" />
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_toRightOf="@+id/waiting_list_item_number"
-        android:paddingTop="@dimen/_5sdp">
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:id="@+id/waiting_list_item_number_cover"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/waiting_list_item_number"
+                android:layout_width="@dimen/_15sdp"
+                android:layout_height="@dimen/_15sdp"
+                android:fontFamily="@font/font_awesome"
+                android:background="@drawable/btn_round_transparent_border_blue"
+                android:textColor="@color/colorWhite"
+                android:text="@string/icon_check"
+                android:textSize="@dimen/_10sdp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                />
+        </RelativeLayout>
 
         <LinearLayout
+            android:id="@+id/waiting_list_item_parent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:background="?selectableItemBackground"
+            android:layout_toRightOf="@+id/waiting_list_item_number_cover"
+            android:paddingTop="@dimen/_5sdp"
+            android:layout_centerVertical="true">
 
-            <TextView
-                android:id="@+id/waiting_list_item_signboard"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:text="a"
-                android:textSize="@dimen/_12sdp"
-                android:textColor="@color/black_text_color"
-                android:textAllCaps="true" />
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/waiting_list_item_distance"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/waiting_list_item_signboard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="a"
+                    android:textSize="@dimen/_12sdp"
+                    android:textColor="@color/black_text_color"
+                    />
+
+                <TextView
+                    android:id="@+id/waiting_list_item_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/_2sdp"
+                    android:text="a"
+                    android:textColor="@color/black_text_color_hint"
+                    android:textSize="@dimen/_10sdp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/_10sdp"/>
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black_text_color_hint"
-                android:textStyle="italic"
-                android:layout_marginLeft="@dimen/_5sdp"
-                android:textSize="@dimen/_10sdp" />
+                android:orientation="horizontal"
+                android:layout_marginBottom="@dimen/_5sdp">
+
+                <TextView
+                    android:id="@+id/waiting_list_item_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/_2sdp"
+                    android:text="a"
+                    android:textColor="@color/black_text_color_hint"
+                    android:textSize="@dimen/_10sdp"
+                    android:layout_centerVertical="true"/>
+
+                <TextView
+                    android:id="@+id/waiting_list_item_distance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black_text_color"
+                    android:textSize="@dimen/_10sdp"
+                    android:text="km"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/_5sdp"
+                    android:layout_toLeftOf="@+id/waiting_list_item_icon"/>
+
+                <TextView
+                    android:id="@+id/waiting_list_item_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/font_awesome"
+                    android:textColor="@color/black_text_color"
+                    android:textSize="@dimen/_10sdp"
+                    android:text="@string/icon_previous"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/_10sdp"
+                    android:layout_centerVertical="true"/>
+
+
+            </RelativeLayout>
+
+
+
         </LinearLayout>
-
-
-        <TextView
-            android:id="@+id/waiting_list_item_address"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/_2sdp"
-            android:text="a"
-            android:textColor="@color/black_text_color_hint"
-            android:textSize="@dimen/_10sdp" />
-
     </LinearLayout>
 
-    <TextView
-        android:fontFamily="@font/font_awesome"
-        android:id="@+id/waiting_list_item_delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="?selectableItemBackgroundBorderless"
-        android:text="@string/icon_x"
-        android:textSize="@dimen/_14sdp"
-        android:textColor="@color/black_text_color_hint"
-        android:layout_alignParentRight="true"
-        android:padding="@dimen/_10sdp"
-        android:layout_centerVertical="true" />
+
 
     <View
         android:id="@+id/waiting_list_item_line"
@@ -84,4 +129,4 @@
         android:layout_marginLeft="@dimen/_5sdp" />
 
 
-</RelativeLayout>
+</LinearLayout>

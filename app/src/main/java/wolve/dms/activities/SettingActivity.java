@@ -20,6 +20,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.R;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackObject;
+import wolve.dms.libraries.CustomSwitchButton;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
@@ -40,11 +41,12 @@ import wolve.dms.utils.Util;
 
 public class SettingActivity extends BaseActivity implements View.OnClickListener, CallbackObject, CompoundButton.OnCheckedChangeListener {
     private ImageView btnBack;
-    private TextView tvDisplayname, tvRole, tvChangePassword, tvChangeUser, tvLogout, tvInfo, tvContact,
-                    tvShare, tvShareDetail;
+    private TextView tvDisplayname, tvRole, tvChangePassword, tvChangeUser,
+            tvLogout, tvInfo, tvContact, tvShare, tvShareDetail,
+            tvMapStyle;
     private CircleImageView imgUser;
     private Fragment mFragment;
-    private SwitchCompat swSaveContact;
+    private SwitchCompat swSaveContact, swMapStyle;
     private RelativeLayout lnShare;
 
     private BaseModel currentUser;
@@ -71,6 +73,8 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         imgUser = findViewById(R.id.user_option_image);
         tvInfo = findViewById(R.id.user_option_change_info);
         swSaveContact = findViewById(R.id.user_option_change_contact_sw);
+        tvMapStyle = findViewById(R.id.user_option_mapstyle);
+        swMapStyle = findViewById(R.id.user_option_mapstyle_sw);
         tvShare = findViewById(R.id.user_option_share);
         tvShareDetail= findViewById(R.id.user_option_share_detail);
         lnShare = findViewById(R.id.user_option_share_parent);
@@ -89,9 +93,11 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         tvChangeUser.setText(Util.getIconString(R.string.icon_group, "    ", "Chuyển tài khoản"));
         tvLogout.setText(Util.getIconString(R.string.icon_logout, "    ", "Đăng xuất"));
         tvInfo.setText(Util.getIconString(R.string.icon_info, "      ", "Thông tin tài khoản"));
+        tvMapStyle.setText(Util.getIconString(R.string.icon_edit_map, "      ", "Định dạng bản đồ mặc định"));
         tvContact.setText(Util.getIconString(R.string.icon_contact, "      ", "Tự động lưu danh bạ"));
         tvShare.setText(Util.getIconString(R.string.icon_share, "      ", "Ứng dụng chia sẻ mặc định"));
         swSaveContact.setChecked(CustomFixSQL.getInt(Constants.AUTO_SAVE_CONTACT) == 1 ? true : false);
+        swMapStyle.setChecked(CustomFixSQL.getBoolean(Constants.SET_DEFAULT_MAPSTYLE));
         switch (CustomFixSQL.getInt(Constants.PACKAGE_DEFAULT)){
             case 0:
                 tvShareDetail.setText("Tùy chọn");
@@ -119,7 +125,9 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         tvChangeUser.setOnClickListener(this);
         tvLogout.setOnClickListener(this);
         swSaveContact.setOnCheckedChangeListener(this);
+
         lnShare.setOnClickListener(this);
+        mapStyleEvent();
     }
 
     @Override
@@ -170,7 +178,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
 
     private void changeUser() {
         List<BaseModel> users = CustomFixSQL.getListObject(Constants.USER_LIST);
-        CustomCenterDialog.dialogChangeUser("ĐỔI SANG TÀI KHOẢN",
+        CustomCenterDialog.dialogChangeUser("Đổi sang tài khoản",
                 DataUtil.removeObjectFromList(users, User.getCurrentUser(), "id"),
                 new CallbackObject() {
                     @Override
@@ -207,7 +215,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     }
 
     private void showReloginDialog(BaseModel user){
-        String title = user == null ? "ĐĂNG NHẬP TÀI KHOẢN" : String.format("Đăng nhập tài khoản %s", user.getString("displayName"));
+        String title = user == null ? "Đăng nhập tài khoản" : String.format("Đăng nhập tài khoản %s", user.getString("displayName"));
         CustomCenterDialog.showDialogRelogin(title, user, new CallbackBoolean() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
@@ -253,5 +261,15 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         CustomFixSQL.setInt(Constants.AUTO_SAVE_CONTACT, b? 1 : 0);
+    }
+
+    private void mapStyleEvent(){
+        swMapStyle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                CustomFixSQL.setBoolean(Constants.SET_DEFAULT_MAPSTYLE, isChecked);
+            }
+        });
+
     }
 }

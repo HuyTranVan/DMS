@@ -193,12 +193,12 @@
                     android:id="@+id/home_tempimport_group"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/btn_round_transparent_border_orange"
+                    android:background="@drawable/btn_round_transparent_border_black"
                     android:paddingLeft="@dimen/_5sdp"
                     android:paddingRight="@dimen/_10sdp"
                     android:paddingTop="@dimen/_5sdp"
                     android:paddingBottom="@dimen/_5sdp"
-                    android:visibility="gone">
+                    android:visibility="visible">
 
 
                     <TextView
@@ -206,7 +206,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/_16sdp"
                         android:minWidth="@dimen/_16sdp"
-                        android:background="@drawable/bg_oval_transparent_stroke_orange"
+                        android:background="@drawable/btn_round_transparent_border_black"
                         android:textColor="@color/black_text_color"
                         android:text="00"
                         android:textSize="@dimen/_10sdp"

@@ -45,10 +45,10 @@ import static wolve.dms.activities.BaseActivity.createPostParam;
  */
 
 public class CustomerInfoFragment extends Fragment implements View.OnClickListener {
-    private View view;
+    private View view, vStatusColor;
     private CInputForm edAdress, edPhone, edName, edNote;
     private EditText edShopName;
-    private CButtonVertical mDirection, mCall, mInterest;
+    private CButtonVertical mDirection, mRating, mCall, mInterest;
     protected TextView tvLastCheckin, tvCheckin, tvHistory;
     private Spinner spShoptype;
 
@@ -78,9 +78,10 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         mDirection = view.findViewById(R.id.customer_info_direction);
         mInterest = view.findViewById(R.id.customer_info_interest);
         mCall = view.findViewById(R.id.customer_info_call);
+        mRating = view.findViewById(R.id.customer_info_rating);
         edNote = view.findViewById(R.id.customer_info_note);
         tvLastCheckin = view.findViewById(R.id.customer_info_last_status);
-        //rgType = view.findViewById(R.id.customer_info_shoptype);
+        vStatusColor = view.findViewById(R.id.customer_info_status_color);
         tvCheckin = view.findViewById(R.id.customer_checkin);
         spShoptype = view.findViewById(R.id.customer_info_shoptype);
         tvHistory = view.findViewById(R.id.customer_history);
@@ -108,6 +109,11 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         setupShopTypeSpinner();
         spShoptype.setSelection(mActivity.currentCustomer.getInt("shopType"));
 
+        mRating.setIconText(
+                mActivity.currentCustomer.getDoubleValue("rating") > 1 ?
+                Util.FormatMoney(mActivity.currentCustomer.getDouble("rating")) :
+                Util.getStringIcon("1", "", R.string.icon_star));
+        mRating.setText(String.format("%d Đánh giá", mActivity.currentCustomer.getInt("rating_count")));
         edPhone.setText(Util.FormatPhone(mActivity.currentCustomer.getString("phone")));
         edName.setText(mActivity.currentCustomer.getString("name"));
         edShopName.setText(mActivity.currentCustomer.getString("signBoard"));
@@ -142,7 +148,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         tvHistory.setOnClickListener(this);
         mDirection.setOnClickListener(this);
         mCall.setOnClickListener(this);
-        mInterest.setOnClickListener(this);
+        //mInterest.setOnClickListener(this);
         tvCheckin.setOnClickListener(this);
         edAdress.setOnMoreClickView(new View.OnClickListener() {
             @Override
@@ -224,6 +230,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
             mInterest.setIconText(mActivity.getResources().getString(R.string.icon_x));
             mDirection.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
             mCall.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
+            vStatusColor.setBackgroundColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
 
             edAdress.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
             edNote.setIconColor(mActivity.getResources().getColor(R.color.black_text_color_hint));
@@ -250,23 +257,33 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
             mActivity.btnShopCart.setBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_blue));
             mActivity.btnShopCart.setTextColor(mActivity.getResources().getColor(R.color.colorWhite));
 
-            if (status == 3) {
+            if (status == 4) {
+                mInterest.setText("Dừng mua hàng");
+                mInterest.setIconBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_purple));
+                mInterest.setTextColor(mActivity.getResources().getColor(R.color.colorGrape));
+                mInterest.setIconText(mActivity.getResources().getString(R.string.icon_warning));
+                vStatusColor.setBackgroundColor(mActivity.getResources().getColor(R.color.colorGrape));
+
+            } else if (status == 3) {
                 mInterest.setText("Đã mua hàng");
                 mInterest.setIconBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_blue));
                 mInterest.setTextColor(mActivity.getResources().getColor(R.color.colorBlue));
                 mInterest.setIconText(mActivity.getResources().getString(R.string.icon_check));
+                vStatusColor.setBackgroundColor(mActivity.getResources().getColor(R.color.colorBlue));
 
             } else if (status == 1) {
                 mInterest.setText("Có quan tâm");
                 mInterest.setIconBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_orange));
                 mInterest.setTextColor(mActivity.getResources().getColor(R.color.orange_dark));
                 mInterest.setIconText(mActivity.getResources().getString(R.string.icon_heart));
+                vStatusColor.setBackgroundColor(mActivity.getResources().getColor(R.color.orange_dark));
 
             } else if (status == 0) {
                 mInterest.setText("Khách hàng mới");
                 mInterest.setIconBackground(mActivity.getResources().getDrawable(R.drawable.btn_round_pink));
                 mInterest.setTextColor(mActivity.getResources().getColor(R.color.colorPink));
                 mInterest.setIconText(mActivity.getResources().getString(R.string.icon_star));
+                vStatusColor.setBackgroundColor(mActivity.getResources().getColor(R.color.colorPink));
             }
 
         }
@@ -392,18 +409,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 
     }
 
-
-
-    private String createParamCheckin(BaseModel customer, int statusId, String note) {
-        String params = String.format(ApiUtil.SCHECKIN_CREATE_PARAM, customer.getInt("id"),
-                statusId,
-                Util.encodeString(note),
-                User.getId());
-
-        return params;
-    }
-
-    protected void submitCheckin(String paramdetail, CallbackBoolean listener) {
+    protected void submitCheckin(String paramdetail, int status_id, CallbackBoolean listener) {
         BaseModel param = createPostParam(ApiUtil.CHECKIN_NEW(), paramdetail, false, false);
         new GetPostMethod(param, new NewCallbackCustom() {
             @Override
@@ -421,7 +427,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 
     private void showDialogNote() {
         String currentNote = getNoteText(mActivity.currentCustomer.getString("note"));
-        CustomCenterDialog.showReasonChoice("GHI CHÚ KHÁCH HÀNG",
+        CustomCenterDialog.showReasonChoice("Ghi chú khách hàng",
                 "Nhập nội dung ghi chú ",
                 Util.isEmpty(currentNote) ? "" : currentNote + "\n",
                 "quay lại",
@@ -442,16 +448,18 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         int currentRating = mActivity.listCheckins.size() > 0 ?
                 mActivity.listCheckins.get(mActivity.listCheckins.size() - 1).getInt("rating") :
                 1;
-        CustomCenterDialog.showCheckinDialog("chi tiết ghé thăm cửa hàng",
+        CustomCenterDialog.showCheckinDialog("Chi tiết ghé thăm cửa hàng",
                 mActivity.currentCustomer.getInt("id"),
                 mActivity.currentCustomer.getInt("status_id"),
-                currentRating,
+                mActivity.currentCustomer.getInt("rating"),
                 new CallbackObject() {
                     @Override
                     public void onResponse(BaseModel object) {
-                        submitCheckin(object.getString("param"), new CallbackBoolean() {
+                        submitCheckin(object.getString("param"),
+                                object.getInt("status"),
+                                new CallbackBoolean() {
                             @Override
-                            public void onRespone(Boolean result) {
+                            public void onRespone(Boolean result){
                                 if (result) {
                                     if (object.getBoolean("updateStatus")) {
                                         mActivity.currentCustomer.put("status_id", object.getInt("status"));

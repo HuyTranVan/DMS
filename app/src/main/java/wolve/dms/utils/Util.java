@@ -47,6 +47,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.transition.TransitionManager;
 
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.kaopiz.kprogresshud.KProgressHUD;
@@ -1312,6 +1313,13 @@ public class Util {
         return true;
     }
 
+    public static boolean isEmpty(CInputForm etText) {
+        if (etText.getText().toString().trim().length() > 0)
+            return false;
+
+        return true;
+    }
+
     public static boolean isEmpty(String value) {
         if (value.trim().length() > 0)
             return false;
@@ -1722,6 +1730,23 @@ public class Util {
         CustomSQL.clear();
         CustomSQL.setListBaseModel(Constants.USER_LIST, listUser);
         CustomSQL.setInt(Constants.VERSION_CODE, versionCode);
+    }
+
+    public static void hideView(ViewGroup parent, View view){
+        TransitionManager.beginDelayedTransition(parent);
+        ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+        layoutParams.width = 0;
+        view.requestLayout();
+
+    }
+
+    public static void showView(ViewGroup parent, View view){
+        TransitionManager.beginDelayedTransition(parent);
+        int width =  view.getWidth();
+        ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+        layoutParams.width = 500;
+        view.requestLayout();
+
     }
 
 }

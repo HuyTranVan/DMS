@@ -21,6 +21,7 @@
     <color name="colorRedTransparent">#61ed3237</color>
     <color name="colorRedDark">#ce0208</color>
     <color name="colorGrape">#9C27B0</color>
+    <color name="colorGrapeDark">#670378</color>
 
     <!--black text color-->
     <color name="black_text_color">#de000000</color>

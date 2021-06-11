@@ -442,7 +442,7 @@ public class NewUpdateDistributorFragment extends Fragment implements View.OnCli
     }
 
     private void dialogNewAdmin(){
-        CustomCenterDialog.showDialogNewAdmin(mUsers.size() >0 ? "tạo nhân viên" : "tạo quản trị viên",
+        CustomCenterDialog.showDialogNewAdmin(mUsers.size() >0 ? "Tạo nhân viên" : "Tạo quản trị viên",
                 currentDistributor.getInt("id"),
                 mUsers.size() >0 ? 3 : 1,
                 mUsers.size() >0?  false : true,

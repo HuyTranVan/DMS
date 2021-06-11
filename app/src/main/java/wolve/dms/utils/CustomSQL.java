@@ -48,6 +48,11 @@ public class CustomSQL {
         prefs.edit().putLong(title, lon).apply();
     }
 
+    public static void setDouble(String title, double dou) {
+        prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
+        prefs.edit().putLong(title, Double.doubleToRawLongBits(dou)).apply();
+    }
+
     public static void setObject(String title, Object value) {
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
         prefs.edit().putString(title, new Gson().toJson(value)).apply();
@@ -153,6 +158,13 @@ public class CustomSQL {
         prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
         if (prefs != null)
             return prefs.getLong(title, 0);
+        return 0;
+    }
+
+    public static double getDouble(String title) {
+        prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
+        if (prefs != null)
+            return Double.longBitsToDouble(prefs.getLong(title, 0));
         return 0;
     }
 

@@ -237,7 +237,7 @@ public class ApiUtil {
     public final static String ACTIVE_CREATE_PARAM = "distributor_id=%d&to=%s";
     public final static String ACTIVE_NEW(){ return BASE_URL + "dms/token/distributor/ActiveNew"; }
 
-    public final static String SCHECKIN_CREATE_PARAM = "customer_id=%d&rating=%d&note=%s&user_id=%d&nextVisit=%d&meetOwner=%d";
+    public final static String SCHECKIN_CREATE_PARAM = "customer_id=%d&rating=%d&note=%s&user_id=%d&nextVisit=%d&meetOwner=%d&status_id=%d";
     public final static String CHECKIN_NEW(){
         return BASE_URL + "dms/token/customer/CheckinNew";
     }

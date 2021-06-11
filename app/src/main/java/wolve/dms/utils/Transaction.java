@@ -32,7 +32,6 @@ import wolve.dms.activities.SettingActivity;
 import wolve.dms.activities.ShopCartActivity;
 import wolve.dms.activities.StatisticalActivity;
 import wolve.dms.activities.CashFlowTypeActivity;
-import wolve.dms.activities.TestActivity;
 import wolve.dms.activities.UserActivity;
 import wolve.dms.activities.WarehouseActivity;
 import wolve.dms.callback.CallbackBoolean;
@@ -179,7 +178,7 @@ public class Transaction {
             Intent intent = new Intent(context, CustomerActivity.class);
             CustomSQL.setLong(Constants.CHECKIN_TIME, Util.CurrentTimeStamp());
             context.startActivityForResult(intent, Constants.RESULT_CUSTOMER_ACTIVITY);
-            context.overridePendingTransition(R.anim.slide_up, R.anim.nothing);
+            context.overridePendingTransition(R.anim.slide_in_up, R.anim.nothing);
 
         }
 
@@ -300,6 +299,7 @@ public class Transaction {
 
     }
 
+
     public static void shareViaOtherApp(String content) {
 //        ShareCompat.IntentBuilder.from(Util.getInstance().getCurrentActivity())
 //                .setType("text/plain")
@@ -411,13 +411,7 @@ public class Transaction {
 
     }
 
-    public static void gotoTestActivity() {
-        Context context = Util.getInstance().getCurrentActivity();
-        Intent intent = new Intent(context, TestActivity.class);
-        context.startActivity(intent);
-        ((AppCompatActivity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-        ((AppCompatActivity) context).finish();
-    }
+
 
     public static void startImageChooser(Fragment fragment, CallbackUri callbackuri) {
         Uri tempUri = Uri.fromFile(Util.createTempFileOutput("LOCAL", "Select"));

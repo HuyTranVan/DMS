@@ -277,7 +277,8 @@ public class MapUtil {
             case Constants.MARKER_INTERESTED:
                 if (customer.getInt("status_id") == 0
                         || customer.getInt("status_id") == 1
-                        || customer.getInt("status_id") == 3) {
+                        || customer.getInt("status_id") == 3
+                        || customer.getInt("status_id") == 4) {
                     currentMarker.setVisible(true);
 
                 } else {
@@ -286,7 +287,8 @@ public class MapUtil {
                 break;
 
             case Constants.MARKER_ORDERED:
-                if (customer.getInt("status_id") == 3) {
+                if (customer.getInt("status_id") == 3
+                ||customer.getInt("status_id") == 4) {
                     currentMarker.setVisible(true);
                 } else {
                     currentMarker.setVisible(false);

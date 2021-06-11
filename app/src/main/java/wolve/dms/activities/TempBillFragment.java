@@ -125,7 +125,7 @@ public class TempBillFragment extends Fragment implements View.OnClickListener {
             case R.id.tempbill_select_list:
                 List<BaseModel> listbill = getBillFromTemp(adapter.getCheckedData());
                 if (listbill.size() > 0) {
-                    CustomCenterDialog.showListProduct("DANH SÁCH SẢN PHẨM", sumProduct(listbill));
+                    CustomCenterDialog.showListProduct("Danh sách sản phẩm", sumProduct(listbill));
 
                 } else {
                     Util.showToast("Vui lòng chọn hóa đơn đê thao tác tiếp");

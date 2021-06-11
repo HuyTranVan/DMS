@@ -68,7 +68,7 @@ public class CustomBottomDialog {
                 .setBackgroundColorResId(R.drawable.bg_corner5_white)
                 .setMargin(10, 10, 10, 10)
 //                .setPadding(20,30,20,20)
-                .setInAnimation(R.anim.slide_up)
+                .setInAnimation(R.anim.slide_in_up)
                 .setOnBackPressListener(new OnBackPressListener() {
                     @Override
                     public void onBackPressed(DialogPlus dialogPlus) {
@@ -132,7 +132,7 @@ public class CustomBottomDialog {
                 .setGravity(Gravity.BOTTOM)
                 .setBackgroundColorResId(R.drawable.bg_corner5_white)
                 .setMargin(10, 10, 10, 10)
-                .setInAnimation(R.anim.slide_up)
+                .setInAnimation(R.anim.slide_in_up)
                 .setOnBackPressListener(new OnBackPressListener() {
                     @Override
                     public void onBackPressed(DialogPlus dialogPlus) {
@@ -221,7 +221,7 @@ public class CustomBottomDialog {
                 .setBackgroundColorResId(R.drawable.bg_corner5_white)
                 .setMargin(20, 20, 20, 20)
                 .setContentHeight(heigh)
-                .setInAnimation(R.anim.slide_up)
+                .setInAnimation(R.anim.slide_in_up)
                 .setOnDismissListener(new OnDismissListener() {
                     @Override
                     public void onDismiss(DialogPlus dialog) {
@@ -274,7 +274,7 @@ public class CustomBottomDialog {
                 .setGravity(Gravity.BOTTOM)
                 .setBackgroundColorResId(R.drawable.bg_corner5_white)
                 .setMargin(10, 10, 10, 10)
-                .setInAnimation(R.anim.slide_up)
+                .setInAnimation(R.anim.slide_in_up)
                 .setOnBackPressListener(new OnBackPressListener() {
                     @Override
                     public void onBackPressed(DialogPlus dialogPlus) {

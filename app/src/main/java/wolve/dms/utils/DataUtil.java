@@ -471,6 +471,8 @@ public class DataUtil {
         customerResult.put("status", customer.getJsonObject("status"));
         customerResult.put("distributor_id", customer.getInt("distributor_id"));
         customerResult.put("status_id", customer.getInt("status_id"));
+        customerResult.put("rating", customer.getDouble("rating"));
+        customerResult.put("rating_count", customer.getInt("rating_count"));
         customerResult.put("waiting_list", customer.getBoolean("waiting_list"));
 
         List<BaseModel> listOriginalBill = new ArrayList<>(DataUtil.array2ListObject(customer.getString("bills")));

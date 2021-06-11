@@ -479,6 +479,7 @@ public class CustomCenterDialog {
         RadioGroup radioGroup = dialogResult.findViewById(R.id.dialog_checkin_rg);
         RadioButton radioNotInterest = dialogResult.findViewById(R.id.dialog_checkin_notinterest);
         RadioButton radioInterest = dialogResult.findViewById(R.id.dialog_checkin_interest);
+        RadioButton radioStopOrder = dialogResult.findViewById(R.id.dialog_checkin_stop_order);
         FrameLayout frParent = dialogResult.findViewById(R.id.dialog_choice_status_parent);
         LinearLayout lnProductParent = dialogResult.findViewById(R.id.dialog_checkin_product_parent);
         LinearLayout lnNextVisit = dialogResult.findViewById(R.id.dialog_checkin_nextvisit_parent);
@@ -510,6 +511,7 @@ public class CustomCenterDialog {
             case 0:
                 radioNotInterest.setVisibility(View.VISIBLE);
                 radioInterest.setVisibility(View.GONE);
+                radioStopOrder.setVisibility(View.GONE);
                 lnProductParent.setVisibility(View.VISIBLE);
                 tvStatus.setBackground(Util.getInstance().getCurrentActivity().getResources().getDrawable(R.drawable.bg_round_white_border_pink));
                 tvStatus.setTextColor(Util.getInstance().getCurrentActivity().getResources().getColor(R.color.colorPink));
@@ -519,6 +521,7 @@ public class CustomCenterDialog {
             case 1:
                 radioNotInterest.setVisibility(View.VISIBLE);
                 radioInterest.setVisibility(View.GONE);
+                radioStopOrder.setVisibility(View.GONE);
                 lnProductParent.setVisibility(View.VISIBLE);
                 tvStatus.setBackground(Util.getInstance().getCurrentActivity().getResources().getDrawable(R.drawable.bg_round_white_border_orange));
                 tvStatus.setTextColor(Util.getInstance().getCurrentActivity().getResources().getColor(R.color.orange));
@@ -528,6 +531,7 @@ public class CustomCenterDialog {
             case 2:
                 radioNotInterest.setVisibility(View.GONE);
                 radioInterest.setVisibility(View.VISIBLE);
+                radioStopOrder.setVisibility(View.GONE);
                 lnProductParent.setVisibility(View.VISIBLE);
                 tvStatus.setBackground(Util.getInstance().getCurrentActivity().getResources().getDrawable(R.drawable.bg_round_white_border_grey));
                 tvStatus.setTextColor(Util.getInstance().getCurrentActivity().getResources().getColor(R.color.black_text_color_hint));
@@ -538,9 +542,22 @@ public class CustomCenterDialog {
                 radioNotInterest.setVisibility(View.GONE);
                 radioInterest.setVisibility(View.GONE);
                 lnProductParent.setVisibility(View.GONE);
+                radioInterest.setVisibility(View.GONE);
+                radioStopOrder.setVisibility(View.VISIBLE);
                 tvStatus.setBackground(Util.getInstance().getCurrentActivity().getResources().getDrawable(R.drawable.bg_round_white_border_blue));
                 tvStatus.setTextColor(Util.getInstance().getCurrentActivity().getResources().getColor(R.color.colorBlue));
                 tvStatus.setText("Khách đã mua hàng");
+
+                break;
+
+            case 4:
+                radioNotInterest.setVisibility(View.GONE);
+                radioInterest.setVisibility(View.GONE);
+                lnProductParent.setVisibility(View.GONE);
+                radioStopOrder.setVisibility(View.GONE);
+                tvStatus.setBackground(Util.getInstance().getCurrentActivity().getResources().getDrawable(R.drawable.bg_round_white_border_grey));
+                tvStatus.setTextColor(Util.getInstance().getCurrentActivity().getResources().getColor(R.color.black_text_color_hint));
+                tvStatus.setText("Khách đã dừng mua hàng");
 
                 break;
 
@@ -551,7 +568,7 @@ public class CustomCenterDialog {
                 switch (i) {
                     case R.id.dialog_checkin_owner:
                         edNote.setHint("Nhập ghi chú khách hàng");
-                        lnProductParent.setVisibility(status_id != 3 ? View.VISIBLE : View.GONE);
+                        lnProductParent.setVisibility(status_id != 3 && status_id != 4? View.VISIBLE : View.GONE);
                         lnNextVisit.setVisibility(View.VISIBLE);
                         ratingBar.setClickRating(true);
                         ratingBar.setTouchRating(true);
@@ -572,6 +589,16 @@ public class CustomCenterDialog {
                         ratingBar.setCount(1);
                         ratingBar.setClickRating(false);
                         ratingBar.setTouchRating(false);
+
+                        break;
+
+                    case R.id.dialog_checkin_stop_order:
+                        edNote.setHint("Nhập lý do dừng mua hàng");
+                        lnProductParent.setVisibility(View.GONE);
+                        lnNextVisit.setVisibility(View.GONE);
+                        ratingBar.setCount(1);
+                        ratingBar.setClickRating(true);
+                        ratingBar.setTouchRating(true);
 
                         break;
 
@@ -631,8 +658,9 @@ public class CustomCenterDialog {
                                 ratingBar.getCount(),
                                 Util.encodeString("Chuyển sang không quan tâm vì: " + edNote.getText().toString()),
                                 User.getId(),
-                                Util.CurrentTimeStamp() + 365 * 86400000,
-                                1);
+                                365 ,
+                                1,
+                                2);
 
                         object.put("updateStatus", true);
                         object.put("status", 2);
@@ -642,7 +670,29 @@ public class CustomCenterDialog {
 
                     }
 
-                } else if (radioGroup.getCheckedRadioButtonId() == R.id.dialog_checkin_interest) {
+                } else if (radioGroup.getCheckedRadioButtonId() == R.id.dialog_checkin_stop_order) {
+                    if (Util.isEmpty(edNote)) {
+                        Util.showSnackbar("Nhập lý do khách dừng mua hàng", null, null);
+
+                    } else {
+                        param = String.format(ApiUtil.SCHECKIN_CREATE_PARAM,
+                                customer_id,
+                                ratingBar.getCount(),
+                                Util.encodeString("Dừng mua hàng vì: " + edNote.getText().toString()),
+                                User.getId(),
+                                365,
+                                1,
+                                4);
+
+                        object.put("updateStatus", true);
+                        object.put("status", 4);
+                        object.put("param", param);
+                        listener.onResponse(object);
+                        dialogResult.dismiss();
+
+                    }
+
+                }else if (radioGroup.getCheckedRadioButtonId() == R.id.dialog_checkin_interest) {
                     if (Util.isEmpty(edNote)) {
                         Util.showSnackbar("Nhập lý do khách hàng quan tâm để tiếp tục", null, null);
 
@@ -655,7 +705,8 @@ public class CustomCenterDialog {
                                 ratingBar.getCount(),
                                 Util.encodeString(DataUtil.createCheckinNote(selectAdapter.getData(), "Chuyển sang quan tâm vì: " + edNote.getText().toString())),
                                 User.getId(),
-                                Util.CurrentTimeStamp() + Integer.parseInt(edNextDay.getText().toString()) * 86400000,
+                                Integer.parseInt(edNextDay.getText().toString()),
+                                1,
                                 1);
 
                         object.put("updateStatus", true);
@@ -679,7 +730,8 @@ public class CustomCenterDialog {
                                 ratingBar.getCount(),
                                 Util.encodeString(DataUtil.createCheckinNote(selectAdapter.getData(), edNote.getText().toString())),
                                 User.getId(),
-                                Util.CurrentTimeStamp() + Integer.parseInt(edNextDay.getText().toString()) * 86400000,
+                                Integer.parseInt(edNextDay.getText().toString()) ,
+                                1,
                                 1);
 
                         if (status_id == 0) {
@@ -701,8 +753,9 @@ public class CustomCenterDialog {
                             ratingBar.getCount(),
                             Util.encodeString(DataUtil.createCheckinNote(selectAdapter.getData(), edNote.getText().toString())),
                             User.getId(),
-                            Util.CurrentTimeStamp() + Integer.parseInt(edNextDay.getText().toString()) * 86400000,
-                            0);
+                            Integer.parseInt(edNextDay.getText().toString()),
+                            0,
+                            status_id);
 
                     object.put("updateStatus", false);
                     object.put("param", param);
@@ -1108,47 +1161,6 @@ public class CustomCenterDialog {
             }
         });
 
-
-    }
-
-    public static void showWaitingList(String title, List<BaseModel> listCustomer, CallbackBoolean listener, CallbackInt listenerCount) {
-        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_list);
-
-        final TextView tvTitle = dialogResult.findViewById(R.id.dialog_list_title);
-        final RecyclerView rvProduct = dialogResult.findViewById(R.id.dialog_list_rv);
-        final Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
-        final Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
-
-        dialogResult.setCanceledOnTouchOutside(true);
-        btnCancel.setText("QUAY LẠI");
-        btnSubmit.setText("VẼ ĐƯỜNG");
-        tvTitle.setText(title);
-
-        final WaitingListAdapter adapter = new WaitingListAdapter(listCustomer, new CallbackInt() {
-            @Override
-            public void onResponse(int value) {
-                listenerCount.onResponse(value);
-                if (value == 0) {
-                    dialogResult.dismiss();
-                }
-            }
-        });
-        Util.createLinearRV(rvProduct, adapter);
-
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogResult.dismiss();
-            }
-        });
-
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listener.onRespone(true);
-                dialogResult.dismiss();
-            }
-        });
 
     }
 

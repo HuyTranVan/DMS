@@ -2,7 +2,6 @@ package wolve.dms.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -13,7 +12,6 @@ import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -32,7 +30,10 @@ import androidx.cardview.widget.CardView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.PermissionChecker;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -50,8 +51,6 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,7 +62,7 @@ import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.apiconnect.apiserver.GMapGetMethod;
 import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackInt;
+import wolve.dms.callback.CallbackListObject;
 import wolve.dms.callback.CallbackLong;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
@@ -73,10 +72,8 @@ import wolve.dms.customviews.CButton;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.libraries.Contacts;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Customer;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.District;
-import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
@@ -95,11 +92,12 @@ import wolve.dms.utils.Util;
 public class MapsActivity extends BaseActivity implements OnMapReadyCallback, View.OnClickListener,
         GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, GoogleMap.OnCameraIdleListener,
         GoogleMap.OnMapLongClickListener, RadioGroup.OnCheckedChangeListener,
-        GoogleMap.OnCameraMoveListener, ViewTreeObserver.OnGlobalLayoutListener {
+        GoogleMap.OnCameraMoveListener, ViewTreeObserver.OnGlobalLayoutListener,
+        CallbackObject, CallbackListObject {
     public GoogleMap mMap;
-    private FloatingActionMenu btnNewCustomer;
-    private CardView btnLocation;
-    private FloatingActionButton btnRepair, btnPhoneNumber;
+    //private FloatingActionMenu btnNewCustomer;
+    protected CardView btnLocation, btnNewCustomer;
+    //private FloatingActionButton , btnPhoneNumber;
     public SupportMapFragment mapFragment;
     private RadioGroup rdFilter;
     private RadioButton rdAll, rdIntersted, rdOrdered;
@@ -107,12 +105,13 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     private EditText edSearch;
     private CoordinatorLayout coParent;
     private SmoothProgressBar progressLoading;
-    private RelativeLayout rlSearchLayout;
+    private RelativeLayout rlSearchLayout, tvWaitingTitle;
     private RecyclerView rvSearch;
     private LinearLayout lnSheetBody, lnBottomSheet;
     private CButton btnDirection, btnCall, btnShare, btnAddList ;
-    private TextView tvShopname, tvAddress, tvTempBill, tvListWating,
-            tvLocation, tvReload, tvStatusDot, tvStatus, tvCheckin, tvDistance, btnClose, btnContact;
+    private TextView tvShopname, tvAddress, tvTempBill,
+            tvLocation, tvReload, tvStatusDot, tvStatus, tvCheckin,
+            tvDistance, btnClose, btnContact, tvRating, tvListWaiting;
 
     private Handler mHandlerMoveMap = new Handler();
     private Handler mHandlerSearch = new Handler();
@@ -125,7 +124,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     private Marker currentMarker;
     private BottomSheetBehavior mBottomSheetBehavior;
     private ProgressBar progressLoadCustomer;
-    protected List<BaseModel> listCustomerWaiting = new ArrayList<>();
+    protected int countCustomerWaiting = 0;
     private List<Marker> listMarker = new ArrayList<>();
     private Fragment mFragment;
     private BaseModel currentCustomer;
@@ -144,9 +143,9 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     public void findViewById() {
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         btnLocation = findViewById(R.id.map_current_location);
-        btnNewCustomer = (FloatingActionMenu) findViewById(R.id.map_new_customer);
-        btnRepair = (FloatingActionButton) findViewById(R.id.map_new_repair);
-        btnPhoneNumber = (FloatingActionButton) findViewById(R.id.map_new_addphone);
+        btnNewCustomer = (CardView) findViewById(R.id.map_new_customer);
+//        btnRepair = (FloatingActionButton) findViewById(R.id.map_new_repair);
+//        btnPhoneNumber = (FloatingActionButton) findViewById(R.id.map_new_addphone);
         rdFilter = (RadioGroup) findViewById(R.id.map_filter);
         rdAll = findViewById(R.id.map_filter_all);
         rdIntersted = findViewById(R.id.map_filter_interested);
@@ -160,8 +159,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         edSearch = findViewById(R.id.maintext);
         rlSearchLayout = findViewById(R.id.map_search_bạckground);
         lnSheetBody = findViewById(R.id.map_bottom_sheet_body);
-        btnNewCustomer.setMenuButtonColorNormalResId(R.color.colorBlue);
-        btnNewCustomer.setMenuButtonColorPressedResId(R.color.colorBlueDark);
+//        btnNewCustomer.setMenuButtonColorNormalResId(R.color.colorBlue);
+//        btnNewCustomer.setMenuButtonColorPressedResId(R.color.colorBlueDark);
         rvSearch = findViewById(R.id.map_rvsearch);
         lnBottomSheet = (LinearLayout) findViewById(R.id.map_bottom_sheet);
         tvShopname = findViewById(R.id.map_detail_shopname);
@@ -177,7 +176,9 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         tvStatus = findViewById(R.id.map_detail_status);
         tvStatusDot = findViewById(R.id.map_detail_status_dot);
         tvTempBill = findViewById(R.id.map_detail_tempbill);
-        tvListWating = findViewById(R.id.map_waiting_list_text);
+        tvListWaiting = findViewById(R.id.map_waiting_list_text);
+        tvWaitingTitle = findViewById(R.id.map_waiting_list_title);
+        tvRating = findViewById(R.id.map_detail_rating);
 
 
     }
@@ -185,7 +186,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style_map));
+        if (!CustomFixSQL.getBoolean(Constants.SET_DEFAULT_MAPSTYLE))
+            mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style_map));
         mMap.setOnCameraMoveListener(this);
         mMap.setOnCameraIdleListener(this);
         //mMap.setOnInfoWindowLongClickListener(this);
@@ -212,21 +214,21 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         MapUtil.markers = new ArrayList<>();
         edSearch.setFocusable(false);
         tvReload.setVisibility(loadCustomer ? View.GONE : View.VISIBLE);
-        getWaitingList();
+        updateNumWaiting();
     }
 
     @Override
     public void addEvent() {
         mapFragment.getMapAsync(this);
         btnLocation.setOnClickListener(this);
-        btnRepair.setOnClickListener(this);
+        //btnRepair.setOnClickListener(this);
         rdFilter.setOnCheckedChangeListener(this);
-        btnPhoneNumber.setOnClickListener(this);
+        btnNewCustomer.setOnClickListener(this);
         btnBack.setOnClickListener(this);
         tvLocation.setOnClickListener(this);
         edSearch.setOnClickListener(this);
         btnClose.setOnClickListener(this);
-        tvListWating.setOnClickListener(this);
+
         searchEvent();
 
         tvReload.setOnClickListener(this);
@@ -237,6 +239,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     @Override
     protected void onResume() {
         super.onResume();
+        updateNumWaiting();
         if (recheckGPS != null && recheckGPS)
             checkGPS();
     }
@@ -256,8 +259,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
                 break;
 
-            case R.id.map_new_repair:
-                btnNewCustomer.close(true);
+            case R.id.map_new_customer:
+                //btnNewCustomer.close(true);
                 getCurrentLocation(new LocationListener() {
                     @Override
                     public void onLocationChanged(Location location) {
@@ -270,20 +273,20 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
                 break;
 
-            case R.id.map_new_addphone:
-                btnNewCustomer.close(true);
-                getCurrentLocation(new LocationListener() {
-                    @Override
-                    public void onLocationChanged(Location location) {
-                        if (location != null) {
-                            inputPhoneNumber(location.getLatitude(), location.getLongitude());
-                        }
-
-                    }
-                });
-
-
-                break;
+//            case R.id.map_new_addphone:
+//                btnNewCustomer.close(true);
+//                getCurrentLocation(new LocationListener() {
+//                    @Override
+//                    public void onLocationChanged(Location location) {
+//                        if (location != null) {
+//                            inputPhoneNumber(location.getLatitude(), location.getLongitude());
+//                        }
+//
+//                    }
+//                });
+//
+//
+//                break;
 
             case R.id.icon_back:
                 backPress();
@@ -314,6 +317,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 Util.hideKeyboard(view);
                 showListWaiting();
 
+
                 break;
 
         }
@@ -325,7 +329,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     @Override
     public void onMapClick(LatLng latLng) {
         Util.hideKeyboard(btnNewCustomer);
-        btnNewCustomer.close(true);
+        //btnNewCustomer.close(true);
         mMap.setOnCameraMoveListener(MapsActivity.this);
         loadCustomer = true;
         tvReload.setVisibility(loadCustomer ? View.GONE : View.VISIBLE);
@@ -375,27 +379,34 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     }
 
     private void inputShopName(double lat, double lng) {
-        CustomInputDialog.inputShopName(coParent, new CustomInputDialog.ShopNameListener() {
+        CustomInputDialog.dialogNewCustomer(new CustomInputDialog.ShopListener() {
             @Override
-            public void onShopname(String shopname, int shoptype) {
-                createCustomerFast(shoptype, shopname, "", lat, lng);
-            }
-
-
-        });
-
-    }
-
-    private void inputPhoneNumber(double lat, double lng) {
-        CustomInputDialog.inputPhoneNumber(coParent, new CallbackString() {
-            @Override
-            public void Result(String s) {
-                createCustomerFast(0, "-", s, lat, lng);
-
+            public void onShopname(String shopname, int shoptype, String phone) {
+                createCustomerFast(shoptype, shopname, phone, lat, lng);
             }
         });
 
+//        CustomInputDialog.inputShopName(coParent, new CustomInputDialog.ShopNameListener() {
+//            @Override
+//            public void onShopname(String shopname, int shoptype) {
+//                createCustomerFast(shoptype, shopname, "", lat, lng);
+//            }
+//
+//
+//        });
+
     }
+
+//    private void inputPhoneNumber(double lat, double lng) {
+//        CustomInputDialog.inputPhoneNumber(coParent, new CallbackString() {
+//            @Override
+//            public void Result(String s) {
+//                createCustomerFast(0, "-", s, lat, lng);
+//
+//            }
+//        });
+//
+//    }
 
     private void loadCustomersByDistrict(String district) {
         BaseModel param = createPostParam(
@@ -461,7 +472,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             currentCustomer.put("statusInterested", true);
 
         } else if (customerStatus == 1) {
-            currentCustomer.put("icon", R.drawable.ico_pin_red);
+            currentCustomer.put("icon", R.drawable.ico_pin_orange);
             currentCustomer.put("checkincount", customer.getInt("checkinCount") > 99 ? "99+" : customer.getInt("checkinCount"));
             currentCustomer.put("statusDetail", "Khách hàng có quan tâm");
             currentCustomer.put("statusColor", getResources().getColor(R.color.orange_dark));
@@ -474,11 +485,18 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             currentCustomer.put("statusColor", getResources().getColor(R.color.black_text_color_hint));
             currentCustomer.put("statusInterested", false);
 
-        } else {
+        } else if (customerStatus == 3){
             currentCustomer.put("icon", R.drawable.ico_pin_blue);
             currentCustomer.put("checkincount", customer.getInt("checkinCount") > 99 ? "99+" : customer.getInt("checkinCount"));
             currentCustomer.put("statusDetail", "Khách đã mua hàng");
             currentCustomer.put("statusColor", getResources().getColor(R.color.colorBlue));
+            currentCustomer.put("statusInterested", true);
+
+        }else {
+            currentCustomer.put("icon", R.drawable.ico_pin_purple_dark);
+            currentCustomer.put("checkincount", customer.getInt("checkinCount") > 99 ? "99+" : customer.getInt("checkinCount"));
+            currentCustomer.put("statusDetail", "Khách dừng mua hàng");
+            currentCustomer.put("statusColor", getResources().getColor(R.color.colorGrape));
             currentCustomer.put("statusInterested", true);
 
         }
@@ -610,26 +628,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     }
 
-//    @Override
-//    public void onInfoWindowLongClick(Marker marker) {
-//        final Customer customer = new Customer((JSONObject) marker.getTag());
-//        currentPhone = customer.getString("phone");
-//
-//        if (!currentPhone.equals("")) {
-//            CustomCenterDialog.alertWithCancelButton(null, "Gọi điện thoại cho " + customer.getString("name") + " (" + customer.getString("phone") + ")", "ĐỒNG Ý", "HỦY", new CallbackBoolean() {
-//                @Override
-//                public void onRespone(Boolean result) {
-//                    Transaction.openCallScreen(currentPhone);
-//
-//                }
-//            });
-//        } else {
-//            Util.showSnackbar("Khách hàng chưa có số điện thoại", null, null);
-//        }
-//
-//
-//    }
-
     @Override
     public void onCameraMove() {
         mHandlerMoveMap.removeCallbacks(mFilterTask);
@@ -751,10 +749,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     private void backPress() {
         mFragment = getSupportFragmentManager().findFragmentById(R.id.map_parent);
-        if (mFragment != null && mFragment instanceof MapWaitingListFragment) {
-            getSupportFragmentManager().popBackStack();
-
-        } else if (rlSearchLayout.getVisibility() == View.VISIBLE) {
+        if (rlSearchLayout.getVisibility() == View.VISIBLE) {
             closeSearch();
 
         } else if (currentMarker != null){
@@ -810,12 +805,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         edSearch.setSelection(edSearch.getText().toString().isEmpty() ? 0 : edSearch.getText().toString().length());
         Util.showKeyboard(edSearch);
         tvLocation.setVisibility(View.GONE);
+        tvListWaiting.setVisibility(View.GONE);
         btnLocation.setVisibility(View.GONE);
         tvReload.setVisibility(View.GONE);
-        tvListWating.setVisibility(View.GONE);
 
         unsetCurrentMarker(true);
-        //mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         setNullButton();
 
     }
@@ -827,8 +821,9 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         edSearch.setFocusable(false);
         tvLocation.setVisibility(View.VISIBLE);
         btnLocation.setVisibility(View.VISIBLE);
-        tvReload.setVisibility(loadCustomer ? View.VISIBLE : View.GONE);
-        tvListWating.setVisibility(View.VISIBLE);
+        tvListWaiting.setVisibility(View.VISIBLE);
+        tvReload.setVisibility(!loadCustomer ? View.VISIBLE : View.GONE);
+
 
     }
 
@@ -897,7 +892,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         Util.createLinearRV(rvSearch, mSearchAdapter);
     }
 
-    private void showMarker(BaseModel customer) {
+    public void showMarker(BaseModel customer) {
         progressLoading.setVisibility(View.GONE);
         LatLng newLatLng = new LatLng(customer.getDouble("lat"), customer.getDouble("lng"));
         triggerCurrentLocation(newLatLng, false);
@@ -917,7 +912,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
                         CustomInputDialog.dismissDialog();
                         Util.showToast("Tạo cửa hàng thành công");
-
+                        updateNumWaiting();
 
                     }
                 });
@@ -953,10 +948,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 Util.encodeString(objectAdress.getString("street")), //street
                 Util.encodeString(""), //note
                 Util.encodeString(objectAdress.getString("district")), //district
-                Util.encodeString(objectAdress.getString("province")), //province
+                Util.encodeString(objectAdress.getString("province")),
+                //sdaf//province
                 lat, //lat
                 lng, //lng
-                10, //province
+                10,
                 Util.encodeString(String.valueOf(shoptype)), //shopType
                 0, //currentStatusId
                 Distributor.getDistributorId(),//DistributorId
@@ -1082,6 +1078,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 CustomSQL.setBaseModel(Constants.CUSTOMER, cust);
                 BaseModel customer = buildMarkerByCustomer(cust);
 
+                tvRating.setText(Util.getStringIcon(Util.FormatMoney(customer.getDouble("rating")), " ",  R.string.icon_star));
                 tvStatusDot.setTextColor(customer.getInt("statusColor"));
                 if (customer.getBoolean("statusInterested")) {
                     btnDirection.setBackground(getResources().getDrawable(R.drawable.btn_round_blue));
@@ -1096,7 +1093,8 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 }
 
                 if (customer.hasKey("last_time_order")) {
-                    tvStatus.setText(String.format("Khách đã mua hàng     %s ngày   %s",
+                    tvStatus.setText(String.format("%s     %s ngày   %s",
+                            customer.getInt("status_id") == 4? "Khách dừng mua hàng" : "Khách đã mua hàng",
                             Util.getIconString(R.string.icon_calendar, "  ", customer.getString("last_time_order")),
                             Util.getIconString(R.string.icon_username, "  ", customer.getString("user_order"))));
 
@@ -1115,7 +1113,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 }
 
                 tvTempBill.setVisibility(customer.hasKey(Constants.TEMPBILL) ? View.VISIBLE : View.GONE);
-                updatAddListStatus(customer);
+                //updatAddListStatus(customer);
 
                 lnSheetBody.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -1225,32 +1223,6 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
             }
         });
 
-        btnAddList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                BaseModel param = createPostParam(ApiUtil.CUSTOMER_TEMP_NEW(),
-                        String.format(ApiUtil.CUSTOMER_TEMP_NEW_PARAM, customer.getInt("id"), User.getId()), false,
-                false);
-                new GetPostMethod(param, new NewCallbackCustom() {
-                    @Override
-                    public void onResponse(BaseModel result, List<BaseModel> list) {
-                        if (result.getBoolean("success")) {
-                            BaseModel customer = CustomSQL.getBaseModel(Constants.CUSTOMER);
-                            customer.put("waiting_list", result.getBoolean("data"));
-                            updatAddListStatus(customer);
-                            getWaitingList();
-                        }
-                    }
-
-                    @Override
-                    public void onError(String error) {
-
-                    }
-                },0).execute();
-
-            }
-        });
-
     }
 
     @SuppressLint("WrongConstant")
@@ -1298,35 +1270,30 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         inputShopName(latLng.latitude, latLng.longitude);
     }
 
-    private void updatAddListStatus(BaseModel customer) {
-        if (customer.hasKey("waiting_list") && customer.getBoolean("waiting_list")) {
-            btnAddList.setBackground(getResources().getDrawable(R.drawable.btn_round_white_border_grey));
-            btnAddList.setIconColor(getResources().getColor(R.color.black_text_color_hint));
-            btnAddList.setIconText(getResources().getString(R.string.icon_minus));
-
-
-        } else {
-            btnAddList.setBackground(getResources().getDrawable(R.drawable.btn_round_white_border_blue));
-            btnAddList.setIconColor(getResources().getColor(R.color.colorBlue));
-            btnAddList.setIconText(getResources().getString(R.string.icon_plus));
-
-        }
-    }
-
-    private void getWaitingList() {
-        BaseModel param = createGetParam(ApiUtil.CUSTOMER_WAITING_LIST(), true);
+    private void updateNumWaiting() {
+        countCustomerWaiting = 0;
+        BaseModel param = createGetParam(ApiUtil.CUSTOMER_WAITING_LIST() + "?count=true", false);
         new GetPostMethod(param, new NewCallbackCustom() {
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
-                for (BaseModel model : list) {
-                    listCustomerWaiting.add(buildMarkerByCustomer(model));
-                }
+                countCustomerWaiting = result.getInt("total");
+                if (countCustomerWaiting > 0) {
+                    tvListWaiting.setVisibility(View.VISIBLE);
+                    tvWaitingTitle.setVisibility(View.VISIBLE);
+                    tvListWaiting.setText(String.format("%d", countCustomerWaiting));
 
-                if (listCustomerWaiting.size() > 0) {
-                    tvListWating.setVisibility(View.VISIBLE);
-                    tvListWating.setText(Util.getIconString(R.string.icon_thumbtack, "  ", String.valueOf(listCustomerWaiting.size())));
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Util.hideView(coParent, tvWaitingTitle);
+                            tvListWaiting.setOnClickListener(MapsActivity.this);
+
+                        }
+                    }, 5000);
+
                 } else {
-                    tvListWating.setVisibility(View.GONE);
+                    tvListWaiting.setVisibility(View.GONE);
+                    tvWaitingTitle.setVisibility(View.GONE);
                 }
             }
 
@@ -1338,45 +1305,47 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     }
 
-    private List<BaseModel> addLocationToListCustomer(List<BaseModel> list, double lat, double lng) {
-        for (BaseModel model : list) {
-            double distance = MapUtil.distance(lat, lng, model.getDouble("lat"), model.getDouble("lng"));
-            model.put("distance", distance);
-
-        }
-        return list;
-    }
+//    private void addLocationToListCustomer(List<BaseModel> listCustomerWaiting, double lat, double lng) {
+//        for (BaseModel model : listCustomerWaiting) {
+//            double distance = MapUtil.distance(lat, lng, model.getDouble("lat"), model.getDouble("lng"));
+//            model.put("distance", distance);
+//
+//        }
+//
+//    }
 
     private void showListWaiting() {
-        btnNewCustomer.close(true);
+        //btnNewCustomer.close(true);
+        //btnLocation.setVisibility(View.GONE);
         unsetCurrentMarker(true);
-        setNullButton();
+        //setNullButton();
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         getCurrentLocation(new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                CustomCenterDialog.showWaitingList("DANH SÁCH KHÁCH HÀNG CHỜ CHECKIN",
-                        addLocationToListCustomer(listCustomerWaiting, location.getLatitude(), location.getLongitude()),
-                        new CallbackBoolean() {
-                            @Override
-                            public void onRespone(Boolean result) {
-                                if (result) {
-                                    changeFragment(new MapWaitingListFragment(), true);
-                                    btnLocation.setVisibility(View.GONE);
+                CustomSQL.setDouble(Constants.LAT, location.getLatitude());
+                CustomSQL.setDouble(Constants.LNG, location.getLongitude());
+                //changeFragment(new MapWaitingListFragment(), true);
 
-                                }
-                            }
-                        }, new CallbackInt() {
-                            @Override
-                            public void onResponse(int value) {
-                                if (listCustomerWaiting.size() > 0) {
-                                    tvListWating.setVisibility(View.VISIBLE);
-                                    tvListWating.setText(Util.getIconString(R.string.icon_thumbtack, "  ", String.valueOf(listCustomerWaiting.size())));
-                                } else {
-                                    tvListWating.setVisibility(View.GONE);
-                                }
-                            }
-                        });
+                MapWaitingListFragment fragment = new MapWaitingListFragment();
+                String tag = fragment.getClass().getSimpleName();
+                DialogFragment myFragment = (DialogFragment) getSupportFragmentManager().findFragmentByTag(tag);
+                DialogFragment fragmentReplace;
+                if (myFragment != null) {
+                    fragmentReplace = myFragment;
+                } else {
+                    fragmentReplace = fragment;
+                }
+//
+                FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
+
+                //manager.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_down, R.anim.slide_in_bottom, R.anim.slide_out_bottom);
+
+                fragmentReplace.show(manager, tag);
+
+//                Transaction.gotoWaitingCustomerActivity();
+
+
             }
         });
     }
@@ -1424,33 +1393,22 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         }
     }
 
-//    private void setWatingListVisibilityScreen(boolean isShow){
-//        if (isShow){
-//            mMap.setOnCameraMoveListener(null);
-//            mMap.setOnMapClickListener(null);
-//            rlSearchLayout.setVisibility(View.GONE);
-//            btnNewCustomer.setVisibility(View.GONE);
-//            tvListWating.setText(Util.getIcon(R.string.icon_x));
-//
-//        }else {
-//            mMap.setOnCameraMoveListener(this);
-//            mMap.setOnMapClickListener(this);
-//            rlSearchLayout.setVisibility(View.VISIBLE);
-//            btnNewCustomer.setVisibility(View.VISIBLE);
-//            tvListWating.setText(Util.getIconString(R.string.icon_thumbtack,"  ",String.valueOf(listCustomerWaiting.size())));
-//            getCurrentLocation(new LocationListener() {
-//                @Override
-//                public void onLocationChanged(Location location) {
-//                    if (location != null) {
-//                        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-//                        triggerCurrentLocation(latLng, true);
-//                    }
-//                }
-//            });
-//
-//        }
-//    }
 
+    @Override
+    public void onResponse(BaseModel object) {
+        showMarker(object);
+    }
+
+    @Override
+    public void onResponse(List<BaseModel> list) {
+        List<BaseModel> tempCustomers = new ArrayList<>();
+        for (BaseModel model : list) {
+            tempCustomers.add(buildMarkerByCustomer(model));
+        }
+        loadCustomer = false;
+        tvReload.setVisibility(View.VISIBLE);
+        addListMarkertoMap(mMap, true, tempCustomers, true);
+    }
 
 }
 

@@ -85,7 +85,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         if (isAnimation) {
 //            manager.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,R.anim.slide_in_left, R.anim.slide_out_right);
-            manager.setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_in_bottom, R.anim.slide_out_bottom);
+            manager.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_down, R.anim.slide_in_bottom, R.anim.slide_out_bottom);
         }
 
         manager.replace(setIdContainer(), fragment, tag)
@@ -106,12 +106,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         FragmentTransaction manager = this.getSupportFragmentManager().beginTransaction();
         if (isAnimation) {
 //            manager.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right);
-            manager.setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_in_bottom, R.anim.slide_out_bottom);
+            manager.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_down, R.anim.slide_in_bottom, R.anim.slide_out_bottom);
         }
 
 
         manager.replace(setIdContainer(), fragmentReplace, tag)
-                .addToBackStack(tag)
+                .addToBackStack(null)
                 .commitAllowingStateLoss();
     }
 

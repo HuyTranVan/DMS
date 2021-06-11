@@ -15,48 +15,29 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.github.clans.fab.FloatingActionMenu
+    <androidx.cardview.widget.CardView
         android:id="@+id/map_new_customer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        fab:menu_fab_size="normal"
-        fab:menu_colorNormal="#1565C0"
-        fab:menu_colorPressed="#2272CD"
-        fab:menu_colorRipple="#62B2FF"
-        android:layout_marginRight="@dimen/_10sdp"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginRight="@dimen/_15sdp"
         android:layout_marginBottom="@dimen/_90sdp"
+        app:cardBackgroundColor="@color/colorBlue"
+        app:cardCornerRadius="@dimen/_20sdp"
+        app:cardMaxElevation="@dimen/_10sdp"
         app:layout_anchor="@id/map_current_location"
         app:layout_anchorGravity="top|end">
 
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/map_new_addphone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_local_phone_white_18dp"
-            app:fab_label="TẠO BẰNG SỐ ĐIỆN THOẠI"
-            style="@style/MenuButtonsStyleBlue" />
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/map_new_repair"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_mode_edit_white_18dp"
-            app:fab_label="TẠO CỬA HÀNG"
-            style="@style/MenuButtonsStyleBlue" />
-
-    </com.github.clans.fab.FloatingActionMenu>
-
-    <!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-    <!--        android:id="@+id/map_current_location"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginRight="@dimen/_15sdp"-->
-    <!--        android:layout_marginBottom="@dimen/_40sdp"-->
-    <!--        app:srcCompat="@drawable/ic_my_location_black_18dp"-->
-    <!--        app:fab_size="normal"-->
-    <!--        app:layout_anchor="@id/map_bottom_sheet"-->
-    <!--        app:layout_anchorGravity="top|end"-->
-    <!--        app:backgroundTint="@color/colorWhite"/>-->
+            android:fontFamily="@font/font_awesome"
+            android:background="?selectableItemBackgroundBorderless"
+            android:text="@string/icon_plus"
+            android:textColor="@color/white_text_color"
+            android:layout_gravity="center"
+            android:textSize="@dimen/_16sdp"
+            android:gravity="center"/>
+    </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/map_current_location"
@@ -67,7 +48,7 @@
         app:cardCornerRadius="@dimen/_20sdp"
         app:cardMaxElevation="@dimen/_10sdp"
         app:layout_anchor="@id/map_bottom_sheet"
-        app:layout_anchorGravity="top|end">
+        app:layout_anchorGravity="end">
 
         <TextView
             android:layout_width="match_parent"
@@ -186,22 +167,53 @@
             android:layout_marginRight="@dimen/_10sdp"
             android:layout_marginTop="-14dp" />
 
-        <TextView
-            android:id="@+id/map_waiting_list_text"
-            android:fontFamily="@font/font_awesome"
+
+        <FrameLayout
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/_25sdp"
-            android:minWidth="@dimen/_40sdp"
-            android:background="@drawable/btn_round_white_border_grey"
-            android:text="@string/icon_thumbtack"
-            android:textSize="@dimen/_12sdp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:layout_alignParentEnd="true"
-            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/search_top_bar"
-            android:paddingLeft="@dimen/_5sdp"
-            android:paddingRight="@dimen/_5sdp" />
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="@dimen/_10sdp">
+
+            <RelativeLayout
+                android:id="@+id/map_waiting_list_title"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_20sdp"
+                android:minWidth="@dimen/_25sdp"
+                android:background="@drawable/btn_round_grey"
+                android:layout_gravity="center_vertical">
+
+                <TextView
+                    android:fontFamily="@font/font_awesome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Khách chờ check-in"
+                    android:textSize="@dimen/_10sdp"
+                    android:textColor="@color/colorWhite"
+                    android:layout_centerVertical="true"
+
+                    android:paddingLeft="@dimen/_10sdp"
+                    android:paddingRight="@dimen/_40sdp"/>
+            </RelativeLayout>
+
+
+
+            <TextView
+                android:id="@+id/map_waiting_list_text"
+                android:fontFamily="@font/font_awesome"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:background="@drawable/btn_round_black"
+                android:text="5"
+                android:textSize="@dimen/_12sdp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:layout_gravity="center_vertical|right"/>
+
+        </FrameLayout>
+
+
 
 
         <TextView
@@ -329,7 +341,8 @@
                         android:layout_height="wrap_content"
 
                         android:orientation="horizontal"
-                        android:layout_marginTop="@dimen/_2sdp">
+                        android:layout_marginTop="@dimen/_2sdp"
+                        android:layout_marginBottom="@dimen/_5sdp" >
 
                         <TextView
                             android:id="@+id/map_detail_address"
@@ -353,21 +366,50 @@
 
                     </LinearLayout>
 
-                    <TextView
-                        android:fontFamily="@font/font_awesome"
-                        android:id="@+id/map_detail_checkin_text"
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="m"
-                        android:textColor="@color/black_text_color_hint"
-                        android:textSize="@dimen/_9sdp"
-                        android:layout_marginTop="@dimen/_2sdp" />
+                        android:orientation="horizontal"
+
+                        android:layout_marginBottom="@dimen/_5sdp" >
+
+                        <TextView
+                            android:fontFamily="@font/font_awesome"
+                            android:id="@+id/map_detail_rating"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="m"
+                            android:textColor="@color/orange_dark"
+                            android:textSize="@dimen/_9sdp"
+                            android:layout_marginRight="@dimen/_15sdp"/>
+
+                        <TextView
+                            android:fontFamily="@font/font_awesome"
+                            android:id="@+id/map_detail_checkin_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="m"
+                            android:textColor="@color/black_text_color_hint"
+                            android:textSize="@dimen/_9sdp"
+                            />
+
+                    </LinearLayout>
+
+<!--                    <TextView-->
+<!--                        android:fontFamily="@font/font_awesome"-->
+<!--                        android:id="@+id/map_detail_checkin_text"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="m"-->
+<!--                        android:textColor="@color/black_text_color_hint"-->
+<!--                        android:textSize="@dimen/_9sdp"-->
+<!--                        android:layout_marginTop="@dimen/_2sdp" />-->
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginTop="@dimen/_2sdp">
+                        android:layout_marginBottom="@dimen/_2sdp">
 
                         <TextView
                             android:fontFamily="@font/font_awesome"

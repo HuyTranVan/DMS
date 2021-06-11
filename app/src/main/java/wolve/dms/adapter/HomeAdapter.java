@@ -89,11 +89,28 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
 
         }
 
-        holder.tvMore.setVisibility(mData.get(position).getBoolean("haveDetail")
-                && mData.get(position).hasKey("more_text")
-                && inventoryQuantity > 0
-                ? View.VISIBLE : View.GONE);
-        //holder.tvMore.setText(mData.get(position).hasKey("more_text") && inventoryQuantity > 0 ? Util.getIcon(R.string.icon_menu) : Util.getIcon(R.string.icon_info_not_circle));
+//        holder.tvMore.setVisibility(mData.get(position).getBoolean("haveDetail")
+//                && mData.get(position).hasKey("more_text")
+//                && inventoryQuantity > 0
+//                ? View.VISIBLE : View.GONE);
+        if (mData.get(position).hasKey("more_text")){
+            holder.tvMore.setVisibility(View.VISIBLE);
+            holder.tvMore.setText(mData.get(position).getString("more_text"));
+        }else {
+            holder.tvMore.setVisibility(View.GONE);
+        }
+
+        if (mData.get(position).hasKey("notify_text")){
+            holder.tvNotify.setVisibility(View.VISIBLE);
+            holder.tvNotify.setText(mData.get(position).getString("notify_text"));
+        }else {
+            holder.tvNotify.setVisibility(View.GONE);
+        }
+
+//        holder.tvMore.setBackground(mData.get(position).hasKey("none_background")?
+//                mContext.getResources().getDrawable(R.drawable.btn_round_transparent_border_purple):
+//                mContext.getResources().getDrawable(R.drawable.bg_round_transparent_border_grey));
+
         holder.tvMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view){
@@ -146,7 +163,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
 
 
     public class ItemAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvTitle, tvIcon, tvMore;
+        private TextView tvTitle, tvIcon, tvMore, tvNotify;
         private RelativeLayout rlParent;
         private CircleImageView imgItem;
 
@@ -155,6 +172,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
             tvIcon = (TextView) itemView.findViewById(R.id.item_home_icon);
             tvTitle = (TextView) itemView.findViewById(R.id.item_home_text);
             tvMore = (TextView) itemView.findViewById(R.id.item_home_more);
+            tvNotify = (TextView) itemView.findViewById(R.id.item_home_notify);
             rlParent = (RelativeLayout) itemView.findViewById(R.id.item_home_parent);
             imgItem = itemView.findViewById(R.id.item_home_image);
 
@@ -167,9 +185,21 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
     }
 
     public void updateInventoryDetail(int inventory_no){
-        mData.get(2).put("more_text", inventory_no > 0? Util.getIcon(R.string.icon_menu) : R.string.icon_info);
+        if (inventory_no >0){
+            mData.get(2).put("more_text",Util.getIcon(R.string.icon_menu));
+        }
+
         inventoryQuantity = inventory_no;
         notifyItemChanged(2);
+
+    }
+
+    public void updateWaitingListDetail(int size){
+        if (size >0){
+            mData.get(0).put("notify_text", size);
+        }
+        //inventoryQuantity = inventory_no;
+        notifyItemChanged(0);
 
     }
 

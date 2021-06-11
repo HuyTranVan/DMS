@@ -39,7 +39,7 @@ public class CustomTopDialog {
                                 Util.convertSdpToInt(R.dimen._5sdp), //right
                                 Util.convertSdpToInt(R.dimen._5sdp)) //bottom
                         .setOverlayBackgroundResource(R.color.black_text_color_hint)
-                        .setInAnimation(R.anim.slide_down)
+                        .setInAnimation(R.anim.slide_out_down)
                         .setOnDismissListener(new OnDismissListener() {
                             @Override
                             public void onDismiss(DialogPlus dialog) {
@@ -83,7 +83,7 @@ public class CustomTopDialog {
                 .setBackgroundColorResId(R.drawable.bg_corner5_white)
                 .setMargin(20, 20, 20, 20)
                 //.setContentHeight(heigh)
-                .setInAnimation(R.anim.slide_down)
+                .setInAnimation(R.anim.slide_out_down)
                 .setOnDismissListener(new OnDismissListener() {
                     @Override
                     public void onDismiss(DialogPlus dialog) {

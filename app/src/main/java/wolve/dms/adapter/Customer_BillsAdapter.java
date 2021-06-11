@@ -363,7 +363,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
             List currentDebt = new ArrayList();
             currentDebt.add(mData.get(currentPosition));
 
-            CustomCenterDialog.showDialogPayment(String.format("THANH TOÁN HÓA ĐƠN %s", Util.DateString(mData.get(currentPosition).getLong("createAt"))),
+            CustomCenterDialog.showDialogPayment(String.format("Thanh toán hóa đơn %s", Util.DateString(mData.get(currentPosition).getLong("createAt"))),
                     currentDebt,
                     0.0,
                     true,

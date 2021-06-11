@@ -158,6 +158,7 @@ public class Constants {
     public static final String IMAGES = "images";
     public static final String LOADING_TIMES = "loading_times";
     public static final String AUTO_SAVE_CONTACT = "auto_save_contact";
+    public static final String SET_DEFAULT_MAPSTYLE = "default_map_style";
     public static final String PAY_DISTRIBUTOR = "pay_distributor";
     public static final String IN_COME = "in_come";
     public static final String OUT_COME = "out_come";
@@ -175,11 +176,13 @@ public class Constants {
     public static final String PACKAGE_DEFAULT = "package_default";
     public static final String RANGE_TIME = "range_time";
     public static final String ONLY_USER = "only_user";
+    public static final String LAT = "lat";
+    public static final String LNG = "lng";
 
     //Home constant
     public static List<BaseModel> HomeItemList() {
         String[] icons = new String[]{
-                Util.getIcon(R.string.icon_edit_map),
+                Util.getIcon(R.string.icon_edit_map_marked),
                 Util.getIcon(R.string.icon_chart),
                 Util.getIcon(R.string.icon_depot),
                 Util.getIcon(R.string.icon_hand_on_money),
@@ -225,13 +228,13 @@ public class Constants {
 
 
     public static String[] shopName = new String[]{
-            "SỬA XE",
-            "RỬA XE",
-            "PHỤ TÙNG",
-            "BẢO TRÌ",
-            "GARAGE",
-            "SHOP",
-            "KHÁCH LẺ"};
+            "Sửa xe",
+            "Rửa xe",
+            "Phụ tùng",
+            "Bảo trì",
+            "Garage",
+            "Shop",
+            "Khách lẻ"};
 
     public static String[] shopNameShortened = new String[]{
             "SX",

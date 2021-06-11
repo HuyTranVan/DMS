@@ -1,99 +1,121 @@
 package wolve.dms.activities;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.location.Location;
+import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MapStyleOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.adapter.WaitingListAdapter;
+import wolve.dms.apiconnect.ApiUtil;
+import wolve.dms.apiconnect.apiserver.GetPostMethod;
+import wolve.dms.callback.CallbackInt;
+import wolve.dms.callback.CallbackListObject;
+import wolve.dms.callback.CallbackObject;
+import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.models.BaseModel;
+import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomSQL;
+import wolve.dms.utils.MapUtil;
 import wolve.dms.utils.Util;
+
+import static wolve.dms.activities.BaseActivity.createGetParam;
 
 /**
  * Created by macos on 9/16/17.
  */
 
-public class MapWaitingListFragment extends Fragment implements View.OnClickListener,
-        OnMapReadyCallback,
-        GoogleMap.OnCameraMoveListener {
+public class MapWaitingListFragment extends DialogFragment implements View.OnClickListener,
+                                                CompoundButton.OnCheckedChangeListener{
     private View view;
-    private TextView tvTitle, btnLocation;
+    private TextView tvTitle, tvClose, tvCount;
+    private Button btnSubmit;
     private ImageView btnBack;
-    private LinearLayout rlBottom;
-    public SupportMapFragment mapFragment;
-    private GoogleMap mMap;
+    private RecyclerView rvCustomerWaiting;
+    private CheckBox cbCheckAll;
+    private RelativeLayout mCheckGroup, mParent;
 
 
-    private MapsActivity mActivity;
-    private Handler mHandlerMoveMap = new Handler();
-    private FusedLocationProviderClient mFusedLocationClient;
-    private BaseModel objectAdress = new BaseModel();
+    private List<BaseModel> listCustomerWaiting = new ArrayList<>();
+    private WaitingListAdapter adapter;
+    private CallbackObject mListener;
+    private CallbackListObject mListListener;
 
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_show_waitinglist_map, container, false);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mListener = (CallbackObject) context;
+        mListListener = (CallbackListObject) context;
+    }
 
-        initializeView();
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        view = inflater.inflate(R.layout.fragment_map_waitinglist, null);
 
-        intitialData();
+        Dialog dialog = new Dialog(getContext(),R.style.dialogFullScreen);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().setBackgroundDrawableResource(R.drawable.bg_corner5_white);
+
+        dialog.setContentView(view);
+
+        findViewById();
+
+        initialData();
+        addEvent();
 
         addEvent();
-        return view;
+
+        return dialog;
     }
 
-    public void intitialData() {
-
-
-    }
-
-    private void addEvent() {
-        mapFragment.getMapAsync(this);
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mActivity);
-        btnBack.setOnClickListener(this);
-        btnLocation.setOnClickListener(this);
-
-
-    }
-
-    private void initializeView() {
-        mActivity = (MapsActivity) getActivity();
+    public void findViewById() {
+        mParent = view.findViewById(R.id.waitinglist_parent);
         btnBack = view.findViewById(R.id.icon_back);
-        mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.waitinglist_map);
         tvTitle = view.findViewById(R.id.waitinglist_title);
-        btnLocation = view.findViewById(R.id.waitinglist_location);
+        rvCustomerWaiting = view.findViewById(R.id.waitinglist_rvCustomer);
+        tvClose = view.findViewById(R.id.waitinglist_select_close);
+        tvCount = view.findViewById(R.id.waitinglist_select_count);
+        cbCheckAll = view.findViewById(R.id.waitinglist_select_check);
+        mCheckGroup = view.findViewById(R.id.waitinglist_select_group);
+        btnSubmit = view.findViewById(R.id.waitinglist_submit);
 
     }
 
-    private void backEvent() {
-        mActivity.onBackPressed();
-
+    public void initialData() {
+        getWaitingList();
 
     }
 
+    public void addEvent() {
+        btnBack.setOnClickListener(this);
+        tvClose.setOnClickListener(this);
+        cbCheckAll.setOnCheckedChangeListener(this);
+        btnSubmit.setOnClickListener(this);
+    }
+
+    private void backEvent(){
+        //getDialog().getWindow().getAttributes().windowAnimations = R.style.DialogAnimationOut;
+        this.dismiss();
+
+    }
 
     @Override
     public void onClick(View v) {
@@ -104,9 +126,15 @@ public class MapWaitingListFragment extends Fragment implements View.OnClickList
 
                 break;
 
+            case R.id.waitinglist_select_close:
+                adapter.unCheckAll();
+                mCheckGroup.setVisibility(View.GONE);
 
-            case R.id.waitinglist_location:
-                animateToCurrentLocation();
+                break;
+
+            case R.id.waitinglist_submit:
+                mListListener.onResponse(adapter.getAllChecked());
+                backEvent();
 
                 break;
 
@@ -114,100 +142,98 @@ public class MapWaitingListFragment extends Fragment implements View.OnClickList
         }
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        showPinDelay(1500);
-        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(mActivity, R.raw.style_map));
-
-        mMap.setMyLocationEnabled(true);
-        mMap.getUiSettings().setMyLocationButtonEnabled(false);
-        mMap.getUiSettings().setRotateGesturesEnabled(false);
-
-        //mActivity.addListMarkertoMap(mMap, true, mActivity.listCustomerWaiting, true);
-
-    }
-
-    private void animateToCurrentLocation() {
-        getCurrentLocation(new LocationListener() {
+    private void getWaitingList(){
+        listCustomerWaiting = new ArrayList<>();
+        BaseModel param = createGetParam(ApiUtil.CUSTOMER_WAITING_LIST() , false);
+        new GetPostMethod(param, new NewCallbackCustom() {
             @Override
-            public void onLocationChanged(Location location) {
-                float zoom = mMap.getCameraPosition().zoom < 15 ? 15 : mMap.getCameraPosition().zoom;
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), zoom), 800, null);
-            }
-        });
-
-
-    }
-
-    private void showPinDelay(int milisec) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
-//                LatLng latLng = new LatLng(mActivity.currentCustomer.getDouble("lat"),mActivity.currentCustomer.getDouble("lng") );
-//                float zoom = mMap.getCameraPosition().zoom < 15 ? 15 : mMap.getCameraPosition().zoom;
-//                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom), 400, new GoogleMap.CancelableCallback() {
-//                    @Override
-//                    public void onFinish() {
-//                        iconPin.setVisibility(View.VISIBLE);
-//                        new Handler().postDelayed (new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                mMap.setOnCameraMoveListener(MapWaitingListFragment.this);
-//
-//                            }}, 1);
-//
-//                    }
-//
-//                    @Override
-//                    public void onCancel() {
-//
-//                    }
-//                });
+            public void onResponse(BaseModel result, List<BaseModel> list) {
+                listCustomerWaiting = addLocationToListCustomer(result.getList("list"),
+                                                                CustomSQL.getDouble(Constants.LAT),
+                                                                CustomSQL.getDouble(Constants.LNG));
+                createCustomerWaitingRV(listCustomerWaiting);
 
             }
-        }, milisec);
-    }
 
-
-    @Override
-    public void onCameraMove() {
-//        btnSubmit.setVisibility(View.GONE);
-//
-//        mHandlerMoveMap.removeCallbacks(mFilterTask);
-//        mHandlerMoveMap.postDelayed(mFilterTask, 1000);
-    }
-
-    private Runnable mFilterTask = new Runnable() {
-        @Override
-        public void run() {
-//            btnSubmit.setVisibility(View.VISIBLE);
-//
-//            LatLng center = mMap.getCameraPosition().target;
-//            updateLocation(center.latitude , center.longitude);
-
-
-        }
-    };
-
-    private void getCurrentLocation(final LocationListener mListener) {
-        if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            return;
-        }
-
-
-        mFusedLocationClient.getLastLocation().addOnSuccessListener(mActivity, new OnSuccessListener<Location>() {
             @Override
-            public void onSuccess(final Location location) {
-                if (location != null) {
-                    mListener.onLocationChanged(location);
+            public void onError(String error) {
+
+            }
+        }, 0).execute();
+
+    }
+
+    private void createCustomerWaitingRV(List<BaseModel> list){
+        adapter = new WaitingListAdapter(list, new CallbackInt() {
+            @Override
+            public void onResponse(int value) {
+                tvCount.setText(value > 0 ? String.valueOf(value) : "");
+                if (value > 0) {
+                    mCheckGroup.setVisibility(View.VISIBLE);
+                    btnSubmit.setVisibility(View.VISIBLE);
+                    setMarginSubmitButton(rvCustomerWaiting.getHeight());
+                    cbCheckAll.setOnCheckedChangeListener(null);
+                    if (value == list.size()) {
+                        cbCheckAll.setChecked(true);
+                    } else {
+                        cbCheckAll.setChecked(false);
+                    }
+                    cbCheckAll.setOnCheckedChangeListener(MapWaitingListFragment.this);
+
+                } else {
+                    mCheckGroup.setVisibility(View.GONE);
+                    btnSubmit.setVisibility(View.GONE);
 
                 }
             }
+        }, new CallbackObject() {
+            @Override
+            public void onResponse(BaseModel object) {
+                mListener.onResponse(object);
+                backEvent();
+
+            }
         });
+        Util.createLinearRV(rvCustomerWaiting, adapter);
+
     }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (isChecked){
+            adapter.CheckAll();
+
+        }else {
+            adapter.unCheckAll();
+
+        }
+    }
+
+    private List<BaseModel> addLocationToListCustomer(List<BaseModel> listCustomerWaiting, double lat, double lng) {
+        for (BaseModel model : listCustomerWaiting) {
+            double distance = MapUtil.distance(lat, lng, model.getDouble("lat"), model.getDouble("lng"));
+            model.put("distance", distance);
+
+        }
+
+        return listCustomerWaiting;
+
+    }
+
+    private void setMarginSubmitButton(int recycleViewHeight){
+        int height = 0;
+
+        if (recycleViewHeight > mParent.getHeight() - Util.convertSdpToInt(R.dimen._80sdp)){
+            height = mParent.getHeight() - Util.convertSdpToInt(R.dimen._40sdp);
+        }else {
+            height = recycleViewHeight + Util.convertSdpToInt(R.dimen._50sdp);
+        }
+
+
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) btnSubmit.getLayoutParams();
+        params.setMargins(0, height, 0, 0);
+        btnSubmit.setLayoutParams(params);
+    }
+
 
 }

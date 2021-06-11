@@ -139,7 +139,7 @@
             android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden|stateHidden" />
 
         <activity
             android:name=".activities.WarehouseActivity"

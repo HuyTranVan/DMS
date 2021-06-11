@@ -70,6 +70,7 @@
     <string name="icon_bill" translatable="false">&#xf543;</string>
     <string name="icon_save" translatable="false">&#xf0c7;</string>
     <string name="icon_edit_map" translatable="false">&#xf279;</string>
+    <string name="icon_edit_map_marked" translatable="false">&#xf5a0;</string>
     <string name="icon_money" translatable="false">&#xf53a;</string>
     <string name="icon_warning" translatable="false">&#xf071;</string>
     <string name="icon_print" translatable="false">&#xf02f;</string>
@@ -150,6 +151,8 @@
     <string name="icon_report">&#xf659;</string>
     <string name="icon_link">&#xf0c1;</string>
     <string name="icon_pickup">&#xf63c;</string>
+    <string name="icon_compress">&#xf326;</string>
+    <string name="icon_previous">&#xf0d9;</string>
 
     <string name="login_username" translatable="false">Nhập tài khoản hoặc SĐT</string>
     <string name="login_password" translatable="false">Nhập mật khẩu</string>

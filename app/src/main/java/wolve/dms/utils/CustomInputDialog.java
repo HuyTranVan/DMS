@@ -1,5 +1,7 @@
 package wolve.dms.utils;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.Rect;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -8,6 +10,7 @@ import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -22,7 +25,9 @@ import com.orhanobut.dialogplus.OnCancelListener;
 import com.orhanobut.dialogplus.ViewHolder;
 
 import wolve.dms.R;
+import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackString;
+import wolve.dms.customviews.CInputForm;
 
 //import com.hold1.keyboardheightprovider.KeyboardHeightProvider;
 
@@ -38,11 +43,95 @@ public class CustomInputDialog {
         void onShopname(String shopname, int shoptype);
     }
 
+    public interface ShopListener {
+        void onShopname(String shopname, int shoptype, String phone);
+    }
+
+    public static void dialogNewCustomer(ShopListener mListener) {
+        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_new_customer);
+        LinearLayout lnParent = dialogResult.findViewById(R.id.dialog_newcustomer_parent);
+        //TextView tvTitle = (TextView) dialogResult.findViewById(R.id.dialog_newcustomer_title);
+        Spinner spShopType = dialogResult.findViewById(R.id.dialog_newcustomer_shoptype);
+        final EditText edShopName = (EditText) dialogResult.findViewById(R.id.dialog_newcustomer_shopname);
+        final CInputForm edPhone = (CInputForm) dialogResult.findViewById(R.id.dialog_newcustomer_phone);
+        final TextView btnSubmit = (TextView) dialogResult.findViewById(R.id.dialog_newcustomer_submit);
+
+        dialogResult.setCanceledOnTouchOutside(true);
+        Util.textPhoneEvent(edPhone.getEdInput(), null);
+
+        Util.showKeyboardDelay(edShopName);
+
+        dialogResult.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                Util.hideKeyboard(edPhone);
+            }
+        });
+
+        final int[] shopType = {0};
+
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(Util.getInstance().getCurrentActivity(), R.layout.view_spinner_text, Constants.shopName);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spShopType.setAdapter(dataAdapter);
+
+        spShopType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                shopType[0] = i;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!Util.isEmpty(edShopName)) {
+                    if (Util.isPhoneFormat(edPhone.getText().toString()) != null){
+                        mListener.onShopname(edShopName.getText().toString().trim(), shopType[0], Util.getPhoneValue(edPhone));
+                        Util.hideKeyboard(v);
+                        dialogResult.dismiss();
+
+                    }else if (!Util.isEmpty(edPhone)){
+                        Util.showToast("Sai định dạng số điện thoại");
+
+                    }else {
+                        mListener.onShopname(edShopName.getText().toString().trim(), shopType[0], "");
+                        Util.hideKeyboard(v);
+                        dialogResult.dismiss();
+
+                    }
+
+
+
+                } else {
+                    if (Util.isPhoneFormat(edPhone.getText().toString()) != null){
+                        mListener.onShopname("-", shopType[0], Util.getPhoneValue(edPhone));
+                        Util.hideKeyboard(v);
+                        dialogResult.dismiss();
+
+                    }else {
+                        Util.showToast("Sai định dạng thông tin");
+                    }
+
+                }
+
+
+            }
+        });
+
+
+    }
+
     public static void inputShopName(View view, final ShopNameListener mListener) {
         dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
                 .setContentHolder(new ViewHolder(R.layout.view_input_shopname))
                 .setGravity(Gravity.BOTTOM)
-                .setInAnimation(R.anim.slide_up)
+                .setInAnimation(R.anim.slide_in_up)
+
                 .setBackgroundColorResId(R.drawable.transparent)
                 .setOnBackPressListener(new OnBackPressListener() {
                     @Override
@@ -109,19 +198,19 @@ public class CustomInputDialog {
 
         view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
-            public void onGlobalLayout() {
+            public void onGlobalLayout(){
                 // TODO Auto-generated method stub
                 Rect r = new Rect();
                 lnParent.getWindowVisibleDisplayFrame(r);
 
                 int screenHeight = lnParent.getRootView().getHeight();
-                int heightDifference = screenHeight - (r.bottom - r.top) - Util.getInstance().getCurrentActivity().getResources().getDimensionPixelSize(R.dimen._32sdp);
+                int heightDifference = screenHeight - (r.bottom - r.top) +  Util.getInstance().getCurrentActivity().getResources().getDimensionPixelSize(R.dimen._2sdp);
+//                        - Util.getInstance().getCurrentActivity().getResources().getDimensionPixelSize(R.dimen._32sdp);
                 int margin = Util.getInstance().getCurrentActivity().getResources().getDimensionPixelSize(R.dimen._2sdp);
 
                 FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 params.setMargins(margin, 0, margin, heightDifference);
                 lnParent.setLayoutParams(params);
-
 
             }
         });
@@ -135,7 +224,7 @@ public class CustomInputDialog {
         dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
                 .setContentHolder(new ViewHolder(R.layout.view_input_warehouse))
                 .setGravity(Gravity.BOTTOM)
-                .setInAnimation(R.anim.slide_up)
+                .setInAnimation(R.anim.slide_in_up)
                 .setBackgroundColorResId(R.drawable.transparent)
                 .setOnBackPressListener(new OnBackPressListener() {
                     @Override
@@ -213,7 +302,7 @@ public class CustomInputDialog {
                 .setContentHolder(new ViewHolder(R.layout.view_input_phonenumber))
                 .setGravity(Gravity.BOTTOM)
                 .setBackgroundColorResId(R.drawable.transparent)
-                .setInAnimation(R.anim.slide_up)
+                .setInAnimation(R.anim.slide_in_up)
                 .setOnBackPressListener(new OnBackPressListener() {
                     @Override
                     public void onBackPressed(DialogPlus dialogPlus) {
@@ -306,7 +395,7 @@ public class CustomInputDialog {
                 .setContentHolder(new ViewHolder(R.layout.view_input_number))
                 .setGravity(Gravity.BOTTOM)
                 .setBackgroundColorResId(R.drawable.transparent)
-                .setInAnimation(R.anim.slide_up)
+                .setInAnimation(R.anim.slide_in_up)
                 .setOnBackPressListener(new OnBackPressListener() {
                     @Override
                     public void onBackPressed(DialogPlus dialogPlus) {

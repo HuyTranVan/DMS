@@ -431,6 +431,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             public void onResponse(BaseModel result, List<BaseModel> list) {
                 swipeRefreshLayout.setRefreshing(false);
                 adapterHome.updateInventoryDetail(result.getInt("inventories"));
+                adapterHome.updateWaitingListDetail(result.getInt("countCustomerWaiting"));
                 updateTempBillVisibility(DataUtil.listTempBill(DataUtil.array2ListObject(result.getString("tempBills"))));
                 updateTempImportVisibility(DataUtil.filterListTempImport(DataUtil.array2ListObject(result.getString("tempImport"))));
                 tvCash.setText(String.format("%s đ", Util.FormatMoney(result.getDouble("paymentInMonth"))));

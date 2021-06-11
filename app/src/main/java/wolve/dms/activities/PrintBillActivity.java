@@ -391,7 +391,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void showDialogPayment(CallbackBoolean isShareZalo) {
-        dialogPayment = CustomCenterDialog.showDialogPayment("NHẬP SỐ TIỀN KHÁCH TRẢ",
+        dialogPayment = CustomCenterDialog.showDialogPayment("Nhập số tiền khách trả",
                 getAllDebt(),
                 0.0,
                 true,

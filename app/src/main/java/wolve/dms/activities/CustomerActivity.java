@@ -18,7 +18,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.Fragment;
@@ -430,7 +429,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         returnIntent.putExtra(Constants.CUSTOMER, customer != null ? customer.BaseModelstoString() : null);
         returnIntent.putExtra(Constants.RELOAD_DATA, haschange);
         setResult(Constants.RESULT_CUSTOMER_ACTIVITY, returnIntent);
-        Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.nothing, R.anim.slide_down);
+        Util.getInstance().getCurrentActivity().overridePendingTransition(R.anim.nothing, R.anim.slide_out_down);
         Util.getInstance().getCurrentActivity().finish();
 
     }
@@ -556,6 +555,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 Util.encodeString(customer.getString("note")), //note
                 Util.encodeString(customer.getString("district")), //district
                 Util.encodeString(customer.getString("province")), //province
+
                 customer.getDouble("lat"), //lat
                 customer.getDouble("lng"), //lng
                 customer.getInt("volumeEstimate"), //province
@@ -614,7 +614,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void showDialogPayment() {
-        CustomCenterDialog.showDialogPayment("THANH TOÁN CÁC HÓA ĐƠN NỢ",
+        CustomCenterDialog.showDialogPayment("Thanh toán các hóa đơn nợ",
                 listDebtBill,
                 0.0,
                 true,
@@ -634,7 +634,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void showDiscountPayment() {
-        CustomCenterDialog.showDialogDiscountPayment("TRỪ TIỀN CHIẾT KHẤU KHÁCH HÀNG",
+        CustomCenterDialog.showDialogDiscountPayment("Trừ tiền chiết khấu khách hàng",
                 "Nhập số tiền chiết khấu",
                 currentCustomer.getDouble("paid"),
                 new CallbackDouble() {
