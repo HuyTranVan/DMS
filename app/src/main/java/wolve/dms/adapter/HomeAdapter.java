@@ -120,22 +120,25 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
                                 WarehouseAdapter.listMenu(false,
                                         User.getCurrentUser().getBaseModel("warehouse"),
                                         inventoryQuantity ),
-                                        new CallbackString() {
-                            @Override
-                            public void Result(String s) {
-                                if (s.equals(warehouseOptions[0])){
-                                    BaseModel warehouse = User.getCurrentUser().getBaseModel("warehouse");
-                                    warehouse.putBaseModel("user", User.getCurrentUser() );
-                                    mWarehouseOption.onInfo(warehouse);
+                                        0,
+                                        new CallbackClickAdapter() {
+                                            @Override
+                                            public void onRespone(String data, int position) {
+                                                if (data.equals(warehouseOptions[0])){
+                                                    BaseModel warehouse = User.getCurrentUser().getBaseModel("warehouse");
+                                                    warehouse.putBaseModel("user", User.getCurrentUser() );
+                                                    mWarehouseOption.onInfo(warehouse);
 
-                                }else if (s.equals(warehouseOptions[1])){
-                                    mWarehouseOption.onInventory(mData.get(position));
+                                                }else if (data.equals(warehouseOptions[1])){
+                                                    mWarehouseOption.onInventory(mData.get(position));
 
-                                }else if (s.equals(warehouseOptions[2])){
-                                    mWarehouseOption.onReturn(mData.get(position));
-                                }
+                                                }else if (data.equals(warehouseOptions[2])){
+                                                    mWarehouseOption.onReturn(mData.get(position));
+                                                }
 
-                            }
+                                            }
+
+
                         });
 
                     }

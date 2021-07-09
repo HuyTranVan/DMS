@@ -46,8 +46,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         Util.getInstance().setCurrentActivity(this);
         findViewById();
 
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        //Handler handler = new Handler();
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 initialData();
@@ -255,6 +255,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                 if (!DataUtil.checkDuplicate(listUser, "id", object)) {
                     listUser.add(object);
                 }
+
+                Util.deleteAllImageExternalStorage();
                 CustomFixSQL.setListBaseModel(Constants.USER_LIST, listUser);
                 /////////////
                 object.removeKey("distributor");

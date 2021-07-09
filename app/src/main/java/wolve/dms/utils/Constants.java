@@ -178,6 +178,7 @@ public class Constants {
     public static final String ONLY_USER = "only_user";
     public static final String LAT = "lat";
     public static final String LNG = "lng";
+    public static final String HISTORY_SEARCH = "history_search";
 
     //Home constant
     public static List<BaseModel> HomeItemList() {

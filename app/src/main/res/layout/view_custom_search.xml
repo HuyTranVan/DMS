@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     app:cardCornerRadius="@dimen/_4sdp"
     app:cardElevation="4dp"
-    app:cardMaxElevation="8dp"
+    app:cardMaxElevation="@dimen/_4sdp"
     app:cardUseCompatPadding="true">
 
     <LinearLayout
@@ -32,7 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@null"
-                android:hint="Tìm tên cửa hàng hoặc số điện thoại"
+                android:hint="Tìm thông tin cửa hàng"
                 android:imeOptions="actionSearch"
                 android:inputType="textNoSuggestions"
                 android:singleLine="true"

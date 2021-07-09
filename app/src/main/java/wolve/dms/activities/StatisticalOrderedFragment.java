@@ -113,8 +113,7 @@ public class StatisticalOrderedFragment extends Fragment implements View.OnClick
     }
 
     private void createRVCustomerOrdered(List<BaseModel> list) {
-        adapter = new Statistical_OrderedAdapter(mActivity.tvEmployeeName.getText().toString().trim(),
-                list, new CallbackString() {
+        adapter = new Statistical_OrderedAdapter(list, new CallbackString() {
             @Override
             public void Result(String s) {
                 openCustomerActivity(s);

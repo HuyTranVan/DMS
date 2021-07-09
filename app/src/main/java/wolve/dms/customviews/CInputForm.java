@@ -303,6 +303,15 @@ public class CInputForm extends FrameLayout {
     }
 
     public void textMoneyEvent(final CallbackDouble mlistener) {
+        tvMore.setText(Util.getIcon(R.string.icon_x));
+        tvMore.setVisibility(Util.isEmpty(edInput) ? GONE : VISIBLE);
+        tvMore.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                edInput.setText("");
+                Util.showKeyboard(edInput);
+            }
+        });
         edInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -316,21 +325,25 @@ public class CInputForm extends FrameLayout {
 
             @Override
             public void afterTextChanged(Editable s) {
+                tvMore.setVisibility(Util.isEmpty(edInput) ? GONE : VISIBLE);
+
                 edInput.removeTextChangedListener(this);
+                int currentSelection = edInput.getSelectionStart();
+                int prevStringLength = edInput.getText().length();
+
                 try {
                     edInput.setText(Util.FormatMoney(Util.valueMoney(edInput)));
-                    edInput.setSelection(edInput.getText().toString().length());
+                    edInput.setSelection(currentSelection + (edInput.getText().toString().length() - prevStringLength));
+
                     if (mlistener != null){
                         mlistener.Result(Util.valueMoney(edInput));
                     }
-
                     edInput.addTextChangedListener(this);
-
-
                 } catch (Exception ex) {
 //                    ex.printStackTrace();
                     edInput.addTextChangedListener(this);
                 }
+
 
             }
         });

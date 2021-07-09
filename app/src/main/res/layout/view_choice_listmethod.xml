@@ -23,7 +23,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/view_list_method_rv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_5sdp"/>
 
 </LinearLayout>
 

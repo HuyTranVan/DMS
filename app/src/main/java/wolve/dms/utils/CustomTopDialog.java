@@ -75,14 +75,14 @@ public class CustomTopDialog {
     }
 
     public static void choiceListObject(String title, final List<BaseModel> list, String key, final CallbackObject mListener, CallbackBoolean dismiss) {
-        int heigh = list.size() > 5 ? Util.convertSdpToInt(R.dimen._300sdp) :
-                (list.size() + 1) * Util.convertSdpToInt(R.dimen._35sdp) + Util.convertSdpToInt(R.dimen._5sdp); //+Util.convertSdpToInt(R.dimen._30sdp);
+        int heigh = list.size() > 6 ? Util.convertSdpToInt(R.dimen._350sdp) :
+                (list.size() + 1) * Util.convertSdpToInt(R.dimen._40sdp) + Util.convertSdpToInt(R.dimen._5sdp);  //+Util.convertSdpToInt(R.dimen._30sdp);
         final DialogPlus dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
                 .setContentHolder(new ViewHolder(R.layout.view_choice_listmethod))
                 .setGravity(Gravity.TOP)
                 .setBackgroundColorResId(R.drawable.bg_corner5_white)
                 .setMargin(20, 20, 20, 20)
-                //.setContentHeight(heigh)
+                .setContentHeight(heigh)
                 .setInAnimation(R.anim.slide_out_down)
                 .setOnDismissListener(new OnDismissListener() {
                     @Override

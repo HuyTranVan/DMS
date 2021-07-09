@@ -18,6 +18,7 @@ import androidx.appcompat.widget.ListPopupWindow;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackString;
 
 /**
@@ -71,7 +72,7 @@ public class CustomDropdow {
         popup.showAsDropDown(view, 20, 0);
     }
 
-    public static void createListDropdown(View view, List<String> list, final CallbackString mListener) {
+    public static void createListDropdown(View view, List<String> list,int high,  final CallbackClickAdapter mListener) {
         Context mContext = Util.getInstance().getCurrentActivity();
         ListPopupWindow listPopupWindow = new ListPopupWindow(mContext);
 
@@ -79,14 +80,15 @@ public class CustomDropdow {
         listPopupWindow.setAdapter(listAdapter);
         listPopupWindow.setAnchorView(view);
         listPopupWindow.setWidth(measureContentWidth(mContext, listAdapter));
-        listPopupWindow.setHeight(ListPopupWindow.WRAP_CONTENT);
+        listPopupWindow.setHeight(high == 0? ListPopupWindow.WRAP_CONTENT : high);
 
         listPopupWindow.setModal(true);
         listPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                mListener.Result(adapterView.getItemAtPosition(i).toString());
+                mListener.onRespone(adapterView.getItemAtPosition(i).toString(), i);
                 listPopupWindow.dismiss();
+
             }
         });
         listPopupWindow.show();

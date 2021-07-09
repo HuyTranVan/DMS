@@ -126,6 +126,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         adapterHome = new HomeAdapter(HomeActivity.this, new WarehouseAdapter.CallbackWarehouseOption() {
             @Override
             public void onInfo(BaseModel objInfo) {
+
             }
 
             @Override
@@ -133,14 +134,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 CustomSQL.setBaseModel(Constants.CURRENT_WAREHOUSE, User.getCurrentUser().getBaseModel("warehouse"));
                 changeFragment(new InventoryDetailFragment(), true);
 
-
             }
 
             @Override
             public void onReturn(BaseModel objReturn){
                 CustomSQL.setBaseModel(Constants.CURRENT_WAREHOUSE, User.getCurrentUser().getBaseModel("warehouse"));
                 changeFragment(new ImportReturnFragment(), true);
-
 
             }
         });
@@ -708,7 +707,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             tvWarehouseName.setText(String.format("%s (%s)",
                     warehouse.getString("name"),
                     warehouse.getInt("quantity")));
-            tvInventoryValue.setText(Util.FormatMoney(warehouse.getDouble("total")));
+            tvInventoryValue.setText(String.format("%s đ", Util.FormatMoney(warehouse.getDouble("total"))));
 
         }else {
             lnInventory.setVisibility(View.GONE);

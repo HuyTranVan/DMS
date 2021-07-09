@@ -34,7 +34,7 @@ public class Statistical_OrderedAdapter extends RecyclerView.Adapter<RecyclerVie
     private final int VIEW_TYPE_ITEM = 0;
     private final int VIEW_TYPE_LOADING = 1;
 
-    public Statistical_OrderedAdapter(String user, List<BaseModel> data, CallbackString listener) {
+    public Statistical_OrderedAdapter(List<BaseModel> data, CallbackString listener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mListener = listener;

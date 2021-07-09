@@ -208,6 +208,19 @@ public class CustomFixSQL {
 
     }
 
+    public static List<String> getListString(String title) {
+        prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
+
+        String json = prefs.getString(title, null);
+        Type type = new TypeToken<ArrayList<String>>() {}.getType();
+        List<String> currentList = new ArrayList<>();
+        if (json != null){
+            currentList =  new Gson().fromJson(json, type);
+        }
+
+        return currentList;
+    }
+
 //    public static boolean hasKey(String key){
 //        prefs = Util.getInstance().getCurrentActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
 //        String value = prefs.getString(key,null);

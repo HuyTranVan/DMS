@@ -182,8 +182,9 @@ public class ApiUtil {
         return BASE_URL + "dms/token/bill/DebitNoteNew";
     }
     
-    public final static String CUSTOMERS(int page, int size){
-        return BASE_URL + "dms/token/customer/CustomerList" + String.format(ApiUtil.DEFAULT_RANGE, page, size);
+    public final static String CUSTOMERS(){
+//        return BASE_URL + "dms/token/customer/CustomerList" + String.format(ApiUtil.DEFAULT_RANGE, page, size);
+        return BASE_URL + "dms/token/customer/CustomerList";
     }
 
     public final static String CUSTOMERS_NEAREST(String lat, String lng, int page, int size){

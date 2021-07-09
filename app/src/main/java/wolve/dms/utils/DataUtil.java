@@ -1,5 +1,10 @@
 package wolve.dms.utils;
 
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.BackgroundColorSpan;
+import android.widget.TextView;
+
 import com.google.android.gms.maps.model.Marker;
 
 import org.json.JSONArray;
@@ -825,6 +830,18 @@ public class DataUtil {
         return check;
     }
 
+    public static boolean checkDuplicate(List<String> list, String value) {
+        boolean check = false;
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).equals(value)) {
+                check = true;
+                break;
+            }
+        }
+
+        return check;
+    }
+
     public static BaseModel reuturnDuplicate(List<BaseModel> list, String key1, BaseModel object, String key2) {
         BaseModel result = null;
         //boolean check = false;
@@ -949,6 +966,30 @@ public class DataUtil {
             }
         }, 1).execute();
 
+    }
+
+    public static List<String> listObject2ListString(List<BaseModel> list, String key){
+        List<String> results = new ArrayList<>();
+        for (int i=0; i<list.size(); i++){
+            results.add(list.get(i).getString(key));
+        }
+        return results;
+    }
+
+    public static void setHighLightedText(TextView tv, String textToHighlight) {
+        String tvt = tv.getText().toString();
+        int ofe = tvt.indexOf(textToHighlight, 0);
+        Spannable wordToSpan = new SpannableString(tv.getText());
+        for (int ofs = 0; ofs < tvt.length() && ofe != -1; ofs = ofe + 1) {
+            ofe = tvt.indexOf(textToHighlight, ofs);
+            if (ofe == -1)
+                break;
+            else {
+                // set color here
+                wordToSpan.setSpan(new BackgroundColorSpan(0xFFFFFF00), ofe, ofe + textToHighlight.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                tv.setText(wordToSpan, TextView.BufferType.SPANNABLE);
+            }
+        }
     }
 
 }

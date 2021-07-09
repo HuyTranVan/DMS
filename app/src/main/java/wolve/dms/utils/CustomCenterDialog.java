@@ -824,6 +824,14 @@ public class CustomCenterDialog {
             }
         });
 
+        tvRemain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                edPaid.setText(Util.FormatMoney(totalDebt));
+                edPaid.setSelection(edPaid.getText().toString().length());
+            }
+        });
+
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

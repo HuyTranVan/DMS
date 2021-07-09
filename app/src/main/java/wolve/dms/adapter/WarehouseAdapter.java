@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.models.BaseModel;
@@ -66,12 +67,12 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
         return new WarehouseAdapterViewHolder(itemView);
     }
 
-    public void addItems(ArrayList<ProductGroup> list) {
-        mData = new ArrayList<>();
-        mData.addAll(list);
-        notifyDataSetChanged();
-
-    }
+//    public void addItems(ArrayList<ProductGroup> list) {
+//        mData = new ArrayList<>();
+//        mData.addAll(list);
+//        notifyDataSetChanged();
+//
+//    }
 
     @Override
     public void onBindViewHolder(final WarehouseAdapterViewHolder holder, final int position) {
@@ -169,20 +170,21 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
                 CustomDropdow.createListDropdown(holder.tvMenu, listMenu(true,
                         mData.get(position),
                         mData.get(position).getInt("quantity")),
-                        new CallbackString() {
-                    @Override
-                    public void Result(String s) {
-                        if (s.equals(warehouseOptions[0])){
-                            mListenerInfo.onInfo(mData.get(position));
+                        0,
+                        new CallbackClickAdapter() {
+                            @Override
+                            public void onRespone(String data, int pos) {
+                                if (data.equals(warehouseOptions[0])){
+                                    mListenerInfo.onInfo(mData.get(position));
 
-                        }else if (s.equals(warehouseOptions[1])){
-                            mListenerInfo.onInventory(mData.get(position));
+                                }else if (data.equals(warehouseOptions[1])){
+                                    mListenerInfo.onInventory(mData.get(position));
 
-                        }else if (s.equals(warehouseOptions[2])){
-                            mListenerInfo.onReturn(mData.get(position));
-                        }
+                                }else if (data.equals(warehouseOptions[2])){
+                                    mListenerInfo.onReturn(mData.get(position));
+                                }
+                            }
 
-                    }
                 });
 
             }

@@ -50,7 +50,6 @@ public class MapWaitingListFragment extends DialogFragment implements View.OnCli
     private CheckBox cbCheckAll;
     private RelativeLayout mCheckGroup, mParent;
 
-
     private List<BaseModel> listCustomerWaiting = new ArrayList<>();
     private WaitingListAdapter adapter;
     private CallbackObject mListener;

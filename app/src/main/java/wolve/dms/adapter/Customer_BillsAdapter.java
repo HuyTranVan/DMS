@@ -23,6 +23,7 @@ import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.apiconnect.apiserver.CustomGetPostListMethod;
 import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackListCustom;
@@ -217,16 +218,16 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
                     list.add(Util.getIconString(R.string.icon_delete, "   ", "Xóa hóa đơn"));
                 }
 
-                CustomDropdow.createListDropdown(holder.btnMenu, list, new CallbackString() {
+                CustomDropdow.createListDropdown(holder.btnMenu, list,0,  new CallbackClickAdapter() {
                     @Override
-                    public void Result(String s) {
-                        if (s.equals(list.get(0))) {
+                    public void onRespone(String data, int position) {
+                        if (data.equals(list.get(0))) {
                             BaseModel respone = new BaseModel();
                             respone.put(Constants.TYPE, Constants.BILL_RETURN);
                             respone.putBaseModel(Constants.RESULT, mData.get(position));
                             mListener.onResponse(respone);
 
-                        } else if (s.equals(list.get(1))) {
+                        } else if (data.equals(list.get(1))) {
                             if (listPayment.size() > 0) {
                                 Util.showToast("Không thể xóa hóa đơn có phát sinh thanh toán ");
                             } else if (listReturn.size() > 0) {
@@ -238,6 +239,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
 
                         }
                     }
+
                 });
 
             }

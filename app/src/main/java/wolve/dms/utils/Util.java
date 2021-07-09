@@ -105,6 +105,7 @@ import wolve.dms.models.Product;
 import wolve.dms.models.Province;
 import wolve.dms.models.User;
 
+import static wolve.dms.utils.Constants.IMAGES;
 import static wolve.dms.utils.Constants.REQUEST_GOOGLE_PLAY_SERVICES;
 
 public class Util {
@@ -613,7 +614,9 @@ public class Util {
                     stream.flush();
                     stream.close();
 
-                    CustomSQL.setStringToList(Constants.IMAGES, uri.toString());
+                    //todo save path of image to local
+                    CustomFixSQL.setStringToList(Constants.IMAGES, uri.toString());
+
                     return uri;
 
                 }else {
@@ -713,12 +716,20 @@ public class Util {
 
     public static void deleteAllImageExternalStorage(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
-            List<String> imageStored = CustomSQL.getListString(Constants.IMAGES);
+            List<String> imageStored = CustomFixSQL.getListString(Constants.IMAGES);
             ContentResolver resolver = Util.getInstance().getCurrentActivity().getContentResolver();
-            for (String item: imageStored){
-                Uri uri = Uri.parse(item);
-                resolver.delete(uri, null, null);
+            try{
+                for (String item: imageStored){
+                    Uri uri = Uri.parse(item);
+                    resolver.delete(uri, null, null);
+
+                }
+            } catch (Exception e) {
+                //e.printStackTrace();
+                CustomFixSQL.removeKey(IMAGES);
             }
+
+            CustomFixSQL.removeKey(IMAGES);
 
         }else {
             String relativeLocation = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES )
@@ -1177,10 +1188,11 @@ public class Util {
         Double paid = 0.0;
         Double debt = 0.0;
         for (int i = 0; i < list.size(); i++) {
-            if (!Util.isBillReturn(list.get(i))) {
+            if (!Util.isBillReturn(list.get(i)) && !list.get(i).isNull("deliverBy")) {
                 total += list.get(i).getDouble("total");
                 paid += list.get(i).getDouble("paid");
                 debt += list.get(i).getDouble("debt");
+
             }
         }
 

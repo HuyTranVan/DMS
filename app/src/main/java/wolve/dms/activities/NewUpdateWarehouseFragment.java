@@ -67,11 +67,14 @@ public class NewUpdateWarehouseFragment extends Fragment implements View.OnClick
         return view;
     }
 
-    private void intitialData() {
+    private void intitialData(){
         String bundle = getArguments().getString(Constants.DEPOT);
         if (bundle != null) {
             currentDepot = new BaseModel(bundle);
             edInput.setText(currentDepot.getString("name"));
+//            edUser.setFocusable(false);
+//            edUser.setText(currentDepot.getBaseModel("user").getString("displayName"));
+
             if (currentDepot.getInt("isMaster") == 2){
                 edUser.setVisibility(View.GONE);
             }else {
