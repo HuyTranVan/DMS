@@ -127,6 +127,10 @@ public class CInputForm extends FrameLayout {
         return edInput;
     }
 
+    public TextView getMoreButton() {
+        return tvMore;
+    }
+
     public void setIconMoreText(String text) {
         if (text == null){
             tvMore.setVisibility(INVISIBLE);
@@ -151,7 +155,8 @@ public class CInputForm extends FrameLayout {
                 @Override
                 public void onClick(View v) {
                     Util.hideKeyboard(v);
-                    mListener.onClick(v);
+                    if (mListener != null)
+                       mListener.onClick(v);
                 }
             });
 
@@ -160,7 +165,8 @@ public class CInputForm extends FrameLayout {
                 @Override
                 public void onClick(View v) {
                     Util.hideKeyboard(v);
-                    mListener.onClick(v);
+                    if (mListener != null)
+                        mListener.onClick(v);
                 }
             });
         }
@@ -173,6 +179,28 @@ public class CInputForm extends FrameLayout {
     public void setInputType(int type) {
         edInput.setInputType(type);
 
+    }
+
+    public void setOnClick(ClickListener mListener){
+        tvMore.setVisibility(VISIBLE);
+        tvMore.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.hideKeyboard(v);
+                if (mListener != null)
+                    mListener.onClick(v);
+            }
+        });
+
+        edInput.setFocusable(false);
+        edInput.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.hideKeyboard(v);
+                if (mListener != null)
+                    mListener.onClick(v);
+            }
+        });
     }
 
     public void setBoldStyle(){
@@ -302,6 +330,37 @@ public class CInputForm extends FrameLayout {
         });
     }
 
+    public void textEvent() {
+        tvMore.setText(Util.getIcon(R.string.icon_x));
+        tvMore.setVisibility(Util.isEmpty(edInput) ? GONE : VISIBLE);
+        tvMore.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                edInput.setText("");
+                Util.showKeyboard(edInput);
+            }
+        });
+        edInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                tvMore.setVisibility(Util.isEmpty(edInput) ? GONE : VISIBLE);
+
+            }
+        });
+
+
+    }
+
     public void textMoneyEvent(final CallbackDouble mlistener) {
         tvMore.setText(Util.getIcon(R.string.icon_x));
         tvMore.setVisibility(Util.isEmpty(edInput) ? GONE : VISIBLE);
@@ -373,7 +432,6 @@ public class CInputForm extends FrameLayout {
         mLayout.setBackgroundColor(color);
 
     }
-
 
     public void setIconText(String string) {
         tvIcon.setText(string);

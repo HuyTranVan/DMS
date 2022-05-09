@@ -21,14 +21,14 @@
 
         <TextView
             android:id="@+id/statistical_bills_item_number"
-            android:layout_width="@dimen/_16sdp"
-            android:layout_height="@dimen/_16sdp"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_centerVertical="true"
             android:background="@drawable/btn_oval_denim"
-            android:textColor="@color/colorWhite"
-            android:text="0"
-            android:textSize="@dimen/_8sdp"
             android:gravity="center"
-            android:layout_centerVertical="true" />
+            android:text="0"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/_8sdp" />
 
         <View
             android:id="@+id/statistical_bills_item_under"

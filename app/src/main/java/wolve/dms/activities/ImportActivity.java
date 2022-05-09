@@ -3,10 +3,8 @@ package wolve.dms.activities;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -15,27 +13,28 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
-import com.suke.widget.SwitchButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.adapter.Export_ProductAdapter;
 import wolve.dms.adapter.Import_ProductAdapter;
 import wolve.dms.adapter.ProductImportAdapter;
 import wolve.dms.adapter.ProductImportChoosenAdapter;
 import wolve.dms.adapter.ProductInventoryAdapter;
 import wolve.dms.adapter.ViewpagerMultiListAdapter;
 import wolve.dms.apiconnect.ApiUtil;
+import wolve.dms.apiconnect.apiserver.GetPostListMethod;
 import wolve.dms.apiconnect.apiserver.UtilLoading;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickAdapter;
+import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackListObject;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
-import wolve.dms.libraries.CustomSwitchButton;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.models.User;
@@ -66,9 +65,14 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
     private ProductImportChoosenAdapter adapterChoosen;
     private ProductInventoryAdapter adapterInventory;
     private Import_ProductAdapter adapterImport;
+    private Export_ProductAdapter adapterExport;
     private int currentPosition = 0;
     private List<String> mTitle = new ArrayList<>();
-    private boolean[] searches = new boolean[]{false, false, false, false};
+    private boolean[] searches = new boolean[]{false, false, false, false, false};
+
+    public interface Callback2ListObject {
+        void onResponse(List<BaseModel> list1, List<BaseModel> list2);
+    }
 
     @Override
     public int getResourceLayout() {
@@ -105,10 +109,12 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         getListWarehouse(new CallbackListObject() {
             @Override
             public void onResponse(List<BaseModel> list) {
-                getListImport(0, new CallbackListObject(){
+                getListImport(0, new Callback2ListObject() {
                     @Override
-                    public void onResponse(List<BaseModel> list) {
-                        setupViewPager(new ArrayList<>(), list);
+                    public void onResponse(List<BaseModel> list1, List<BaseModel> list2) {
+                        setupViewPager(new ArrayList<>(),
+                                        list1,
+                                        list2);
                         getInventory(toWarehouse.getInt("id"), new CallbackListObject() {
                             @Override
                             public void onResponse(List<BaseModel> list) {
@@ -121,7 +127,26 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
                             }
                         });
                     }
-                }, 0);
+                },0);
+
+//                getListImport(0, new CallbackListObject(){
+//                    @Override
+//                    public void onResponse(List<BaseModel> list) {
+//                        setupViewPager(new ArrayList<>(),
+//                                list);
+//                        getInventory(toWarehouse.getInt("id"), new CallbackListObject() {
+//                            @Override
+//                            public void onResponse(List<BaseModel> list) {
+//                                updateInventoryTitle(list);
+//                                if (list.size() > 0) {
+//                                    viewPager.setCurrentItem(2, true);
+//                                }
+//
+//                                selectFromWarehouse(0);
+//                            }
+//                        });
+//                    }
+//                }, 0);
             }
         }, 4);
 
@@ -164,21 +189,43 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         titles.add(0, "DANH SÁCH");
         titles.add(1, "ĐÃ CHỌN");
         titles.add(2, "TỒN " + warehouse.getString("name"));
-        titles.add(3, "LỊCH SỬ");
+        titles.add(3, "NHẬP KHO");
+        titles.add(4, "XUẤT KHO");
         return titles;
     }
 
-    private void getListImport(int offset, CallbackListObject listener, int loadingtimes) {
-        BaseModel param = createGetParam(String.format(ApiUtil.IMPORTS(), offset, 20, toWarehouse.getInt("id")), true);
-        new GetPostMethod(param, new NewCallbackCustom() {
+    private void getListImport(int offset, Callback2ListObject listener, int loadingtimes) {
+        BaseModel param0 = createGetParam(String.format(ApiUtil.IMPORTS(), offset, 20, toWarehouse.getInt("id")), true);
+        BaseModel param1 = createGetParam(String.format(ApiUtil.EXPORTS(), offset, 20, toWarehouse.getInt("id")), true);
+
+
+
+        new GetPostMethod(param0, new NewCallbackCustom() {
             @Override
-            public void onResponse(BaseModel result, List<BaseModel> list) {
+            public void onResponse(BaseModel result, List<BaseModel> list0) {
+                new GetPostMethod(param1, new NewCallbackCustom() {
+                    @Override
+                    public void onResponse(BaseModel result, List<BaseModel> list1) {
+                        listener.onResponse(
+                                list0,
+                                //DataUtil.filterListImport(list0, toWarehouse.getInt("id")),
+                                list1);
+                                //DataUtil.filterListImport(list1, toWarehouse.getInt("id")));
+                    }
+
+                    @Override
+                    public void onError(String error) {
+
+                    }
+                },0).execute();
+
+
                 //listener.onResponse(list);
-                listener.onResponse(DataUtil.filterListImport(list, toWarehouse.getInt("id")));
+
             }
 
             @Override
-            public void onError(String error) {
+            public void onError(String error){
 
             }
         }, loadingtimes).execute();
@@ -197,7 +244,9 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         }
     }
 
-    private void setupViewPager(List<BaseModel> listProduct, List<BaseModel> listImport) {
+    private void setupViewPager(List<BaseModel> listProduct,
+                                List<BaseModel> listImport,
+                                List<BaseModel> listExport) {
         listadapter = new ArrayList<>();
         adapterProduct = new ProductImportAdapter(listProduct, new CallbackObject() {
             @Override
@@ -230,11 +279,19 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
             }
         });
 
+        adapterExport = new Export_ProductAdapter(toWarehouse.getInt("id"), listExport, new CallbackBoolean() {
+            @Override
+            public void onRespone(Boolean result) {
+
+            }
+        });
+
 
         listadapter.add(0, adapterProduct);
         listadapter.add(1, adapterChoosen);
         listadapter.add(2, adapterInventory);
         listadapter.add(3, adapterImport);
+        listadapter.add(4, adapterExport);
 
         viewpagerAdapter = new ViewpagerMultiListAdapter(listadapter, mTitle, searches, new CallbackClickAdapter() {
             @Override
@@ -246,9 +303,10 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         });
         viewPager.setAdapter(viewpagerAdapter);
         viewPager.setCurrentItem(currentPosition);
-        viewPager.setOffscreenPageLimit(4);
+        viewPager.setOffscreenPageLimit(5);
 
         adapterImport.initScrollListener();
+        adapterExport.initScrollListener();
 
         for (int i = 0; i < mTitle.size(); i++) {
             updateTabNotify(i, mTitle.get(i), 0);
@@ -405,23 +463,40 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
     }
 
     public void reloadListImport(boolean setActive, boolean reloadToWarehouse) {
-        getListImport(0, new CallbackListObject(){
+        getListImport(0, new Callback2ListObject(){
             @Override
-            public void onResponse(List<BaseModel> list) {
-                adapterImport.reloadData(list);
-                if (setActive) {
-                    viewPager.setCurrentItem(3, true);
-                }
-                if (reloadToWarehouse) {
-                    getInventory(toWarehouse.getInt("id"), new CallbackListObject() {
-                        @Override
-                        public void onResponse(List<BaseModel> list2) {
-                            updateInventoryTitle(list2);
-
-                        }
-                    });
-                }
+            public void onResponse(List<BaseModel> list1, List<BaseModel> list2) {
+//                adapterImport.reloadData(list);
+//                if (setActive) {
+//                    viewPager.setCurrentItem(3, true);
+//                }
+//                if (reloadToWarehouse) {
+//                    getInventory(toWarehouse.getInt("id"), new CallbackListObject() {
+//                        @Override
+//                        public void onResponse(List<BaseModel> list2) {
+//                            updateInventoryTitle(list2);
+//
+//                        }
+//                    });
+//                }
             }
+
+//            @Override
+//            public void onResponse(List<BaseModel> list) {
+//                adapterImport.reloadData(list);
+//                if (setActive) {
+//                    viewPager.setCurrentItem(3, true);
+//                }
+//                if (reloadToWarehouse) {
+//                    getInventory(toWarehouse.getInt("id"), new CallbackListObject() {
+//                        @Override
+//                        public void onResponse(List<BaseModel> list2) {
+//                            updateInventoryTitle(list2);
+//
+//                        }
+//                    });
+//                }
+//            }
         }, 0);
 
     }

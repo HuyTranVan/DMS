@@ -39,10 +39,10 @@ public class ApiUtil {
 
     public final static String GOOGLESHEET_CREDENTIALS_FILE_PATH = "/credentials.json";
     public final static String GOOGLESHEET_TOKENS_PATH = "tokens";
-    public final static String STATISTICAL_SHEET_KEY = Util.getInstance().getCurrentActivity().getResources().getString(R.string.sheet_key1);
-    public final static String STATISTICAL_SHEET_TAB = "%s!A%d:z";
-    public final static String STATISTICAL_SHEET_TAB1 = "Sheet1!A%d:z";
-    public final static String STATISTICAL_SHEET_TAB2 = "Sheet2!A%d:z";
+//    public final static String STATISTICAL_SHEET_KEY = Util.getInstance().getCurrentActivity().getResources().getString(R.string.sheet_key1);
+//    public final static String STATISTICAL_SHEET_TAB = "%s!A%d:z";
+//    public final static String STATISTICAL_SHEET_TAB1 = "Sheet1!A%d:z";
+//    public final static String STATISTICAL_SHEET_TAB2 = "Sheet2!A%d:z";
     public final static String SCANNER_SHEET_KEY = Util.getInstance().getCurrentActivity().getResources().getString(R.string.sheet_key2);
     public final static String SCANNER_DISTRIBUTOR_TAB = "DISTRIBUTOR!A1:z";
     public final static String SCANNER_CODE_TAB = "CODE!A%d:z";
@@ -72,7 +72,7 @@ public class ApiUtil {
         return BASE_URL + "dms/token/productgroup/ProductgroupList";
     }
 
-    public final static String PRODUCTGROUP_CREATE_PARAM = "%sname=%s";
+    public final static String PRODUCTGROUP_CREATE_PARAM = "%sname=%s&isSales=%d";
     public final static String PRODUCT_GROUP_NEW(){
         return BASE_URL + "dms/token/productgroup/ProductgroupNew";
     }
@@ -85,7 +85,7 @@ public class ApiUtil {
         return BASE_URL + "dms/token/product/ProductList";
     }
 
-    public final static String PRODUCT_CREATE_PARAM = "%sname=%s&promotion=%s&unitPrice=%s&purchasePrice=%s&volume=%s&productGroup.id=%d&image=%s&basePrice=%s&unitInCarton=%s";
+    public final static String PRODUCT_CREATE_PARAM = "%sname=%s&promotion=%s&unitPrice=%s&purchasePrice=%s&volume=%s&productGroup_id=%d&image=%s&basePrice=%s&unitInCarton=%s&note=%s";
     public final static String PRODUCT_NEW(){
         return BASE_URL + "dms/token/product/ProductNew";
     }
@@ -119,6 +119,9 @@ public class ApiUtil {
     public final static String INVENTORIES(){
         return BASE_URL + "dms/token/warehouse/InventoryList?id=%d&isGroup=%d";
     }
+    public final static String INVENTORIES_BY_WAREHOUSE(){
+        return BASE_URL + "dms/token/warehouse/InventoryByWarehouseId?warehouse_id=%d";
+    }
     public final static String INVENTORY_EDIT_QUANTITY(){
         return BASE_URL + "dms/token/warehouse/InventoryEditQuantity";
     }
@@ -130,6 +133,9 @@ public class ApiUtil {
     public final static String IMPORTS(){
         return BASE_URL + "dms/token/warehouse/ImportList?page=%d&size=%d&warehouse_id=%d";
     }
+    public final static String EXPORTS(){
+        return BASE_URL + "dms/token/warehouse/ExportList?page=%d&size=%d&warehouse_id=%d";
+    }
     public final static String IMPORT_DELETE(){
         return BASE_URL + "dms/token/warehouse/ImportDelete?id=";
     }
@@ -138,7 +144,7 @@ public class ApiUtil {
         return BASE_URL + "dms/token/user/UserList";
     }
 
-    public final static String USER_CREATE_PARAM = "%sdisplayName=%s&gender=%d&email=%s&phone=%s&contact=%s&role=%d&image=%s&warehouse_id=%d&warehouse_name=%s";
+    public final static String USER_CREATE_PARAM = "%sdisplayName=%s&gender=%d&email=%s&phone=%s&contact=%s&role=%d&image=%s&warehouse_id=%d&warehouse_name=%s&expire_debt=%s";
     public final static String USER_NEW(){
         return BASE_URL + "dms/token/user/UserNew";
     }

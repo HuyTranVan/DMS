@@ -20,21 +20,22 @@
         app:civ_border_color="@color/colorLightGrey"
         android:layout_centerVertical="true" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:layout_marginLeft="@dimen/_10sdp"
-        android:layout_marginRight="@dimen/_10sdp"
+        android:layout_marginLeft="@dimen/_5sdp"
         android:layout_toRightOf="@+id/product_item_image"
         android:layout_centerVertical="true"
         android:gravity="center_vertical">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:id="@+id/product_item_name_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_weight="0.7">
+            android:layout_toLeftOf="@+id/product_item_price_group"
+            android:layout_centerVertical="true">
 
             <TextView
                 android:id="@+id/product_item_name"
@@ -45,40 +46,77 @@
                 android:textSize="@dimen/_12sdp" />
 
             <TextView
-                android:id="@+id/product_item_base_price"
+                android:id="@+id/product_item_note"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Default"
                 android:textColor="@color/black_text_color_hint"
+                android:textSize="@dimen/_7sdp"
+                android:layout_marginTop="-4dp"/>
+
+            <TextView
+                android:id="@+id/product_item_base_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Default"
+                android:textColor="@color/black_text_color"
                 android:textSize="@dimen/_8sdp"
                 android:layout_marginTop="@dimen/_2sdp" />
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/product_item_unitprice"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.3"
-            android:text="Default"
-            android:textColor="@color/colorRed"
-            android:layout_gravity="center_vertical"
-            android:textSize="@dimen/_14sdp"
-            android:gravity="right"
-            android:visibility="gone"/>
+        <LinearLayout
+            android:id="@+id/product_item_price_group"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_alignParentEnd="true"
+            android:gravity="center">
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/product_item_unitprice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/product_item_menu"
+
+                android:text="Default"
+                android:textColor="@color/colorRed"
+                android:textSize="@dimen/_14sdp" />
+
+            <TextView
+                android:id="@+id/product_item_menu"
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="?selectableItemBackgroundBorderless"
+                android:fontFamily="@font/font_awesome"
+                android:gravity="center"
+                android:text="@string/icon_menu"
+                android:textColor="@color/black_text_color_hint"
+                android:textSize="@dimen/_14sdp"/>
+
+        </LinearLayout>
+
+
+
+    </RelativeLayout>
 
     <TextView
-        android:fontFamily="@font/font_awesome"
         android:id="@+id/product_item_gift"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/icon_gift"
-        android:layout_alignParentRight="true"
-        android:textSize="@dimen/_10sdp"
-        android:layout_margin="@dimen/_2sdp"
-        android:textColor="@color/yellow" />
+        android:layout_marginStart="@dimen/_2sdp"
+        android:layout_marginTop="@dimen/_1sdp"
+        android:layout_marginEnd="@dimen/_2sdp"
+        android:layout_marginBottom="@dimen/_2sdp"
+        android:fontFamily="@font/font_awesome"
+        android:text="@string/icon_bookmark"
+        android:textColor="@color/yellow"
+        android:textSize="@dimen/_10sdp" />
+
+
 
     <View
         android:id="@+id/product_item_seperateline"
@@ -91,12 +129,14 @@
         android:id="@+id/product_item_hide"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fontFamily="@font/font_awesome"
         android:background="@color/black_text_color_hint"
+        android:fontFamily="@font/font_awesome"
+        android:focusable="true"
+        android:gravity="center|right"
+        android:paddingRight="@dimen/_10sdp"
         android:text="&#xf070; Đang ẩn"
         android:textColor="@color/white_text_color"
-        android:gravity="center|right"
         android:textSize="@dimen/_14sdp"
-        android:paddingRight="@dimen/_10sdp"/>
+        android:visibility="gone"/>
 
 </RelativeLayout>

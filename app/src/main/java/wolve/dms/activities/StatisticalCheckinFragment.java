@@ -26,7 +26,6 @@ public class StatisticalCheckinFragment extends Fragment implements View.OnClick
     private RecyclerView rvCheckins;
     private TextView tvCount;
 
-
     private Statistical_CheckinsAdapter adapter;
 
 

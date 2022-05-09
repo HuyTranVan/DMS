@@ -73,6 +73,15 @@ public class PrintBillAdapter extends RecyclerView.Adapter<PrintBillAdapter.Prin
         return total;
     }
 
+    public Double getNetTotalMoney() {
+        Double total = 0.0;
+        for (int i = 0; i < mData.size(); i++) {
+            total += mData.get(i).getDouble("purchasePrice") * mData.get(i).getDouble("quantity");
+
+        }
+        return total;
+    }
+
     public Double getTotalMoney(List<BaseModel> list) {
         Double total = 0.0;
         for (int i = 0; i < list.size(); i++) {

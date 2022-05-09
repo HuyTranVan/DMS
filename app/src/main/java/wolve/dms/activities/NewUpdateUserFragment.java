@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -24,6 +25,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.R;
 import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackClickAdapter;
+import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.CallbackUri;
@@ -31,13 +34,16 @@ import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.customviews.CInputForm;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.apiconnect.apiserver.UploadCloudaryMethod;
+import wolve.dms.libraries.FitScrollWithFullscreen;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
+import wolve.dms.utils.CustomDropdow;
 import wolve.dms.utils.CustomInputDialog;
 import wolve.dms.utils.CustomSQL;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -57,21 +63,23 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
     private View view;
     private ImageView btnBack;
     private CInputForm edName, edPhone, edGender, edRole, edEmail, edWarehouse, edContact;
-    private TextView tvTitle, tvPasswordDefault;
+    private TextView tvTitle, tvPasswordDefault, tvDebt;
     private Button btnSubmit;
     private CircleImageView imgUser;
+    private RelativeLayout edExpireDebt;
 
     private Uri imageChangeUri = null;
     private BaseModel currentUser;
     private BaseModel currentWarehouse;
     //private List<BaseModel> listWarehouse;
-    private String displayWarehouseFormat = "Kho: %s";
+    private String displayWarehouseFormat = "%s";
     private CallbackObject onDataPass;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_add_user, container, false);
+        FitScrollWithFullscreen.assistActivity(getActivity(), 1);
         initializeView();
 
         intitialData();
@@ -97,18 +105,11 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
             edGender.setText(currentUser.getInt("gender") == 0 ? "NAM" : "NỮ");
             edEmail.setText(currentUser.getString("email"));
             edWarehouse.setText(currentUser.hasKey("warehouse") ? String.format(displayWarehouseFormat, currentUser.getBaseModel("warehouse").getString("name")) : "");
-
+            tvDebt.setText(currentUser.getString("expire_debt"));
             if (!Util.checkImageNull(currentUser.getString("image"))) {
                 String url = Util.remakeURL(currentUser.getString("image"));
                 Glide.with(this).load(url).dontAnimate().centerCrop().into(imgUser);
             }
-
-        } else {
-//            currentUser = new BaseModel();
-//            currentWarehouse = new BaseModel();
-//            edRole.setText(User.getRoleString(4));
-//            edGender.setText("NAM");
-//            edContact.setVisibility(View.GONE);
 
         }
 
@@ -133,6 +134,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
         btnSubmit.setOnClickListener(this);
         imgUser.setOnClickListener(this);
         tvPasswordDefault.setOnClickListener(this);
+        edExpireDebt.setOnClickListener(this);
         genderEvent();
 
 
@@ -150,8 +152,9 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
         tvTitle = view.findViewById(R.id.add_user_title);
         edEmail = view.findViewById(R.id.add_user_email);
         edWarehouse = view.findViewById(R.id.add_user_warehouse);
+        edExpireDebt = view.findViewById(R.id.add_user_debt_expire_parent);
         tvPasswordDefault = view.findViewById(R.id.add_user_password_default);
-
+        tvDebt = view.findViewById(R.id.add_user_debt_expire_detail);
     }
 
     @Override
@@ -225,6 +228,16 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
 
                 break;
 
+            case R.id.add_user_debt_expire_parent:
+                CustomInputDialog.dialogDebtRange(currentUser.getInt("expire_debt"), new CallbackInt() {
+                    @Override
+                    public void onResponse(int value) {
+                        tvDebt.setText(String.valueOf(value));
+                    }
+                });
+
+                break;
+
         }
     }
 
@@ -286,23 +299,29 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
     }
 
     private void genderEvent() {
-        edGender.setDropdown(true, new CInputForm.ClickListener() {
+        edGender.setOnClick(new CInputForm.ClickListener() {
             @Override
             public void onClick(View view) {
-                List<BaseModel> listGender = new ArrayList<>();
-                listGender.add(BaseModel.putValueToNewObject("text", "NAM"));
-                listGender.add(BaseModel.putValueToNewObject("text", "NỮ"));
+                CustomDropdow.createListDropdown(
+                        edGender.getMoreButton(),
+                        DataUtil.createList2String(Util.getIconString(R.string.icon_man, "  ", "NAM"),
+                                Util.getIconString(R.string.icon_woman, "   ", "NỮ")),
+                        0,
+                        false,
+                        new CallbackClickAdapter() {
+                            @Override
+                            public void onRespone(String data, int pos) {
+                                if (pos ==0){
+                                    edGender.setText("NAM");
+                                }else {
+                                    edGender.setText("NỮ");
+                                }
+                            }
 
-                CustomBottomDialog.choiceListObject("CHỌN GIỚI TÍNH", listGender, "text", new CallbackObject() {
-                    @Override
-                    public void onResponse(BaseModel object) {
-                        edGender.setText(object.getString("text"));
-
-                    }
-                }, null);
-
+                        });
             }
         });
+
     }
 
     private void roleEvent() {
@@ -425,6 +444,7 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
         if (currentWarehouse.hasKey("id")) {
             currentUser.put("warehouse_id", currentWarehouse.getInt("id"));
             currentUser.put("warehouse_name", currentWarehouse.getString("name"));
+
         } else {
 //            currentUser.put("warehouse_id", 0);
 //            currentUser.put("warehouse_name", currentWarehouse.getString("name"));
@@ -441,7 +461,8 @@ public class NewUpdateUserFragment extends Fragment implements View.OnClickListe
                 User.getIndex(edRole.getText().toString()),
                 url,
                 currentUser.getInt("warehouse_id"),
-                Util.encodeString(currentUser.getString("warehouse_name"))),
+                Util.encodeString(currentUser.getString("warehouse_name")),
+                Integer.parseInt(tvDebt.getText().toString())),
                 false,
                 false);
         new GetPostMethod(param, new NewCallbackCustom() {

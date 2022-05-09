@@ -18,6 +18,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import wolve.dms.R;
 import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackListObject;
 import wolve.dms.callback.NewCallbackCustom;
@@ -32,6 +33,7 @@ public class DataUtil {
     public static String newBillJsonParam(int customerId,
                                           int userId,
                                           final Double total,
+                                          double netTotal,
                                           final Double paid,
                                           List<BaseModel> listProduct,
                                           String note,
@@ -41,6 +43,7 @@ public class DataUtil {
         try {
             params.put("debt", total - paid);
             params.put("total", total);
+            params.put("total_net", netTotal);
             params.put("paid", paid);
             params.put("customerId", customerId);
             params.put("distributorId", Distributor.getDistributorId());
@@ -990,6 +993,25 @@ public class DataUtil {
                 tv.setText(wordToSpan, TextView.BufferType.SPANNABLE);
             }
         }
+    }
+
+    public static List<String> createList2String(String one, String two){
+        List<String> list = new ArrayList<>();
+        list.add(one);
+        list.add(two);
+
+        return list;
+
+    }
+
+    public static List<String> createList3String(String one, String two, String three){
+        List<String> list = new ArrayList<>();
+        list.add(one);
+        list.add(two);
+        list.add(three);
+
+        return list;
+
     }
 
 }

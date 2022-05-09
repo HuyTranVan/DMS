@@ -1,5 +1,6 @@
 package wolve.dms.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,7 +54,7 @@ public class ProductImportChoosenAdapter extends RecyclerView.Adapter<ProductImp
 
 
     @Override
-    public void onBindViewHolder(final ProductAdapterViewHolder holder, final int position) {
+    public void onBindViewHolder(final ProductAdapterViewHolder holder, @SuppressLint("RecyclerView") int position) {
         holder.tvName.setText(mData.get(position).getString("name"));
         holder.tvGroup.setText(mData.get(position).getBaseModel("productGroup").getString("name"));
         if (mData.get(position).hasKey("currentQuantity") && mData.get(position).getInt("currentQuantity") > 0) {
@@ -124,7 +125,7 @@ public class ProductImportChoosenAdapter extends RecyclerView.Adapter<ProductImp
             @Override
             public void onClick(View view) {
                 if (mData.get(position).getInt("quantity") > 0){
-                    CustomCenterDialog.showDialogInputQuantity(mData.get(position).getString("name"),
+                    CustomCenterDialog.showDialogInputQuantity(mData.get(position),
                             mData.get(position).getString("quantity"),
                             0,
                             false,

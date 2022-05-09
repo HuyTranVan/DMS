@@ -254,4 +254,34 @@ public class Statistical_BillsAdapter extends RecyclerView.Adapter<Statistical_B
         return total;
     }
 
+    public double sumNetSalesTotal(){
+        double total = 0.0;
+        for (int i = 0; i < mData.size(); i++) {
+            List<BaseModel> details = mData.get(i).getList("billDetails");
+
+            for (BaseModel item:  details){
+                if (item.getBaseModel("productGroup").getInt("isSales") == 1){
+                    total += item.getDouble("purchasePrice")*item.getInt("quantity");
+                }
+
+            }
+        }
+
+        return total;
+    }
+
+    public double sumBaseTotal(){
+        double total = 0.0;
+        for (int i = 0; i < mData.size(); i++) {
+            List<BaseModel> details = mData.get(i).getList("billDetails");
+
+            for (int ii =0; ii<details.size(); ii++){
+                total += details.get(ii).getDouble("basePrice")*details.get(ii).getInt("quantity");
+
+            }
+        }
+
+        return total;
+    }
+
 }

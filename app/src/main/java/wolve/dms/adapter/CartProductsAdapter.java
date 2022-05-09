@@ -1,8 +1,10 @@
 package wolve.dms.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Handler;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -10,6 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.MotionEventCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -19,6 +22,8 @@ import wolve.dms.R;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackObject;
+import wolve.dms.libraries.recycleviewhelper.ItemTouchHelperAdapter;
+import wolve.dms.libraries.recycleviewhelper.ItemTouchHelperViewHolder;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.utils.CustomCenterDialog;
@@ -30,19 +35,48 @@ import wolve.dms.utils.Util;
  * Created by tranhuy on 5/24/17.
  */
 
-public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapter.CartProductsViewHolder> {
+public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapter.CartProductsViewHolder> implements ItemTouchHelperAdapter {
     private List<BaseModel> mData = new ArrayList<>();
     private List<BaseModel> mBillDetail = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackDouble mChangePrice;
+    private OnStartDragListener mDragStartListener;
 
-    public CartProductsAdapter(List<BaseModel> list, List<BaseModel> listbilldetail, CallbackDouble callbackChangePrice) {
+    @Override
+    public void onItemMove(int fromPosition, int toPosition) {
+        BaseModel prev = mData.remove(fromPosition);
+        mData.add(toPosition > fromPosition ? toPosition - 1 : toPosition, prev);
+        notifyItemMoved(fromPosition, toPosition);
+        notifyItemChanged(fromPosition);
+        notifyItemChanged(toPosition);
+    }
+
+    @Override
+    public void onItemDismiss(int position) {
+
+    }
+
+    public interface OnStartDragListener {
+
+        /**
+         * Called when a view is requesting a start of a drag.
+         *
+         * @param viewHolder The holder of the view to drag.
+         */
+        void onStartDrag(RecyclerView.ViewHolder viewHolder);
+    }
+
+    public CartProductsAdapter(List<BaseModel> list,
+                               List<BaseModel> listbilldetail,
+                               CallbackDouble callbackChangePrice,
+                               OnStartDragListener dragStartListener){
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mChangePrice = callbackChangePrice;
         this.mData = list;
         this.mBillDetail = listbilldetail;
+        this.mDragStartListener = dragStartListener;
 
     }
 
@@ -179,6 +213,17 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
             }
         });
 
+        holder.lnParent.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (MotionEventCompat.getActionMasked(event) ==
+                        MotionEvent.ACTION_DOWN) {
+                    mDragStartListener.onStartDrag(holder);
+                }
+                return false;
+            }
+        });
+
     }
 
     @Override
@@ -186,7 +231,7 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
         return mData.size();
     }
 
-    public class CartProductsViewHolder extends RecyclerView.ViewHolder {
+    public class CartProductsViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
         private TextView tvName, tvQuantity, tvQuantityDisplay, tvRibbon, tvCount, btnSub, btnPlus, btnCopy, btnPromotion, btnDelete;
         private LinearLayout lnParent;
         private RelativeLayout coParent;
@@ -209,6 +254,15 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
 
         }
 
+        @Override
+        public void onItemSelected() {
+            itemView.setBackgroundColor(Color.LTGRAY);
+        }
+
+        @Override
+        public void onItemClear() {
+            itemView.setBackgroundColor(0);
+        }
     }
 
     public void addItemProduct(int pos, Product product) {
@@ -270,6 +324,14 @@ public class CartProductsAdapter extends RecyclerView.Adapter<CartProductsAdapte
         Double sum = 0.0;
         for (int i = 0; i < mData.size(); i++) {
             sum += mData.get(i).getDouble("totalMoney");
+        }
+        return sum;
+    }
+
+    public double totalNetPrice() {
+        Double sum = 0.0;
+        for (int i = 0; i < mData.size(); i++) {
+            sum += mData.get(i).getDouble("purchasePrice") * mData.get(i).getInt("quantity");
         }
         return sum;
     }

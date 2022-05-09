@@ -139,11 +139,13 @@ public class Transaction {
     }
 
     public static void gotoProductActivity() {
-        Context context = Util.getInstance().getCurrentActivity();
+        Activity context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(context, ProductActivity.class);
-        context.startActivity(intent);
-        ((AppCompatActivity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-        ((AppCompatActivity) context).finish();
+        context.startActivityForResult(intent, Constants.RESULT_IMPORT_ACTIVITY);
+        context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+//        context.startActivity(intent);
+//        ((AppCompatActivity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+//        ((AppCompatActivity) context).finish();
     }
 
     public static void gotoProductGroupActivity() {

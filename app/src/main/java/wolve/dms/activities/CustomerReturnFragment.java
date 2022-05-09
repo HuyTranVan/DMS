@@ -22,7 +22,7 @@ import wolve.dms.R;
 import wolve.dms.adapter.DebtAdapter;
 import wolve.dms.adapter.ProductReturnAdapter;
 import wolve.dms.apiconnect.ApiUtil;
-import wolve.dms.apiconnect.apiserver.CustomGetPostListMethod;
+import wolve.dms.apiconnect.apiserver.GetPostListMethod;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackDouble;
@@ -55,12 +55,6 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
     private String cash = "TRẢ LẠI KHÁCH TIỀN MẶT:     %s đ";
     private double totalReturn = 0.0;
     private List<BaseModel> listDebt = new ArrayList<>();
-
-    private interface callbackbill {
-        void onRespone(BaseModel currentBill, BaseModel returnBill);
-
-        void onError(String error);
-    }
 
     @Nullable
     @Override
@@ -445,6 +439,7 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
                 User.getId(),
                 0.0,
                 0.0,
+                0.0,
                 listProductReturn,
                 "",
                 User.getId(),
@@ -475,7 +470,7 @@ public class CustomerReturnFragment extends Fragment implements View.OnClickList
             params.add(item);
         }
 
-        new CustomGetPostListMethod(params, new CallbackCustomList() {
+        new GetPostListMethod(params, new CallbackCustomList() {
             @Override
             public void onResponse(List<BaseModel> results) {
                 listener.onResponse(results);

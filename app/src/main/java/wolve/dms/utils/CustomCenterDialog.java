@@ -214,14 +214,20 @@ public class CustomCenterDialog {
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                 sweetAlertDialog.dismissWithAnimation();
-                                callback.onRespone(false);
+                                if (callback != null){
+                                    callback.onRespone(false);
+                                }
+
                             }
                         })
                         .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
                             public void onClick(SweetAlertDialog sDialog) {
                                 sDialog.dismissWithAnimation();
-                                callback.onRespone(true);
+                                if (callback != null){
+                                    callback.onRespone(true);
+                                }
+
                             }
                         });
                 dialog.setCanceledOnTouchOutside(false);
@@ -270,6 +276,7 @@ public class CustomCenterDialog {
         final EditText edNetPrice = dialogResult.findViewById(R.id.dialog_edit_product_netprice);
         final TextView tvTotal = dialogResult.findViewById(R.id.dialog_edit_product_total);
         final EditText edDiscount = dialogResult.findViewById(R.id.dialog_edit_product_discount);
+        TextInputLayout tvQuantity = dialogResult.findViewById(R.id.dialog_edit_product_quantity_title);
         final EditText edQuantity = dialogResult.findViewById(R.id.dialog_edit_product_quantity);
         TextView tvClear = dialogResult.findViewById(R.id.dialog_edit_product_netprice_clear);
         RecyclerView rvPrice = dialogResult.findViewById(R.id.dialog_edit_product_rvprice);
@@ -284,7 +291,15 @@ public class CustomCenterDialog {
 
         edNetPrice.setText(Util.FormatMoney(product.getDouble("unitPrice") - product.getDouble("discount")));
 
-        edQuantity.setText(String.valueOf(Math.round(product.getDouble("quantity"))));
+        //edQuantity.setText(String.valueOf(Math.round(product.getDouble("quantity"))));
+        Util.numberEvent(edQuantity, new CallbackInt() {
+            @Override
+            public void onResponse(int value) {
+                tvQuantity.setHint(String.format("Số lượng %s",
+                        Util.quantityProductDisplay(product, value)));
+            }
+        });
+        edQuantity.setText(String.valueOf(product.getInt("quantity")));
         tvTotal.setText(Util.FormatMoney(product.getDouble("quantity") * (product.getDouble("unitPrice") - product.getDouble("discount"))));
 
         edDiscount.setFilters(new InputFilter[]{new InputFilter.LengthFilter(tvUnitPrice.getText().toString().trim().length())});
@@ -394,7 +409,7 @@ public class CustomCenterDialog {
         tvTitle.setText(title);
 
         tvContent.setVisibility(View.GONE);
-        Util.showKeyboardDelay(edNote);
+        Util.showKeyboardEditTextDelay(edNote);
 
         edNote.setHint(hint);
         edNote.setText(text);
@@ -900,27 +915,41 @@ public class CustomCenterDialog {
 
     }
 
-    public static void showDialogInputQuantity(String title, String quantity,
+    public static void showDialogInputQuantity(BaseModel product,
+                                               String quantity,
                                                int currentQuantity,
                                                boolean emptyQuantityValue,
                                                final CallbackString mListener) {
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_input_quantity);
         TextView tvTitle = (TextView) dialogResult.findViewById(R.id.input_number_title);
         final EditText edQuantity = (EditText) dialogResult.findViewById(R.id.input_number_quantity);
-        TextInputLayout currentQuantityParent = dialogResult.findViewById(R.id.input_number_current_quantity_parent);
+        TextInputLayout tvCurrentQuantity = dialogResult.findViewById(R.id.input_number_current_quantity_title);
         final EditText edCurrentQuantity = (EditText) dialogResult.findViewById(R.id.input_number_current_quantity);
+        TextInputLayout tvQuantity = dialogResult.findViewById(R.id.input_number_quantity_title);
+
         final Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
         final Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
 
         dialogResult.setCanceledOnTouchOutside(true);
-        tvTitle.setText(title);
-        currentQuantityParent.setVisibility(currentQuantity > 0 ? View.VISIBLE : View.GONE);
+        tvTitle.setText(product.getString("name"));
+        tvCurrentQuantity.setVisibility(currentQuantity > 0 ? View.VISIBLE : View.GONE);
+        tvCurrentQuantity.setHint(String.format("Số lượng hiện tại %s",
+                Util.quantityProductDisplay(product, currentQuantity)));
         edCurrentQuantity.setText(String.valueOf(currentQuantity));
-        edQuantity.setText(quantity);
+
         btnSubmit.setText("đồng ý");
         btnCancel.setText("hủy");
 
         Util.showKeyboardEditTextDelay(edQuantity);
+
+        Util.numberEvent(edQuantity, new CallbackInt() {
+            @Override
+            public void onResponse(int value) {
+                tvQuantity.setHint(String.format("Số lượng hiệu chỉnh %s",
+                        Util.quantityProductDisplay(product, value)));
+            }
+        });
+        edQuantity.setText(quantity);
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1304,7 +1333,8 @@ public class CustomCenterDialog {
                             String.format(ApiUtil.ADMIN_CREATE_PARAM,
                                     Util.encodeString(edName.getText().toString()),
                                     Util.getPhoneValue(edPhone),
-                                    Util.encodeString(isCreateAdmin? "KHO TỔNG" : edName.getText().toString().substring(edName.getText().toString().lastIndexOf(" ") + 1)),
+                                    Util.encodeString(edName.getText().toString().substring(edName.getText().toString().lastIndexOf(" ") + 1)),
+                                    //Util.encodeString(isCreateAdmin? "KHO TỔNG" : edName.getText().toString().substring(edName.getText().toString().lastIndexOf(" ") + 1)),
                                     distributor_id,
                                     role),
                             false,

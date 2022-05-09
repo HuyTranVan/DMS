@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -31,12 +32,33 @@
 
     </RelativeLayout>
 
-    <wolve.dms.customviews.CInputForm
-        android:id="@+id/add_productgroup_input"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_10sdp"
-        android:inputType="textCapCharacters" />
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/_10sdp"
+        android:paddingRight="@dimen/_10sdp">
+
+        <wolve.dms.customviews.CInputForm
+            android:id="@+id/add_productgroup_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapCharacters" />
+
+        <wolve.dms.customviews.CInputForm
+            android:id="@+id/add_productgroup_sales"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:textHint=""
+            app:iconText="@string/icon_gift"
+            app:isDropdown="true"
+            app:textColor="@color/colorBlue" />
+
+    </LinearLayout>
+
+
+
+
 
     <Button
         android:id="@+id/add_productgroup_submit"

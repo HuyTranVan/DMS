@@ -15,12 +15,12 @@ import java.util.List;
 import wolve.dms.R;
 import wolve.dms.adapter.ProductGroupAdapter;
 import wolve.dms.apiconnect.ApiUtil;
-import wolve.dms.callback.CallbackClickAdapter;
-import wolve.dms.callback.CallbackDeleteAdapter;
+import wolve.dms.callback.CallbackObjectAdapter;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -55,8 +55,15 @@ public class ProductGroupActivity extends BaseActivity implements View.OnClickLi
     }
 
     @Override
-    public void initialData() {
+    protected void onResume() {
+        super.onResume();
         loadProductGroup();
+
+    }
+
+    @Override
+    public void initialData() {
+        //loadProductGroup();
 
     }
 
@@ -119,18 +126,26 @@ public class ProductGroupActivity extends BaseActivity implements View.OnClickLi
             listProductGroup.add(list.get(i));
 
         }
-        productGroupAdapter = new ProductGroupAdapter(listProductGroup, new CallbackClickAdapter() {
-            @Override
-            public void onRespone(String data, int position) {
-                openFragmentNewProductGroup(data);
-            }
-
-        }, new CallbackDeleteAdapter() {
-            @Override
-            public void onDelete(String data, int position) {
-                loadProductGroup();
-            }
-        });
+        productGroupAdapter = new ProductGroupAdapter(listProductGroup,
+                new CallbackObjectAdapter() {
+                    @Override
+                    public void onRespone(BaseModel data, int position) {
+                        CustomSQL.setBaseModel(Constants.PRODUCTGROUPOBJECT, data);
+                        Transaction.gotoProductActivity();
+                    }
+                },
+                new CallbackObjectAdapter() {
+                    @Override
+                    public void onRespone(BaseModel data, int position) {
+                        openFragmentNewProductGroup(data.BaseModelstoString());
+                    }
+                },
+                new CallbackObjectAdapter() {
+                    @Override
+                    public void onRespone(BaseModel data, int position) {
+                        loadProductGroup();
+                    }
+                });
         Util.createLinearRV(rvProductGroup, productGroupAdapter);
 
     }

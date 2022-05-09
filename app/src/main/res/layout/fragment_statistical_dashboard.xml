@@ -14,6 +14,255 @@
         android:orientation="vertical"
         android:paddingBottom="@dimen/_50sdp">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/_5sdp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/font_awesome"
+                android:text="BÁN HÀNG"
+                android:textStyle="bold"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:textColor="@color/colorBlueDark"/>
+
+            <wolve.dms.customviews.CHorizontalView
+                android:id="@+id/statistical_dashboard_revenue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:titleText="Tổng bán hàng"
+                app:text="000"
+                app:iconText="@string/icon_cart"
+                app:textColor="@color/colorBlueDark"/>
+
+            <wolve.dms.customviews.CHorizontalView
+                android:id="@+id/statistical_dashboard_billnet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:titleText="Tổng bán hàng theo giá NET"
+                app:text="000"
+                app:iconText="@string/icon_cart"
+                app:textColor="@color/colorBlueDark"/>
+
+            <wolve.dms.customviews.CHorizontalView
+                android:id="@+id/statistical_dashboard_billsalesnet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:titleText="Tổng bán hàng tính CK theo giá NET"
+                app:text="000"
+                app:iconText="@string/icon_cart"
+                app:textColor="@color/colorBlueDark"/>
+
+            <wolve.dms.customviews.CHorizontalView
+                android:id="@+id/statistical_dashboard_billbase"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:titleText="Tổng bán hàng theo giá NPP"
+                app:text="000"
+                app:iconText="@string/icon_cart"
+                app:textColor="@color/colorBlueDark"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:background="@color/colorGrey"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_5sdp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/_5sdp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TIỀN THU THỰC TẾ"
+                android:textStyle="bold"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:textColor="@color/colorAccent"/>
+
+            <wolve.dms.customviews.CHorizontalView
+                android:id="@+id/statistical_dashboard_cash"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:titleText="Tổng tiền thu"
+                app:text="000"
+                app:iconText="@string/icon_money"
+                app:textColor="@color/colorAccent"/>
+
+            <wolve.dms.customviews.CHorizontalView
+                android:id="@+id/statistical_dashboard_paidnet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:titleText="Tổng tiền thu theo giá NET"
+                app:text="000"
+                app:iconText="@string/icon_money"
+                app:textColor="@color/colorAccent"/>
+
+            <wolve.dms.customviews.CHorizontalView
+                android:id="@+id/statistical_dashboard_paidbase"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:titleText="Tổng tiền thu theo giá NPP"
+                app:text="000"
+                app:iconText="@string/icon_money"
+                app:textColor="@color/colorAccent"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:background="@color/colorGrey"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_5sdp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/_5sdp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="CHIẾT KHẤU"
+                android:textStyle="bold"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:textColor="@color/colorPink"/>
+
+            <wolve.dms.customviews.CHorizontalView
+                android:id="@+id/statistical_dashboard_profit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:titleText="Chiết khấu bán hàng"
+                app:text="000"
+                app:iconText="@string/icon_hand_on_money"
+                app:textColor="@color/colorPink"/>
+
+            <wolve.dms.customviews.CHorizontalView
+                android:id="@+id/statistical_dashboard_base_profit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:titleText="Chênh lệch giá NPP"
+                app:text="000"
+                app:iconText="@string/icon_hand_on_money"
+                app:textColor="@color/colorPink"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:background="@color/colorGrey"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_5sdp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/_5sdp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="CÔNG NỢ"
+                android:textStyle="bold"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:textColor="@color/colorGrape"/>
+
+            <wolve.dms.customviews.CHorizontalView
+                android:id="@+id/statistical_dashboard_debt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:titleText="Công nợ thực tế"
+                app:text="000"
+                app:iconText="@string/icon_money_check"
+                app:textColor="@color/colorGrape"/>
+
+            <wolve.dms.customviews.CHorizontalView
+                android:id="@+id/statistical_dashboard_debt_net"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:titleText="Công nợ theo giá NET"
+                app:text="000"
+                app:iconText="@string/icon_money_check"
+                app:textColor="@color/colorGrape"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:background="@color/colorGrey"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_5sdp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/_5sdp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TỒN KHO"
+                android:textStyle="bold"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:textColor="@color/orange"/>
+
+            <wolve.dms.customviews.CHorizontalView
+                android:id="@+id/statistical_dashboard_inventory_base"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:titleText="Tồn kho"
+                app:text="000"
+                app:iconText="@string/icon_depot"
+                app:textColor="@color/orange"/>
+
+            <wolve.dms.customviews.CHorizontalView
+                android:id="@+id/statistical_dashboard_inventory_employee"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:titleText="Tồn kho nhân viên theo giá NET"
+                app:text="000"
+                app:iconText="@string/icon_depot"
+                app:textColor="@color/orange"/>
+
+            <wolve.dms.customviews.CHorizontalView
+                android:id="@+id/statistical_dashboard_inventory_net"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:titleText="Tồn kho NPP theo giá NET"
+                app:text="000"
+                app:iconText="@string/icon_depot"
+                app:textColor="@color/orange"/>
+
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:background="@color/colorGrey"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_5sdp"/>
+
+        </LinearLayout>
+
         <androidx.gridlayout.widget.GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -25,90 +274,90 @@
             app:columnOrderPreserved="true"
             android:layout_marginTop="@dimen/_5sdp">
 
-            <wolve.dms.customviews.CVerticalView
-                android:id="@+id/statistical_dashboard_cash"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                app:text="0"
-                app:iconText="@string/icon_bomb"
-                app:textColor="@color/orange"
-                app:layout_columnWeight="1"
-                android:layout_marginBottom="@dimen/_1sdp"
-                android:layout_marginRight="@dimen/_1sdp" />
+<!--            <wolve.dms.customviews.CVerticalView-->
+<!--                android:id="@+id/statistical_dashboard_cash"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="0.5"-->
+<!--                app:text="0"-->
+<!--                app:iconText="@string/icon_bomb"-->
+<!--                app:textColor="@color/orange"-->
+<!--                app:layout_columnWeight="1"-->
+<!--                android:layout_marginBottom="@dimen/_1sdp"-->
+<!--                android:layout_marginRight="@dimen/_1sdp" />-->
 
-            <wolve.dms.customviews.CVerticalView
-                android:id="@+id/statistical_dashboard_profit"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                app:textColor="@color/colorGreen"
-                app:iconText="@string/icon_hand_on_money"
-                app:layout_columnWeight="1" />
+<!--            <wolve.dms.customviews.CVerticalView-->
+<!--                android:id="@+id/statistical_dashboard_profit"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="0.5"-->
+<!--                app:textColor="@color/colorGreen"-->
+<!--                app:iconText="@string/icon_hand_on_money"-->
+<!--                app:layout_columnWeight="1" />-->
 
-            <wolve.dms.customviews.CVerticalView
-                android:id="@+id/statistical_dashboard_revenue"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:text="0"
-                app:iconText="@string/icon_truck"
-                app:layout_columnWeight="1"
-                android:layout_marginBottom="@dimen/_1sdp"
-                android:layout_marginRight="@dimen/_1sdp" />
+<!--            <wolve.dms.customviews.CVerticalView-->
+<!--                android:id="@+id/statistical_dashboard_revenue"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                app:text="0"-->
+<!--                app:iconText="@string/icon_truck"-->
+<!--                app:layout_columnWeight="1"-->
+<!--                android:layout_marginBottom="@dimen/_1sdp"-->
+<!--                android:layout_marginRight="@dimen/_1sdp" />-->
 
-            <wolve.dms.customviews.CVerticalView
-                android:id="@+id/statistical_dashboard_debt"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:textColor="@color/colorRed"
-                app:iconText="@string/icon_money"
-                app:layout_columnWeight="1" />
+<!--            <wolve.dms.customviews.CVerticalView-->
+<!--                android:id="@+id/statistical_dashboard_debt"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                app:textColor="@color/colorRed"-->
+<!--                app:iconText="@string/icon_money"-->
+<!--                app:layout_columnWeight="1" />-->
 
 
 
-            <wolve.dms.customviews.CVerticalView
-                android:id="@+id/statistical_dashboard_paidnet"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                app:text="xxx"
-                app:iconText="@string/icon_dollar"
-                app:textColor="@color/colorAccent"
-                app:layout_columnWeight="1"
-                android:layout_marginBottom="@dimen/_1sdp"
-                android:layout_marginRight="@dimen/_1sdp" />
+<!--            <wolve.dms.customviews.CVerticalView-->
+<!--                android:id="@+id/statistical_dashboard_paidnet"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="0.5"-->
+<!--                app:text="xxx"-->
+<!--                app:iconText="@string/icon_dollar"-->
+<!--                app:textColor="@color/colorAccent"-->
+<!--                app:layout_columnWeight="1"-->
+<!--                android:layout_marginBottom="@dimen/_1sdp"-->
+<!--                android:layout_marginRight="@dimen/_1sdp" />-->
 
-            <wolve.dms.customviews.CVerticalView
-                android:id="@+id/statistical_dashboard_billnet"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                app:textColor="@color/black_text_color_hint"
-                app:text="###"
-                app:titleText="###"
-                app:iconText="#"
-                app:layout_columnWeight="1" />
+<!--            <wolve.dms.customviews.CVerticalView-->
+<!--                android:id="@+id/statistical_dashboard_billnet"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="0.5"-->
+<!--                app:textColor="@color/black_text_color_hint"-->
+<!--                app:text="###"-->
+<!--                app:titleText="###"-->
+<!--                app:iconText="#"-->
+<!--                app:layout_columnWeight="1" />-->
 
-            <wolve.dms.customviews.CVerticalView
-                android:id="@+id/statistical_dashboard_inventory"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                app:text="0"
-                app:iconText="@string/icon_inventory"
-                app:textColor="@color/colorGrape"
-                app:layout_columnWeight="1"
-                android:layout_marginBottom="@dimen/_1sdp"
-                android:layout_marginRight="@dimen/_1sdp" />
+<!--            <wolve.dms.customviews.CVerticalView-->
+<!--                android:id="@+id/statistical_dashboard_inventory"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="0.5"-->
+<!--                app:text="0"-->
+<!--                app:iconText="@string/icon_inventory"-->
+<!--                app:textColor="@color/colorGrape"-->
+<!--                app:layout_columnWeight="1"-->
+<!--                android:layout_marginBottom="@dimen/_1sdp"-->
+<!--                android:layout_marginRight="@dimen/_1sdp" />-->
 
-            <wolve.dms.customviews.CVerticalView
-                android:id="@+id/statistical_dashboard_base_profit"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                app:textColor="@color/colorAccent"
-                app:iconText="@string/icon_hand_on_money"
-                app:layout_columnWeight="1" />
+<!--            <wolve.dms.customviews.CVerticalView-->
+<!--                android:id="@+id/statistical_dashboard_base_profit"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="0.5"-->
+<!--                app:textColor="@color/colorAccent"-->
+<!--                app:iconText="@string/icon_hand_on_money"-->
+<!--                app:layout_columnWeight="1" />-->
 
         </androidx.gridlayout.widget.GridLayout>
 
@@ -136,29 +385,6 @@
 
 
         </LinearLayout>
-
-<!--        <FrameLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="@dimen/_10sdp">-->
-
-<!--            <lecho.lib.hellocharts.view.ColumnChartView-->
-<!--                android:id="@+id/statistical_dashboard_income"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="@dimen/_170sdp"-->
-<!--                android:padding="@dimen/_10sdp" />-->
-
-<!--            <TextView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Thống kê chung"-->
-<!--                android:layout_margin="@dimen/_5sdp"-->
-<!--                android:textSize="@dimen/_10sdp"-->
-<!--                android:textStyle="italic"-->
-<!--                android:textColor="@color/colorBlueTransparent" />-->
-
-<!--        </FrameLayout>-->
-
 
         <View
             android:layout_width="match_parent"
@@ -190,7 +416,6 @@
 
 
         </LinearLayout>
-
 
         <View
             android:layout_width="match_parent"

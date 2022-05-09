@@ -20,6 +20,7 @@ import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackDeleteAdapter;
+import wolve.dms.callback.CallbackObjectAdapter;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.models.BaseModel;
@@ -28,9 +29,12 @@ import wolve.dms.models.ProductGroup;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
+import wolve.dms.utils.CustomDropdow;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 import static wolve.dms.activities.BaseActivity.createGetParam;
+import static wolve.dms.activities.BaseActivity.createPostParam;
 
 
 /**
@@ -39,25 +43,25 @@ import static wolve.dms.activities.BaseActivity.createGetParam;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductAdapterViewHolder> {
     private List<BaseModel> mData = new ArrayList<>();
-    private BaseModel mGroup;
+    //private BaseModel mGroup;
     private LayoutInflater mLayoutInflater;
     private Context mContext;
-    private CallbackClickAdapter mListener;
-    private CallbackDeleteAdapter mDeleteListener;
+    private CallbackObjectAdapter mItem, mCopy;
 
-    public ProductAdapter(BaseModel group, List<BaseModel> list, CallbackClickAdapter callbackClickAdapter, CallbackDeleteAdapter callbackDeleteAdapter) {
+    public ProductAdapter(List<BaseModel> list, CallbackObjectAdapter itemlistener, CallbackObjectAdapter copylistener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
-        this.mGroup = group;
-        this.mListener = callbackClickAdapter;
-        this.mDeleteListener = callbackDeleteAdapter;
+        //this.mGroup = group;
+        this.mData = list;
+        this.mItem = itemlistener;
+        this.mCopy = copylistener;
 
-        for (int i = 0; i < list.size(); i++) {
-            ProductGroup productGroup = new ProductGroup(list.get(i).getJsonObject("productGroup"));
-            if (productGroup.getInt("id") == group.getInt("id")) {
-                mData.add(list.get(i));
-            }
-        }
+//        for (int i = 0; i < list.size(); i++) {
+//            ProductGroup productGroup = new ProductGroup(list.get(i).getJsonObject("productGroup"));
+//            if (productGroup.getInt("id") == group.getInt("id")) {
+//                mData.add(list.get(i));
+//            }
+//        }
 
     }
 
@@ -67,15 +71,34 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
         return new ProductAdapterViewHolder(itemView);
     }
 
-    public void addItems(ArrayList<Product> list) {
+    public void addItem(ArrayList<Product> list) {
         mData = new ArrayList<>();
         mData.addAll(list);
         notifyDataSetChanged();
     }
 
+    public void updateItem(BaseModel item){
+        //boolean check= false;
+        for (int i=0; i<mData.size(); i++){
+            if (mData.get(i).getInt("id") ==  item.getInt("id")){
+                mData.remove(i);
+                mData.add(i, item);
+                notifyItemChanged(i);
+
+                //check = true;
+                break;
+            }
+
+        }
+
+    }
+
 
     @Override
-    public void onBindViewHolder(final ProductAdapterViewHolder holder, final int position) {
+    public void onBindViewHolder(final ProductAdapterViewHolder holder, int position) {
+        holder.line.setVisibility(position == mData.size()-1? View.GONE: View.VISIBLE);
+        holder.tvNote.setVisibility(Util.isEmpty(mData.get(position).getString("note"))? View.GONE : View.VISIBLE);
+        holder.tvNote.setText(mData.get(position).getString("note"));
         holder.tvName.setText(mData.get(position).getString("name"));
         holder.tvPrice.setText(Util.FormatMoney(mData.get(position).getDouble("unitPrice")));
         String baseprice = Util.isAdmin() ? (String.format(" (%s)", Util.FormatMoney(mData.get(position).getDouble("basePrice")))) : "";
@@ -83,10 +106,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
 
         if (mData.get(position).getInt("deleted") == 1){
             holder.tvHide.setVisibility(View.VISIBLE);
+            holder.tvMenu.setVisibility(View.GONE);
             holder.tvPrice.setVisibility(View.GONE);
         }else {
             holder.tvHide.setVisibility(View.GONE);
             holder.tvPrice.setVisibility(View.VISIBLE);
+            holder.tvMenu.setVisibility(View.VISIBLE);
         }
 
         holder.tvGift.setVisibility(mData.get(position).getInt("promotion") == 1 ? View.VISIBLE : View.GONE);
@@ -102,41 +127,84 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
             holder.rlParent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mListener.onRespone(mData.get(position).BaseModelstoString(), position);
+                    mItem.onRespone(mData.get(holder.getAdapterPosition()), holder.getAdapterPosition());
 
-                }
-            });
-
-            holder.rlParent.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-//                    CustomCenterDialog.alertWithCancelButton(null, "Bạn muốn xóa sản phẩm " + mData.get(position).getString("name"), "ĐỒNG Ý", "HỦY", new CallbackBoolean() {
-//                        @Override
-//                        public void onRespone(Boolean result) {
-//                            if (result) {
-//                                BaseModel param = createGetParam(ApiUtil.PRODUCT_DELETE() + mData.get(position).getString("id"), false);
-//                                new GetPostMethod(param, new NewCallbackCustom() {
-//                                    @Override
-//                                    public void onResponse(BaseModel result, List<BaseModel> list) {
-//                                        Util.getInstance().stopLoading(true);
-//                                        mDeleteListener.onDelete(mData.get(position).BaseModelstoString(), position);
-//                                    }
-//
-//                                    @Override
-//                                    public void onError(String error) {
-//
-//                                    }
-//                                }, 1).execute();
-//
-//                            }
-//
-//                        }
-//                    });
-
-                    return true;
                 }
             });
         }
+
+        holder.tvMenu.setVisibility(Util.isAdmin()? View.VISIBLE : View.GONE);
+        holder.tvMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CustomDropdow.createListDropdown(
+                        holder.tvMenu,
+                        DataUtil.createList3String(Util.getIconString(R.string.icon_copy, "  ", "Copy"),
+                                Util.getIconString(R.string.icon_ban, "   ", "Ẩn sản phẩm"),
+                                Util.getIconString(R.string.icon_delete, "   ", "Xoá sản phẩm")),
+                        0,
+                        true,
+                        new CallbackClickAdapter() {
+                            @Override
+                            public void onRespone(String data, int pos) {
+                                if (pos ==0){
+                                    BaseModel product = BaseModel.copyToNewBaseModel(mData.get(holder.getAdapterPosition()));
+                                    product.put("id", 0);
+                                    product.put("name", mData.get(holder.getAdapterPosition()).getString("name") + " _copy");
+                                    mCopy.onRespone(product, holder.getAdapterPosition());
+
+                                }else if(pos ==1) {
+                                    BaseModel param = createPostParam(ApiUtil.PRODUCT_ACTIVE(),
+                                            String.format(ApiUtil.PRODUCT_ACTIVE_PARAM,
+                                                    mData.get(holder.getAdapterPosition()).getInt("id"),
+                                                    1),
+                                            false, false);
+                                    new GetPostMethod(param, new NewCallbackCustom() {
+                                        @Override
+                                        public void onResponse(BaseModel result, List<BaseModel> list) {
+                                            mData.remove(holder.getAdapterPosition());
+                                            mData.add(holder.getAdapterPosition(), result);
+                                            notifyItemChanged(holder.getAdapterPosition());
+                                        }
+
+                                        @Override
+                                        public void onError(String error) {
+
+                                        }
+                                    }, 1).execute();
+                                }else if (pos==2){
+                                    CustomCenterDialog.alertWithCancelButton(null, "Bạn muốn xoá sản phẩm " + mData.get(holder.getAdapterPosition()).getString("name") +" khỏi danh sách", "ĐỒNG Ý", "HỦY", new CallbackBoolean() {
+                                        @Override
+                                        public void onRespone(Boolean result) {
+                                            if (result) {
+                                                BaseModel param = createGetParam(ApiUtil.PRODUCT_DELETE() + mData.get(holder.getAdapterPosition()).getString("id"), false);
+                                                new GetPostMethod(param, new NewCallbackCustom() {
+                                                    @Override
+                                                    public void onResponse(BaseModel result, List<BaseModel> list) {
+                                                        Util.getInstance().stopLoading(true);
+
+                                                        mData.remove(holder.getAdapterPosition());
+                                                        notifyItemRemoved(holder.getAdapterPosition());
+                                                    }
+
+                                                    @Override
+                                                    public void onError(String error) {
+
+                                                    }
+                                                }, 1).execute();
+
+                                            }
+
+                                        }
+                                    });
+                                }
+
+                            }
+
+                        });
+
+            }
+        });
 
 
     }
@@ -148,19 +216,23 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
 
 
     public class ProductAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvName, tvBasePrice, tvPrice, tvGift,tvHide;
+        private TextView tvName, tvBasePrice, tvPrice, tvGift,tvHide, tvMenu, tvNote;
         private RelativeLayout rlParent;
         private CircleImageView imageProduct;
+        private View line;
 
         public ProductAdapterViewHolder(View itemView) {
             super(itemView);
             tvName = (TextView) itemView.findViewById(R.id.product_item_name);
+            tvNote = itemView.findViewById(R.id.product_item_note);
             tvBasePrice = (TextView) itemView.findViewById(R.id.product_item_base_price);
             tvPrice = (TextView) itemView.findViewById(R.id.product_item_unitprice);
             tvGift = (TextView) itemView.findViewById(R.id.product_item_gift);
             rlParent = (RelativeLayout) itemView.findViewById(R.id.product_item_parent);
             imageProduct = itemView.findViewById(R.id.product_item_image);
             tvHide = itemView.findViewById(R.id.product_item_hide);
+            tvMenu = itemView.findViewById(R.id.product_item_menu);
+            line = itemView.findViewById(R.id.product_item_seperateline);
         }
 
     }

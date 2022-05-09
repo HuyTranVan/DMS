@@ -42,6 +42,7 @@ import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.customviews.CInputForm;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.apiconnect.apiserver.UploadCloudaryMethod;
+import wolve.dms.libraries.FitScrollWithFullscreen;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.ProductGroup;
@@ -97,6 +98,7 @@ public class NewUpdateDistributorFragment extends Fragment implements View.OnCli
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //return super.onCreateView(inflater, container, savedInstanceState);
         view = inflater.inflate(R.layout.fragment_add_distributor, container, false);
+        FitScrollWithFullscreen.assistActivity(getActivity(), 1);
         findViewById();
 
         intitialData();
@@ -199,26 +201,29 @@ public class NewUpdateDistributorFragment extends Fragment implements View.OnCli
 
         tvName.setFocusable(User.getId() != 2 ? false : true);
         tvProvince.setFocusable(User.getId() != 2 ? false : true);
-        tvProvince.setDropdown(true, new CInputForm.ClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mProvinces.size() >0){
-                    chooseProvince(mProvinces);
+        if (User.getId() ==2){
+            tvProvince.setDropdown(true, new CInputForm.ClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mProvinces.size() >0){
+                        chooseProvince(mProvinces);
 
-                }else {{
-                    getListProvince(new CallbackListObject() {
-                        @Override
-                        public void onResponse(List<BaseModel> list) {
-                            mProvinces = list;
-                            chooseProvince(mProvinces);
-                        }
-                    });
+                    }else {{
+                        getListProvince(new CallbackListObject() {
+                            @Override
+                            public void onResponse(List<BaseModel> list) {
+                                mProvinces = list;
+                                chooseProvince(mProvinces);
+                            }
+                        });
 
-                }}
+                    }}
 
 
-            }
-        });
+                }
+            });
+        }
+
 
 
     }
@@ -239,6 +244,7 @@ public class NewUpdateDistributorFragment extends Fragment implements View.OnCli
                 if (hasChange){
                     onDataPass.onResponse(currentDistributor);
                 }
+                Util.hideKeyboard(btnSubmit);
                 getActivity().onBackPressed();
                 break;
 
@@ -346,6 +352,7 @@ public class NewUpdateDistributorFragment extends Fragment implements View.OnCli
                                 public void onRespone(Boolean result) {
                                     if (!result){
                                         onDataPass.onResponse(currentDistributor);
+                                        Util.hideKeyboard(btnSubmit);
                                         getActivity().onBackPressed();
                                     }
                                 }
@@ -353,6 +360,7 @@ public class NewUpdateDistributorFragment extends Fragment implements View.OnCli
 
                 }else {
                     onDataPass.onResponse(currentDistributor);
+                    Util.hideKeyboard(btnSubmit);
                     getActivity().onBackPressed();
                 }
 

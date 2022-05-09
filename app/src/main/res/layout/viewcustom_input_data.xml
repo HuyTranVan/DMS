@@ -6,16 +6,16 @@
     android:background="@color/colorWhite">
 
     <TextView
-        android:fontFamily="@font/font_awesome"
         android:id="@+id/input_data_icon"
         android:layout_width="@dimen/_30sdp"
         android:layout_height="wrap_content"
-        android:text="@string/icon_product_group"
-        android:textSize="@dimen/_12sdp"
-        android:textColor="@color/colorBlueTransparent"
-        android:layout_gravity="center_vertical"
         android:layout_centerVertical="true"
-        android:gravity="center" />
+        android:layout_gravity="center_vertical"
+        android:fontFamily="@font/font_awesome"
+        android:gravity="center"
+        android:text="@string/icon_product_group"
+        android:textColor="@color/colorBlueTransparent"
+        android:textSize="@dimen/_12sdp" />
 
 
     <EditText

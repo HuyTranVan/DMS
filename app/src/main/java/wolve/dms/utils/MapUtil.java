@@ -442,61 +442,61 @@ public class MapUtil {
 
     }
 
-    public static void drawRoute(GoogleMap mMap, Location currentLocation, List<Marker> markers) {
-        LatLng lastMarkerPoint = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-        //lastMarkerPoint = markerPoint;
-
-        for (int i = 0; i < markers.size(); i++) {
-            DrawRoute drawRoute = DrawRoute.getInstance(Util.getInstance().getCurrentActivity());
-            drawRoute.setLoader(false);
-            drawRoute.callInterface = new DrawRoute.onDrawRoute() {
-                @Override
-                public void afterDraw(String result) {
-                    String s = result;
-//                try {
-//                    JSONObject listingPoint = relatedListingList.getJSONObject(count);
-//                    JSONObject resultObject = new JSONObject(result);
-//                    if (!resultObject.has("error_message")) {
-//                        JSONArray routes = resultObject.getJSONArray("routes");
-//                        JSONObject route = routes.getJSONObject(0);
+//    public static void drawRoute(GoogleMap mMap, Location currentLocation, List<Marker> markers) {
+//        LatLng lastMarkerPoint = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+//        //lastMarkerPoint = markerPoint;
 //
-//                        JSONArray newTempARr = route.getJSONArray("legs");
-//                        JSONObject newDisTimeOb = newTempARr.getJSONObject(0);
-//
-//                        JSONObject distOb = newDisTimeOb.getJSONObject("distance");
-//                        JSONObject timeOb = newDisTimeOb.getJSONObject("duration");
-//
-//                        int duration = timeOb.getInt("value") + delayTime;
-//
-//                        listingPoint.put("distance", distOb.getString("value"));
-//                        listingPoint.put("duration", String.valueOf(duration));
-//
-//                        totalDistance += distOb.getInt("value");  // In metres
-//                        totalDuration += duration;  // In seconds
-//
-//                    } else {
-//                        Util.alert("Lỗi", resultObject.getString("error_message"), "Đóng");
-//                    }
-//                    if (count == lastRunPoint) {
-//                        drawLastPointBack(context, mMap, lastMarkerPoint);
-//                    }
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
+//        for (int i = 0; i < markers.size(); i++) {
+//            DrawRoute drawRoute = DrawRoute.getInstance(Util.getInstance().getCurrentActivity());
+//            drawRoute.setLoader(false);
+//            drawRoute.callInterface = new DrawRoute.onDrawRoute() {
+//                @Override
+//                public void afterDraw(String result) {
+//                    String s = result;
+////                try {
+////                    JSONObject listingPoint = relatedListingList.getJSONObject(count);
+////                    JSONObject resultObject = new JSONObject(result);
+////                    if (!resultObject.has("error_message")) {
+////                        JSONArray routes = resultObject.getJSONArray("routes");
+////                        JSONObject route = routes.getJSONObject(0);
+////
+////                        JSONArray newTempARr = route.getJSONArray("legs");
+////                        JSONObject newDisTimeOb = newTempARr.getJSONObject(0);
+////
+////                        JSONObject distOb = newDisTimeOb.getJSONObject("distance");
+////                        JSONObject timeOb = newDisTimeOb.getJSONObject("duration");
+////
+////                        int duration = timeOb.getInt("value") + delayTime;
+////
+////                        listingPoint.put("distance", distOb.getString("value"));
+////                        listingPoint.put("duration", String.valueOf(duration));
+////
+////                        totalDistance += distOb.getInt("value");  // In metres
+////                        totalDuration += duration;  // In seconds
+////
+////                    } else {
+////                        Util.alert("Lỗi", resultObject.getString("error_message"), "Đóng");
+////                    }
+////                    if (count == lastRunPoint) {
+////                        drawLastPointBack(context, mMap, lastMarkerPoint);
+////                    }
+////                } catch (JSONException e) {
+////                    e.printStackTrace();
+////                }
 //                }
-                }
-            };
-            BaseModel customer = new BaseModel(markers.get(i).getTag().toString());
-            LatLng currentPoint = new LatLng(customer.getDouble("lat"), customer.getDouble("lng"));
-            drawRoute.setFromLatLong(lastMarkerPoint.latitude, lastMarkerPoint.longitude);
-            drawRoute.setToLatLong(currentPoint.latitude, currentPoint.longitude);
-            drawRoute.setGmapAndKey(Util.getInstance().getCurrentActivity().getResources().getString(R.string.map_route), mMap);
-            drawRoute.run();
-
-            lastMarkerPoint = currentPoint;
-
-        }
-
-
-    }
+//            };
+//            BaseModel customer = new BaseModel(markers.get(i).getTag().toString());
+//            LatLng currentPoint = new LatLng(customer.getDouble("lat"), customer.getDouble("lng"));
+//            drawRoute.setFromLatLong(lastMarkerPoint.latitude, lastMarkerPoint.longitude);
+//            drawRoute.setToLatLong(currentPoint.latitude, currentPoint.longitude);
+//            drawRoute.setGmapAndKey(Util.getInstance().getCurrentActivity().getResources().getString(R.string.map_route), mMap);
+//            drawRoute.run();
+//
+//            lastMarkerPoint = currentPoint;
+//
+//        }
+//
+//
+//    }
 
 }

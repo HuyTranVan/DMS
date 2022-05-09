@@ -374,18 +374,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                                 break;
 
                             case 3:
-                                if (User.getCurrentRoleId() == Constants.ROLE_ADMIN) {
+                                //if (User.getCurrentRoleId() == Constants.ROLE_ADMIN) {
                                     Transaction.gotoProductGroupActivity();
-                                }
+                                //}
                                 break;
 
                             case 4:
-                                Transaction.gotoProductActivity();
-                                break;
-
-
-
-                            case 5:
                                 Transaction.gotoDistributorActivity();
 
                                 break;

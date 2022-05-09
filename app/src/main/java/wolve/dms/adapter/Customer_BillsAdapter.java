@@ -20,14 +20,13 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.apiconnect.ApiUtil;
-import wolve.dms.apiconnect.apiserver.CustomGetPostListMethod;
+import wolve.dms.apiconnect.apiserver.GetPostListMethod;
 import wolve.dms.callback.CallbackBaseModel;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackListCustom;
-import wolve.dms.callback.CallbackString;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
@@ -119,7 +118,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
-    public void onBindViewHolder(final CustomerBillsAdapterViewHolder holder, final int position) {
+    public void onBindViewHolder(final CustomerBillsAdapterViewHolder holder,int position) {
         holder.lnCover.setVisibility(mData.get(position).isNull(Constants.DELIVER_BY) ? View.VISIBLE : View.GONE);
         holder.btnDelete.setVisibility(User.getCurrentRoleId() == Constants.ROLE_ADMIN ||
                 User.getId() == mData.get(position).getInt("user_id")
@@ -136,7 +135,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
             holder.tvDebt.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    payBill(position);
+                    payBill(holder.getAdapterPosition());
 
                 }
             });
@@ -194,7 +193,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteBill(position);
+                deleteBill(holder.getAdapterPosition());
             }
         });
 
@@ -203,7 +202,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
             public void onClick(View v) {
                 BaseModel respone = new BaseModel();
                 respone.put(Constants.TYPE, Constants.BILL_DELIVER);
-                respone.putBaseModel(Constants.RESULT, mData.get(position));
+                respone.putBaseModel(Constants.RESULT, mData.get(holder.getAdapterPosition()));
                 mListener.onResponse(respone);
             }
         });
@@ -218,13 +217,13 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
                     list.add(Util.getIconString(R.string.icon_delete, "   ", "Xóa hóa đơn"));
                 }
 
-                CustomDropdow.createListDropdown(holder.btnMenu, list,0,  new CallbackClickAdapter() {
+                CustomDropdow.createListDropdown(holder.btnMenu, list,0, true, new CallbackClickAdapter() {
                     @Override
-                    public void onRespone(String data, int position) {
+                    public void onRespone(String data, int pos) {
                         if (data.equals(list.get(0))) {
                             BaseModel respone = new BaseModel();
                             respone.put(Constants.TYPE, Constants.BILL_RETURN);
-                            respone.putBaseModel(Constants.RESULT, mData.get(position));
+                            respone.putBaseModel(Constants.RESULT, mData.get(holder.getAdapterPosition()));
                             mListener.onResponse(respone);
 
                         } else if (data.equals(list.get(1))) {
@@ -233,7 +232,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
                             } else if (listReturn.size() > 0) {
                                 Util.showToast("Không thể xóa hóa đơn có phát sinh trả hàng ");
                             } else {
-                                deleteBill(position);
+                                deleteBill(holder.getAdapterPosition());
                             }
 
 
@@ -307,7 +306,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
                                 }
                             }
 
-                            new CustomGetPostListMethod(params, new CallbackCustomList() {
+                            new GetPostListMethod(params, new CallbackCustomList() {
                                 @Override
                                 public void onResponse(List<BaseModel> results) {
                                     if (results.size() > 0) {
@@ -381,7 +380,7 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
                                 params.add(item);
                             }
 
-                            new CustomGetPostListMethod(params, new CallbackCustomList() {
+                            new GetPostListMethod(params, new CallbackCustomList() {
                                 @Override
                                 public void onResponse(List<BaseModel> results) {
                                     if (results.size() >0){

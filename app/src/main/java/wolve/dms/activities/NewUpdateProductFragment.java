@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -26,6 +27,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.R;
 import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
@@ -34,15 +36,20 @@ import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.customviews.CInputForm;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.apiconnect.apiserver.UploadCloudaryMethod;
+import wolve.dms.libraries.FitScrollWithFullscreen;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
+import wolve.dms.utils.CustomDropdow;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
 import static android.app.Activity.RESULT_OK;
+import static android.content.Context.ACTIVITY_SERVICE;
+import static wolve.dms.activities.BaseActivity.createGetParam;
 import static wolve.dms.activities.BaseActivity.createPostParam;
 import static wolve.dms.utils.Constants.REQUEST_CHOOSE_IMAGE;
 import static wolve.dms.utils.Constants.REQUEST_IMAGE_CAPTURE;
@@ -57,7 +64,8 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
     private View view, vCover, vSwitch;
     private ImageView btnBack;
     private CInputForm edName, edUnitPrice, edPurchasePrice, edGroup, edVolume,
-            edIsPromotion, edBasePrice, edUnitInCarton;
+            edIsPromotion, edBasePrice, edUnitInCarton, edNote;
+    private TextView tvTitle;
     private Button btnSubmit;
     private CircleImageView imgProduct;
     private SwitchButton swActive;
@@ -65,7 +73,7 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
 
     private BaseModel product;
     private ProductActivity mActivity;
-    private List<String> listBoolean = new ArrayList<>();
+//    private List<String> listBoolean = new ArrayList<>();
     private Uri imageChangeUri;
 
 
@@ -73,7 +81,7 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_add_product, container, false);
-//        FitScrollWithFullscreen.assistActivity(getActivity(), 1);
+        FitScrollWithFullscreen.assistActivity(getActivity(), 1);
         initializeView();
 
         intitialData();
@@ -85,6 +93,7 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
     private void initializeView() {
         mActivity = (ProductActivity) getActivity();
         edName = (CInputForm) view.findViewById(R.id.add_product_name);
+        edNote = (CInputForm) view.findViewById(R.id.add_product_note);
         edUnitPrice = (CInputForm) view.findViewById(R.id.add_product_unit_price);
         edPurchasePrice = (CInputForm) view.findViewById(R.id.add_product_purchase_price);
         edGroup = (CInputForm) view.findViewById(R.id.add_product_group);
@@ -103,46 +112,35 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
     }
 
     private void intitialData() {
+//        listBoolean.add(0, Constants.IS_PROMOTION);
+//        listBoolean.add(1, Constants.NO_PROMOTION);
 
-        for (int i = 0; i < mActivity.listProductGroup.size(); i++) {
-            mActivity.listProductGroup.get(i).put("text", mActivity.listProductGroup.get(i).getString("name"));
-        }
+        edGroup.setText(mActivity.mGroup.getString("name"));
+        edGroup.setDropdown(true, null);
 
-        listBoolean.add(0, Constants.IS_PROMOTION);
-        listBoolean.add(1, Constants.NO_PROMOTION);
-
-        edGroup.setText(mActivity.listProductGroup.get(mActivity.currentPosition).getString("name"));
-        edGroup.setDropdown(true, new CInputForm.ClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                CustomBottomDialog.choiceListObject("CHỌN NHÓM SẢN PHẨM", mActivity.listProductGroup, "text", new CallbackObject() {
-                    @Override
-                    public void onResponse(BaseModel object) {
-                        edGroup.setText(object.getString("text"));
-
-                    }
-                }, null);
-
-            }
-        });
-
-        edIsPromotion.setText(listBoolean.get(0));
+        edIsPromotion.setText(Constants.NO_PROMOTION);
         edIsPromotion.setDropdown(true, new CInputForm.ClickListener() {
             @Override
             public void onClick(View view) {
-                CustomBottomDialog.choiceTwoOption(mActivity.getResources().getString(R.string.icon_gift), Constants.IS_PROMOTION,
-                        mActivity.getResources().getString(R.string.icon_empty), Constants.NO_PROMOTION,
-                        new CustomBottomDialog.TwoMethodListener() {
+                CustomDropdow.createListDropdown(
+                        edIsPromotion.getMoreButton(),
+                        DataUtil.createList2String(Util.getIconString(R.string.icon_gift, "  ", Constants.IS_PROMOTION),
+                                Util.getIconString(R.string.icon_empty, "   ", Constants.NO_PROMOTION)),
+                        0,
+                        false,
+                        new CallbackClickAdapter() {
                             @Override
-                            public void Method1(Boolean one) {
-                                edIsPromotion.setText(Constants.IS_PROMOTION);
+                            public void onRespone(String data, int pos) {
+                                if (pos ==0){
+                                    edIsPromotion.setText(Constants.IS_PROMOTION);
+
+                                }else if(pos ==1) {
+                                    edIsPromotion.setText(Constants.NO_PROMOTION);
+
+                                }
+
                             }
 
-                            @Override
-                            public void Method2(Boolean two) {
-                                edIsPromotion.setText(Constants.NO_PROMOTION);
-                            }
                         });
 
             }
@@ -153,6 +151,7 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
             product = new BaseModel(bundle);
 
             edName.setText(product.getString("name"));
+            edNote.setText(product.getString("note"));
             edUnitPrice.setText(Util.FormatMoney(product.getDouble("unitPrice")));
             edPurchasePrice.setText(Util.FormatMoney(product.getDouble("purchasePrice")));
             edBasePrice.setText(Util.FormatMoney(product.getDouble("basePrice")));
@@ -192,6 +191,9 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
         edPurchasePrice.textMoneyEvent(null);
         edBasePrice.textMoneyEvent(null);
         vSwitch.setOnClickListener(this);
+        edName.textEvent();
+        edVolume.textEvent();
+        edUnitInCarton.textEvent();
 
     }
 
@@ -250,11 +252,11 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
 
     private int defineGroupId(String groupName) {
         int id = 0;
-        for (int i = 0; i < mActivity.listProductGroup.size(); i++) {
-            if (mActivity.listProductGroup.get(i).getString("name").equals(groupName)) {
-                id = mActivity.listProductGroup.get(i).getInt("id");
-            }
-        }
+//        for (int i = 0; i < mActivity.listProductGroup.size(); i++) {
+//            if (mActivity.listProductGroup.get(i).getString("name").equals(groupName)) {
+//                id = mActivity.listProductGroup.get(i).getInt("id");
+//            }
+//        }
         return id;
     }
 
@@ -264,12 +266,7 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
                 || edPurchasePrice.getText().toString().trim().equals("")
                 || edBasePrice.getText().toString().trim().equals("")
                 || edUnitInCarton.getText().toString().trim().equals("")) {
-            CustomCenterDialog.alertWithCancelButton(null, "Vui lòng nhập đủ thông tin", "đồng ý", null, new CallbackBoolean() {
-                @Override
-                public void onRespone(Boolean result) {
-
-                }
-            });
+            CustomCenterDialog.alertWithCancelButton(null, "Vui lòng nhập đủ thông tin", "đồng ý", null, null);
 
         } else {
             if (imageChangeUri != null) {
@@ -305,10 +302,11 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
                         Util.valueMoney(edUnitPrice.getText().toString()),
                         Util.valueMoney(edPurchasePrice.getText().toString()),
                         edVolume.getText().toString().trim().replace(",", ""),
-                        defineGroupId(edGroup.getText().toString().trim()),
+                        mActivity.mGroup.getInt("id"),
                         urlImage,
                         Util.valueMoney(edBasePrice.getText().toString()),
-                        edUnitInCarton.getText().toString().trim().replace(",", "")),
+                        edUnitInCarton.getText().toString().trim().replace(",", ""),
+                        Util.encodeString(edNote.getText().toString())),
                 false, false);
         new GetPostMethod(param, new NewCallbackCustom() {
             @Override

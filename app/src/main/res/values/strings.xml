@@ -25,6 +25,7 @@
     <string name="icon_email" translatable="false">&#xf0e0;</string>
     <string name='icon_sms' translatable="false">&#xf075;</string>
     <string name="icon_phone" translatable="false">&#xf095;</string>
+    <string name="icon_hotline" translatable="false">&#xf8d3;</string>
     <string name="icon_idcard" translatable="false">&#xf02a;</string>
     <string name="icon_edit" translatable="false">&#xf044;</string>
     <string name="icon_edit_pen" translatable="false">&#xf304;</string>
@@ -56,6 +57,7 @@
     <string name="icon_product_group" translatable="false">&#xf0e8;</string>
     <string name="icon_product" translatable="false">&#xf02d;</string>
     <string name="icon_price" translatable="false">&#xf155;</string>
+    <string name="icon_base_price" translatable="false">&#xf4a0;</string>
     <string name="icon_purchase_price" translatable="false">&#xf0d6;</string>
     <string name="icon_gift" translatable="false">&#xf06b;</string>
     <string name="icon_chart" translatable="false">&#xf080;</string>
@@ -103,6 +105,8 @@
     <string name="icon_repair" translatable="false">&#xf7d9;</string>
     <string name="icon_close" translatable="false">&#xf057;</string>
     <string name="icon_copy" translatable="false">&#xf0c5;</string>
+    <string name="icon_man" translatable="false">&#xf222;</string>
+    <string name="icon_woman" translatable="false">&#xf221;</string>
     <string name="icon_cart" translatable="false">&#xf07a;</string>
     <string name="icon_empty" translatable="false">&#xf656;</string>
     <string name="icon_web" translatable="false">&#xf37e;</string>
@@ -141,7 +145,7 @@
     <string name="icon_key" translatable="false">&#xf084;</string>
     <string name="icon_chat_noname" translatable="false">&#xf075;</string>
     <string name="icon_chat_viber">&#xf409;</string>
-    <string name="icon_chat_messenger">&#xf39f;</string>
+    <string name="icon_chat_messenger">&#xf39e;</string>
     <string name="icon_reply">&#xf3e5;</string>
     <string name="icon_circle_up">&#xf0aa;</string>
     <string name="icon_circle_down">&#xf0ab;</string>
@@ -153,6 +157,8 @@
     <string name="icon_pickup">&#xf63c;</string>
     <string name="icon_compress">&#xf326;</string>
     <string name="icon_previous">&#xf0d9;</string>
+    <string name="icon_ban">&#xf05e;</string>
+
 
     <string name="login_username" translatable="false">Nhập tài khoản hoặc SĐT</string>
     <string name="login_password" translatable="false">Nhập mật khẩu</string>
@@ -164,6 +170,7 @@
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <string name="fcm_message" translatable="false">FCM Message</string>
     <string name="file_provider_name" translatable="false">.fileProvider</string>
+
 
 
 </resources>

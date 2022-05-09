@@ -152,4 +152,13 @@ public class StatisticalBillsFragment extends Fragment implements View.OnClickLi
     public double getSumBillNetSale() {
         return adapter.sumNetTotal();
     }
+
+    public double getSumBillSalesNet() {
+        return adapter.sumNetSalesTotal();
+    }
+
+    public double getSumBillBasePrice() {
+        return adapter.sumBaseTotal();
+    }
+
 }

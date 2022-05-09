@@ -161,6 +161,10 @@ public class StatisticalDebtFragment extends Fragment implements View.OnClickLis
         return adapter.sumDebts();
     }
 
+    protected double getSumNetDebt() {
+        return adapter.sumNetDebts();
+    }
+
     private void sortDebt() {
         if (tvSort.getRotation() == 180) {
             tvSort.setRotation(0);

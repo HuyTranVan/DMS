@@ -161,9 +161,10 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
                     CustomTopDialog.choiceListObject("Chọn nhân viên", listUser, "displayName", new CallbackObject() {
                         @Override
                         public void onResponse(BaseModel object) {
-                            tvEmployeeName.setText(object.getString("displayName"));
-                            Glide.with(StatisticalActivity.this).load(object.getString("image")).placeholder(R.drawable.ic_user).fitCenter().into(employeeImage);
-                            updateAllFragmentData(object.getInt("id"));
+                            currentUser = object;
+                            tvEmployeeName.setText(currentUser.getString("displayName"));
+                            Glide.with(StatisticalActivity.this).load(currentUser.getString("image")).placeholder(R.drawable.ic_user).fitCenter().into(employeeImage);
+                            updateAllFragmentData(currentUser.getInt("id"), currentUser.getInt("warehouse_id"));
 
                         }
 
@@ -232,7 +233,7 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
                 updateBillDetailList(listInitialBill);
                 temptWarehouse = result.getBaseModel("inventory");
 
-                updateAllFragmentData(0);
+                updateAllFragmentData(currentUser.getInt("id"), currentUser.getInt("warehouse_id"));
             }
 
             @Override
@@ -275,11 +276,11 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
 
     }
 
-    private void updateAllFragmentData(int id) {
+    private void updateAllFragmentData(int user_id, int warehouse_id) {
         String username = tvEmployeeName.getText().toString().trim();
         Util.paymentFragment.reloadData(username, listInitialPayment);
         Util.debtFragment.reloadData(username, listInitialDebt);
-        Util.debtFragment.updateCustomerNumber(id, listInitialCustomerByUser);
+        Util.debtFragment.updateCustomerNumber(user_id, listInitialCustomerByUser);
         Util.billsFragment.reloadData(username, listInitialBill);
         Util.productFragment.reloadData(username, listInitialBillDetail);
         Util.dashboardFragment.reloadData(username, listInitialBill,
@@ -288,11 +289,15 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
                 Util.paymentFragment.getSumPayment(),
                 Util.paymentFragment.getCoutList(),
                 Util.debtFragment.getSumDebt(),
+                Util.debtFragment.getSumNetDebt(),
                 Util.debtFragment.CoutList(),
                 Util.paymentFragment.getSumProfit(),
                 Util.paymentFragment.getSumBaseProfit(),
                 Util.billsFragment.getSumBillNetSale(),
-                temptWarehouse);
+                Util.billsFragment.getSumBillSalesNet(),
+                Util.billsFragment.getSumBillBasePrice(),
+                temptWarehouse,
+                warehouse_id);
 
     }
 

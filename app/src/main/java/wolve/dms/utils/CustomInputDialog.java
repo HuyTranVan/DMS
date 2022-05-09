@@ -26,6 +26,7 @@ import com.orhanobut.dialogplus.ViewHolder;
 
 import wolve.dms.R;
 import wolve.dms.callback.CallbackDouble;
+import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CInputForm;
 
@@ -467,6 +468,83 @@ public class CustomInputDialog {
         edPhone.requestFocus();
         Util.showKeyboard(edPhone);
 
+    }
+
+    public static void dialogDebtRange(int currentTime, CallbackInt listener) {
+        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_debt_range);
+        LinearLayout lnParent = dialogResult.findViewById(R.id.dialog_debtrange_parent);
+        final CInputForm edTime = (CInputForm) dialogResult.findViewById(R.id.dialog_debtrange_time);
+        final Button btnSubmit = (Button) dialogResult.findViewById(R.id.btn_submit);
+        final Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
+
+        dialogResult.setCanceledOnTouchOutside(true);
+
+        edTime.textEvent();
+        edTime.setText(String.valueOf(currentTime));
+
+        btnSubmit.setText("cập nhật");
+        Util.showKeyboardEditTextDelay(edTime.getEdInput());
+
+        dialogResult.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                Util.hideKeyboard(edTime);
+            }
+        });
+
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Util.isEmpty(edTime)){
+                    Util.showToast("Nhập sai giá trị");
+                }else {
+                    listener.onResponse(Integer.parseInt(edTime.getText().toString()));
+                    Util.hideKeyboard(edTime);
+                    dialogResult.dismiss();
+                }
+
+//                if (!Util.isEmpty(edShopName)) {
+//                    if (Util.isPhoneFormat(edPhone.getText().toString()) != null){
+//                        mListener.onShopname(edShopName.getText().toString().trim(), shopType[0], Util.getPhoneValue(edPhone));
+//                        Util.hideKeyboard(v);
+//                        dialogResult.dismiss();
+//
+//                    }else if (!Util.isEmpty(edPhone)){
+//                        Util.showToast("Sai định dạng số điện thoại");
+//
+//                    }else {
+//                        mListener.onShopname(edShopName.getText().toString().trim(), shopType[0], "");
+//                        Util.hideKeyboard(v);
+//                        dialogResult.dismiss();
+//
+//                    }
+//
+//
+//
+//                } else {
+//                    if (Util.isPhoneFormat(edPhone.getText().toString()) != null){
+//                        mListener.onShopname("-", shopType[0], Util.getPhoneValue(edPhone));
+//                        Util.hideKeyboard(v);
+//                        dialogResult.dismiss();
+//
+//                    }else {
+//                        Util.showToast("Sai định dạng thông tin");
+//                    }
+//
+//                }
+
+
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogResult.dismiss();
+            }
+        });
+
+        //dialogResult.show();
     }
 
 }

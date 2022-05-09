@@ -64,12 +64,12 @@
 
     </RelativeLayout>
 
-    <androidx.core.widget.NestedScrollView
+    <ScrollView
         android:id="@+id/customer_scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingBottom="@dimen/_5sdp"
+        android:paddingBottom="@dimen/_40sdp"
         android:layout_below="@+id/update_price_header">
 
         <LinearLayout
@@ -125,7 +125,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number"
-                    app:textHint="Giá nhập hàng"
+                    app:textHint="Giá Sale"
                     app:iconText="@string/icon_purchase" />
 
                 <wolve.dms.customviews.CInputForm
@@ -134,7 +134,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="number"
                     app:textHint="Giá nhà phân phối"
-                    app:iconText="@string/icon_briefcase" />
+                    app:iconText="@string/icon_base_price" />
 
                 <wolve.dms.customviews.CInputForm
                     android:id="@+id/add_product_unit_in_carton"
@@ -161,6 +161,17 @@
                     app:isDropdown="true"
                     app:textColor="@color/colorBlue" />
 
+                <wolve.dms.customviews.CInputForm
+                    android:id="@+id/add_product_note"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:background="?selectableItemBackground"
+                    app:iconText="@string/icon_comment"
+                    app:multiLine="true"
+                    app:textColor="@drawable/text_white_selected"
+                    app:textHint="Ghi chú sản phẩm"
+                    app:isShowBottomLine="false" />
+
 
             </LinearLayout>
 
@@ -179,7 +190,7 @@
 
 
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+    </ScrollView>
 
     <View
         android:id="@+id/add_product_cover"
@@ -187,6 +198,7 @@
         android:layout_height="match_parent"
         android:background="@color/black_text_color_hint"
         android:layout_below="@+id/update_price_header"
-        android:clickable="true"/>
+        android:clickable="true"
+        android:visibility="gone"/>
 
 </RelativeLayout>

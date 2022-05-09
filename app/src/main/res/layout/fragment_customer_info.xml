@@ -38,7 +38,6 @@
                         android:layout_width="@dimen/_2sdp"
                         android:layout_height="match_parent"
                         android:background="@color/black"
-                        android:layout_marginRight="@dimen/_10sdp"
                         android:layout_marginBottom="@dimen/_5sdp"/>
 
                     <wolve.dms.customviews.CButtonVertical
@@ -46,7 +45,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:iconText="@string/icon_check"
-                        android:layout_marginRight="@dimen/_15sdp"
+                        android:layout_marginRight="@dimen/_5sdp"
                         app:text="In hđ nợ"
                         app:iconColor="@color/colorWhite"
                         app:textColor="@color/black_text_color_hint"
@@ -61,7 +60,7 @@
                         app:textColor="@color/black_text_color_hint"
                         app:iconColor="@color/orange_dark"
                         app:backgroundIcon="@drawable/btn_round_transparent_border_grey"
-                        android:layout_marginRight="@dimen/_15sdp" />
+                        android:layout_marginRight="@dimen/_5sdp" />
 
                     <wolve.dms.customviews.CButtonVertical
                         android:id="@+id/customer_info_call"
@@ -72,16 +71,27 @@
                         app:textColor="@color/black_text_color_hint"
                         app:iconColor="@color/colorBlue"
                         app:backgroundIcon="@drawable/btn_round_transparent_border_grey"
-                        android:layout_marginRight="@dimen/_15sdp" />
+                        android:layout_marginRight="@dimen/_5sdp" />
 
                     <wolve.dms.customviews.CButtonVertical
                         android:id="@+id/customer_info_direction"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:iconText="@string/icon_direction"
-                        android:layout_marginRight="@dimen/_15sdp"
+                        android:layout_marginRight="@dimen/_5sdp"
                         app:text="Chỉ đường"
                         app:iconColor="@color/colorBlue"
+                        app:textColor="@color/black_text_color_hint"
+                        app:backgroundIcon="@drawable/btn_round_transparent_border_grey" />
+
+                    <wolve.dms.customviews.CButtonVertical
+                        android:id="@+id/customer_info_print"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:iconText="@string/icon_print"
+                        android:layout_marginRight="@dimen/_5sdp"
+                        app:text="In công nợ"
+                        app:iconColor="@color/black_text_color_hint"
                         app:textColor="@color/black_text_color_hint"
                         app:backgroundIcon="@drawable/btn_round_transparent_border_grey" />
 

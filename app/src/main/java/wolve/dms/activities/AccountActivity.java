@@ -35,7 +35,7 @@ import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
-public class AccountActivity extends BaseActivity implements View.OnClickListener {
+public class AccountActivity extends BluetoothActivity implements View.OnClickListener {
     private ImageView btnBack;
     private TextView tvTitle, tvMonth, tvIncome, tvOutcome;
     private RadioGroup rdSort;

@@ -140,14 +140,16 @@
 
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/dialog_edit_product_quantity_title"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:hint="Số lượng">
 
             <EditText
                 android:id="@+id/dialog_edit_product_quantity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Số lượng"
+
                 android:inputType="number"
                 app:backgroundTint="@color/colorBlueDark" />
 

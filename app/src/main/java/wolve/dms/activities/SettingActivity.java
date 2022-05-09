@@ -43,10 +43,10 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     private ImageView btnBack;
     private TextView tvDisplayname, tvRole, tvChangePassword, tvChangeUser,
             tvLogout, tvInfo, tvContact, tvShare, tvShareDetail,
-            tvMapStyle;
+            tvMapStyle, tvSaveImage;
     private CircleImageView imgUser;
     private Fragment mFragment;
-    private SwitchCompat swSaveContact, swMapStyle;
+    private SwitchCompat swSaveContact, swMapStyle, swSaveImage;
     private RelativeLayout lnShare;
 
     private BaseModel currentUser;
@@ -75,6 +75,8 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         swSaveContact = findViewById(R.id.user_option_change_contact_sw);
         tvMapStyle = findViewById(R.id.user_option_mapstyle);
         swMapStyle = findViewById(R.id.user_option_mapstyle_sw);
+        tvSaveImage = findViewById(R.id.user_option_saveimage);
+        swSaveImage = findViewById(R.id.user_option_saveimage_sw);
         tvShare = findViewById(R.id.user_option_share);
         tvShareDetail= findViewById(R.id.user_option_share_detail);
         lnShare = findViewById(R.id.user_option_share_parent);
@@ -93,10 +95,12 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         tvChangeUser.setText(Util.getIconString(R.string.icon_group, "    ", "Chuyển tài khoản"));
         tvLogout.setText(Util.getIconString(R.string.icon_logout, "    ", "Đăng xuất"));
         tvInfo.setText(Util.getIconString(R.string.icon_info, "      ", "Thông tin tài khoản"));
-        tvMapStyle.setText(Util.getIconString(R.string.icon_edit_map, "      ", "Định dạng bản đồ mặc định"));
+        tvSaveImage.setText(Util.getIconString(R.string.icon_image, "      ", "Lưu hình sản phẩm"));
+        tvMapStyle.setText(Util.getIconString(R.string.icon_edit_map, "      ", "Định dạng bản đồ Google Map"));
         tvContact.setText(Util.getIconString(R.string.icon_contact, "      ", "Tự động lưu danh bạ"));
-        tvShare.setText(Util.getIconString(R.string.icon_share, "      ", "Ứng dụng chia sẻ mặc định"));
-        swSaveContact.setChecked(CustomFixSQL.getInt(Constants.AUTO_SAVE_CONTACT) == 1 ? true : false);
+        tvShare.setText(Util.getIconString(R.string.icon_share, "      ", "Chia sẻ mặc định"));
+        swSaveContact.setChecked(CustomFixSQL.getBoolean(Constants.AUTO_SAVE_CONTACT));
+        swSaveImage.setChecked(CustomFixSQL.getBoolean(Constants.SAVE_PRODUCT_IMAGE));
         swMapStyle.setChecked(CustomFixSQL.getBoolean(Constants.SET_DEFAULT_MAPSTYLE));
         switch (CustomFixSQL.getInt(Constants.PACKAGE_DEFAULT)){
             case 0:
@@ -108,12 +112,9 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 break;
 
             case 2:
-                tvShareDetail.setText("Viber");
+                tvShareDetail.setText("Facebook Messenger");
                 break;
 
-            case 3:
-                tvShareDetail.setText("Messenger");
-                break;
         }
     }
 
@@ -124,10 +125,12 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         tvChangePassword.setOnClickListener(this);
         tvChangeUser.setOnClickListener(this);
         tvLogout.setOnClickListener(this);
-        swSaveContact.setOnCheckedChangeListener(this);
+        //swSaveContact.setOnCheckedChangeListener(this);
 
         lnShare.setOnClickListener(this);
         mapStyleEvent();
+        saveContactEvent();
+        saveProductImageEvent();
     }
 
     @Override
@@ -268,6 +271,26 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 CustomFixSQL.setBoolean(Constants.SET_DEFAULT_MAPSTYLE, isChecked);
+            }
+        });
+
+    }
+
+    private void saveContactEvent(){
+        swSaveContact.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                CustomFixSQL.setBoolean(Constants.AUTO_SAVE_CONTACT, isChecked);
+            }
+        });
+
+    }
+
+    private void saveProductImageEvent(){
+        swSaveImage.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                CustomFixSQL.setBoolean(Constants.SAVE_PRODUCT_IMAGE, isChecked);
             }
         });
 

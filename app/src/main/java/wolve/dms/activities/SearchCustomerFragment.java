@@ -189,6 +189,7 @@ public class SearchCustomerFragment extends DialogFragment implements View.OnCli
          CustomDropdow.createListDropdown(tvDistrict,
                  districts,
                  Util.convertSdpToInt(R.dimen._300sdp),
+                 false,
                  new CallbackClickAdapter() {
              @Override
              public void onRespone(String data, int position) {

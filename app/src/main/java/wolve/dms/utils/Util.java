@@ -96,6 +96,7 @@ import wolve.dms.activities.StatisticalDebtFragment;
 import wolve.dms.activities.StatisticalPaymentFragment;
 import wolve.dms.activities.StatisticalProductFragment;
 import wolve.dms.callback.CallbackDouble;
+import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CInputForm;
 import wolve.dms.libraries.ItemDecorationGridSpace;
@@ -1005,6 +1006,12 @@ public class Util {
         return (int) (time / (1000 * 24 * 60 * 60));
     }
 
+    public static int countDay(long timestampStart, long timestampEnd) {
+        long time = timestampEnd - timestampStart;
+
+        return (int) (time / (1000 * 24 * 60 * 60));
+    }
+
     public static String HourStringNatural(long timestamp) {
         String date = "";
 
@@ -1553,6 +1560,27 @@ public class Util {
         });
     }
 
+    public static void numberEvent(final EditText edText, final CallbackInt mlistener) {
+        edText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String text = s.toString().trim();
+                mlistener.onResponse(text.equals("") || text.equals("0")? 0: Integer.parseInt(text));
+
+            }
+        });
+    }
+
     public static void showGooglePlayServicesAvailabilityErrorDialog(final int connectionStatusCode) {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         Dialog dialog = apiAvailability.getErrorDialog(Util.getInstance().getCurrentActivity(),
@@ -1758,6 +1786,28 @@ public class Util {
         ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
         layoutParams.width = 500;
         view.requestLayout();
+
+    }
+
+    public static String quantityProductDisplay(BaseModel product, int quantity){
+        String mDisplay = "";
+        if (quantity > 0){
+            if (product.getInt("unitInCarton") >1){
+                if (quantity > product.getInt("unitInCarton") ){
+                    String unitDisplay = quantity%product.getInt("unitInCarton")>0?
+                            " + "+quantity%product.getInt("unitInCarton") :
+                            "";
+                    mDisplay = String.format("[%dth%s]",
+                            quantity/product.getInt("unitInCarton"),
+                            unitDisplay);
+
+                }
+
+            }
+
+        }
+        return mDisplay;
+
 
     }
 

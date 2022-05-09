@@ -1,5 +1,7 @@
 package wolve.dms.activities;
 
+import static wolve.dms.activities.BaseActivity.createGetParam;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +30,10 @@ import lecho.lib.hellocharts.util.ChartUtils;
 import lecho.lib.hellocharts.view.ColumnChartView;
 import lecho.lib.hellocharts.view.PieChartView;
 import wolve.dms.R;
+import wolve.dms.apiconnect.ApiUtil;
+import wolve.dms.apiconnect.apiserver.GetPostMethod;
+import wolve.dms.callback.NewCallbackCustom;
+import wolve.dms.customviews.CHorizontalView;
 import wolve.dms.customviews.CVerticalView;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.District;
@@ -45,7 +51,8 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
     private ColumnChartView chartIncome;
     private ColumnChartView chartNetGroup;
     private PieChartView chartDistrict;
-    private CVerticalView vRevenue, vCash, vDebt, vProfit, vInventory, vBaseProfit, vPaidNet, vBillNet;
+    private CHorizontalView vCash, vProfit, vPaidNet, vPaidBase, vRevenue, vDebt, vDebtNet, vBillNet,vBillSalesNet,
+            vBillBase, vInventoryBase, vInventoryNet, vInventoryEmployee, vBaseProfit  ;
 
     private StatisticalActivity mActivity;
 
@@ -90,11 +97,17 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         vRevenue = view.findViewById(R.id.statistical_dashboard_revenue);
         vCash = view.findViewById(R.id.statistical_dashboard_cash);
         vDebt = view.findViewById(R.id.statistical_dashboard_debt);
+        vDebtNet = view.findViewById(R.id.statistical_dashboard_debt_net);
         vProfit = view.findViewById(R.id.statistical_dashboard_profit);
-        vInventory = view.findViewById(R.id.statistical_dashboard_inventory);
+        vInventoryBase = view.findViewById(R.id.statistical_dashboard_inventory_base);
+        vInventoryNet = view.findViewById(R.id.statistical_dashboard_inventory_net);
+        vInventoryEmployee = view.findViewById(R.id.statistical_dashboard_inventory_employee);
         vBaseProfit = view.findViewById(R.id.statistical_dashboard_base_profit);
         vPaidNet = view.findViewById(R.id.statistical_dashboard_paidnet);
+        vPaidBase = view.findViewById(R.id.statistical_dashboard_paidbase);
         vBillNet = view.findViewById(R.id.statistical_dashboard_billnet);
+        vBillSalesNet = view.findViewById(R.id.statistical_dashboard_billsalesnet);
+        vBillBase = view.findViewById(R.id.statistical_dashboard_billbase);
     }
 
     @Override
@@ -109,11 +122,15 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
                            List<BaseModel> listDetail,
                            double total,
                            double paid, int countpayment,
-                           double debt, int countdebt,
+                           double debt,
+                           double debt_net, int countdebt,
                            double profit,
                            double base_profit,
                            double net_total,
-                           BaseModel temptWarehouse) {
+                           double sales_net_total,
+                           double base_total,
+                           BaseModel temptWarehouse,
+                           int warehouse_id) {
         List<BaseModel> mList = new ArrayList<>();
         List<BaseModel> mListDetail = new ArrayList<>();
         if (username.equals(Constants.ALL_FILTER)) {
@@ -135,11 +152,26 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
                     mListDetail.add(row2);
                 }
             }
+
+            loadEmployeeInventory(warehouse_id);
         }
         setupIncomeChart(mListDetail, total, paid, debt, profit);
         setupNetGroupChart(mListDetail);
         setupDistrictChart(mList);
-        updateOverView(username, mList, paid, countpayment, total, debt, countdebt, profit, base_profit, net_total,temptWarehouse);
+        updateOverView( username,
+                        mList,
+                        paid,
+                        countpayment,
+                        total,
+                        debt,
+                        debt_net,
+                        countdebt,
+                        profit,
+                        base_profit,
+                        net_total,
+                        sales_net_total,
+                        base_total,
+                        temptWarehouse);
 
     }
 
@@ -147,39 +179,59 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
                                 List<BaseModel> bills,
                                 double paid, int countpayment,
                                 double total,
-                                double debt, int countdebt,
+                                double debt,
+                                double debt_net, int countdebt,
                                 double profit,
                                 double baseprofit,
                                 double nettotal,
+                                double salesnettotal,
+                                double basetotal,
                                 BaseModel warehouse){
 
         vRevenue.setTitleText(String.format("Tổng bán hàng (%d)", bills.size()));
         vRevenue.setText(Util.FormatMoney(total));
 
-        vCash.setTitleText(String.format("Tiền thu (%d)", countpayment));
+        vBillNet.setTitleText("Tổng bán hàng theo giá NET");
+        vBillNet.setText(Util.FormatMoney(nettotal));
+
+        vBillSalesNet.setText(Util.FormatMoney(salesnettotal));
+
+        vBillBase.setText(Util.FormatMoney(basetotal));
+
+        vCash.setTitleText(String.format("Tổng tiền thu (%d)", countpayment));
         vCash.setText(Util.FormatMoney(paid));
 
-        vDebt.setTitleText(String.format("Công nợ (%d)", countdebt));
-        vDebt.setText(Util.FormatMoney(debt));
+        vPaidNet.setTitleText("Tổng tiền thu theo giá NET");
+        vPaidNet.setText(Util.FormatMoney(paid - profit));
+
+        vPaidBase.setTitleText("Tổng tiền thu theo giá NPP");
+        vPaidBase.setText(Util.FormatMoney(paid - baseprofit));
 
         vProfit.setTitleText("Chiết khấu bán hàng");
         vProfit.setText(Util.FormatMoney(profit));
 
-        vPaidNet.setTitleText("Giá NET theo tiền thu");
-        vPaidNet.setText(Util.FormatMoney(paid - profit));
-
-        vBillNet.setTitleText("Giá NET bán hàng");
-        vBillNet.setText(Util.FormatMoney(nettotal));
-
-        vInventory.setTitleText(String.format("Tồn kho NPP (%d)", warehouse.getInt("quantity")));
-        vInventory.setText(Util.FormatMoney(warehouse.getDouble("total")));
-
         vBaseProfit.setTitleText("Chênh lệch giá NPP");
         vBaseProfit.setText(Util.FormatMoney(baseprofit));
 
-        vPaidNet.setVisibility(username.equals(Constants.ALL_FILTER) ? View.GONE : View.VISIBLE);
-        vBillNet.setVisibility(username.equals(Constants.ALL_FILTER) ? View.GONE : View.VISIBLE);
-        vInventory.setVisibility(Util.isAdmin() ? View.VISIBLE : View.GONE);
+        vDebt.setTitleText(String.format("Công nợ (%d)", countdebt));
+        vDebt.setText(Util.FormatMoney(debt));
+        vDebtNet.setText(Util.FormatMoney(debt_net));
+
+
+        vInventoryBase.setTitleText(String.format("Tồn kho NPP(%d)", warehouse.getInt("quantity")));
+        vInventoryBase.setText(Util.FormatMoney(warehouse.getDouble("total_base")));
+
+        vInventoryNet.setText(Util.FormatMoney(warehouse.getDouble("total_net")));
+
+
+
+        //vPaidNet.setVisibility(username.equals(Constants.ALL_FILTER) ? View.GONE : View.VISIBLE);
+        vInventoryEmployee.setVisibility(username.equals(Constants.ALL_FILTER) ? View.GONE : View.VISIBLE);
+        vInventoryBase.setVisibility(Util.isAdmin() ? View.VISIBLE : View.GONE);
+        vInventoryNet.setVisibility(Util.isAdmin() ? View.VISIBLE : View.GONE);
+        vBillBase.setVisibility(Util.isAdmin() ? View.VISIBLE : View.GONE);
+        vPaidBase.setVisibility(Util.isAdmin() ? View.VISIBLE : View.GONE);
+
         vBaseProfit.setVisibility(Util.isAdmin() ? View.VISIBLE : View.GONE);
     }
 
@@ -472,5 +524,22 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
 
     }
 
+    private void loadEmployeeInventory(int warehouse_id){
+        BaseModel param = createGetParam(String.format(ApiUtil.INVENTORIES_BY_WAREHOUSE(), warehouse_id), false);
+
+        new GetPostMethod(param, new NewCallbackCustom() {
+            @Override
+            public void onResponse(BaseModel result, List<BaseModel> list) {
+                vInventoryEmployee.setTitleText(String.format("Tồn kho nhân viên giá NET(%d)", result.getInt("quantity")));
+                vInventoryEmployee.setText(Util.FormatMoney(result.getDouble("total_net")));
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        }, 0).execute();
+
+    }
 
 }

@@ -119,7 +119,7 @@ public class InventoryDetailAdapter extends RecyclerView.Adapter<InventoryDetail
     }
 
     private void showDialogEditInventory(int pos) {
-        CustomCenterDialog.showDialogInputQuantity(mData.get(pos).getString("name"),
+        CustomCenterDialog.showDialogInputQuantity(mData.get(pos),
                 mData.get(pos).getString("currentQuantity"),
                 mData.get(pos).getInt("currentQuantity"),
                 true,

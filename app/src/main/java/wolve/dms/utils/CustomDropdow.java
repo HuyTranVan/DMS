@@ -1,6 +1,7 @@
 package wolve.dms.utils;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -72,11 +73,22 @@ public class CustomDropdow {
         popup.showAsDropDown(view, 20, 0);
     }
 
-    public static void createListDropdown(View view, List<String> list,int high,  final CallbackClickAdapter mListener) {
+    public static void createListDropdown(View view, List<String> list,int high, boolean haveDelete, final CallbackClickAdapter mListener) {
         Context mContext = Util.getInstance().getCurrentActivity();
         ListPopupWindow listPopupWindow = new ListPopupWindow(mContext);
 
-        ListAdapter listAdapter = new ArrayAdapter(mContext, R.layout.view_spinner_item, list);
+        ListAdapter listAdapter = new ArrayAdapter(mContext, R.layout.view_spinner_item, list) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView text = (TextView) view.findViewById(R.id.text);
+                if (haveDelete && position == list.size()-1){
+                    text.setTextColor(Util.getInstance().getCurrentActivity().getResources().getColor(R.color.colorRedDark));
+
+                }
+                return view;
+            }
+        };
         listPopupWindow.setAdapter(listAdapter);
         listPopupWindow.setAnchorView(view);
         listPopupWindow.setWidth(measureContentWidth(mContext, listAdapter));

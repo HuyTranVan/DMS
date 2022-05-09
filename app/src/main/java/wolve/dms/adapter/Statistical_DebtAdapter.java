@@ -68,7 +68,7 @@ public class Statistical_DebtAdapter extends RecyclerView.Adapter<Statistical_De
     }
 
     @Override
-    public void onBindViewHolder(final StatisticalBillsViewHolder holder, final int position) {
+    public void onBindViewHolder(final StatisticalBillsViewHolder holder, int position) {
         holder.tvNumber.setText(mData.size() > 0 ? String.valueOf(mData.size() - position) : "");
         holder.tvsignBoard.setText(Constants.shopName[mData.get(position).getInt("shopType")] + " " + mData.get(position).getString("signBoard"));
         holder.tvDistrict.setText(mData.get(position).getString("street") + " - " + mData.get(position).getString("district"));
@@ -81,7 +81,7 @@ public class Statistical_DebtAdapter extends RecyclerView.Adapter<Statistical_De
         holder.tvNumber.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.Result(mData.get(position).getString("id"));
+                mListener.Result(mData.get(holder.getAdapterPosition()).getString("id"));
             }
         });
 
@@ -154,6 +154,14 @@ public class Statistical_DebtAdapter extends RecyclerView.Adapter<Statistical_De
         double totalDebt = 0.0;
         for (BaseModel row : mData) {
             totalDebt += row.getDouble("debt");
+        }
+        return totalDebt;
+    }
+
+    public double sumNetDebts() {
+        double totalDebt = 0.0;
+        for (BaseModel row : mData) {
+            totalDebt += row.getDouble("debt_net");
         }
         return totalDebt;
     }

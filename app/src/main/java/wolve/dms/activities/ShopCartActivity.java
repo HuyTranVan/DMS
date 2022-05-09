@@ -9,6 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -27,6 +28,7 @@ import wolve.dms.callback.CallbackDouble;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.customviews.CInputForm;
+import wolve.dms.libraries.recycleviewhelper.SimpleItemTouchHelperCallback;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Product;
 import wolve.dms.models.ProductGroup;
@@ -59,6 +61,7 @@ public class ShopCartActivity extends BaseActivity implements View.OnClickListen
     protected List<BaseModel> listProductGroups = new ArrayList<>();
     protected List<BaseModel> listBillDetail = new ArrayList<>();
     private String debt;
+    private ItemTouchHelper mItemTouchHelper;
 
 
     @Override
@@ -225,8 +228,17 @@ public class ShopCartActivity extends BaseActivity implements View.OnClickListen
 
                 updateBDFValue();
             }
+        }, new CartProductsAdapter.OnStartDragListener() {
+            @Override
+            public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
+                //mItemTouchHelper.startDrag(viewHolder);
+            }
         });
         Util.createLinearRV(rvProducts, adapterProducts);
+
+//        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(adapterProducts);
+//        mItemTouchHelper = new ItemTouchHelper(callback);
+//        mItemTouchHelper.attachToRecyclerView(rvProducts);
 
     }
 
@@ -240,6 +252,7 @@ public class ShopCartActivity extends BaseActivity implements View.OnClickListen
             product.put("promotion", list_product.get(i).getBoolean("promotion"));
             product.put("unitPrice", list_product.get(i).getDouble("unitPrice"));
             product.put("purchasePrice", list_product.get(i).getDouble("purchasePrice"));
+            product.put("unitInCarton", list_product.get(i).getInt("unitInCarton"));
             product.put("volume", list_product.get(i).getInt("volume"));
             product.put("image", list_product.get(i).getString("image"));
             //product.put("imageUrl", list_product.get(i).getString("imageUrl"));
@@ -315,6 +328,7 @@ public class ShopCartActivity extends BaseActivity implements View.OnClickListen
                                 DataUtil.newBillJsonParam(currentCustomer.getInt("id"),
                                         User.getId(),
                                         adapterProducts.totalPrice(),
+                                        adapterProducts.totalNetPrice(),
                                         0.0,
                                         adapterProducts.getAllData(),
                                         s,

@@ -121,6 +121,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
                                         User.getCurrentUser().getBaseModel("warehouse"),
                                         inventoryQuantity ),
                                         0,
+                                        false,
                                         new CallbackClickAdapter() {
                                             @Override
                                             public void onRespone(String data, int position) {

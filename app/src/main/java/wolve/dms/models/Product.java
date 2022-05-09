@@ -11,6 +11,7 @@ import java.util.List;
 import wolve.dms.callback.CallbackListObject;
 import wolve.dms.apiconnect.apiserver.DownloadImageMethod;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomFixSQL;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
@@ -54,13 +55,18 @@ public class Product extends BaseModel {
 
             }
 
-            new DownloadImageMethod(mProducts, "image", "PRODUCT", new CallbackListObject() {
-                @Override
-                public void onResponse(List<BaseModel> list) {
-                    //Util.getInstance().stopLoading(true);
-                    CustomSQL.setListBaseModel(Constants.PRODUCT_LIST, list);
-                }
-            }).execute();
+            if (CustomFixSQL.getBoolean(Constants.SAVE_PRODUCT_IMAGE)){
+                new DownloadImageMethod(mProducts, "image", "PRODUCT", new CallbackListObject() {
+                    @Override
+                    public void onResponse(List<BaseModel> list) {
+                        //Util.getInstance().stopLoading(true);
+                        CustomSQL.setListBaseModel(Constants.PRODUCT_LIST, list);
+                    }
+                }).execute();
+            }else {
+                CustomSQL.setListBaseModel(Constants.PRODUCT_LIST, mProducts);
+            }
+
 
 
         } catch (JSONException e) {

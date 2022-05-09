@@ -75,7 +75,7 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
 //    }
 
     @Override
-    public void onBindViewHolder(final WarehouseAdapterViewHolder holder, final int position) {
+    public void onBindViewHolder(final WarehouseAdapterViewHolder holder, int position) {
         holder.tvGroupName.setTextColor(mData.get(position).getInt("isMaster") == 2 ?
                 mContext.getResources().getColor(R.color.colorBlue) :
                 mContext.getResources().getColor(R.color.black_text_color)) ;
@@ -146,7 +146,7 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
         holder.lnParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListenerImport.onResponse(mData.get(position));
+                mListenerImport.onResponse(mData.get(holder.getAdapterPosition()));
 
             }
         });
@@ -168,20 +168,21 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
             @Override
             public void onClick(View view) {
                 CustomDropdow.createListDropdown(holder.tvMenu, listMenu(true,
-                        mData.get(position),
-                        mData.get(position).getInt("quantity")),
+                        mData.get(holder.getAdapterPosition()),
+                        mData.get(holder.getAdapterPosition()).getInt("quantity")),
                         0,
+                        false,
                         new CallbackClickAdapter() {
                             @Override
                             public void onRespone(String data, int pos) {
                                 if (data.equals(warehouseOptions[0])){
-                                    mListenerInfo.onInfo(mData.get(position));
+                                    mListenerInfo.onInfo(mData.get(holder.getAdapterPosition()));
 
                                 }else if (data.equals(warehouseOptions[1])){
-                                    mListenerInfo.onInventory(mData.get(position));
+                                    mListenerInfo.onInventory(mData.get(holder.getAdapterPosition()));
 
                                 }else if (data.equals(warehouseOptions[2])){
-                                    mListenerInfo.onReturn(mData.get(position));
+                                    mListenerInfo.onReturn(mData.get(holder.getAdapterPosition()));
                                 }
                             }
 

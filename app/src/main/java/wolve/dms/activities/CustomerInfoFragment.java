@@ -48,7 +48,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
     private View view, vStatusColor;
     private CInputForm edAdress, edPhone, edName, edNote;
     private EditText edShopName;
-    private CButtonVertical mDirection, mRating, mCall, mInterest;
+    protected CButtonVertical mDirection, mRating, mCall, mInterest, mPrint;
     protected TextView tvLastCheckin, tvCheckin, tvHistory;
     private Spinner spShoptype;
 
@@ -79,6 +79,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         mInterest = view.findViewById(R.id.customer_info_interest);
         mCall = view.findViewById(R.id.customer_info_call);
         mRating = view.findViewById(R.id.customer_info_rating);
+        mPrint = view.findViewById(R.id.customer_info_print);
         edNote = view.findViewById(R.id.customer_info_note);
         tvLastCheckin = view.findViewById(R.id.customer_info_last_status);
         vStatusColor = view.findViewById(R.id.customer_info_status_color);
@@ -148,7 +149,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         tvHistory.setOnClickListener(this);
         mDirection.setOnClickListener(this);
         mCall.setOnClickListener(this);
-        //mInterest.setOnClickListener(this);
+        mPrint.setOnClickListener(this);
         tvCheckin.setOnClickListener(this);
         edAdress.setOnMoreClickView(new View.OnClickListener() {
             @Override
@@ -318,6 +319,11 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
                     showDialogCheckin();
 
                 }
+
+                break;
+
+            case R.id.customer_info_print:
+                mActivity.printDebtBills();
 
                 break;
 

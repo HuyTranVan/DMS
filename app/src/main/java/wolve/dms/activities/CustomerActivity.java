@@ -34,7 +34,7 @@ import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import wolve.dms.R;
 import wolve.dms.adapter.Customer_ViewpagerAdapter;
 import wolve.dms.apiconnect.ApiUtil;
-import wolve.dms.apiconnect.apiserver.CustomGetPostListMethod;
+import wolve.dms.apiconnect.apiserver.GetPostListMethod;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackDouble;
@@ -676,7 +676,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
             params.add(item);
         }
 
-        new CustomGetPostListMethod(params, new CallbackCustomList() {
+        new GetPostListMethod(params, new CallbackCustomList() {
             @Override
             public void onResponse(List<BaseModel> results) {
                 reloadCustomer(currentCustomer.getString("id"));
@@ -738,6 +738,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void setPrintIconVisibility() {
+        infoFragment.mPrint.setVisibility(listDebtBill.size() > 0 ? View.VISIBLE : View.GONE);
         if (currentPosition == 1 && listDebtBill.size() > 0) {
             tvPrint.setVisibility(View.VISIBLE);
         } else {

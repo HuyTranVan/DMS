@@ -17,12 +17,15 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.apiconnect.ApiUtil;
+import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.customviews.CInputForm;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomDropdow;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 import static wolve.dms.activities.BaseActivity.createPostParam;
@@ -34,9 +37,9 @@ import static wolve.dms.activities.BaseActivity.createPostParam;
 public class NewUpdateProductGroupFragment extends Fragment implements View.OnClickListener {
     private View view;
     private ImageView btnBack;
-    private CInputForm edInput;
+    private CInputForm edInput, edIsSales;
     private Button btnSubmit;
-    private ProductGroup productGroup;
+    private BaseModel productGroup;
     private ProductGroupActivity mActivity;
 
     @Nullable
@@ -52,15 +55,13 @@ public class NewUpdateProductGroupFragment extends Fragment implements View.OnCl
     }
 
     private void intitialData() {
+        edIsSales.setText(Constants.NO_SALES);
         String bundle = getArguments().getString(Constants.PRODUCTGROUP);
         if (bundle != null) {
-            try {
-                productGroup = new ProductGroup(new JSONObject(bundle));
-                edInput.setText(productGroup.getString("name"));
+            productGroup = new BaseModel(bundle);
+            edInput.setText(productGroup.getString("name"));
+            edIsSales.setText(productGroup.getInt("isSales") == 1 ? Constants.IS_SALES : Constants.NO_SALES);
 
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
         }
 
         Util.showKeyboardEditTextDelay(edInput.getEdInput());
@@ -71,10 +72,41 @@ public class NewUpdateProductGroupFragment extends Fragment implements View.OnCl
     private void addEvent() {
         btnBack.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
+        isSalesEvent();
+    }
+
+    private void isSalesEvent() {
+        edIsSales.setDropdown(true, new CInputForm.ClickListener() {
+            @Override
+            public void onClick(View view) {
+                CustomDropdow.createListDropdown(
+                        edIsSales.getMoreButton(),
+                        DataUtil.createList2String(Util.getIconString(R.string.icon_product_group, "  ", Constants.IS_SALES),
+                                                    Util.getIconString(R.string.icon_empty, "   ", Constants.NO_SALES)),
+                        0,
+                        false,
+                        new CallbackClickAdapter() {
+                            @Override
+                            public void onRespone(String data, int pos) {
+                                if (pos ==0){
+                                    edIsSales.setText(Constants.IS_SALES);
+
+                                }else if(pos ==1) {
+                                    edIsSales.setText(Constants.NO_SALES);
+
+                                }
+
+                            }
+
+                        });
+
+            }
+        });
     }
 
     private void initializeView() {
         edInput = (CInputForm) view.findViewById(R.id.add_productgroup_input);
+        edIsSales = (CInputForm) view.findViewById(R.id.add_productgroup_sales);
         btnSubmit = (Button) view.findViewById(R.id.add_productgroup_submit);
         btnBack = (ImageView) view.findViewById(R.id.icon_back);
 
@@ -96,8 +128,10 @@ public class NewUpdateProductGroupFragment extends Fragment implements View.OnCl
 
                 } else {
                     BaseModel param = createPostParam(ApiUtil.PRODUCT_GROUP_NEW(),
-                            String.format(ApiUtil.PRODUCTGROUP_CREATE_PARAM, productGroup == null ? "" : "id=" + productGroup.getString("id") + "&",
-                                    Util.encodeString(edInput.getText().toString())),
+                            String.format(ApiUtil.PRODUCTGROUP_CREATE_PARAM,
+                                                    productGroup == null ? "" : "id=" + productGroup.getString("id") + "&",
+                                                    Util.encodeString(edInput.getText().toString()),
+                                                    edIsSales.getText().equals(Constants.IS_SALES)? 1 :0),
                             false,
                             false);
                     new GetPostMethod(param, new NewCallbackCustom() {

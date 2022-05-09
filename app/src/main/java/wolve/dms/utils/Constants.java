@@ -16,6 +16,7 @@ public class Constants {
     public final static String DMS_NAME = "DMS_NAME";
     public final static String DMS_LOGS = "DMS_LOGS";
     public final static String PRODUCTGROUP = "productgroup";
+    public final static String PRODUCTGROUPOBJECT = "productgroup_id";
     public final static String DEPOT = "depot";
     public final static String PRODUCT = "product";
     public final static String STATUS = "status";
@@ -91,6 +92,9 @@ public class Constants {
 
     public final static String IS_PROMOTION = "BÁN VÀ KHUYẾN MÃI";
     public final static String NO_PROMOTION = "CHỈ BÁN";
+
+    public final static String IS_SALES = "SẢN PHẨM TÍNH DOANH SỐ";
+    public final static String NO_SALES = "KHÔNG TÍNH DOANH SỐ";
 
     public final static String LOGIN_SUCCESS = "login_success";
 
@@ -179,6 +183,7 @@ public class Constants {
     public static final String LAT = "lat";
     public static final String LNG = "lng";
     public static final String HISTORY_SEARCH = "history_search";
+    public static final String SAVE_PRODUCT_IMAGE = "save_image";
 
     //Home constant
     public static List<BaseModel> HomeItemList() {
@@ -293,25 +298,25 @@ public class Constants {
         BaseModel item2 = new BaseModel();
         item2.put("position", 3);
         item2.put("icon", Util.getIcon(R.string.icon_product_group));
-        item2.put("text", "Nhóm sản phẩm");
-        if (Util.isAdmin()){
-            list.add(item2);
-        }
-        //list.add(item2);
+        item2.put("text", "Sản phẩm");
+//        if (Util.isAdmin()){
+//            list.add(item2);
+//        }
+        list.add(item2);
 
         BaseModel item3 = new BaseModel();
         item3.put("position", 4);
-        item3.put("icon", Util.getIcon(R.string.icon_product));
-        item3.put("text", "Sản phẩm");
-        list.add(item3);
+        item3.put("icon", Util.getIcon(R.string.icon_list_check));
+        item3.put("text", "Danh sách nhà phân phối");
+        //list.add(item3);
 
-        BaseModel item5 = new BaseModel();
-        item5.put("position", 5);
-        item5.put("icon", Util.getIcon(R.string.icon_list_check));
-        item5.put("text", "Danh sách nhà phân phối");
+//        BaseModel item5 = new BaseModel();
+//        item5.put("position", 5);
+//        item5.put("icon", Util.getIcon(R.string.icon_list_check));
+//        item5.put("text", "Danh sách nhà phân phối");
 
         if (User.getId() ==  2){
-            list.add(5, item5);
+            list.add(item3);
         }
 
 
@@ -323,7 +328,7 @@ public class Constants {
 
         BaseModel item0 = new BaseModel();
         item0.put("position", 0);
-        item0.put("icon", Util.getIcon(R.string.icon_chat));
+        item0.put("icon", Util.getIcon(R.string.icon_share));
         item0.put("text", "Tùy chọn");
         list.add(0, item0);
 
@@ -333,17 +338,17 @@ public class Constants {
         item1.put("text", "Zalo");
         list.add(1, item1);
 
+//        BaseModel item2 = new BaseModel();
+//        item2.put("position", 2);
+//        item2.put("icon", Util.getIcon(R.string.icon_chat_viber));
+//        item2.put("text", "Viber");
+//        list.add(2, item2);
+
         BaseModel item2 = new BaseModel();
         item2.put("position", 2);
-        item2.put("icon", Util.getIcon(R.string.icon_chat_viber));
-        item2.put("text", "Viber");
+        item2.put("icon", Util.getIcon(R.string.icon_chat_messenger));
+        item2.put("text", "Facebook Messenger");
         list.add(2, item2);
-
-        BaseModel item3 = new BaseModel();
-        item3.put("position", 3);
-        item3.put("icon", Util.getIcon(R.string.icon_chat_messenger));
-        item3.put("text", "Messenger");
-        list.add(3, item3);
 
         return list;
     }

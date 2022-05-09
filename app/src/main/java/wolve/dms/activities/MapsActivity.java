@@ -210,7 +210,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         btnBack.setOnClickListener(this);
         tvDistrictSelect.setOnClickListener(this);
         tvSearch.setOnClickListener(this);
-
+        tvListWaiting.setOnClickListener(this);
         //searchEvent();
 
         tvReload.setOnClickListener(this);
@@ -297,7 +297,10 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 break;
 
             case R.id.map_waiting_list_text:
-                showListWaiting();
+                if (!progressLoading.isShown()){
+                    showListWaiting();
+                }
+
 
 
                 break;
@@ -1146,7 +1149,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                         if (Contacts.contactExists(Util.getPhoneValue(customer.getString("phone")))){
                             btnContact.setVisibility(View.GONE);
                         }else {
-                            if (CustomFixSQL.getInt(Constants.AUTO_SAVE_CONTACT) == 1){
+                            if (CustomFixSQL.getBoolean(Constants.AUTO_SAVE_CONTACT)){
                                 saveContactEvent(customer);
 
                             }else {
@@ -1216,10 +1219,10 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                 if (result){
                     btnContact.setVisibility(View.GONE);
                     if (result){
-                        CustomFixSQL.setInt(Constants.AUTO_SAVE_CONTACT, 1);
+                        CustomFixSQL.setBoolean(Constants.AUTO_SAVE_CONTACT, true);
 
                     }else {
-                        CustomFixSQL.setInt(Constants.AUTO_SAVE_CONTACT, 0);
+                        CustomFixSQL.setBoolean(Constants.AUTO_SAVE_CONTACT, false);
                     }
 
                 }
@@ -1269,7 +1272,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                         @Override
                         public void run() {
                             Util.hideView(coParent, tvWaitingTitle);
-                            tvListWaiting.setOnClickListener(MapsActivity.this);
+                            //tvListWaiting.setOnClickListener(MapsActivity.this);
 
                         }
                     }, 5000);

@@ -167,6 +167,16 @@ public class User extends BaseModel {
         return phone;
     }
 
+    public static String getContact() {
+        String phone = "";
+        BaseModel currentUser = CustomSQL.getBaseModel(Constants.USER);
+
+        if (currentUser != null) {
+            phone = currentUser.getString("contact");
+        }
+        return phone;
+    }
+
     public static BaseModel getCurrentUser() {
         return CustomSQL.getBaseModel(Constants.USER);
     }

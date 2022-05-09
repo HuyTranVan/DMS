@@ -75,7 +75,9 @@ public class Statistical_PaymentAdapter extends RecyclerView.Adapter<Statistical
         holder.tvUser.setText(user + collect);
 
         String time = Util.DateHourString(mData.get(position).getLong("createAt"));
-        holder.tvTime.setText(time);
+        int countDay = Util.countDay(mData.get(position).getLong("bill_date"), mData.get(position).getLong("createAt"));
+
+        holder.tvTime.setText(String.format("%s [%d ngày]" , time, countDay));
 
         holder.tvProfit.setText(String.format("(%s)", Util.FormatMoney(mData.get(position).getDouble("bill_profit"))));
 

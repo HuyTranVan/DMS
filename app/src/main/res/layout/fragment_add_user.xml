@@ -17,9 +17,9 @@
             android:id="@+id/icon_back"
             android:layout_width="@dimen/_35sdp"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_arrow_back_black_18dp"
+            android:background="@drawable/btn_transparent"
             android:padding="@dimen/_8sdp"
-            android:background="@drawable/btn_transparent" />
+            android:src="@drawable/ic_arrow_back_black_18dp" />
 
         <TextView
             android:id="@+id/add_user_title"
@@ -33,12 +33,12 @@
 
     </RelativeLayout>
 
-    <androidx.core.widget.NestedScrollView
+    <ScrollView
         android:id="@+id/add_user_scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingBottom="@dimen/_5sdp"
+        android:paddingBottom="@dimen/_40sdp"
         android:layout_below="@+id/add_user_header">
 
         <LinearLayout
@@ -97,7 +97,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="phone"
                     app:textHint="Gọi đặt hàng"
-                    app:iconText="@string/icon_phone" />
+                    app:iconText="@string/icon_hotline" />
 
                 <wolve.dms.customviews.CInputForm
                     android:id="@+id/add_user_gender"
@@ -125,6 +125,57 @@
                     app:iconText="@string/icon_depot"
                     app:isDropdown="true"
                     app:textColor="@color/colorBlue" />
+
+                <RelativeLayout
+                    android:id="@+id/add_user_debt_expire_parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?selectableItemBackground">
+
+                    <TextView
+                        android:id="@+id/add_user_debt_expire_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/font_awesome"
+                        android:gravity="center_vertical"
+                        android:minHeight="@dimen/_40sdp"
+                        android:paddingLeft="@dimen/_10sdp"
+                        android:text="@string/icon_ban"
+                        android:textColor="@color/colorBlueTransparent"
+                        android:textSize="@dimen/_12sdp"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/add_user_debt_expire_icon"
+                        android:gravity="center_vertical"
+                        android:minHeight="@dimen/_40sdp"
+                        android:paddingLeft="@dimen/_20sdp"
+                        android:text="Thời gian công nợ (ngày)"
+                        android:textColor="@color/black_text_color"
+                        android:textSize="@dimen/_12sdp" />
+
+                    <TextView
+                        android:id="@+id/add_user_debt_expire_detail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="30"
+                        android:textSize="@dimen/_12sdp"
+                        android:textColor="@color/colorBlue"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="@dimen/_10sdp"
+                        />
+
+                    <View
+                        android:id="@+id/input_data_underline"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dip"
+                        android:background="@color/colorGrey"
+                        android:layout_alignParentBottom="true"/>
+
+                </RelativeLayout>
 
                 <TextView
                     android:id="@+id/add_user_password_default"
@@ -154,7 +205,7 @@
             </LinearLayout>
 
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+    </ScrollView>
 
 
 

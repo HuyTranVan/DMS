@@ -1,5 +1,7 @@
 package wolve.dms.activities;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -8,7 +10,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -16,6 +20,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.PermissionChecker;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -35,7 +43,7 @@ import wolve.dms.adapter.DebtAdapter;
 import wolve.dms.adapter.PrintBillAdapter;
 import wolve.dms.adapter.PrintOldBillAdapter;
 import wolve.dms.apiconnect.ApiUtil;
-import wolve.dms.apiconnect.apiserver.CustomGetPostListMethod;
+import wolve.dms.apiconnect.apiserver.GetPostListMethod;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustomList;
@@ -48,7 +56,6 @@ import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
-import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
@@ -61,7 +68,7 @@ import static wolve.dms.utils.Constants.REQUEST_ENABLE_BT;
  * Created by macos on 9/15/17.
  */
 
-public class PrintBillActivity extends BaseActivity implements View.OnClickListener, BluetoothListFragment.OnDataPass {
+public class PrintBillActivity extends BluetoothActivity implements View.OnClickListener, BluetoothListFragment.OnDataPass {
     private ImageView imgLogo, btnBack, imgOrderPhone;
     private TextView tvCompany, tvAdress, tvHotline, tvWebsite, tvTitle, tvShopName, tvCustomerName, tvCustomerAddress, tvDate, tvEmployee,
             tvSumCurrentBill, tvOrderPhone, tvThanks, tvPrinterMainText, tvPrinterName, tvTotal, tvPaid, tvRemain, tvTotalTitle,
@@ -82,12 +89,12 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     private String orderPhone;
     private Uri currentImagePath;
 
-    private BluetoothListFragment bluFragment = null;
-    protected BluetoothAdapter mBluetoothAdapter = null;
-    protected BluetoothSocket btsocket;
-    protected OutputStream outputStream;
-    protected BluetoothDevice currentBluetooth = null;
-    protected List<BluetoothDevice> listDevice = new ArrayList<>();
+//    private BluetoothListFragment bluFragment = null;
+//    protected BluetoothAdapter mBluetoothAdapter = null;
+//    protected BluetoothSocket btsocket;
+//    protected OutputStream outputStream;
+//    protected BluetoothDevice currentBluetooth = null;
+//    protected List<BluetoothDevice> listDevice = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,7 +167,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
         rePrint = getIntent().getExtras().getBoolean(Constants.RE_PRINT);
         if (rePrint) {
-            orderPhone = User.getPhone();
+            orderPhone = User.getContact();
             tvTitle.setText("CÔNG NỢ ");
             line1.setVisibility(View.GONE);
             line2.setVisibility(View.GONE);
@@ -178,7 +185,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
             tvTotal.setText(Util.FormatMoney(adapterOldBill.getDebtMoney()));
 
         } else {
-            orderPhone = currentBill.getBaseModel("user").getString("phone");
+            orderPhone = currentBill.getBaseModel("user").getString("contact");
             tvTitle.setText("HÓA ĐƠN");
             line1.setVisibility(View.VISIBLE);
             line2.setVisibility(View.VISIBLE);
@@ -232,10 +239,16 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         tvCustomerAddress.setText(": " + String.format("%s, %s", currentCustomer.getString("district"), currentCustomer.getString("province")));
         tvDate.setText(": " + Util.CurrentMonthYearHour());
 
-        if (!Util.getDeviceName().equals(Constants.currentEmulatorDevice)) {
-            registerBluetooth();
-
-        }
+//        if (!Util.getDeviceName().equals(Constants.currentEmulatorDevice)) {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+//                checkPermission();
+//
+//            } else {
+//                registerBluetooth();
+//            }
+//
+//
+//        }
 
     }
 
@@ -416,10 +429,10 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
                             lnSignature.setVisibility(View.GONE);
                         }
 
-                        if (isShareZalo != null){
+                        if (isShareZalo != null) {
                             isShareZalo.onRespone(true);
 
-                        }else {
+                        } else {
                             Util.getInstance().showLoading("Đang kiểm tra...");
                             new Handler().postDelayed(new Runnable() {
                                 @Override
@@ -465,60 +478,56 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         returnPreActivity(false);
 
     }
-    private void returnPreActivity(boolean loadData){
+
+    private void returnPreActivity(boolean loadData) {
         BaseModel modelResult = new BaseModel();
-        if (loadData){
+        if (loadData) {
             modelResult.put(Constants.RELOAD_DATA, true);
             CustomCenterDialog.alertWithCancelButton(null,
-                    !rePrint? "Cập nhật hóa đơn lên hệ thống thành công. Bạn muốn chia sẻ hóa đơn không?":
+                    !rePrint ? "Cập nhật hóa đơn lên hệ thống thành công. Bạn muốn chia sẻ hóa đơn không?" :
                             "Chưa kết nối máy in. Bạn muốn tiếp tục chia sẻ công nợ",
                     "Chia sẻ", "Không",
-                    new CallbackBoolean(){
-                @Override
-                public void onRespone(Boolean bool){
-                    if (bool) {
-                        currentImagePath = Util.storeImage(BitmapView.ResizeBitMapDependWidth(BitmapView.getBitmapFromView(scContentParent)) ,
-                                "SHARE",
-                                "SHARE",
-                                true);
+                    new CallbackBoolean() {
+                        @Override
+                        public void onRespone(Boolean bool) {
+                            if (bool) {
+                                currentImagePath = Util.storeImage(BitmapView.ResizeBitMapDependWidth(BitmapView.getBitmapFromView(scContentParent)),
+                                        "SHARE",
+                                        "SHARE",
+                                        true);
 
-                        Transaction.shareImage(currentImagePath, currentCustomer);
+                                Transaction.shareImage(currentImagePath, currentCustomer);
 
 //                        Util.storeImage(BitmapView.ResizeBitMapDependWidth(BitmapView.getBitmapFromView(scContentParent)) ,
 //                                "SHARE",
 //                                "SHARE",
 //                                true);
 
-                        Transaction.returnPreviousActivity(Constants.PRINT_BILL_ACTIVITY,
-                                modelResult,
-                                Constants.RESULT_PRINTBILL_ACTIVITY);
+                                Transaction.returnPreviousActivity(Constants.PRINT_BILL_ACTIVITY,
+                                        modelResult,
+                                        Constants.RESULT_PRINTBILL_ACTIVITY);
 
-                    }else {
-                        Transaction.returnPreviousActivity(Constants.PRINT_BILL_ACTIVITY,
-                                modelResult,
-                                Constants.RESULT_PRINTBILL_ACTIVITY);
+                            } else {
+                                Transaction.returnPreviousActivity(Constants.PRINT_BILL_ACTIVITY,
+                                        modelResult,
+                                        Constants.RESULT_PRINTBILL_ACTIVITY);
 
-                    }
+                            }
 
-                }
-            });
-
-
+                        }
+                    });
 
 
-        }else {
+        } else {
             Transaction.returnPreviousActivity(Constants.PRINT_BILL_ACTIVITY, modelResult, Constants.RESULT_PRINTBILL_ACTIVITY);
 
         }
 
 
-
-
-
     }
 
     private void createCurrentRVBill(BaseModel bill) {
-        adapterBill = new PrintBillAdapter( DataUtil.array2ListObject(bill.getString(Constants.BILL_DETAIL)));
+        adapterBill = new PrintBillAdapter(DataUtil.array2ListObject(bill.getString(Constants.BILL_DETAIL)));
         Util.createLinearRV(rvBills, adapterBill);
 
     }
@@ -531,7 +540,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void createOldRVBill(final List<BaseModel> list) {
-        adapterOldBill = new PrintOldBillAdapter( list);
+        adapterOldBill = new PrintOldBillAdapter(list);
         Util.createLinearRV(rvBills, adapterOldBill);
 
     }
@@ -540,6 +549,16 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_ENABLE_BT && resultCode == RESULT_OK) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
             mBluetoothAdapter.startDiscovery();
 
 
@@ -563,17 +582,17 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
-    private Boolean isPrinterConnected() {
-        if (btsocket != null && btsocket.isConnected())
-            return true;
-
-        return false;
-
-    }
+//    private Boolean isPrinterConnected() {
+//        if (btsocket != null && btsocket.isConnected())
+//            return true;
+//
+//        return false;
+//
+//    }
 
     private void doPrintCurrentBill(final List<BaseModel> listPayments) {
         //int printSize = tvPrintSize.getText().toString().equals(Constants.PRINTER_80) ? Constants.PRINTER_80_WIDTH : Constants.PRINTER_57_WIDTH;
-        if (!Util.getInstance().isLoading()){
+        if (!Util.getInstance().isLoading()) {
             Util.getInstance().showLoading("Đang in...");
         }
 
@@ -666,6 +685,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
             params = DataUtil.newBillJsonParam(currentCustomer.getInt("id"),
                     User.getId(),
                     adapterBill.getTotalMoney(),
+                    adapterBill.getNetTotalMoney(),
                     0.0,
                     DataUtil.array2ListObject(currentBill.getString(Constants.BILL_DETAIL)),
                     note,
@@ -687,7 +707,7 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
                             new CallbackBoolean() {
                                 @Override
                                 public void onRespone(Boolean result) {
-                                    if (result){
+                                    if (result) {
                                         returnPreActivity(true);
                                     }
                                 }
@@ -712,12 +732,12 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
     private void postPayToServer(List<String> listParam, CallbackBoolean success) {
         List<BaseModel> params = new ArrayList<>();
 
-        for (String itemdetail: listParam){
+        for (String itemdetail : listParam) {
             BaseModel item = createPostParam(ApiUtil.PAY_NEW(), itemdetail, false, false);
             params.add(item);
         }
 
-        new CustomGetPostListMethod(params, new CallbackCustomList() {
+        new GetPostListMethod(params, new CallbackCustomList() {
             @Override
             public void onResponse(List<BaseModel> results) {
                 success.onRespone(true);
@@ -737,78 +757,89 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
 
     //************** Todo Bluetooth SETUP
 
-    @Override
-    protected void onDestroy() {
-        Util.getInstance().stopLoading(true);
-        try {
-            if (btsocket != null) {
-                if (outputStream != null)
-                    outputStream.close();
-                btsocket.close();
-                btsocket = null;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//    @Override
+//    protected void onDestroy() {
+//        Util.getInstance().stopLoading(true);
+//        try {
+//            if (btsocket != null) {
+//                if (outputStream != null)
+//                    outputStream.close();
+//                btsocket.close();
+//                btsocket = null;
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        super.onDestroy();
+//
+//    }
 
-        super.onDestroy();
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        try {
+//            unregisterReceiver(mBTReceiver);
+//
+//        } catch (Exception e) {
+//            //e.printStackTrace();
+//        }
+//    }
 
-    }
+//    private Runnable socketErrorRunnable = new Runnable() {
+//
+//        @Override
+//        public void run() {
+//            Util.showToast("Cannot establish connection");
+//
+//            if (ActivityCompat.checkSelfPermission(PrintBillActivity.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+//                // TODO: Consider calling
+//                //    ActivityCompat#requestPermissions
+//                // here to request the missing permissions, and then overriding
+//                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//                //                                          int[] grantResults)
+//                // to handle the case where the user grants the permission. See the documentation
+//                // for ActivityCompat#requestPermissions for more details.
+//                return;
+//            }
+//            mBluetoothAdapter.startDiscovery();
+//
+//        }
+//    };
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        try {
-            unregisterReceiver(mBTReceiver);
+//    public void registerBluetooth() {
+//        try {
+//            if (initDevicesList() != 0) {
+//                this.finish();
+//                return;
+//            }
+//
+//        } catch (Exception ex) {
+//            this.finish();
+//            return;
+//        }
+//        IntentFilter btIntentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+//        registerReceiver(mBTReceiver, btIntentFilter);
+//
+//    }
 
-        } catch (Exception e) {
-            //e.printStackTrace();
-        }
-    }
-
-    private Runnable socketErrorRunnable = new Runnable() {
-
-        @Override
-        public void run() {
-            Util.showToast("Cannot establish connection");
-            mBluetoothAdapter.startDiscovery();
-
-        }
-    };
-
-    public void registerBluetooth() {
-        try {
-            if (initDevicesList() != 0) {
-                this.finish();
-                return;
-            }
-
-        } catch (Exception ex) {
-            this.finish();
-            return;
-        }
-        IntentFilter btIntentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(mBTReceiver, btIntentFilter);
-
-    }
-
-    public final BroadcastReceiver mBTReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
-                addBluetoothItem2List(device);
-
-                if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))) {
-                    updateViewWhileConnectBlu(device, false);
-
-                }
-
-            }
-        }
-    };
+//    public final BroadcastReceiver mBTReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            String action = intent.getAction();
+//            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+//                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+//
+//                addBluetoothItem2List(device);
+//
+//                if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))) {
+//                    updateViewWhileConnectBlu(device, false);
+//
+//                }
+//
+//            }
+//        }
+//    };
 
     protected void updateViewWhileConnectBlu(BluetoothDevice device, boolean showloading) {
         Util.getInstance().showLoading(showloading);
@@ -844,6 +875,17 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onSuccess(String name) {
                 Util.getInstance().stopLoading(true);
+
+                if (ActivityCompat.checkSelfPermission(PrintBillActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
                 tvPrinterName.setText(String.format(Constants.CONNECTED_PRINTER,
                         CustomSQL.getString(Constants.PRINTER_SIZE),
                         device.getName(),
@@ -860,125 +902,232 @@ public class PrintBillActivity extends BaseActivity implements View.OnClickListe
         });
     }
 
-    public int initDevicesList() {
-        try {
-            if (btsocket != null) {
-                btsocket.close();
+//    public int initDevicesList() {
+//        try {
+//            if (btsocket != null) {
+//                btsocket.close();
+//
+//                btsocket = null;
+//            }
+//
+//            if (mBluetoothAdapter != null) {
+//                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+//                    // TODO: Consider calling
+//                    //    ActivityCompat#requestPermissions
+//                    // here to request the missing permissions, and then overriding
+//                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//                    //                                          int[] grantResults)
+//                    // to handle the case where the user grants the permission. See the documentation
+//                    // for ActivityCompat#requestPermissions for more details.
+//                    //return ;
+//                }
+//                mBluetoothAdapter.cancelDiscovery();
+//            }
+//
+//            finalize();
+//
+//        } catch (Throwable throwable) {
+//            throwable.printStackTrace();
+//        }
+//
+//        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//        if (mBluetoothAdapter == null) {
+//            Util.showToast("Bluetooth not supported!!");
+//
+//            return -1;
+//        }
+//
+//        if (mBluetoothAdapter.isDiscovering()) {
+//            mBluetoothAdapter.cancelDiscovery();
+//        }
+//
+//        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//        try {
+//            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+//        } catch (Exception ex) {
+//            return -2;
+//        }
+//
+//        return 0;
+//
+//    }
 
-                btsocket = null;
-            }
+//    public void connectBluetoothDevice(final BluetoothDevice device, final CallbackProcess mListener) {
+//        mListener.onStart();
+//        if (mBluetoothAdapter == null) {
+//            mListener.onError();
+//            return;
+//
+//        }
+//
+//        Thread connectThread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    if (ActivityCompat.checkSelfPermission(PrintBillActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+//                        // TODO: Consider calling
+//                        //    ActivityCompat#requestPermissions
+//                        // here to request the missing permissions, and then overriding
+//                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//                        //                                          int[] grantResults)
+//                        // to handle the case where the user grants the permission. See the documentation
+//                        // for ActivityCompat#requestPermissions for more details.
+//                        return;
+//                    }
+//                    if (device.getUuids() != null) {
+//                        UUID uuid = device.getUuids()[0].getUuid();
+//                        btsocket = null;
+//                        btsocket = device.createRfcommSocketToServiceRecord(uuid);
+//                        btsocket.connect();
+//                    }
+//
+//                } catch (IOException ex) {
+//                    runOnUiThread(socketErrorRunnable);
+//                    try {
+//                        if (btsocket != null)
+//                            btsocket.close();
+//                    } catch (IOException e) {
+//                        mListener.onError();
+////                        e.printStackTrace();
+//                    }
+//                    btsocket = null;
+//
+//                    return;
+//                } finally {
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//
+//                            try {
+//                                if (btsocket != null) {
+//                                    CustomSQL.setString(Constants.BLUETOOTH_DEVICE, btsocket.getRemoteDevice().getAddress());
+//                                    outputStream = btsocket.getOutputStream();
+//                                    if (ActivityCompat.checkSelfPermission(PrintBillActivity.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+//                                        // TODO: Consider calling
+//                                        //    ActivityCompat#requestPermissions
+//                                        // here to request the missing permissions, and then overriding
+//                                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//                                        //                                          int[] grantResults)
+//                                        // to handle the case where the user grants the permission. See the documentation
+//                                        // for ActivityCompat#requestPermissions for more details.
+//                                        return;
+//                                    }
+//                                    mBluetoothAdapter.cancelDiscovery();
+//
+//
+//                                    mListener.onSuccess(device.getName());
+//                                } else {
+//                                    mListener.onError();
+//                                }
+//
+//
+//                            } catch (IOException e) {
+//                                mListener.onError();
+////                                e.printStackTrace();
+//                            }
+//
+//
+//                        }
+//                    });
+//                }
+//            }
+//        });
+//        connectThread.start();
+//    }
 
-            if (mBluetoothAdapter != null) {
-                mBluetoothAdapter.cancelDiscovery();
-            }
+//    protected void addBluetoothItem2List(BluetoothDevice device) {
+//        Boolean exist = false;
+//        for (int i = 0; i < listDevice.size(); i++) {
+//            if (listDevice.get(i).getAddress().equals(device.getAddress())) {
+//                exist = true;
+//                break;
+//            }
+//        }
+//        if (!exist) {
+//            listDevice.add(device);
+//
+//            if (bluFragment != null) {
+//                bluFragment.updateList();
+//            }
+//
+//        }
+//    }
 
-            finalize();
-
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
-
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBluetoothAdapter == null) {
-            Util.showToast("Bluetooth not supported!!");
-
-            return -1;
-        }
-
-        if (mBluetoothAdapter.isDiscovering()) {
-            mBluetoothAdapter.cancelDiscovery();
-        }
-
-        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        try {
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-        } catch (Exception ex) {
-            return -2;
-        }
-
-        return 0;
-
-    }
-
-    public void connectBluetoothDevice(final BluetoothDevice device, final CallbackProcess mListener) {
-        mListener.onStart();
-        if (mBluetoothAdapter == null) {
-            mListener.onError();
-            return;
-
-        }
-
-        Thread connectThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (device.getUuids() != null) {
-                        UUID uuid = device.getUuids()[0].getUuid();
-                        btsocket = null;
-                        btsocket = device.createRfcommSocketToServiceRecord(uuid);
-                        btsocket.connect();
-                    }
-
-                } catch (IOException ex) {
-                    runOnUiThread(socketErrorRunnable);
-                    try {
-                        if (btsocket != null)
-                            btsocket.close();
-                    } catch (IOException e) {
-                        mListener.onError();
-//                        e.printStackTrace();
-                    }
-                    btsocket = null;
-
-                    return;
-                } finally {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            try {
-                                if (btsocket != null) {
-                                    CustomSQL.setString(Constants.BLUETOOTH_DEVICE, btsocket.getRemoteDevice().getAddress());
-                                    outputStream = btsocket.getOutputStream();
-                                    mBluetoothAdapter.cancelDiscovery();
-
-
-                                    mListener.onSuccess(device.getName());
-                                } else {
-                                    mListener.onError();
-                                }
-
-
-                            } catch (IOException e) {
-                                mListener.onError();
-//                                e.printStackTrace();
-                            }
-
-
-                        }
-                    });
-                }
-            }
-        });
-        connectThread.start();
-    }
-
-    protected void addBluetoothItem2List(BluetoothDevice device) {
-        Boolean exist = false;
-        for (int i = 0; i < listDevice.size(); i++) {
-            if (listDevice.get(i).getAddress().equals(device.getAddress())) {
-                exist = true;
-                break;
-            }
-        }
-        if (!exist) {
-            listDevice.add(device);
-
-            if (bluFragment != null) {
-                bluFragment.updateList();
-            }
-
-        }
-    }
+//    private void checkPermission() {
+//        Activity context = Util.getInstance().getCurrentActivity();
+//        if (PermissionChecker.checkSelfPermission(context, Manifest.permission.BLUETOOTH_SCAN) != PermissionChecker.PERMISSION_GRANTED ||
+//                PermissionChecker.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PermissionChecker.PERMISSION_GRANTED ){
+//
+//            CustomCenterDialog.alertWithCancelButton("Cấp quyền truy cập!",
+//                    "Ứng dụng cần bạn đồng ý quyền truy cập bluetooth để tiếp tục",
+//                    "đồng ý",
+//                    "hủy",
+//                    new CallbackBoolean() {
+//                        @RequiresApi(api = Build.VERSION_CODES.S)
+//                        @Override
+//                        public void onRespone(Boolean result) {
+//                            if (result) {
+//                                ActivityCompat.requestPermissions(context, new String[]{
+//                                        Manifest.permission.BLUETOOTH_SCAN,
+//                                        Manifest.permission.BLUETOOTH_CONNECT
+//
+//                                }, Constants.REQUEST_PERMISSION);
+//
+//                            } else {
+//                                returnPreActivity(false);
+//
+//                            }
+//                        }
+//
+//                    });
+//
+//        } else {
+//            registerBluetooth();
+//        }
+//
+//    }
+//
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        if (requestCode == Constants.REQUEST_PERMISSION) {
+//            if (grantResults.length > 0) {
+//
+//                boolean hasDenied = false;
+//                for (int i = 0; i < grantResults.length; i++) {
+//                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+//                        hasDenied = true;
+//                        break;
+//                    }
+//                }
+//
+//                if (!hasDenied) {
+//                    registerBluetooth();
+//
+//                } else {
+//                    Util.showToast("Cấp quyền truy cập không thành công!");
+//                    CustomCenterDialog.alertWithCancelButton("Cấp quyền truy cập!",
+//                            "Ứng dụng chưa được cấp quyền đầy đủ",
+//                            "Cấp lại",
+//                            "hủy",
+//                            new CallbackBoolean() {
+//                                @Override
+//                                public void onRespone(Boolean result) {
+//                                    if (result) {
+//                                        checkPermission();
+//
+//                                    } else {
+//                                        returnPreActivity(false);
+//                                    }
+//
+//                                }
+//
+//                            });
+//
+//                }
+//
+//            }
+//        }
+//
+//    }
 
 }
