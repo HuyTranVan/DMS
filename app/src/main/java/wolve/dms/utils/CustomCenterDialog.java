@@ -982,9 +982,7 @@ public class CustomCenterDialog {
             }
         });
 
-
     }
-
 
     public static void showListProduct(String title, List<BaseModel> listProduct) {
         final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_list_product);
@@ -1001,7 +999,7 @@ public class CustomCenterDialog {
         final ProductQuantityAdapter adapter = new ProductQuantityAdapter(listProduct);
         Util.createLinearRV(rvProduct, adapter);
 
-        btnCancel.setOnClickListener(new View.OnClickListener() {
+        btnCancel.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 dialogResult.dismiss();
@@ -1216,6 +1214,7 @@ public class CustomCenterDialog {
             public void onResponse(BaseModel object) {
                 dialogResult.dismiss();
                 mListener.onResponse(object);
+
             }
         });
         Util.createLinearRV(rvUser, adapter);

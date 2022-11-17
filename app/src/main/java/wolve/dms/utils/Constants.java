@@ -117,6 +117,7 @@ public class Constants {
     public final static int REQUEST_PHONE_PERMISSION = 1009;
     public final static int REQUEST_PERMISSION = 1010;
     public final static int RESULT_IMPORT_ACTIVITY = 1011;
+    public final static int RESULT_PRINTSHIPPING_ACTIVITY = 1012;
     public final static String RESULT_ERROR_TITLE = "Có lỗi xảy ra";
     public final static String RESULT = "result";
     public final static boolean RESULT_FALSE = false;

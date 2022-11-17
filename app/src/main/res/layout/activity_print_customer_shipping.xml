@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/black_text_color_hint"
+    android:clickable="true"
+    android:keepScreenOn="true"
+    android:id="@+id/print_customer_shipping_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/print_customer_shipping_content_parent"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@color/colorWhite">
+
+        <LinearLayout
+            android:id="@+id/print_customer_shipping_mainlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/_15sdp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:text="--Thông tin gửi hàng--"
+                android:textSize="@dimen/_12sdp" />
+
+            <TextView
+                android:id="@+id/print_customer_shipping_company"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:fontFamily="@font/font_awesome"
+                android:text="Công ty"
+                android:textAllCaps="true"
+                android:textSize="@dimen/_12sdp" />
+
+            <TextView
+                android:id="@+id/print_customer_shipping_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:fontFamily="@font/font_awesome"
+                android:text="Dia chi"
+                android:textSize="@dimen/_12sdp" />
+
+            <TextView
+                android:id="@+id/print_customer_shipping_sender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:fontFamily="@font/font_awesome"
+                android:text="Người gửi"
+                android:textSize="@dimen/_14sdp" />
+
+            <TextView
+                android:id="@+id/print_customer_shipping_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:fontFamily="@font/font_awesome"
+                android:text="Hotline"
+                android:textSize="@dimen/_14sdp"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_60sdp"
+                android:gravity="right"
+                android:text="--Thông tin nhận hàng--"
+                android:textSize="@dimen/_12sdp" />
+
+            <TextView
+                android:id="@+id/print_customer_shipping_shopname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:fontFamily="@font/font_awesome"
+                android:gravity="right"
+                android:text="Công ty"
+                android:textAllCaps="true"
+                android:textSize="@dimen/_12sdp" />
+
+            <TextView
+                android:id="@+id/print_customer_shipping_shopaddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:fontFamily="@font/font_awesome"
+                android:gravity="right"
+                android:text="Dia chi"
+                android:textSize="@dimen/_20sdp" />
+
+            <TextView
+                android:id="@+id/print_customer_shipping_shopowner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:fontFamily="@font/font_awesome"
+                android:gravity="right"
+                android:text="Người gửi"
+                android:textStyle="bold"
+                android:textSize="@dimen/_14sdp" />
+
+<!--            <TextView-->
+<!--                android:id="@+id/print_customer_shipping_shopphone"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="@dimen/_5sdp"-->
+<!--                android:fontFamily="@font/font_awesome"-->
+<!--                android:gravity="right"-->
+<!--                android:text="SĐT người nhận:"-->
+<!--                android:textSize="@dimen/_14sdp"-->
+<!--                android:textStyle="bold" />-->
+
+            <TextView
+                android:id="@+id/print_customer_shipping_shopphone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:gravity="center"
+                android:text="0908 136 885"
+                android:textSize="@dimen/_36sdp"
+                android:textStyle="bold" />
+
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <ImageView
+        android:id="@+id/icon_back"
+        android:layout_width="@dimen/_35sdp"
+        android:layout_height="@dimen/_35sdp"
+        android:background="?selectableItemBackground"
+        android:padding="@dimen/_8sdp"
+        android:src="@drawable/ic_arrow_back_black_18dp" />
+
+    <LinearLayout
+        android:id="@+id/print_customer_shipping_bottom"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="@dimen/_35sdp"
+        android:background="@color/black_text_color_hint"
+        android:layout_alignParentBottom="true">
+
+        <LinearLayout
+            android:id="@+id/print_customer_shipping_submit"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="0.7"
+            android:background="?selectableItemBackground">
+
+            <TextView
+                android:id="@+id/print_customer_shipping_bottom_maintext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="IN PHIẾU"
+                android:textAllCaps="true"
+                android:textColor="@color/white_text_color"
+                android:layout_centerHorizontal="true"
+                android:textSize="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:layout_gravity="center_horizontal" />
+
+            <TextView
+                android:id="@+id/print_customer_shipping_bottom_secondtext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/print_customer_shipping_bottom_maintext"
+                android:text="Chưa kết nối máy in!!"
+                android:textColor="@color/white_text_color_hint"
+                android:layout_centerHorizontal="true"
+                android:textSize="@dimen/_10sdp"
+                android:layout_gravity="center_horizontal" />
+
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/white_text_color_hint"
+            android:layout_margin="@dimen/_2sdp" />
+
+        <TextView
+            android:fontFamily="@font/font_awesome"
+            android:id="@+id/print_customer_shipping_bottom_printerselect"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"
+            android:background="?selectableItemBackground"
+            android:text="@string/icon_setting_singgle"
+            android:textColor="@color/white_text_color"
+            android:textSize="@dimen/_16sdp"
+            android:gravity="center"
+            android:rotation="180" />
+
+<!--        <View-->
+<!--            android:layout_width="1dp"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:background="@color/white_text_color_hint"-->
+<!--            android:layout_margin="@dimen/_2sdp" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/print_customer_shipping_bottom_printersize"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_weight="0.2"-->
+<!--            android:background="?selectableItemBackground"-->
+<!--            android:text="57mm"-->
+<!--            android:gravity="center"-->
+<!--            android:textColor="@color/white_text_color"-->
+<!--            android:textSize="@dimen/_14sdp" />-->
+
+<!--        <View-->
+<!--            android:layout_width="1dp"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:background="@color/white_text_color_hint"-->
+<!--            android:layout_margin="@dimen/_2sdp" />-->
+
+<!--        <TextView-->
+<!--            android:fontFamily="@font/font_awesome"-->
+<!--            android:id="@+id/print_customer_shipping_bottom_share"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_weight="0.1"-->
+<!--            android:background="?selectableItemBackground"-->
+<!--            android:text="@string/icon_share"-->
+<!--            android:textColor="@color/white_text_color"-->
+<!--            android:textSize="@dimen/_16sdp"-->
+<!--            android:gravity="center" />-->
+    </LinearLayout>
+
+
+</RelativeLayout>

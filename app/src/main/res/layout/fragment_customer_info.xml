@@ -90,7 +90,7 @@
                         android:layout_height="wrap_content"
                         app:iconText="@string/icon_print"
                         android:layout_marginRight="@dimen/_5sdp"
-                        app:text="In công nợ"
+                        app:text="Gửi hàng"
                         app:iconColor="@color/black_text_color_hint"
                         app:textColor="@color/black_text_color_hint"
                         app:backgroundIcon="@drawable/btn_round_transparent_border_grey" />

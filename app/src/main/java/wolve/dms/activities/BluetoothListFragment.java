@@ -22,6 +22,7 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.BluetoothListAdapter;
+import wolve.dms.callback.CallbackObject;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.Util;
@@ -40,9 +41,9 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
 
     //private List<BluetoothDevice> listDevice = new ArrayList<>();
     private BluetoothListAdapter adapter;
-    private PrintBillActivity mActivity;
-    private OnDataPass mListener;
-
+    private BluetoothActivity mActivity;
+    private CallbackObject mListener;
+//    protected OnDataPass mListener;
 
     public interface OnDataPass {
         void dataReturnFromFragment(String data1, String data2);
@@ -51,7 +52,7 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mListener = (OnDataPass) context;
+        mListener = (CallbackObject) context;
     }
 
     @Nullable
@@ -67,7 +68,7 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
     }
 
     private void initializeView() {
-        mActivity = (PrintBillActivity) getActivity();
+        mActivity = (BluetoothActivity) getActivity();
         lnParent =  view.findViewById(R.id.bluetooth_list_parent);
         btnCancel = view.findViewById(R.id.btn_cancel);
         rvBluetooth = view.findViewById(R.id.dialog_bluetooth_list_rv);
@@ -78,7 +79,7 @@ public class BluetoothListFragment extends DialogFragment implements View.OnClic
 
     }
 
-    private void intitialData() {
+    private void intitialData(){
         createRVBluetoothList(mActivity.listDevice);
         if (CustomSQL.getString(Constants.PRINTER_SIZE).equals("") || CustomSQL.getString(Constants.PRINTER_SIZE).equals(Constants.PRINTER_80)) {
             rd80.setChecked(true);

@@ -115,7 +115,7 @@ public class Statistical_ProductGroupAdapter extends RecyclerView.Adapter<Statis
     private BaseModel createGroupFromBill(BaseModel group, List<BaseModel> detailList) {
         List<BaseModel> mResults = new ArrayList<>();
         for (BaseModel detail : detailList) {
-            if (detail.getInt("productGroup_id") == group.getInt("id")) {
+            if (detail.getBaseModel("productGroup").getInt("id") == group.getInt("id")) {
                 boolean check = false;
                 for (BaseModel result : mResults) {
                     if (result.getInt("product_id") == detail.getInt("product_id")) {

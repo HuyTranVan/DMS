@@ -18,6 +18,7 @@ import android.view.animation.Interpolator;
 import androidx.fragment.app.Fragment;
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
 
+import com.google.android.gms.auth.api.signin.internal.Storage;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -32,6 +33,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -499,4 +502,17 @@ public class MapUtil {
 //
 //    }
 
+//    static void authExplicit(String jsonPath) throws IOException {
+//        // You can specify a credential file by providing a path to GoogleCredentials.
+//        // Otherwise credentials are read from the GOOGLE_APPLICATION_CREDENTIALS environment variable.
+//        GoogleCredentials credentials = GoogleCredentials.fromStream(new FileInputStream(jsonPath))
+//                .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
+//        Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
+//
+//        System.out.println("Buckets:");
+//        Page<Bucket> buckets = storage.list();
+//        for (Bucket bucket : buckets.iterateAll()) {
+//            System.out.println(bucket.toString());
+//        }
+//    }
 }

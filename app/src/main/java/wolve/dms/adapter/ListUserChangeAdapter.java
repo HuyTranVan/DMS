@@ -20,6 +20,8 @@ import wolve.dms.R;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
+import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomFixSQL;
 import wolve.dms.utils.Util;
 
 
@@ -92,6 +94,16 @@ public class ListUserChangeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             }
         });
 
+        holder.tvClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                removeUser(mData.get(holder.getAdapterPosition()));
+                mData.remove(holder.getAdapterPosition());
+                notifyItemRemoved(holder.getAdapterPosition());
+            }
+        });
+
     }
 
 
@@ -101,7 +113,7 @@ public class ListUserChangeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvName, tvPhone, tvRole;
+        private TextView tvName, tvPhone, tvRole, tvClose;
         private CircleImageView imgUser;
         private View vLine;
         private RelativeLayout lnParent;
@@ -113,6 +125,7 @@ public class ListUserChangeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             tvPhone = itemView.findViewById(R.id.list_user_change_item_phone);
             tvRole = itemView.findViewById(R.id.list_user_change_item_role);
             imgUser = itemView.findViewById(R.id.list_user_change_item_image);
+            tvClose = itemView.findViewById(R.id.list_user_change_item_role_x);
             vLine = itemView.findViewById(R.id.seperateline);
 
 
@@ -135,6 +148,20 @@ public class ListUserChangeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 mListener.onResponse(null);
             }
         });
+    }
+
+    private void removeUser(BaseModel user){
+        List<BaseModel> users = CustomFixSQL.getListObject(Constants.USER_LIST);
+        for (int i=0; i<users.size(); i++){
+            if (users.get(i).getInt("id") == user.getInt("id")){
+                users.remove(i);
+                break;
+
+            }
+        }
+        CustomFixSQL.setListBaseModel(Constants.USER_LIST, users);
+
+
     }
 
 

@@ -690,6 +690,16 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     }
 
+    protected void printCustomerShipping() {
+        if (Util.isPhoneFormat(currentCustomer.getString("phone")) != null){
+            Transaction.gotoPrintShippingActivity();
+        }else {
+            Util.showToast("Cập nhật số điện thoại trước khi in phiếu");
+        }
+
+
+    }
+
     protected void printDebtBills() {
         Transaction.gotoPrintBillActivity(new BaseModel(), true);
 
@@ -739,6 +749,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     private void setPrintIconVisibility() {
         infoFragment.mPrint.setVisibility(listDebtBill.size() > 0 ? View.VISIBLE : View.GONE);
+        infoFragment.mPrint.setVisibility(Util.isEmpty(currentCustomer.getString("phone"))? View.GONE : View.VISIBLE);
         if (currentPosition == 1 && listDebtBill.size() > 0) {
             tvPrint.setVisibility(View.VISIBLE);
         } else {

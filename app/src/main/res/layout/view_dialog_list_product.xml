@@ -46,41 +46,48 @@
 <!--        android:textColor="@color/black_text_color"-->
 <!--        android:gravity="center" />-->
 
-    <LinearLayout
-        android:id="@+id/dialog_list_product__body"
-        android:layout_below="@+id/header_parent"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorWhite"
-        android:orientation="vertical">
+        android:layout_below="@+id/header_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/dialog_list_product_rv"
+        <LinearLayout
+            android:id="@+id/dialog_list_product__body"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/_10sdp"
-            android:layout_marginRight="@dimen/_10sdp"
-            android:clipToPadding="false"
-            android:paddingTop="@dimen/_5sdp"
-            android:paddingBottom="@dimen/_10sdp" />
+            android:layout_height="wrap_content"
+            android:background="@color/colorWhite"
+            android:orientation="vertical">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2px"
-            android:background="#0d000000" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/dialog_list_product_rv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:clipToPadding="false"
+                android:paddingTop="@dimen/_5sdp"
+                android:paddingBottom="@dimen/_10sdp" />
 
-        <Button
-            android:id="@+id/btn_cancel"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_30sdp"
-            android:background="?selectableItemBackground"
-            android:textColor="@color/black_text_color_hint"
-            android:text="Quay lại"
-            android:textSize="@dimen/_12sdp"
-            android:textAllCaps="true"
-            android:layout_gravity="center" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:background="#0d000000" />
 
-    </LinearLayout>
+            <Button
+                android:id="@+id/btn_cancel"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_30sdp"
+                android:background="?selectableItemBackground"
+                android:textColor="@color/black_text_color_hint"
+                android:text="Quay lại"
+                android:textSize="@dimen/_12sdp"
+                android:textAllCaps="true"
+                android:layout_gravity="center" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
 
 
 </RelativeLayout>

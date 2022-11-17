@@ -223,6 +223,13 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
+            android:name=".activities.PrintCustomerShippingActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="unspecified"
+            android:theme="@style/FullScreen"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+
+        <activity
             android:name=".activities.ScannerActivity"
             android:label="@string/app_name"
             android:screenOrientation="unspecified"

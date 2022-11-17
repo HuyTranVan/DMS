@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.suke.widget.SwitchButton;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 import org.json.JSONException;
@@ -65,9 +66,9 @@ import static wolve.dms.utils.Constants.REQUEST_IMAGE_CAPTURE;
  */
 
 public class NewUpdateDistributorFragment extends Fragment implements View.OnClickListener {
-    private View view;
+    private View view, vImport;
     private ImageView btnBack;
-    private CInputForm tvCompany, tvPhone, tvAddress, tvSite, tvThanks, tvName, tvProvince;
+    private CInputForm tvCompany, tvPhone, tvAddress, tvSite, tvThanks, tvName, tvProvince, tvImport;
     private Button btnSubmit;
     private TextView tvTitle, tvAddTitle, tvExpire;
     private RelativeLayout rlImage;
@@ -75,6 +76,7 @@ public class NewUpdateDistributorFragment extends Fragment implements View.OnCli
     private LinearLayout btnAdminNew, rlAdmin;
     private RecyclerView rvAdmin;
     private ProgressBar progressBar;
+    private SwitchButton swImport;
 
     private BaseModel currentDistributor;
     private Uri imageChangeUri;
@@ -119,6 +121,7 @@ public class NewUpdateDistributorFragment extends Fragment implements View.OnCli
         rlImage = view.findViewById(R.id.add_distributor_image_parent);
         tvName = view.findViewById(R.id.add_distributor_name);
         tvProvince = view.findViewById(R.id.add_distributor_province);
+        tvImport = view.findViewById(R.id.add_distributor_import);
         image = view.findViewById(R.id.add_distributor_image);
         btnAdminNew = view.findViewById(R.id.add_distributor_add_admin);
         rvAdmin = view.findViewById(R.id.add_distributor_rvadmin);
@@ -126,6 +129,8 @@ public class NewUpdateDistributorFragment extends Fragment implements View.OnCli
         progressBar = view.findViewById(R.id.add_distributor_progress);
         tvAddTitle = view.findViewById(R.id.add_distributor_add_admin_title);
         tvExpire = view.findViewById(R.id.add_distributor_expire_to);
+        swImport = view.findViewById(R.id.add_distributor_import_switch);
+        vImport = view.findViewById(R.id.add_distributor_import_switch_cover);
 
     }
 
@@ -149,6 +154,7 @@ public class NewUpdateDistributorFragment extends Fragment implements View.OnCli
 
         tvName.setBoldStyle();
         tvProvince.setBoldStyle();
+        tvImport.setBoldStyle();
         tvName.setText(distributor.getString("name"));
         tvProvince.setText(distributor.getBaseModel("province").getString("name"));
         tvCompany.setText(distributor.getString("company"));
@@ -201,6 +207,7 @@ public class NewUpdateDistributorFragment extends Fragment implements View.OnCli
 
         tvName.setFocusable(User.getId() != 2 ? false : true);
         tvProvince.setFocusable(User.getId() != 2 ? false : true);
+        tvImport.setFocusable(false);
         if (User.getId() ==2){
             tvProvince.setDropdown(true, new CInputForm.ClickListener() {
                 @Override

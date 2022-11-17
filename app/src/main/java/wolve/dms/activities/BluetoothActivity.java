@@ -41,6 +41,7 @@ import wolve.dms.R;
 import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackProcess;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.models.BaseModel;
@@ -54,7 +55,7 @@ import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
 
-public abstract class BluetoothActivity extends BaseActivity {
+public abstract class BluetoothActivity extends BaseActivity implements CallbackObject {
     protected BluetoothListFragment bluFragment = null;
     protected BluetoothAdapter mBluetoothAdapter = null;
     protected BluetoothSocket btsocket;
@@ -418,6 +419,97 @@ public abstract class BluetoothActivity extends BaseActivity {
         return false;
 
     }
+
+    protected void openBluetoothSeclectFragment(){
+        bluFragment = new BluetoothListFragment();
+        showFragmentDialog(bluFragment);
+    }
+
+    protected void updateViewWhileConnectBlu(BluetoothDevice device, boolean showloading) {
+        Util.getInstance().showLoading(showloading);
+        connectBluetoothDevice(device, new CallbackProcess() {
+            @Override
+            public void onStart() {
+//                tvPrinterName.setText(Constants.CONNECTING_PRINTER);
+//                lnBottom.setBackgroundColor(getResources().getColor(R.color.black_text_color_hint));
+//                currentBluetooth = null;
+//                if (bluFragment != null) {
+//                    bluFragment.updateItem(currentBluetooth, false);
+//
+//                }
+
+
+            }
+
+            @Override
+            public void onError() {
+//                Util.getInstance().stopLoading(true);
+//                tvPrinterName.setText("Chưa kết nối được máy in");
+//                Util.showToast(Constants.CONNECTED_PRINTER_ERROR);
+//                lnBottom.setBackgroundColor(getResources().getColor(R.color.black_text_color_hint));
+//                currentBluetooth = null;
+//                if (bluFragment != null) {
+//                    bluFragment.updateItem(currentBluetooth, false);
+//
+//                }
+
+
+            }
+
+            @Override
+            public void onSuccess(String name) {
+                Util.getInstance().stopLoading(true);
+
+                if (ActivityCompat.checkSelfPermission(BluetoothActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+//                tvPrinterName.setText(String.format(Constants.CONNECTED_PRINTER,
+//                        CustomSQL.getString(Constants.PRINTER_SIZE),
+//                        device.getName(),
+//                        device.getAddress()));
+//                lnBottom.setBackgroundColor(getResources().getColor(R.color.colorBlue));
+//                currentBluetooth = device;
+//                //bluFragment.updateItem(currentBluetooth, false);
+//
+//                if (bluFragment != null) {
+//                    bluFragment.finish();
+//
+//                }
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_ENABLE_BT && resultCode == RESULT_OK) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            mBluetoothAdapter.startDiscovery();
+
+
+        }
+    }
+
+//    @Override
+//    public void onResponse(BaseModel object) {
+//
+//    }
 
 
 }

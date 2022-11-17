@@ -85,4 +85,12 @@
         <attr name="sb_enable_effect" format="reference|boolean" />
     </declare-styleable>
 
+    <array name="autosize_text_sizes">
+        <item>10sp</item>
+        <item>12sp</item>
+        <item>20sp</item>
+        <item>40sp</item>
+        <item>100sp</item>
+    </array>
+
 </resources>

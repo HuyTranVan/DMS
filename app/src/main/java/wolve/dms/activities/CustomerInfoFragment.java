@@ -31,7 +31,6 @@ import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.customviews.CButtonVertical;
 import wolve.dms.customviews.CInputForm;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Transaction;
@@ -323,7 +322,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
                 break;
 
             case R.id.customer_info_print:
-                mActivity.printDebtBills();
+                mActivity.printCustomerShipping();
 
                 break;
 

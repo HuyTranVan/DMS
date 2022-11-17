@@ -45,7 +45,7 @@
         android:gravity="center"
         android:padding="@dimen/_2sdp"/>
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/add_distributor_expire_to"
@@ -111,9 +111,44 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textCapCharacters"
-
                 app:iconText="@string/icon_district"
                 app:textHint="Tỉnh / Thành phố" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <wolve.dms.customviews.CInputForm
+                    android:id="@+id/add_distributor_import"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapCharacters"
+                    app:iconText="@string/icon_depot"
+                    app:text="Chức năng nhập kho"
+                    />
+
+
+
+                <com.suke.widget.SwitchButton
+                    android:id="@+id/add_distributor_import_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_25sdp"
+                    app:sb_checked="false"
+                    app:sb_checked_color="@color/colorBlue"
+                    android:layout_marginRight="@dimen/_10sdp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"/>
+
+                <View
+                    android:id="@+id/add_distributor_import_switch_cover"
+                    android:layout_width="@dimen/_40sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/_10sdp"
+                    android:layout_centerVertical="true"/>
+            </RelativeLayout>
+
+
 
             <wolve.dms.customviews.CInputForm
                 android:id="@+id/add_distributor_company_name"
@@ -224,7 +259,7 @@
         </LinearLayout>
 
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 
 </RelativeLayout>

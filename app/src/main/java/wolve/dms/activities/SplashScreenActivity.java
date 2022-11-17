@@ -73,6 +73,8 @@ public class SplashScreenActivity extends BaseActivity {
         }, SPLASH_TIME_OUT);
 
 
+
+
     }
 
     @Override

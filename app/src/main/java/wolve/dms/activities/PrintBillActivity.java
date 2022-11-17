@@ -68,7 +68,7 @@ import static wolve.dms.utils.Constants.REQUEST_ENABLE_BT;
  * Created by macos on 9/15/17.
  */
 
-public class PrintBillActivity extends BluetoothActivity implements View.OnClickListener, BluetoothListFragment.OnDataPass {
+public class PrintBillActivity extends BluetoothActivity implements View.OnClickListener {
     private ImageView imgLogo, btnBack, imgOrderPhone;
     private TextView tvCompany, tvAdress, tvHotline, tvWebsite, tvTitle, tvShopName, tvCustomerName, tvCustomerAddress, tvDate, tvEmployee,
             tvSumCurrentBill, tvOrderPhone, tvThanks, tvPrinterMainText, tvPrinterName, tvTotal, tvPaid, tvRemain, tvTotalTitle,
@@ -275,8 +275,9 @@ public class PrintBillActivity extends BluetoothActivity implements View.OnClick
                 break;
 
             case R.id.print_bill_bottom_printerselect:
-                bluFragment = new BluetoothListFragment();
-                showFragmentDialog(bluFragment);
+                openBluetoothSeclectFragment();
+//                bluFragment = new BluetoothListFragment();
+//                showFragmentDialog(bluFragment);
 
                 break;
 
@@ -545,42 +546,42 @@ public class PrintBillActivity extends BluetoothActivity implements View.OnClick
 
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_ENABLE_BT && resultCode == RESULT_OK) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
-            mBluetoothAdapter.startDiscovery();
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == REQUEST_ENABLE_BT && resultCode == RESULT_OK) {
+//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+//                // TODO: Consider calling
+//                //    ActivityCompat#requestPermissions
+//                // here to request the missing permissions, and then overriding
+//                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//                //                                          int[] grantResults)
+//                // to handle the case where the user grants the permission. See the documentation
+//                // for ActivityCompat#requestPermissions for more details.
+//                return;
+//            }
+//            mBluetoothAdapter.startDiscovery();
+//
+//
+//        }
+//    }
 
-
-        }
-    }
-
-    @Override
-    public void dataReturnFromFragment(String data1, String data2) {
-        switch (data1) {
-            case Constants.ONSTART:
-                tvPrinterName.setText(Constants.CONNECTING_PRINTER);
-                break;
-
-            case Constants.ONFAIL:
-                tvPrinterName.setText("Chưa kết nối được máy in");
-                break;
-
-            case Constants.ONSUCCESS:
-                tvPrinterName.setText(String.format(Constants.CONNECTED_PRINTER, data2));
-                break;
-        }
-    }
+//    @Override
+//    public void dataReturnFromFragment(String data1, String data2) {
+//        switch (data1) {
+//            case Constants.ONSTART:
+//                tvPrinterName.setText(Constants.CONNECTING_PRINTER);
+//                break;
+//
+//            case Constants.ONFAIL:
+//                tvPrinterName.setText("Chưa kết nối được máy in");
+//                break;
+//
+//            case Constants.ONSUCCESS:
+//                tvPrinterName.setText(String.format(Constants.CONNECTED_PRINTER, data2));
+//                break;
+//        }
+//    }
 
 //    private Boolean isPrinterConnected() {
 //        if (btsocket != null && btsocket.isConnected())
@@ -900,6 +901,11 @@ public class PrintBillActivity extends BluetoothActivity implements View.OnClick
                 }
             }
         });
+    }
+
+    @Override
+    public void onResponse(BaseModel object) {
+
     }
 
 //    public int initDevicesList() {

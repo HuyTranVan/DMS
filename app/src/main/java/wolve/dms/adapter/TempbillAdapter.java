@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -51,7 +52,7 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
     }
 
     @Override
-    public void onBindViewHolder(final TempbillAdapterViewHolder holder, final int position) {
+    public void onBindViewHolder(final TempbillAdapterViewHolder holder, int position) {
         if (mData.get(position).hasKey("checked") && mData.get(position).getBoolean("checked")) {
             holder.tvNumber.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bg_oval_green));
             holder.tvNumber.setText(mContext.getResources().getString(R.string.icon_check));
@@ -67,7 +68,9 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
         holder.tvAddress.setText(customer.getString("street") + " - " + customer.getString("district"));
 
         holder.tvTotal.setText(Util.FormatMoney(mData.get(position).getBaseModel("bill").getDouble("total")));
-        holder.tvEmployee.setText(String.format("Nhân viên: %s", mData.get(position).getBaseModel("user").getString("displayName")));
+        holder.tvEmployee.setText(Util.getIconString(R.string.icon_username,
+                                                    "   ",
+                                                    mData.get(position).getBaseModel("user").getString("displayName")));
 
         List<BaseModel> details = mergeDetail(DataUtil.array2ListObject(mData.get(position).getBaseModel("bill").getString("billDetails")));
         String detail = "";
@@ -84,15 +87,15 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
         holder.tvNumber.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mData.get(position).hasKey("checked") && mData.get(position).getBoolean("checked")) {
-                    mData.get(position).put("checked", false);
+                if (mData.get(holder.getAdapterPosition()).hasKey("checked") && mData.get(holder.getAdapterPosition()).getBoolean("checked")) {
+                    mData.get(holder.getAdapterPosition()).put("checked", false);
 
                 } else {
-                    mData.get(position).put("checked", true);
+                    mData.get(holder.getAdapterPosition()).put("checked", true);
 
                 }
                 boListener.onRespone(true);
-                notifyItemChanged(position);
+                notifyItemChanged(holder.getAdapterPosition());
 
             }
         });
@@ -114,8 +117,8 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
                     @Override
                     public void onRespone(Boolean re) {
                         if (re) {
-                            Transaction.openGoogleMapRoute(mData.get(position).getBaseModel("customer").getDouble("lat"),
-                                    mData.get(position).getBaseModel("customer").getDouble("lng"));
+                            Transaction.openGoogleMapRoute(mData.get(holder.getAdapterPosition()).getBaseModel("customer").getDouble("lat"),
+                                    mData.get(holder.getAdapterPosition()).getBaseModel("customer").getDouble("lng"));
                         }
 
                     }
@@ -128,10 +131,23 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
         holder.lnDeliver.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mListener.onResponse(mData.get(position));
+                mListener.onResponse(mData.get(holder.getAdapterPosition()));
             }
         });
 
+        holder.lnDetailParent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        holder.tvEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
     }
 
@@ -167,8 +183,9 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
 
 
     public class TempbillAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvEmployee, tvShopName, tvTotal, tvAddress, tvDetail, tvNumber, tvNote, tvDate;
+        private TextView tvEmployee, tvShopName, tvTotal, tvAddress, tvDetail, tvNumber, tvNote, tvDate, tvEdit;
         private LinearLayout lnParent, lnDirection, lnDeliver;
+        private RelativeLayout lnDetailParent;
         private View vLineUpper, vLineUnder;
 
         public TempbillAdapterViewHolder(View itemView) {
@@ -184,8 +201,10 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
             tvAddress = (TextView) itemView.findViewById(R.id.tempbill_item_address);
             tvDetail = itemView.findViewById(R.id.tempbill_item_detail);
             tvDate = itemView.findViewById(R.id.tempbill_item_date);
+            tvEdit = itemView.findViewById(R.id.tempbill_item_edit);
             vLineUnder = (View) itemView.findViewById(R.id.tempbill_item_under);
             vLineUpper = (View) itemView.findViewById(R.id.tempbill_item_upper);
+            lnDetailParent = itemView.findViewById(R.id.tempbill_item_detail_parent);
 
         }
 

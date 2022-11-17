@@ -25,6 +25,7 @@ import wolve.dms.activities.ImportActivity;
 import wolve.dms.activities.LoginActivity;
 import wolve.dms.activities.MapsActivity;
 import wolve.dms.activities.PrintBillActivity;
+import wolve.dms.activities.PrintCustomerShippingActivity;
 import wolve.dms.activities.ProductActivity;
 import wolve.dms.activities.ProductGroupActivity;
 import wolve.dms.activities.ScannerActivity;
@@ -263,6 +264,15 @@ public class Transaction {
         intent.putExtra(Constants.RE_PRINT, rePrint);
         intent.putExtra(Constants.BILL, bill.BaseModelstoString());
         context.startActivityForResult(intent, Constants.RESULT_PRINTBILL_ACTIVITY);
+        context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
+
+    public static void gotoPrintShippingActivity() {
+        Activity context = Util.getInstance().getCurrentActivity();
+        Intent intent = new Intent(context, PrintCustomerShippingActivity.class);
+//        intent.putExtra(Constants.RE_PRINT, rePrint);
+//        intent.putExtra(Constants.BILL, bill.BaseModelstoString());
+        context.startActivityForResult(intent, Constants.RESULT_PRINTSHIPPING_ACTIVITY);
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
