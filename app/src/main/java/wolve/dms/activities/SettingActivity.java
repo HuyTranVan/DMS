@@ -41,15 +41,16 @@ import wolve.dms.utils.Util;
 
 public class SettingActivity extends BaseActivity implements View.OnClickListener, CallbackObject, CompoundButton.OnCheckedChangeListener {
     private ImageView btnBack;
-    private TextView tvDisplayname, tvRole, tvChangePassword, tvChangeUser,
+    private TextView tvDisplayname, tvRole, tvChangePassword, tvChangeUserTitle, tvChangeUser,
             tvLogout, tvInfo, tvContact, tvShare, tvShareDetail,
             tvMapStyle, tvSaveImage;
-    private CircleImageView imgUser;
+    private CircleImageView imgUser, imgFirstImage;
     private Fragment mFragment;
     private SwitchCompat swSaveContact, swMapStyle, swSaveImage;
     private RelativeLayout lnShare;
 
-    private BaseModel currentUser;
+    private BaseModel currentUser, firstUser;
+    private List<BaseModel> users;
 
     @Override
     public int getResourceLayout() {
@@ -65,6 +66,8 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     public void findViewById() {
         btnBack = (ImageView) findViewById(R.id.icon_back);
         tvChangePassword = findViewById(R.id.user_option_change_password);
+        tvChangeUserTitle = findViewById(R.id.user_option_change_user_title);
+        imgFirstImage = findViewById(R.id.user_option_firstuser);
         tvChangeUser = findViewById(R.id.user_option_change_user);
         tvLogout = findViewById(R.id.user_option_logout);
         tvDisplayname = findViewById(R.id.user_option_username);
@@ -85,6 +88,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     @Override
     public void initialData() {
         currentUser = User.getCurrentUser();
+        users = DataUtil.removeObjectFromList(CustomFixSQL.getListObject(Constants.USER_LIST), User.getCurrentUser(), "id");
         tvDisplayname.setText(User.getFullName());
         String role = User.getCurrentRoleString();
         tvRole.setText(  role.substring(0, 1).toUpperCase() + role.substring(1).toLowerCase());
@@ -92,7 +96,8 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             Glide.with(this).load(User.getImage()).centerCrop().into(imgUser);
         }
         tvChangePassword.setText(Util.getIconString(R.string.icon_key, "      ", "Đổi mật khẩu"));
-        tvChangeUser.setText(Util.getIconString(R.string.icon_group, "    ", "Chuyển tài khoản"));
+        tvChangeUserTitle.setText(Util.getIconString(R.string.icon_group, "    ", "Chuyển tài khoản"));
+
         tvLogout.setText(Util.getIconString(R.string.icon_logout, "    ", "Đăng xuất"));
         tvInfo.setText(Util.getIconString(R.string.icon_info, "      ", "Thông tin tài khoản"));
         tvSaveImage.setText(Util.getIconString(R.string.icon_image, "      ", "Lưu hình sản phẩm"));
@@ -102,6 +107,15 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         swSaveContact.setChecked(CustomFixSQL.getBoolean(Constants.AUTO_SAVE_CONTACT));
         swSaveImage.setChecked(CustomFixSQL.getBoolean(Constants.SAVE_PRODUCT_IMAGE));
         swMapStyle.setChecked(CustomFixSQL.getBoolean(Constants.SET_DEFAULT_MAPSTYLE));
+        if (users.size() > 0){
+            imgFirstImage.setVisibility(View.VISIBLE);
+            firstUser = User.getFirstUser(users);
+            Glide.with(this).load(firstUser.getString("image")).centerCrop().into(imgFirstImage);
+
+            imgFirstImage.setOnClickListener(this);
+        }else {
+            imgFirstImage.setVisibility(View.GONE);
+        }
         switch (CustomFixSQL.getInt(Constants.PACKAGE_DEFAULT)){
             case 0:
                 tvShareDetail.setText("Tùy chọn");
@@ -124,7 +138,9 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         tvInfo.setOnClickListener(this);
         tvChangePassword.setOnClickListener(this);
         tvChangeUser.setOnClickListener(this);
+        tvChangeUserTitle.setOnClickListener(this);
         tvLogout.setOnClickListener(this);
+        imgFirstImage.setOnClickListener(this);
         //swSaveContact.setOnCheckedChangeListener(this);
 
         lnShare.setOnClickListener(this);
@@ -148,6 +164,30 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
 
             case R.id.user_option_change_user:
                 changeUser();
+                break;
+
+            case R.id.user_option_change_user_title:
+                changeUser();
+                break;
+
+            case R.id.user_option_firstuser:
+                login(firstUser.getString("phone"),
+                        firstUser.getString("password_local"),
+                        firstUser.getString("token"),
+                        new CallbackBoolean() {
+                            @Override
+                            public void onRespone(Boolean result) {
+                                if (result) {
+                                    CustomSQL.setBoolean(Constants.LOGIN_SUCCESS, true);
+                                    Util.showToast("Đăng nhập thành công");
+                                    onBackPressed();
+
+                                } else {
+                                    Util.showToast("Đăng nhập thất bại!");
+
+                                }
+                            }
+                        });
                 break;
 
             case R.id.user_option_logout:
@@ -180,9 +220,8 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
 
 
     private void changeUser() {
-        List<BaseModel> users = CustomFixSQL.getListObject(Constants.USER_LIST);
         CustomCenterDialog.dialogChangeUser("Đổi sang tài khoản",
-                DataUtil.removeObjectFromList(users, User.getCurrentUser(), "id"),
+                users,
                 new CallbackObject() {
                     @Override
                     public void onResponse(BaseModel object) {
@@ -224,6 +263,8 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             @Override
             public void onRespone(Boolean result) {
                 if (result) {
+                    CustomSQL.setBoolean(Constants.LOGIN_SUCCESS, true);
+                    Util.showToast("Đăng nhập thành công");
                     onBackPressed();
                     //mActivity.initialData();
 

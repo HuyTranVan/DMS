@@ -244,6 +244,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
         }else if (mFragment != null && mFragment instanceof NewUpdateDistributorFragment) {
             getSupportFragmentManager().popBackStack();
+            //updateTempWahouseInventory(null);
 
         }else if (mFragment != null && mFragment instanceof InventoryDetailFragment) {
             getSupportFragmentManager().popBackStack();
@@ -552,6 +553,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     }
 
+    @SuppressLint("MissingSuperCall")
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == Constants.REQUEST_PERMISSION) {
@@ -633,7 +635,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void onResponse(BaseModel object) {
-        adapterHome.reloadItem();
+        //adapterHome.reloadItem();
+        //updateTempWahouseInventory(null);
+        checkNewProductUpdated(null, 0, false);
+        //onResume();
     }
 
     private void suggestChangePassword(){
@@ -695,9 +700,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     private void updateTempWahouseInventory(BaseModel warehouse){
-        tempWarehouse = warehouse;
-        if (Util.isAdmin()){
+        if (warehouse != null){
+            tempWarehouse = warehouse;
+        }
+
+        if (Util.isAdmin() && Distributor.getImportFunction() == 1){
             lnInventory.setVisibility(View.VISIBLE);
+            lnTempImport.setVisibility(View.VISIBLE);
             tvWarehouseName.setText(String.format("%s (%s)",
                     warehouse.getString("name"),
                     warehouse.getInt("quantity")));
@@ -705,6 +714,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
         }else {
             lnInventory.setVisibility(View.GONE);
+            lnTempImport.setVisibility(View.GONE);
 
         }
     }

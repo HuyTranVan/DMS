@@ -100,7 +100,7 @@ public class NewUpdateDistributorFragment extends Fragment implements View.OnCli
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //return super.onCreateView(inflater, container, savedInstanceState);
         view = inflater.inflate(R.layout.fragment_add_distributor, container, false);
-        FitScrollWithFullscreen.assistActivity(getActivity(), 1);
+        //FitScrollWithFullscreen.assistActivity(getActivity(), 1);
         findViewById();
 
         intitialData();
@@ -163,6 +163,7 @@ public class NewUpdateDistributorFragment extends Fragment implements View.OnCli
         tvSite.setText(distributor.getString("website"));
         tvThanks.setText(distributor.getString("thanks"));
         tvTitle.setText(distributor.getString("name"));
+        swImport.setChecked(distributor.getInt("importFunction") == 1? true : false);
         if (!Util.checkImageNull(distributor.getString("image"))){
             Glide.with(this).load(distributor.getString("image")).fitCenter().into(image);
             imgURL = distributor.getString("image");
@@ -338,7 +339,8 @@ public class NewUpdateDistributorFragment extends Fragment implements View.OnCli
                         Util.encodeString(tvPhone.getText().toString().replace(".", "")),
                         Util.encodeString(tvSite.getText().toString()),
                         Util.encodeString(tvThanks.getText().toString()),
-                        imageLink),
+                        imageLink,
+                        swImport.isChecked()? 1: 0),
                 false,
                 false);
         new GetPostMethod(param, new NewCallbackCustom() {

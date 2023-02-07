@@ -23,7 +23,9 @@ import wolve.dms.R;
 import wolve.dms.adapter.TempbillAdapter;
 import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
+import wolve.dms.callback.Callback2Int;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.models.BaseModel;
@@ -192,6 +194,12 @@ public class TempBillFragment extends Fragment implements View.OnClickListener {
                     }
                 }
             }
+        }, new Callback2Int() {
+            @Override
+            public void onResponse(int value1, int value2) {
+                Transaction.gotoEditTempBillActivity(value1, value2);
+
+            }
         });
         Util.createLinearRV(rvTempBill, adapter);
     }
@@ -207,7 +215,14 @@ public class TempBillFragment extends Fragment implements View.OnClickListener {
                 if (User.checkUserWarehouse())
                     Transaction.checkInventoryBeforePrintBill(customer.getBaseModel("temp_bill"),
                             DataUtil.array2ListObject(customer.getBaseModel("temp_bill").getString(Constants.BILL_DETAIL)),
-                            User.getCurrentUser().getInt("warehouse_id"));
+                            User.getCurrentUser().getInt("warehouse_id"), new CallbackBoolean() {
+                                @Override
+                                public void onRespone(Boolean result) {
+                                    if (result){
+                                        mActivity.onBackPressed();
+                                    }
+                                }
+                            });
             }
 
             @Override

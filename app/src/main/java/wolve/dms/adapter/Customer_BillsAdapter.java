@@ -206,12 +206,12 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
                 mListener.onResponse(respone);
             }
         });
-
+        holder.btnMenu.setVisibility(Util.isAdmin()? View.VISIBLE : View.GONE);
         holder.btnMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 List<String> list = new ArrayList<>();
-                list.add(Util.getIconString(R.string.icon_reply, "  ", "Trả hàng"));
+                //list.add(Util.getIconString(R.string.icon_reply, "  ", "Trả hàng"));
 
                 if (User.getCurrentRoleId() == Constants.ROLE_ADMIN) {
                     list.add(Util.getIconString(R.string.icon_delete, "   ", "Xóa hóa đơn"));
@@ -221,12 +221,10 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
                     @Override
                     public void onRespone(String data, int pos) {
                         if (data.equals(list.get(0))) {
-                            BaseModel respone = new BaseModel();
-                            respone.put(Constants.TYPE, Constants.BILL_RETURN);
-                            respone.putBaseModel(Constants.RESULT, mData.get(holder.getAdapterPosition()));
-                            mListener.onResponse(respone);
-
-                        } else if (data.equals(list.get(1))) {
+//                            BaseModel respone = new BaseModel();
+//                            respone.put(Constants.TYPE, Constants.BILL_RETURN);
+//                            respone.putBaseModel(Constants.RESULT, mData.get(holder.getAdapterPosition()));
+//                            mListener.onResponse(respone);
                             if (listPayment.size() > 0) {
                                 Util.showToast("Không thể xóa hóa đơn có phát sinh thanh toán ");
                             } else if (listReturn.size() > 0) {
@@ -235,8 +233,18 @@ public class Customer_BillsAdapter extends RecyclerView.Adapter<Customer_BillsAd
                                 deleteBill(holder.getAdapterPosition());
                             }
 
-
                         }
+//                        else if (data.equals(list.get(0))) {
+//                            if (listPayment.size() > 0) {
+//                                Util.showToast("Không thể xóa hóa đơn có phát sinh thanh toán ");
+//                            } else if (listReturn.size() > 0) {
+//                                Util.showToast("Không thể xóa hóa đơn có phát sinh trả hàng ");
+//                            } else {
+//                                deleteBill(holder.getAdapterPosition());
+//                            }
+//
+//
+//                        }
                     }
 
                 });

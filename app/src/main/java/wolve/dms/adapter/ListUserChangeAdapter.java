@@ -42,7 +42,9 @@ public class ListUserChangeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mListener = listener;
 
-        this.mData = list;
+        for (BaseModel item: list){
+            this.mData.add(item);
+        }
         mData.add(null);
 
 

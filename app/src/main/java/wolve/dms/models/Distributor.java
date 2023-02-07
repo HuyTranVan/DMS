@@ -85,5 +85,15 @@ public class Distributor extends BaseModel {
 
     }
 
+    public static int getImportFunction(){
+        int importFunction =0;
+        BaseModel currentDistributor = CustomSQL.getBaseModel(Constants.DISTRIBUTOR);
+        if (currentDistributor != null) {
+            importFunction = currentDistributor.getInt("importFunction");
+//            location = 79;
+        }
+        return importFunction;
+    }
+
 
 }

@@ -368,7 +368,12 @@ public class ShopCartActivity extends BaseActivity implements View.OnClickListen
 
         Transaction.checkInventoryBeforePrintBill(bill,
                 adapterProducts.getAllData(),
-                User.getCurrentUser().getInt("warehouse_id"));
+                User.getCurrentUser().getInt("warehouse_id"), new CallbackBoolean() {
+                    @Override
+                    public void onRespone(Boolean result) {
+
+                    }
+                });
 
     }
 

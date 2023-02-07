@@ -57,7 +57,9 @@ public class WarehouseImportAdapter extends RecyclerView.Adapter<WarehouseImport
         holder.tvGroup.setText(mData.get(position).getBaseModel("productGroup").getString("name"));
         holder.tvQuantityLimit.setText(mData.get(position).getString("quantity"));
         holder.edQuantity.setText(mData.get(position).getString("quantity"));
-
+        if (position == mData.size() -1){
+            holder.edQuantity.setSelection(holder.edQuantity.getText().toString().length());
+        }
         Util.textEvent(holder.edQuantity, new CallbackString() {
             @Override
             public void Result(String s) {

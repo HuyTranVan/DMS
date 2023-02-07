@@ -4,8 +4,13 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
+import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -25,6 +30,7 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.models.BaseModel;
+import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomFixSQL;
@@ -42,6 +48,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        //setFullScreen();
         setContentView(getResourceLayout());
         Util.getInstance().setCurrentActivity(this);
         findViewById();
@@ -78,9 +86,18 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     //change fragment with bundle
     public void changeFragment(Fragment fragment, Bundle bundle, boolean isAnimation) {
-
         String tag = fragment.getClass().getSimpleName();
-        fragment.setArguments(bundle);
+//        fragment.setArguments(bundle);
+        Fragment myFragment = getSupportFragmentManager().findFragmentByTag(tag);
+        Fragment fragmentReplace;
+        if (myFragment != null) {
+            fragmentReplace = myFragment;
+        } else {
+            fragmentReplace = fragment;
+        }
+        fragmentReplace.setArguments(bundle);
+
+
         FragmentTransaction manager = this.getSupportFragmentManager().beginTransaction();
 
         if (isAnimation) {
@@ -88,7 +105,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             manager.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_down, R.anim.slide_in_bottom, R.anim.slide_out_bottom);
         }
 
-        manager.replace(setIdContainer(), fragment, tag)
+        manager.replace(setIdContainer(), fragmentReplace, tag)
                 .addToBackStack(tag)
                 .commitAllowingStateLoss();
     }
@@ -147,6 +164,8 @@ public abstract class BaseActivity extends AppCompatActivity {
             public void onSuccess(final Location location) {
                 if (location != null) {
                     mListener.onLocationChanged(location);
+
+                }else {
 
                 }
             }
@@ -249,15 +268,19 @@ public abstract class BaseActivity extends AppCompatActivity {
                 CustomSQL.setString(Constants.USER_PASSWORD, pass);
                 CustomSQL.setInt(Constants.VERSION_CODE, CustomSQL.getInt(Constants.VERSION_CODE));
                 object.removeKey("district");
+                object.put("password_local", pass);
 
-                ///////////////saveUser;
-                List<BaseModel> listUser = CustomFixSQL.getListObject(Constants.USER_LIST);
-                if (!DataUtil.checkDuplicate(listUser, "id", object)) {
-                    listUser.add(object);
-                }
+                //saveUser;
+                User.saveUser(object);
 
-                Util.deleteAllImageExternalStorage();
-                CustomFixSQL.setListBaseModel(Constants.USER_LIST, listUser);
+//
+//
+//                if (!DataUtil.checkDuplicate(listUser, "id", object)) {
+//                    listUser.add(0,object);
+//                }
+//                List<BaseModel> listUser = CustomFixSQL.getListObject(Constants.USER_LIST);
+//                Util.deleteAllImageExternalStorage();
+//                CustomFixSQL.setListBaseModel(Constants.USER_LIST, listUser);
                 /////////////
                 object.removeKey("distributor");
 

@@ -92,7 +92,20 @@
     </FrameLayout>
 
 
+    <FrameLayout
+        android:id="@+id/item_home_cover"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:visibility="gone">
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_2sdp"
+            android:background="@color/black_text_color_hint"
+            android:layout_gravity="center"
+            android:rotation="45"/>
+    </FrameLayout>
 
 
 

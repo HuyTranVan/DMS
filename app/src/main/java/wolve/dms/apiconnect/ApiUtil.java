@@ -237,7 +237,7 @@ public class ApiUtil {
     public final static String DISTRIBUTORS(){
         return BASE_URL + "dms/token/distributor/DistributorList";
     }
-    public final static String DISTRIBUTOR_CREATE_PARAM = "%sname=%s&province_id=%d&company=%s&address=%s&phone=%s&website=%s&thanks=%s&image=%s";
+    public final static String DISTRIBUTOR_CREATE_PARAM = "%sname=%s&province_id=%d&company=%s&address=%s&phone=%s&website=%s&thanks=%s&image=%s&importFunction=%d";
     public final static String DISTRIBUTOR_NEW(){ return BASE_URL + "dms/token/distributor/DistributorNew"; }
 
 //ACTIVE
@@ -269,9 +269,17 @@ public class ApiUtil {
     public final static String BILL_NEW(){
         return BASE_URL + "dms/token/bill/BillNew";
     }
+    public final static String TEMPBILL_UPDATE(){
+        return BASE_URL + "dms/token/bill/UpdateTempBill";
+    }
     public final static String BILL_DELETE(){
         return BASE_URL + "dms/token/bill/BillDelete?id=";
     }
+
+    public final static String BILL_DETAIL(){
+        return BASE_URL + "dms/token/bill/BillDetail?id=";
+    }
+
 
     public final static String PAY_PARAM = "customerId=%d&paid=%s&billId=%d&userId=%d&note=%s&payByReturn=%d&user_collect=%d";
     public final static String PAY_NEW() {

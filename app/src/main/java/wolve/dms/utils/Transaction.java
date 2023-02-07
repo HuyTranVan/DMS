@@ -20,6 +20,7 @@ import wolve.dms.R;
 import wolve.dms.activities.AccountActivity;
 import wolve.dms.activities.CustomerActivity;
 import wolve.dms.activities.DistributorActivity;
+import wolve.dms.activities.EditTempBillActivity;
 import wolve.dms.activities.HomeActivity;
 import wolve.dms.activities.ImportActivity;
 import wolve.dms.activities.LoginActivity;
@@ -39,6 +40,7 @@ import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackListObject;
 import wolve.dms.callback.CallbackUri;
 import wolve.dms.models.BaseModel;
+import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 
 import static wolve.dms.utils.Constants.REQUEST_CHOOSE_IMAGE;
@@ -205,6 +207,15 @@ public class Transaction {
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
+    public static void gotoEditTempBillActivity(int bill_id, int temp_id) {
+        Activity context = Util.getInstance().getCurrentActivity();
+        Intent intent = new Intent(context, EditTempBillActivity.class);
+        intent.putExtra(Constants.BILL_ID, bill_id);
+        intent.putExtra(Constants.TEMPBILL_ID, temp_id);
+        context.startActivityForResult(intent, Constants.RESULT_SHOPCART_ACTIVITY);
+        context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
+
     public static void returnShopCartActivity(String fromActivity, String data, int result) {
         Intent returnIntent = Util.getInstance().getCurrentActivity().getIntent();
         returnIntent.putExtra(fromActivity, data);
@@ -230,31 +241,41 @@ public class Transaction {
 
     }
 
-    public static void checkInventoryBeforePrintBill(BaseModel bill, List<BaseModel> listproduct, int warehouse_id) {
-        DataUtil.checkInventory(listproduct, warehouse_id, new CallbackListObject() {
-            @Override
-            public void onResponse(List<BaseModel> list){
-                if (list.size() > 0) {
+    public static void checkInventoryBeforePrintBill(BaseModel bill, List<BaseModel> listproduct, int warehouse_id, CallbackBoolean submit) {
+        if (Distributor.getImportFunction() == 1){
+            DataUtil.checkInventory(listproduct, warehouse_id, new CallbackListObject(){
+                @Override
+                public void onResponse(List<BaseModel> list){
+                    if (list.size() > 0) {
 
-                    CustomCenterDialog.showListProductWithDifferenceQuantity(User.getCurrentUser().getBaseModel("warehouse").getString("name") + ": KHÔNG ĐỦ TỒN KHO ",
-                            list,
-                            new CallbackBoolean() {
-                                @Override
-                                public void onRespone(Boolean result) {
-                                    if (result) {
-                                        CustomSQL.setListBaseModel(Constants.PRODUCT_SUGGEST_LIST, listproduct);
-                                        gotoImportActivity(User.getCurrentUser().getBaseModel("warehouse"));
+                        CustomCenterDialog.showListProductWithDifferenceQuantity(User.getCurrentUser().getBaseModel("warehouse").getString("name") + ": KHÔNG ĐỦ TỒN KHO ",
+                                list,
+                                new CallbackBoolean() {
+                                    @Override
+                                    public void onRespone(Boolean result) {
+                                        if (result) {
+                                            submit.onRespone(true);
+                                            CustomSQL.setListBaseModel(Constants.PRODUCT_SUGGEST_LIST, listproduct);
+                                            gotoImportActivity(User.getCurrentUser().getBaseModel("warehouse"));
+
+                                        }else {
+                                            submit.onRespone(false);
+
+                                        }
 
                                     }
+                                });
 
-                                }
-                            });
-
-                } else {
-                    gotoPrintBillActivity(bill, false);
+                    } else {
+                        gotoPrintBillActivity(bill, false);
+                    }
                 }
-            }
-        });
+            });
+
+        }else {
+            gotoPrintBillActivity(bill, false);
+        }
+
 
     }
 

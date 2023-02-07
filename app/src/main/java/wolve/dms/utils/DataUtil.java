@@ -51,6 +51,8 @@ public class DataUtil {
             params.put("note", Util.encodeString(note));
             params.put("deliverBy", deliverBy);
             params.put("isReturn", isreturnBill);
+            params.put("importFunction", Distributor.getImportFunction());
+
             if (User.getCurrentUser().hasKey("warehouse_id")) {
                 params.put("warehouse_id", User.getCurrentUser().getInt("warehouse_id"));
             }
@@ -85,6 +87,7 @@ public class DataUtil {
             params.put("customerId", customerId);
             params.put("user_id", currentBill.getInt("user_id"));
             params.put("warehouse_id", User.getCurrentUser().getInt("warehouse_id"));
+            params.put("importFunction", Distributor.getImportFunction());
 
             JSONArray array = new JSONArray();
             for (int i = 0; i < listProduct.size(); i++) {
@@ -107,6 +110,46 @@ public class DataUtil {
         return params.toString();
 
     }
+
+    public static String updateTempBillJsonParam(int temp_id,
+                                                 int bill_id,
+                                                 int user_id,
+                                                 int warehouse_id,
+                                                 double total,
+                                                 double total_net,
+                                                 String note,
+                                                 List<BaseModel> details) {
+        JSONObject params = new JSONObject();
+        try {
+            params.put("temp_id", temp_id);
+            params.put("id", bill_id);
+            params.put("user_id", user_id);
+            params.put("warehouse_id", warehouse_id);
+            params.put("total", total);
+            params.put("total_net", total_net);
+            params.put("note", Util.encodeString(note));
+
+
+            JSONArray array = new JSONArray();
+            for (int i = 0; i < details.size(); i++) {
+                JSONObject object = new JSONObject();
+                object.put("id", details.get(i).getInt("id"));
+                object.put("discount", details.get(i).getDouble("discount"));
+                object.put("quantity", details.get(i).getInt("quantity"));
+                object.put("deleted", details.get(i).getBoolean("deleted"));
+
+                array.put(object);
+            }
+            params.put("billDetails", (Object) array);
+
+        } catch (JSONException e) {
+//            e.printStackTrace();
+        }
+
+        return params.toString();
+
+    }
+
 
     public static String createPostImportJsonParam(int warehouse_id,
                                                    int from_warehouse,

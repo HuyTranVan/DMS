@@ -304,12 +304,13 @@ public class CustomCenterDialog {
 
         edDiscount.setFilters(new InputFilter[]{new InputFilter.LengthFilter(tvUnitPrice.getText().toString().trim().length())});
 
-        Util.showKeyboardEditTextDelay(edNetPrice);
+        Util.showKeyboardEditTextDelay(edQuantity, 500);
 
         PriceSuggestAdapter adapter = new PriceSuggestAdapter(listBillDetail, new CallbackDouble() {
             @Override
             public void Result(Double d) {
                 edNetPrice.setText(Util.FormatMoney(d));
+                Util.showKeyboardEditTextDelay(edQuantity);
             }
         });
         Util.createHorizontalRV(rvPrice, adapter);
@@ -321,7 +322,8 @@ public class CustomCenterDialog {
 
                 edDiscount.setText(Util.FormatMoney(product.getDouble("unitPrice") - Util.moneyValue(edNetPrice)));
                 tvTotal.setText(Util.FormatMoney(d * Util.valueMoney(edQuantity)));
-                edNetPrice.setSelection(edNetPrice.getText().toString().length());
+
+                //edNetPrice.setSelection(edNetPrice.getText().toString().length());
 
             }
         });
@@ -331,10 +333,11 @@ public class CustomCenterDialog {
             public void onClick(View v) {
                 edNetPrice.setText("");
                 tvTotal.setText("0");
+                Util.showKeyboardEditTextDelay(edNetPrice);
             }
         });
 
-        edQuantity.addTextChangedListener(new DoubleTextWatcher(edQuantity, new CallbackString() {
+        Util.textEvent(edQuantity, new CallbackString() {
             @Override
             public void Result(String text) {
                 if (!text.toString().equals("") && !text.equals("0")) {
@@ -344,7 +347,18 @@ public class CustomCenterDialog {
                     tvTotal.setText("0");
                 }
             }
-        }));
+        });
+//        edQuantity.addTextChangedListener(new DoubleTextWatcher(edQuantity, new CallbackString() {
+//            @Override
+//            public void Result(String text) {
+//                if (!text.toString().equals("") && !text.equals("0")) {
+//                    tvTotal.setText(Util.FormatMoney(Double.parseDouble(text) * (product.getDouble("unitPrice") - Util.valueMoney(edDiscount))));
+//
+//                } else if (text.toString().equals("")) {
+//                    tvTotal.setText("0");
+//                }
+//            }
+//        }));
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -822,7 +836,7 @@ public class CustomCenterDialog {
 
         edPaid.setText(money == 0.0 ? "" : Util.FormatMoney(money));
 
-        Util.textMoneyEvent(edPaid, totalDebt, new CallbackDouble() {
+        Util.textMoneyEvent(edPaid, totalDebt, new CallbackDouble(){
             @Override
             public void Result(Double s) {
                 debtAdapter.inputPaid(s, swFastPay.isChecked());

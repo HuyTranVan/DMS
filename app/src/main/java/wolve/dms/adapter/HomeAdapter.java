@@ -7,6 +7,7 @@ import android.graphics.drawable.LayerDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -72,8 +73,8 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
     }
 
     @Override
-    public void onBindViewHolder(final ItemAdapterViewHolder holder, final int position) {
-        if (mData.get(position).getBoolean("isDistributor")){
+    public void onBindViewHolder(final ItemAdapterViewHolder holder, int position) {
+        if (mData.get(holder.getAdapterPosition()).getBoolean("isDistributor")){
             holder.tvIcon.setVisibility(View.GONE);
             holder.imgItem.setVisibility(View.VISIBLE);
             holder.tvTitle.setText(Distributor.getName());
@@ -83,8 +84,8 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
         }else {
             holder.tvIcon.setVisibility(View.VISIBLE);
             holder.imgItem.setVisibility(View.GONE);
-            holder.tvIcon.setText(mData.get(position).getString("icon"));
-            holder.tvTitle.setText(mData.get(position).getString("text"));
+            holder.tvIcon.setText(mData.get(holder.getAdapterPosition()).getString("icon"));
+            holder.tvTitle.setText(mData.get(holder.getAdapterPosition()).getString("text"));
             holder.tvTitle.setTextColor(mContext.getResources().getColor(R.color.black_text_color));
 
         }
@@ -93,19 +94,27 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
 //                && mData.get(position).hasKey("more_text")
 //                && inventoryQuantity > 0
 //                ? View.VISIBLE : View.GONE);
-        if (mData.get(position).hasKey("more_text")){
+        if (mData.get(holder.getAdapterPosition()).hasKey("more_text")){
             holder.tvMore.setVisibility(View.VISIBLE);
-            holder.tvMore.setText(mData.get(position).getString("more_text"));
+            holder.tvMore.setText(mData.get(holder.getAdapterPosition()).getString("more_text"));
         }else {
             holder.tvMore.setVisibility(View.GONE);
         }
 
-        if (mData.get(position).hasKey("notify_text")){
+        if (mData.get(holder.getAdapterPosition()).hasKey("notify_text")){
             holder.tvNotify.setVisibility(View.VISIBLE);
-            holder.tvNotify.setText(mData.get(position).getString("notify_text"));
+            holder.tvNotify.setText(mData.get(holder.getAdapterPosition()).getString("notify_text"));
         }else {
             holder.tvNotify.setVisibility(View.GONE);
         }
+        if (mData.get(holder.getAdapterPosition()).hasKey("importFunction") && mData.get(holder.getAdapterPosition()).getInt("importFunction") == 1){
+            holder.vCover.setVisibility(View.GONE);
+        }else if (mData.get(holder.getAdapterPosition()).hasKey("importFunction")){
+            holder.vCover.setVisibility(View.VISIBLE);
+        }else {
+            holder.vCover.setVisibility(View.GONE);
+        }
+
 
 //        holder.tvMore.setBackground(mData.get(position).hasKey("none_background")?
 //                mContext.getResources().getDrawable(R.drawable.btn_round_transparent_border_purple):
@@ -115,7 +124,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
             @Override
             public void onClick(View view){
                 if (User.checkUserWarehouse()){
-                    if (position == 2){
+                    if (holder.getAdapterPosition() == 2){
                         CustomDropdow.createListDropdown(holder.tvMore,
                                 WarehouseAdapter.listMenu(false,
                                         User.getCurrentUser().getBaseModel("warehouse"),
@@ -124,17 +133,17 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
                                         false,
                                         new CallbackClickAdapter() {
                                             @Override
-                                            public void onRespone(String data, int position) {
+                                            public void onRespone(String data, int pos) {
                                                 if (data.equals(warehouseOptions[0])){
                                                     BaseModel warehouse = User.getCurrentUser().getBaseModel("warehouse");
                                                     warehouse.putBaseModel("user", User.getCurrentUser() );
                                                     mWarehouseOption.onInfo(warehouse);
 
                                                 }else if (data.equals(warehouseOptions[1])){
-                                                    mWarehouseOption.onInventory(mData.get(position));
+                                                    mWarehouseOption.onInventory(mData.get(holder.getAdapterPosition()));
 
                                                 }else if (data.equals(warehouseOptions[2])){
-                                                    mWarehouseOption.onReturn(mData.get(position));
+                                                    mWarehouseOption.onReturn(mData.get(holder.getAdapterPosition()));
                                                 }
 
                                             }
@@ -153,7 +162,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
         holder.rlParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onRespone(holder.tvTitle.getText().toString(), position);
+                mListener.onRespone(holder.tvTitle.getText().toString(), holder.getAdapterPosition());
 
             }
         });
@@ -168,11 +177,13 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
 
     public class ItemAdapterViewHolder extends RecyclerView.ViewHolder {
         private TextView tvTitle, tvIcon, tvMore, tvNotify;
+        private FrameLayout vCover;
         private RelativeLayout rlParent;
         private CircleImageView imgItem;
 
         public ItemAdapterViewHolder(View itemView) {
             super(itemView);
+            vCover = itemView.findViewById(R.id.item_home_cover);
             tvIcon = (TextView) itemView.findViewById(R.id.item_home_icon);
             tvTitle = (TextView) itemView.findViewById(R.id.item_home_text);
             tvMore = (TextView) itemView.findViewById(R.id.item_home_more);
@@ -191,6 +202,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
     public void updateInventoryDetail(int inventory_no){
         if (inventory_no >0){
             mData.get(2).put("more_text",Util.getIcon(R.string.icon_menu));
+            mData.get(2).put("importFunction", Distributor.getImportFunction());
         }
 
         inventoryQuantity = inventory_no;

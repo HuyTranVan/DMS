@@ -20,6 +20,7 @@ public class Constants {
     public final static String DEPOT = "depot";
     public final static String PRODUCT = "product";
     public final static String STATUS = "status";
+    public final static String NOTE = "note";
     public final static String CFTYPE = "cftype";
     public final static String CUSTOMER = "customer";
     public final static String CUSTOMER_RECEIVE = "customer_receive";
@@ -27,6 +28,8 @@ public class Constants {
     public final static String BILLS = "bills";
     public final static String DEBTS = "debts";
     public final static String BILL = "bill";
+    public final static String BILL_ID = "bill_id";
+    public final static String TEMPBILL_ID = "tempbill_id";
     public final static String WAREHOUSE = "warehouse";
     public final static String WAREHOUSE_ID = "warehouse_id";
     public final static String CURRENT_WAREHOUSE = "current_warehouse";

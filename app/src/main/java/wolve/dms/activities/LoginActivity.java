@@ -117,8 +117,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                                     public void onRespone(Boolean result) {
                                         if (result) {
                                             Util.showToast("Đăng nhập thành công");
-                                            Transaction.gotoHomeActivity();
                                             CustomSQL.setBoolean(Constants.LOGIN_SUCCESS, true);
+                                            Transaction.gotoHomeActivity();
 
                                         }
                                     }

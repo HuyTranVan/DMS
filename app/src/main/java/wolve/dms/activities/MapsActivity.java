@@ -738,12 +738,15 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 //            closeSearch();
 //
 //        } else
-        if (currentMarker != null){
-            unsetCurrentMarker(true);
-            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        } else {
-            Transaction.gotoHomeActivityRight(true);
-        }
+//        if(currentMarker != null){
+//            unsetCurrentMarker(true);
+//            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+//        }
+//        else {
+//            Transaction.gotoHomeActivityRight(true);
+//        }
+
+        Transaction.gotoHomeActivityRight(true);
     }
 
     @Override
@@ -1311,22 +1314,23 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == Constants.REQUEST_PERMISSION) {
             if (grantResults.length > 0) {
                 boolean hasDenied = false;
                 for (int i = 0; i < grantResults.length; i++) {
-                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED){
+                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
                         hasDenied = true;
                         break;
                     }
                 }
 
-                if (!hasDenied){
-                    if (permissions[0].equals(android.Manifest.permission.CALL_PHONE)){
+                if (!hasDenied) {
+                    if (permissions[0].equals(Manifest.permission.CALL_PHONE)) {
                         Transaction.openCallScreen(currentPhone);
 
-                    }else if (permissions[0].equals(android.Manifest.permission.READ_CONTACTS) ||
-                            permissions[0].equals(Manifest.permission.WRITE_CONTACTS)){
+                    } else if (permissions[0].equals(Manifest.permission.READ_CONTACTS) ||
+                            permissions[0].equals(Manifest.permission.WRITE_CONTACTS)) {
 
                         saveContactEvent(currentCustomer);
 

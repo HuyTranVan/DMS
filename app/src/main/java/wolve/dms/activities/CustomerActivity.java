@@ -708,7 +708,12 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     protected void printTempBill(BaseModel bill) {
         Transaction.checkInventoryBeforePrintBill(bill,
                 DataUtil.array2ListObject(bill.getString(Constants.BILL_DETAIL)),
-                User.getCurrentUser().getInt("warehouse_id"));
+                User.getCurrentUser().getInt("warehouse_id"), new CallbackBoolean() {
+                    @Override
+                    public void onRespone(Boolean result) {
+
+                    }
+                });
 
 
     }

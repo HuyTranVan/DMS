@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.callback.Callback2Int;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
@@ -33,13 +35,15 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
     private Context mContext;
     private CallbackObject mListener;
     private CallbackBoolean boListener;
+    private Callback2Int billIdListener;
 
-    public TempbillAdapter(List<BaseModel> list, CallbackObject listener, CallbackBoolean boollistener) {
+    public TempbillAdapter(List<BaseModel> list, CallbackObject listener, CallbackBoolean boollistener, Callback2Int billidlistener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mData = list;
         this.mListener = listener;
         this.boListener = boollistener;
+        this.billIdListener = billidlistener;
 
         //DataUtil.sortbyStringKey("createAt", mData, true);
 
@@ -145,7 +149,8 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
         holder.tvEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                billIdListener.onResponse(mData.get(holder.getAdapterPosition()).getInt("bill_id"),
+                        mData.get(holder.getAdapterPosition()).getInt("id"));
             }
         });
 

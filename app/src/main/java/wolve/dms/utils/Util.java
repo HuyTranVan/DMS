@@ -53,7 +53,7 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.kaopiz.kprogresshud.KProgressHUD;
 
 
-import org.apache.commons.io.FileUtils;
+//import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -441,6 +441,7 @@ public class Util {
             @Override
             public void run() {
                 Util.showKeyboard(view);
+
             }
         }, 500);
     }
@@ -453,6 +454,16 @@ public class Util {
                 view.setSelection(view.getText().toString().trim().length());
             }
         }, 200);
+    }
+
+    public static void showKeyboardEditTextDelay(EditText view, int time) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Util.showKeyboard(view);
+                view.setSelection(view.getText().toString().trim().length());
+            }
+        }, time);
     }
 
     public static void hideKeyboard(View view) {
@@ -738,11 +749,11 @@ public class Util {
                     + Constants.APP_DIRECTORY;
 
             File mediaStorageDir = new File(relativeLocation);
-            try {
-                FileUtils.deleteDirectory(mediaStorageDir);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                //FileUtils.deleteDirectory(mediaStorageDir);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
 
         }
 

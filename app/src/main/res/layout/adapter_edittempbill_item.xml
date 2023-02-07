@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/edittempbill_item_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="?selectableItemBackground">
+
+    <LinearLayout
+        android:id="@+id/edittempbill_item_body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:minHeight="@dimen/_40sdp">
+
+        <TextView
+            android:id="@+id/edittempbill_item_quantity"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"
+            android:text="6000"
+            android:textStyle="bold"
+            android:textSize="@dimen/_12sdp"
+            android:singleLine="true"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/edittempbill_item_name"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.6"
+            android:textColor="@color/black_text_color"
+            android:textSize="@dimen/_12sdp"
+            android:paddingLeft="@dimen/_2sdp"
+            android:paddingTop="@dimen/_2sdp"
+            android:paddingBottom="@dimen/_2sdp"
+            android:gravity="center_vertical" />
+
+        <TextView
+            android:id="@+id/edittempbill_item_price"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.2"
+            android:text="125.000"
+            android:textSize="@dimen/_12sdp"
+            android:singleLine="true"
+            android:gravity="center_vertical|right"/>
+
+        <TextView
+            android:id="@+id/edittempbill_item_delete"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"
+            android:fontFamily="@font/font_awesome"
+            android:background="?selectableItemBackgroundBorderless"
+            android:text="@string/icon_return"
+            android:textSize="@dimen/_12sdp"
+            android:singleLine="true"
+            android:textColor="@color/colorRedTransparent"
+            android:gravity="center"/>
+        
+    </LinearLayout>
+
+
+
+    <View
+        android:id="@+id/seperateline"
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:background="#0d000000"
+        android:layout_alignParentBottom="true" />
+
+
+</RelativeLayout>

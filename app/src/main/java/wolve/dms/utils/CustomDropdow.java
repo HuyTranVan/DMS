@@ -21,6 +21,7 @@ import java.util.List;
 import wolve.dms.R;
 import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackString;
+import wolve.dms.models.BaseModel;
 
 /**
  * Created by macos on 11/16/17.

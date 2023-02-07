@@ -8,7 +8,9 @@ import java.util.List;
 
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
+import wolve.dms.utils.CustomFixSQL;
 import wolve.dms.utils.CustomSQL;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 
@@ -194,5 +196,40 @@ public class User extends BaseModel {
         }
     }
 
+    public static void saveUser(BaseModel user){
+        user.put("loginTimes", 1);
+        List<BaseModel> listUser = CustomFixSQL.getListObject(Constants.USER_LIST);
+        boolean check = false;
+        for (int i = 0; i < listUser.size(); i++) {
+            if (!listUser.get(i).hasKey("loginTimes")){
+                listUser.get(i).put("loginTimes", 1);
+            }
+            if (listUser.get(i).getInt("id") ==  user.getInt("id")) {
+                listUser.get(i).put("loginTimes",listUser.get(i).getInt("loginTimes") + 1);
+                listUser.get(i).put("password_local", user.getString("password_local"));
+                check = true;
+                break;
+            }
+        }
+
+        if (!check){
+            listUser.add(user);
+        }
+        Util.deleteAllImageExternalStorage();
+        CustomFixSQL.setListBaseModel(Constants.USER_LIST, listUser);
+    }
+
+    public static BaseModel getFirstUser(List<BaseModel> listUser){
+        int pos = 0 , count = 0;
+        for (int i = 0; i < listUser.size(); i++) {
+            if (listUser.get(i).getInt("loginTimes") > count){
+                count = listUser.get(i).getInt("loginTimes");
+                pos = i;
+            }
+
+        }
+
+        return listUser.get(pos);
+    }
 
 }

@@ -270,13 +270,12 @@
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/home_rvitems"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/_10sdp"/>
+        android:layout_marginBottom="@dimen/_10sdp" />
 
     <LinearLayout
         android:layout_width="wrap_content"
