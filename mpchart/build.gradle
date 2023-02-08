@@ -1,17 +1,17 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven'
+//apply plugin: 'maven'
+apply plugin: 'maven-publish'
 //apply plugin: 'com.github.dcendents.android-maven'
 //apply plugin: 'realm-android'
+//apply plugin: 'com.android.application'
+//apply plugin: 'com.google.gms.google-services'
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion '28.0.2'
+    compileSdkVersion 30
     // resourcePrefix 'mpcht'
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 27
-        versionCode 3
-        versionName '3.0.2'
+        minSdkVersion 21
+        targetSdkVersion 30
     }
     buildTypes {
         debug {
@@ -20,7 +20,6 @@ android {
         }
 
         qc_test {
-            debuggable true
 
         }
 
@@ -38,9 +37,14 @@ android {
 }
 
 repositories {
+//    maven {
+//        url 'http://oss.jfrog.org/artifactory/oss-snapshot-local'
+//    }
+//    jcenter()
     maven {
-        url 'http://oss.jfrog.org/artifactory/oss-snapshot-local'
+        url "https://maven.google.com"
     }
+    jcenter()
 }
 
 dependencies {
@@ -51,13 +55,13 @@ dependencies {
     testImplementation "org.mockito:mockito-core:1.9.5"
 }
 
-android.libraryVariants.all { variant ->
-    def name = variant.buildType.name
-    def task = project.tasks.create "jar${name.capitalize()}", Jar
-    task.dependsOn variant.javaCompile
-    task.from variant.javaCompile.destinationDir
-    artifacts.add('archives', task);
-}
+//android.libraryVariants.all { variant ->
+//    def name = variant.buildType.name
+//    def task = project.tasks.create "jar${name.capitalize()}", Jar
+//    task.dependsOn variant.javaCompile
+//    task.from variant.javaCompile.destinationDir
+//    artifacts.add('archives', task);
+//}
 
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
