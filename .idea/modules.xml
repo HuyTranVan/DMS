@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/DMS.iml" filepath="$PROJECT_DIR$/DMS.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DMS.iml" filepath="$PROJECT_DIR$/.idea/modules/DMS.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/DMS.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/DMS.app.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/DMS.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/DMS.app.androidTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/DMS.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/DMS.app.main.iml" />
