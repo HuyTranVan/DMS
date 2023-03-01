@@ -21,6 +21,7 @@ import wolve.dms.callback.CallbackString;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.models.BaseModel;
+import wolve.dms.models.Distributor;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.Util;
 
@@ -76,9 +77,16 @@ public class InventoryDetailAdapter extends RecyclerView.Adapter<InventoryDetail
         holder.lnParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (Util.isAdmin() && mWarehouse.getInt("isMaster") == 2){
-                    showDialogEditInventory(position);
-                }
+//                if (Distributor.getImportFunction() ==1 ){
+                    if (Util.isAdmin() && mWarehouse.getInt("isMaster") == 2 || Distributor.getImportFunction() ==2){
+                        showDialogEditInventory(position);
+                    }
+
+//                }else if (Distributor.getImportFunction() ==2 ){
+//
+//
+//                }
+
 
 
             }

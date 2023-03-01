@@ -20,6 +20,7 @@ import wolve.dms.R;
 import wolve.dms.activities.AccountActivity;
 import wolve.dms.activities.CustomerActivity;
 import wolve.dms.activities.DistributorActivity;
+import wolve.dms.activities.DistributorDetailActivity;
 import wolve.dms.activities.EditTempBillActivity;
 import wolve.dms.activities.HomeActivity;
 import wolve.dms.activities.ImportActivity;
@@ -189,6 +190,17 @@ public class Transaction {
 
     }
 
+    public static void gotoDistributorDetailActivity(int id) {
+        Activity context = Util.getInstance().getCurrentActivity();
+        Intent intent = new Intent(context, DistributorDetailActivity.class);
+        CustomSQL.setInt(Constants.DISTRIBUTOR_ID, id);
+        context.startActivityForResult(intent, Constants.RESULT_DISTRIBUTORDETAIL_ACTIVITY);
+        context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+
+
+
+    }
+
     public static void returnCustomerActivity(String fromActivity, String data, int result) {
         Intent returnIntent = Util.getInstance().getCurrentActivity().getIntent();
         returnIntent.putExtra(fromActivity, data);
@@ -242,7 +254,7 @@ public class Transaction {
     }
 
     public static void checkInventoryBeforePrintBill(BaseModel bill, List<BaseModel> listproduct, int warehouse_id, CallbackBoolean submit) {
-        if (Distributor.getImportFunction() == 1){
+        //if (Distributor.getImportFunction() == 1){
             DataUtil.checkInventory(listproduct, warehouse_id, new CallbackListObject(){
                 @Override
                 public void onResponse(List<BaseModel> list){
@@ -272,9 +284,9 @@ public class Transaction {
                 }
             });
 
-        }else {
-            gotoPrintBillActivity(bill, false);
-        }
+//        }else {
+//            gotoPrintBillActivity(bill, false);
+//        }
 
 
     }

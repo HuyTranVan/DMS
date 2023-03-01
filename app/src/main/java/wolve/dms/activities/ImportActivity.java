@@ -36,6 +36,7 @@ import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
 import wolve.dms.models.BaseModel;
+import wolve.dms.models.Distributor;
 import wolve.dms.models.Product;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
@@ -129,24 +130,6 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
                     }
                 },0);
 
-//                getListImport(0, new CallbackListObject(){
-//                    @Override
-//                    public void onResponse(List<BaseModel> list) {
-//                        setupViewPager(new ArrayList<>(),
-//                                list);
-//                        getInventory(toWarehouse.getInt("id"), new CallbackListObject() {
-//                            @Override
-//                            public void onResponse(List<BaseModel> list) {
-//                                updateInventoryTitle(list);
-//                                if (list.size() > 0) {
-//                                    viewPager.setCurrentItem(2, true);
-//                                }
-//
-//                                selectFromWarehouse(0);
-//                            }
-//                        });
-//                    }
-//                }, 0);
             }
         }, 4);
 
@@ -360,30 +343,42 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
     private void submitEvent() {
             List<BaseModel> listDiff = DataUtil.listImportNotEnough( adapterChoosen.getmData());
 
-            if (listDiff.size() > 0 && fromWarehouse.getInt("isMaster") == 2 && Util.isAdmin()){
-                CustomCenterDialog.alertWithButton("Thiếu tồn kho!",
-                        "Tồn kho " + fromWarehouse.getString("name").toUpperCase() + " hiện tại không đủ, chọn 'Chờ nhập kho' để hoàn tất sau",
-                        "đồng ý",
-                        new CallbackBoolean() {
-                            @Override
-                            public void onRespone(Boolean result) {
-                                if (result){
-                                    postImport(0);
+            if(Distributor.getImportFunction() == 1){
+                if (listDiff.size() > 0 && fromWarehouse.getInt("isMaster") == 2 && Util.isAdmin()){
+                    CustomCenterDialog.alertWithButton("Thiếu tồn kho!",
+                            "Tồn kho " + fromWarehouse.getString("name").toUpperCase() + " hiện tại không đủ, chọn 'Chờ nhập kho' để hoàn tất sau",
+                            "đồng ý",
+                            new CallbackBoolean() {
+                                @Override
+                                public void onRespone(Boolean result){
+                                    if (result){
+                                        submitImport(0);
+                                    }
+
+
                                 }
+                            });
+
+                } else {
+                    submitImport(Util.isAdmin() ? User.getId() : 0);
+
+                }
+
+            }else if (Distributor.getImportFunction() == 2){
+                if (fromWarehouse.getInt("isMaster") == 1){
+                    submitImport(User.getId());
+
+                }else {
+                    submitImport(0);
 
 
-                            }
-                        });
-
-            } else {
-                postImport(Util.isAdmin() ? User.getId() : 0);
-
-
+                }
             }
+
 
     }
 
-    private void postImport(int accepUser){
+    private void submitImport(int accepUser){
         String param = DataUtil.createPostImportJsonParam(toWarehouse.getInt("id"),
                 fromWarehouse.getInt("id"),
                 adapterChoosen.getmData(),
@@ -558,7 +553,6 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         getListWarehouse(new CallbackListObject(){
             @Override
             public void onResponse(List<BaseModel> listWa) {
-
                 dialogSelectWarehouse("CHỌN KHO XUẤT", filterListFromWarehouse(listWa), new CallbackObject() {
                     @Override
                     public void onResponse(BaseModel object){
@@ -596,48 +590,70 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
     private List<BaseModel> filterListFromWarehouse(List<BaseModel> list) {
         List<BaseModel> listResutl = new ArrayList<>();
         for (BaseModel model : list) {
-            if (Util.isAdmin()) {
-                if (fromWarehouse != null) {
-                    if (toWarehouse.getInt("isMaster") == 2
-                            && model.getInt("id") != toWarehouse.getInt("id")
-                            && model.getInt("id") != fromWarehouse.getInt("id")){
-                        listResutl.add(model);
-                    }else if (model.getInt("isMaster") != 1
-                            && model.getInt("id") != toWarehouse.getInt("id")
-                            && model.getInt("id") != fromWarehouse.getInt("id")){
-                        listResutl.add(model);
+            if (Distributor.getImportFunction() == 1){
+                if (Util.isAdmin()) {
+                    if (fromWarehouse != null) {
+                        if (toWarehouse.getInt("isMaster") == 2
+                                && model.getInt("id") != toWarehouse.getInt("id")
+                                && model.getInt("id") != fromWarehouse.getInt("id")){
+                            listResutl.add(model);
+                        }else if (model.getInt("isMaster") != 1
+                                && model.getInt("id") != toWarehouse.getInt("id")
+                                && model.getInt("id") != fromWarehouse.getInt("id")){
+                            listResutl.add(model);
+
+                        }
+
+                    }else {
+                        if (toWarehouse.getInt("isMaster") == 2
+                                && model.getInt("id") != toWarehouse.getInt("id")){
+                            listResutl.add(model);
+                        }else if (model.getInt("isMaster") != 1
+                                && model.getInt("id") != toWarehouse.getInt("id")){
+                            listResutl.add(model);
+
+                        }
 
                     }
 
-                }else {
-                    if (toWarehouse.getInt("isMaster") == 2
-                            && model.getInt("id") != toWarehouse.getInt("id")){
-                        listResutl.add(model);
-                    }else if (model.getInt("isMaster") != 1
-                            && model.getInt("id") != toWarehouse.getInt("id")){
-                        listResutl.add(model);
+                }
+                else {
+                    if (fromWarehouse != null){
+                        if (model.getInt("id") != toWarehouse.getInt("id")
+                                && model.getInt("id") != fromWarehouse.getInt("id")
+                                && model.getInt("isMaster") != 1) {
+                            listResutl.add(model);
+                        }
+
+                    }else {
+                        if (model.getInt("id") != toWarehouse.getInt("id")
+                                && model.getInt("isMaster") != 1) {
+                            listResutl.add(model);
+                        }
 
                     }
 
                 }
 
-            } else {
+            }else if (Distributor.getImportFunction() == 2){
                 if (fromWarehouse != null){
                     if (model.getInt("id") != toWarehouse.getInt("id")
                             && model.getInt("id") != fromWarehouse.getInt("id")
-                            && model.getInt("isMaster") != 1) {
+                            && model.getInt("isMaster") != 2) {
                         listResutl.add(model);
                     }
 
                 }else {
                     if (model.getInt("id") != toWarehouse.getInt("id")
-                            && model.getInt("isMaster") != 1) {
+                            && model.getInt("isMaster") != 2) {
                         listResutl.add(model);
                     }
 
                 }
 
             }
+
+
         }
         DataUtil.sortbyStringKey("isMaster", listResutl, false);
         return listResutl;
@@ -792,75 +808,5 @@ public class ImportActivity extends BaseActivity implements View.OnClickListener
         }
     }
 
-//    private void selectToWarehouse(int loadingtimes) {
-//        //todo: show all include Master Warehouse
-//        getListWarehouse(new CallbackListObject() {
-//            @Override
-//            public void onResponse(List<BaseModel> list) {
-//                dialogSelectWarehouse("CHỌN KHO NHẬP", filterListToWarehouse(list), new CallbackObject() {
-//                    @Override
-//                    public void onResponse(BaseModel object) {
-//                        setToWarehouse(object, true);
-////                        toWarehouse = object;
-////                        tvToWarehouse.setText(Util.getStringIcon(object.getString("name"), "   ", R.string.icon_down));
-////
-////                        reloadAllWarehouse(null);
-//
-//                    }
-//                });
-//
-//            }
-//        }, loadingtimes);
-//
-//
-//    }
 
-//    private List<BaseModel> filterListToWarehouse(List<BaseModel> list) {
-//        List<BaseModel> results = new ArrayList<>();
-//        for (BaseModel model : list) {
-//            if (model.getInt("isMaster") != 1) {
-//                if (fromWarehouse != null && model.getInt("id") != fromWarehouse.getInt("id")) {
-//                    results.add(model);
-//
-//                } else if (fromWarehouse == null) {
-//                    results.add(model);
-//
-//                }
-//
-//            }
-//        }
-//        DataUtil.sortbyStringKey("isMaster", results, false);
-//        return results;
-//    }
-
-//    @Override
-//    public void onCheckedChanged(SwitchButton view, boolean isChecked) {
-//        if (statecheckevent){
-//            if (isChecked){
-//                setFromWarehouse(masterWarehouse);
-//                setToWarehouse(tempWarehouse, false);
-//                getInventory(toWarehouse.getInt("id"), new CallbackListObject() {
-//                    @Override
-//                    public void onResponse(List<BaseModel> list2) {
-//                        updateInventoryTitle(list2);
-//                    }
-//                });
-//
-//            }else {
-//                setFromWarehouse(tempWarehouse);
-//                setToWarehouse(userWarehouse, false);
-//                getInventory(toWarehouse.getInt("id"), new CallbackListObject() {
-//                    @Override
-//                    public void onResponse(List<BaseModel> list2) {
-//                        updateInventoryTitle(list2);
-//
-//                    }
-//                });
-//
-//            }
-//        }else {
-//            statecheckevent = true;
-//        }
-//
-//    }
 }

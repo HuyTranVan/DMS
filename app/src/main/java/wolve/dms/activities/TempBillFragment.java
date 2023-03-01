@@ -154,28 +154,31 @@ public class TempBillFragment extends Fragment implements View.OnClickListener {
         adapter = new TempbillAdapter(list, new CallbackObject() {
             @Override
             public void onResponse(BaseModel object) {
-                checkLocation(new LocationListener() {
-                    @Override
-                    public void onLocationChanged(Location location) {
-                        double distance = MapUtil.distance(location.getLatitude(),
-                                location.getLongitude(),
-                                object.getBaseModel("customer").getDouble("lat"),
-                                object.getBaseModel("customer").getDouble("lng"));
+                if (User.getId() == object.getInt("user_id") || Util.isAdmin()){
+                    gotoPrintBillScreen(object);
 
-                        if (distance < Constants.CHECKIN_DISTANCE
-                                || User.getId() == object.getInt("user_id")
-                                || CustomSQL.getBoolean(Constants.IS_ADMIN)) {
-                            gotoPrintBillScreen(object);
+                }else {
+                    checkLocation(new LocationListener() {
+                        @Override
+                        public void onLocationChanged(Location location) {
+                            double distance = MapUtil.distance(location.getLatitude(),
+                                    location.getLongitude(),
+                                    object.getBaseModel("customer").getDouble("lat"),
+                                    object.getBaseModel("customer").getDouble("lng"));
 
-                        } else {
+                            if (distance < Constants.CHECKIN_DISTANCE ) {
+                                gotoPrintBillScreen(object);
 
-                            Util.showSnackbar("Không thể tiếp tục do ở bên ngoài của hàng ", null, null);
+                            } else {
+
+                                Util.showSnackbar("Không thể tiếp tục do ở bên ngoài của hàng ", null, null);
+                            }
+
+
                         }
+                    }, true);
 
-
-                    }
-                }, true);
-
+                }
             }
         }, new CallbackBoolean() {
             @Override

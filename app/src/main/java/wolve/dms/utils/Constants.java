@@ -1,9 +1,5 @@
 package wolve.dms.utils;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +39,7 @@ public class Constants {
     public final static String IMPORT_ACTIVITY = "import";
     public final static String USER = "user";
     public final static String DISTRIBUTOR = "distributor";
+    public final static String DISTRIBUTORDETAIL_ACTIVITY = "distributordetail_activity";
     public final static String USER_USERNAME = "username";
     public final static String USER_PASSWORD = "password";
     public final static String IMAGES_DIRECTORY = "Lubsolution_DMS";
@@ -111,6 +108,7 @@ public class Constants {
     public final static int RESULT_CUSTOMER_ACTIVITY = 1000;
     public final static int RESULT_SHOPCART_ACTIVITY = 1001;
     public final static int RESULT_PRINTBILL_ACTIVITY = 1002;
+
     public final static int REQUEST_CHOOSE_IMAGE = 1003;
     public final static int REQUEST_IMAGE_CAPTURE = 1004;
     public final static int REQUEST_READ_PERMISSION = 1005;
@@ -121,6 +119,7 @@ public class Constants {
     public final static int REQUEST_PERMISSION = 1010;
     public final static int RESULT_IMPORT_ACTIVITY = 1011;
     public final static int RESULT_PRINTSHIPPING_ACTIVITY = 1012;
+    public static final int RESULT_DISTRIBUTORDETAIL_ACTIVITY = 1013;
     public final static String RESULT_ERROR_TITLE = "Có lỗi xảy ra";
     public final static String RESULT = "result";
     public final static boolean RESULT_FALSE = false;
@@ -188,52 +187,117 @@ public class Constants {
     public static final String LNG = "lng";
     public static final String HISTORY_SEARCH = "history_search";
     public static final String SAVE_PRODUCT_IMAGE = "save_image";
+    public static final String DISTRIBUTOR_ID = "distributor_id";
+
+    public static String SALE = "Bán hàng";
+    public static String STATISTICAL = "Thống kê";
+    public static String IMPORT = "Nhập kho";
+    public static String CASHFLOW = "Thu chi";
+    public static String CATEGORIES = "Danh mục";
+
+
+
 
     //Home constant
-    public static List<BaseModel> HomeItemList() {
-        String[] icons = new String[]{
-                Util.getIcon(R.string.icon_edit_map_marked),
-                Util.getIcon(R.string.icon_chart),
-                Util.getIcon(R.string.icon_depot),
-                Util.getIcon(R.string.icon_hand_on_money),
-                Util.getIcon(R.string.icon_setting),
-                ""};
-        String[] texts = new String[]{
-                "Bán hàng",
-                "Thống kê",
-                "Nhập kho",
-                "Thu chi",
-                "Danh mục",
-                ""};
-        boolean[] isDistributor = new boolean[]{
-                false,
-                false,
-                false,
-                false,
-                false,
-                true};
-        boolean[] haveDetail = new boolean[]{
-                false,
-                false,
-                true,
-                false,
-                false,
-                false};
+//    public static List<BaseModel> HomeItemList() {
+//        String[] icons = new String[]{
+//                Util.getIcon(R.string.icon_edit_map_marked),
+//                Util.getIcon(R.string.icon_chart),
+//                Util.getIcon(R.string.icon_depot),
+//                Util.getIcon(R.string.icon_hand_on_money),
+//                Util.getIcon(R.string.icon_setting),
+//                ""};
+//        String[] texts = new String[]{SALE, STATISTICAL, IMPORT, CASHFLOW, CATEGORIES, ""};
+//
+//        boolean[] isDistributor = new boolean[]{
+//                false,
+//                false,
+//                false,
+//                false,
+//                false,
+//                true};
+//        boolean[] haveDetail = new boolean[]{
+//                false,
+//                false,
+//                true,
+//                false,
+//                false,
+//                false};
+//
+//
+//        List<BaseModel> list = new ArrayList<>();
+//        for (int i = 0; i < icons.length; i++) {
+//            BaseModel object = new BaseModel();
+//            object.put("icon", icons[i]);
+//            object.put("text", texts[i]);
+//            object.put("isDistributor", isDistributor[i]);
+//            object.put("haveDetail", haveDetail[i]);
+//
+//
+//            list.add(object);
+//        }
+//
+//        return list;
+//    }
 
+    public static BaseModel HomeSaleItem(){
+        BaseModel object = new BaseModel();
+        object.put("icon", Util.getIcon(R.string.icon_edit_map_marked));
+        object.put("text", SALE);
+        object.put("isDistributor", false);
+        object.put("haveDetail", false);
 
-        List<BaseModel> list = new ArrayList<>();
-        for (int i = 0; i < icons.length; i++) {
-            BaseModel object = new BaseModel();
-            object.put("icon", icons[i]);
-            object.put("text", texts[i]);
-            object.put("isDistributor", isDistributor[i]);
-            object.put("haveDetail", haveDetail[i]);
+        return object;
+    }
 
+    public static BaseModel HomeStatisticalItem(){
+        BaseModel object = new BaseModel();
+        object.put("icon", Util.getIcon(R.string.icon_chart));
+        object.put("text", STATISTICAL);
+        object.put("isDistributor", false);
+        object.put("haveDetail", false);
 
-            list.add(object);
-        }
+        return object;
+    }
 
-        return list;
+    public static BaseModel HomeImportItem(){
+        BaseModel object = new BaseModel();
+        object.put("icon", Util.getIcon(R.string.icon_depot));
+        object.put("text", IMPORT);
+        object.put("isDistributor", false);
+        object.put("haveDetail", true);
+
+        return object;
+    }
+
+    public static BaseModel HomeCashFlowItem(){
+        BaseModel object = new BaseModel();
+        object.put("icon", Util.getIcon(R.string.icon_hand_on_money));
+        object.put("text", CASHFLOW);
+        object.put("isDistributor", false);
+        object.put("haveDetail", false);
+
+        return object;
+    }
+
+    public static BaseModel HomeCategoriesItem(){
+        BaseModel object = new BaseModel();
+        object.put("icon", Util.getIcon(R.string.icon_setting));
+        object.put("text", CATEGORIES);
+        object.put("isDistributor", false);
+        object.put("haveDetail", false);
+
+        return object;
+    }
+
+    public static BaseModel HomeDistributorItem(){
+        BaseModel object = new BaseModel();
+        object.put("icon", "");
+        object.put("text", DISTRIBUTOR);
+        object.put("isDistributor", true);
+        object.put("haveDetail", false);
+
+        return object;
     }
 
 
@@ -256,7 +320,6 @@ public class Constants {
             "KL"};
 
     public static String[] sortGroups = new String[]{
-
             "Tất cả",
             "Khác",
             "Trả tiền NPP",
@@ -269,17 +332,13 @@ public class Constants {
     }
 
 
-    public static List<BaseModel> homeSettingSetup(){
+    public static List<BaseModel> homeCategoriesSetup(){
         List<BaseModel> list = new ArrayList<>();
-
-        BaseModel item1 = new BaseModel();
-        item1.put("position", 0);
-        item1.put("icon", Util.getIcon(R.string.icon_group));
-        item1.put("text", "Nhân viên");
-        if (Util.isAdmin()){
-            list.add(item1);
-        }
-        //list.add(item1);
+        BaseModel item2 = new BaseModel();
+        item2.put("position", 0);
+        item2.put("icon", Util.getIcon(R.string.icon_product_group));
+        item2.put("text", "Sản phẩm");
+        list.add(item2);
 
         BaseModel item6 = new BaseModel();
         item6.put("position", 1);
@@ -289,36 +348,26 @@ public class Constants {
             list.add(item6);
         }
 
+        BaseModel item1 = new BaseModel();
+        item1.put("position", 2);
+        item1.put("icon", Util.getIcon(R.string.icon_group));
+        item1.put("text", "Nhân viên");
+        if (Util.isAdmin()){
+            list.add(item1);
+        }
 
         BaseModel item4 = new BaseModel();
-        item4.put("position", 2);
+        item4.put("position", 3);
         item4.put("icon", Util.getIcon(R.string.icon_hand_on_money));
         item4.put("text", "Thu - chi");
         if (Util.isAdmin()){
             list.add(item4);
         }
-        //list.add(2, item4);
-
-        BaseModel item2 = new BaseModel();
-        item2.put("position", 3);
-        item2.put("icon", Util.getIcon(R.string.icon_product_group));
-        item2.put("text", "Sản phẩm");
-//        if (Util.isAdmin()){
-//            list.add(item2);
-//        }
-        list.add(item2);
 
         BaseModel item3 = new BaseModel();
         item3.put("position", 4);
         item3.put("icon", Util.getIcon(R.string.icon_list_check));
         item3.put("text", "Danh sách nhà phân phối");
-        //list.add(item3);
-
-//        BaseModel item5 = new BaseModel();
-//        item5.put("position", 5);
-//        item5.put("icon", Util.getIcon(R.string.icon_list_check));
-//        item5.put("text", "Danh sách nhà phân phối");
-
         if (User.getId() ==  2){
             list.add(item3);
         }

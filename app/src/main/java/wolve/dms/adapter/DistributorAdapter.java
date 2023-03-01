@@ -59,7 +59,8 @@ public class DistributorAdapter extends RecyclerView.Adapter<DistributorAdapter.
     @Override
     public void onBindViewHolder(final ProductAdapterViewHolder holder, final int position) {
         holder.line.setVisibility(position == mData.size() -1? View.GONE : View.VISIBLE);
-        holder.tvName.setText(mData.get(position).getString("name"));
+        holder.tvName.setText(String.format("%s (%d)", mData.get(position).getString("name"),
+                                                        mData.get(position).getInt("count_user")));
         holder.tvLocation.setText(mData.get(position).getBaseModel("province").getString("name"));
 
         if (!Util.checkImageNull(mData.get(position).getString("image"))) {
@@ -210,7 +211,7 @@ public class DistributorAdapter extends RecyclerView.Adapter<DistributorAdapter.
         }
     }
 
-    private void updateActiveDistributor(BaseModel distributor, long time, CallbackObject listener){
+    public static void updateActiveDistributor(BaseModel distributor, long time, CallbackObject listener){
         BaseModel param = createPostParam(ApiUtil.ACTIVE_NEW(),
                 String.format(ApiUtil.ACTIVE_CREATE_PARAM, distributor.getInt("id"), time),
                 false,

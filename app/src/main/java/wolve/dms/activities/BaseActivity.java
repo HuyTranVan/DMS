@@ -165,8 +165,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                 if (location != null) {
                     mListener.onLocationChanged(location);
 
-                }else {
-
                 }
             }
         });

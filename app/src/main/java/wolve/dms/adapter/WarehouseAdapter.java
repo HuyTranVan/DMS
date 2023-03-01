@@ -18,6 +18,7 @@ import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.CallbackString;
 import wolve.dms.models.BaseModel;
+import wolve.dms.models.Distributor;
 import wolve.dms.models.ProductGroup;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
@@ -236,16 +237,22 @@ public class WarehouseAdapter extends RecyclerView.Adapter<WarehouseAdapter.Ware
         if (hasInfo){
             list.add(warehouseOptions[0]);
         }
+        if (Distributor.getImportFunction() == 1){
+            if (warehouse.getInt("isMaster") == 2 || quantity > 0){
+                list.add(warehouseOptions[1]);
 
-        if (warehouse.getInt("isMaster") == 2 || quantity > 0){
+            }
+
+            if (warehouse.getInt("isMaster") == 3 &&  quantity > 0){
+                list.add(warehouseOptions[2]);
+
+            }
+
+        }else if (Distributor.getImportFunction() == 2){
             list.add(warehouseOptions[1]);
 
         }
 
-        if (warehouse.getInt("isMaster") == 3 &&  quantity > 0){
-            list.add(warehouseOptions[2]);
-
-        }
 
         return  list;
     }

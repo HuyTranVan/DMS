@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.suke.widget.SwitchButton;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -23,6 +24,7 @@ import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.CustomBottomDialog;
 import wolve.dms.utils.CustomCenterDialog;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 import static wolve.dms.activities.BaseActivity.createPostParam;
@@ -37,10 +39,10 @@ public class AdminsAdapter extends RecyclerView.Adapter<AdminsAdapter.ChoiceMeth
     private LayoutInflater mLayoutInflater;
     //private CustomBottomDialog.PositionListener mListener;
 
-    public AdminsAdapter(List<BaseModel> list) {
+    public AdminsAdapter() {
         this.mContext = Util.getInstance().getCurrentActivity();
         this.mLayoutInflater = LayoutInflater.from(mContext);
-        this.mData = list;
+        this.mData = new ArrayList<>();
 
     }
 
@@ -153,8 +155,19 @@ public class AdminsAdapter extends RecyclerView.Adapter<AdminsAdapter.ChoiceMeth
             public void onError(String error) {
                 listener.onRespone(false);
             }
-        }, 0).execute();
+        }, 1).execute();
 
+    }
+
+    public void addItem(BaseModel item){
+        mData.add(item);
+        notifyDataSetChanged();
+    }
+
+    public void updateData(List<BaseModel> list){
+        mData = list;
+        DataUtil.sortbyStringKey("role", mData, false);
+        notifyDataSetChanged();
     }
 
 

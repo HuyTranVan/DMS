@@ -32,7 +32,6 @@ import wolve.dms.adapter.HomeAdapter;
 import wolve.dms.adapter.WarehouseAdapter;
 import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
@@ -52,7 +51,7 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/15/17.
  */
 
-public class HomeActivity extends BaseActivity implements View.OnClickListener, CallbackClickAdapter, SwipeRefreshLayout.OnRefreshListener, CallbackObject {
+public class HomeActivity extends BaseActivity implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, CallbackObject {
     private RecyclerView rvItems;
     private CircleImageView imgUser;
     private TextView tvFullname, tvRole, tvCash, tvMonth, tvHaveNewProduct,
@@ -119,6 +118,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         }
 
         checkPermission();
+
+        //AuthenticateImplicitWithAdc.main();
 
     }
 
@@ -242,11 +243,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         } else if (mFragment != null && mFragment instanceof TempImportFragment) {
             getSupportFragmentManager().popBackStack();
 
-        }else if (mFragment != null && mFragment instanceof NewUpdateDistributorFragment) {
-            getSupportFragmentManager().popBackStack();
-            //updateTempWahouseInventory(null);
-
-        }else if (mFragment != null && mFragment instanceof InventoryDetailFragment) {
+        }
+//        else if (mFragment != null && mFragment instanceof DistributorDetailActivity) {
+//            getSupportFragmentManager().popBackStack();
+//            //updateTempWahouseInventory(null);
+//
+//        }
+        else if (mFragment != null && mFragment instanceof InventoryDetailFragment) {
             getSupportFragmentManager().popBackStack();
 
         }else if (mFragment != null && mFragment instanceof ImportReturnFragment) {
@@ -269,56 +272,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             }, 1500);
 
         }
-    }
-
-    @Override
-    public void onRespone(String data, int position) {
-        switch (position) {
-            case 0:
-                if (User.checkUserWarehouse())
-                    Transaction.gotoMapsActivity();
-
-                break;
-
-            case 1:
-                Transaction.gotoStatisticalActivity(Util.isAdmin()? "" : User.getCurrentUserString());
-
-                break;
-
-            case 2:
-                Transaction.gotoImportActivity(User.getCurrentUser().getBaseModel("warehouse"));
-                    //Transaction.gotoWarehouseActivity();
-
-                break;
-
-            case 3:
-                if (Util.isAdmin()){
-                    Transaction.gotoAccountActivity();
-                }else {
-                    Util.showToast("Không hỗ trợ");
-                }
-
-
-                break;
-
-            case 4:
-                choiceSetupItem();
-
-                break;
-
-            case 5:
-                if (CustomSQL.getBoolean(Constants.IS_ADMIN)) {
-                    NewUpdateDistributorFragment groupFragment = new NewUpdateDistributorFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putString(Constants.DISTRIBUTOR, Distributor.getObjectString());
-                    changeFragment(groupFragment, bundle, true);
-
-                }
-
-                break;
-        }
-
-
     }
 
     private void loadCurrentData(CallbackBoolean listener, int load) {
@@ -349,16 +302,15 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     private void choiceSetupItem() {
         CustomBottomDialog.choiceListObject("danh mục",
-                Constants.homeSettingSetup(),
+                Constants.homeCategoriesSetup(),
                 "text",
                 new CallbackObject() {
                     @Override
                     public void onResponse(BaseModel object) {
-                        switch (object.getInt("position")) {
+                        switch (object.getInt("position")){
                             case 0:
-                                if (User.getCurrentRoleId() == Constants.ROLE_ADMIN) {
-                                    Transaction.gotoUserActivity();
-                                }
+                                Transaction.gotoProductGroupActivity();
+
                                 break;
 
                             case 1:
@@ -369,15 +321,17 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
                             case 2:
                                 if (User.getCurrentRoleId() == Constants.ROLE_ADMIN) {
-                                    Transaction.gotoCashFlowTypeActivity();
+                                    Transaction.gotoUserActivity();
                                 }
+
 
                                 break;
 
                             case 3:
-                                //if (User.getCurrentRoleId() == Constants.ROLE_ADMIN) {
-                                    Transaction.gotoProductGroupActivity();
-                                //}
+                                if (User.getCurrentRoleId() == Constants.ROLE_ADMIN) {
+                                    Transaction.gotoCashFlowTypeActivity();
+                                }
+
                                 break;
 
                             case 4:
@@ -398,10 +352,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         super.onActivityResult(requestCode, resultCode, data);
         Util.getInstance().setCurrentActivity(this);
         mFragment = getSupportFragmentManager().findFragmentById(R.id.home_parent);
+        adapterHome.updateAllItems();
         checkNewProductUpdated(new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
                 if (result){
+
                     if (mFragment != null && mFragment instanceof TempBillFragment) {
                         ((TempBillFragment) mFragment).reloadData();
 
@@ -420,11 +376,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         long end = Util.TimeStamp1(Util.Next01MonthYear());
 
         BaseModel param = createGetParam(String.format(ApiUtil.PRODUCT_LASTEST() , start, end), false);
-        new GetPostMethod(param, new NewCallbackCustom() {
+        new GetPostMethod(param, new NewCallbackCustom(){
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
                 swipeRefreshLayout.setRefreshing(false);
-                adapterHome.updateInventoryDetail(result.getInt("inventories"));
+                adapterHome.updateImportShorcut(result.getInt("inventories"));
                 adapterHome.updateWaitingListDetail(result.getInt("countCustomerWaiting"));
                 updateTempBillVisibility(DataUtil.listTempBill(DataUtil.array2ListObject(result.getString("tempBills"))));
                 updateTempImportVisibility(DataUtil.filterListTempImport(DataUtil.array2ListObject(result.getString("tempImport"))));
@@ -637,8 +593,43 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     public void onResponse(BaseModel object) {
         //adapterHome.reloadItem();
         //updateTempWahouseInventory(null);
-        checkNewProductUpdated(null, 0, false);
-        //onResume();
+        //checkNewProductUpdated(null, 0, false);
+        if (object.getString("text").equals(Constants.SALE)){
+            Transaction.gotoMapsActivity();
+
+        }
+        else if (object.getString("text").equals(Constants.STATISTICAL)){
+            Transaction.gotoStatisticalActivity(Util.isAdmin()? "" : User.getCurrentUserString());
+
+        }
+        else if (object.getString("text").equals(Constants.IMPORT)){
+            Transaction.gotoImportActivity(User.getCurrentUser().getBaseModel("warehouse"));
+
+        }
+        else if (object.getString("text").equals(Constants.CASHFLOW)){
+            if (Util.isAdmin()){
+                Transaction.gotoAccountActivity();
+            }else {
+                Util.showToast("Không hỗ trợ");
+            }
+
+        }
+        else if (object.getString("text").equals(Constants.CATEGORIES)){
+            choiceSetupItem();
+
+        }
+        else if (object.getString("text").equals(Constants.DISTRIBUTOR)){
+            if (Util.isAdmin()) {
+                Transaction.gotoDistributorDetailActivity(Distributor.getId());
+
+            }else {
+                Util.showToast("Không hỗ trợ");
+            }
+
+        }
+
+
+
     }
 
     private void suggestChangePassword(){
@@ -704,9 +695,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             tempWarehouse = warehouse;
         }
 
-        if (Util.isAdmin() && Distributor.getImportFunction() == 1){
-            lnInventory.setVisibility(View.VISIBLE);
-            lnTempImport.setVisibility(View.VISIBLE);
+        if (Util.isAdmin() && Distributor.getImportFunction() > 0){
+            lnInventory.setVisibility(Distributor.getImportFunction() == 1? View.VISIBLE : View.GONE);
+            if (listTempImport != null && listTempImport.size() > 0) {
+                lnTempImport.setVisibility(View.VISIBLE);
+                tvNumberTempImport.setText(String.valueOf(listTempImport.size()));
+            } else {
+                lnTempImport.setVisibility(View.GONE);
+            }
             tvWarehouseName.setText(String.format("%s (%s)",
                     warehouse.getString("name"),
                     warehouse.getInt("quantity")));

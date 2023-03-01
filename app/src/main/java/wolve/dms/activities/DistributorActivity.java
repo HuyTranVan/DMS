@@ -1,9 +1,11 @@
 package wolve.dms.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,11 +16,8 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.DistributorAdapter;
-import wolve.dms.adapter.ProductGroupAdapter;
 import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
-import wolve.dms.callback.CallbackClickAdapter;
-import wolve.dms.callback.CallbackDeleteAdapter;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.models.BaseModel;
@@ -78,7 +77,7 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
                 break;
 
             case R.id.distributor_add_new:
-                openFragmentNewDistributor(null);
+                Transaction.gotoDistributorDetailActivity(0);
 
                 break;
 
@@ -87,13 +86,14 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void onBackPressed() {
-        Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.distributor_parent);
-        if (mFragment != null && mFragment instanceof NewUpdateDistributorFragment) {
-            getSupportFragmentManager().popBackStack();
-
-        } else {
-            Transaction.gotoHomeActivityRight(true);
-        }
+//        Fragment mFragment = getSupportFragmentManager().findFragmentById(R.id.distributor_parent);
+//        if (mFragment != null && mFragment instanceof DistributorDetailActivity) {
+//            getSupportFragmentManager().popBackStack();
+//
+//        } else {
+//
+//        }
+        Transaction.gotoHomeActivityRight(true);
     }
 
     protected void loadDistributors() {
@@ -124,22 +124,32 @@ public class DistributorActivity extends BaseActivity implements View.OnClickLis
         distributorAdapter = new DistributorAdapter(listDistributor, new CallbackObject() {
             @Override
             public void onResponse(BaseModel object) {
-                openFragmentNewDistributor(object.BaseModelstoString());
+                Transaction.gotoDistributorDetailActivity(object.getInt("id"));
+                //openFragmentNewDistributor(object.BaseModelstoString());
             }
         });
         Util.createLinearRV(rvDistributor, distributorAdapter);
 
     }
 
-    private void openFragmentNewDistributor(String distributor) {
-        NewUpdateDistributorFragment groupFragment = new NewUpdateDistributorFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(Constants.DISTRIBUTOR, distributor);
-        changeFragment(groupFragment, bundle, true);
-    }
+//    private void openFragmentNewDistributor(String distributor) {
+//        DistributorDetailActivity groupFragment = new DistributorDetailActivity();
+//        Bundle bundle = new Bundle();
+//        bundle.putString(Constants.DISTRIBUTOR, distributor);
+//        changeFragment(groupFragment, bundle, true);
+//    }
 
     @Override
     public void onResponse(BaseModel object) {
         distributorAdapter.updateDistributor(object);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Util.getInstance().setCurrentActivity(this);
+        if (requestCode == Constants.RESULT_DISTRIBUTORDETAIL_ACTIVITY){
+            loadDistributors();
+        }
     }
 }

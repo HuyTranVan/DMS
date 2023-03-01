@@ -1,14 +1,9 @@
 package wolve.dms.adapter;
 
 import android.content.Context;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -16,23 +11,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import wolve.dms.R;
 import wolve.dms.callback.CallbackClickAdapter;
-import wolve.dms.callback.CallbackInt;
-import wolve.dms.callback.CallbackString;
+import wolve.dms.callback.CallbackObject;
 import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomDropdow;
-import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
 import static wolve.dms.utils.Constants.warehouseOptions;
@@ -46,17 +36,34 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
     private List<BaseModel> mData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
-    private CallbackClickAdapter mListener;
+    private CallbackObject mListener;
     private WarehouseAdapter.CallbackWarehouseOption mWarehouseOption;
     private int inventoryQuantity;
 
-    public HomeAdapter(CallbackClickAdapter callbackClickAdapter, WarehouseAdapter.CallbackWarehouseOption morelistener) {
+    public HomeAdapter(CallbackObject callbackClickAdapter, WarehouseAdapter.CallbackWarehouseOption morelistener) {
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
-        this.mData = Constants.HomeItemList();
+        createItemList();
         this.mListener = callbackClickAdapter;
         this.mWarehouseOption = morelistener;
         this.inventoryQuantity = 0;
+    }
+
+    private void createItemList(){
+        mData = new ArrayList<>();
+        mData.add(Constants.HomeSaleItem());
+        mData.add(Constants.HomeStatisticalItem());
+        if (Distributor.getImportFunction() > 0)
+            mData.add(Constants.HomeImportItem());
+        mData.add(Constants.HomeCashFlowItem());
+        mData.add(Constants.HomeCategoriesItem());
+        mData.add(Constants.HomeDistributorItem());
+
+    }
+
+    public void updateAllItems(){
+        createItemList();
+        notifyDataSetChanged();
     }
 
     @Override
@@ -107,13 +114,6 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
         }else {
             holder.tvNotify.setVisibility(View.GONE);
         }
-        if (mData.get(holder.getAdapterPosition()).hasKey("importFunction") && mData.get(holder.getAdapterPosition()).getInt("importFunction") == 1){
-            holder.vCover.setVisibility(View.GONE);
-        }else if (mData.get(holder.getAdapterPosition()).hasKey("importFunction")){
-            holder.vCover.setVisibility(View.VISIBLE);
-        }else {
-            holder.vCover.setVisibility(View.GONE);
-        }
 
 
 //        holder.tvMore.setBackground(mData.get(position).hasKey("none_background")?
@@ -162,7 +162,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
         holder.rlParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onRespone(holder.tvTitle.getText().toString(), holder.getAdapterPosition());
+                mListener.onResponse(mData.get(holder.getAdapterPosition()));
 
             }
         });
@@ -177,13 +177,11 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
 
     public class ItemAdapterViewHolder extends RecyclerView.ViewHolder {
         private TextView tvTitle, tvIcon, tvMore, tvNotify;
-        private FrameLayout vCover;
         private RelativeLayout rlParent;
         private CircleImageView imgItem;
 
         public ItemAdapterViewHolder(View itemView) {
             super(itemView);
-            vCover = itemView.findViewById(R.id.item_home_cover);
             tvIcon = (TextView) itemView.findViewById(R.id.item_home_icon);
             tvTitle = (TextView) itemView.findViewById(R.id.item_home_text);
             tvMore = (TextView) itemView.findViewById(R.id.item_home_more);
@@ -199,23 +197,36 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ItemAdapterVie
         notifyDataSetChanged();
     }
 
-    public void updateInventoryDetail(int inventory_no){
-        if (inventory_no >0){
-            mData.get(2).put("more_text",Util.getIcon(R.string.icon_menu));
-            mData.get(2).put("importFunction", Distributor.getImportFunction());
+    public void updateImportShorcut(int inventory_no){
+        if (Distributor.getImportFunction() > 0 && inventory_no >0){
+            for (int i=0; i<mData.size(); i++){
+                if (mData.get(i).getString("text").equals(Constants.IMPORT)){
+                    mData.get(i).put("more_text",Util.getIcon(R.string.icon_menu));
+                    mData.get(i).put("importFunction", Distributor.getImportFunction());
+                    notifyItemChanged(i);
+                    break;
+                }
+            }
+
         }
 
         inventoryQuantity = inventory_no;
-        notifyItemChanged(2);
+        //notifyItemChanged(i);
 
     }
 
     public void updateWaitingListDetail(int size){
         if (size >0){
-            mData.get(0).put("notify_text", size);
+            for (int i=0; i<mData.size(); i++){
+                if (mData.get(i).getString("text").equals(Constants.SALE)){
+                    mData.get(i).put("notify_text", size);
+                    notifyItemChanged(i);
+                    break;
+                }
+
+            }
+
         }
-        //inventoryQuantity = inventory_no;
-        notifyItemChanged(0);
 
     }
 

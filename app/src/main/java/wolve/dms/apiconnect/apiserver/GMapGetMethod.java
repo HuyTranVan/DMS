@@ -1,6 +1,7 @@
 package wolve.dms.apiconnect.apiserver;
 
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.View;
 
 import java.io.BufferedReader;
@@ -79,7 +80,9 @@ public class GMapGetMethod extends AsyncTask<String, Void, String> {
             inp.close();
 
         } catch (IOException e) {
+            Log.e("TAG", e.toString());
             return e.toString();
+
         }
         return String.valueOf(response);
 

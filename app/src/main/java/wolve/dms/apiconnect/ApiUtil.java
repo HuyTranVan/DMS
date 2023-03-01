@@ -37,6 +37,8 @@ public class ApiUtil {
                 Util.getInstance().getCurrentActivity().getResources().getString(R.string.map_id);
     }
 
+    //AIzaSyDFHxjXnO6Wwk9cOxRMJHl5nLgQYPmTjwQ
+
     public final static String GOOGLESHEET_CREDENTIALS_FILE_PATH = "/credentials.json";
     public final static String GOOGLESHEET_TOKENS_PATH = "tokens";
 //    public final static String STATISTICAL_SHEET_KEY = Util.getInstance().getCurrentActivity().getResources().getString(R.string.sheet_key1);
