@@ -16,6 +16,20 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/mpchart/DMS.mpchart.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/mpchart/DMS.mpchart.androidTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/mpchart/DMS.mpchart.main.iml" filepath="$PROJECT_DIR$/.idea/modules/mpchart/DMS.mpchart.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/mpchart/DMS.mpchart.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/mpchart/DMS.mpchart.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/StudioProjects.DMS.iml" filepath="$PROJECT_DIR$/.idea/modules/StudioProjects.DMS.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/StudioProjects.DMS.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/StudioProjects.DMS.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/StudioProjects.DMS.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/StudioProjects.DMS.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/StudioProjects.DMS.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/StudioProjects.DMS.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/StudioProjects.DMS.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/StudioProjects.DMS.app.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/dialog/StudioProjects.DMS.dialog.iml" filepath="$PROJECT_DIR$/.idea/modules/dialog/StudioProjects.DMS.dialog.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/dialog/StudioProjects.DMS.dialog.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/dialog/StudioProjects.DMS.dialog.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/dialog/StudioProjects.DMS.dialog.main.iml" filepath="$PROJECT_DIR$/.idea/modules/dialog/StudioProjects.DMS.dialog.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/dialog/StudioProjects.DMS.dialog.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/dialog/StudioProjects.DMS.dialog.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/lib/StudioProjects.DMS.lib.iml" filepath="$PROJECT_DIR$/.idea/modules/lib/StudioProjects.DMS.lib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mpchart/StudioProjects.DMS.mpchart.iml" filepath="$PROJECT_DIR$/.idea/modules/mpchart/StudioProjects.DMS.mpchart.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mpchart/StudioProjects.DMS.mpchart.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/mpchart/StudioProjects.DMS.mpchart.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mpchart/StudioProjects.DMS.mpchart.main.iml" filepath="$PROJECT_DIR$/.idea/modules/mpchart/StudioProjects.DMS.mpchart.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mpchart/StudioProjects.DMS.mpchart.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/mpchart/StudioProjects.DMS.mpchart.unitTest.iml" />
     </modules>
   </component>
 </project>
