@@ -126,147 +126,126 @@
 
         <activity
             android:name=".activities.LoginActivity"
-            android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.HomeActivity"
-            android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.MapsActivity"
-            android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
             android:windowSoftInputMode="stateAlwaysHidden|stateHidden" />
 
         <activity
             android:name=".activities.WarehouseActivity"
-            android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.ImportActivity"
-            android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.ProductActivity"
-            android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.UserActivity"
-            android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.SettingActivity"
-            android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.ProductGroupActivity"
-            android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.CashFlowTypeActivity"
-            android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.CustomerActivity"
-            android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.ShopCartActivity"
-            android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.EditTempBillActivity"
-            android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.StatisticalActivity"
-            android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.PrintBillActivity"
-            android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.PrintCustomerShippingActivity"
-            android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.ScannerActivity"
-            android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.DistributorActivity"
-            android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.TestActivity"
-            android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.AccountActivity"
-            android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".activities.DistributorDetailActivity"
-            android:label="@string/app_name"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
