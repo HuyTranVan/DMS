@@ -366,19 +366,10 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
     private void inputShopName(double lat, double lng) {
         CustomInputDialog.dialogNewCustomer(new CustomInputDialog.ShopListener() {
             @Override
-            public void onShopname(String shopname, int shoptype, String phone) {
-                createCustomerFast(shoptype, shopname, phone, lat, lng);
+            public void onShopname(String shopname, int shoptype, String phone, String note) {
+                createCustomerFast(shoptype, shopname, phone, lat, lng, note);
             }
         });
-
-//        CustomInputDialog.inputShopName(coParent, new CustomInputDialog.ShopNameListener() {
-//            @Override
-//            public void onShopname(String shopname, int shoptype) {
-//                createCustomerFast(shoptype, shopname, "", lat, lng);
-//            }
-//
-//
-//        });
 
     }
 
@@ -891,11 +882,11 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     }
 
-    private void createCustomerFast(int shoptype, String shopname, String phone, Double lat, Double lng) {
+    private void createCustomerFast(int shoptype, String shopname, String phone, Double lat, Double lng, String note) {
         getAddressFromLatlng(lat, lng, new CallbackObject() {
             @Override
             public void onResponse(BaseModel result1) {
-                postCustomerFast(shoptype, shopname, phone, lat, lng, result1, new CallbackObject() {
+                postCustomerFast(shoptype, shopname, phone, lat, lng, note, result1, new CallbackObject() {
                     @Override
                     public void onResponse(BaseModel result) {
                         reUpdateMarkerDetail(result);
@@ -916,7 +907,14 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         new GMapGetMethod(lat, lng, new NewCallbackCustom() {
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
-                mListener.onResponse(MapUtil.getAddressFromMapResult(result));
+                if (result != null){
+                    mListener.onResponse(MapUtil.getAddressFromMapResult(result));
+
+                }else {
+                    mListener.onResponse(null);
+
+                }
+
 
             }
 
@@ -928,18 +926,16 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
     }
 
-    private void postCustomerFast(int shoptype, String shopName, String phone, Double lat, Double lng, BaseModel objectAdress, final CallbackObject mListener) {
+    private void postCustomerFast(int shoptype, String shopName, String phone, Double lat, Double lng, String note, BaseModel objectAdress, final CallbackObject mListener) {
         BaseModel param = createPostParam(ApiUtil.CUSTOMER_NEW(),String.format(ApiUtil.CUSTOMER_CREATE_PARAM,
                 "",
                 Util.encodeString("Anh " + shopName.substring(shopName.lastIndexOf(" ") + 1)),//name
                 Util.encodeString(shopName),//signBoard
-                Util.encodeString(objectAdress.getString("address")), //address
+                objectAdress != null? Util.encodeString(objectAdress.getString("address")) : "", //address
                 Util.encodeString(phone), //phone
-                Util.encodeString(objectAdress.getString("street")), //street
-                Util.encodeString(""), //note
-                Util.encodeString(objectAdress.getString("district")), //district
-                Util.encodeString(objectAdress.getString("province")),
-                //sdaf//province
+                Util.encodeString(note), //note
+                objectAdress != null? Util.encodeString(objectAdress.getString("district")): "", //district
+                objectAdress != null? Util.encodeString(objectAdress.getString("province")): "",  //province
                 lat, //lat
                 lng, //lng
                 10,
@@ -1035,7 +1031,7 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         currentCustomer = customer;
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
-        final String title;
+        final String title, add;
         title = String.format("%s %s%s",
                 Constants.shopName[customer.getInt("shopType")] ,
                 customer.getString("signBoard"),
@@ -1043,10 +1039,19 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
                         String.format(" (%s)", customer.getBaseModel("distributor").getString("name")) :
                         ""
                 );
-        String add = String.format("%s %s, %s",
-                customer.getString("address"),
-                customer.getString("street"),
-                customer.getString("district"));
+        if (customer.getString("district").equals("") && customer.getString("province").equals("")){
+            tvAddress.setTextColor(getResources().getColor(R.color.colorRedTransparent));
+            add = "Chưa có địa chỉ";
+
+
+        }else {
+            tvAddress.setTextColor(getResources().getColor(R.color.black_text_color_hint));
+            add = String.format("%s %s, %s",
+                    customer.getString("address"),
+                    customer.getString("street"),
+                    customer.getString("district"));
+        }
+
 
         tvShopname.setText(title);
         tvAddress.setText(add);
@@ -1058,10 +1063,10 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
         lnSheetBody.setOnClickListener(null);
 
         BaseModel param = createGetParam(ApiUtil.CUSTOMER_GETDETAIL() + customer.getString("id"), false);
-        new GetPostMethod(param, new NewCallbackCustom() {
+        new GetPostMethod(param, new NewCallbackCustom(){
             @SuppressLint("WrongConstant")
             @Override
-            public void onResponse(BaseModel result, List<BaseModel> list) {
+            public void onResponse(BaseModel result, List<BaseModel> list){
                 progressLoadCustomer.setVisibility(View.GONE);
                 BaseModel cust = DataUtil.rebuiltCustomer(result, false);
                 CustomSQL.setBaseModel(Constants.CUSTOMER, cust);
@@ -1081,25 +1086,31 @@ public class MapsActivity extends BaseActivity implements OnMapReadyCallback, Vi
 
                 }
 
-                if (customer.hasKey("last_time_order")) {
-                    tvStatus.setText(String.format("%s     %s ngày   %s",
-                            customer.getInt("status_id") == 4? "Khách dừng mua hàng" : "Khách đã mua hàng",
-                            Util.getIconString(R.string.icon_calendar, "  ", customer.getString("last_time_order")),
-                            Util.getIconString(R.string.icon_username, "  ", customer.getString("user_order"))));
+                tvStatus.setText(String.format("%s     %s ngày   %s",
+                        customer.getString("statusDetail"),
+                        Util.getIconString(R.string.icon_calendar, "  ", customer.getString("last_time")),
+                        Util.getIconString(R.string.icon_username, "  ", customer.getString("user_last"))));
 
-                } else {
-                    tvStatus.setText(customer.getString("statusDetail"));
-                }
+//                if (customer.hasKey("last_time_order")) {
+//                    tvStatus.setText(String.format("%s     %s ngày   %s",
+//                            customer.getInt("status_id") == 4? "Khách dừng mua hàng" : "Khách đã mua hàng",
+//                            Util.getIconString(R.string.icon_calendar, "  ", customer.getString("last_time_order")),
+//                            Util.getIconString(R.string.icon_username, "  ", customer.getString("user_order"))));
+//
+//                } else {
+//                    tvStatus.setText(customer.getString("statusDetail"));
+//
+//                }
 
-                if (customer.hasKey("last_time_checkin")) {
-                    tvCheckin.setVisibility(View.VISIBLE);
-                    tvCheckin.setText(String.format("%s ngày",
-                            Util.getIconString(R.string.icon_district, "  ", customer.getString("last_time_checkin"))));
-
-
-                } else {
+//                if (customer.hasKey("last_time_checkin")) {
+//                    tvCheckin.setVisibility(View.VISIBLE);
+//                    tvCheckin.setText(String.format("%s ngày",
+//                            Util.getIconString(R.string.icon_district, "  ", customer.getString("last_time_checkin"))));
+//
+//
+//                } else {
                     tvCheckin.setVisibility(View.GONE);
-                }
+//                }
 
                 tvTempBill.setVisibility(customer.hasKey(Constants.TEMPBILL) ? View.VISIBLE : View.GONE);
                 //updatAddListStatus(customer);

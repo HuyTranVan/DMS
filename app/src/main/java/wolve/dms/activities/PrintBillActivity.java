@@ -11,18 +11,25 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.PermissionChecker;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,6 +37,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.zxing.WriterException;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -72,7 +81,7 @@ public class PrintBillActivity extends BluetoothActivity implements View.OnClick
     private ImageView imgLogo, btnBack, imgOrderPhone;
     private TextView tvCompany, tvAdress, tvHotline, tvWebsite, tvTitle, tvShopName, tvCustomerName, tvCustomerAddress, tvDate, tvEmployee,
             tvSumCurrentBill, tvOrderPhone, tvThanks, tvPrinterMainText, tvPrinterName, tvTotal, tvPaid, tvRemain, tvTotalTitle,
-            tvEmployeeSign, tvDeliver, tvDeliverTitle, tvListPrinter;
+            tvEmployeeSign, tvDeliver, tvDeliverTitle, tvListPrinter, tvPrintText;
     private RecyclerView rvBills, rvDebts;
     private LinearLayout lnMain, lnBottom, lnSubmit, lnTotalGroup, lnPaidGroup, lnRemainGroup, lnSignature;
     private View line1, line2, line3, line4;
@@ -155,7 +164,7 @@ public class PrintBillActivity extends BluetoothActivity implements View.OnClick
         lnPaidGroup = findViewById(R.id.print_bill_paid_group);
         lnRemainGroup = findViewById(R.id.print_bill_remain_group);
         lnSignature = findViewById(R.id.print_bill_signature_group);
-
+        tvPrintText = findViewById(R.id.print_bill_bottom_printerselect_text);
 
     }
 
@@ -546,51 +555,6 @@ public class PrintBillActivity extends BluetoothActivity implements View.OnClick
 
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == REQUEST_ENABLE_BT && resultCode == RESULT_OK) {
-//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-//                // TODO: Consider calling
-//                //    ActivityCompat#requestPermissions
-//                // here to request the missing permissions, and then overriding
-//                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//                //                                          int[] grantResults)
-//                // to handle the case where the user grants the permission. See the documentation
-//                // for ActivityCompat#requestPermissions for more details.
-//                return;
-//            }
-//            mBluetoothAdapter.startDiscovery();
-//
-//
-//        }
-//    }
-
-//    @Override
-//    public void dataReturnFromFragment(String data1, String data2) {
-//        switch (data1) {
-//            case Constants.ONSTART:
-//                tvPrinterName.setText(Constants.CONNECTING_PRINTER);
-//                break;
-//
-//            case Constants.ONFAIL:
-//                tvPrinterName.setText("Chưa kết nối được máy in");
-//                break;
-//
-//            case Constants.ONSUCCESS:
-//                tvPrinterName.setText(String.format(Constants.CONNECTED_PRINTER, data2));
-//                break;
-//        }
-//    }
-
-//    private Boolean isPrinterConnected() {
-//        if (btsocket != null && btsocket.isConnected())
-//            return true;
-//
-//        return false;
-//
-//    }
-
     private void doPrintCurrentBill(final List<BaseModel> listPayments) {
         //int printSize = tvPrintSize.getText().toString().equals(Constants.PRINTER_80) ? Constants.PRINTER_80_WIDTH : Constants.PRINTER_57_WIDTH;
         if (!Util.getInstance().isLoading()) {
@@ -756,92 +720,6 @@ public class PrintBillActivity extends BluetoothActivity implements View.OnClick
 
     }
 
-    //************** Todo Bluetooth SETUP
-
-//    @Override
-//    protected void onDestroy() {
-//        Util.getInstance().stopLoading(true);
-//        try {
-//            if (btsocket != null) {
-//                if (outputStream != null)
-//                    outputStream.close();
-//                btsocket.close();
-//                btsocket = null;
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        super.onDestroy();
-//
-//    }
-
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//        try {
-//            unregisterReceiver(mBTReceiver);
-//
-//        } catch (Exception e) {
-//            //e.printStackTrace();
-//        }
-//    }
-
-//    private Runnable socketErrorRunnable = new Runnable() {
-//
-//        @Override
-//        public void run() {
-//            Util.showToast("Cannot establish connection");
-//
-//            if (ActivityCompat.checkSelfPermission(PrintBillActivity.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-//                // TODO: Consider calling
-//                //    ActivityCompat#requestPermissions
-//                // here to request the missing permissions, and then overriding
-//                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//                //                                          int[] grantResults)
-//                // to handle the case where the user grants the permission. See the documentation
-//                // for ActivityCompat#requestPermissions for more details.
-//                return;
-//            }
-//            mBluetoothAdapter.startDiscovery();
-//
-//        }
-//    };
-
-//    public void registerBluetooth() {
-//        try {
-//            if (initDevicesList() != 0) {
-//                this.finish();
-//                return;
-//            }
-//
-//        } catch (Exception ex) {
-//            this.finish();
-//            return;
-//        }
-//        IntentFilter btIntentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-//        registerReceiver(mBTReceiver, btIntentFilter);
-//
-//    }
-
-//    public final BroadcastReceiver mBTReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            String action = intent.getAction();
-//            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-//                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-//
-//                addBluetoothItem2List(device);
-//
-//                if (device.getAddress().equals(CustomSQL.getString(Constants.BLUETOOTH_DEVICE))) {
-//                    updateViewWhileConnectBlu(device, false);
-//
-//                }
-//
-//            }
-//        }
-//    };
-
     protected void updateViewWhileConnectBlu(BluetoothDevice device, boolean showloading) {
         Util.getInstance().showLoading(showloading);
         connectBluetoothDevice(device, new CallbackProcess() {
@@ -908,232 +786,93 @@ public class PrintBillActivity extends BluetoothActivity implements View.OnClick
 
     }
 
-//    public int initDevicesList() {
+//    private void generatePDF() {
+//        // creating an object variable
+//        // for our PDF document.
+//        PdfDocument pdfDocument = new PdfDocument();
+//
+//        // two variables for paint "paint" is used
+//        // for drawing shapes and we will use "title"
+//        // for adding text in our PDF file.
+//        Paint paint = new Paint();
+//        Paint title = new Paint();
+//
+//        // we are adding page info to our PDF file
+//        // in which we will be passing our pageWidth,
+//        // pageHeight and number of pages and after that
+//        // we are calling it to create our PDF.
+//        PdfDocument.PageInfo mypageInfo = new PdfDocument.PageInfo.Builder(pagewidth, pageHeight, 1).create();
+//
+//        // below line is used for setting
+//        // start page for our PDF file.
+//        PdfDocument.Page myPage = pdfDocument.startPage(mypageInfo);
+//
+//        // creating a variable for canvas
+//        // from our page of PDF.
+//        Canvas canvas = myPage.getCanvas();
+//
+//        // below line is used to draw our image on our PDF file.
+//        // the first parameter of our drawbitmap method is
+//        // our bitmap
+//        // second parameter is position from left
+//        // third parameter is position from top and last
+//        // one is our variable for paint.
+//        canvas.drawBitmap(scaledbmp, 56, 40, paint);
+//
+//        // below line is used for adding typeface for
+//        // our text which we will be adding in our PDF file.
+//        title.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+//
+//        // below line is used for setting text size
+//        // which we will be displaying in our PDF file.
+//        title.setTextSize(15);
+//
+//        // below line is sued for setting color
+//        // of our text inside our PDF file.
+//        title.setColor(ContextCompat.getColor(this, R.color.purple_200));
+//
+//        // below line is used to draw text in our PDF file.
+//        // the first parameter is our text, second parameter
+//        // is position from start, third parameter is position from top
+//        // and then we are passing our variable of paint which is title.
+//        canvas.drawText("A portal for IT professionals.", 209, 100, title);
+//        canvas.drawText("Geeks for Geeks", 209, 80, title);
+//
+//        // similarly we are creating another text and in this
+//        // we are aligning this text to center of our PDF file.
+//        title.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
+//        title.setColor(ContextCompat.getColor(this, R.color.purple_200));
+//        title.setTextSize(15);
+//
+//        // below line is used for setting
+//        // our text to center of PDF.
+//        title.setTextAlign(Paint.Align.CENTER);
+//        canvas.drawText("This is sample document which we have created.", 396, 560, title);
+//
+//        // after adding all attributes to our
+//        // PDF file we will be finishing our page.
+//        pdfDocument.finishPage(myPage);
+//
+//        // below line is used to set the name of
+//        // our PDF file and its path.
+//        File file = new File(Environment.getExternalStorageDirectory(), "GFG.pdf");
+//
 //        try {
-//            if (btsocket != null) {
-//                btsocket.close();
+//            // after creating a file name we will
+//            // write our PDF file to that location.
+//            pdfDocument.writeTo(new FileOutputStream(file));
 //
-//                btsocket = null;
-//            }
-//
-//            if (mBluetoothAdapter != null) {
-//                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-//                    // TODO: Consider calling
-//                    //    ActivityCompat#requestPermissions
-//                    // here to request the missing permissions, and then overriding
-//                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//                    //                                          int[] grantResults)
-//                    // to handle the case where the user grants the permission. See the documentation
-//                    // for ActivityCompat#requestPermissions for more details.
-//                    //return ;
-//                }
-//                mBluetoothAdapter.cancelDiscovery();
-//            }
-//
-//            finalize();
-//
-//        } catch (Throwable throwable) {
-//            throwable.printStackTrace();
+//            // below line is to print toast message
+//            // on completion of PDF generation.
+//            Toast.makeText(this, "PDF file generated successfully.", Toast.LENGTH_SHORT).show();
+//        } catch (IOException e) {
+//            // below line is used
+//            // to handle error
+//            e.printStackTrace();
 //        }
-//
-//        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-//        if (mBluetoothAdapter == null) {
-//            Util.showToast("Bluetooth not supported!!");
-//
-//            return -1;
-//        }
-//
-//        if (mBluetoothAdapter.isDiscovering()) {
-//            mBluetoothAdapter.cancelDiscovery();
-//        }
-//
-//        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-//        try {
-//            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-//        } catch (Exception ex) {
-//            return -2;
-//        }
-//
-//        return 0;
-//
-//    }
-
-//    public void connectBluetoothDevice(final BluetoothDevice device, final CallbackProcess mListener) {
-//        mListener.onStart();
-//        if (mBluetoothAdapter == null) {
-//            mListener.onError();
-//            return;
-//
-//        }
-//
-//        Thread connectThread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    if (ActivityCompat.checkSelfPermission(PrintBillActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-//                        // TODO: Consider calling
-//                        //    ActivityCompat#requestPermissions
-//                        // here to request the missing permissions, and then overriding
-//                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//                        //                                          int[] grantResults)
-//                        // to handle the case where the user grants the permission. See the documentation
-//                        // for ActivityCompat#requestPermissions for more details.
-//                        return;
-//                    }
-//                    if (device.getUuids() != null) {
-//                        UUID uuid = device.getUuids()[0].getUuid();
-//                        btsocket = null;
-//                        btsocket = device.createRfcommSocketToServiceRecord(uuid);
-//                        btsocket.connect();
-//                    }
-//
-//                } catch (IOException ex) {
-//                    runOnUiThread(socketErrorRunnable);
-//                    try {
-//                        if (btsocket != null)
-//                            btsocket.close();
-//                    } catch (IOException e) {
-//                        mListener.onError();
-////                        e.printStackTrace();
-//                    }
-//                    btsocket = null;
-//
-//                    return;
-//                } finally {
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//
-//                            try {
-//                                if (btsocket != null) {
-//                                    CustomSQL.setString(Constants.BLUETOOTH_DEVICE, btsocket.getRemoteDevice().getAddress());
-//                                    outputStream = btsocket.getOutputStream();
-//                                    if (ActivityCompat.checkSelfPermission(PrintBillActivity.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-//                                        // TODO: Consider calling
-//                                        //    ActivityCompat#requestPermissions
-//                                        // here to request the missing permissions, and then overriding
-//                                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//                                        //                                          int[] grantResults)
-//                                        // to handle the case where the user grants the permission. See the documentation
-//                                        // for ActivityCompat#requestPermissions for more details.
-//                                        return;
-//                                    }
-//                                    mBluetoothAdapter.cancelDiscovery();
-//
-//
-//                                    mListener.onSuccess(device.getName());
-//                                } else {
-//                                    mListener.onError();
-//                                }
-//
-//
-//                            } catch (IOException e) {
-//                                mListener.onError();
-////                                e.printStackTrace();
-//                            }
-//
-//
-//                        }
-//                    });
-//                }
-//            }
-//        });
-//        connectThread.start();
-//    }
-
-//    protected void addBluetoothItem2List(BluetoothDevice device) {
-//        Boolean exist = false;
-//        for (int i = 0; i < listDevice.size(); i++) {
-//            if (listDevice.get(i).getAddress().equals(device.getAddress())) {
-//                exist = true;
-//                break;
-//            }
-//        }
-//        if (!exist) {
-//            listDevice.add(device);
-//
-//            if (bluFragment != null) {
-//                bluFragment.updateList();
-//            }
-//
-//        }
-//    }
-
-//    private void checkPermission() {
-//        Activity context = Util.getInstance().getCurrentActivity();
-//        if (PermissionChecker.checkSelfPermission(context, Manifest.permission.BLUETOOTH_SCAN) != PermissionChecker.PERMISSION_GRANTED ||
-//                PermissionChecker.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PermissionChecker.PERMISSION_GRANTED ){
-//
-//            CustomCenterDialog.alertWithCancelButton("Cấp quyền truy cập!",
-//                    "Ứng dụng cần bạn đồng ý quyền truy cập bluetooth để tiếp tục",
-//                    "đồng ý",
-//                    "hủy",
-//                    new CallbackBoolean() {
-//                        @RequiresApi(api = Build.VERSION_CODES.S)
-//                        @Override
-//                        public void onRespone(Boolean result) {
-//                            if (result) {
-//                                ActivityCompat.requestPermissions(context, new String[]{
-//                                        Manifest.permission.BLUETOOTH_SCAN,
-//                                        Manifest.permission.BLUETOOTH_CONNECT
-//
-//                                }, Constants.REQUEST_PERMISSION);
-//
-//                            } else {
-//                                returnPreActivity(false);
-//
-//                            }
-//                        }
-//
-//                    });
-//
-//        } else {
-//            registerBluetooth();
-//        }
-//
-//    }
-//
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        if (requestCode == Constants.REQUEST_PERMISSION) {
-//            if (grantResults.length > 0) {
-//
-//                boolean hasDenied = false;
-//                for (int i = 0; i < grantResults.length; i++) {
-//                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-//                        hasDenied = true;
-//                        break;
-//                    }
-//                }
-//
-//                if (!hasDenied) {
-//                    registerBluetooth();
-//
-//                } else {
-//                    Util.showToast("Cấp quyền truy cập không thành công!");
-//                    CustomCenterDialog.alertWithCancelButton("Cấp quyền truy cập!",
-//                            "Ứng dụng chưa được cấp quyền đầy đủ",
-//                            "Cấp lại",
-//                            "hủy",
-//                            new CallbackBoolean() {
-//                                @Override
-//                                public void onRespone(Boolean result) {
-//                                    if (result) {
-//                                        checkPermission();
-//
-//                                    } else {
-//                                        returnPreActivity(false);
-//                                    }
-//
-//                                }
-//
-//                            });
-//
-//                }
-//
-//            }
-//        }
-//
+//        // after storing our pdf to that
+//        // location we are closing our PDF file.
+//        pdfDocument.close();
 //    }
 
 }

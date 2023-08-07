@@ -530,15 +530,17 @@ public class DataUtil {
         List<BaseModel> listCheckin = new ArrayList<>(DataUtil.array2ListObject(customer.getString("checkins")));
 
         if (listOriginalBill.size() > 0) {
-            customerResult.put("last_time_order", Util.countDay(listOriginalBill.get(listOriginalBill.size() - 1).getLong("createAt")));
-            customerResult.put("user_order", listOriginalBill.get(listOriginalBill.size() - 1).getBaseModel("user").getString("displayName"));
+            customerResult.put("last_time", Util.countDay(listOriginalBill.get(listOriginalBill.size() - 1).getLong("createAt")));
+            customerResult.put("user_last", listOriginalBill.get(listOriginalBill.size() - 1).getBaseModel("user").getString("displayName"));
 
-        }
-
-        if (listCheckin.size() > 0) {
+        } else if (listCheckin.size() > 0) {
             customerResult.put("count_checkin", listCheckin.size());
-            customerResult.put("last_time_checkin", Util.countDay(listCheckin.get(listCheckin.size() - 1).getLong("createAt")));
-            customerResult.put("user_checkin", listCheckin.get(listCheckin.size() - 1).getBaseModel("user").getString("displayName"));
+            customerResult.put("last_time", Util.countDay(listCheckin.get(listCheckin.size() - 1).getLong("createAt")));
+            customerResult.put("user_last", listCheckin.get(listCheckin.size() - 1).getBaseModel("user").getString("displayName"));
+
+        }else {
+            customerResult.put("last_time", Util.countDay(customer.getLong("createAt")));
+            customerResult.put("user_last", customer.getBaseModel("user").getString("displayName"));
 
         }
 

@@ -65,7 +65,7 @@ public class Constants {
     public static final String DELIVER_BY = "deliverBy";
     public static final String TEMPBILL = "temp_bill";
     public static final String LAST_PRODUCT_UPDATE = "last_product_update";
-    public static final String addressFormat = "%s %s, %s, %s";
+    public static final String addressFormat = "%s, %s, %s";
     public final static String FLAG = "flag";
 
     public static final String FILTER_BY_DATE = "Lọc theo ngày";
@@ -81,6 +81,7 @@ public class Constants {
 
     public static final int PRINTER_57_WIDTH = 384;
     public static final int PRINTER_80_WIDTH = 576;
+    public static final int PRINTER_A5_WIDTH = 2480;
 
     public static final String DATE_DEFAULT = "Chọn ngày";
     public static final String MONTH_DEFAULT = "Chọn tháng";
@@ -194,6 +195,7 @@ public class Constants {
     public static String IMPORT = "Nhập kho";
     public static String CASHFLOW = "Thu chi";
     public static String CATEGORIES = "Danh mục";
+    public static String PRODUCT_ACTIVE= "product_active";
 
 
 

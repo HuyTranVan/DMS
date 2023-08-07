@@ -53,7 +53,9 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
     protected List<BaseModel> listUser;
     protected List<BaseModel> listInitialPayment;
     protected List<BaseModel> listInitialDebt;
-    protected List<BaseModel> listInitialCustomerByUser;
+    protected List<BaseModel> listInitialCustomerOrderedByUser;
+    protected List<BaseModel> listInitialCustomer;
+    protected List<BaseModel> listInitialCheckin;
     //private List<Object> listSheetID = new ArrayList<>();
     private int[] icons = new int[]{
             R.string.icon_chartline,
@@ -227,10 +229,12 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
         new GetPostMethod(param, new NewCallbackCustom() {
             @Override
             public void onResponse(BaseModel result, List<BaseModel> list) {
-                updatePaymentList(DataUtil.array2ListObject(result.getString(Constants.PAYMENTS)));
+                updatePaymentList(result.getList(Constants.PAYMENTS));
                 updateDebtList(result.getBaseModel(Constants.DEBTS));
-                updateBillsList(DataUtil.array2ListObject(result.getString(Constants.BILLS)));
+                updateBillsList(result.getList(Constants.BILLS));
                 updateBillDetailList(listInitialBill);
+                updateCustomerList(result.getList("customers"));
+                updateCheckinList(result.getList("checkins"));
                 temptWarehouse = result.getBaseModel("inventory");
 
                 updateAllFragmentData(currentUser.getInt("id"), currentUser.getInt("warehouse_id"));
@@ -271,8 +275,19 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
 
     private void updateDebtList(BaseModel debt) {
         listInitialDebt = DataUtil.array2ListObject(debt.getString("debtList"));
-        listInitialCustomerByUser = DataUtil.array2ListObject(debt.getString("ordered"));
+        listInitialCustomerOrderedByUser = DataUtil.array2ListObject(debt.getString("ordered"));
         updateListUser(listInitialDebt);
+
+    }
+
+    private void updateCustomerList(List<BaseModel> list) {
+        listInitialCustomer = new ArrayList<>(list);
+        updateListUser(listInitialCustomer);
+
+    }
+
+    private void updateCheckinList(List<BaseModel> list) {
+        listInitialCheckin = new ArrayList<>(list);
 
     }
 
@@ -280,11 +295,13 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
         String username = tvEmployeeName.getText().toString().trim();
         Util.paymentFragment.reloadData(username, listInitialPayment);
         Util.debtFragment.reloadData(username, listInitialDebt);
-        Util.debtFragment.updateCustomerNumber(user_id, listInitialCustomerByUser);
+        Util.debtFragment.updateCustomerNumber(user_id, listInitialCustomerOrderedByUser);
         Util.billsFragment.reloadData(username, listInitialBill);
         Util.productFragment.reloadData(username, listInitialBillDetail);
         Util.dashboardFragment.reloadData(username, listInitialBill,
                 listInitialBillDetail,
+                listInitialCustomer,
+                listInitialCheckin,
                 Util.billsFragment.getSumBillTotal(),
                 Util.paymentFragment.getSumPayment(),
                 Util.paymentFragment.getCoutList(),

@@ -45,7 +45,7 @@ public class CustomInputDialog {
     }
 
     public interface ShopListener {
-        void onShopname(String shopname, int shoptype, String phone);
+        void onShopname(String shopname, int shoptype, String phone, String note);
     }
 
     public static void dialogNewCustomer(ShopListener mListener) {
@@ -56,11 +56,25 @@ public class CustomInputDialog {
         final EditText edShopName = (EditText) dialogResult.findViewById(R.id.dialog_newcustomer_shopname);
         final CInputForm edPhone = (CInputForm) dialogResult.findViewById(R.id.dialog_newcustomer_phone);
         final TextView btnSubmit = (TextView) dialogResult.findViewById(R.id.dialog_newcustomer_submit);
+        EditText edNote = dialogResult.findViewById(R.id.dialog_newcustomer_note);
+        TextView tvClear = dialogResult.findViewById(R.id.dialog_newcustomer_clear);
 
         dialogResult.setCanceledOnTouchOutside(true);
         Util.textPhoneEvent(edPhone.getEdInput(), null);
 
         Util.showKeyboardDelay(edShopName);
+        Util.textEvent(edNote, new CallbackString() {
+            @Override
+            public void Result(String s) {
+                tvClear.setVisibility(Util.isEmpty(s)? View.INVISIBLE: View.VISIBLE);
+            }
+        });
+        tvClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                edNote.setText("");
+            }
+        });
 
         dialogResult.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
@@ -92,7 +106,10 @@ public class CustomInputDialog {
             public void onClick(View v) {
                 if (!Util.isEmpty(edShopName)) {
                     if (Util.isPhoneFormat(edPhone.getText().toString()) != null){
-                        mListener.onShopname(edShopName.getText().toString().trim(), shopType[0], Util.getPhoneValue(edPhone));
+                        mListener.onShopname(edShopName.getText().toString().trim(),
+                                shopType[0],
+                                Util.getPhoneValue(edPhone),
+                                edNote.getText().toString());
                         Util.hideKeyboard(v);
                         dialogResult.dismiss();
 
@@ -100,7 +117,10 @@ public class CustomInputDialog {
                         Util.showToast("Sai định dạng số điện thoại");
 
                     }else {
-                        mListener.onShopname(edShopName.getText().toString().trim(), shopType[0], "");
+                        mListener.onShopname(edShopName.getText().toString().trim(),
+                                shopType[0],
+                                "",
+                                edNote.getText().toString());
                         Util.hideKeyboard(v);
                         dialogResult.dismiss();
 
@@ -110,7 +130,10 @@ public class CustomInputDialog {
 
                 } else {
                     if (Util.isPhoneFormat(edPhone.getText().toString()) != null){
-                        mListener.onShopname("-", shopType[0], Util.getPhoneValue(edPhone));
+                        mListener.onShopname("-",
+                                shopType[0],
+                                Util.getPhoneValue(edPhone),
+                                edNote.getText().toString());
                         Util.hideKeyboard(v);
                         dialogResult.dismiss();
 

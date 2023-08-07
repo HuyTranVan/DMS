@@ -52,7 +52,7 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
     private ColumnChartView chartNetGroup;
     private PieChartView chartDistrict;
     private CHorizontalView vCash, vProfit, vPaidNet, vPaidBase, vRevenue, vDebt, vDebtNet, vBillNet,vBillSalesNet,
-            vBillBase, vInventoryBase, vInventoryNet, vInventoryEmployee, vBaseProfit  ;
+            vBillBase, vInventoryBase, vInventoryNet, vInventoryEmployee, vBaseProfit, vNewCustomer, vCheckin  ;
 
     private StatisticalActivity mActivity;
 
@@ -108,6 +108,8 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         vBillNet = view.findViewById(R.id.statistical_dashboard_billnet);
         vBillSalesNet = view.findViewById(R.id.statistical_dashboard_billsalesnet);
         vBillBase = view.findViewById(R.id.statistical_dashboard_billbase);
+        vNewCustomer = view.findViewById(R.id.statistical_dashboard_newcustomer);
+        vCheckin = view.findViewById(R.id.statistical_dashboard_newcheckin);
     }
 
     @Override
@@ -120,6 +122,8 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
     public void reloadData(String username,
                            List<BaseModel> list,
                            List<BaseModel> listDetail,
+                           List<BaseModel> listCustomer,
+                           List<BaseModel> listCheckin,
                            double total,
                            double paid, int countpayment,
                            double debt,
@@ -133,9 +137,13 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
                            int warehouse_id) {
         List<BaseModel> mList = new ArrayList<>();
         List<BaseModel> mListDetail = new ArrayList<>();
+        List<BaseModel> mCustomers = new ArrayList<>();
+        List<BaseModel> mCheckins = new ArrayList<>();
         if (username.equals(Constants.ALL_FILTER)) {
             mList = list;
             mListDetail = listDetail;
+            mCustomers = listCustomer;
+            mCheckins = listCheckin;
 
         } else {
             mList = new ArrayList<>();
@@ -153,6 +161,17 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
                 }
             }
 
+            for (BaseModel row3 : listCustomer) {
+                if (row3.getBaseModel("user").getString("displayName").equals(username)) {
+                    mCustomers.add(row3);
+                }
+            }
+            for (BaseModel row4 : listCheckin) {
+                if (row4.getBaseModel("user").getString("displayName").equals(username)) {
+                    mCheckins.add(row4);
+                }
+            }
+
             loadEmployeeInventory(warehouse_id);
         }
         setupIncomeChart(mListDetail, total, paid, debt, profit);
@@ -160,6 +179,8 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
         setupDistrictChart(mList);
         updateOverView( username,
                         mList,
+                        mCustomers,
+                        mCheckins,
                         paid,
                         countpayment,
                         total,
@@ -177,6 +198,8 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
 
     private void updateOverView(String username,
                                 List<BaseModel> bills,
+                                List<BaseModel> customers,
+                                List<BaseModel> checkins,
                                 double paid, int countpayment,
                                 double total,
                                 double debt,
@@ -187,6 +210,9 @@ public class StatisticalDashboardFragment extends Fragment implements View.OnCli
                                 double salesnettotal,
                                 double basetotal,
                                 BaseModel warehouse){
+
+        vNewCustomer.setText(String.valueOf(customers.size()));
+        vCheckin.setText(String.valueOf(checkins.size()));
 
         vRevenue.setTitleText(String.format("Tổng bán hàng (%d)", bills.size()));
         vRevenue.setText(Util.FormatMoney(total));

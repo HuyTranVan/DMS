@@ -302,7 +302,7 @@ public class CustomCenterDialog {
         edQuantity.setText(String.valueOf(product.getInt("quantity")));
         tvTotal.setText(Util.FormatMoney(product.getDouble("quantity") * (product.getDouble("unitPrice") - product.getDouble("discount"))));
 
-        edDiscount.setFilters(new InputFilter[]{new InputFilter.LengthFilter(tvUnitPrice.getText().toString().trim().length())});
+        //edDiscount.setFilters(new InputFilter[]{new InputFilter.LengthFilter(tvUnitPrice.getText().toString().trim().length())});
 
         Util.showKeyboardEditTextDelay(edQuantity, 500);
 
@@ -315,7 +315,7 @@ public class CustomCenterDialog {
         });
         Util.createHorizontalRV(rvPrice, adapter);
 
-        Util.textMoneyEvent(edNetPrice, product.getDouble("unitPrice"), new CallbackDouble() {
+        Util.textMoneyEvent(edNetPrice, null, new CallbackDouble() {
             @Override
             public void Result(Double d) {
                 tvClear.setVisibility(Util.isEmpty(edNetPrice) || edNetPrice.getText().toString().equals("0") ? View.GONE : View.VISIBLE);
@@ -375,10 +375,12 @@ public class CustomCenterDialog {
                 } else if (Util.isEmptyValue(edNetPrice)) {
                     Util.showToast("Vui lòng nhập giá tiền  >0 ");
 
-                } else if (Util.moneyValue(edNetPrice) > product.getDouble("unitPrice")) {
-                    Util.showToast("Vui lòng nhập giá tiền nhỏ hơn giá đơn vị ");
-
-                } else {
+                }
+//                else if (Util.moneyValue(edNetPrice) > product.getDouble("unitPrice")) {
+//                    Util.showToast("Vui lòng nhập giá tiền nhỏ hơn giá đơn vị ");
+//
+//                }
+                else {
                     BaseModel newProduct = product;
                     newProduct.put("quantity", Util.valueMoney(edQuantity));
                     newProduct.put("discount", edDiscount.getText().toString().equals("") ? 0 : Util.valueMoney(edDiscount));

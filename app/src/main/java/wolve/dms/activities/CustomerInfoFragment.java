@@ -89,12 +89,21 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
     }
 
     protected void reshowAddress(BaseModel address) {
-        String add = String.format("%s%s, %s, %s",
-                Util.isEmpty(address.getString("address")) ? "" : address.getString("address") + " ",
-                Util.isEmpty(address.getString("street")) ? "" : address.getString("street"),
-                address.getString("district"),
-                address.getString("province"));
+        String add ="";
         edAdress.setFocusable(false);
+
+        if (address.getString("district").equals("") && address.getString("province").equals("")){
+            add ="Chưa có địa chỉ";
+            edAdress.setTextColor(getResources().getColor(R.color.colorRedTransparent));
+        }else {
+            add = String.format("%s, %s, %s",
+                    Util.isEmpty(address.getString("address")) ? "" : address.getString("address"),
+                    //Util.isEmpty(address.getString("street")) ? "" : address.getString("street"),
+                    address.getString("district"),
+                    address.getString("province"));
+            edAdress.setTextColor(getResources().getColor(R.color.black_text_color));
+
+        }
         edAdress.setText(add);
         mActivity.tvAddress.setText(add);
 
@@ -176,15 +185,13 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
             }
         });
 
-        if (Util.isAdmin()){
-            tvCheckin.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    showDialogCheckin();
-                    return true;
-                }
-            });
-        }
+        tvCheckin.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                showDialogCheckin();
+                return true;
+            }
+        });
 
 
     }

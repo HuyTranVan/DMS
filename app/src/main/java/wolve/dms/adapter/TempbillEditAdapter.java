@@ -237,11 +237,11 @@ public class TempbillEditAdapter extends RecyclerView.Adapter<TempbillEditAdapte
         edQuantity.setText(String.valueOf(detail.getInt("quantity")));
         tvTotal.setText(Util.FormatMoney(detail.getDouble("quantity") * (detail.getDouble("unitPrice") - detail.getDouble("discount"))));
 
-        edDiscount.setFilters(new InputFilter[]{new InputFilter.LengthFilter(tvUnitPrice.getText().toString().trim().length())});
+        //edDiscount.setFilters(new InputFilter[]{new InputFilter.LengthFilter(tvUnitPrice.getText().toString().trim().length())});
 
         Util.showKeyboardEditTextDelay(edQuantity, 500);
 
-        Util.textMoneyEvent(edNetPrice, detail.getDouble("unitPrice"), new CallbackDouble() {
+        Util.textMoneyEvent(edNetPrice, null, new CallbackDouble() {
             @Override
             public void Result(Double d) {
                 tvClear.setVisibility(Util.isEmpty(edNetPrice) || edNetPrice.getText().toString().equals("0") ? View.GONE : View.VISIBLE);
@@ -290,10 +290,11 @@ public class TempbillEditAdapter extends RecyclerView.Adapter<TempbillEditAdapte
 //                    Util.showToast("Vui lòng nhập giá tiền  >0 ");
 //
 //                }
-                else if (Util.moneyValue(edNetPrice) > detail.getDouble("unitPrice")) {
-                    Util.showToast("Vui lòng nhập giá tiền nhỏ hơn giá đơn vị ");
-
-                } else {
+//                else if (Util.moneyValue(edNetPrice) > detail.getDouble("unitPrice")) {
+//                    Util.showToast("Vui lòng nhập giá tiền nhỏ hơn giá đơn vị ");
+//
+//                }
+                else {
                     detail.put("quantity", String.valueOf(edQuantity.getText().toString()));
                     detail.put("discount", edDiscount.getText().toString().equals("") ? 0 : Util.valueMoney(edDiscount));
                     detail.put("totalMoney", tvTotal.getText().toString().replace(".", ""));

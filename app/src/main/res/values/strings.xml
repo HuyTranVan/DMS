@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name" translatable="false">DMS</string>
     <string name="map_id" translatable="false">AIzaSyCJ-4zFtAI6ZVWSXY8E2xxM_EyLqXtwCXE</string>
-        <string name="map_route" translatable="false">AIzaSyCJ-4zFtAI6ZVWSXY8E2xxM_EyLqXtwCXE</string>
+    <string name="map_route" translatable="false">AIzaSyCJ-4zFtAI6ZVWSXY8E2xxM_EyLqXtwCXE</string>
+<!--    <string name="map_id" translatable="false">AIzaSyDFHxjXnO6Wwk9cOxRMJHl5nLgQYPmTjwQ</string>-->
 
     <string name="cloud_image_name" translatable="false">lubsolution</string>
     <string name="cloud_image_key" translatable="false">482386522287271</string>
@@ -66,6 +67,7 @@
     <string name="icon_weight" translatable="false">&#xf5cd;</string>
     <string name="icon_adress" translatable="false">&#xf277;</string>
     <string name="icon_district" translatable="false">&#xf3c5;</string>
+    <string name="icon_city" translatable="false">&#xf64f;</string>
     <string name="icon_detail" translatable="false">&#xf05a;</string>
     <string name="icon_flag" translatable="false">&#xf024;</string>
     <string name="icon_protect" translatable="false">&#xf132;</string>
@@ -76,6 +78,8 @@
     <string name="icon_money" translatable="false">&#xf53a;</string>
     <string name="icon_warning" translatable="false">&#xf071;</string>
     <string name="icon_print" translatable="false">&#xf02f;</string>
+
+    <string name="icon_print_scroll" translatable="false">&#xf70e;</string>
     <string name="icon_keyboard" translatable="false">&#xf11c;</string>
     <string name="icon_import" translatable="false">&#xf187;</string>
     <string name="icon_notify" translatable="false">&#xf0a1;</string>
@@ -101,7 +105,7 @@
     <string name="icon_pay" translatable="false">&#xf4c0;</string>
     <string name="icon_receipt" translatable="false">&#xf543;</string>
     <string name="icon_street" translatable="false">&#xf018;</string>
-    <string name="icon_city" translatable="false">&#xf64f;</string>
+    <string name="icon_arrow_progress" translatable="false">&#xf018;</string>
     <string name="icon_repair" translatable="false">&#xf7d9;</string>
     <string name="icon_close" translatable="false">&#xf057;</string>
     <string name="icon_copy" translatable="false">&#xf0c5;</string>

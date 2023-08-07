@@ -376,7 +376,7 @@
                             android:id="@+id/map_detail_shopname"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="cua hang sua xe"
+                            android:text=""
                             android:textAllCaps="true"
                             android:textColor="@color/black_text_color"
                             android:textSize="@dimen/_14sdp"
@@ -384,23 +384,23 @@
                             android:layout_gravity="center_vertical"
                             android:singleLine="true"/>
 
-                        <TextView
-                            android:id="@+id/map_detail_tempbill"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:minHeight="@dimen/_14sdp"
-                            android:background="@drawable/btn_confirm_orange"
-                            android:text="1 hóa đơn chưa giao"
-                            android:textSize="@dimen/_8sdp"
-                            android:textColor="@color/colorWhite"
-                            android:textStyle="bold"
-                            android:textAllCaps="true"
-                            android:paddingLeft="@dimen/_5sdp"
-                            android:paddingRight="@dimen/_5sdp"
-                            android:layout_gravity="center_vertical"
-                            android:gravity="center"
-                            android:layout_marginLeft="@dimen/_10sdp"
-                            android:visibility="gone" />
+<!--                        <TextView-->
+<!--                            android:id="@+id/map_detail_tempbill"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:minHeight="@dimen/_14sdp"-->
+<!--                            android:background="@drawable/btn_confirm_orange"-->
+<!--                            android:text="1 hóa đơn chưa giao"-->
+<!--                            android:textSize="@dimen/_8sdp"-->
+<!--                            android:textColor="@color/colorWhite"-->
+<!--                            android:textStyle="bold"-->
+<!--                            android:textAllCaps="true"-->
+<!--                            android:paddingLeft="@dimen/_5sdp"-->
+<!--                            android:paddingRight="@dimen/_5sdp"-->
+<!--                            android:layout_gravity="center_vertical"-->
+<!--                            android:gravity="center"-->
+<!--                            android:layout_marginLeft="@dimen/_10sdp"-->
+<!--                            android:visibility="gone" />-->
 
                         <ProgressBar
                             android:id="@+id/map_loading_customer"
@@ -430,15 +430,15 @@
                             android:textSize="@dimen/_10sdp"
                             android:singleLine="true" />
 
-                        <TextView
-                            android:fontFamily="@font/font_awesome"
-                            android:id="@+id/map_detail_distance"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="m"
-                            android:textColor="@color/black_text_color_hint"
-                            android:textSize="@dimen/_10sdp"
-                            android:layout_marginLeft="@dimen/_10sdp" />
+<!--                        <TextView-->
+<!--                            android:fontFamily="@font/font_awesome"-->
+<!--                            android:id="@+id/map_detail_distance"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="m"-->
+<!--                            android:textColor="@color/black_text_color_hint"-->
+<!--                            android:textSize="@dimen/_10sdp"-->
+<!--                            android:layout_marginLeft="@dimen/_10sdp" />-->
 
 
                     </LinearLayout>
@@ -465,10 +465,36 @@
                             android:id="@+id/map_detail_checkin_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="m"
                             android:textColor="@color/black_text_color_hint"
                             android:textSize="@dimen/_9sdp"
                             />
+
+                        <TextView
+                            android:fontFamily="@font/font_awesome"
+                            android:id="@+id/map_detail_distance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="m"
+                            android:textColor="@color/black_text_color_hint"
+                            android:textSize="@dimen/_10sdp"/>
+
+                        <TextView
+                            android:id="@+id/map_detail_tempbill"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minHeight="@dimen/_14sdp"
+                            android:background="@drawable/btn_confirm_orange"
+                            android:text="1 hóa đơn chưa giao"
+                            android:textSize="@dimen/_8sdp"
+                            android:textColor="@color/colorWhite"
+                            android:textStyle="bold"
+                            android:textAllCaps="true"
+                            android:paddingLeft="@dimen/_5sdp"
+                            android:paddingRight="@dimen/_5sdp"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:visibility="gone" />
 
                     </LinearLayout>
 

@@ -16,6 +16,7 @@
 
     <color name="colorBlueDark">#0570c6</color>
     <color name="lightGreen">#ccff99</color>
+    <color name="lightGreenDark">#1A9305</color>
     <color name="colorGreenFab">#99cc33</color>
     <color name="colorRed">#ed3237</color>
     <color name="colorRedTransparent">#61ed3237</color>
@@ -35,7 +36,7 @@
     <color name="white_text_disable">#80ffffff</color>
 
     <color name="orange">#ffac2c</color>
-    <color name="orange_dark">#ff963b</color>
+    <color name="orange_dark">#CDDC39</color>
     <color name="orange_pressed">#e76d04</color>
     <color name="orange_disable">#80ff963b</color>
 

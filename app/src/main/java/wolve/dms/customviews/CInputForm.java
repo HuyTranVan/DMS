@@ -145,8 +145,8 @@ public class CInputForm extends FrameLayout {
         mLine.setVisibility(value ? GONE : VISIBLE);
     }
 
-    public void setDropdown(boolean aBoolean, final ClickListener mListener) {
-        if (!aBoolean) {
+    public void setDropdown(boolean isDropdown, final ClickListener mListener) {
+        if (!isDropdown) {
             tvMore.setVisibility(GONE);
             edInput.setOnClickListener(null);
         } else {

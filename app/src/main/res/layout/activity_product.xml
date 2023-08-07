@@ -19,16 +19,32 @@
             android:layout_height="match_parent"
             android:src="@drawable/ic_arrow_back_black_18dp"
             android:padding="@dimen/_8sdp"
-            android:background="@drawable/btn_transparent" />
+            android:background="@drawable/btn_transparent"/>
 
         <TextView
             android:id="@+id/product_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="DANH SÁCH SẢN PHẨM"
+            android:text="DANH SÁCH SẢN PHẨM DANH SÁCH SẢN PHẨM DANH SÁCH SẢN PHẨM"
             android:textSize="@dimen/_14sdp"
-            android:textColor="@color/black_text_color" />
+            android:textColor="@color/black_text_color"
+            android:layout_toRightOf="@+id/icon_back"
+            android:layout_toLeftOf="@+id/product_active_sw"
+            android:lines="1"
+            android:gravity="center"/>
+
+        <com.suke.widget.SwitchButton
+            android:id="@+id/product_active_sw"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_25sdp"
+            android:layout_marginRight="@dimen/_5sdp"
+            app:sb_checked="false"
+            app:sb_checked_color="@color/colorBlueDark"
+            app:sb_background="@color/black_text_color_hint"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            />
 
     </RelativeLayout>
 
@@ -40,52 +56,6 @@
         android:clipToPadding="false"
         android:paddingBottom="@dimen/_60sdp" />
 
-<!--    <wolve.dms.libraries.MySwipeRefreshLayout-->
-<!--        android:id="@+id/product_swipelayout"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_below="@+id/product_header">-->
-
-<!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:orientation="vertical">-->
-
-<!--            <View-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="1dp"-->
-<!--                android:background="#75b9b3b3" />-->
-
-<!--            <com.google.android.material.tabs.TabLayout-->
-<!--                android:id="@+id/product_tabs"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="@dimen/_30sdp"-->
-<!--                android:background="#f4f4f4"-->
-<!--                android:layout_gravity="center"-->
-<!--                app:tabGravity="center"-->
-<!--                app:tabPaddingStart="@dimen/_10sdp"-->
-<!--                app:tabPaddingEnd="@dimen/_10sdp"-->
-<!--                app:tabIndicatorColor="@color/colorBlue"-->
-<!--                app:tabIndicatorHeight="3dp"-->
-<!--                app:tabMode="scrollable"-->
-<!--                app:tabSelectedTextColor="@color/colorBlue"-->
-<!--                app:tabTextAppearance="@style/NavigationTabTextAppeareance"-->
-<!--                app:tabTextColor="@color/black_text_color_hint" />-->
-
-<!--            <View-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="1dp"-->
-<!--                android:background="#75b9b3b3" />-->
-
-
-<!--            <androidx.viewpager.widget.ViewPager-->
-<!--                android:id="@+id/product_viewpager"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:background="@color/colorWhite" />-->
-
-<!--        </LinearLayout>-->
-<!--    </wolve.dms.libraries.MySwipeRefreshLayout>-->
 
     <com.github.clans.fab.FloatingActionButton
         android:id="@+id/product_add_new"

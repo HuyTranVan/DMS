@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
 android {
+    namespace = 'com.example.library'
     compileSdkVersion 33
     defaultConfig {
         applicationId "wolve.dms"
@@ -86,13 +87,13 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    lint {
+        checkReleaseBuilds false
+    }
+    namespace 'wolve.dms'
 
     configurations.all {
         resolutionStrategy.force 'com.google.code.findbugs:jsr305:1.3.9'
-    }
-    lintOptions {
-        checkReleaseBuilds false
-
     }
 
 }

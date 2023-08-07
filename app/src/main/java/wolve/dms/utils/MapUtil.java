@@ -159,7 +159,6 @@ public class MapUtil {
     public static BaseModel getAddressFromMapResult(BaseModel object) {
         BaseModel objectResult = new BaseModel();
         objectResult.put("address", "");
-        objectResult.put("street", "");
         objectResult.put("district", "");
         objectResult.put("province", "");
 
@@ -168,8 +167,10 @@ public class MapUtil {
             for (int i = 0; i < array.length(); i++) {
                 JSONObject objectChild = array.getJSONObject(i);
 
+                if (objectChild.getString("types").contains("street_number")) {
+                    objectResult.put("address", objectChild.getString("long_name"));
 
-                if (objectChild.getString("types").contains("route")) {
+                }else if (objectChild.getString("types").contains("route")) {
                     objectResult.put("street", objectChild.isNull("long_name") ? "--" : objectChild.getString("long_name"));
 
                 } else if (objectChild.getString("types").contains("administrative_area_level_2") || objectChild.getString("types").contains("locality")) {
@@ -177,9 +178,6 @@ public class MapUtil {
 
                 } else if (objectChild.getString("types").contains("administrative_area_level_1")) {
                     objectResult.put("province", objectChild.isNull("long_name") ? "--" : objectChild.getString("long_name"));
-
-                } else if (objectChild.getString("types").contains("street_number")) {
-                    objectResult.put("address", objectChild.getString("long_name"));
 
                 }
             }
@@ -189,6 +187,8 @@ public class MapUtil {
 //            e.printStackTrace();
             return objectResult;
         }
+        String add = objectResult.getString("address") + " " + objectResult.getString("street");
+        objectResult.put("address",add.trim().equals("")? "0" : add );
 
         return objectResult;
     }

@@ -1,27 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/map_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorWhite">
 
-
-    <fragment
-        android:id="@+id/edit_map_map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/edit_map_pin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_pin"
-        android:layout_gravity="center"
-        android:visibility="visible"
-        android:layout_centerInParent="true" />
+        <fragment
+            android:id="@+id/edit_map_map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
+        <ImageView
+            android:id="@+id/edit_map_pin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_pin"
+            android:layout_gravity="center"
+            android:visibility="visible"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/edit_map_header"
@@ -44,8 +48,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center"
-            android:layout_toRightOf="@+id/icon_back"
-            android:layout_toLeftOf="@+id/edit_map_edit">
+            android:layout_toRightOf="@+id/icon_back">
 
             <TextView
                 android:id="@+id/edit_map_title"
@@ -57,222 +60,416 @@
                 android:textColor="@color/black_text_color"
                 android:gravity="center" />
 
-            <TextView
-                android:id="@+id/edit_map_address"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/black_text_color_hint"
-                android:text="dia chi"
-                android:textSize="@dimen/_8sdp"
-                android:gravity="center"
-                android:textStyle="italic" />
+<!--            <TextView-->
+<!--                android:id="@+id/edit_map_address_title"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:textColor="@color/black_text_color_hint"-->
+<!--                android:text="dia chi"-->
+<!--                android:textSize="@dimen/_8sdp"-->
+<!--                android:gravity="center"-->
+<!--                android:textStyle="italic" />-->
 
 
         </LinearLayout>
 
-        <TextView
-            android:fontFamily="@font/font_awesome"
-            android:id="@+id/edit_map_edit"
-            android:layout_width="@dimen/_35sdp"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:background="?selectableItemBackground"
-            android:text="@string/icon_up"
-            android:rotation="180"
-            android:textSize="@dimen/_16sdp"
-            android:layout_alignParentRight="true" />
+<!--        <TextView-->
+<!--            android:fontFamily="@font/font_awesome"-->
+<!--            android:id="@+id/edit_map_edit"-->
+<!--            android:layout_width="@dimen/_35sdp"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:gravity="center"-->
+<!--            android:background="?selectableItemBackground"-->
+<!--            android:text="@string/icon_up"-->
+<!--            android:rotation="180"-->
+<!--            android:textSize="@dimen/_16sdp"-->
+<!--            android:layout_alignParentRight="true" />-->
 
     </RelativeLayout>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/edit_map_detail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_35sdp"
-        app:cardElevation="@dimen/_5sdp"
-        app:cardMaxElevation="@dimen/_10sdp"
-        app:cardBackgroundColor="@color/colorWhite"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="@dimen/_5sdp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.7"
-                    android:text="Địa chỉ"
-                    android:gravity="center_vertical|right"
-                    android:paddingRight="@dimen/_5sdp" />
-
-                <EditText
-                    android:id="@+id/edit_map_add"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.3"
-                    android:background="@drawable/bg_corner5_grey"
-                    android:minHeight="@dimen/_25sdp"
-                    android:textSize="@dimen/_12sdp"
-                    android:layout_margin="@dimen/_5sdp"
-                    android:paddingLeft="@dimen/_10sdp"
-                    android:inputType="textCapWords" />
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.7"
-                    android:text="Tên đường"
-                    android:gravity="center_vertical|right"
-                    android:paddingRight="@dimen/_5sdp" />
-
-                <EditText
-                    android:id="@+id/edit_map_street"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.3"
-                    android:background="@drawable/bg_corner5_grey"
-                    android:minHeight="@dimen/_25sdp"
-                    android:layout_margin="@dimen/_5sdp"
-                    android:paddingLeft="@dimen/_10sdp"
-                    android:textSize="@dimen/_12sdp"
-                    android:inputType="textCapWords" />
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.7"
-                    android:text="Quận/ Huyện"
-                    android:gravity="center_vertical|right"
-                    android:paddingRight="@dimen/_5sdp" />
-
-                <EditText
-                    android:id="@+id/edit_map_district"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.3"
-                    android:background="@drawable/bg_corner5_grey"
-                    android:minHeight="@dimen/_25sdp"
-                    android:layout_margin="@dimen/_5sdp"
-                    android:paddingLeft="@dimen/_10sdp"
-                    android:focusable="false"
-                    android:textSize="@dimen/_12sdp"
-                    android:inputType="textCapWords" />
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.7"
-                    android:text="Tỉnh/ Thành phố"
-                    android:gravity="center_vertical|right"
-                    android:paddingRight="@dimen/_5sdp" />
-
-                <EditText
-                    android:id="@+id/edit_map_city"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.3"
-                    android:background="@drawable/bg_corner5_grey"
-                    android:minHeight="@dimen/_25sdp"
-                    android:layout_margin="@dimen/_5sdp"
-                    android:paddingLeft="@dimen/_10sdp"
-                    android:focusable="false"
-                    android:textSize="@dimen/_12sdp"
-                    android:inputType="textCapWords" />
-
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-
-    </androidx.cardview.widget.CardView>
-
-
-    <TextView
-        android:fontFamily="@font/font_awesome"
         android:id="@+id/edit_map_location"
-        android:layout_width="@dimen/_35sdp"
-        android:layout_height="@dimen/_35sdp"
-        android:background="@drawable/btn_oval_white_border_grey"
-        android:text="@string/icon_direction"
-        android:textColor="@color/colorBlueTransparent"
-        android:gravity="center"
-        android:layout_marginRight="@dimen/_20sdp"
-        android:layout_marginBottom="@dimen/_85sdp"
-        android:layout_gravity="bottom|right"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true" />
-
-
-    <LinearLayout
-        android:id="@+id/edit_map_bottom"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_50sdp"
-        android:orientation="vertical"
-        android:background="@color/colorWhite"
-        android:layout_gravity="bottom"
-        android:layout_alignParentBottom="true"
-        android:clickable="true"
-        android:visibility="visible">
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginRight="@dimen/_15sdp"
+        android:layout_marginBottom="@dimen/_160sdp"
+        app:cardCornerRadius="@dimen/_20sdp"
+        app:cardMaxElevation="@dimen/_10sdp"
+        app:layout_anchor="@id/edit_map_bottomsheet"
+        app:layout_anchorGravity="end">
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_15sdp"
-            android:background="@color/colorWhite"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/font_awesome"
+            android:background="?selectableItemBackgroundBorderless"
+            android:text="@string/icon_location"
             android:textColor="@color/black_text_color"
-            android:text="Di chuyển Pin đến vị trí chính xác"
             android:gravity="center"
-            android:textStyle="italic"
-            android:textSize="@dimen/_10sdp" />
+            android:textSize="@dimen/_16sdp" />
+    </androidx.cardview.widget.CardView>
+
+    <LinearLayout
+        android:id="@+id/edit_map_bottomsheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:clickable="true"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:background="@drawable/bg_2topcorner8_gradientgrey"
+            android:layout_marginLeft="@dimen/_4sdp"
+            android:layout_marginRight="@dimen/_4sdp"
+            android:layout_marginBottom="-4dp"/>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/_4sdp"
+            android:layout_marginLeft="@dimen/_4sdp"
+            android:layout_marginRight="@dimen/_4sdp"
+            app:cardCornerRadius="@dimen/_5sdp"
+            app:cardElevation="@dimen/_5sdp">
+
+            <LinearLayout
+                android:id="@+id/edit_map_bottom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/colorWhite"
+                android:layout_gravity="bottom"
+                android:layout_alignParentBottom="true"
+                android:clickable="true"
+                android:visibility="visible">
+
+<!--                <TextView-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="@dimen/_15sdp"-->
+<!--                    android:background="@color/colorWhite"-->
+<!--                    android:textColor="@color/black_text_color"-->
+<!--                    android:text="Di chuyển Pin đến vị trí chính xác"-->
+<!--                    android:gravity="center"-->
+<!--                    android:textStyle="italic"-->
+<!--                    android:textSize="@dimen/_10sdp" />-->
+
+                <wolve.dms.customviews.CInputForm
+                    android:id="@+id/edit_map_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapWords"
+
+                    app:iconText="@string/icon_street"
+                    app:textHint="Địa chỉ cửa hàng" />
+
+                <wolve.dms.customviews.CInputForm
+                    android:id="@+id/edit_map_district"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapWords"
+                    app:iconText="@string/icon_adress"
+                    app:textHint="Quận / Huyện" />
+
+                <wolve.dms.customviews.CInputForm
+                    android:id="@+id/edit_map_province"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapWords"
+                    app:iconText="@string/icon_city"
+                    app:textHint="Tỉnh / Thành phố" />
 
 
-        <Button
-            android:id="@+id/edit_map_submit"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/_25sdp"
-            android:minWidth="@dimen/_150sdp"
-            android:background="@drawable/btn_confirm_blue"
-            android:text="LƯU ĐỊA ĐIỂM"
-            android:textAllCaps="true"
-            android:textColor="@color/colorWhite"
-            android:textSize="@dimen/_12sdp"
-            android:layout_gravity="center_horizontal|bottom"
-            android:layout_marginTop="@dimen/_2sdp" />
+                <Button
+                    android:id="@+id/edit_map_submit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_25sdp"
+                    android:minWidth="@dimen/_150sdp"
+                    android:background="@drawable/btn_confirm_blue"
+                    android:text="LƯU ĐỊA ĐIỂM"
+                    android:textAllCaps="true"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/_12sdp"
+                    android:layout_gravity="center_horizontal|bottom"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_5sdp"/>
 
+
+            </LinearLayout>
+
+
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:orientation="vertical"-->
+<!--                android:layout_marginTop="@dimen/_5sdp"-->
+<!--                android:layout_marginLeft="@dimen/_10sdp"-->
+<!--                android:layout_marginBottom="@dimen/_5sdp"-->
+<!--                android:layout_marginRight="@dimen/_10sdp">-->
+
+<!--                <View-->
+<!--                    android:layout_width="@dimen/_25sdp"-->
+<!--                    android:layout_height="@dimen/_2sdp"-->
+<!--                    android:background="@drawable/bg_corner5_grey"-->
+<!--                    android:layout_gravity="center_horizontal"-->
+<!--                    android:layout_marginBottom="@dimen/_2sdp" />-->
+
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/map_bottom_sheet_body"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="vertical"-->
+<!--                    android:background="?selectableItemBackgroundBorderless">-->
+
+<!--                    <LinearLayout-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="@dimen/_20sdp"-->
+<!--                        android:orientation="horizontal">-->
+
+<!--                        <TextView-->
+<!--                            android:id="@+id/map_detail_contact"-->
+<!--                            android:layout_width="@dimen/_20sdp"-->
+<!--                            android:layout_height="match_parent"-->
+<!--                            android:fontFamily="@font/font_awesome"-->
+<!--                            android:background="?selectableItemBackgroundBorderless"-->
+<!--                            android:text="@string/icon_contact"-->
+<!--                            android:textSize="@dimen/_12sdp"-->
+<!--                            android:textColor="@color/colorGreen"-->
+<!--                            android:gravity="center"-->
+<!--                            android:layout_marginRight="@dimen/_5sdp"/>-->
+
+<!--                        <TextView-->
+<!--                            android:id="@+id/map_detail_shopname"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="cua hang sua xe"-->
+<!--                            android:textAllCaps="true"-->
+<!--                            android:textColor="@color/black_text_color"-->
+<!--                            android:textSize="@dimen/_14sdp"-->
+<!--                            android:textStyle="bold"-->
+<!--                            android:layout_gravity="center_vertical"-->
+<!--                            android:singleLine="true"/>-->
+
+<!--                        <TextView-->
+<!--                            android:id="@+id/map_detail_tempbill"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:minHeight="@dimen/_14sdp"-->
+<!--                            android:background="@drawable/btn_confirm_orange"-->
+<!--                            android:text="1 hóa đơn chưa giao"-->
+<!--                            android:textSize="@dimen/_8sdp"-->
+<!--                            android:textColor="@color/colorWhite"-->
+<!--                            android:textStyle="bold"-->
+<!--                            android:textAllCaps="true"-->
+<!--                            android:paddingLeft="@dimen/_5sdp"-->
+<!--                            android:paddingRight="@dimen/_5sdp"-->
+<!--                            android:layout_gravity="center_vertical"-->
+<!--                            android:gravity="center"-->
+<!--                            android:layout_marginLeft="@dimen/_10sdp"-->
+<!--                            android:visibility="gone" />-->
+
+<!--                        <ProgressBar-->
+<!--                            android:id="@+id/map_loading_customer"-->
+<!--                            android:layout_width="@dimen/_14sdp"-->
+<!--                            android:layout_height="@dimen/_14sdp"-->
+<!--                            android:layout_gravity="center"-->
+<!--                            android:indeterminateTint="@color/colorBlue"-->
+<!--                            android:layout_marginLeft="@dimen/_10sdp"-->
+<!--                            android:visibility="gone" />-->
+
+<!--                    </LinearLayout>-->
+
+<!--                    <LinearLayout-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+
+<!--                        android:orientation="horizontal"-->
+<!--                        android:layout_marginTop="@dimen/_2sdp"-->
+<!--                        android:layout_marginBottom="@dimen/_5sdp" >-->
+
+<!--                        <TextView-->
+<!--                            android:id="@+id/map_detail_address"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:maxWidth="@dimen/_200sdp"-->
+<!--                            android:textColor="@color/black_text_color_hint"-->
+<!--                            android:textSize="@dimen/_10sdp"-->
+<!--                            android:singleLine="true" />-->
+
+<!--                        <TextView-->
+<!--                            android:fontFamily="@font/font_awesome"-->
+<!--                            android:id="@+id/map_detail_distance"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="m"-->
+<!--                            android:textColor="@color/black_text_color_hint"-->
+<!--                            android:textSize="@dimen/_10sdp"-->
+<!--                            android:layout_marginLeft="@dimen/_10sdp" />-->
+
+
+<!--                    </LinearLayout>-->
+
+<!--                    <LinearLayout-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:orientation="horizontal"-->
+
+<!--                        android:layout_marginBottom="@dimen/_5sdp" >-->
+
+<!--                        <TextView-->
+<!--                            android:fontFamily="@font/font_awesome"-->
+<!--                            android:id="@+id/map_detail_rating"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="m"-->
+<!--                            android:textColor="@color/orange_dark"-->
+<!--                            android:textSize="@dimen/_9sdp"-->
+<!--                            android:layout_marginRight="@dimen/_15sdp"/>-->
+
+<!--                        <TextView-->
+<!--                            android:fontFamily="@font/font_awesome"-->
+<!--                            android:id="@+id/map_detail_checkin_text"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="m"-->
+<!--                            android:textColor="@color/black_text_color_hint"-->
+<!--                            android:textSize="@dimen/_9sdp"-->
+<!--                            />-->
+
+<!--                    </LinearLayout>-->
+
+<!--                    &lt;!&ndash;                    <TextView&ndash;&gt;-->
+<!--                    &lt;!&ndash;                        android:fontFamily="@font/font_awesome"&ndash;&gt;-->
+<!--                    &lt;!&ndash;                        android:id="@+id/map_detail_checkin_text"&ndash;&gt;-->
+<!--                    &lt;!&ndash;                        android:layout_width="wrap_content"&ndash;&gt;-->
+<!--                    &lt;!&ndash;                        android:layout_height="wrap_content"&ndash;&gt;-->
+<!--                    &lt;!&ndash;                        android:text="m"&ndash;&gt;-->
+<!--                    &lt;!&ndash;                        android:textColor="@color/black_text_color_hint"&ndash;&gt;-->
+<!--                    &lt;!&ndash;                        android:textSize="@dimen/_9sdp"&ndash;&gt;-->
+<!--                    &lt;!&ndash;                        android:layout_marginTop="@dimen/_2sdp" />&ndash;&gt;-->
+
+<!--                    <LinearLayout-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:orientation="horizontal"-->
+<!--                        android:layout_marginBottom="@dimen/_2sdp">-->
+
+<!--                        <TextView-->
+<!--                            android:fontFamily="@font/font_awesome"-->
+<!--                            android:id="@+id/map_detail_status_dot"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="match_parent"-->
+<!--                            android:text="@string/icon_circle"-->
+<!--                            android:gravity="center"-->
+<!--                            android:textSize="@dimen/_8sdp"-->
+<!--                            android:textColor="@color/black_text_color_hint" />-->
+
+<!--                        <TextView-->
+<!--                            android:fontFamily="@font/font_awesome"-->
+<!--                            android:id="@+id/map_detail_status"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="Cua hang sua xe"-->
+<!--                            android:textColor="@color/black_text_color_hint"-->
+<!--                            android:textSize="@dimen/_9sdp"-->
+<!--                            android:layout_marginLeft="@dimen/_5sdp"-->
+<!--                            android:gravity="center_vertical" />-->
+
+
+<!--                    </LinearLayout>-->
+
+
+
+<!--                </LinearLayout>-->
+
+
+<!--                <HorizontalScrollView-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:fillViewport="false">-->
+
+<!--                    <LinearLayout-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:orientation="horizontal"-->
+<!--                        android:gravity="center_vertical">-->
+
+<!--                        <wolve.dms.customviews.CButton-->
+<!--                            android:id="@+id/map_detail_direction"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:orientation="horizontal"-->
+<!--                            android:layout_marginRight="@dimen/_10sdp"-->
+<!--                            app:iconText="@string/icon_direction"-->
+<!--                            app:text="Chỉ đường"-->
+<!--                            app:iconColor="@color/colorWhite"-->
+<!--                            app:textColor="@color/colorWhite"-->
+<!--                            app:backgroundLayout="@drawable/btn_round_blue" />-->
+
+<!--                        <wolve.dms.customviews.CButton-->
+<!--                            android:id="@+id/map_detail_add"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:orientation="horizontal"-->
+<!--                            android:layout_marginRight="@dimen/_10sdp"-->
+<!--                            app:iconText="@string/icon_contact"-->
+<!--                            app:text="Danh bạ"-->
+<!--                            app:iconColor="@color/colorBlue"-->
+<!--                            app:textColor="@color/black_text_color"-->
+<!--                            app:backgroundLayout="@drawable/btn_round_white_border_blue"-->
+<!--                            android:visibility="gone"/>-->
+
+<!--                        <wolve.dms.customviews.CButton-->
+<!--                            android:id="@+id/map_detail_call"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:orientation="horizontal"-->
+<!--                            android:layout_marginRight="@dimen/_10sdp"-->
+<!--                            app:iconText="@string/icon_phone"-->
+<!--                            app:text="Gọi"-->
+<!--                            app:iconColor="@color/colorBlue"-->
+<!--                            app:textColor="@color/black_text_color"-->
+<!--                            app:backgroundLayout="@drawable/btn_round_white_border_blue" />-->
+
+<!--                        &lt;!&ndash;                        <wolve.dms.customviews.CButton&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            android:id="@+id/map_detail_contact"&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            android:layout_width="wrap_content"&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            android:layout_height="wrap_content"&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            android:layout_marginRight="@dimen/_10sdp"&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            android:orientation="horizontal"&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            app:backgroundLayout="@drawable/btn_round_white_border_blue"&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            app:iconColor="@color/colorBlue"&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            app:iconText="@string/icon_contact"&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            app:text="Lưu"&ndash;&gt;-->
+<!--                        &lt;!&ndash;                            app:textColor="@color/black_text_color" />&ndash;&gt;-->
+
+<!--                        <wolve.dms.customviews.CButton-->
+<!--                            android:id="@+id/map_detail_share"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:orientation="horizontal"-->
+<!--                            android:layout_marginRight="@dimen/_10sdp"-->
+<!--                            app:iconText="@string/icon_share"-->
+<!--                            app:text="Chia sẻ"-->
+<!--                            app:iconColor="@color/colorBlue"-->
+<!--                            app:textColor="@color/black_text_color"-->
+<!--                            app:backgroundLayout="@drawable/btn_round_white_border_blue" />-->
+
+<!--                    </LinearLayout>-->
+
+<!--                </HorizontalScrollView>-->
+
+
+<!--            </LinearLayout>-->
+
+
+        </androidx.cardview.widget.CardView>
 
     </LinearLayout>
+
+
+
 
     <View
         android:id="@+id/edit_map_cover"
@@ -283,4 +480,4 @@
         android:layout_below="@+id/edit_map_header"
         android:visibility="gone" />
 
-</RelativeLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

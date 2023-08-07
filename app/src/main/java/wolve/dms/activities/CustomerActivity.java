@@ -366,7 +366,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
             case R.id.customer_shopcart:
                 if (tempBill != null) {
-                    Util.showSnackbar("Có 1 đơn hàng chưa hoàn thành nên không thể tạo hóa đơn mới", null, null);
+                    Util.showSnackbar("Có đơn hàng chưa hoàn thành nên không thể tạo hóa đơn mới", null, null);
 
                 } else {
                     CustomSQL.setListBaseModel(Constants.BILL_DETAIL, listBillDetail);
@@ -551,7 +551,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 Util.encodeString(customer.getString("signBoard")),//signBoard
                 Util.encodeString(customer.getString("address")), //address
                 Util.encodeString(customer.getString("phone")), //phone
-                Util.encodeString(customer.getString("street")), //street
+                //Util.encodeString(customer.getString("street")), //street
                 Util.encodeString(customer.getString("note")), //note
                 Util.encodeString(customer.getString("district")), //district
                 Util.encodeString(customer.getString("province")), //province

@@ -71,8 +71,9 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
     private SwitchButton swActive;
     private RelativeLayout lnActiveParent;
 
-    private BaseModel product;
+    private BaseModel product, group;
     private ProductActivity mActivity;
+    private List<BaseModel> mGroup = null;
 //    private List<String> listBoolean = new ArrayList<>();
     private Uri imageChangeUri;
 
@@ -114,37 +115,9 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
     private void intitialData() {
 //        listBoolean.add(0, Constants.IS_PROMOTION);
 //        listBoolean.add(1, Constants.NO_PROMOTION);
-
-        edGroup.setText(mActivity.mGroup.getString("name"));
-        edGroup.setDropdown(true, null);
-
+        group = BaseModel.copyToNewBaseModel(mActivity.mGroup);
+        edGroup.setText(group.getString("name"));
         edIsPromotion.setText(Constants.NO_PROMOTION);
-        edIsPromotion.setDropdown(true, new CInputForm.ClickListener() {
-            @Override
-            public void onClick(View view) {
-                CustomDropdow.createListDropdown(
-                        edIsPromotion.getMoreButton(),
-                        DataUtil.createList2String(Util.getIconString(R.string.icon_gift, "  ", Constants.IS_PROMOTION),
-                                Util.getIconString(R.string.icon_empty, "   ", Constants.NO_PROMOTION)),
-                        0,
-                        false,
-                        new CallbackClickAdapter() {
-                            @Override
-                            public void onRespone(String data, int pos) {
-                                if (pos ==0){
-                                    edIsPromotion.setText(Constants.IS_PROMOTION);
-
-                                }else if(pos ==1) {
-                                    edIsPromotion.setText(Constants.NO_PROMOTION);
-
-                                }
-
-                            }
-
-                        });
-
-            }
-        });
 
         String bundle = getArguments().getString(Constants.PRODUCT);
         if (bundle != null) {
@@ -156,7 +129,7 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
             edPurchasePrice.setText(Util.FormatMoney(product.getDouble("purchasePrice")));
             edBasePrice.setText(Util.FormatMoney(product.getDouble("basePrice")));
 
-            edGroup.setText(product.getBaseModel("productGroup").getString("name"));
+            //edGroup.setText(product.getBaseModel("productGroup").getString("name"));
             edVolume.setText(product.getString("volume"));
             edUnitInCarton.setText(product.getString("unitInCarton"));
             edIsPromotion.setText(product.getInt("promotion") == 1 ? Constants.IS_PROMOTION : Constants.NO_PROMOTION);
@@ -194,6 +167,9 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
         edName.textEvent();
         edVolume.textEvent();
         edUnitInCarton.textEvent();
+        groupEvent();
+        promotionEvent();
+
 
     }
 
@@ -302,7 +278,7 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
                         Util.valueMoney(edUnitPrice.getText().toString()),
                         Util.valueMoney(edPurchasePrice.getText().toString()),
                         edVolume.getText().toString().trim().replace(",", ""),
-                        mActivity.mGroup.getInt("id"),
+                        group.getInt("id"),
                         urlImage,
                         Util.valueMoney(edBasePrice.getText().toString()),
                         edUnitInCarton.getText().toString().trim().replace(",", ""),
@@ -421,6 +397,79 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
             }
         },1).execute();
 
+    }
+
+    private void groupEvent(){
+        edGroup.setDropdown(true, new CInputForm.ClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadGroups();
+            }
+        });
+
+    }
+
+    private void loadGroups(){
+        if (mGroup != null){
+            selectGroup();
+
+        }else {
+            BaseModel param = createGetParam(ApiUtil.PRODUCT_GROUPS(), true);
+            new GetPostMethod(param, new NewCallbackCustom() {
+                @Override
+                public void onResponse(BaseModel result, List<BaseModel> list) {
+                    mGroup = list;
+                    selectGroup();
+                }
+
+                @Override
+                public void onError(String error) {
+
+                }
+            },1).execute();
+
+        }
+
+    }
+
+    private void selectGroup(){
+        CustomDropdow.createListDropdown(edGroup.getMoreButton(), DataUtil.listObject2ListString(mGroup, "name"), 0, false, new CallbackClickAdapter() {
+            @Override
+            public void onRespone(String data, int position) {
+                edGroup.setText(data);
+                group = mGroup.get(position);
+
+            }
+        });
+    }
+
+    private void promotionEvent(){
+        edIsPromotion.setDropdown(true, new CInputForm.ClickListener() {
+            @Override
+            public void onClick(View view) {
+                CustomDropdow.createListDropdown(
+                        edIsPromotion.getMoreButton(),
+                        DataUtil.createList2String(Util.getIconString(R.string.icon_gift, "  ", Constants.IS_PROMOTION),
+                                Util.getIconString(R.string.icon_empty, "   ", Constants.NO_PROMOTION)),
+                        0,
+                        false,
+                        new CallbackClickAdapter() {
+                            @Override
+                            public void onRespone(String data, int pos) {
+                                if (pos ==0){
+                                    edIsPromotion.setText(Constants.IS_PROMOTION);
+
+                                }else if(pos ==1) {
+                                    edIsPromotion.setText(Constants.NO_PROMOTION);
+
+                                }
+
+                            }
+
+                        });
+
+            }
+        });
     }
 
 }

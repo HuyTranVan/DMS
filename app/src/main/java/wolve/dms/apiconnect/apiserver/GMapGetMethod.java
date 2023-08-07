@@ -94,7 +94,15 @@ public class GMapGetMethod extends AsyncTask<String, Void, String> {
             BaseModel respone = new BaseModel(result);
             if (respone.hasKey("results")){
                 List<BaseModel> arrays = DataUtil.array2ListBaseModel(respone.getJSONArray("results"));
-                mListener.onResponse(arrays.get(0), arrays);
+//                mListener.onResponse(null, null);
+                if (arrays.size() > 0){
+                    mListener.onResponse(arrays.get(0), arrays);
+
+                }else {
+                    mListener.onResponse(null, null);
+
+                }
+
 
             }
 

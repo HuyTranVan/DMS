@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.clans.fab.FloatingActionButton;
+import com.suke.widget.SwitchButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +35,10 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/16/17.
  */
 
-public class ProductActivity extends BaseActivity implements View.OnClickListener {
+public class ProductActivity extends BaseActivity implements View.OnClickListener, SwitchButton.OnCheckedChangeListener {
     private ImageView btnBack;
     private TextView tvTitle;
+    private SwitchButton swActive;
     //private ProductGroupAdapter productGroupAdapter;
     private FloatingActionButton btnAddProduct;
 //    private ViewPager viewPager;
@@ -77,6 +79,7 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
         btnBack = (ImageView) findViewById(R.id.icon_back);
         btnAddProduct = (FloatingActionButton) findViewById(R.id.product_add_new);
         rvProduct = findViewById(R.id.product_list);
+        swActive = findViewById(R.id.product_active_sw);
 //        viewPager = (ViewPager) findViewById(R.id.product_viewpager);
 //        tabLayout = (TabLayout) findViewById(R.id.product_tabs);
 //        swipeRefreshLayout = (MySwipeRefreshLayout) findViewById(R.id.product_swipelayout);
@@ -87,6 +90,7 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
     public void initialData() {
         mGroup = CustomSQL.getBaseModel(Constants.PRODUCTGROUPOBJECT);
         tvTitle.setText(String.format("DANH SÁCH %s",mGroup.getString("name")));
+        swActive.setVisibility(Util.isAdmin()? View.VISIBLE : View.GONE);
         loadProductByGroup();
         //tabLayout.setupWithViewPager(viewPager);
         btnAddProduct.setVisibility(User.getCurrentRoleId() == Constants.ROLE_ADMIN ? View.VISIBLE : View.GONE);
@@ -98,6 +102,7 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
         btnBack.setOnClickListener(this);
         //swipeRefreshLayout.setOnRefreshListener(this);
         btnAddProduct.setOnClickListener(this);
+        swActive.setOnCheckedChangeListener(this);
 
 
     }
@@ -319,6 +324,12 @@ public class ProductActivity extends BaseActivity implements View.OnClickListene
 //                break;
 //            }
 //        }
+
+    }
+
+    @Override
+    public void onCheckedChanged(SwitchButton view, boolean isChecked) {
+        productAdapter.reloadData(isChecked);
 
     }
 }

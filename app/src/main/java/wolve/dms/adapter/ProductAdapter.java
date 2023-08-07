@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -43,7 +44,7 @@ import static wolve.dms.activities.BaseActivity.createPostParam;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductAdapterViewHolder> {
     private List<BaseModel> mData = new ArrayList<>();
-    //private BaseModel mGroup;
+    private List<BaseModel> baseData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackObjectAdapter mItem, mCopy;
@@ -52,16 +53,17 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
         this.mLayoutInflater = LayoutInflater.from(Util.getInstance().getCurrentActivity());
         this.mContext = Util.getInstance().getCurrentActivity();
         //this.mGroup = group;
-        this.mData = list;
+        this.baseData = list;
+        //this.mData = baseData;
         this.mItem = itemlistener;
         this.mCopy = copylistener;
 
-//        for (int i = 0; i < list.size(); i++) {
-//            ProductGroup productGroup = new ProductGroup(list.get(i).getJsonObject("productGroup"));
-//            if (productGroup.getInt("id") == group.getInt("id")) {
-//                mData.add(list.get(i));
-//            }
-//        }
+        for (BaseModel item: baseData){
+            if (item.getInt("deleted") == 0){
+                mData.add(item);
+            }
+
+        }
 
     }
 
@@ -71,25 +73,37 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
         return new ProductAdapterViewHolder(itemView);
     }
 
-    public void addItem(ArrayList<Product> list) {
-        mData = new ArrayList<>();
-        mData.addAll(list);
-        notifyDataSetChanged();
-    }
+//    public void addItem(ArrayList<Product> list) {
+//        mData = new ArrayList<>();
+//        mData.addAll(list);
+//        notifyDataSetChanged();
+//    }
 
     public void updateItem(BaseModel item){
         //boolean check= false;
         for (int i=0; i<mData.size(); i++){
             if (mData.get(i).getInt("id") ==  item.getInt("id")){
-                mData.remove(i);
-                mData.add(i, item);
-                notifyItemChanged(i);
+                if (mData.get(i).getBaseModel("productGroup").getInt("id") !=  item.getBaseModel("productGroup").getInt("id")){
+                    mData.remove(i);
+                    notifyItemRemoved(i);
 
-                //check = true;
+                }else {
+                    mData.remove(i);
+                    mData.add(i, item);
+                    notifyItemChanged(i);
+
+                }
+
                 break;
             }
 
         }
+
+    }
+
+    public void addItem(BaseModel item){
+        mData.add(0, item);
+        notifyItemInserted(0);
 
     }
 
@@ -245,6 +259,24 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
         mData.remove(pos);
         mData.add(pos, item);
         notifyItemChanged(pos);
+
+    }
+
+    public void reloadData(Boolean loadAll){
+        mData = new ArrayList<>();
+        if (loadAll){
+            mData = baseData;
+
+        }else {
+            for (BaseModel item: baseData){
+                if (item.getInt("deleted") == 0){
+                    mData.add(item);
+                }
+
+            }
+
+        }
+        notifyDataSetChanged();
 
     }
 
