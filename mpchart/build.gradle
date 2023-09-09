@@ -28,12 +28,13 @@ android {
 
         }
     }
-    lintOptions {
-        abortOnError false
-    }
     testOptions {
         unitTests.returnDefaultValues = true // this prevents "not mocked" error
     }
+    lint {
+        abortOnError false
+    }
+    namespace 'com.github.mikephil.charting'
 }
 
 repositories {

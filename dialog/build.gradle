@@ -22,10 +22,11 @@ android {
 
         }
     }
-
-    lintOptions {
+    lint {
         abortOnError false
     }
+    namespace 'cn.pedant.SweetAlert'
+
 }
 
 dependencies {
