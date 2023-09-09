@@ -69,7 +69,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_toLeftOf="@+id/tempbill_item_edit">
+                android:layout_toLeftOf="@+id/tempbill_item_print">
 
                 <TextView
                     android:id="@+id/tempbill_item_shopname"
@@ -127,16 +127,18 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/tempbill_item_edit"
+                android:id="@+id/tempbill_item_print"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:background="?selectableItemBackgroundBorderless"
                 android:fontFamily="@font/font_awesome"
-                android:padding="@dimen/_5sdp"
-                android:text="@string/icon_edit_pen"
-                android:textSize="@dimen/_10sdp" />
+                android:paddingLeft="@dimen/_10sdp"
+                android:paddingRight="@dimen/_10sdp"
+                android:text="@string/icon_share_square"
+                android:textSize="@dimen/_10sdp"
+                android:gravity="center"/>
 
 
         </RelativeLayout>

@@ -151,6 +151,7 @@ public class ChoiceProductFragment extends Fragment implements View.OnClickListe
             List<BaseModel> listTemp = new ArrayList<>();
             listTemp = listadapter.get(i).getAllData();
             for (int j = 0; j < listTemp.size(); j++) {
+                //listTemp.get(j).put("productName", listTemp.get(j).getString("name"));
                 if (listTemp.get(j).getBoolean("checked")) {
                     listChecked.add(listTemp.get(j));
                 }

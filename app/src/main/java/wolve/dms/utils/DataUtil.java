@@ -455,6 +455,20 @@ public class DataUtil {
         return list;
     }
 
+    public static List<BaseModel> sortbyLongKey(final String key, List<BaseModel> list, boolean reverse) {
+        Collections.sort(list, new Comparator<BaseModel>() {
+            public int compare(BaseModel obj1, BaseModel obj2) {
+                return obj1.getLong(key).compareTo(obj2.getLong(key));
+            }
+        });
+
+        if (reverse) {
+            Collections.reverse(list);
+        }
+
+        return list;
+    }
+
     public static List<BaseModel> listTempBill(List<BaseModel> list) {
         List<BaseModel> listBillByUser = new ArrayList<>();
         for (BaseModel model : list) {
@@ -1057,6 +1071,24 @@ public class DataUtil {
 
         return list;
 
+    }
+
+    public static double getTotalMoney(List<BaseModel> details) {
+        Double total = 0.0;
+        for (int i = 0; i < details.size(); i++) {
+            total += (details.get(i).getDouble("unitPrice") - details.get(i).getDouble("discount")) * details.get(i).getDouble("quantity");
+
+        }
+        return total;
+    }
+
+    public static double getNetTotalMoney(List<BaseModel> details) {
+        Double total = 0.0;
+        for (int i = 0; i < details.size(); i++) {
+            total += details.get(i).getDouble("purchasePrice") * details.get(i).getDouble("quantity");
+
+        }
+        return total;
     }
 
 }

@@ -16,7 +16,6 @@ import java.util.List;
 import wolve.dms.R;
 import wolve.dms.callback.Callback2Int;
 import wolve.dms.callback.CallbackBoolean;
-import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
@@ -69,7 +68,7 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
 
         BaseModel customer = mData.get(position).getBaseModel("customer");
         holder.tvShopName.setText(Constants.shopName[customer.getInt("shopType")] + " " + customer.getString("signBoard"));
-        holder.tvAddress.setText(customer.getString("street") + " - " + customer.getString("district"));
+        holder.tvAddress.setText(" - " + customer.getString("district"));
 
         holder.tvTotal.setText(Util.FormatMoney(mData.get(position).getBaseModel("bill").getDouble("total")));
         holder.tvEmployee.setText(Util.getIconString(R.string.icon_username,
@@ -139,14 +138,14 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
             }
         });
 
-        holder.lnDetailParent.setOnClickListener(new View.OnClickListener() {
+        holder.tvPrint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
             }
         });
 
-        holder.tvEdit.setOnClickListener(new View.OnClickListener() {
+        holder.lnDetailParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 billIdListener.onResponse(mData.get(holder.getAdapterPosition()).getInt("bill_id"),
@@ -188,7 +187,7 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
 
 
     public class TempbillAdapterViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvEmployee, tvShopName, tvTotal, tvAddress, tvDetail, tvNumber, tvNote, tvDate, tvEdit;
+        private TextView tvEmployee, tvShopName, tvTotal, tvAddress, tvDetail, tvNumber, tvNote, tvDate, tvPrint;
         private LinearLayout lnParent, lnDirection, lnDeliver;
         private RelativeLayout lnDetailParent;
         private View vLineUpper, vLineUnder;
@@ -206,7 +205,7 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
             tvAddress = (TextView) itemView.findViewById(R.id.tempbill_item_address);
             tvDetail = itemView.findViewById(R.id.tempbill_item_detail);
             tvDate = itemView.findViewById(R.id.tempbill_item_date);
-            tvEdit = itemView.findViewById(R.id.tempbill_item_edit);
+            tvPrint = itemView.findViewById(R.id.tempbill_item_print);
             vLineUnder = (View) itemView.findViewById(R.id.tempbill_item_under);
             vLineUpper = (View) itemView.findViewById(R.id.tempbill_item_upper);
             lnDetailParent = itemView.findViewById(R.id.tempbill_item_detail_parent);

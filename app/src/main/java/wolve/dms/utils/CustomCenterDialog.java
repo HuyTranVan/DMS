@@ -16,6 +16,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -59,6 +60,7 @@ import wolve.dms.models.User;
 
 import static wolve.dms.activities.BaseActivity.createGetParam;
 import static wolve.dms.activities.BaseActivity.createPostParam;
+import static wolve.dms.utils.Constants.ZALO_PACKAGE;
 
 /**
  * Created by macos on 9/28/17.
@@ -1464,6 +1466,52 @@ public class CustomCenterDialog {
 
             }
         });
+
+
+    }
+
+    public static void showDialogOptionShare(CallbackInt listener) {
+        final Dialog dialogResult = CustomCenterDialog.showCustomDialog(R.layout.view_dialog_option_share);
+        ImageView zalo = dialogResult.findViewById(R.id.dialog_option_share_zalo);
+        ImageView printer = dialogResult.findViewById(R.id.dialog_option_share_print);
+        ImageView other = dialogResult.findViewById(R.id.dialog_option_share_other);
+        final Button btnCancel = (Button) dialogResult.findViewById(R.id.btn_cancel);
+
+        dialogResult.setCanceledOnTouchOutside(false);
+
+        zalo.setVisibility(CustomSQL.getBoolean(ZALO_PACKAGE)? View.VISIBLE : View.GONE);
+        zalo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onResponse(1);
+                dialogResult.dismiss();
+            }
+        });
+        printer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onResponse(2);
+                dialogResult.dismiss();
+            }
+        });
+        other.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onResponse(3);
+                dialogResult.dismiss();
+
+            }
+        });
+
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onResponse(0);
+                dialogResult.dismiss();
+            }
+        });
+
 
 
     }

@@ -108,6 +108,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     public void initialData() {
         Util.getInstance().setCurrentActivity(this);
+        Util.checkPackageZalo();
         swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorBlueDark));
         tvFullname.setText( User.getFullName());
         String role = User.getCurrentRoleString();
@@ -467,12 +468,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         Activity context = Util.getInstance().getCurrentActivity();
         if (PermissionChecker.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
                 PermissionChecker.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-                //PermissionChecker.checkSelfPermission(context, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED ||
                 PermissionChecker.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
                 PermissionChecker.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
                 PermissionChecker.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
-                //PermissionChecker.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED||
-                //PermissionChecker.checkSelfPermission(context, Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED){
 
 
             CustomCenterDialog.alertWithCancelButton("Cấp quyền truy cập!",

@@ -519,7 +519,7 @@
                             android:id="@+id/map_detail_status_dot"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:text="@string/icon_circle"
+                            android:text="@string/icon_circle_check"
                             android:gravity="center"
                             android:textSize="@dimen/_8sdp"
                             android:textColor="@color/black_text_color_hint" />

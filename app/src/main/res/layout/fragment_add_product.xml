@@ -117,7 +117,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number"
-                    app:textHint="Giá bán"
+                    app:textHint="Giá bán lẻ"
                     app:iconText="@string/icon_price" />
 
                 <wolve.dms.customviews.CInputForm
@@ -125,7 +125,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number"
-                    app:textHint="Giá Sale"
+                    app:textHint="Giá chiết khấu Sale"
                     app:iconText="@string/icon_purchase" />
 
                 <wolve.dms.customviews.CInputForm
@@ -133,7 +133,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number"
-                    app:textHint="Giá nhà phân phối"
+                    app:textHint="Giá nhập phân phối"
                     app:iconText="@string/icon_base_price" />
 
                 <wolve.dms.customviews.CInputForm

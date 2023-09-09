@@ -109,6 +109,41 @@ public class BaseModel implements Serializable {
 
     }
 
+    public void putINTArray(String key, int[] array) {
+        try {
+            jsonObject.put(key, array);
+        } catch (JSONException e) {
+            Util.showToast(e.toString());
+        }
+
+    }
+    public int[] getINTArray(String key) {
+        try {
+            return (int[]) jsonObject.get(key);
+        } catch (JSONException e) {
+            return new int[]{};
+        }
+
+    }
+
+    public void putStringArray(String key, String[] array) {
+        try {
+            jsonObject.put(key, array);
+        } catch (JSONException e) {
+            Util.showToast(e.toString());
+        }
+
+    }
+    public String[] getSTRINGArray(String key) {
+        try {
+            return (String[]) jsonObject.get(key);
+        } catch (JSONException e) {
+            return new String[]{};
+        }
+
+    }
+
+
     public String getString(String key) {
         try {
             return jsonObject.getString(key);

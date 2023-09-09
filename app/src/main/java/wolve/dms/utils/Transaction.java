@@ -5,14 +5,18 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.provider.AlarmClock;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.Fragment;
 
+import java.io.File;
 import java.util.List;
 
 import wolve.dms.BuildConfig;
@@ -44,8 +48,10 @@ import wolve.dms.models.BaseModel;
 import wolve.dms.models.Distributor;
 import wolve.dms.models.User;
 
+import static wolve.dms.utils.Constants.PRINTER_PACKAGE;
 import static wolve.dms.utils.Constants.REQUEST_CHOOSE_IMAGE;
 import static wolve.dms.utils.Constants.REQUEST_IMAGE_CAPTURE;
+import static wolve.dms.utils.Constants.ZALO_PACKAGE;
 
 
 public class Transaction {
@@ -254,7 +260,7 @@ public class Transaction {
     }
 
     public static void checkInventoryBeforePrintBill(BaseModel bill, List<BaseModel> listproduct, int warehouse_id, CallbackBoolean submit) {
-        //if (Distributor.getImportFunction() == 1){
+        if (Distributor.getImportFunction() == 1){
             DataUtil.checkInventory(listproduct, warehouse_id, new CallbackListObject(){
                 @Override
                 public void onResponse(List<BaseModel> list){
@@ -279,22 +285,22 @@ public class Transaction {
                                 });
 
                     } else {
-                        gotoPrintBillActivity(bill, false);
+                        gotoPrintBillActivity(bill);
                     }
                 }
             });
 
-//        }else {
-//            gotoPrintBillActivity(bill, false);
-//        }
+        }else {
+            gotoPrintBillActivity(bill);
+        }
 
 
     }
 
-    public static void gotoPrintBillActivity(BaseModel bill, Boolean rePrint) {
+    public static void gotoPrintBillActivity(BaseModel bill) {
         Activity context = Util.getInstance().getCurrentActivity();
         Intent intent = new Intent(context, PrintBillActivity.class);
-        intent.putExtra(Constants.RE_PRINT, rePrint);
+//        intent.putExtra(Constants.RE_PRINT, rePrint);
         intent.putExtra(Constants.BILL, bill.BaseModelstoString());
         context.startActivityForResult(intent, Constants.RESULT_PRINTBILL_ACTIVITY);
         context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
@@ -394,6 +400,80 @@ public class Transaction {
 
     }
 
+//    public static void shareDocument(Uri uri, BaseModel currentCustomer) {
+//        String message = currentCustomer == null? "" : String.format("%s %s ::: %s",
+//                Constants.shopName[currentCustomer.getInt("shopType")].toUpperCase(),
+//                currentCustomer.getString("signBoard").toUpperCase(),
+//                Util.CurrentMonthYearHourNotBlank());
+//
+//        Intent sendIntent = new Intent();
+//        sendIntent.setAction(Intent.ACTION_SEND);
+//        sendIntent.setType("application/*");
+//        sendIntent.setPackage("com.android.bips");
+//        sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
+//        sendIntent.putExtra(Intent.EXTRA_TEXT, message);
+//        Util.getInstance().getCurrentActivity().startActivity(sendIntent);
+//
+//
+//
+//    }
+
+    public static void shareVia(Uri uri, boolean isimage, int otherapp, BaseModel currentCustomer) {
+        String message = currentCustomer == null? "" : String.format("%s %s ::: %s",
+                Constants.shopName[currentCustomer.getInt("shopType")].toUpperCase(),
+                currentCustomer.getString("signBoard").toUpperCase(),
+                Util.CurrentMonthYearHourNotBlank());
+
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.setType(isimage? "image/*" : "application/*");
+        sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, message);
+        //Util.getInstance().getCurrentActivity().startActivity(sendIntent);
+
+        switch (otherapp){
+            case 1:
+                sendIntent.setPackage(ZALO_PACKAGE);
+//                Util.getInstance().getCurrentActivity().startActivity(sendIntent);
+                break;
+
+            case 2:
+                sendIntent.setPackage(PRINTER_PACKAGE);
+//                Util.getInstance().getCurrentActivity().startActivity(sendIntent);
+                break;
+
+//            default:
+//                Util.getInstance().getCurrentActivity().startActivity(sendIntent);
+//                break;
+
+
+
+        }
+
+        try {
+            Util.getInstance().getCurrentActivity().startActivity(sendIntent);
+
+        }catch (android.content.ActivityNotFoundException ex) {
+            switch (otherapp){
+                case 1:
+                    Util.showToast("Please Install Zalo");
+                    break;
+
+                case 2:
+                    Util.showToast("Please Install Printer");
+                    break;
+
+                default:
+                    Util.showToast("Cannot share document/image");
+                    break;
+            }
+
+        }
+
+
+
+
+    }
     public static void shareImage(Uri uri, BaseModel currentCustomer) {
         String message = currentCustomer == null? "" : String.format("%s %s ::: %s",
                 Constants.shopName[currentCustomer.getInt("shopType")].toUpperCase(),
@@ -406,38 +486,40 @@ public class Transaction {
 //        sendIntent.setPackage("com.zing.zalo");
         sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
         sendIntent.putExtra(Intent.EXTRA_TEXT, message);
-        switch (CustomFixSQL.getInt(Constants.PACKAGE_DEFAULT)){
-            case 1:
-                sendIntent.setPackage("com.zing.zalo");
-                break;
+        Util.getInstance().getCurrentActivity().startActivity(sendIntent);
 
-            case 2:
-                sendIntent.setPackage("com.viber.voip");
-                break;
-
-            case 3:
-                sendIntent.setPackage("com.facebook.orca");
-                break;
-        }
-
-        try {
-            Util.getInstance().getCurrentActivity().startActivity(sendIntent);
-
-        } catch (android.content.ActivityNotFoundException ex) {
-            switch (CustomFixSQL.getInt(Constants.PACKAGE_DEFAULT)){
-                case 1:
-                    Util.showToast("Please Install Zalo");
-                    break;
-
-                case 2:
-                    Util.showToast("Please Install Viber");
-                    break;
-
-                case 3:
-                    Util.showToast("Please Install Facebook Messenger");
-                    break;
-            }
-        }
+//        switch (CustomFixSQL.getInt(Constants.PACKAGE_DEFAULT)){
+//            case 1:
+//                sendIntent.setPackage("com.zing.zalo");
+//                break;
+//
+//            case 2:
+//                sendIntent.setPackage("com.viber.voip");
+//                break;
+//
+//            case 3:
+//                sendIntent.setPackage("com.facebook.orca");
+//                break;
+//        }
+//
+//        try {
+//            Util.getInstance().getCurrentActivity().startActivity(sendIntent);
+//
+//        } catch (android.content.ActivityNotFoundException ex) {
+//            switch (CustomFixSQL.getInt(Constants.PACKAGE_DEFAULT)){
+//                case 1:
+//                    Util.showToast("Please Install Zalo");
+//                    break;
+//
+//                case 2:
+//                    Util.showToast("Please Install Viber");
+//                    break;
+//
+//                case 3:
+//                    Util.showToast("Please Install Facebook Messenger");
+//                    break;
+//            }
+//        }
 
     }
 
@@ -544,6 +626,16 @@ public class Transaction {
 
 
     }
+
+    //        final PackageManager packageManager = Util.getInstance().getCurrentActivity().getPackageManager();
+//        //Intent intent = new Intent(AlarmClock.ACTION_SHOW_ALARMS);
+//        List<ResolveInfo> packages = packageManager.queryIntentActivities(sendIntent,0);
+//        for(ResolveInfo res : packages){
+//
+//            String package_name = res.activityInfo.packageName;
+//            Log.w("Package Name: ",package_name);
+//
+//        }
 
 
 }

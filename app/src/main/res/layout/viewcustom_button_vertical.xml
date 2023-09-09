@@ -27,10 +27,10 @@
         android:layout_height="wrap_content"
         android:focusableInTouchMode="true"
         android:textSize="@dimen/_10sdp"
-        android:text="GỌI điện"
+        android:text="xxx"
         android:textColor="@color/black_text_color"
         android:textColorHint="@color/black_text_color_hint"
-        android:gravity="center_vertical"
+        android:layout_centerInParent="true"
         android:layout_below="@+id/button_vertical_icon"
         android:layout_marginTop="@dimen/_5sdp" />
 

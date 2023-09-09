@@ -1,43 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/statistical_checkin_item_parent"
+    android:id="@+id/waiting_list_item_parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/colorWhite">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <RelativeLayout
-            android:id="@+id/waiting_list_item_number_cover"
+        <TextView
+            android:id="@+id/waiting_list_item_number"
             android:layout_width="@dimen/_40sdp"
             android:layout_height="match_parent"
-            android:clickable="true"
-            android:gravity="center">
-
-            <TextView
-                android:id="@+id/waiting_list_item_number"
-                android:layout_width="@dimen/_15sdp"
-                android:layout_height="@dimen/_15sdp"
-                android:fontFamily="@font/font_awesome"
-                android:background="@drawable/btn_round_transparent_border_blue"
-                android:textColor="@color/colorWhite"
-                android:text="@string/icon_check"
-                android:textSize="@dimen/_10sdp"
-                android:layout_gravity="center"
-                android:gravity="center"
-                />
-        </RelativeLayout>
+            android:fontFamily="@font/font_awesome"
+            android:background="?selectableItemBackground"
+            android:textColor="@color/colorBlue"
+            android:text="@string/icon_circle_check"
+            android:textSize="@dimen/_14sdp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            />
 
         <LinearLayout
-            android:id="@+id/waiting_list_item_parent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="?selectableItemBackground"
-            android:layout_toRightOf="@+id/waiting_list_item_number_cover"
+            android:layout_toRightOf="@+id/waiting_list_item_number"
             android:paddingTop="@dimen/_5sdp"
             android:layout_centerVertical="true">
 
@@ -124,7 +116,7 @@
         android:id="@+id/waiting_list_item_line"
         android:layout_width="match_parent"
         android:layout_height="1dip"
-        android:background="#f1f1f1"
+        android:background="@color/colorGrey"
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="@dimen/_5sdp" />
 

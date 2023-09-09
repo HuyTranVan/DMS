@@ -8,7 +8,7 @@ import wolve.dms.models.BaseModel;
 import wolve.dms.models.User;
 
 public class Constants {
-    public final static String DMS_EMAIL = "tranvanhuy112@gmail.com";
+    protected final static String DMS_EMAIL = "tranvanhuy112@gmail.com";
     public final static String DMS_NAME = "DMS_NAME";
     public final static String DMS_LOGS = "DMS_LOGS";
     public final static String PRODUCTGROUP = "productgroup";
@@ -181,6 +181,7 @@ public class Constants {
     public final static String ZALO_PACKAGE = "com.zing.zalo";
     public final static String VIBER_PACKAGE = "com.viber.voip";
     public final static String MESSENGER_PACKAGE = "com.facebook.orca";
+    public final static String PRINTER_PACKAGE = "com.android.bips";
     public static final String PACKAGE_DEFAULT = "package_default";
     public static final String RANGE_TIME = "range_time";
     public static final String ONLY_USER = "only_user";
@@ -196,51 +197,10 @@ public class Constants {
     public static String CASHFLOW = "Thu chi";
     public static String CATEGORIES = "Danh mục";
     public static String PRODUCT_ACTIVE= "product_active";
+    public static int LEFTPOSITION = 0;
+    public static int CENTERPOSITION = 1;
+    public static int RIGHTPOSITION = 2;
 
-
-
-
-    //Home constant
-//    public static List<BaseModel> HomeItemList() {
-//        String[] icons = new String[]{
-//                Util.getIcon(R.string.icon_edit_map_marked),
-//                Util.getIcon(R.string.icon_chart),
-//                Util.getIcon(R.string.icon_depot),
-//                Util.getIcon(R.string.icon_hand_on_money),
-//                Util.getIcon(R.string.icon_setting),
-//                ""};
-//        String[] texts = new String[]{SALE, STATISTICAL, IMPORT, CASHFLOW, CATEGORIES, ""};
-//
-//        boolean[] isDistributor = new boolean[]{
-//                false,
-//                false,
-//                false,
-//                false,
-//                false,
-//                true};
-//        boolean[] haveDetail = new boolean[]{
-//                false,
-//                false,
-//                true,
-//                false,
-//                false,
-//                false};
-//
-//
-//        List<BaseModel> list = new ArrayList<>();
-//        for (int i = 0; i < icons.length; i++) {
-//            BaseModel object = new BaseModel();
-//            object.put("icon", icons[i]);
-//            object.put("text", texts[i]);
-//            object.put("isDistributor", isDistributor[i]);
-//            object.put("haveDetail", haveDetail[i]);
-//
-//
-//            list.add(object);
-//        }
-//
-//        return list;
-//    }
 
     public static BaseModel HomeSaleItem(){
         BaseModel object = new BaseModel();

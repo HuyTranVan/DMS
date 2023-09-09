@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -24,13 +25,17 @@ import wolve.dms.R;
 import wolve.dms.adapter.WaitingListAdapter;
 import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.apiconnect.apiserver.GetPostMethod;
+import wolve.dms.callback.CallbackClickAdapter;
 import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackListObject;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.callback.NewCallbackCustom;
 import wolve.dms.models.BaseModel;
+import wolve.dms.models.User;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.CustomDropdow;
 import wolve.dms.utils.CustomSQL;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.MapUtil;
 import wolve.dms.utils.Util;
 
@@ -40,20 +45,20 @@ import static wolve.dms.activities.BaseActivity.createGetParam;
  * Created by macos on 9/16/17.
  */
 
-public class MapWaitingListFragment extends DialogFragment implements View.OnClickListener,
-                                                CompoundButton.OnCheckedChangeListener{
+public class MapWaitingListFragment extends DialogFragment implements View.OnClickListener{
     private View view;
-    private TextView tvTitle, tvClose, tvCount;
+    private TextView tvTitle, tvClose, tvCount, tvCheckall, tvSortTitle;
     private Button btnSubmit;
     private ImageView btnBack;
     private RecyclerView rvCustomerWaiting;
-    private CheckBox cbCheckAll;
-    private RelativeLayout mCheckGroup, mParent;
+    private RelativeLayout mCheckGroup, mParent, mBottom;
+    private LinearLayout lnCheckAll, lnSort;
 
     private List<BaseModel> listCustomerWaiting = new ArrayList<>();
     private WaitingListAdapter adapter;
     private CallbackObject mListener;
     private CallbackListObject mListListener;
+    private List<String> listSortTitle;
 
 
     @Override
@@ -92,22 +97,29 @@ public class MapWaitingListFragment extends DialogFragment implements View.OnCli
         rvCustomerWaiting = view.findViewById(R.id.waitinglist_rvCustomer);
         tvClose = view.findViewById(R.id.waitinglist_select_close);
         tvCount = view.findViewById(R.id.waitinglist_select_count);
-        cbCheckAll = view.findViewById(R.id.waitinglist_select_check);
         mCheckGroup = view.findViewById(R.id.waitinglist_select_group);
         btnSubmit = view.findViewById(R.id.waitinglist_submit);
+        mBottom = view.findViewById(R.id.waitinglist_submit_parent);
+        lnCheckAll = view.findViewById(R.id.waitinglist_checkall_parent);
+        tvCheckall = view.findViewById(R.id.waitinglist_checkall_check);
+        lnSort = view.findViewById(R.id.waitinglist_sort);
+        tvSortTitle = view.findViewById(R.id.waitinglist_sort_title);
+
 
     }
 
     public void initialData() {
         getWaitingList();
+        listSortItem();
 
     }
 
     public void addEvent() {
         btnBack.setOnClickListener(this);
         tvClose.setOnClickListener(this);
-        cbCheckAll.setOnCheckedChangeListener(this);
         btnSubmit.setOnClickListener(this);
+        lnCheckAll.setOnClickListener(this);
+        lnSort.setOnClickListener(this);
     }
 
     private void backEvent(){
@@ -128,6 +140,7 @@ public class MapWaitingListFragment extends DialogFragment implements View.OnCli
             case R.id.waitinglist_select_close:
                 adapter.unCheckAll();
                 mCheckGroup.setVisibility(View.GONE);
+                tvCheckall.setText(Util.getIcon(R.string.icon_circle_border));
 
                 break;
 
@@ -136,6 +149,31 @@ public class MapWaitingListFragment extends DialogFragment implements View.OnCli
                 backEvent();
 
                 break;
+
+            case R.id.waitinglist_checkall_parent:
+                if (tvCheckall.getText().toString().equals(Util.getIcon(R.string.icon_circle_border))){
+                    adapter.CheckAll();
+                    tvCheckall.setText(Util.getIcon(R.string.icon_circle_check));
+
+                }else if (tvCheckall.getText().toString().equals(Util.getIcon(R.string.icon_circle_check))){
+                    adapter.unCheckAll();
+                    tvCheckall.setText(Util.getIcon(R.string.icon_circle_border));
+                }
+
+                break;
+
+            case R.id.waitinglist_sort:
+                CustomDropdow.createListDropdown(lnSort, listSortTitle, 0, false, new CallbackClickAdapter() {
+                    @Override
+                    public void onRespone(String data, int position) {
+                        tvSortTitle.setText(data);
+                        adapter.sort(position);
+
+                    }
+                });
+
+                break;
+
 
 
         }
@@ -166,22 +204,22 @@ public class MapWaitingListFragment extends DialogFragment implements View.OnCli
         adapter = new WaitingListAdapter(list, new CallbackInt() {
             @Override
             public void onResponse(int value) {
-                tvCount.setText(value > 0 ? String.valueOf(value) : "");
+                tvCount.setText(String.format("%s Khách hàng",value > 0 ? String.valueOf(value) : ""));
                 if (value > 0) {
                     mCheckGroup.setVisibility(View.VISIBLE);
-                    btnSubmit.setVisibility(View.VISIBLE);
-                    setMarginSubmitButton(rvCustomerWaiting.getHeight());
-                    cbCheckAll.setOnCheckedChangeListener(null);
+                    mBottom.setVisibility(View.VISIBLE);
+                    //setMarginSubmitButton(rvCustomerWaiting.getHeight());
+                    //cbCheckAll.setOnCheckedChangeListener(null);
                     if (value == list.size()) {
-                        cbCheckAll.setChecked(true);
+                        tvCheckall.setText(Util.getIcon(R.string.icon_circle_check));
                     } else {
-                        cbCheckAll.setChecked(false);
+                        tvCheckall.setText(Util.getIcon(R.string.icon_circle_border));
                     }
-                    cbCheckAll.setOnCheckedChangeListener(MapWaitingListFragment.this);
+                    //cbCheckAll.setOnCheckedChangeListener(MapWaitingListFragment.this);
 
                 } else {
                     mCheckGroup.setVisibility(View.GONE);
-                    btnSubmit.setVisibility(View.GONE);
+                    mBottom.setVisibility(View.GONE);
 
                 }
             }
@@ -195,17 +233,6 @@ public class MapWaitingListFragment extends DialogFragment implements View.OnCli
         });
         Util.createLinearRV(rvCustomerWaiting, adapter);
 
-    }
-
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if (isChecked){
-            adapter.CheckAll();
-
-        }else {
-            adapter.unCheckAll();
-
-        }
     }
 
     private List<BaseModel> addLocationToListCustomer(List<BaseModel> listCustomerWaiting, double lat, double lng) {
@@ -232,6 +259,16 @@ public class MapWaitingListFragment extends DialogFragment implements View.OnCli
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) btnSubmit.getLayoutParams();
         params.setMargins(0, height, 0, 0);
         btnSubmit.setLayoutParams(params);
+    }
+
+    private void listSortItem(){
+        listSortTitle = new ArrayList<>();
+
+        listSortTitle.add(0,"Khoảng cách gần nhất");
+        listSortTitle.add(1,"Khoảng cách xa nhất");
+        listSortTitle.add(2,"Thời gian gần nhất");
+        listSortTitle.add(3,"Thời gian xa nhất");
+
     }
 
 

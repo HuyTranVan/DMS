@@ -1,9 +1,12 @@
 package wolve.dms.activities;
 
+import static wolve.dms.utils.Constants.ZALO_PACKAGE;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,7 +37,9 @@ import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import wolve.dms.R;
 import wolve.dms.adapter.Customer_ViewpagerAdapter;
 import wolve.dms.apiconnect.ApiUtil;
+import wolve.dms.apiconnect.apiserver.DownloadImageMethod;
 import wolve.dms.apiconnect.apiserver.GetPostListMethod;
+import wolve.dms.callback.CallbackBitmap;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackCustomList;
 import wolve.dms.callback.CallbackDouble;
@@ -52,6 +57,7 @@ import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.MapUtil;
+import wolve.dms.utils.PdfGenerator;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -62,14 +68,14 @@ import wolve.dms.utils.Util;
 public class CustomerActivity extends BaseActivity implements View.OnClickListener, View.OnLongClickListener, CallbackObject {
     private ImageView btnBack;
     protected Button btnSubmit;
-    private TextView tvCheckInStatus, tvTime, tvTrash, tvPrint;
-    protected TextView tvTitle, tvAddress, tvDebt, tvPaid, tvTotal, tvBDF, btnShopCart, tvFilter, tvFilterIcon;
+    protected TextView tvCheckInStatus, tvTime, tvPrint, tvZalo, tvShare, tvTitle,
+            tvDebt, tvPaid, tvTotal, tvBDF, btnShopCart, tvFilter, tvFilterIcon;
     private FrameLayout coParent;
     private ViewPager viewPager;
     private TabLayout tabLayout;
     private HorizontalScrollView scrollOverView;
     private SmoothProgressBar smLoading;
-    private RelativeLayout rlStatusGroup;
+    private RelativeLayout rlStatusGroup, lnPrintGroup;
     private LinearLayout lnFilter;
 
     protected BaseModel currentCustomer = null;
@@ -146,7 +152,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
         btnBack = (ImageView) findViewById(R.id.icon_back);
         btnShopCart = (TextView) findViewById(R.id.customer_shopcart);
-        tvTrash = (TextView) findViewById(R.id.icon_more);
+        //tvTrash = (TextView) findViewById(R.id.icon_more);
         tvTitle = (TextView) findViewById(R.id.customer_title);
         tvDebt = (TextView) findViewById(R.id.customer_debt);
         tvCheckInStatus = findViewById(R.id.customer_checkin_status);
@@ -160,10 +166,13 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         tvBDF = findViewById(R.id.customer_bdf);
         scrollOverView = findViewById(R.id.customer_overview);
         smLoading = findViewById(R.id.customer_loading);
-        tvAddress = findViewById(R.id.customer_address);
+        //tvAddress = findViewById(R.id.customer_address);
         lnFilter = findViewById(R.id.customer_filter);
         tvFilter = findViewById(R.id.customer_filter_text);
         tvPrint = findViewById(R.id.customer_print);
+        lnPrintGroup = findViewById(R.id.customer_print_group);
+        tvZalo = findViewById(R.id.customer_zalo);
+        tvShare = findViewById(R.id.customer_share);
         tvFilterIcon = findViewById(R.id.customer_filter_icon_close);
 
     }
@@ -171,8 +180,9 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     @Override
     public void addEvent() {
         btnBack.setOnClickListener(this);
-        tvTrash.setOnClickListener(this);
         tvPrint.setOnClickListener(this);
+        tvZalo.setOnClickListener(this);
+        tvShare.setOnClickListener(this);
         tvFilterIcon.setOnClickListener(this);
         btnShopCart.setOnClickListener(this);
         tvDebt.setOnClickListener(this);
@@ -198,7 +208,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
         countTime = Util.CurrentTimeStamp() - CustomSQL.getLong(Constants.CHECKIN_TIME);
         CustomSQL.removeKey(Constants.CURRENT_DISTANCE);
 
-        tvTrash.setVisibility(User.getCurrentRoleId() == Constants.ROLE_ADMIN ? View.VISIBLE : View.GONE);
+        Util.checkPackageZalo();
 
         setupViewPager(viewPager);
         setupTabLayout(tabLayout);
@@ -230,14 +240,16 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
             tempBill = null;
         }
 
-        listDebtBill = new ArrayList<>(DataUtil.array2ListObject(currentCustomer.getString(Constants.DEBTS)));
-        listBills = new ArrayList<>(DataUtil.array2ListObject(currentCustomer.getString(Constants.BILLS)));
-        listBillDetail = new ArrayList<>(DataUtil.getAllBillDetail(listBills));
-        listCheckins = new ArrayList<>(DataUtil.array2ListBaseModel(currentCustomer.getJSONArray(Constants.CHECKINS)));
+        listDebtBill = currentCustomer.getList(Constants.DEBTS);
+        listBills = currentCustomer.getList(Constants.BILLS);
+        listBillDetail = DataUtil.getAllBillDetail(listBills);
+        listCheckins = currentCustomer.getList(Constants.CHECKINS);
 
         updateBillTabNotify(tempBill != null ? true : false, listBills.size());
 
         updateOverview(listBills);
+
+        setDeleteIconVisibility();
 
         currentDebt = Util.getTotalDebt(listBills);
 
@@ -304,7 +316,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
             public void onPageSelected(int position) {
                 currentPosition = position;
                 setPrintIconVisibility();
-                setFilterVisibility();
+//                setFilterVisibility();
             }
 
             @Override
@@ -350,19 +362,19 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
                 break;
 
-            case R.id.icon_more:
-                if (listBills.size() > 0) {
-                    Util.showToast("Không thể xóa khách hàng đã có hóa đơn");
+//            case R.id.icon_more:
+//                if (listBills.size() > 0) {
+//                    Util.showToast("Không thể xóa khách hàng đã có hóa đơn");
+//
+//                } else if (listCheckins.size() > 0) {
+//                    Util.showToast("Không thể xóa khách hàng có checkin");
+//
+//                } else {
+//                    deleteCustomer();
+//
+//                }
 
-                } else if (listCheckins.size() > 0) {
-                    Util.showToast("Không thể xóa khách hàng có checkin");
-
-                } else {
-                    deleteCustomer();
-
-                }
-
-                break;
+//                break;
 
             case R.id.customer_shopcart:
                 if (tempBill != null) {
@@ -410,12 +422,23 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                     tvFilterIcon.setText(Util.getIcon(R.string.icon_calendar));
                     tvFilter.setVisibility(View.GONE);
                     filterBillByRange(0, 0);
+
                 }
 
                 break;
 
+            case R.id.customer_zalo:
+                printDebtBills(1); // ZALO
+
+                break;
+
             case R.id.customer_print:
-                printDebtBills();
+                printDebtBills(2); //PRINT
+
+                break;
+
+            case R.id.customer_share:
+                printDebtBills(3); // SHARE
 
                 break;
 
@@ -439,7 +462,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     }
 
-    private void deleteCustomer() {
+    protected void deleteCustomer() {
         CustomCenterDialog.alertWithCancelButton(null, String.format("Xóa khách hàng %s", tvTitle.getText().toString()), "ĐỒNG Ý", "HỦY", new CallbackBoolean() {
             @Override
             public void onRespone(Boolean result) {
@@ -700,8 +723,25 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     }
 
-    protected void printDebtBills() {
-        Transaction.gotoPrintBillActivity(new BaseModel(), true);
+    protected void printDebtBills(int app){
+        BaseModel distributor = Distributor.getObject();
+        List<BaseModel> listDebts = currentCustomer.getList(Constants.DEBTS);
+        new DownloadImageMethod(distributor.getString("image"), new CallbackBitmap(){
+            @Override
+            public void onResponse(Bitmap bitmap) {
+                Transaction.shareVia(Util.storePDF(PdfGenerator.createPdfOldBill(currentCustomer, listDebts, bitmap)),
+                        false,
+                        app,
+                        currentCustomer);
+
+                }
+
+        }).execute();
+
+
+
+
+//        Transaction.gotoPrintBillActivity(new BaseModel(), true);
 
     }
 
@@ -753,21 +793,29 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void setPrintIconVisibility() {
-        infoFragment.mPrint.setVisibility(listDebtBill.size() > 0 ? View.VISIBLE : View.GONE);
-        infoFragment.mPrint.setVisibility(Util.isEmpty(currentCustomer.getString("phone"))? View.GONE : View.VISIBLE);
+//        infoFragment.mPrint.setVisibility(listDebtBill.size() > 0 ? View.VISIBLE : View.GONE);
+//        infoFragment.mPrint.setVisibility(Util.isEmpty(currentCustomer.getString("phone"))? View.GONE : View.VISIBLE);
         if (currentPosition == 1 && listDebtBill.size() > 0) {
-            tvPrint.setVisibility(View.VISIBLE);
+            lnPrintGroup.setVisibility(View.VISIBLE);
+            tvZalo.setVisibility(CustomSQL.getBoolean(ZALO_PACKAGE)? View.VISIBLE : View.GONE);
         } else {
-            tvPrint.setVisibility(View.GONE);
+            lnPrintGroup.setVisibility(View.GONE);
         }
     }
 
-    private void setFilterVisibility() {
-        if (currentPosition != 0 && listBills.size() > 0) {
-            lnFilter.setVisibility(View.VISIBLE);
-        } else {
-            lnFilter.setVisibility(View.GONE);
+    private void setDeleteIconVisibility() {
+        if (Util.isAdmin() && listBills.size() <1 && listCheckins.size()<1){
+            infoFragment.mDelete.setVisibility(View.VISIBLE);
+
+        }else {
+            infoFragment.mDelete.setVisibility(View.GONE);
         }
+
+
+    }
+
+    private void setFilterVisibility() {
+        lnFilter.setVisibility(listBills.size() > 0 ? View.VISIBLE: View.GONE);
     }
 
     private void filterBillByRange(long start, long end) {
@@ -814,38 +862,14 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == Constants.REQUEST_PERMISSION) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED
-                    && permissions[0].equals(android.Manifest.permission.CALL_PHONE)){
+                    && permissions[0].equals(Manifest.permission.CALL_PHONE)) {
                 Transaction.openCallScreen(currentCustomer.getString("phone"));
 
             }
 
-
-//            if (grantResults.length > 0) {
-//                boolean hasDenied = false;
-//                for (int i = 0; i < grantResults.length; i++) {
-//                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED){
-//                        hasDenied = true;
-//                        break;
-//                    }
-//                }
-//
-//                if (!hasDenied){
-//                    if (permissions[0].equals(android.Manifest.permission.CALL_PHONE)){
-//                        Transaction.openCallScreen(currentPhone);
-//
-//                    }else if (permissions[0].equals(android.Manifest.permission.READ_CONTACTS) ||
-//                            permissions[0].equals(Manifest.permission.WRITE_CONTACTS)){
-//
-//                        saveContactEvent(currentCustomer);
-//
-//                    }
-//
-//
-//                }
-//
-//            }
         }
 
     }

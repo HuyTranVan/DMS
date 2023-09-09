@@ -4,15 +4,14 @@
     android:id="@+id/waitinglist_parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorWhite"
-    android:layout_marginLeft="@dimen/_10sdp"
-    android:layout_marginRight="@dimen/_10sdp">
+    android:background="@color/colorWhite">
 
 
     <RelativeLayout
         android:id="@+id/waitinglist_header"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_35sdp"
+        android:background="@drawable/bg_img_header"
         android:orientation="horizontal"
         android:clickable="true">
 
@@ -29,16 +28,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Danh sách chờ Check-in"
-            android:textSize="@dimen/_16sdp"
+            android:gravity="center"
+            android:text="Danh sách chờ CHECKIN"
+            android:textAllCaps="true"
             android:textColor="@color/black_text_color"
-            android:gravity="center" />
+            android:textSize="@dimen/_14sdp" />
 
         <RelativeLayout
             android:id="@+id/waitinglist_select_group"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorWhite"
+            android:background="@drawable/bg_img_header"
             android:layout_marginRight="@dimen/_10sdp"
             android:clickable="true"
             android:visibility="gone">
@@ -64,21 +64,84 @@
                 android:layout_toRightOf="@+id/waitinglist_select_close"
                 android:layout_marginLeft="@dimen/_5sdp"/>
 
-            <CheckBox
-                android:fontFamily="@font/font_awesome"
-                android:id="@+id/waitinglist_select_check"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="Chọn tất cả"
-                android:gravity="center"
-                android:textColor="@color/black_text_color"
-                android:paddingLeft="@dimen/_5sdp"
-                android:paddingRight="@dimen/_5sdp"
-                android:layout_alignParentRight="true"
-                android:buttonTint="@color/black_text_color_hint"/>
 
 
         </RelativeLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/waitinglist_filter_group"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_30sdp"
+        android:clickable="true"
+        android:layout_below="@+id/waitinglist_header">
+
+        <LinearLayout
+            android:id="@+id/waitinglist_checkall_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="?selectableItemBackground"
+            android:orientation="horizontal"
+            android:paddingRight="@dimen/_10sdp">
+
+            <TextView
+                android:id="@+id/waitinglist_checkall_check"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:fontFamily="@font/font_awesome"
+                android:textColor="@color/black_text_color"
+                android:text="@string/icon_circle_border"
+                android:textSize="@dimen/_14sdp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Tất cả"
+                android:textSize="@dimen/_12sdp"
+                android:textColor="@color/black_text_color"
+                android:gravity="center_vertical"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/waitinglist_sort"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_alignParentRight="true">
+
+            <TextView
+                android:id="@+id/waitinglist_sort_title"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Sắp xếp"
+                android:gravity="center"
+                android:textSize="@dimen/_10sdp"
+                android:textStyle="italic"/>
+
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/font_awesome"
+                android:background="?selectableItemBackground"
+                android:text="@string/icon_sort"
+                android:textSize="@dimen/_14sdp"
+                android:textColor="@color/black_text_color_hint"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/_10sdp"
+                android:paddingRight="@dimen/_10sdp"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/bg_2bottomcorner5_lightgrey"/>
+
 
     </RelativeLayout>
 
@@ -86,23 +149,32 @@
         android:id="@+id/waitinglist_rvCustomer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/waitinglist_header"
+        android:layout_below="@+id/waitinglist_filter_group"
         android:clipToPadding="false"
-        android:paddingTop="@dimen/_5sdp"
-        />
+        android:paddingBottom="@dimen/_35sdp"/>
 
-    <Button
-        android:id="@+id/waitinglist_submit"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/_25sdp"
-        android:background="@drawable/btn_choice_blue"
-        android:text="Thêm vào bản đồ"
-        android:layout_centerHorizontal="true"
-        android:paddingLeft="@dimen/_10sdp"
-        android:paddingRight="@dimen/_10sdp"
-        android:textColor="@color/colorBlueDark"
-        android:layout_marginBottom="@dimen/_15sdp"
-        android:visibility="gone"/>
+    <RelativeLayout
+        android:id="@+id/waitinglist_submit_parent"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_35sdp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorGrey"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/waitinglist_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_25sdp"
+            android:background="@drawable/btn_round_blue"
+            android:text="Thêm vào bản đồ"
+            android:layout_centerInParent="true"
+            android:paddingLeft="@dimen/_15sdp"
+            android:paddingRight="@dimen/_15sdp"
+            android:textColor="@color/colorWhite"
+            />
+    </RelativeLayout>
+
+
 
 
 </RelativeLayout>

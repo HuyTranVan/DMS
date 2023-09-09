@@ -438,18 +438,18 @@ public class DistributorDetailActivity extends BaseActivity implements View.OnCl
         if (requestCode == REQUEST_CHOOSE_IMAGE) {
             if (data != null) {
                 CropImage.activity(Uri.parse(data.getData().toString()))
-                        .setAspectRatio(1,1)
+                        //.setAspectRatio(1,1)
                         .setMaxZoom(10)
-                        .setRequestedSize(512, 512)
+                        .setRequestedSize(720, 720)
                         .start(DistributorDetailActivity.this);
 
             }
 
         } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
             CropImage.activity(imageChangeUri)
-                    .setAspectRatio(1,1)
+                    //.setAspectRatio(1,1)
                     .setMaxZoom(10)
-                    .setRequestedSize(512, 512)
+                    .setRequestedSize(720, 720)
                     .start(DistributorDetailActivity.this);
 
         }else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {

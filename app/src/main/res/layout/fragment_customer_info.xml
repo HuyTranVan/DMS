@@ -85,13 +85,13 @@
                         app:backgroundIcon="@drawable/btn_round_transparent_border_grey" />
 
                     <wolve.dms.customviews.CButtonVertical
-                        android:id="@+id/customer_info_print"
+                        android:id="@+id/customer_info_delete"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:iconText="@string/icon_print"
+                        app:iconText="@string/icon_delete"
                         android:layout_marginRight="@dimen/_5sdp"
-                        app:text="Gửi hàng"
-                        app:iconColor="@color/black_text_color_hint"
+                        app:text="Xóa"
+                        app:iconColor="@color/colorRed"
                         app:textColor="@color/black_text_color_hint"
                         app:backgroundIcon="@drawable/btn_round_transparent_border_grey" />
 

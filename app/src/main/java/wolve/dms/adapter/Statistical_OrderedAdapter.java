@@ -89,7 +89,7 @@ public class Statistical_OrderedAdapter extends RecyclerView.Adapter<RecyclerVie
     private void setItemRows(ItemViewHolder holder, int position) {
         holder.tvNumber.setText(String.valueOf(position + 1));
         holder.tvsignBoard.setText(Constants.shopName[mData.get(position).getInt("shopType")] + " " + mData.get(position).getString("signBoard"));
-        holder.tvDistrict.setText(mData.get(position).getString("street") + " - " + mData.get(position).getString("district"));
+        holder.tvDistrict.setText(mData.get(position).getString("address") + " - " + mData.get(position).getString("district"));
         holder.tvUser.setText(Util.getIconString(R.string.icon_username, "  ", mData.get(position).getBaseModel("user").getString("displayName")));
         holder.tvDebt.setVisibility(mData.get(position).getDouble("debt") > 0.0 ? View.VISIBLE : View.GONE);
         holder.tvDebt.setText(Util.FormatMoney(mData.get(position).getDouble("debt")));

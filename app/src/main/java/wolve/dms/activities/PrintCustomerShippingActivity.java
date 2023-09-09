@@ -268,7 +268,7 @@ public class PrintCustomerShippingActivity extends BluetoothActivity implements 
     private void doPrintLabel() {
         //int printSize = tvPrintSize.getText().toString().equals(Constants.PRINTER_80) ? Constants.PRINTER_80_WIDTH : Constants.PRINTER_57_WIDTH;
         Util.getInstance().showLoading("Đang in...");
-        mLabel = BitmapView.ResizeBitMapDependWidth(BitmapView.getBitmapFromView(scContentParent));
+        mLabel = BitmapView.ResizeBitMapDependWidth(BitmapView.getBitmapFromView(scContentParent), 0);
         new BluetoothPrintBitmap(outputStream,
                 mLabel,
                 new CallbackBoolean() {

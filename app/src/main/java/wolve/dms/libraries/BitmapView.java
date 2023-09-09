@@ -69,9 +69,15 @@ public class BitmapView {
     }
 
 
-    public static Bitmap ResizeBitMapDependWidth(Bitmap bitmap) {
-        int w = CustomSQL.getString(Constants.PRINTER_SIZE).equals("") || CustomSQL.getString(Constants.PRINTER_SIZE).equals(Constants.PRINTER_80)?
-                Constants.PRINTER_80_WIDTH : Constants.PRINTER_57_WIDTH;
+    public static Bitmap ResizeBitMapDependWidth(Bitmap bitmap, int mWidth) {
+        int w =0;
+        if (mWidth ==0){
+            w = CustomSQL.getString(Constants.PRINTER_SIZE).equals("") || CustomSQL.getString(Constants.PRINTER_SIZE).equals(Constants.PRINTER_80)?
+                    Constants.PRINTER_80_WIDTH : Constants.PRINTER_57_WIDTH;
+        }else {
+            w = mWidth;
+        }
+
 
 //        float originalWidth = bitmap.getWidth();
 //        float originalHeight = bitmap.getHeight();
@@ -115,6 +121,32 @@ public class BitmapView {
         } else {
             resizedBitmap = Bitmap.createBitmap(BitmapOrg, 0, 0, w, height);
         }
+
+        return resizedBitmap;
+    }
+
+    public static Bitmap ResizeBitMapDependHeight(Bitmap bitmap, int mHeight) {
+        Boolean ischecked = false;
+        Bitmap BitmapOrg = bitmap;
+        Bitmap resizedBitmap = null;
+        int width = BitmapOrg.getWidth();
+        int height = BitmapOrg.getHeight();
+        if (height <= mHeight) {
+            return bitmap;
+        }
+
+        int newWidth =width * mHeight/height;
+        int newHeight = mHeight;
+
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+        // if you want to rotate the Bitmap
+        // matrix.postRotate(45);
+        resizedBitmap = Bitmap.createBitmap(BitmapOrg, 0, 0, width, height, matrix, true);
+
 
         return resizedBitmap;
     }

@@ -43,8 +43,8 @@ public class PrintBillAdapter extends RecyclerView.Adapter<PrintBillAdapter.Prin
 
     @Override
     public void onBindViewHolder(final PrintBillViewHolder holder, final int position) {
-        String name = mData.get(position).isNull("name") ? mData.get(position).getString("productName") : mData.get(position).getString("name");
-        holder.tvName.setText(name);
+//        String name = mData.get(position).isNull("name") ? mData.get(position).getString("productName") : mData.get(position).getString("name");
+        holder.tvName.setText(mData.get(position).getString("productName"));
 
         holder.tvQuantity.setText(mData.get(position).getString("quantity"));
 
@@ -82,14 +82,7 @@ public class PrintBillAdapter extends RecyclerView.Adapter<PrintBillAdapter.Prin
         return total;
     }
 
-    public Double getTotalMoney(List<BaseModel> list) {
-        Double total = 0.0;
-        for (int i = 0; i < list.size(); i++) {
-            total += (list.get(i).getDouble("unitPrice") - list.get(i).getDouble("discount")) * list.get(i).getDouble("quantity");
 
-        }
-        return total;
-    }
 
     public class PrintBillViewHolder extends RecyclerView.ViewHolder {
         private TextView tvName, tvQuantity, tvPrice, tvTotal;
@@ -105,5 +98,7 @@ public class PrintBillAdapter extends RecyclerView.Adapter<PrintBillAdapter.Prin
         }
 
     }
+
+
 
 }

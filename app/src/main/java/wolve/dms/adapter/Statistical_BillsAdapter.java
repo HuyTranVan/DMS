@@ -93,7 +93,7 @@ public class Statistical_BillsAdapter extends RecyclerView.Adapter<Statistical_B
 
 
             holder.tvsignBoard.setText(Constants.shopName[customer.getInt("shopType")] + " " + customer.getString("signBoard"));
-            holder.tvDistrict.setText(customer.getString("street") + " - " + customer.getString("district"));
+            holder.tvDistrict.setText(customer.getString("address") + " - " + customer.getString("district"));
             String user = String.format("Nhân viên: %s", mData.get(position).getJsonObject("user").getString("displayName"));
             String hour = Util.DateHourString(mData.get(position).getLong("createAt"));
             holder.tvUser.setText(String.format("%s         %s", user, hour));

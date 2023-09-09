@@ -21,6 +21,7 @@ import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.apiconnect.apiserver.VersionChecker;
+import wolve.dms.utils.PdfGenerator;
 import wolve.dms.utils.Transaction;
 
 public class SplashScreenActivity extends BaseActivity {
@@ -73,7 +74,7 @@ public class SplashScreenActivity extends BaseActivity {
         }, SPLASH_TIME_OUT);
 
 
-
+//        PdfGenerator.createPdfBill(null);
 
     }
 

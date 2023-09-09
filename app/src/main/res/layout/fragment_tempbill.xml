@@ -26,8 +26,8 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="HÓA ĐƠN CHƯA GIAO"
-            android:textSize="@dimen/_12sdp"
-            android:textColor="@color/black_text_color" />
+            android:textColor="@color/black_text_color"
+            android:textSize="@dimen/_12sdp" />
 
         <RelativeLayout
             android:id="@+id/tempbill_select_group"

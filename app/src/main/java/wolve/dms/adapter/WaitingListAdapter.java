@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import wolve.dms.callback.CallbackInt;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Constants;
+import wolve.dms.utils.DataUtil;
 import wolve.dms.utils.Util;
 
 /**
@@ -26,6 +28,7 @@ import wolve.dms.utils.Util;
 
 public class WaitingListAdapter extends RecyclerView.Adapter<WaitingListAdapter.StatisticalBillsViewHolder> {
     private List<BaseModel> mData = new ArrayList<>();
+    private List<BaseModel> mBaseData = new ArrayList<>();
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private CallbackInt mCountListener;
@@ -38,7 +41,13 @@ public class WaitingListAdapter extends RecyclerView.Adapter<WaitingListAdapter.
         this.mData = data;
         this.count = 0;
         this.mItemListener = objectlistener;
-        //DataUtil.sortbyDoubleKey("distance", mData, false);
+
+//        mData = new ArrayList<>();
+//        for (BaseModel item: mBaseData){
+//            mData.add(item);
+//        }
+
+        DataUtil.sortbyLongKey("waitingCreateAt", mData, true);
 
     }
 
@@ -62,50 +71,58 @@ public class WaitingListAdapter extends RecyclerView.Adapter<WaitingListAdapter.
 
         holder.tvDistance.setText(distance);
         holder.tvTime.setText(String.format("Check-in %d ngày",
-                Util.countDay(mData.get(position).getBaseModel("waiting").getLong("updateAt"))
+                Util.countDay(mData.get(position).getBaseModel("waiting").getLong("createAt"))
                 ));
+        if (mData.get(position).hasKey("checked") && mData.get(position).getBoolean("checked") ){
+            holder.tvNumber.setText(Util.getIcon(R.string.icon_circle_check));
+            holder.lnParent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorLightGrey));
+
+        }else {
+            holder.tvNumber.setText(Util.getIcon(R.string.icon_circle_border));
+            holder.lnParent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorWhite));
+        }
 
         switch (mData.get(position).getInt("status_id")){
             case 0:
-                holder.tvNumber.setBackground(
-                        mData.get(position).hasKey("checked") && mData.get(position).getBoolean("checked")?
-                                mContext.getResources().getDrawable(R.drawable.btn_round_pink):
-                                mContext.getResources().getDrawable(R.drawable.btn_round_transparent_border_pink));
-
-                holder.tvIcon.setTextColor(mContext.getResources().getColor(R.color.colorPink));
+                holder.tvNumber.setTextColor(ContextCompat.getColor(mContext, R.color.colorPink));
 
                 break;
 
             case 1:
-                holder.tvNumber.setBackground(
-                        mData.get(position).hasKey("checked") && mData.get(position).getBoolean("checked")?
-                                mContext.getResources().getDrawable(R.drawable.btn_round_orange):
-                                mContext.getResources().getDrawable(R.drawable.btn_round_transparent_border_orange));
-                holder.tvIcon.setTextColor(mContext.getResources().getColor(R.color.orange));
+                holder.tvNumber.setTextColor(ContextCompat.getColor(mContext, R.color.orange));
 
                 break;
 
             case 3:
-                holder.tvNumber.setBackground(
-                        mData.get(position).hasKey("checked") && mData.get(position).getBoolean("checked")?
-                                mContext.getResources().getDrawable(R.drawable.btn_round_blue):
-                                mContext.getResources().getDrawable(R.drawable.btn_round_transparent_border_blue));
-                holder.tvIcon.setTextColor(mContext.getResources().getColor(R.color.colorBlue));
+                holder.tvNumber.setTextColor(ContextCompat.getColor(mContext, R.color.colorBlue));
 
                 break;
 
             default:
-                holder.tvNumber.setBackground(
-                        mData.get(position).hasKey("checked") && mData.get(position).getBoolean("checked")?
-                                mContext.getResources().getDrawable(R.drawable.btn_round_grey):
-                                mContext.getResources().getDrawable(R.drawable.btn_round_transparent_border_grey));
-                holder.tvIcon.setTextColor(mContext.getResources().getColor(R.color.colorGrey));
+                holder.tvNumber.setTextColor(ContextCompat.getColor(mContext, R.color.black_text_color));
 
         }
 
-        holder.lnNumberCover.setOnClickListener(new View.OnClickListener() {
+//        holder.tvNumber.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v){
+//                if (mData.get(position).hasKey("checked") && mData.get(position).getBoolean("checked") ){
+//                    mData.get(position).put("checked",false );
+//                    count -= 1;
+//
+//                }else {
+//                    mData.get(position).put("checked",true);
+//                    count += 1;
+//                }
+//
+//                notifyItemChanged(position);
+//                mCountListener.onResponse(count);
+//            }
+//        });
+
+        holder.lnParent.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 if (mData.get(position).hasKey("checked") && mData.get(position).getBoolean("checked") ){
                     mData.get(position).put("checked",false );
                     count -= 1;
@@ -115,49 +132,10 @@ public class WaitingListAdapter extends RecyclerView.Adapter<WaitingListAdapter.
                     count += 1;
                 }
 
-
-                switch (mData.get(position).getInt("status_id")){
-                    case 0:
-                        holder.tvNumber.setBackground(
-                                mData.get(position).hasKey("checked") && mData.get(position).getBoolean("checked")?
-                                mContext.getResources().getDrawable(R.drawable.btn_round_pink):
-                                mContext.getResources().getDrawable(R.drawable.btn_round_transparent_border_pink));
-
-
-                        break;
-
-                    case 1:
-                        holder.tvNumber.setBackground(
-                                mData.get(position).hasKey("checked") && mData.get(position).getBoolean("checked")?
-                                mContext.getResources().getDrawable(R.drawable.btn_round_orange):
-                                mContext.getResources().getDrawable(R.drawable.btn_round_transparent_border_orange));
-
-                        break;
-
-                    case 3:
-                        holder.tvNumber.setBackground(
-                                mData.get(position).hasKey("checked") && mData.get(position).getBoolean("checked")?
-                                mContext.getResources().getDrawable(R.drawable.btn_round_blue):
-                                mContext.getResources().getDrawable(R.drawable.btn_round_transparent_border_blue));
-
-                        break;
-
-                    default:
-                        holder.tvNumber.setBackground(
-                                mData.get(position).hasKey("checked") && mData.get(position).getBoolean("checked")?
-                                mContext.getResources().getDrawable(R.drawable.btn_round_grey):
-                                mContext.getResources().getDrawable(R.drawable.btn_round_transparent_border_grey));
-
-                }
-
+                notifyItemChanged(position);
                 mCountListener.onResponse(count);
-            }
-        });
 
-        holder.lnParent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mItemListener.onResponse(mData.get(position));
+                //mItemListener.onResponse(mData.get(position));
             }
         });
 
@@ -184,7 +162,7 @@ public class WaitingListAdapter extends RecyclerView.Adapter<WaitingListAdapter.
             tvDistance = itemView.findViewById(R.id.waiting_list_item_distance);
             tvIcon = itemView.findViewById(R.id.waiting_list_item_icon);
             vLine = itemView.findViewById(R.id.waiting_list_item_line);
-            lnNumberCover = itemView.findViewById(R.id.waiting_list_item_number_cover);
+//            lnNumberCover = itemView.findViewById(R.id.waiting_list_item_number_cover);
             lnParent= itemView.findViewById(R.id.waiting_list_item_parent);
 
         }
@@ -221,6 +199,33 @@ public class WaitingListAdapter extends RecyclerView.Adapter<WaitingListAdapter.
         }
 
         return list;
+    }
+
+    public void sort(int i){
+//        mData = new ArrayList<>();
+//        for (BaseModel item: mBaseData){
+//            mData.add(item);
+//        }
+        switch (i){
+            case 0:
+                DataUtil.sortbyLongKey("distance", mData, false);
+                break;
+            case 1:
+                DataUtil.sortbyLongKey("distance", mData, true);
+                break;
+
+            case 2:
+                DataUtil.sortbyDoubleKey("waitingCreateAt", mData, true);
+                break;
+
+            case 3:
+                DataUtil.sortbyDoubleKey("waitingCreateAt", mData, false);
+                break;
+
+        }
+
+        notifyDataSetChanged();
+
     }
 
 }

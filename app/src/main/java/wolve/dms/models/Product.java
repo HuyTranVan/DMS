@@ -9,12 +9,11 @@ import java.util.Collections;
 import java.util.List;
 
 import wolve.dms.callback.CallbackListObject;
-import wolve.dms.apiconnect.apiserver.DownloadImageMethod;
+import wolve.dms.apiconnect.apiserver.DownloadListImageMethod;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomFixSQL;
 import wolve.dms.utils.CustomSQL;
 import wolve.dms.utils.DataUtil;
-import wolve.dms.utils.Util;
 
 /**
  * Created by macos on 9/16/17.
@@ -56,7 +55,7 @@ public class Product extends BaseModel {
             }
 
             if (CustomFixSQL.getBoolean(Constants.SAVE_PRODUCT_IMAGE)){
-                new DownloadImageMethod(mProducts, "image", "PRODUCT", new CallbackListObject() {
+                new DownloadListImageMethod(mProducts, "image", "PRODUCT", new CallbackListObject() {
                     @Override
                     public void onResponse(List<BaseModel> list) {
                         //Util.getInstance().stopLoading(true);

@@ -67,7 +67,7 @@ public class Statistical_PaymentAdapter extends RecyclerView.Adapter<Statistical
 
         final BaseModel customer = new BaseModel(mData.get(position).getJsonObject("customer"));
         holder.tvsignBoard.setText(Constants.shopName[customer.getInt("shopType")] + " " + customer.getString("signBoard"));
-        holder.tvDistrict.setText(customer.getString("street") + " - " + customer.getString("district"));
+        holder.tvDistrict.setText(customer.getString("address") + " - " + customer.getString("district"));
 
         String user = Util.getIconString(R.string.icon_username, "   ", mData.get(position).getBaseModel("user").getString("displayName"));
         String collect = mData.get(position).getInt("user_id") != mData.get(position).getInt("user_collect") ?

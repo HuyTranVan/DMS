@@ -1,7 +1,5 @@
 package wolve.dms.activities;
 
-import static android.app.PendingIntent.getActivity;
-
 import android.Manifest;
 import android.app.Dialog;
 import android.bluetooth.BluetoothDevice;
@@ -9,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -18,13 +17,19 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.github.barteksc.pdfviewer.PDFView;
+import com.google.zxing.WriterException;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidmads.library.qrgenearator.QRGContents;
+import androidmads.library.qrgenearator.QRGEncoder;
 import wolve.dms.R;
 import wolve.dms.adapter.DebtAdapter;
+import wolve.dms.adapter.PrintBillAdapter;
 import wolve.dms.adapter.PrintOldBillAdapter;
 import wolve.dms.apiconnect.ApiUtil;
 import wolve.dms.apiconnect.apiserver.DownloadImageMethod;
@@ -54,23 +59,22 @@ import wolve.dms.utils.Util;
  * Created by macos on 9/15/17.
  */
 
-public class PrintBillActivity extends BluetoothActivity implements View.OnClickListener{
+public class PrintBillActivityOld extends BluetoothActivity implements View.OnClickListener{
     private ImageView imgLogo, btnBack, imgOrderPhone;
-    private TextView btnSubmit, tvPrinterName,tvCompany, tvAdress, tvHotline, tvWebsite, tvTitle, tvShopName, tvCustomerName, tvCustomerAddress, tvDate, tvEmployee,
-            tvSumCurrentBill, tvOrderPhone, tvThanks, tvPrinterMainText,  tvTotal, tvPaid, tvRemain, tvTotalTitle,
+    private TextView tvCompany, tvAdress, tvHotline, tvWebsite, tvTitle, tvShopName, tvCustomerName, tvCustomerAddress, tvDate, tvEmployee,
+            tvSumCurrentBill, tvOrderPhone, tvThanks, tvPrinterMainText, tvPrinterName, tvTotal, tvPaid, tvRemain, tvTotalTitle,
             tvEmployeeSign, tvDeliver, tvDeliverTitle, tvListPrinter, tvPrintText;
     private RecyclerView rvBills, rvDebts;
     private LinearLayout lnMain, lnBottom, lnSubmit, lnTotalGroup, lnPaidGroup, lnRemainGroup, lnSignature;
     private View line1, line2, line3, line4;
     private NestedScrollView scContentParent;
     private BaseModel currentCustomer, currentBill, distributor;
-//    private PrintBillAdapter adapterBill;
+    private PrintBillAdapter adapterBill;
 
     private PrintOldBillAdapter adapterOldBill;
     private DebtAdapter adapterDebt;
     private List<BaseModel> listDebts = new ArrayList<>();
-    private List<BaseModel> billDetails = new ArrayList<>();
-//    private boolean rePrint;
+    private boolean rePrint;
     ;
     private Dialog dialogPayment;
     private String orderPhone;
@@ -78,7 +82,8 @@ public class PrintBillActivity extends BluetoothActivity implements View.OnClick
     private Bitmap logoBitmap = null;
     private double currentPaid = 0.0;
     private PDFView pdfView;
-
+    private Uri uriBill;
+    private File currentFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +104,8 @@ public class PrintBillActivity extends BluetoothActivity implements View.OnClick
     public void findViewById() {
         pdfView = findViewById(R.id.print_bill_pdf);
         btnBack = findViewById(R.id.icon_back);
-        btnSubmit = findViewById(R.id.print_bill_submit);
+        lnBottom = findViewById(R.id.print_bill_bottom);
+        lnSubmit = findViewById(R.id.print_bill_submit);
 
     }
 
@@ -150,24 +156,33 @@ public class PrintBillActivity extends BluetoothActivity implements View.OnClick
 
     }
 
+    private void findIdIsoPrinter(){
+
+
+    }
     @Override
     public void initialData() {
         distributor = Distributor.getObject();
         currentCustomer = new BaseModel(CustomSQL.getString(Constants.CUSTOMER));
         currentBill = new BaseModel(getIntent().getExtras().getString(Constants.BILL));
-        billDetails = DataUtil.array2ListObject(currentBill.getString(Constants.BILL_DETAIL));
         listDebts = new ArrayList<>(DataUtil.array2ListObject(currentCustomer.getString(Constants.DEBTS)));
+        rePrint = getIntent().getExtras().getBoolean(Constants.RE_PRINT);
 
-        new DownloadImageMethod(distributor.getString("image"), new CallbackBitmap(){
+        new DownloadImageMethod(distributor.getString("image"), new CallbackBitmap() {
             @Override
             public void onResponse(Bitmap bitmap) {
                 logoBitmap = bitmap;
-                pdfView.fromFile(Util.createNewFile(PdfGenerator.createPdfBill(currentCustomer,
-                        currentBill,
-                        listDebts,
-                        logoBitmap,
-                        currentPaid))).spacing(2).load();
+                if (rePrint){
+                    pdfView.fromFile(Util.createNewFile(PdfGenerator.createPdfOldBill(currentCustomer, listDebts, logoBitmap))).spacing(2).load();
 
+                }else {
+                    pdfView.fromFile(Util.createNewFile(PdfGenerator.createPdfBill(currentCustomer,
+                                                        currentBill,
+                                                        listDebts,
+                                                        logoBitmap,
+                                                        currentPaid))).spacing(2).load();
+
+                }
 
             }
         }).execute();
@@ -176,13 +191,88 @@ public class PrintBillActivity extends BluetoothActivity implements View.OnClick
 
     }
 
+    private void inititalThermalData(){
+        if (rePrint) {
+            orderPhone = User.getContact();
+            tvTitle.setText("CÔNG NỢ ");
+            line1.setVisibility(View.GONE);
+            line2.setVisibility(View.GONE);
+            line3.setVisibility(View.GONE);
+            tvSumCurrentBill.setVisibility(View.GONE);
+            tvPrinterMainText.setText("IN LẠI HÓA ĐƠN");
+            tvTotalTitle.setText("Tổng nợ:");
+            lnPaidGroup.setVisibility(View.GONE);
+            lnRemainGroup.setVisibility(View.GONE);
+            tvDeliverTitle.setVisibility(View.GONE);
+            tvDeliver.setVisibility(View.GONE);
+            tvEmployee.setText(": " + User.getFullName());
 
+            createOldRVBill(listDebts);
+            tvTotal.setText(Util.FormatMoney(adapterOldBill.getDebtMoney()));
+
+        } else {
+            orderPhone = currentBill.getBaseModel("user").getString("contact");
+            tvTitle.setText("HÓA ĐƠN");
+            line1.setVisibility(View.VISIBLE);
+            line2.setVisibility(View.VISIBLE);
+            line3.setVisibility(View.VISIBLE);
+            tvSumCurrentBill.setVisibility(View.VISIBLE);
+            tvPrinterMainText.setText("IN HÓA ĐƠN & LƯU");
+            lnPaidGroup.setVisibility(View.VISIBLE);
+            lnRemainGroup.setVisibility(View.VISIBLE);
+            tvDeliverTitle.setVisibility(View.VISIBLE);
+            tvDeliver.setVisibility(View.VISIBLE);
+            tvDeliver.setText(": " + User.getFullName());
+            tvEmployee.setText(": " + currentBill.getBaseModel("user").getString("displayName"));
+
+            createCurrentRVBill(currentBill);
+            createRVDebt(listDebts);
+            tvSumCurrentBill.setText(Util.FormatMoney(adapterBill.getTotalMoney()));
+            String totalMoney = Util.FormatMoney(adapterBill.getTotalMoney() + adapterDebt.getTotalMoney());
+            tvTotalTitle.setText("Tổng:");
+            tvTotal.setText(totalMoney);
+
+            tvPaid.setText("0");
+            tvRemain.setText(totalMoney);
+
+        }
+
+        tvCompany.setText(distributor.getString("company"));
+        tvAdress.setText(distributor.getString("address"));
+        tvHotline.setText(String.format("Hotline: %s", Util.FormatPhone(distributor.getString("phone"))));
+        tvWebsite.setText(distributor.getString("website"));
+        if (!Util.checkImageNull(distributor.getString("image"))) {
+            Glide.with(this).load(distributor.getString("image")).centerCrop().into(imgLogo);
+
+        }
+
+        tvOrderPhone.setText(String.format("Đặt hàng: %s", Util.FormatPhone(orderPhone)));
+        try {
+            QRGEncoder qrgEncoder = new QRGEncoder(orderPhone, null, QRGContents.Type.PHONE, Util.convertDp2PxInt(100));
+            imgOrderPhone.setImageBitmap(qrgEncoder.encodeAsBitmap());
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+
+        tvThanks.setText(distributor.getString("thanks"));
+        tvShopName.setText(String.format(": %s %s", Constants.shopName[currentCustomer.getInt("shopType")].toUpperCase(), currentCustomer.getString("signBoard").toUpperCase()));
+
+        String phone = currentCustomer.getString("phone").equals("") ? "--" : Util.FormatPhone(currentCustomer.getString("phone"));
+        tvCustomerName.setText(String.format(": %s - %s", currentCustomer.getString("name"), phone));
+
+        tvCustomerAddress.setText(": " + String.format("%s, %s", currentCustomer.getString("district"), currentCustomer.getString("province")));
+        tvDate.setText(": " + Util.CurrentMonthYearHour());
+
+    }
 
     @Override
     public void addEvent() {
         btnBack.setOnClickListener(this);
-        btnSubmit.setOnClickListener(this);
+        lnBottom.setOnClickListener(this);
+        lnSubmit.setOnClickListener(this);
+//        tvListPrinter.setOnClickListener(this);
 
+//        imgLogo.setOnClickListener(this);
 
     }
 
@@ -193,19 +283,35 @@ public class PrintBillActivity extends BluetoothActivity implements View.OnClick
                 onBackPressed();
                 break;
 
-//            case R.id.print_bill_bottom:
-//
-//
-//                break;
+            case R.id.print_bill_bottom:
 
-//            case R.id.print_bill_bottom_printerselect:
-//                openBluetoothSeclectFragment();
-//
-//                break;
+
+                break;
+
+            case R.id.print_bill_bottom_printerselect:
+                openBluetoothSeclectFragment();
+
+                break;
 
 
             case R.id.print_bill_submit:
-                showDialogPayment();
+                if (rePrint) {
+                    CustomCenterDialog.showDialogOptionShare(new CallbackInt() {
+                        @Override
+                        public void onResponse(int value) {
+                            Transaction.shareVia(Util.storePDF(PdfGenerator.createPdfOldBill(currentCustomer, listDebts, logoBitmap)),
+                                                    false,
+                                                    value,
+                                                    currentCustomer);
+                            returnPreActivity(false);
+
+                        }
+                    });
+
+
+                } else {
+                    showDialogPayment(null);
+                }
 
                 break;
 
@@ -230,7 +336,7 @@ public class PrintBillActivity extends BluetoothActivity implements View.OnClick
         return list;
     }
 
-    private void showDialogPayment() {
+    private void showDialogPayment(CallbackBoolean isShareZalo) {
         dialogPayment = CustomCenterDialog.showDialogPayment("Nhập số tiền khách trả",
                 getAllDebt(),
                 0.0,
@@ -239,58 +345,54 @@ public class PrintBillActivity extends BluetoothActivity implements View.OnClick
                     @Override
                     public void onResponse(final List result) {
                         dialogPayment.dismiss();
+
+                        final Double total = adapterBill.getTotalMoney() + adapterDebt.getTotalMoney();
                         currentPaid = DataUtil.sumValueFromList(result, "paid");
-                        postBilltoServer(result, "");
+                        Double remain = total - currentPaid;
 
-                        //final Double total = adapterBill.getTotalMoney() + adapterDebt.getTotalMoney();
+                        tvPaid.setText(Util.FormatMoney(currentPaid));
+                        tvRemain.setText(Util.FormatMoney(remain));
 
-                        //Double remain = total - currentPaid;
+                        if (remain > 0) {
+                            line4.setVisibility(View.GONE);
+                            lnSignature.setVisibility(View.VISIBLE);
+                            tvEmployeeSign.setText(String.format("NV: %s", User.getFullName()));
+                        } else {
+                            line4.setVisibility(View.VISIBLE);
+                            lnSignature.setVisibility(View.GONE);
+                        }
+
+                        if (isShareZalo != null) {
+                            isShareZalo.onRespone(true);
+
+                        } else {
+                            Util.getInstance().showLoading("Đang kiểm tra...");
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Util.getInstance().stopLoading(true);
+                                    if (isPrinterConnected()) {
+                                        doPrintCurrentBill(result);
+
+                                    } else {
+                                        CustomCenterDialog.alertWithCancelButton(null, "Chưa kết nối máy in. Bạn muốn tiếp tục thanh toán không xuất hóa đơn", "Tiếp tục", "Quay lại", new CallbackBoolean() {
+                                            @Override
+                                            public void onRespone(Boolean bool) {
+                                                if (bool) {
+                                                    postBilltoServer(result, "");
+
+                                                }
 
 
+                                            }
+                                        });
+                                    }
 
-//                        tvPaid.setText(Util.FormatMoney(currentPaid));
-//                        tvRemain.setText(Util.FormatMoney(remain));
-//
-//                        if (remain > 0) {
-//                            line4.setVisibility(View.GONE);
-//                            lnSignature.setVisibility(View.VISIBLE);
-//                            tvEmployeeSign.setText(String.format("NV: %s", User.getFullName()));
-//                        } else {
-//                            line4.setVisibility(View.VISIBLE);
-//                            lnSignature.setVisibility(View.GONE);
-//                        }
 
-//                        if (isShareZalo != null) {
-//                            isShareZalo.onRespone(true);
-//
-//                        } else {
-//                            Util.getInstance().showLoading("Đang kiểm tra...");
-//                            new Handler().postDelayed(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    Util.getInstance().stopLoading(true);
-//                                    if (isPrinterConnected()) {
-//                                        doPrintCurrentBill(result);
-//
-//                                    } else {
-//                                        CustomCenterDialog.alertWithCancelButton(null, "Chưa kết nối máy in. Bạn muốn tiếp tục thanh toán không xuất hóa đơn", "Tiếp tục", "Quay lại", new CallbackBoolean() {
-//                                            @Override
-//                                            public void onRespone(Boolean bool) {
-//                                                if (bool) {
-//                                                    postBilltoServer(result, "");
-//
-//                                                }
-//
-//
-//                                            }
-//                                        });
-//                                    }
-//
-//
-//                                }
-//                            }, 500);
-//
-//                        }
+                                }
+                            }, 500);
+
+                        }
 
                     }
 
@@ -313,44 +415,23 @@ public class PrintBillActivity extends BluetoothActivity implements View.OnClick
     private void returnPreActivity(boolean loadData) {
 
         if (loadData) {
-            Util.showToast("Cập nhật hóa đơn thành công");
             BaseModel modelResult = new BaseModel();
             modelResult.put(Constants.RELOAD_DATA, true);
 
-            CustomCenterDialog.showDialogOptionShare(new CallbackInt() {
-                @Override
-                public void onResponse(int value) {
-                    Uri uri = Util.storePDF(PdfGenerator.createPdfBill(currentCustomer,
-                            currentBill,
-                            listDebts,
-                            logoBitmap,
-                            currentPaid));
-                    if (value !=0){
-                        Transaction.shareVia(uri, false, value, currentCustomer);
-
-                    }
-                    Transaction.returnPreviousActivity(Constants.PRINT_BILL_ACTIVITY,
-                            modelResult,
-                            Constants.RESULT_PRINTBILL_ACTIVITY);
-
-
-                }
-            });
-
-
-//            CustomCenterDialog.alertWithCancelButton(null,
-//                    "Cập nhật hóa đơn lên hệ thống thành công. Tiếp tục chia sẻ hóa đơn!",
-//                    "Chia sẻ", "Quay lại",
-//                    new CallbackBoolean() {
-//                        @Override
-//                        public void onRespone(Boolean bool) {
-//                            pdfView.fromFile(Util.createNewFile(PdfGenerator.createPdfBill(currentCustomer,
+            CustomCenterDialog.alertWithCancelButton(null,
+                    !rePrint ? "Cập nhật hóa đơn lên hệ thống thành công. Bạn muốn chia sẻ hóa đơn không?" :
+                            "Chưa kết nối máy in. Bạn muốn tiếp tục chia sẻ công nợ",
+                    "Chia sẻ", "Không",
+                    new CallbackBoolean() {
+                        @Override
+                        public void onRespone(Boolean bool) {
+//                            Uri uri = PdfGenerator.createPdfBill(currentCustomer,
 //                                    currentBill,
 //                                    listDebts,
 //                                    logoBitmap,
-//                                    currentPaid))).spacing(2).load();
-//
-//                            if (bool) {
+//                                    currentPaid);
+//                            Transaction.shareDocument(uri, currentCustomer);
+                            if (bool) {
 //                                currentImagePath = Util.storeImage(BitmapView.ResizeBitMapDependWidth(BitmapView.getBitmapFromView(scContentParent), 0),
 //                                        "DMS",
 //                                        "SHARE",
@@ -366,19 +447,19 @@ public class PrintBillActivity extends BluetoothActivity implements View.OnClick
 
 
 
-//                                Transaction.returnPreviousActivity(Constants.PRINT_BILL_ACTIVITY,
-//                                        modelResult,
-//                                        Constants.RESULT_PRINTBILL_ACTIVITY);
-//
-//                            } else {
-//                                Transaction.returnPreviousActivity(Constants.PRINT_BILL_ACTIVITY,
-//                                        modelResult,
-//                                        Constants.RESULT_PRINTBILL_ACTIVITY);
-//
-//                            }
-//
-//                        }
-//                    });
+                                Transaction.returnPreviousActivity(Constants.PRINT_BILL_ACTIVITY,
+                                        modelResult,
+                                        Constants.RESULT_PRINTBILL_ACTIVITY);
+
+                            } else {
+                                Transaction.returnPreviousActivity(Constants.PRINT_BILL_ACTIVITY,
+                                        modelResult,
+                                        Constants.RESULT_PRINTBILL_ACTIVITY);
+
+                            }
+
+                        }
+                    });
 
 
         } else {
@@ -389,24 +470,24 @@ public class PrintBillActivity extends BluetoothActivity implements View.OnClick
 
     }
 
-//    private void createCurrentRVBill(BaseModel bill) {
-////        adapterBill = new PrintBillAdapter(DataUtil.array2ListObject(bill.getString(Constants.BILL_DETAIL)));
-////        Util.createLinearRV(rvBills, adapterBill);
-//
-//    }
+    private void createCurrentRVBill(BaseModel bill) {
+        adapterBill = new PrintBillAdapter(DataUtil.array2ListObject(bill.getString(Constants.BILL_DETAIL)));
+        Util.createLinearRV(rvBills, adapterBill);
 
-//    private void createRVDebt(final List<BaseModel> list) {
-//        DataUtil.sortbyStringKey("createAt", list, true);
-//        adapterDebt = new DebtAdapter(list, true, false);
-//        Util.createLinearRV(rvDebts, adapterDebt);
-//
-//    }
+    }
 
-//    private void createOldRVBill(final List<BaseModel> list) {
-//        adapterOldBill = new PrintOldBillAdapter(list);
-//        Util.createLinearRV(rvBills, adapterOldBill);
-//
-//    }
+    private void createRVDebt(final List<BaseModel> list) {
+        DataUtil.sortbyStringKey("createAt", list, true);
+        adapterDebt = new DebtAdapter(list, true, false);
+        Util.createLinearRV(rvDebts, adapterDebt);
+
+    }
+
+    private void createOldRVBill(final List<BaseModel> list) {
+        adapterOldBill = new PrintOldBillAdapter(list);
+        Util.createLinearRV(rvBills, adapterOldBill);
+
+    }
 
     private void doPrintCurrentBill(final List<BaseModel> listPayments) {
         //int printSize = tvPrintSize.getText().toString().equals(Constants.PRINTER_80) ? Constants.PRINTER_80_WIDTH : Constants.PRINTER_57_WIDTH;
@@ -502,8 +583,8 @@ public class PrintBillActivity extends BluetoothActivity implements View.OnClick
         } else {
             params = DataUtil.newBillJsonParam(currentCustomer.getInt("id"),
                     User.getId(),
-                    DataUtil.getTotalMoney(billDetails),
-                    DataUtil.getNetTotalMoney(billDetails),
+                    adapterBill.getTotalMoney(),
+                    adapterBill.getNetTotalMoney(),
                     0.0,
                     DataUtil.array2ListObject(currentBill.getString(Constants.BILL_DETAIL)),
                     note,
@@ -608,7 +689,7 @@ public class PrintBillActivity extends BluetoothActivity implements View.OnClick
             public void onSuccess(String name) {
                 Util.getInstance().stopLoading(true);
 
-                if (ActivityCompat.checkSelfPermission(PrintBillActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(PrintBillActivityOld.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
                     // here to request the missing permissions, and then overriding
@@ -641,77 +722,3 @@ public class PrintBillActivity extends BluetoothActivity implements View.OnClick
 
 
 }
-
-//    private void inititalThermalData(){
-//        if (rePrint) {
-//            orderPhone = User.getContact();
-//            tvTitle.setText("CÔNG NỢ ");
-//            line1.setVisibility(View.GONE);
-//            line2.setVisibility(View.GONE);
-//            line3.setVisibility(View.GONE);
-//            tvSumCurrentBill.setVisibility(View.GONE);
-//            tvPrinterMainText.setText("IN LẠI HÓA ĐƠN");
-//            tvTotalTitle.setText("Tổng nợ:");
-//            lnPaidGroup.setVisibility(View.GONE);
-//            lnRemainGroup.setVisibility(View.GONE);
-//            tvDeliverTitle.setVisibility(View.GONE);
-//            tvDeliver.setVisibility(View.GONE);
-//            tvEmployee.setText(": " + User.getFullName());
-//
-//            createOldRVBill(listDebts);
-//            tvTotal.setText(Util.FormatMoney(adapterOldBill.getDebtMoney()));
-//
-//        } else {
-//            orderPhone = currentBill.getBaseModel("user").getString("contact");
-//            tvTitle.setText("HÓA ĐƠN");
-//            line1.setVisibility(View.VISIBLE);
-//            line2.setVisibility(View.VISIBLE);
-//            line3.setVisibility(View.VISIBLE);
-//            tvSumCurrentBill.setVisibility(View.VISIBLE);
-//            tvPrinterMainText.setText("IN HÓA ĐƠN & LƯU");
-//            lnPaidGroup.setVisibility(View.VISIBLE);
-//            lnRemainGroup.setVisibility(View.VISIBLE);
-//            tvDeliverTitle.setVisibility(View.VISIBLE);
-//            tvDeliver.setVisibility(View.VISIBLE);
-//            tvDeliver.setText(": " + User.getFullName());
-//            tvEmployee.setText(": " + currentBill.getBaseModel("user").getString("displayName"));
-//
-//            createCurrentRVBill(currentBill);
-//            createRVDebt(listDebts);
-////            tvSumCurrentBill.setText(Util.FormatMoney(adapterBill.getTotalMoney()));
-////            String totalMoney = Util.FormatMoney(adapterBill.getTotalMoney() + adapterDebt.getTotalMoney());
-////            tvTotalTitle.setText("Tổng:");
-////            tvTotal.setText(totalMoney);
-////
-////            tvPaid.setText("0");
-////            tvRemain.setText(totalMoney);
-//
-//        }
-//
-//        tvCompany.setText(distributor.getString("company"));
-//        tvAdress.setText(distributor.getString("address"));
-//        tvHotline.setText(String.format("Hotline: %s", Util.FormatPhone(distributor.getString("phone"))));
-//        tvWebsite.setText(distributor.getString("website"));
-//        if (!Util.checkImageNull(distributor.getString("image"))) {
-//            Glide.with(this).load(distributor.getString("image")).centerCrop().into(imgLogo);
-//
-//        }
-//
-//        tvOrderPhone.setText(String.format("Đặt hàng: %s", Util.FormatPhone(orderPhone)));
-//        try {
-//            QRGEncoder qrgEncoder = new QRGEncoder(orderPhone, null, QRGContents.Type.PHONE, Util.convertDp2PxInt(100));
-//            imgOrderPhone.setImageBitmap(qrgEncoder.encodeAsBitmap());
-//        } catch (WriterException e) {
-//            e.printStackTrace();
-//        }
-//
-//        tvThanks.setText(distributor.getString("thanks"));
-//        tvShopName.setText(String.format(": %s %s", Constants.shopName[currentCustomer.getInt("shopType")].toUpperCase(), currentCustomer.getString("signBoard").toUpperCase()));
-//
-//        String phone = currentCustomer.getString("phone").equals("") ? "--" : Util.FormatPhone(currentCustomer.getString("phone"));
-//        tvCustomerName.setText(String.format(": %s - %s", currentCustomer.getString("name"), phone));
-//
-//        tvCustomerAddress.setText(": " + String.format("%s, %s", currentCustomer.getString("district"), currentCustomer.getString("province")));
-//        tvDate.setText(": " + Util.CurrentMonthYearHour());
-//
-//    }

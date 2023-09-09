@@ -71,7 +71,7 @@ public class Statistical_DebtAdapter extends RecyclerView.Adapter<Statistical_De
     public void onBindViewHolder(final StatisticalBillsViewHolder holder, int position) {
         holder.tvNumber.setText(mData.size() > 0 ? String.valueOf(mData.size() - position) : "");
         holder.tvsignBoard.setText(Constants.shopName[mData.get(position).getInt("shopType")] + " " + mData.get(position).getString("signBoard"));
-        holder.tvDistrict.setText(mData.get(position).getString("street") + " - " + mData.get(position).getString("district"));
+        holder.tvDistrict.setText(mData.get(position).getString("address") + " - " + mData.get(position).getString("district"));
         holder.tvUser.setText(Util.getIconString(R.string.icon_username, "  ", mData.get(position).getBaseModel("user").getString("displayName")));
         holder.tvDebt.setText(Util.FormatMoney(mData.get(position).getDouble("debt")));
         holder.tvTime.setText(String.format("%d ngày", Util.countDay(mData.get(position).getLong("last_debt"))));

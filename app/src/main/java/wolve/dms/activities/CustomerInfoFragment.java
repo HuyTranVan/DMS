@@ -47,7 +47,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
     private View view, vStatusColor;
     private CInputForm edAdress, edPhone, edName, edNote;
     private EditText edShopName;
-    protected CButtonVertical mDirection, mRating, mCall, mInterest, mPrint;
+    protected CButtonVertical mDirection, mRating, mCall, mInterest, mDelete;
     protected TextView tvLastCheckin, tvCheckin, tvHistory;
     private Spinner spShoptype;
 
@@ -78,7 +78,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         mInterest = view.findViewById(R.id.customer_info_interest);
         mCall = view.findViewById(R.id.customer_info_call);
         mRating = view.findViewById(R.id.customer_info_rating);
-        mPrint = view.findViewById(R.id.customer_info_print);
+        mDelete = view.findViewById(R.id.customer_info_delete);
         edNote = view.findViewById(R.id.customer_info_note);
         tvLastCheckin = view.findViewById(R.id.customer_info_last_status);
         vStatusColor = view.findViewById(R.id.customer_info_status_color);
@@ -105,7 +105,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 
         }
         edAdress.setText(add);
-        mActivity.tvAddress.setText(add);
+        //mActivity.tvAddress.setText(add);
 
     }
 
@@ -157,7 +157,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         tvHistory.setOnClickListener(this);
         mDirection.setOnClickListener(this);
         mCall.setOnClickListener(this);
-        mPrint.setOnClickListener(this);
+        mDelete.setOnClickListener(this);
         tvCheckin.setOnClickListener(this);
         edAdress.setOnMoreClickView(new View.OnClickListener() {
             @Override
@@ -328,8 +328,9 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 
                 break;
 
-            case R.id.customer_info_print:
-                mActivity.printCustomerShipping();
+            case R.id.customer_info_delete:
+//                mActivity.printCustomerShipping();
+                mActivity.deleteCustomer();
 
                 break;
 

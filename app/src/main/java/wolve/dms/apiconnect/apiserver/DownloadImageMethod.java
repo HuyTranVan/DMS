@@ -13,6 +13,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 
+import wolve.dms.callback.CallbackBitmap;
 import wolve.dms.callback.CallbackListObject;
 import wolve.dms.models.BaseModel;
 import wolve.dms.utils.Util;
@@ -20,42 +21,40 @@ import wolve.dms.utils.Util;
 /**
  * Created by tranhuy on 10/2/16.
  */
-public class DownloadImageMethod extends AsyncTask<String, Void, List<BaseModel>> {
-    private List<BaseModel> mList;
-    private String mKey, mGroupName;
-    private CallbackListObject mListener;
+public class DownloadImageMethod extends AsyncTask<String, Void, Bitmap> {
+    private String mUrl;
+    private CallbackBitmap mListener;
 
-    public DownloadImageMethod(List<BaseModel> list, String keyurl, String groupName, CallbackListObject listener) {
-        this.mList = list;
+    public DownloadImageMethod(String url, CallbackBitmap listener) {
         this.mListener = listener;
-        this.mKey = keyurl;
-        this.mGroupName = groupName;
+        this.mUrl = url;
+        UtilLoading.getInstance().showLoading(1);
+
     }
 
     @Override
-    protected List<BaseModel> doInBackground(String... URL) {
+    protected Bitmap doInBackground(String... URL) {
         Bitmap bm = null;
         BufferedInputStream bis = null;
         InputStream is = null;
         try {
-            for (int i = 0; i < mList.size(); i++) {
-                if (!Util.checkImageNull(mList.get(i).getString(mKey))) {
-                    URL aURL = new URL(mList.get(i).getString(mKey));
+                if (!Util.checkImageNull(mUrl)) {
+                    URL aURL = new URL(mUrl);
                     URLConnection conn = aURL.openConnection();
                     conn.connect();
                     is = conn.getInputStream();
                     bis = new BufferedInputStream(is);
                     bm = BitmapFactory.decodeStream(bis);
 
-                    Uri image_uri = Util.storeImage(
-                            bm,
-                            mGroupName,
-                            String.format("%s%s", mGroupName, mList.get(i).getString("id")),
-                            false);
+//                    Uri image_uri = Util.storeImage(
+//                            bm,
+//                            mGroupName,
+//                            String.format("%s%s", mGroupName, mList.get(i).getString("id")),
+//                            false);
+//
+//                    mList.get(i).put("image_uri", image_uri != null? Util.getRealPathFromImageURI(image_uri) : "");
 
-                    mList.get(i).put("image_uri", image_uri != null? Util.getRealPathFromImageURI(image_uri) : "");
 
-                }
 
 
             }
@@ -67,13 +66,14 @@ public class DownloadImageMethod extends AsyncTask<String, Void, List<BaseModel>
 
 
         } catch (IOException e) {
-            Log.e("Hub", "Error getting the image from server : " + e.getMessage().toString());
+            return null;
         }
-        return mList;
+        return bm;
     }
 
     @Override
-    protected void onPostExecute(List<BaseModel> result) {
+    protected void onPostExecute(Bitmap result) {
+        UtilLoading.getInstance().stopLoading();
         mListener.onResponse(result);
 
     }

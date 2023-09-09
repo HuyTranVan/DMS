@@ -33,7 +33,9 @@
     <string name="icon_camera" translatable="false">&#xf030;</string>
     <string name="icon_facebook" translatable="false">&#xf09a;</string>
     <string name="icon_image" translatable="false">&#xf1c5;</string>
-    <string name="icon_circle" translatable="false">&#xf058;</string>
+<!--    <string name="icon_circle" translatable="false">&#xf058;</string>-->
+    <string name="icon_circle_border" translatable="false">&#xf111;</string>
+    <string name="icon_circle_check" translatable="false">&#xf058;</string>
     <string name="icon_trash" translatable="false">&#xf2ed;</string>
     <string name="icon_upload" translatable="false">&#xf0ee;</string>
     <string name="icon_clock" translatable="false">&#xf017;</string>
@@ -89,6 +91,8 @@
     <string name="icon_bookmark" translatable="false">&#xf02e;</string>
     <string name="icon_export" translatable="false">&#xf093;</string>
     <string name="icon_filter" translatable="false">&#xf0b0;</string>
+    <string name="icon_sort" translatable="false">&#xf0dc;</string>
+    <string name="icon_more" translatable="false">&#xfe10a;</string>sdaf
     <string name="icon_return" translatable="false">&#xf0e2;</string>
     <string name="icon_delete" translatable="false">&#xf1f8;</string>
     <string name="icon_reload" translatable="false">&#xf01e;</string>

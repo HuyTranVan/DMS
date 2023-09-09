@@ -7,6 +7,11 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -17,6 +22,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.graphics.pdf.PdfDocument;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -43,6 +49,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.content.FileProvider;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -58,11 +65,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.InetAddress;
@@ -107,7 +117,9 @@ import wolve.dms.models.Province;
 import wolve.dms.models.User;
 
 import static wolve.dms.utils.Constants.IMAGES;
+import static wolve.dms.utils.Constants.PRINTER_PACKAGE;
 import static wolve.dms.utils.Constants.REQUEST_GOOGLE_PLAY_SERVICES;
+import static wolve.dms.utils.Constants.ZALO_PACKAGE;
 
 public class Util {
     private static Util util;
@@ -608,10 +620,10 @@ public class Util {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
                 String relativeLocation = Environment.DIRECTORY_PICTURES
-                        + File.separator
-                        + Constants.APP_DIRECTORY
-                        + File.separator
-                        + folderName;
+                                        + File.separator
+                                        + Constants.APP_DIRECTORY
+                                        + File.separator
+                                        + folderName;
                 ContentResolver resolver = Util.getInstance().getCurrentActivity().getContentResolver();
                 ContentValues contentValues = new ContentValues();
                 contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, imageFileName);
@@ -689,10 +701,6 @@ public class Util {
 
         }
 
-
-
-
-
 //        File file = createCustomImageFile(name, storeCacheFile);
 //        try {
 //            OutputStream stream = null;
@@ -725,6 +733,87 @@ public class Util {
 //        fos.close();
 
     }
+
+
+    public static Uri storePDF(PdfDocument document) {
+        String pdfFileName = String.format("DMSBILL_%s.pdf",  Util.CurrentDDMMYY_HHmm());
+        String relativeLocation = Environment.DIRECTORY_DOCUMENTS
+                                            + File.separator
+                                            + Constants.APP_DIRECTORY;
+//                                            + File.separator
+//                                            + folderName;
+
+            File pdfFileStore;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                pdfFileStore = new File(relativeLocation, pdfFileName);
+            } else {
+                pdfFileStore = new File(relativeLocation, pdfFileName);
+            }
+
+            if (!pdfFileStore.exists()) {
+                pdfFileStore.mkdirs();
+            }
+
+
+            try {
+                ContentResolver resolver = Util.getInstance().getCurrentActivity().getContentResolver();
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(MediaStore.Files.FileColumns.DISPLAY_NAME, pdfFileName);
+                contentValues.put(MediaStore.Files.FileColumns.MIME_TYPE, "application/pdf");
+                contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, relativeLocation);
+                Uri uri = Util.getInstance().getCurrentActivity().getContentResolver().insert(MediaStore.Files.getContentUri("external"), contentValues);
+
+                OutputStream stream = resolver.openOutputStream(uri);
+
+                document.writeTo(stream);
+                stream.close();
+
+                document.close();
+
+                return uri;
+            } catch (IOException e) {
+//                e.printStackTrace();
+                document.close();
+                return null;
+            }
+
+    }
+
+    public static File createNewFile(PdfDocument document){
+        String fileName = String.format("DMS_%s.pdf",Util.CurrentDDMMYY_HHmm());
+        File file = new File(Util.getInstance().getCurrentActivity().getFilesDir(), fileName);
+        try {
+            OutputStream fileOutputStream = new FileOutputStream( file);
+            document.writeTo(fileOutputStream);
+            fileOutputStream.close();
+            document.close();
+
+            return file;
+        } catch (IOException e) {
+            document.close();
+            return null;
+
+        }
+    }
+
+//    public static Uri saveToCacheMemory(PdfDocument pdf) {
+//        String fileName = String.format("DMSBILL_%s.pdf",Util.CurrentDDMMYY_HHmm());
+//        File file = new File(getInstance().getCurrentActivity().getFilesDir(), fileName);
+//        try {
+//            OutputStream fileOutputStream = new FileOutputStream(file);
+//
+////            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
+////            BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter);
+//
+//            pdf.writeTo(fileOutputStream);
+//            fileOutputStream.close();
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        return Uri.parse(file.getAbsolutePath());
+//    }
+
 
     public static void deleteAllImageExternalStorage(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
@@ -876,6 +965,9 @@ public class Util {
 
     public static String CurrentMonthYearHourNotBlank() {
         return new SimpleDateFormat("ddMMyyyy_HHmm").format(Calendar.getInstance().getTime());
+    }
+    public static String CurrentDDMMYY_HHmm() {
+        return new SimpleDateFormat("ddMMyy_HHmm").format(Calendar.getInstance().getTime());
     }
 
 
@@ -1775,6 +1867,11 @@ public class Util {
 
     }
 
+    public static int getColor(int color) {
+        return getInstance().getCurrentActivity().getResources().getColor(color, null);
+
+    }
+
 //    public static void clearSQL() {
 //        List<BaseModel> listUser = CustomSQL.getListObject(Constants.USER_LIST);
 //        int versionCode = CustomSQL.getInt(Constants.VERSION_CODE);
@@ -1821,5 +1918,18 @@ public class Util {
 
 
     }
+
+    public static void checkPackageZalo(){
+        List<PackageInfo> packs = Util.getInstance().getCurrentActivity().getPackageManager().getInstalledPackages(0);
+        for(PackageInfo res : packs){
+            if (res.packageName.equals(ZALO_PACKAGE)){
+                CustomSQL.setBoolean(ZALO_PACKAGE, true);
+                break;
+            }
+        }
+
+    }
+
+
 
 }
