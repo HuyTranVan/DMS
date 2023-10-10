@@ -8,8 +8,10 @@ public class PagerInfo {
     public static int MARGINTOP = 10;
     public static int MARGINRIGHT = 25;
     public static int MARGINBOTTOM = 15;
+    public static int ROWHIGHMIN = 15;
     public static int ROWHEIGHTDEFAULT = 18;
-    public static int ROWHIGHER = 25;
+    public static int ROWHIGHER = 20;
+    public static int ROWHIGHMAX = 25;
     public static int LOGOHEIGHT = 45;
 
 

@@ -47,7 +47,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
     private View view, vStatusColor;
     private CInputForm edAdress, edPhone, edName, edNote;
     private EditText edShopName;
-    protected CButtonVertical mDirection, mRating, mCall, mInterest, mDelete;
+    protected CButtonVertical mDirection, mRating, mCall, mInterest, mDelete, mShare;
     protected TextView tvLastCheckin, tvCheckin, tvHistory;
     private Spinner spShoptype;
 
@@ -75,6 +75,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
         edName = (CInputForm) view.findViewById(R.id.customer_info_name);
         edShopName = (EditText) view.findViewById(R.id.customer_info_shopname_name);
         mDirection = view.findViewById(R.id.customer_info_direction);
+        mShare = view.findViewById(R.id.customer_info_share);
         mInterest = view.findViewById(R.id.customer_info_interest);
         mCall = view.findViewById(R.id.customer_info_call);
         mRating = view.findViewById(R.id.customer_info_rating);
@@ -156,6 +157,7 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
     private void addEvent() {
         tvHistory.setOnClickListener(this);
         mDirection.setOnClickListener(this);
+        mShare.setOnClickListener(this);
         mCall.setOnClickListener(this);
         mDelete.setOnClickListener(this);
         tvCheckin.setOnClickListener(this);
@@ -306,6 +308,11 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
 
                 break;
 
+            case R.id.customer_info_share:
+                Transaction.shareGoogleMapLocation(mActivity.currentCustomer);
+
+                break;
+
             case R.id.customer_info_call:
                 mActivity.checkPhonePermission();
                 //Transaction.openCallScreen(mActivity.currentCustomer.getString("phone"));
@@ -338,16 +345,17 @@ public class CustomerInfoFragment extends Fragment implements View.OnClickListen
     }
 
     private void openGoogleMap() {
-        CustomCenterDialog.alertWithCancelButton("Chỉ đường", "Mở ứng dụng bản đồ để tiếp tục chỉ đường", "Tiếp tục", "Quay lại", new CallbackBoolean() {
-            @Override
-            public void onRespone(Boolean re) {
-                if (re) {
-                    Transaction.openGoogleMapRoute(mActivity.currentCustomer.getDouble("lat"), mActivity.currentCustomer.getDouble("lng"));
-
-                }
-
-            }
-        });
+        Transaction.openGoogleMapRoute(mActivity.currentCustomer.getDouble("lat"), mActivity.currentCustomer.getDouble("lng"));
+//        CustomCenterDialog.alertWithCancelButton("Chỉ đường", "Mở ứng dụng bản đồ để tiếp tục chỉ đường", "Tiếp tục", "Quay lại", new CallbackBoolean() {
+//            @Override
+//            public void onRespone(Boolean re) {
+//                if (re) {
+//                    Transaction.openGoogleMapRoute(mActivity.currentCustomer.getDouble("lat"), mActivity.currentCustomer.getDouble("lng"));
+//
+//                }
+//
+//            }
+//        });
     }
 
     private void shopNameEvent() {

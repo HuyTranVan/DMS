@@ -3,6 +3,8 @@ package wolve.dms.activities;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,9 +32,10 @@ import wolve.dms.utils.Util;
 
 public class ProductGroupActivity extends BaseActivity implements View.OnClickListener {
     private ImageView btnBack;
+    private TextView tvUnits;
     private RecyclerView rvProductGroup;
     private ProductGroupAdapter productGroupAdapter;
-    private FloatingActionButton btnAddProductGroup;
+    private LinearLayout btnAddProductGroup;
 
     public List<BaseModel> listProductGroup;
 
@@ -51,6 +54,7 @@ public class ProductGroupActivity extends BaseActivity implements View.OnClickLi
         btnBack = (ImageView) findViewById(R.id.icon_back);
         rvProductGroup = (RecyclerView) findViewById(R.id.product_group_rvgroup);
         btnAddProductGroup = findViewById(R.id.product_group_add_new);
+        tvUnits = findViewById(R.id.product_group_units);
 
     }
 
@@ -63,6 +67,7 @@ public class ProductGroupActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     public void initialData() {
+        tvUnits.setVisibility(Util.isAdmin()? View.VISIBLE : View.GONE);
         //loadProductGroup();
 
     }
@@ -71,6 +76,7 @@ public class ProductGroupActivity extends BaseActivity implements View.OnClickLi
     public void addEvent() {
         btnBack.setOnClickListener(this);
         btnAddProductGroup.setOnClickListener(this);
+        tvUnits.setOnClickListener(this);
 
     }
 
@@ -85,6 +91,10 @@ public class ProductGroupActivity extends BaseActivity implements View.OnClickLi
             case R.id.product_group_add_new:
                 openFragmentNewProductGroup(null);
 
+                break;
+
+            case R.id.product_group_units:
+                Transaction.gotoProductUnitActivity();
                 break;
 
         }

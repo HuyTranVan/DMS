@@ -71,6 +71,7 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     protected TextView tvCheckInStatus, tvTime, tvPrint, tvZalo, tvShare, tvTitle,
             tvDebt, tvPaid, tvTotal, tvBDF, btnShopCart, tvFilter, tvFilterIcon;
     private FrameLayout coParent;
+
     private ViewPager viewPager;
     private TabLayout tabLayout;
     private HorizontalScrollView scrollOverView;
@@ -724,12 +725,11 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
     }
 
     protected void printDebtBills(int app){
-        BaseModel distributor = Distributor.getObject();
         List<BaseModel> listDebts = currentCustomer.getList(Constants.DEBTS);
-        new DownloadImageMethod(distributor.getString("image"), new CallbackBitmap(){
+        new DownloadImageMethod(Distributor.getImage(), new CallbackBitmap(){
             @Override
             public void onResponse(Bitmap bitmap) {
-                Transaction.shareVia(Util.storePDF(PdfGenerator.createPdfOldBill(currentCustomer, listDebts, bitmap)),
+                Transaction.shareVia(Util.storePDF(PdfGenerator.createPdfOldBill(currentCustomer, listDebts, bitmap), Util.shortenName(currentCustomer.getString("nameUnsigned"))),
                         false,
                         app,
                         currentCustomer);
@@ -737,11 +737,6 @@ public class CustomerActivity extends BaseActivity implements View.OnClickListen
                 }
 
         }).execute();
-
-
-
-
-//        Transaction.gotoPrintBillActivity(new BaseModel(), true);
 
     }
 

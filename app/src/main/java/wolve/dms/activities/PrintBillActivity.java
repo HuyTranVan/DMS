@@ -324,7 +324,8 @@ public class PrintBillActivity extends BluetoothActivity implements View.OnClick
                             currentBill,
                             listDebts,
                             logoBitmap,
-                            currentPaid));
+                            currentPaid),
+                            Util.shortenName(currentCustomer.getString("nameUnsigned")));
                     if (value !=0){
                         Transaction.shareVia(uri, false, value, currentCustomer);
 

@@ -38,4 +38,8 @@ public class CustomTabLayout extends TabLayout {
             e.printStackTrace();
         }
     }
+
+    public Tab getTab(){
+        return getTab();
+    }
 }

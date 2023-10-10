@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/pinlist_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorTransparent">
+
+
+    <RelativeLayout
+        android:id="@+id/pinlist_header"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_35sdp"
+        android:background="@drawable/bg_img_header"
+        android:orientation="horizontal"
+        android:clickable="true">
+
+        <ImageView
+            android:id="@+id/icon_back"
+            android:layout_width="@dimen/_35sdp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_arrow_back_black_18dp"
+            android:padding="@dimen/_8sdp"
+            android:background="@drawable/btn_transparent" />
+
+        <TextView
+            android:id="@+id/pinlist_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/icon_back"
+            android:gravity="center_horizontal"
+            android:text="DS GHIM"
+            android:textAllCaps="true"
+            android:textColor="@color/black_text_color"
+            android:textSize="@dimen/_14sdp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="@dimen/_2sdp"
+            android:layout_marginRight="@dimen/_5sdp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:fontFamily="@font/font_awesome"
+                android:gravity="center_vertical"
+                android:text="@string/icon_username"
+                android:textColor="@color/black_text_color"
+                android:textSize="@dimen/_12sdp" />
+
+            <TextView
+                android:id="@+id/pinlist_employee"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="?selectableItemBackground"
+                android:layout_centerVertical="true"
+                android:paddingLeft="@dimen/_10sdp"
+                android:paddingRight="@dimen/_5sdp"
+                android:textColor="@color/black_text_color_hint"
+                android:text="test"
+                android:gravity="center"/>
+
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/pinlist_select_group"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_img_header"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:clickable="true"
+            android:visibility="gone">
+
+            <TextView
+                android:fontFamily="@font/font_awesome"
+                android:id="@+id/pinlist_select_close"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="match_parent"
+                android:text="@string/icon_x"
+                android:gravity="center"
+                android:textColor="@color/black_text_color"
+                android:textSize="@dimen/_16sdp" />
+
+            <TextView
+                android:id="@+id/pinlist_select_count"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="0"
+                android:gravity="center"
+                android:textColor="@color/colorBlue"
+                android:textSize="@dimen/_14sdp"
+                android:layout_toRightOf="@+id/pinlist_select_close"
+                android:layout_marginLeft="@dimen/_5sdp"/>
+
+
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/pinlist_filter_group"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_30sdp"
+        android:background="@color/colorWhite"
+        android:clickable="true"
+        android:layout_below="@+id/pinlist_header">
+
+        <CheckBox
+            android:id="@+id/pinlist_checkall"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingRight="@dimen/_10sdp"
+            android:paddingLeft="@dimen/_5sdp"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:text="Tất cả"
+            android:textSize="@dimen/_12sdp"
+            android:buttonTint="@color/black_text_color_hint"/>
+
+
+<!--        <LinearLayout-->
+<!--            android:id="@+id/pinlist_checkall_parent"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:background="?selectableItemBackground"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:paddingRight="@dimen/_10sdp">-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/pinlist_checkall_check"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:fontFamily="@font/font_awesome"-->
+<!--                android:textColor="@color/black_text_color"-->
+<!--                android:text="@string/icon_circle_border"-->
+<!--                android:textSize="@dimen/_14sdp"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:paddingLeft="@dimen/_10sdp"-->
+<!--                android:paddingRight="@dimen/_10sdp"/>-->
+
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:text="Tất cả"-->
+<!--                android:textSize="@dimen/_12sdp"-->
+<!--                android:textColor="@color/black_text_color"-->
+<!--                android:gravity="center_vertical"/>-->
+<!--        </LinearLayout>-->
+
+        <LinearLayout
+            android:id="@+id/pinlist_sort"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="?selectableItemBackground"
+            android:orientation="horizontal"
+            android:layout_alignParentRight="true">
+
+            <TextView
+                android:id="@+id/pinlist_sort_title"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Sắp xếp"
+                android:gravity="center"
+                android:textSize="@dimen/_12sdp"
+                android:textStyle="italic"
+                android:clickable="false"
+                android:paddingLeft="@dimen/_10sdp"/>
+
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/font_awesome"
+                android:text="@string/icon_sort"
+                android:textSize="@dimen/_14sdp"
+                android:textColor="@color/black_text_color_hint"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/_10sdp"
+                android:paddingRight="@dimen/_10sdp"
+                android:clickable="false"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/colorGrey"/>
+
+
+    </RelativeLayout>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/pinlist_rvCustomer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:layout_below="@+id/pinlist_filter_group"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/_35sdp"
+        android:layout_above="@+id/pinlist_submit_parent"/>
+
+    <LinearLayout
+        android:id="@+id/pinlist_submit_parent"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_35sdp"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorGrey"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/pinlist_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_25sdp"
+            android:background="@drawable/btn_round_blue"
+            android:text="Thêm vào bản đồ"
+            android:paddingLeft="@dimen/_15sdp"
+            android:paddingRight="@dimen/_15sdp"
+            android:textColor="@color/colorWhite" />
+
+<!--        <RelativeLayout-->
+<!--            android:id="@+id/pinlist_submit_parent"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="@dimen/_35sdp"-->
+<!--            android:background="@color/colorGrey"-->
+<!--            >-->
+
+
+            
+<!--        </RelativeLayout>-->
+
+    </LinearLayout>
+
+
+</RelativeLayout>

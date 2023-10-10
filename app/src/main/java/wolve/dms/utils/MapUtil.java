@@ -87,7 +87,7 @@ public class MapUtil {
             }
             LatLngBounds bounds = builder.build();
 
-            int padding = 100; // offset from edges of the map in pixels
+            int padding = 200; // offset from edges of the map in pixels
             CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
             mMap.moveCamera(cu);
         }
@@ -297,6 +297,9 @@ public class MapUtil {
                     currentMarker.setVisible(false);
                 }
                 break;
+
+            default:
+                currentMarker.setVisible(true);
         }
 
         return currentMarker;
@@ -442,6 +445,17 @@ public class MapUtil {
                     }
                     break;
             }
+
+    }
+
+    public static List<BaseModel> addLocationToListCustomer(List<BaseModel> listCustomerWaiting, double lat, double lng) {
+        for (BaseModel model : listCustomerWaiting) {
+            double distance = MapUtil.distance(lat, lng, model.getDouble("lat"), model.getDouble("lng"));
+            model.put("distance", distance);
+
+        }
+
+        return listCustomerWaiting;
 
     }
 

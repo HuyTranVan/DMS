@@ -143,6 +143,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
 
         FragmentTransaction manager = this.getSupportFragmentManager().beginTransaction();
+        manager.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_down, R.anim.slide_in_bottom, R.anim.slide_out_bottom);
         fragmentReplace.show(manager, tag);
     }
 

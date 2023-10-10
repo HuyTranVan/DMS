@@ -249,6 +249,7 @@ public class ShopCartActivity extends BaseActivity implements View.OnClickListen
             product.put("product_id", list_product.get(i).getInt("product_id"));
             product.put("name", list_product.get(i).getString("name"));
             product.put("productName", list_product.get(i).getString("name"));
+            //product.put("productName", list_product.get(i).getBaseModel("unit").getString("unit"));
             product.put("productGroup", list_product.get(i).getString("productGroup"));
             product.put("promotion", list_product.get(i).getBoolean("promotion"));
             product.put("unitPrice", list_product.get(i).getDouble("unitPrice"));

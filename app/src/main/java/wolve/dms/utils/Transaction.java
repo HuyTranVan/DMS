@@ -34,6 +34,7 @@ import wolve.dms.activities.PrintBillActivity;
 import wolve.dms.activities.PrintCustomerShippingActivity;
 import wolve.dms.activities.ProductActivity;
 import wolve.dms.activities.ProductGroupActivity;
+import wolve.dms.activities.ProductUnitActivity;
 import wolve.dms.activities.ScannerActivity;
 import wolve.dms.activities.SettingActivity;
 import wolve.dms.activities.ShopCartActivity;
@@ -164,6 +165,14 @@ public class Transaction {
         context.startActivity(intent);
         ((AppCompatActivity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         ((AppCompatActivity) context).finish();
+    }
+
+    public static void gotoProductUnitActivity() {
+        Context context = Util.getInstance().getCurrentActivity();
+        Intent intent = new Intent(context, ProductUnitActivity.class);
+        context.startActivity(intent);
+        ((AppCompatActivity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+
     }
 
     public static void gotoUserActivity() {
@@ -419,10 +428,10 @@ public class Transaction {
 //    }
 
     public static void shareVia(Uri uri, boolean isimage, int otherapp, BaseModel currentCustomer) {
-        String message = currentCustomer == null? "" : String.format("%s %s ::: %s",
+        String message = currentCustomer == null? "" : String.format("%s %s-%s",
                 Constants.shopName[currentCustomer.getInt("shopType")].toUpperCase(),
                 currentCustomer.getString("signBoard").toUpperCase(),
-                Util.CurrentMonthYearHourNotBlank());
+                Util.CurrentDDMMYY_HHmm());
 
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
@@ -475,10 +484,10 @@ public class Transaction {
 
     }
     public static void shareImage(Uri uri, BaseModel currentCustomer) {
-        String message = currentCustomer == null? "" : String.format("%s %s ::: %s",
+        String message = currentCustomer == null? "" : String.format("%s %s-%s",
                 Constants.shopName[currentCustomer.getInt("shopType")].toUpperCase(),
                 currentCustomer.getString("signBoard").toUpperCase(),
-                Util.CurrentMonthYearHourNotBlank());
+                Util.CurrentDDMMYY_HHmm());
 
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
@@ -534,6 +543,26 @@ public class Transaction {
 
         } else {
             Util.showToast("Couldn't open map!");
+        }
+
+    }
+
+    public static void shareGoogleMapLocation(BaseModel customer) {
+        String label = String.format("%s %s",
+                Constants.shopName[customer.getInt("shopType")] ,
+                customer.getString("signBoard"));
+        Uri gmmIntentUri = Uri.parse(String.format("geo:0,0?q=%s,%s([DMS] %s)",customer.getString("lat"), customer.getDouble("lng"), label));
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        //mapIntent.putExtra(Intent.EXTRA_TEXT, "xxxx");
+
+// Check if Google Maps is installed
+        if (mapIntent.resolveActivity(Util.getInstance().getCurrentActivity().getPackageManager()) != null) {
+            Util.getInstance().getCurrentActivity().startActivity(mapIntent);
+        } else {
+            Util.showToast("Couldn't open map!");
+            // Handle the case where Google Maps is not installed
+            // You can prompt the user to install Google Maps or provide an alternative solution
         }
 
     }

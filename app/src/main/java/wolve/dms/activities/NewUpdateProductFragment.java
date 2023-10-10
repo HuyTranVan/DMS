@@ -64,16 +64,17 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
     private View view, vCover, vSwitch;
     private ImageView btnBack;
     private CInputForm edName, edUnitPrice, edPurchasePrice, edGroup, edVolume,
-            edIsPromotion, edBasePrice, edUnitInCarton, edNote;
+            edIsPromotion, edBasePrice, edUnitInCarton, edNote, edUnit;
     private TextView tvTitle;
     private Button btnSubmit;
     private CircleImageView imgProduct;
     private SwitchButton swActive;
     private RelativeLayout lnActiveParent;
 
-    private BaseModel product, group;
+    private BaseModel product, group, unit;
     private ProductActivity mActivity;
     private List<BaseModel> mGroup = null;
+    private List<BaseModel> mUnits = null;
 //    private List<String> listBoolean = new ArrayList<>();
     private Uri imageChangeUri;
 
@@ -109,6 +110,7 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
         vCover = view.findViewById(R.id.add_product_cover);
         vSwitch = view.findViewById(R.id.add_product_active);
         lnActiveParent = view.findViewById(R.id.add_product_active_parent);
+        edUnit = view.findViewById(R.id.add_product_unit);
 
     }
 
@@ -124,6 +126,7 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
             product = new BaseModel(bundle);
 
             edName.setText(product.getString("name"));
+            edUnit.setText(product.getBaseModel("unit").getString("name"));
             edNote.setText(product.getString("note"));
             edUnitPrice.setText(Util.FormatMoney(product.getDouble("unitPrice")));
             edPurchasePrice.setText(Util.FormatMoney(product.getDouble("purchasePrice")));
@@ -168,6 +171,7 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
         edVolume.textEvent();
         edUnitInCarton.textEvent();
         groupEvent();
+        unitEvent();
         promotionEvent();
 
 
@@ -241,7 +245,8 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
                 || edUnitPrice.getText().toString().trim().equals("")
                 || edPurchasePrice.getText().toString().trim().equals("")
                 || edBasePrice.getText().toString().trim().equals("")
-                || edUnitInCarton.getText().toString().trim().equals("")) {
+                || edUnitInCarton.getText().toString().trim().equals("")
+                || edUnit.getText().toString().trim().equals("")) {
             CustomCenterDialog.alertWithCancelButton(null, "Vui lòng nhập đủ thông tin", "đồng ý", null, null);
 
         } else {
@@ -282,7 +287,8 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
                         urlImage,
                         Util.valueMoney(edBasePrice.getText().toString()),
                         edUnitInCarton.getText().toString().trim().replace(",", ""),
-                        Util.encodeString(edNote.getText().toString())),
+                        Util.encodeString(edNote.getText().toString()),
+                        unit.getInt("id")),
                 false, false);
         new GetPostMethod(param, new NewCallbackCustom() {
             @Override
@@ -409,6 +415,16 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
 
     }
 
+    private void unitEvent(){
+        edUnit.setDropdown(true, new CInputForm.ClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadUnits();
+            }
+        });
+
+    }
+
     private void loadGroups(){
         if (mGroup != null){
             selectGroup();
@@ -432,12 +448,45 @@ public class NewUpdateProductFragment extends Fragment implements View.OnClickLi
 
     }
 
+    private void loadUnits(){
+        if (mUnits != null){
+            selectUnit();
+
+        }else {
+            BaseModel param = createGetParam(ApiUtil.PRODUCT_UNITS(), true);
+            new GetPostMethod(param, new NewCallbackCustom() {
+                @Override
+                public void onResponse(BaseModel result, List<BaseModel> list) {
+                    mUnits = list;
+                    selectUnit();
+                }
+
+                @Override
+                public void onError(String error) {
+
+                }
+            },1).execute();
+
+        }
+
+    }
+
     private void selectGroup(){
         CustomDropdow.createListDropdown(edGroup.getMoreButton(), DataUtil.listObject2ListString(mGroup, "name"), 0, false, new CallbackClickAdapter() {
             @Override
             public void onRespone(String data, int position) {
                 edGroup.setText(data);
                 group = mGroup.get(position);
+
+            }
+        });
+    }
+    private void selectUnit(){
+        CustomDropdow.createListDropdown(edUnit.getMoreButton(), DataUtil.listObject2ListString(mUnits, "name"), 0, false, new CallbackClickAdapter() {
+            @Override
+            public void onRespone(String data, int position) {
+                edUnit.setText(data);
+                unit = mUnits.get(position);
 
             }
         });

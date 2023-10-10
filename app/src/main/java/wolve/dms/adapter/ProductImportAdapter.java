@@ -157,14 +157,14 @@ public class ProductImportAdapter extends RecyclerView.Adapter<ProductImportAdap
         return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence charSequence) {
-                String charString = charSequence.toString();
+                String charString = DataUtil.convert_viet_to_en(charSequence.toString().toLowerCase());
                 if (charString.isEmpty()) {
                     mData = baseData;
 
                 } else {
                     List<BaseModel> listTemp = new ArrayList<>();
                     for (BaseModel row : baseData) {
-                        if (row.getString("name").toLowerCase().contains(charString)) {
+                        if (DataUtil.convert_viet_to_en(row.getString("name").toLowerCase()).contains(charString)) {
                             listTemp.add(row);
                         }
                     }

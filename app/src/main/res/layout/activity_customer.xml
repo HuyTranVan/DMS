@@ -283,7 +283,7 @@
         android:layout_marginLeft="@dimen/_15sdp"
         android:layout_marginBottom="@dimen/_10sdp"
         android:layout_marginRight="@dimen/_15sdp"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/customer_print"

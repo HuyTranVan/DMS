@@ -58,6 +58,7 @@
     <string name="icon_plus" translatable="false">&#xf067;</string>
     <string name="icon_minus" translatable="false">&#xf068;</string>
     <string name="icon_product_group" translatable="false">&#xf0e8;</string>
+    <string name="icon_product_minimize" translatable="false">&#xf78c;</string>
     <string name="icon_product" translatable="false">&#xf02d;</string>
     <string name="icon_price" translatable="false">&#xf155;</string>
     <string name="icon_base_price" translatable="false">&#xf4a0;</string>
@@ -104,6 +105,7 @@
     <string name="icon_bomb" translatable="false">&#xf4fd;</string>
     <string name="icon_users" translatable="false">&#xf0c0;</string>
     <string name="icon_share" translatable="false">&#xf1e0;</string>
+    <string name="icon_pin" translatable="false">&#xf08d;</string>
     <string name="icon_share_square" translatable="false">&#xf14d;</string>
     <string name="icon_menu" translatable="false">&#xf142;</string>
     <string name="icon_pay" translatable="false">&#xf4c0;</string>

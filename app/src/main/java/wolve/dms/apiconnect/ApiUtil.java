@@ -82,12 +82,26 @@ public class ApiUtil {
     public final static String PRODUCT_GROUP_DELETE(){
         return BASE_URL + "dms/token/productgroup/ProductgroupDelete?id=";
     }
+
+    //PRODUCT UNIT
+    public final static String PRODUCT_UNITS(){
+        return BASE_URL + "dms/token/productunit/ProductunitList";
+    }
+
+    public final static String PRODUCTUNIT_CREATE_PARAM = "%sname=%s";
+    public final static String PRODUCT_UNIT_NEW(){
+        return BASE_URL + "dms/token/productunit/ProductunitNew";
+    }
+
+    public final static String PRODUCT_UNIT_DELETE(){
+        return BASE_URL + "dms/token/productunit/ProductunitDelete?id=";
+    }
 //PRODUCT
     public final static String PRODUCTS(){
         return BASE_URL + "dms/token/product/ProductList";
     }
 
-    public final static String PRODUCT_CREATE_PARAM = "%sname=%s&promotion=%s&unitPrice=%s&purchasePrice=%s&volume=%s&productGroup_id=%d&image=%s&basePrice=%s&unitInCarton=%s&note=%s";
+    public final static String PRODUCT_CREATE_PARAM = "%sname=%s&promotion=%s&unitPrice=%s&purchasePrice=%s&volume=%s&productGroup_id=%d&image=%s&basePrice=%s&unitInCarton=%s&note=%s&unit_id=%d";
     public final static String PRODUCT_NEW(){
         return BASE_URL + "dms/token/product/ProductNew";
     }
@@ -223,9 +237,15 @@ public class ApiUtil {
         return BASE_URL + "dms/token/customer/CustomerDetail?id=";
     }
 
-    public final static String CUSTOMER_TEMP_NEW_PARAM = "customer_id=%d&user_id=%d";
-    public final static String CUSTOMER_TEMP_NEW(){
-        return BASE_URL + "dms/token/customer/CustomerTempNew";
+    public final static String CUSTOMER_PIN_NEW_PARAM = "customer_id=%d";
+    public final static String CUSTOMER_PIN_NEW(){
+        return BASE_URL + "dms/token/customer/CustomerPinNew";
+    }
+    public final static String CUSTOMER_PIN_LIST(){
+        return BASE_URL + "dms/token/customer/CustomerPins";
+    }
+    public final static String CUSTOMER_PIN_DELETE(){
+        return BASE_URL + "dms/token/customer/CustomerPinDelete?id=";
     }
 
     public final static String CUSTOMER_WAITING_LIST(){

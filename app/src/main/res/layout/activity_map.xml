@@ -15,32 +15,58 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/map_new_customer"
-        android:layout_width="@dimen/_40sdp"
-        android:layout_height="@dimen/_40sdp"
-        android:layout_marginRight="@dimen/_15sdp"
-        android:layout_marginBottom="@dimen/_90sdp"
-        app:cardBackgroundColor="@color/colorBlue"
-        app:cardCornerRadius="@dimen/_20sdp"
-        app:cardMaxElevation="@dimen/_10sdp"
-        app:layout_anchor="@id/map_current_location"
-        app:layout_anchorGravity="top|end">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="bottom|right"
+        android:layout_marginRight="@dimen/_15sdp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fontFamily="@font/font_awesome"
-            android:background="?selectableItemBackgroundBorderless"
-            android:text="@string/icon_plus"
-            android:textColor="@color/white_text_color"
-            android:layout_gravity="center"
-            android:textSize="@dimen/_16sdp"
-            android:gravity="center"/>
-    </androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/map_new_customer"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            app:cardBackgroundColor="@color/colorBlue"
+            app:cardCornerRadius="@dimen/_20sdp"
+            app:cardMaxElevation="@dimen/_10sdp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/font_awesome"
+                android:background="?selectableItemBackgroundBorderless"
+                android:text="@string/icon_plus"
+                android:textColor="@color/white_text_color"
+                android:layout_gravity="center"
+                android:textSize="@dimen/_16sdp"
+                android:gravity="center"/>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/map_current_location"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginBottom="@dimen/_50sdp"
+            app:cardCornerRadius="@dimen/_20sdp"
+            app:cardMaxElevation="@dimen/_10sdp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/font_awesome"
+                android:background="?selectableItemBackgroundBorderless"
+                android:text="@string/icon_location"
+                android:textColor="@color/black_text_color"
+                android:gravity="center"
+                android:textSize="@dimen/_16sdp" />
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+
+
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/map_current_location"
+        android:id="@+id/map_current_pin"
         android:layout_width="@dimen/_40sdp"
         android:layout_height="@dimen/_40sdp"
         android:layout_marginRight="@dimen/_15sdp"
@@ -48,77 +74,21 @@
         app:cardCornerRadius="@dimen/_20sdp"
         app:cardMaxElevation="@dimen/_10sdp"
         app:layout_anchor="@id/map_bottom_sheet"
-        app:layout_anchorGravity="end">
+        app:layout_anchorGravity="top|end"
+        android:visibility="gone">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fontFamily="@font/font_awesome"
             android:background="?selectableItemBackgroundBorderless"
-            android:text="@string/icon_location"
-            android:textColor="@color/black_text_color"
+            android:text="@string/icon_pin"
+            android:textColor="@color/orange"
             android:gravity="center"
-            android:textSize="@dimen/_16sdp" />
+            android:textSize="@dimen/_16sdp"/>
+
+
     </androidx.cardview.widget.CardView>
-
-
-    <RadioGroup
-        android:checkedButton="@+id/map_filter_all"
-        android:id="@+id/map_filter"
-        android:layout_width="@dimen/_200sdp"
-        android:layout_height="@dimen/_25sdp"
-        android:background="@drawable/pink_out_line"
-        android:orientation="horizontal"
-        android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="@dimen/_10sdp">
-
-        <RadioButton
-            android:id="@+id/map_filter_all"
-            android:layout_marginTop="1dp"
-            android:layout_marginBottom="1dp"
-            android:layout_marginLeft="1dp"
-            android:background="@drawable/toggle_widget_background_left"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:button="@null"
-            android:gravity="center"
-            android:text="Tất cả"
-            android:textColor="@drawable/text_white_selected"
-            android:textSize="@dimen/_10sdp" />
-
-        <RadioButton
-            android:id="@+id/map_filter_interested"
-            android:layout_marginTop="1dp"
-            android:layout_marginBottom="1dp"
-            android:layout_marginLeft="0.2dp"
-            android:layout_marginRight="0.2dp"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/toggle_widget_background_center"
-            android:button="@null"
-            android:gravity="center"
-            android:text="Quan tâm"
-            android:textColor="@drawable/text_white_selected"
-            android:textSize="@dimen/_10sdp" />
-
-        <RadioButton
-            android:id="@+id/map_filter_ordered"
-            android:layout_marginRight="1dp"
-            android:layout_marginTop="1dp"
-            android:layout_marginBottom="1dp"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/toggle_widget_background_right"
-            android:button="@null"
-            android:gravity="center"
-            android:text="Đã mua"
-            android:textColor="@drawable/text_white_selected"
-            android:textSize="@dimen/_10sdp" />
-
-    </RadioGroup>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -191,7 +161,7 @@
                     android:layout_width="50dp"
                     android:layout_height="match_parent"
                     android:background="?selectableItemBackground"
-                    android:text="@string/icon_district"
+                    android:text="@string/icon_filter"
                     android:gravity="center"
                     android:textSize="@dimen/_14sdp"
                     android:textColor="@color/black_text_color"
@@ -219,30 +189,6 @@
 
         </androidx.cardview.widget.CardView>
 
-<!--        <include layout="@layout/view_custom_search" />-->
-
-<!--        <fr.castorflex.android.smoothprogressbar.SmoothProgressBar-->
-<!--            android:id="@+id/map_loading"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="2dp"-->
-<!--            android:layout_below="@+id/map_seach_top"-->
-<!--            android:indeterminate="true"-->
-<!--            app:spb_sections_count="4"-->
-<!--            app:spb_color="@color/colorBlue"-->
-<!--            app:spb_speed="2.0"-->
-<!--            app:spb_stroke_width="4dp"-->
-<!--            app:spb_stroke_separator_length="4dp"-->
-<!--            app:spb_reversed="false"-->
-<!--            app:spb_mirror_mode="true"-->
-<!--            app:spb_progressiveStart_activated="false"-->
-<!--            app:spb_progressiveStart_speed="1.5"-->
-<!--            app:spb_progressiveStop_speed="3.4"-->
-<!--            android:visibility="visible"-->
-<!--            android:layout_marginLeft="@dimen/_10sdp"-->
-<!--            android:layout_marginRight="@dimen/_10sdp"-->
-<!--            android:layout_marginTop="-8dp" />-->
-
-
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -251,35 +197,26 @@
             android:layout_marginTop="@dimen/_5sdp"
             android:layout_marginRight="@dimen/_10sdp">
 
-            <RelativeLayout
-                android:id="@+id/map_waiting_list_title"
+            <TextView
+                android:id="@+id/map_pin_list_title"
+                android:fontFamily="@font/font_awesome"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/_20sdp"
-                android:minWidth="@dimen/_25sdp"
                 android:background="@drawable/btn_round_grey"
-                android:layout_gravity="center_vertical">
-
-                <TextView
-                    android:fontFamily="@font/font_awesome"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Khách chờ check-in"
-                    android:textSize="@dimen/_10sdp"
-                    android:textColor="@color/colorWhite"
-                    android:layout_centerVertical="true"
-
-                    android:paddingLeft="@dimen/_10sdp"
-                    android:paddingRight="@dimen/_40sdp"/>
-            </RelativeLayout>
-
-
+                android:text="Khách hàng đã ghim điểm"
+                android:textSize="@dimen/_10sdp"
+                android:textColor="@color/colorWhite"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/_10sdp"
+                android:paddingRight="@dimen/_40sdp"/>
 
             <TextView
-                android:id="@+id/map_waiting_list_text"
+                android:id="@+id/map_pin_list_text"
                 android:fontFamily="@font/font_awesome"
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
-                android:background="@drawable/btn_round_black"
+                android:background="@drawable/btn_round_orange"
                 android:text="5"
                 android:textSize="@dimen/_12sdp"
                 android:textStyle="bold"
@@ -289,9 +226,6 @@
 
         </FrameLayout>
 
-
-
-
         <TextView
             android:fontFamily="@font/font_awesome"
             android:id="@+id/map_reload"
@@ -299,7 +233,6 @@
             android:layout_height="@dimen/_20sdp"
             android:text="@string/icon_reload"
             android:textSize="@dimen/_14sdp"
-
             android:gravity="center"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/_5sdp"/>
@@ -549,8 +482,8 @@
                     android:fillViewport="false">
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical">
 
@@ -591,18 +524,6 @@
                             app:textColor="@color/black_text_color"
                             app:backgroundLayout="@drawable/btn_round_white_border_blue" />
 
-<!--                        <wolve.dms.customviews.CButton-->
-<!--                            android:id="@+id/map_detail_contact"-->
-<!--                            android:layout_width="wrap_content"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_marginRight="@dimen/_10sdp"-->
-<!--                            android:orientation="horizontal"-->
-<!--                            app:backgroundLayout="@drawable/btn_round_white_border_blue"-->
-<!--                            app:iconColor="@color/colorBlue"-->
-<!--                            app:iconText="@string/icon_contact"-->
-<!--                            app:text="Lưu"-->
-<!--                            app:textColor="@color/black_text_color" />-->
-
                         <wolve.dms.customviews.CButton
                             android:id="@+id/map_detail_share"
                             android:layout_width="wrap_content"
@@ -627,5 +548,25 @@
 
     </LinearLayout>
 
+
+    <LinearLayout
+        android:id="@+id/map_bottom_menu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="bottom">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:background="@drawable/bg_2topcorner8_gradientgrey" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/map_bottom_list"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:background="@color/colorWhite"/>
+
+        </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

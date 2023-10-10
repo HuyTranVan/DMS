@@ -4,14 +4,9 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.ContextWrapper;
-import android.content.Intent;
 import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -29,10 +24,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
-import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.ArrayMap;
@@ -48,8 +41,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.core.content.FileProvider;
-import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -65,17 +56,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.net.InetAddress;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.DecimalFormat;
@@ -86,7 +73,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -95,7 +81,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.mateware.snacky.Snacky;
-import wolve.dms.BuildConfig;
 import wolve.dms.R;
 import wolve.dms.activities.MapsActivity;
 import wolve.dms.activities.ShopCartActivity;
@@ -111,13 +96,11 @@ import wolve.dms.callback.CallbackString;
 import wolve.dms.customviews.CInputForm;
 import wolve.dms.libraries.ItemDecorationGridSpace;
 import wolve.dms.models.BaseModel;
-import wolve.dms.models.Bill;
 import wolve.dms.models.Product;
 import wolve.dms.models.Province;
 import wolve.dms.models.User;
 
 import static wolve.dms.utils.Constants.IMAGES;
-import static wolve.dms.utils.Constants.PRINTER_PACKAGE;
 import static wolve.dms.utils.Constants.REQUEST_GOOGLE_PLAY_SERVICES;
 import static wolve.dms.utils.Constants.ZALO_PACKAGE;
 
@@ -735,8 +718,8 @@ public class Util {
     }
 
 
-    public static Uri storePDF(PdfDocument document) {
-        String pdfFileName = String.format("DMSBILL_%s.pdf",  Util.CurrentDDMMYY_HHmm());
+    public static Uri storePDF(PdfDocument document, String customerName) {
+        String pdfFileName = String.format("%s_%s.pdf", Util.shortenName(customerName), Util.CurrentDDMMYY_HHmm());
         String relativeLocation = Environment.DIRECTORY_DOCUMENTS
                                             + File.separator
                                             + Constants.APP_DIRECTORY;
@@ -794,6 +777,10 @@ public class Util {
             return null;
 
         }
+    }
+
+    public static String shortenName(String name){
+        return name.replace(" ", "");
     }
 
 //    public static Uri saveToCacheMemory(PdfDocument pdf) {

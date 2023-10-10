@@ -187,6 +187,7 @@ public class Constants {
     public static final String ONLY_USER = "only_user";
     public static final String LAT = "lat";
     public static final String LNG = "lng";
+    public static final String CUSTOMERS_WAITING = "customer_waiting";
     public static final String HISTORY_SEARCH = "history_search";
     public static final String SAVE_PRODUCT_IMAGE = "save_image";
     public static final String DISTRIBUTOR_ID = "distributor_id";
@@ -200,6 +201,10 @@ public class Constants {
     public static int LEFTPOSITION = 0;
     public static int CENTERPOSITION = 1;
     public static int RIGHTPOSITION = 2;
+    public static String ALL = "Tất cả";
+    public static String INTEREST = "Quan tâm";
+    public static String ORDERED = "Đã mua";
+    public static String CUSTOMER_CARE = "Chăm sóc";
 
 
     public static BaseModel HomeSaleItem(){
@@ -434,5 +439,18 @@ public class Constants {
             Util.getIconString(R.string.icon_info, "    ", "Thông tin"),
             Util.getIconString(R.string.icon_depot, "   ", "Tồn kho"),
             Util.getIconString(R.string.icon_reply, "    ", "Trả hàng")};
+
+    public static List<String> listSortItem(){
+        List<String> listSortTitle = new ArrayList<>();
+
+        listSortTitle.add(0,"Khoảng cách gần nhất");
+        listSortTitle.add(1,"Khoảng cách xa nhất");
+        listSortTitle.add(2,"Thời gian gần nhất");
+        listSortTitle.add(3,"Thời gian xa nhất");
+
+        return listSortTitle;
+
+
+    }
 
 }

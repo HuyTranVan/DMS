@@ -113,6 +113,15 @@
                     app:textColor="@color/colorBlue" />
 
                 <wolve.dms.customviews.CInputForm
+                    android:id="@+id/add_product_unit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:textHint="Đơn vị tính"
+                    app:iconText="@string/icon_product_minimize"
+                    app:isDropdown="true"
+                    app:textColor="@color/colorBlue" />
+
+                <wolve.dms.customviews.CInputForm
                     android:id="@+id/add_product_unit_price"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -136,21 +145,37 @@
                     app:textHint="Giá nhập phân phối"
                     app:iconText="@string/icon_base_price" />
 
-                <wolve.dms.customviews.CInputForm
-                    android:id="@+id/add_product_unit_in_carton"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="number"
-                    app:textHint="đơn vị/ thùng"
-                    app:iconText="@string/icon_container" />
+                    android:orientation="horizontal">
 
-                <wolve.dms.customviews.CInputForm
-                    android:id="@+id/add_product_volume"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    app:textHint="Khối lượng"
-                    app:iconText="@string/icon_weight" />
+                    <wolve.dms.customviews.CInputForm
+                        android:id="@+id/add_product_unit_in_carton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:inputType="number"
+                        app:textHint="đơn vị/ thùng"
+                        app:iconText="@string/icon_container" />
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/colorGrey"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:layout_marginBottom="@dimen/_5sdp"/>
+
+                    <wolve.dms.customviews.CInputForm
+                        android:id="@+id/add_product_volume"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:inputType="numberDecimal"
+                        app:textHint="Khối lượng"
+                        app:iconText="@string/icon_weight" />
+                </LinearLayout>
+
+
 
                 <wolve.dms.customviews.CInputForm
                     android:id="@+id/add_product_promotion"

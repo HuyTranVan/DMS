@@ -18,6 +18,7 @@
     <color name="lightGreen">#ccff99</color>
     <color name="lightGreenDark">#1A9305</color>
     <color name="colorGreenFab">#99cc33</color>
+    <color name="colorGreenLight">#5E76AA0E</color>
     <color name="colorRed">#ed3237</color>
     <color name="colorRedTransparent">#61ed3237</color>
     <color name="colorRedDark">#ce0208</color>
@@ -57,5 +58,7 @@
     <color name="cardview_shadow_start_color">#de000000</color>
     <color name="cardview_shadow_end_color">#03000000</color>
     <color name="colorWhite">#ffffff</color>
+
+    <color name="colorTransparent">#00FFFFFF</color>
 
 </resources>

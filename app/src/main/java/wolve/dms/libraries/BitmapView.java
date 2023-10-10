@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
@@ -146,27 +147,67 @@ public class BitmapView {
         // if you want to rotate the Bitmap
         // matrix.postRotate(45);
         resizedBitmap = Bitmap.createBitmap(BitmapOrg, 0, 0, width, height, matrix, true);
+//        resizedBitmap = Bitmap.createScaledBitmap(BitmapOrg , newWidth, newHeight, true);
 
 
         return resizedBitmap;
     }
 
 
-    public Bitmap getbmpfromURL(String surl) {
-        try {
-            URL url = new URL(surl);
-            HttpURLConnection urlcon = (HttpURLConnection) url.openConnection();
-            urlcon.setDoInput(true);
-            urlcon.connect();
-            InputStream in = urlcon.getInputStream();
-            Bitmap mIcon = BitmapFactory.decodeStream(in);
-            return mIcon;
-        } catch (Exception e) {
-            Log.e("Error", e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
-    }
+//    public static Bitmap ResizeBitMapDependHeight(Bitmap bitmap, int mHeight) {
+////        Bitmap BitmapOrg = bitmap;
+////        Bitmap resizedBitmap = null;
+////        int width = BitmapOrg.getWidth();
+////        int height = BitmapOrg.getHeight();
+////        if (height <= mHeight) {
+////            return bitmap;
+////        }
+////
+//////        int newWidth =width * mHeight/height;
+//////        int newHeight = mHeight;
+////
+////        float scaleWidth = ((float) newWidth) / width;
+////        float scaleHeight = ((float) newHeight) / height;
+////
+////        Matrix matrix = new Matrix();
+////        matrix.postScale(scaleWidth, scaleHeight);
+////        // if you want to rotate the Bitmap
+////        // matrix.postRotate(45);
+////        resizedBitmap = Bitmap.createBitmap(BitmapOrg, 0, 0, width, height, matrix, true);
+//////        resizedBitmap = Bitmap.createScaledBitmap(BitmapOrg , newWidth, newHeight, true);
+//
+//
+//
+//        Bitmap resizedBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
+//
+//        Bitmap BitmapOrg = bitmap;
+////        Bitmap resizedBitmap = null;
+//
+//        int width = BitmapOrg.getWidth();
+//        int height = BitmapOrg.getHeight();
+//        if (height <= mHeight) {
+//            return bitmap;
+//        }
+//
+//        int newWidth =width * mHeight/height;
+//        int newHeight = mHeight;
+//
+//        float scaleX = newWidth / (float) bitmap.getWidth();
+//        float scaleY = newHeight / (float) bitmap.getHeight();
+//        float pivotX = 0;
+//        float pivotY = 0;
+//
+//        Matrix scaleMatrix = new Matrix();
+//        scaleMatrix.postScale(scaleX, scaleY, pivotX, pivotY);
+//
+//        Canvas canvas = new Canvas(resizedBitmap);
+//        canvas.setMatrix(scaleMatrix);
+//        canvas.drawBitmap(bitmap, 0, 0, new Paint(Paint.FILTER_BITMAP_FLAG));
+//
+//        return resizedBitmap;
+//
+//
+//    }
 
 
 }

@@ -25,10 +25,28 @@
             android:id="@+id/product_group_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="DANH SÁCH NHÓM SẢN PHẨM"
+            android:layout_centerVertical="true"
+            android:text="NHÓM SẢN PHẨM"
+            android:textColor="@color/black_text_color"
             android:textSize="@dimen/_14sdp"
-            android:textColor="@color/black_text_color" />
+            android:layout_toRightOf="@+id/icon_back"/>
+
+        <TextView
+            android:id="@+id/product_group_units"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/_20sdp"
+            android:fontFamily="@font/font_awesome"
+            android:layout_centerVertical="true"
+            android:background="@drawable/btn_round_transparent_border_orange"
+            android:text="Đơn vị tính"
+            android:textColor="@color/black_text_color"
+            android:textSize="@dimen/_12sdp"
+            android:paddingRight="@dimen/_15sdp"
+            android:paddingLeft="@dimen/_15sdp"
+            android:gravity="center"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_alignParentRight="true"/>
 
     </RelativeLayout>
 
@@ -36,18 +54,56 @@
         android:id="@+id/product_group_rvgroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/product_group_header" />
+        android:layout_below="@+id/product_group_header"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/_10sdp"/>
 
-    <com.github.clans.fab.FloatingActionButton
+    <LinearLayout
         android:id="@+id/product_group_add_new"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_add_white_18dp"
-        android:layout_margin="@dimen/_15sdp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        app:fab_size="normal"
-        style="@style/MenuButtonsBlue" />
+        android:layout_height="@dimen/_30sdp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/btn_round_white_border_blue"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_below="@+id/product_group_rvgroup"
+        android:layout_centerInParent="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:fontFamily="@font/font_awesome"
+            android:text="@string/icon_plus"
+            android:textSize="@dimen/_12sdp"
+            android:textColor="@color/colorBlue"/>
+
+        <TextView
+            android:id="@+id/distributor_detail_add_admin_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/_20sdp"
+            android:text="Thêm nhóm sản phẩm"
+            android:textSize="@dimen/_12sdp"
+            android:textAllCaps="true"
+            android:textColor="@color/colorBlue" />
+
+    </LinearLayout>
+
+<!--    <com.github.clans.fab.FloatingActionButton-->
+<!--        android:id="@+id/product_group_add_new"-->
+<!--        style="@style/MenuButtonsBlue"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentRight="true"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        android:layout_marginStart="@dimen/_15sdp"-->
+<!--        android:layout_marginTop="@dimen/_15sdp"-->
+<!--        android:layout_marginEnd="@dimen/_15sdp"-->
+<!--        android:layout_marginBottom="@dimen/_15sdp"-->
+<!--        android:src="@drawable/ic_add_white_18dp"-->
+<!--        app:fab_size="normal" />-->
 
 
 </RelativeLayout>

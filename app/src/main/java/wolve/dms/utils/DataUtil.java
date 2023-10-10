@@ -532,13 +532,14 @@ public class DataUtil {
         customerResult.put("checkinCount", customer.getInt("checkinCount"));
         customerResult.put("shopType", customer.getString("shopType"));
         customerResult.put("checkIns", customer.getJsonObject("checkIns"));
-        //customerResult.put("currentDebt", customer.getDouble("currentDebt"));
+        customerResult.put("nameUnsigned", customer.getString("nameUnsigned"));
         customerResult.put("status", customer.getJsonObject("status"));
         customerResult.put("distributor_id", customer.getInt("distributor_id"));
         customerResult.put("status_id", customer.getInt("status_id"));
         customerResult.put("rating", customer.getDouble("rating"));
         customerResult.put("rating_count", customer.getInt("rating_count"));
         customerResult.put("waiting_list", customer.getBoolean("waiting_list"));
+        customerResult.put("pin", customer.getBoolean("pin"));
 
         List<BaseModel> listOriginalBill = new ArrayList<>(DataUtil.array2ListObject(customer.getString("bills")));
         List<BaseModel> listCheckin = new ArrayList<>(DataUtil.array2ListObject(customer.getString("checkins")));
@@ -1089,6 +1090,25 @@ public class DataUtil {
 
         }
         return total;
+    }
+
+    public static String convert_viet_to_en(String str) {
+        str = str.replaceAll("à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ", "a");
+        str = str.replaceAll("è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ", "e");
+        str = str.replaceAll("ì|í|ị|ỉ|ĩ", "i");
+        str = str.replaceAll("ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ", "o");
+        str = str.replaceAll("ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ", "u");
+        str = str.replaceAll("ỳ|ý|ỵ|ỷ|ỹ", "y");
+        str = str.replaceAll("đ", "d");
+
+        str = str.replaceAll("À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ", "A");
+        str = str.replaceAll("È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ", "E");
+        str = str.replaceAll("Ì|Í|Ị|Ỉ|Ĩ", "I");
+        str = str.replaceAll("Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ", "O");
+        str = str.replaceAll("Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ", "U");
+        str = str.replaceAll("Ỳ|Ý|Ỵ|Ỷ|Ỹ", "Y");
+        str = str.replaceAll("Đ", "D");
+        return str;
     }
 
 }

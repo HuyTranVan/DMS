@@ -116,7 +116,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
         holder.tvName.setText(mData.get(position).getString("name"));
         holder.tvPrice.setText(Util.FormatMoney(mData.get(position).getDouble("unitPrice")));
         String baseprice = Util.isAdmin() ? (String.format(" (%s)", Util.FormatMoney(mData.get(position).getDouble("basePrice")))) : "";
-        holder.tvBasePrice.setText(Util.FormatMoney(mData.get(position).getDouble("purchasePrice")) + baseprice);
+        String unit = mData.get(position).getInt("unit_id") != 0 ? "- " + mData.get(position).getBaseModel("unit").getString("name") : "";
+        holder.tvBasePrice.setText(Util.FormatMoney(mData.get(position).getDouble("purchasePrice")) + baseprice + unit);
 
         if (mData.get(position).getInt("deleted") == 1){
             holder.tvHide.setVisibility(View.VISIBLE);

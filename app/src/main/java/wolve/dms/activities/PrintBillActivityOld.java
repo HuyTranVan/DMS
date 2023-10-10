@@ -299,7 +299,7 @@ public class PrintBillActivityOld extends BluetoothActivity implements View.OnCl
                     CustomCenterDialog.showDialogOptionShare(new CallbackInt() {
                         @Override
                         public void onResponse(int value) {
-                            Transaction.shareVia(Util.storePDF(PdfGenerator.createPdfOldBill(currentCustomer, listDebts, logoBitmap)),
+                            Transaction.shareVia(Util.storePDF(PdfGenerator.createPdfOldBill(currentCustomer, listDebts, logoBitmap), Util.shortenName(currentCustomer.getString("nameUnsigned"))),
                                                     false,
                                                     value,
                                                     currentCustomer);

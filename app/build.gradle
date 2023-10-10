@@ -9,8 +9,8 @@ android {
         multiDexEnabled true
         minSdkVersion 27
         //targetSdkVersion 31
-        versionCode 35
-        versionName "2.3"
+        versionCode 37
+        versionName "2.32"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
@@ -33,7 +33,7 @@ android {
             buildConfigField "Boolean", "FLAG", 'false'
 //            buildConfigField "String", "SERVER_URL", '"http://lubsolution.com:8085/"'
 //            buildConfigField "String", "SERVER_URL", '"http://10.0.2.2/"'
-            buildConfigField "String", "SERVER_URL", '"http://192.168.1.6/"'
+            buildConfigField "String", "SERVER_URL", '"http://192.168.1.89/"'
 
 
         }

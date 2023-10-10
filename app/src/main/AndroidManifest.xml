@@ -178,6 +178,12 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
+            android:name=".activities.ProductUnitActivity"
+            android:screenOrientation="unspecified"
+            android:theme="@style/FullScreen"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+
+        <activity
             android:name=".activities.CashFlowTypeActivity"
             android:screenOrientation="unspecified"
             android:theme="@style/FullScreen"

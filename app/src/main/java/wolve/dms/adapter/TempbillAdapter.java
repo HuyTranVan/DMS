@@ -1,6 +1,7 @@
 package wolve.dms.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +15,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wolve.dms.R;
+import wolve.dms.apiconnect.apiserver.DownloadImageMethod;
 import wolve.dms.callback.Callback2Int;
+import wolve.dms.callback.CallbackBitmap;
 import wolve.dms.callback.CallbackBoolean;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.models.BaseModel;
+import wolve.dms.models.Distributor;
 import wolve.dms.utils.Constants;
 import wolve.dms.utils.CustomCenterDialog;
 import wolve.dms.utils.DataUtil;
+import wolve.dms.utils.PdfGenerator;
 import wolve.dms.utils.Transaction;
 import wolve.dms.utils.Util;
 
@@ -70,12 +75,15 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
         holder.tvShopName.setText(Constants.shopName[customer.getInt("shopType")] + " " + customer.getString("signBoard"));
         holder.tvAddress.setText(" - " + customer.getString("district"));
 
-        holder.tvTotal.setText(Util.FormatMoney(mData.get(position).getBaseModel("bill").getDouble("total")));
+        BaseModel bill = mData.get(position).getBaseModel("bill");
+        bill.put("user", mData.get(position).getJsonObject("user"));
+
+        holder.tvTotal.setText(Util.FormatMoney(bill.getDouble("total")));
         holder.tvEmployee.setText(Util.getIconString(R.string.icon_username,
                                                     "   ",
                                                     mData.get(position).getBaseModel("user").getString("displayName")));
 
-        List<BaseModel> details = mergeDetail(DataUtil.array2ListObject(mData.get(position).getBaseModel("bill").getString("billDetails")));
+        List<BaseModel> details = mergeDetail(bill.getList("billDetails"));
         String detail = "";
         for (int i = 0; i < details.size(); i++) {
             detail += String.format("%d  x  %s", details.get(i).getInt("quantity"), details.get(i).getString("productName"))
@@ -113,6 +121,8 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
             holder.vLineUnder.setVisibility(View.GONE);
         }
 
+        //holder.tvPrint.setVisibility();
+
         holder.lnDirection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -141,7 +151,7 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
         holder.tvPrint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                printTempBill(mData.get(holder.getAdapterPosition()));
             }
         });
 
@@ -239,6 +249,22 @@ public class TempbillAdapter extends RecyclerView.Adapter<TempbillAdapter.Tempbi
         }
 
         return listResult;
+    }
+
+    protected void printTempBill(BaseModel tempbill){
+        BaseModel customer = tempbill.getBaseModel(Constants.CUSTOMER);
+        new DownloadImageMethod(Distributor.getImage(), new CallbackBitmap(){
+            @Override
+            public void onResponse(Bitmap bitmap) {
+                Transaction.shareVia(Util.storePDF(PdfGenerator.createPdfTempBill(tempbill, bitmap), Util.shortenName(customer.getString("nameUnsigned"))),
+                        false,
+                        3,
+                        customer);
+
+            }
+
+        }).execute();
+
     }
 
 }

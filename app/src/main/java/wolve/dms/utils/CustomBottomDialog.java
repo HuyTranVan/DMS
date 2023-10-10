@@ -2,7 +2,11 @@ package wolve.dms.utils;
 
 import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,7 +21,11 @@ import java.util.List;
 
 import wolve.dms.R;
 import wolve.dms.adapter.ItemAdapter;
+import wolve.dms.adapter.MapWaitingListAdapter;
 import wolve.dms.callback.CallbackBoolean;
+import wolve.dms.callback.CallbackClickAdapter;
+import wolve.dms.callback.CallbackInt;
+import wolve.dms.callback.CallbackListObject;
 import wolve.dms.callback.CallbackLong;
 import wolve.dms.callback.CallbackObject;
 import wolve.dms.libraries.calendarpicker.SimpleDatePickerDelegate;
@@ -211,7 +219,6 @@ public class CustomBottomDialog {
         dialog.show();
     }
 
-
     public static void choiceListObject(String title, final List<BaseModel> list, String key, final CallbackObject mListener, CallbackBoolean dismiss) {
         int heigh = list.size() > 6 ? Util.convertSdpToInt(R.dimen._350sdp) :
                 (list.size() + 1) * Util.convertSdpToInt(R.dimen._40sdp) + Util.convertSdpToInt(R.dimen._5sdp); //+Util.convertSdpToInt(R.dimen._30sdp);
@@ -324,6 +331,142 @@ public class CustomBottomDialog {
 
 
 
+
+        dialog.show();
+    }
+    public static void customerWaiting(CallbackInt posListener, CallbackListObject callbacklist) {
+        final DialogPlus dialog = DialogPlus.newDialog(Util.getInstance().getCurrentActivity())
+                .setContentHolder(new ViewHolder(R.layout.view_dialog_map_waitinglist))
+                .setGravity(Gravity.BOTTOM)
+                .setBackgroundColorResId(R.color.colorTransparent)
+                .setMargin(0, 0, 0, 0)
+                .setInAnimation(R.anim.slide_in_up)
+                .setOverlayBackgroundResource(R.color.colorTransparent)
+                .setOnBackPressListener(new OnBackPressListener() {
+                    @Override
+                    public void onBackPressed(DialogPlus dialogPlus) {
+                        dialogPlus.dismiss();
+                        posListener.onResponse(0);
+                    }
+                }).create();
+
+        RelativeLayout mParent = (RelativeLayout) dialog.findViewById(R.id.waitinglist_parent);
+        ImageView btnBack = (ImageView) dialog.findViewById(R.id.icon_back);
+        TextView tvTitle = (TextView) dialog.findViewById(R.id.waitinglist_title);
+        RecyclerView rvCustomerWaiting = (RecyclerView) dialog.findViewById(R.id.waitinglist_rvCustomer);
+        TextView tvClose = (TextView) dialog.findViewById(R.id.waitinglist_select_close);
+        TextView tvCount = (TextView) dialog.findViewById(R.id.waitinglist_select_count);
+        RelativeLayout mCheckGroup = (RelativeLayout) dialog.findViewById(R.id.waitinglist_select_group);
+        Button btnSubmit = (Button) dialog.findViewById(R.id.waitinglist_submit);
+        RelativeLayout mBottom = (RelativeLayout) dialog.findViewById(R.id.waitinglist_submit_parent);
+        CheckBox rdCheckAll = (CheckBox) dialog.findViewById(R.id.waitinglist_checkall);
+        LinearLayout lnSort = (LinearLayout) dialog.findViewById(R.id.waitinglist_sort);
+        TextView tvSortTitle = (TextView) dialog.findViewById(R.id.waitinglist_sort_title);
+        View view1 = dialog.findViewById(R.id.bottom_view1);
+        View view2 = dialog.findViewById(R.id.bottom_view2);
+        View view3 = dialog.findViewById(R.id.bottom_view3);
+        View view4 = dialog.findViewById(R.id.bottom_view4);
+
+
+        List<BaseModel> listCustomerWaiting = CustomSQL.getListObject(Constants.CUSTOMERS_WAITING);
+        MapWaitingListAdapter adapter = new MapWaitingListAdapter(listCustomerWaiting,
+                    new CallbackInt() {
+                @Override
+                public void onResponse(int value) {
+                    tvCount.setText(String.format("%s Khách hàng",value > 0 ? String.valueOf(value) : ""));
+                    if (value > 0) {
+                        mCheckGroup.setVisibility(View.VISIBLE);
+                        mBottom.setVisibility(View.VISIBLE);
+                        if (value == listCustomerWaiting.size()) {
+                            rdCheckAll.setChecked(true);
+                        }else {
+                            rdCheckAll.setChecked(false);
+                        }
+
+                    } else {
+                        mCheckGroup.setVisibility(View.GONE);
+                        mBottom.setVisibility(View.GONE);
+
+                    }
+                }
+            });
+            Util.createLinearRV(rvCustomerWaiting, adapter);
+
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                posListener.onResponse(0);
+            }
+        });
+        tvClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                adapter.unCheckAll();
+                mCheckGroup.setVisibility(View.GONE);
+                rdCheckAll.setChecked(false);
+
+            }
+        });
+        rdCheckAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (rdCheckAll.isChecked()){
+                    adapter.CheckAll();
+                }else {
+                    adapter.unCheckAll();
+                }
+            }
+        });
+        lnSort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CustomDropdow.createListDropdown(lnSort, Constants.listSortItem(), 0, false, new CallbackClickAdapter() {
+                    @Override
+                    public void onRespone(String data, int position) {
+                        tvSortTitle.setText(data);
+                        adapter.sort(position);
+
+                    }
+                });
+            }
+        });
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callbacklist.onResponse(adapter.getAllChecked());
+                dialog.dismiss();
+                posListener.onResponse(0);
+            }
+        });
+        view1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                posListener.onResponse(0);
+            }
+        });
+        view2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                posListener.onResponse(1);
+            }
+        });
+        view3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                posListener.onResponse(2);
+            }
+        });
+//        view4.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                posListener.onResponse(3);
+//            }
+//        });
 
         dialog.show();
     }

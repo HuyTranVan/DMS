@@ -63,6 +63,12 @@ public class Distributor extends BaseModel {
         return currentDistributor.getString("image");
     }
 
+    public static String getThanks() {
+        BaseModel currentDistributor = CustomSQL.getBaseModel(Constants.DISTRIBUTOR);
+
+        return currentDistributor.getString("thanks");
+    }
+
     public static int getProvinceId() {
         int province_id = 0;
         BaseModel currentDistributor = CustomSQL.getBaseModel(Constants.DISTRIBUTOR);

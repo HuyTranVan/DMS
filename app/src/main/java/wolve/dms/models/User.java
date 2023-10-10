@@ -232,4 +232,12 @@ public class User extends BaseModel {
         return listUser.get(pos);
     }
 
+    public static BaseModel getAllFilterUser() {
+        BaseModel model = new BaseModel();
+        model.put("image","");
+        model.put("displayName", Constants.ALL_FILTER);
+
+        return model;
+    }
+
 }

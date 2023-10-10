@@ -1,5 +1,7 @@
 package wolve.dms.activities;
 
+import static wolve.dms.models.User.getAllFilterUser;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -343,13 +345,13 @@ public class StatisticalActivity extends BaseActivity implements View.OnClickLis
         }
     }
 
-    private BaseModel getAllFilterUser() {
-        BaseModel model = new BaseModel();
-        model.put("image","");
-        model.put("displayName", Constants.ALL_FILTER);
-
-        return model;
-    }
+//    private BaseModel getAllFilterUser() {
+//        BaseModel model = new BaseModel();
+//        model.put("image","");
+//        model.put("displayName", Constants.ALL_FILTER);
+//
+//        return model;
+//    }
 
     protected int getCurrentUserId() {
         int user_id = 0;
